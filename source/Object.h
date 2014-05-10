@@ -1,0 +1,50 @@
+#ifndef _F3D_OBJECT_H_
+#define _F3D_OBJECT_H_
+
+#include "common.h"
+
+namespace f3d
+{
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	enum class EObjectType
+	{
+		eTypeUnknown,
+		eTypeNode,
+		eTypeTexture,
+		eTypeMaterial,
+		eTypeMesh,
+		eTypeShader,
+		eTypeShaderProgram,
+		eTypeShaderUniform,
+		eTypesCount
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	class CObject
+	{
+	public:
+
+		CObject();
+		~CObject();
+
+		const s32			getID() const;
+		const std::string	getName() const;
+		const EObjectType	getObjectType() const;
+
+		void				setID(const s32 id);
+		void				setName(const std::string& name);
+
+	protected:
+		
+		s32					m_id;
+		std::string			m_name;
+		EObjectType			m_type;
+
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+#endif //_F3D_OBJECT_H_

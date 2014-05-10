@@ -22,7 +22,7 @@
 *.unsuccessfulbuild
 ipch/
 obj/
-project/win32/CMakeFiles/
+project/win32/*
 [Dd]ebug*/
 [Rr]elease*/
 Ankh.NoLoad
