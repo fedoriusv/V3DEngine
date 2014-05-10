@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FedoriaConfig.h"
+#include "Config.h"
 
 namespace f3d
 {

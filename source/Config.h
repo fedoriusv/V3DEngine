@@ -1,12 +1,17 @@
 // Fedoria3D Engine (c) 2014 Fedor Nekrasov
 
-#ifndef _F3D_FEDORIA_CONFIG_H_
-#define _F3D_FEDORIA_CONFIG_H_
+#ifndef _F3D_CONFIG_H_
+#define _F3D_CONFIG_H_
 
 //Version 1.0.0
-#define FEDORIA_VERSION_MAJOR		1
+#define FEDORIA_VERSION_MAJOR		2
 #define FEDORIA_VERSION_MINOR		0
 #define FEDORIA_VERSION_REVISION	0
+
+//Config
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define USE_LOGGER 1
 
 //Compiler
 /////////////////////////////////////////////////////////////////////////////////////////////////////

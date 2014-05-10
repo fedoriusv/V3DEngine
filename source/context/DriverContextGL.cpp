@@ -1,4 +1,5 @@
 #include "DriverContextGL.h"
+#include "utils/Logger.h"
 
 #define GLEW_STATIC
 #include "GL/glew.h"
@@ -45,6 +46,9 @@ bool CDriverContextGL::createContext()
 
 bool CDriverContextGL::createWin32Context()
 {
+
+	LOG_INFO("Create Win32 GL Context")
+
 	// Create a window to test antialiasing support
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	LPCWSTR className = __TEXT("ValeraWin32GL");
@@ -91,7 +95,7 @@ bool CDriverContextGL::createWin32Context()
 
 	if (!tempWindow)
 	{
-		//Cannot create a temp window;
+		LOG_ERROR("Cannot create a temp window")
 		UnregisterClass(className, hInstance);
 		
 		return false;
@@ -128,7 +132,7 @@ bool CDriverContextGL::createWin32Context()
 	HGLRC hRc = wglCreateContext(hDC);
 	if (!hRc)
 	{
-		//Cannot create a temporary GL rendering context;
+		LOG_ERROR("Cannot create a temporary GL rendering context")
 		ReleaseDC(tempWindow, hDC);
 		DestroyWindow(tempWindow);
 		UnregisterClass(className, hInstance);
@@ -138,7 +142,7 @@ bool CDriverContextGL::createWin32Context()
 
 	if (!wglMakeCurrent(hDC, hRc))
 	{
-		//Cannot activate a temporary GL rendering context.
+		LOG_ERROR("Cannot activate a temporary GL rendering context")
 		wglDeleteContext(hRc);
 		ReleaseDC(tempWindow, hDC);
 		DestroyWindow(tempWindow);
@@ -147,12 +151,13 @@ bool CDriverContextGL::createWin32Context()
 		return false;
 	}
 
+	const GLubyte* version = glewGetString(GLEW_VERSION);
+	LOG_INFO("GLEW Init. Version %s", version)
 	GLenum error = glewInit();
 	if (error !=  GLEW_OK )
 	{
 		const GLubyte* errorStr = glewGetErrorString(error);
-		//"Couldn't initialize GLEW! error errorStr
-
+		LOG_ERROR("Couldn't initialize GLEW: %s", errorStr)
 		return false;
 	}
 
@@ -160,8 +165,7 @@ bool CDriverContextGL::createWin32Context()
 		!wglewIsSupported("WGL_ARB_pixel_format"  ) || 
 		!wglewIsSupported("WGL_ARB_multisample"   )  )
 	{
-		//"Error Supported GLEW Lib;
-		
+		LOG_ERROR("Error Supported GLEW Lib")
 		return false;	
 	}
 
@@ -194,15 +198,14 @@ bool CDriverContextGL::createWin32Context()
 	{
 		if ( !wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1, &newPixelFormat, &numFormats) )
 		{
-			//Can't Find A Suitable ExPixelFormat.;
-		
+			LOG_ERROR("Can't Find A Suitable ExPixelFormat")
 			return false;
 		}
 
 		--iAttributes[21]; //WGL_SAMPLES_ARB, antiAlias
 		if (iAttributes[21] < 0)
 		{
-			//Can't Choose ExPixelFormat.;
+			LOG_ERROR("Can't Choose ExPixelFormat")
 			iAttributes[21] = 0;
 			break;
 		}
@@ -221,14 +224,13 @@ bool CDriverContextGL::createWin32Context()
 	hDC = GetDC( window );
 	if (!hDC)
 	{
-		//Cannot create a GL device context.
+		LOG_ERROR("Cannot create a GL device context")
 		return false;
 	}
 
 	if ( newPixelFormat == 0 || !SetPixelFormat(hDC, newPixelFormat, &pfd) )
 	{
-		//Cannot create ExPixelFormat
-		//set default pixel format
+		LOG_WARRNING("Cannot create ExPixelFormat. Set default pixel format")
 		newPixelFormat = ChoosePixelFormat(hDC, &pfd);
 		hRc = wglCreateContext(hDC);
 	}
@@ -248,12 +250,14 @@ bool CDriverContextGL::createWin32Context()
 
 	if ( !hRc || !wglMakeCurrent(hDC, hRc) )
 	{
-		//Can't Create GL Rendering Context
+		LOG_ERROR("Can't Create GL Rendering Context")
 		return false;
 	}
 
 	int pf = GetPixelFormat(hDC);
 	DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+	LOG_INFO("Win32 Context GL successful created")
 
 	return true;
 }
@@ -329,19 +333,19 @@ bool CDriverContextGL::createLinuxContext()
 void CDriverContextGL::driverInfo()
 {
 	// print renderer information
-	const GLubyte* renderer = 0;//glGetString(GL_RENDERER);
-	const GLubyte* vendor = 0;//glGetString(GL_VENDOR);
-	const GLubyte* GLSL = 0;//glGetString(GL_SHADING_LANGUAGE_VERSION);
-	const GLubyte* version = 0;//glGetString(GL_VERSION);
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* vendor = glGetString(GL_VENDOR);
+	const GLubyte* GLSL = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	const GLubyte* version = glGetString(GL_VERSION);
 	
 	GLint maxTextureUnits;
-	//glGetIntegerv( GL_MAX_TEXTURE_UNITS, &maxTextureUnits );
-	//TODO: driver info
-	std::cout << renderer << std::endl;
-	std::cout << vendor << std::endl;
-	std::cout << GLSL << std::endl;
-	std::cout << version << std::endl;
-	std::cout << maxTextureUnits << std::endl;
+	glGetIntegerv( GL_MAX_TEXTURE_UNITS, &maxTextureUnits );
+	
+	LOG_INFO("Render: %s", renderer)
+	LOG_INFO("Vendor: %s", vendor)
+	LOG_INFO("GLSL: %s", GLSL)
+	LOG_INFO("GL Version: %s", version)
+	LOG_INFO("Max Texture Units: %d", maxTextureUnits)
 
 	/*glewIsSupported("GL_ARB_multitexture");
 	glewIsSupported("GL_ARB_vertex_buffer_object");
@@ -353,10 +357,10 @@ void CDriverContextGL::driverInfo()
 void CDriverContextGL::checkForErrors(const std::string& error)
 {
 #ifdef _DEBUG
-    GLenum glError = 0;//glGetError();
-		if ( glError != GL_NO_ERROR )
-		{
-			//( error << glewGetErrorString(glError));
-		}
+	GLenum glError = glGetError();
+	if ( glError != GL_NO_ERROR )
+	{
+		LOG_ERROR("GL Error: %s", glewGetErrorString(glError))
+	}
 #endif
 }

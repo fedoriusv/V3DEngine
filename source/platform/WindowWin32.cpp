@@ -2,6 +2,7 @@
 
 #include <winuser.h>
 #include "FedoriaEngine.h"
+#include "utils\Logger.h"
 
 using namespace f3d;
 using namespace f3d::platform;
@@ -9,9 +10,9 @@ using namespace f3d::platform;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 CWindowWin32::CWindowWin32(const WindowParam& param)
-	: CWindow( param )
-	, m_window( nullptr )
-	, m_context( nullptr )
+	: CWindow(param)
+	, m_window(nullptr)
+	, m_context(nullptr)
 {
 	m_platformType = EPlatformType::ePlatformWin32;
 }
@@ -52,7 +53,7 @@ void CWindowWin32::restore()
 	SetWindowPlacement(m_window, &wndpl);
 }
 
-void CWindowWin32::setResizeble( bool value )
+void CWindowWin32::setResizeble(bool value)
 {
 	if  (m_param.isFullscreen || m_param.isResizeble == value)
 	{
@@ -91,7 +92,7 @@ void CWindowWin32::setResizeble( bool value )
 
 }
 
-void CWindowWin32::setFullScreen( bool value )
+void CWindowWin32::setFullScreen(bool value)
 {
 	LONG_PTR style = WS_POPUP;
 	if (!value)
@@ -232,6 +233,8 @@ bool CWindowWin32::end()
 
 void CWindowWin32::create()
 {
+	LOG_INFO("Create Windows")
+
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	LPCWSTR className = __TEXT("ValeraWin32");
 
@@ -252,8 +255,7 @@ void CWindowWin32::create()
 	wcex.hIconSm        = 0;
 	
 	RegisterClassEx(&wcex);
-
-	
+		
 	// calculate client size
 	RECT clientSize;
 	clientSize.top    = 0;
@@ -309,6 +311,7 @@ void CWindowWin32::create()
 	HDC hDc = GetDC( m_window );
 	m_context = hDc;
 
+	LOG_INFO("Window Size (%d, %d)", m_param.size.width, m_param.size.height)
 }
 
 void CWindowWin32::close()

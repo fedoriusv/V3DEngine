@@ -54,6 +54,20 @@ namespace utils
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if USE_LOGGER
+#	define LOG_GEBUG(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerDebug, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_INFO(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerInfo, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_WARRNING(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerWarning, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_ERROR(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerError, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#else
+#	define LOG_GEBUG(messages, ...)
+#	define LOG_INFO(messages, ...)
+#	define LOG_WARRNING(messages, ...)
+#	define LOG_ERROR(messages, ...)
+#endif
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 #endif //_F3D_LOGGER_H_

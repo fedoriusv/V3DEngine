@@ -1,4 +1,5 @@
 #include "Platform.h"
+#include "utils/Logger.h"
 
 #ifdef _PLATFORM_WIN_
 #	include "platform/WindowWin32.h"
@@ -34,8 +35,8 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 	CWindowPtr window = nullptr;
 
 	WindowParam param;
-	param.size = size;
-	param.position = pos;
+	param.size         = size;
+	param.position     = pos;
 	param.isFullscreen = isFullscreen;
 	param.isResizeble  = isFullscreen ? false : isResizeble;
 	param.driverType   = driverType;
@@ -75,7 +76,7 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 
 		default:
 		{
-			//Wrong Driver Context
+			
 			window->close();
 			system("pause");
 
@@ -86,12 +87,14 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 
 	if (!driver->createContext())
 	{
-		//Error crete context
+		LOG_ERROR("Error crete context")
 		window->close();
 		system("pause");
 
 		return nullptr;
 	}
+
+	driver->driverInfo();
 
 	m_window = window;
 
@@ -105,5 +108,10 @@ bool CPlatform::begin()
 
 bool CPlatform::end()
 {
-	return m_window->end();;
+	return m_window->end();
+}
+
+bool CPlatform::hasError() const
+{
+	return m_window == nullptr;
 }

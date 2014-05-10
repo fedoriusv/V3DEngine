@@ -1,7 +1,7 @@
 #ifndef _F3D_FEDORIA_ENGINE_H_
 #define _F3D_FEDORIA_ENGINE_H_
 
-#include "FedoriaConfig.h"
+#include "Config.h"
 #include "Singleton.h"
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"

@@ -21,6 +21,8 @@ namespace platform
 										bool isFullscreen             = false,
 										bool isResizeble              = false,
 										EDriverType driverType        = EDriverType::eDriverOpenGL );
+
+		bool						hasError() const;
 	
 		bool						begin();	//WARN: ?
 		bool						end();

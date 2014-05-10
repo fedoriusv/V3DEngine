@@ -16,6 +16,11 @@ BaseApplication::~BaseApplication()
 
 int BaseApplication::exec()
 {
+	if (m_engine->getPlatform()->hasError())
+	{
+		return 0;
+	}
+
 	this->init();
 
 	while (m_engine->begin())
