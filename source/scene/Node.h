@@ -7,6 +7,8 @@ namespace f3d
 {
 namespace scene
 {
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	class CNode : public CObject
 	{
 	public:
@@ -18,22 +20,19 @@ namespace scene
 		void				setScale			(const core::Vector3D& scale);
 		void				setTransform		(const core::Matrix4D& transform);
 	
-		void				move				(const core::Vector3D& deltaPosition);
-		void				rotate				(const core::Vector3D& deltaRotation);
+		void				setParentNode		(CNode* parent);
+		void				attachChildNode		(CNode* child);
+		void				dettachChildNode	(CNode* child);
 	
-		void				setParentNode		(CNode* parentNode);
-		void				attachChildNode		(CNode* childNode);
-		void				dettachChildNode	(CNode* childNode);
+		core::Vector3D		getPosition			()                           const;
+		core::Vector3D		getRotation			()                           const;
+		core::Vector3D		getScale			()                           const;
+		core::Matrix4D		getTransform		()                           const;
+		core::Matrix4D		getAbsTransform		()                           const;
 	
-		core::Vector3D		getPosition			()							const;
-		core::Vector3D		getRotation			()							const;
-		core::Vector3D		getScale			()							const;
-		core::Matrix4D		getTransform		()							const;
-		core::Matrix4D		getAbsTransform		()							const;
-	
-		CNode*				getParentNode		()							const;
-		CNode*				getChildNodeByID	(u32 childNodeID)			const;
-		CNode*				getChildNodeByName  (const std::string& name)   const;
+		CNode*				getParentNode		()                           const;
+		CNode*				getChildNodeByID	(u32 id)                     const;
+		CNode*				getChildNodeByName  (const std::string& name)    const;
 
 	protected:
 
@@ -42,7 +41,9 @@ namespace scene
 
 		core::Matrix4D		m_transform;
 	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif
+#endif //_F3D_NODE_H_

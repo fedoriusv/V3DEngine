@@ -1,10 +1,7 @@
 #ifndef _F3D_FEDORIA_ENGINE_H_
 #define _F3D_FEDORIA_ENGINE_H_
 
-#include "Config.h"
-#include "Singleton.h"
-#include "platform/Platform.h"
-#include "event/InputEventHandler.h"
+#include "Fedoria3D.h"
 
 namespace f3d
 {
@@ -16,8 +13,9 @@ namespace f3d
 		CFedoriaEngine();
 		~CFedoriaEngine();
 		
-		platform::CPlatformPtr			getPlatform() const;
+		platform::CPlatformPtr			getPlatform()          const;
 		event::CInputEventHandlerPtr	getInputEventHandler() const;
+		scene::CSceneManagerPtr			getSceneManager()      const;
 
 		bool							begin();
 		bool							end();
@@ -28,6 +26,7 @@ namespace f3d
 
 		platform::CPlatformPtr			m_platform;
 		event::CInputEventHandlerPtr	m_inputEventHandler;
+		scene::CSceneManagerPtr			m_scene;
 
 	};
 

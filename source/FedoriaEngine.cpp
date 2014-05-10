@@ -5,10 +5,12 @@
 using namespace f3d;
 using namespace f3d::platform;
 using namespace f3d::event;
+using namespace f3d::scene;
 
 CFedoriaEngine::CFedoriaEngine()
-: m_platform( nullptr )
+: m_platform(nullptr)
 , m_inputEventHandler(nullptr)
+, m_scene(nullptr)
 {
 	CFedoriaEngine::init();
 }
@@ -16,12 +18,15 @@ CFedoriaEngine::CFedoriaEngine()
 CFedoriaEngine::~CFedoriaEngine()
 {
 	m_platform = nullptr;
+	m_scene = nullptr;
+	m_inputEventHandler = nullptr;
 }
 
 void CFedoriaEngine::init()
 {
 	m_platform = std::make_shared<CPlatform>(CPlatform());
 	m_inputEventHandler = std::make_shared<CInputEventHandler>(CInputEventHandler());
+	m_scene = std::make_shared<CSceneManager>(CSceneManager());
 }
 
 CPlatformPtr CFedoriaEngine::getPlatform() const
@@ -34,9 +39,15 @@ event::CInputEventHandlerPtr CFedoriaEngine::getInputEventHandler() const
 	return m_inputEventHandler;
 }
 
+scene::CSceneManagerPtr CFedoriaEngine::getSceneManager() const
+{
+	return m_scene;
+}
+
 bool CFedoriaEngine::begin()
 {
 	m_inputEventHandler->update();
+	m_scene->draw();
 
 	return m_platform->begin();
 }

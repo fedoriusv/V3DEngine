@@ -29,6 +29,8 @@ namespace f3d
 #include <fstream>
 #include <functional>
 
+#include <time.h>
+
 #include "core/Math.h"
 #include "core/Vector2D.h"
 #include "core/Vector3D.h"

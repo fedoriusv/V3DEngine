@@ -7,6 +7,7 @@
 #include "Singleton.h"
 #include "Object.h"
 #include "scene/Node.h"
+#include "scene/SceneManager.h"
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"
 #include "utils/Logger.h"
