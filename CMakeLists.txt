@@ -100,6 +100,8 @@ file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.cpp)
 #Renderer Source
 file(GLOB RENDERER_HEADERS ${SOURCE_DIR}/renderer/*.h)
 file(GLOB RENDERER_SOURCES ${SOURCE_DIR}/renderer/*.cpp)
+file(GLOB RENDERER_GL_HEADERS ${SOURCE_DIR}/renderer/GL/*.h)
+file(GLOB RENDERER_GL_SOURCES ${SOURCE_DIR}/renderer/GL/*.cpp)
 
 #Context Source
 file(GLOB CONTEXT_HEADERS ${SOURCE_DIR}/context/*.h)
@@ -125,15 +127,16 @@ file(GLOB EVENT_SOURCES ${SOURCE_DIR}/event/*.cpp)
 file(GLOB MAIN_HEADERS ${SOURCE_DIR}/*.h)
 file(GLOB MAIN_SOURCES ${SOURCE_DIR}/*.cpp)
 
-source_group(platform         FILES ${PLATFORM_HEADERS} ${PLATFORM_SOURCES})
-source_group(core             FILES ${CORE_HEADERS}     ${CORE_SOURCES})
-source_group(renderer         FILES ${RENDERER_HEADERS} ${RENDERER_SOURCES})
-source_group(context          FILES ${CONTEXT_HEADERS}  ${CONTEXT_SOURCES})
-source_group(stream           FILES ${STREAM_HEADERS}   ${STREAM_SOURCES})
-source_group(scene            FILES ${SCENE_HEADERS}    ${SCENE_SOURCES})
-source_group(utils            FILES ${UTILS_HEADERS}    ${UTILS_SOURCES})
-source_group(event            FILES ${EVENT_HEADERS}    ${EVENT_SOURCES})
-source_group(""               FILES ${MAIN_HEADERS}     ${MAIN_SOURCES})
+source_group(platform         FILES ${PLATFORM_HEADERS}    ${PLATFORM_SOURCES})
+source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES})
+source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
+source_group(gl               FILES ${RENDERER_GL_HEADERS} ${RENDERER_GL_SOURCES})
+source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
+source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES})
+source_group(scene            FILES ${SCENE_HEADERS}       ${SCENE_SOURCES})
+source_group(utils            FILES ${UTILS_HEADERS}       ${UTILS_SOURCES})
+source_group(event            FILES ${EVENT_HEADERS}       ${EVENT_SOURCES})
+source_group(""               FILES ${MAIN_HEADERS}        ${MAIN_SOURCES})
 
 set (ENGINE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
 
@@ -145,15 +148,16 @@ include_directories(
 add_library(
 	${ENGINE_NAME}
 	STATIC
-	${PLATFORM_HEADERS} ${PLATFORM_SOURCES}
-	${CORE_HEADERS}     ${CORE_SOURCES}
-	${RENDERER_HEADERS} ${RENDERER_SOURCES}
-	${CONTEXT_HEADERS}  ${CONTEXT_SOURCES}
-	${STREAM_HEADERS}   ${STREAM_SOURCES}
-	${SCENE_HEADERS}    ${SCENE_SOURCES}
-	${UTILS_HEADERS}    ${UTILS_SOURCES}
-	${EVENT_HEADERS}    ${EVENT_SOURCES}
-	${MAIN_HEADERS}     ${MAIN_SOURCES}
+	${PLATFORM_HEADERS}    ${PLATFORM_SOURCES}
+	${CORE_HEADERS}        ${CORE_SOURCES}
+	${RENDERER_HEADERS}    ${RENDERER_SOURCES}
+	${RENDERER_GL_HEADERS} ${RENDERER_GL_SOURCES}
+	${CONTEXT_HEADERS}     ${CONTEXT_SOURCES}
+	${STREAM_HEADERS}      ${STREAM_SOURCES}
+	${SCENE_HEADERS}       ${SCENE_SOURCES}
+	${UTILS_HEADERS}       ${UTILS_SOURCES}
+	${EVENT_HEADERS}       ${EVENT_SOURCES}
+	${MAIN_HEADERS}        ${MAIN_SOURCES}
 	) 
 
 target_link_libraries(${ENGINE_NAME} ${GLEW_PLOJECT})
