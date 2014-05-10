@@ -3,10 +3,10 @@
 #ifndef _F3D_CONFIG_H_
 #define _F3D_CONFIG_H_
 
-//Version 1.0.0
-#define FEDORIA_VERSION_MAJOR		2
-#define FEDORIA_VERSION_MINOR		0
-#define FEDORIA_VERSION_REVISION	0
+//Version 2.0.0
+#define VERSION_MAJOR		2
+#define VERSION_MINOR		0
+#define VERSION_REVISION	0
 
 //Config
 /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,7 @@
 #include "scene/Node.h"
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"
+#include "utils/Logger.h"
 
 #include "FedoriaEngine.h"
 
