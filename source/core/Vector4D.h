@@ -14,6 +14,8 @@ namespace core
 	public:
 
 		TVector4D();
+		TVector4D(T nx);
+		TVector4D(T nx, T nw = 0);
 		TVector4D(T nx, T ny, T nz, T nw = 0);
 		TVector4D(const TVector4D<T>& other);
 		TVector4D(const TVector3D<T>& other, T nw = 0);
@@ -106,6 +108,22 @@ namespace core
 		, y(0)
 		, z(0)
 		, w(0)
+	{}
+
+	template<class T>
+	TVector4D<T>::TVector4D(T nx)
+		: x(nx)
+		, y(nx)
+		, z(nx)
+		, w(nx)
+	{}
+
+	template<class T>
+	TVector4D<T>::TVector4D(T nx, T nw)
+		: x(nx)
+		, y(nx)
+		, z(nx)
+		, w(nw)
 	{}
 
 	template<class T>

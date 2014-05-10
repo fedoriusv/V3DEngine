@@ -14,35 +14,36 @@ namespace core
 	public:
 
 		TVector3D();
+		TVector3D(T nx);
 		TVector3D(T nx, T ny, T nz);
 		TVector3D(const TVector3D<T>& other);
 		TVector3D(const TVector2D<T>& other, T nz = 0);
 
-		TVector3D<T>	operator -  ()								const;
+		TVector3D<T>	operator -  ()                             const;
 		TVector3D<T>&	operator =  (const TVector3D<T>& other);
-		TVector3D<T>	operator +  (const TVector3D<T>& other)	const;
+		TVector3D<T>	operator +  (const TVector3D<T>& other)    const;
 		TVector3D<T>&	operator += (const TVector3D<T>& other);
-		TVector3D<T>	operator +  (const T scalar)				const;
+		TVector3D<T>	operator +  (const T scalar)               const;
 		TVector3D<T>&	operator += (const T scalar);
-		TVector3D<T>	operator -  (const TVector3D<T>& other)	const;
+		TVector3D<T>	operator -  (const TVector3D<T>& other)    const;
 		TVector3D<T>&	operator -= (const TVector3D<T>& other);
-		TVector3D<T>	operator -  (const T scalar)				const;
+		TVector3D<T>	operator -  (const T scalar)               const;
 		TVector3D<T>&	operator -= (const T scalar);
-		TVector3D<T>	operator *  (const TVector3D<T>& other)	const;
+		TVector3D<T>	operator *  (const TVector3D<T>& other)    const;
 		TVector3D<T>&	operator *= (const TVector3D<T>& other);
-		TVector3D<T>	operator *  (const T scalar)				const;
+		TVector3D<T>	operator *  (const T scalar)               const;
 		TVector3D<T>&	operator *= (const T scalar);
-		TVector3D<T>	operator /  (const TVector3D<T>& other)	const;
+		TVector3D<T>	operator /  (const TVector3D<T>& other)    const;
 		TVector3D<T>&	operator /= (const TVector3D<T>& other);
-		TVector3D<T>	operator /  (const T scalar)				const;
+		TVector3D<T>	operator /  (const T scalar)               const;
 		TVector3D<T>&	operator /= (const T scalar);
-		bool			operator <= (const TVector3D<T>&other)	const;
-		bool			operator >= (const TVector3D<T>&other)	const;
-		bool			operator <  (const TVector3D<T>&other)	const;
-		bool			operator >  (const TVector3D<T>&other)	const;
-		bool			operator == (const TVector3D<T>& other)	const;
-		bool			operator!=  (const TVector3D<T>& other)	const;
-		T				operator [] (u32 index)					const;
+		bool			operator <= (const TVector3D<T>&other)     const;
+		bool			operator >= (const TVector3D<T>&other)     const;
+		bool			operator <  (const TVector3D<T>&other)     const;
+		bool			operator >  (const TVector3D<T>&other)     const;
+		bool			operator == (const TVector3D<T>& other)    const;
+		bool			operator!=  (const TVector3D<T>& other)    const;
+		T				operator [] (u32 index)                    const;
 		T&				operator [] (u32 index);
 
 		TVector3D<T>&	set(const T nx, const T ny, const T nz);
@@ -51,11 +52,11 @@ namespace core
 		bool			isEquals(const TVector3D<T>& other, const T tolerance = (T)k_tolerance32) const;
 		bool			isInLine(const TVector3D<T>& begin, const TVector3D<T>& end) const;
 
-		T				length()													   const;
-		T				lengthSQ()													   const;
+		T				length()                                   const;
+		T				lengthSQ()                                 const;
 
-		T				distanceFrom(const TVector3D<T>& other)					   const;
-		T				distanceFromSQ(const TVector3D<T>& other)					   const;
+		T				distanceFrom(const TVector3D<T>& other)    const;
+		T				distanceFromSQ(const TVector3D<T>& other)  const;
 
 		TVector3D<T>&	normalize();
 		TVector3D<T>&	invert();
@@ -106,6 +107,13 @@ namespace core
 		: x(0)
 		, y(0)
 		, z(0)
+	{}
+
+	template<class T>
+	TVector3D<T>::TVector3D(T nx)
+		: x(nx)
+		, y(nx)
+		, z(nx)
 	{}
 
 	template<class T>

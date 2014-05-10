@@ -14,44 +14,45 @@ namespace core
 
 		TVector2D();
 		TVector2D(T nx, T ny);
+		TVector2D(T nx);
 		TVector2D(const TVector2D<T>& other);
 
 		TVector2D<T>	operator -  () const;
 		TVector2D<T>&	operator =  (const TVector2D<T>& other);
-		TVector2D<T>	operator +  (const TVector2D<T>& other)		const;
+		TVector2D<T>	operator +  (const TVector2D<T>& other)    const;
 		TVector2D<T>&	operator += (const TVector2D<T>& other);
-		TVector2D<T>	operator +  (const T scalar)				const;
+		TVector2D<T>	operator +  (const T scalar)               const;
 		TVector2D<T>&	operator += (const T scalar);
-		TVector2D<T>	operator -  (const TVector2D<T>& other)		const;
+		TVector2D<T>	operator -  (const TVector2D<T>& other)    const;
 		TVector2D<T>&	operator -= (const TVector2D<T>& other);
-		TVector2D<T>	operator -  (const T scalar)				const;
+		TVector2D<T>	operator -  (const T scalar)               const;
 		TVector2D<T>&	operator -= (const T scalar);
-		TVector2D<T>	operator *  (const TVector2D<T>& other)		const;
+		TVector2D<T>	operator *  (const TVector2D<T>& other)    const;
 		TVector2D<T>&	operator *= (const TVector2D<T>& other);
-		TVector2D<T>	operator *  (const T scalar)				const;
+		TVector2D<T>	operator *  (const T scalar)               const;
 		TVector2D<T>&	operator *= (const T scalar);
-		TVector2D<T>	operator /  (const TVector2D<T>& other)		const;
+		TVector2D<T>	operator /  (const TVector2D<T>& other)    const;
 		TVector2D<T>&	operator /= (const TVector2D<T>& other);
-		TVector2D<T>	operator /  (const T scalar)				const;
+		TVector2D<T>	operator /  (const T scalar)               const;
 		TVector2D<T>&	operator /= (const T scalar);
-		bool			operator <= (const TVector2D<T>&other)		const;
-		bool			operator >= (const TVector2D<T>&other)		const;
-		bool			operator <  (const TVector2D<T>&other)		const;
-		bool			operator >  (const TVector2D<T>&other)		const;
-		bool			operator == (const TVector2D<T>& other)		const;
-		bool			operator != (const TVector2D<T>& other)		const;
+		bool			operator <= (const TVector2D<T>&other)     const;
+		bool			operator >= (const TVector2D<T>&other)     const;
+		bool			operator <  (const TVector2D<T>&other)     const;
+		bool			operator >  (const TVector2D<T>&other)     const;
+		bool			operator == (const TVector2D<T>& other)    const;
+		bool			operator != (const TVector2D<T>& other)    const;
 
 		TVector2D<T>&	set(const T nx, const T ny);
 		TVector2D<T>&	set(const TVector2D<T>& other);
 
-		bool			isEquals(const TVector2D<T>& other, const T tolerance = (T)k_tolerance32)	const;
-		bool			isInLine(const TVector2D<T>& begin, const TVector2D<T>& end)				const;
+		bool			isEquals(const TVector2D<T>& other, const T tolerance = (T)k_tolerance32)  const;
+		bool			isInLine(const TVector2D<T>& begin, const TVector2D<T>& end)               const;
 
-		T				length()										const;
-		T				lengthSQ()										const;
+		T				length()                                  const;
+		T				lengthSQ()                                const;
 
-		T				distanceFrom(const TVector2D<T>& other)			const;
-		T				distanceFromSQ(const TVector2D<T>& other)		const;
+		T				distanceFrom(const TVector2D<T>& other)   const;
+		T				distanceFromSQ(const TVector2D<T>& other) const;
 
 		TVector2D<T>&	normalize();
 		TVector2D<T>&	invert();
@@ -104,6 +105,12 @@ namespace core
 	TVector2D<T>::TVector2D(T nx, T ny)
 		: x(nx)
 		, y(ny) 
+	{}
+
+	template<class T>
+	TVector2D<T>::TVector2D(T nx)
+		: x(nx)
+		, y(nx)
 	{}
 
 	template<class T>

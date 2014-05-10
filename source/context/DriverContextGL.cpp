@@ -354,7 +354,7 @@ void CDriverContextGL::driverInfo()
 
 }
 
-void CDriverContextGL::checkForErrors(const std::string& error)
+void CDriverContextGL::checkForErrors()
 {
 #ifdef _DEBUG
 	GLenum glError = glGetError();

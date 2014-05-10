@@ -17,9 +17,11 @@ namespace renderer
 									CDriverContext(const platform::CWindowPtr& window);
 		virtual						~CDriverContext();
 
-		virtual void				driverInfo()                               = 0;
-		virtual void				checkForErrors(const std::string& error)   = 0;
-		virtual bool				createContext()                            = 0;
+		virtual void				driverInfo()       = 0;
+		virtual void				checkForErrors()   = 0;
+		virtual bool				createContext()    = 0;
+
+		const platform::CWindowPtr	getWindow() const;
 
 	protected:
 

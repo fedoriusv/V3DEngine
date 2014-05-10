@@ -9,6 +9,8 @@ namespace scene
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	class CRenderer;
+
 	class CSceneManager
 	{
 	public:
@@ -17,13 +19,16 @@ namespace scene
 								~CSceneManager();
 
 		void					init();
+
 		void					draw();
+
 		void					clear();
 		bool					drop(CNode* node);
+
 		void					addNode(CNode* node);
 
-		CObject*				getObjectByID(const s32 id);
-		CObject*				getObjectByName(const std::string& name);
+		CNode*					getObjectByID(const s32 id);
+		CNode*					getObjectByName(const std::string& name);
 
 	private:
 
@@ -36,6 +41,7 @@ namespace scene
 
 		std::vector<CNode*>		m_objects;
 
+		CRenderer*				m_renderer;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -91,7 +91,7 @@ void CSceneManager::updateDeltaTime()
 	m_lastTime = m_currentTime;
 }
 
-CObject* CSceneManager::getObjectByID(const s32 id)
+CNode* CSceneManager::getObjectByID(const s32 id)
 {
 	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{
@@ -104,7 +104,7 @@ CObject* CSceneManager::getObjectByID(const s32 id)
 	return nullptr;
 }
 
-CObject* CSceneManager::getObjectByName(const std::string& name)
+CNode* CSceneManager::getObjectByName(const std::string& name)
 {
 	for (std::vector<CNode*>::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{

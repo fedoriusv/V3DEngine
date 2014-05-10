@@ -11,3 +11,8 @@ CDriverContext::CDriverContext(const platform::CWindowPtr& window)
 CDriverContext::~CDriverContext()
 {
 }
+
+const platform::CWindowPtr CDriverContext::getWindow() const
+{
+	return m_window;
+}
