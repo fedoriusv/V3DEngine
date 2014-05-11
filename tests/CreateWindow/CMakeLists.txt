@@ -14,6 +14,7 @@ include_directories(source)
 
 if(WIN32)
 	link_directories(${ENGINE_PROJECT_DIR}/project/win32/)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
 elseif(UNIX AND NOT APPLE)
 	link_directories(${ENGINE_PROJECT_DIR}/project/linux-qt/)
 endif()

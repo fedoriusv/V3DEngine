@@ -1,5 +1,7 @@
 #include "MyApplication.h"
 
+using namespace f3d;
+
 ///Temp
 #include "GL/glew.h"
 #if defined (_PLATFORM_WIN_)
@@ -10,6 +12,7 @@
 MyApplication::MyApplication(int& argc, char** argv)
 	: BaseApplication(argc, argv)
 {
+	BaseApplication::getPlatform()->createWindowWithContext(core::Dimension2D(800, 600));
 }
 
 MyApplication::~MyApplication()
@@ -19,10 +22,12 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
 	LOG_INFO("--------Init Application--------")
-
-	m_engine->getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
-	glViewport( 0, 0, 800, 600 );
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
+	
+	//User data
+	//glViewport( 0, 0, 800, 600 );
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void MyApplication::run()

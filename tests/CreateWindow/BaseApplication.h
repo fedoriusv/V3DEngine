@@ -6,16 +6,23 @@
 class BaseApplication
 {
 public:
-	BaseApplication(int& argc, char** argv);
-	virtual ~BaseApplication();
+												BaseApplication(int& argc, char** argv);
+	virtual										~BaseApplication();
 
-	virtual void init() = 0;
-	virtual void run()  = 0;
+	virtual void								init() = 0;
+	virtual void								run()  = 0;
 	
-	int exec();
+	int											exec();
 
 protected:
-	f3d::CFedoriaEngine* m_engine;
+
+	virtual f3d::platform::CPlatformPtr			getPlatform()          const final;
+	virtual f3d::event::CInputEventHandlerPtr	getInputEventHandler() const final;
+	virtual f3d::scene::CSceneManagerPtr		getSceneManager()      const final;
+
+private:
+
+	f3d::CFedoriaEngine*						m_engine;
 };
 
-#endif
+#endif //_BASE_APPLICATION_H_

@@ -6,7 +6,6 @@ using namespace f3d::platform;
 BaseApplication::BaseApplication(int& argc, char** argv)
 {
 	m_engine = CFedoriaEngine::getInstance();
-	m_engine->getPlatform()->createWindowWithContext(core::Dimension2D(800, 600));
 }
 
 BaseApplication::~BaseApplication()
@@ -18,6 +17,7 @@ int BaseApplication::exec()
 {
 	if (m_engine->getPlatform()->hasError())
 	{
+		delete this;
 		return 0;
 	}
 
@@ -30,5 +30,21 @@ int BaseApplication::exec()
 		m_engine->end();
 	}
 
+	delete this;
 	return 0;
+}
+
+platform::CPlatformPtr BaseApplication::getPlatform() const
+{
+	return m_engine->getPlatform();
+}
+
+event::CInputEventHandlerPtr BaseApplication::getInputEventHandler() const
+{
+	return m_engine->getInputEventHandler();
+}
+
+f3d::scene::CSceneManagerPtr BaseApplication::getSceneManager() const
+{
+	return m_engine->getSceneManager();
 }
