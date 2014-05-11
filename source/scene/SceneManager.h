@@ -2,14 +2,13 @@
 #define _F3D_SCENE_MANAGER_H_
 
 #include "scene/Node.h"
+#include "renderer/Renderer.h"
 
 namespace f3d
 {
 namespace scene
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	class CRenderer;
 
 	class CSceneManager
 	{
@@ -41,7 +40,7 @@ namespace scene
 
 		std::vector<CNode*>		m_objects;
 
-		CRenderer*				m_renderer;
+		renderer::CRendererPtr	m_renderer;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

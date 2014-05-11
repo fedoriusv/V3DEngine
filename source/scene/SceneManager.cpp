@@ -5,12 +5,14 @@
 
 using namespace f3d;
 using namespace f3d::scene;
+using namespace f3d::renderer;
 
 CSceneManager::CSceneManager()
 	: m_currentTime(0.0)
 	, m_deltaTime(0.0)
 	, m_lastTime(0.0)
 {
+	//m_renderer = std::make_shared<CRenderer>();
 }
 
 CSceneManager::~CSceneManager()

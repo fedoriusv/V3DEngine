@@ -4,7 +4,7 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CRenderer::CRenderer(CDriverContext* context)
+CRenderer::CRenderer(const CDriverContextPtr& context)
 	: m_context(context)
 	, m_backColor(core::Vector3D(0))
 {

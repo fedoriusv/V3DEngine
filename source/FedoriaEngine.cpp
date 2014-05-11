@@ -17,9 +17,6 @@ CFedoriaEngine::CFedoriaEngine()
 
 CFedoriaEngine::~CFedoriaEngine()
 {
-	m_platform = nullptr;
-	m_scene = nullptr;
-	m_inputEventHandler = nullptr;
 }
 
 void CFedoriaEngine::init()

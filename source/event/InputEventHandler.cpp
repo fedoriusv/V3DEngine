@@ -1,4 +1,5 @@
 #include "InputEventHandler.h"
+#include "utils/Logger.h"
 
 using namespace f3d;
 using namespace f3d::event;

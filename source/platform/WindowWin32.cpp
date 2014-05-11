@@ -19,6 +19,7 @@ CWindowWin32::CWindowWin32(const WindowParam& param)
 
 CWindowWin32::~CWindowWin32()
 {
+	LOG_INFO("Destructor Windows32")
 }
 
 HWND CWindowWin32::getHandleWindow() const
@@ -428,6 +429,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		
 		case WM_DESTROY:
 			{
+				//f3d::CFedoriaEngine::getInstance()->getWindow()->close();
 				PostQuitMessage(0);
 				return 0;
 			}

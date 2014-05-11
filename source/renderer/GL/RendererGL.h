@@ -13,7 +13,7 @@ namespace f3d
 		{
 		public:
 
-							CRendererGL(CDriverContext* context);
+							CRendererGL(const CDriverContextPtr& context);
 			virtual			~CRendererGL();
 
 			void			init()                         override;

@@ -21,12 +21,17 @@ namespace renderer
 		virtual void				checkForErrors()   = 0;
 		virtual bool				createContext()    = 0;
 
+		const core::Dimension2D&	getViewport() const;
 		const platform::CWindowPtr	getWindow() const;
 
 	protected:
 
 		const platform::CWindowPtr	m_window;
 	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	typedef std::shared_ptr<CDriverContext> CDriverContextPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

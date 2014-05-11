@@ -1,7 +1,8 @@
 #ifndef _F3D_RENDERER_H_
 #define _F3D_RENDERER_H_
 
-#include "common.h"
+#include "Singleton.h"
+#include "context/DriverContext.h"
 
 namespace f3d
 {
@@ -9,13 +10,11 @@ namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CDriverContext;
-
-	class CRenderer
+	class CRenderer : public Singleton<CRenderer>
 	{
 	public:
 
-								CRenderer(CDriverContext* context);
+								CRenderer(const CDriverContextPtr& context);
 		virtual					~CRenderer();
 
 		virtual void			init()                         = 0;
@@ -30,11 +29,15 @@ namespace renderer
 
 	protected:
 
-		CDriverContext*			m_context;
+		CDriverContextPtr		m_context;
 		
 		core::Vector3D			m_backColor;
 		core::Dimension2D		m_viewportSize;
 	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	typedef std::shared_ptr<CRenderer>	CRendererPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

@@ -21,8 +21,8 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CDriverContextGL::CDriverContextGL(const platform::CWindowPtr& platform)
-	: CDriverContext( platform )
+CDriverContextGL::CDriverContextGL(const platform::CWindowPtr& window)
+	: CDriverContext(window)
 {
 }
 

@@ -1,5 +1,6 @@
 #include "Platform.h"
 #include "utils/Logger.h"
+#include "renderer/GL/RendererGL.h"
 
 #ifdef _PLATFORM_WIN_
 #	include "platform/WindowWin32.h"
@@ -20,6 +21,7 @@
 
 using namespace f3d;
 using namespace f3d::platform;
+using namespace f3d::renderer;
 
 CPlatform::CPlatform()
 {
@@ -58,13 +60,13 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 	window->setResizeble(param.isResizeble);
 	window->setFullScreen(param.isFullscreen);
 
-	renderer::CDriverContext* driver = nullptr;
+	renderer::CDriverContextPtr driver = nullptr;
 	
 	switch (param.driverType)
 	{
 		case EDriverType::eDriverOpenGL:
 		{
-			driver = new renderer::CDriverContextGL(window);
+			driver = std::make_shared<CDriverContextGL>(CDriverContextGL(window));
 		}
 		break;
 
@@ -76,7 +78,6 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 
 		default:
 		{
-			
 			window->close();
 			system("pause");
 
@@ -87,16 +88,26 @@ CWindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, con
 
 	if (!driver->createContext())
 	{
-		LOG_ERROR("Error crete context")
+		LOG_ERROR("Error create context")
+
+		driver = nullptr;
 		window->close();
 		system("pause");
 
 		return nullptr;
 	}
 
-	driver->driverInfo();
-
 	m_window = window;
+	m_renderer = CPlatform::createRenderer(driver, param);
+	if (!m_renderer)
+	{
+		LOG_ERROR("Error create Renderer")
+
+		window->close();
+		system("pause");
+
+		return nullptr;
+	}
 
 	return window;
 }
@@ -114,4 +125,38 @@ bool CPlatform::end()
 bool CPlatform::hasError() const
 {
 	return m_window == nullptr;
+}
+
+renderer::CRendererPtr CPlatform::createRenderer(const CDriverContextPtr& context, const WindowParam& param)
+{
+	CRendererPtr renderer = nullptr;
+
+	if (!context)
+	{
+		return nullptr;
+	}
+
+	context->driverInfo();
+
+	switch (param.driverType)
+	{
+		case EDriverType::eDriverOpenGL:
+		{
+			renderer = std::make_shared<CRendererGL>(CRendererGL(context));
+		}
+		break;
+
+		case EDriverType::eDriverDirect3D:
+		{
+			//renderer = std::make_shared<CRenderer>(CRendererD3D());
+		}
+		break;
+
+		default:
+		{
+			return nullptr;
+		}
+	}
+
+	return renderer;
 }

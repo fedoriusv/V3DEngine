@@ -6,11 +6,12 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CRendererGL::CRendererGL(CDriverContext* context)
+CRendererGL::CRendererGL(const CDriverContextPtr& context)
 	: CRenderer(context)
 	, m_projectionMatrix(core::Matrix4D())
 	, m_viewMatrix(core::Matrix4D())
 {
+	m_viewportSize = m_context->getViewport();
 }
 
 CRendererGL::~CRendererGL()
