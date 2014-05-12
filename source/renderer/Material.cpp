@@ -47,22 +47,22 @@ namespace renderer
 		m_materialData.shininess = value;
 	}
 		
-	core::Vector3D CMaterial::getAmbientColor() const
+	const core::Vector3D& CMaterial::getAmbientColor() const
 	{
 		return m_materialData.ambient;
 	}
 
-	core::Vector3D CMaterial::getDiffuseColor() const
+	const core::Vector3D& CMaterial::getDiffuseColor() const
 	{
 		return m_materialData.diffuse;
 	}
 
-	core::Vector3D CMaterial::getSpecularColor() const
+	const core::Vector3D& CMaterial::getSpecularColor() const
 	{
 		return m_materialData.specular;
 	}
 
-	core::Vector3D	CMaterial::getEmissionColor() const
+	const core::Vector3D& CMaterial::getEmissionColor() const
 	{
 		return m_materialData.emission;
 	}
