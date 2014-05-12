@@ -12,6 +12,6 @@
 #include "event/InputEventHandler.h"
 #include "utils/Logger.h"
 
-#include "FedoriaEngine.h"
+#include "Engine.h"
 
 #endif //_F3D_FEDORIA_3D_H_

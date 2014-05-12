@@ -51,7 +51,7 @@ bool CDriverContextGL::createWin32Context()
 
 	// Create a window to test antialiasing support
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	LPCWSTR className = __TEXT("ValeraWin32GL");
+	LPCWSTR className = __TEXT("FedoriaWin32GL");
 
 	// Register Class
 	WNDCLASSEX wcex;

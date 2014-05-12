@@ -1,5 +1,5 @@
-#ifndef _F3D_FEDORIA_ENGINE_H_
-#define _F3D_FEDORIA_ENGINE_H_
+#ifndef _F3D_ENGINE_H_
+#define _F3D_ENGINE_H_
 
 #include "Fedoria3D.h"
 
@@ -7,22 +7,23 @@ namespace f3d
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CFedoriaEngine : public Singleton<CFedoriaEngine>
+	class CEngine : public Singleton<CEngine>
 	{
 	public:
-		CFedoriaEngine();
-		~CFedoriaEngine();
+										CEngine();
+		virtual							~CEngine();
 		
 		platform::CPlatformPtr			getPlatform()          const;
 		event::CInputEventHandlerPtr	getInputEventHandler() const;
 		scene::CSceneManagerPtr			getSceneManager()      const;
+		platform::CWindowPtr			getWindow()            const;
+		renderer::CRendererPtr			getRenderer()          const;
 
+		bool							init();
 		bool							begin();
 		bool							end();
 
 	private:
-
-		void							init();
 
 		platform::CPlatformPtr			m_platform;
 		event::CInputEventHandlerPtr	m_inputEventHandler;
@@ -33,4 +34,4 @@ namespace f3d
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
-#endif //_F3D_FEDORIA_ENGINE_H_
+#endif //_F3D_ENGINE_H_
