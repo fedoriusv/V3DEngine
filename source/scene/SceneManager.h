@@ -29,6 +29,10 @@ namespace scene
 		CNode*					getObjectByID(const s32 id);
 		CNode*					getObjectByName(const std::string& name);
 
+		void					setBackgroundColor(const core::Vector3D& color);
+
+		const core::Vector3D&	getBackgroundColor() const;
+
 	private:
 
 		double					m_currentTime;

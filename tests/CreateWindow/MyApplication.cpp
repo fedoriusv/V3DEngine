@@ -19,7 +19,6 @@ void MyApplication::init()
 	//TODO: user data
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
-
 }
 
 void MyApplication::run()

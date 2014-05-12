@@ -119,3 +119,13 @@ CNode* CSceneManager::getObjectByName(const std::string& name)
 
 	return nullptr;
 }
+
+void CSceneManager::setBackgroundColor(const core::Vector3D& color)
+{
+	f3d::CEngine::getInstance()->getRenderer()->setBackColor(color);
+}
+
+const core::Vector3D& CSceneManager::getBackgroundColor() const
+{
+	return f3d::CEngine::getInstance()->getRenderer()->getBackColor();
+}
