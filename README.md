@@ -1,4 +1,5 @@
 Fedoria3DEngine
 ===============
 
-next level after GLliba
+Next level after GLliba
+Small modified Valera Engine
