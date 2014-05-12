@@ -1,0 +1,48 @@
+#ifndef _F3D_SHAPE_H_
+#define _F3D_SHAPE_H_
+
+#include "scene/Node.h"
+
+namespace f3d
+{
+namespace scene
+{
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	enum class EShapeType
+	{
+		eUnknownShape,
+		eCubeShape,
+		eSphereShape,
+		eCylinderShape,
+		eTorusShape,
+		ePlaneShape,
+		eDiskShape,
+		eHeightMapShape,
+
+		eCountShape
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	class CShape : public CNode
+	{
+	public:
+
+		CShape();
+		virtual ~CShape();
+
+	protected:
+
+		EShapeType	m_shapeType;
+		
+		//Material
+		//Geometry
+
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+}
+
+#endif //_F3D_SHAPE_H_
