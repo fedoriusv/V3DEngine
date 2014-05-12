@@ -13,8 +13,9 @@ namespace platform
 	class CPlatform
 	{
 	public:
-		CPlatform();
-		virtual ~CPlatform();
+
+									CPlatform();
+		virtual						~CPlatform();
 
 		CWindowPtr					createWindowWithContext(
 										const core::Dimension2D& size = core::Dimension2D(800U, 600),
@@ -23,9 +24,14 @@ namespace platform
 										bool isResizeble              = false,
 										EDriverType driverType        = EDriverType::eDriverOpenGL);
 
-		bool						hasError() const;
+		bool						hasError()    const;
+		void						closeWindow() const;
+
+		CWindowPtr					getWindow()   const;
+		renderer::CRendererPtr		getRenderer() const;
 	
-		bool						begin();	//WARN: ?
+		bool						init();
+		bool						begin();
 		bool						end();
 
 	private:

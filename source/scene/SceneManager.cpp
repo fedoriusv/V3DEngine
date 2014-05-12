@@ -1,4 +1,6 @@
 #include "scene/SceneManager.h"
+#include "Engine.h"
+
 #ifdef _PLATFORM_WIN_
 #	include <windows.h>
 #endif
@@ -12,7 +14,6 @@ CSceneManager::CSceneManager()
 	, m_deltaTime(0.0)
 	, m_lastTime(0.0)
 {
-	//m_renderer = std::make_shared<CRenderer>();
 }
 
 CSceneManager::~CSceneManager()
@@ -30,7 +31,7 @@ void CSceneManager::draw()
 	CSceneManager::updateDeltaTime();
 	CSceneManager::update(m_deltaTime);
 
-	//CRender::getInstance()->beginRender();
+	f3d::CEngine::getInstance()->getRenderer()->preRender();
 
 	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{
@@ -40,7 +41,7 @@ void CSceneManager::draw()
 		//item->render();
 	}
 
-	//CRender::getInstance()->endRender();
+	f3d::CEngine::getInstance()->getRenderer()->postRender();
 }
 
 void CSceneManager::clear()

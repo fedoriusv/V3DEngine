@@ -22,7 +22,7 @@ protected:
 
 private:
 
-	f3d::CFedoriaEngine*						m_engine;
+	f3d::CEngine*								m_engine;
 };
 
 #endif //_BASE_APPLICATION_H_

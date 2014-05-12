@@ -1,7 +1,8 @@
 #include "WindowWin32.h"
 
 #include <winuser.h>
-#include "FedoriaEngine.h"
+
+#include "Engine.h"
 #include "utils\Logger.h"
 
 using namespace f3d;
@@ -19,7 +20,6 @@ CWindowWin32::CWindowWin32(const WindowParam& param)
 
 CWindowWin32::~CWindowWin32()
 {
-	LOG_INFO("Destructor Windows32")
 }
 
 HWND CWindowWin32::getHandleWindow() const
@@ -237,7 +237,7 @@ void CWindowWin32::create()
 	LOG_INFO("Create Windows")
 
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	LPCWSTR className = __TEXT("ValeraWin32");
+	LPCWSTR className = __TEXT("FedoriaWin32");
 
 	// Register Class
 	WNDCLASSEX wcex;
@@ -324,7 +324,7 @@ void CWindowWin32::close()
 	
 	DestroyWindow(m_window);
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	UnregisterClass(__TEXT("ValeraWin32"), hInstance);
+	UnregisterClass(__TEXT("FedoriaWin32"), hInstance);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -348,7 +348,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			f3d::event::SKeyboardInputEventPtr event = std::make_shared<f3d::event::SKeyboardInputEvent>();
 			event->m_event = f3d::event::eKeyboardPressDown;
 
-			f3d::CFedoriaEngine::getInstance()->getInputEventHandler()->pushEvent(event);
+			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);
 
 			return 0;
 		}
@@ -356,10 +356,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 		{
-			/*v3d::event::SKeyboardInputEvent event;
-			event.m_event = v3d::event::eKeyboardPressUp;
+			/*f3d::event::SKeyboardInputEvent event;
+			event.m_event = f3d::event::eKeyboardPressUp;
 
-			v3d::CValeraEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 
 			return 0;
 		}
@@ -368,10 +368,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
 		{
-			/*v3d::event::SMouseInputEvent event;
-			event.m_event = v3d::event::eLeftMousePressedDown;
+			/*f3d::event::SMouseInputEvent event;
+			event.m_event = f3d::event::eLeftMousePressedDown;
 
-			v3d::CValeraEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 
 			return 0;
 		}
@@ -380,10 +380,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONUP:
 		case WM_MBUTTONUP:
 		{
-			/*v3d::event::SMouseInputEvent event;
-			event.m_event = v3d::event::eLeftMousePressedUp;
+			/*f3d::event::SMouseInputEvent event;
+			event.m_event = f3d::event::eLeftMousePressedUp;
 
-			v3d::CValeraEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 
 			return 0;
 		}
@@ -429,7 +429,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		
 		case WM_DESTROY:
 			{
-				//f3d::CFedoriaEngine::getInstance()->getWindow()->close();
 				PostQuitMessage(0);
 				return 0;
 			}

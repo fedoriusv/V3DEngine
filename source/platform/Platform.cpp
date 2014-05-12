@@ -160,3 +160,33 @@ renderer::CRendererPtr CPlatform::createRenderer(const CDriverContextPtr& contex
 
 	return renderer;
 }
+
+CWindowPtr CPlatform::getWindow() const
+{
+	return m_window;
+}
+
+CRendererPtr CPlatform::getRenderer() const
+{
+	return m_renderer;
+}
+
+void CPlatform::closeWindow() const
+{
+	if (m_window)
+	{
+		m_window->close();
+	}
+}
+
+bool CPlatform::init()
+{
+	if (!m_renderer)
+	{
+		return false;
+	}
+
+	m_renderer->init();
+
+	return true;
+}

@@ -5,23 +5,23 @@ using namespace f3d::platform;
 
 BaseApplication::BaseApplication(int& argc, char** argv)
 {
-	m_engine = CFedoriaEngine::getInstance();
+	m_engine = CEngine::getInstance();
 }
 
 BaseApplication::~BaseApplication()
 {
-	CFedoriaEngine::freeInstance();
+	CEngine::freeInstance();
 }
 
 int BaseApplication::exec()
 {
-	if (m_engine->getPlatform()->hasError())
+	if (!m_engine->init())
 	{
 		delete this;
 		return 0;
 	}
-
 	this->init();
+	//m_engine->getSceneManager()->init();
 
 	while (m_engine->begin())
 	{
