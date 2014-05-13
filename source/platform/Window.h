@@ -75,6 +75,7 @@ namespace platform
 		const core::Dimension2D&	getSize()         const;
 		const core::Dimension2D&	getPosition()     const;
 		const EPlatformType			getPlatformType() const;
+		const EDriverType			getDriverType()   const;
 
 		virtual bool				begin()                                  = 0;
 		virtual bool				end()                                    = 0;

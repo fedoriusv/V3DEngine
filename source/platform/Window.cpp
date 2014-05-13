@@ -37,3 +37,8 @@ const EPlatformType CWindow::getPlatformType() const
 {
 	return m_platformType;
 }
+
+const EDriverType CWindow::getDriverType() const
+{
+	return m_param.driverType;
+}

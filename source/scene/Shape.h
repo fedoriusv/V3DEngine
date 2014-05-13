@@ -2,6 +2,8 @@
 #define _F3D_SHAPE_H_
 
 #include "scene/Node.h"
+#include "renderer/Material.h"
+#include "renderer/Geometry.h"
 
 namespace f3d
 {
@@ -29,15 +31,17 @@ namespace scene
 	{
 	public:
 
-		CShape();
-		virtual ~CShape();
+								CShape();
+		virtual					~CShape();
+
+		EShapeType				getShapeType() const;
 
 	protected:
 
-		EShapeType	m_shapeType;
+		EShapeType				m_shapeType;
 		
-		//Material
-		//Geometry
+		renderer::CMaterialPtr	m_material;
+		renderer::CGeometryPtr	m_geometry;
 
 	};
 

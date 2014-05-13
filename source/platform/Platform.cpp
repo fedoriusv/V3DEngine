@@ -190,3 +190,8 @@ bool CPlatform::init()
 
 	return true;
 }
+
+const platform::EDriverType CPlatform::getDriverType() const
+{
+	return m_window->getDriverType();
+}

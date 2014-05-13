@@ -29,6 +29,8 @@ namespace platform
 
 		CWindowPtr					getWindow()   const;
 		renderer::CRendererPtr		getRenderer() const;
+
+		const platform::EDriverType	getDriverType() const;
 	
 		bool						init();
 		bool						begin();
