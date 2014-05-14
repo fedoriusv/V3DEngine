@@ -36,6 +36,9 @@ namespace scene
 
 		EShapeType				getShapeType() const;
 
+		void					setMaterial(renderer::CMaterialPtr material);
+		renderer::CMaterialPtr	getMaterial() const;
+
 	protected:
 
 		EShapeType				m_shapeType;

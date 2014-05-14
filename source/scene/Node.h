@@ -34,6 +34,11 @@ namespace scene
 		CNode*				getChildNodeByID	(u32 id)                     const;
 		CNode*				getChildNodeByName  (const std::string& name)    const;
 
+		virtual void				render()         = 0;
+		virtual void				update(f64 time) = 0;
+
+		virtual void				init()           = 0;
+
 	protected:
 
 		CNode*				m_parentNode;
