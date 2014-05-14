@@ -10,8 +10,8 @@ namespace f3d
 	template <class T>
 	struct SVertices
 	{
-		f3d::u32		id;
-		std::vector<T>	vertex;
+		f3d::u32        id;
+		std::vector<T>  vertex;
 
 		SVertices()
 			: id(0)
@@ -25,15 +25,15 @@ namespace f3d
 
 	struct SVertexData
 	{
-		SVertices<core::Vector3D>	m_vertices;
-		SVertices<core::Vector3D>	m_normals;
-		TextureCoords				m_texCoords;
-		SVertices<f3d::u32>			m_indices;
+		SVertices<core::Vector3D>   m_vertices;
+		SVertices<core::Vector3D>   m_normals;
+		TextureCoords               m_texCoords;
+		SVertices<f3d::u32>         m_indices;
 
-		f3d::u32					m_countVertices;
-		f3d::u32					m_countIndices;;
+		f3d::u32                    m_countVertices;
+		f3d::u32                    m_countIndices;;
 
-		f3d::u32					m_arrayId;
+		f3d::u32                    m_arrayId;
 
 		void clear();
 		void malloc(f3d::u32 count, f3d::u32 index = 0, f3d::u32 layer = 1);
