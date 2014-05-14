@@ -29,7 +29,14 @@ namespace f3d
 #include <fstream>
 #include <functional>
 
+#include <assert.h>
 #include <time.h>
+
+#ifdef _DEBUG
+#	define ASSERT(x) assert(x)
+#else
+#	define ASSERT(x)
+#endif
 
 #include "core/Math.h"
 #include "core/Vector2D.h"
