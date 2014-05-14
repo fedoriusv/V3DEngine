@@ -40,7 +40,7 @@ namespace scene
 		double					m_lastTime;
 
 		void					updateDeltaTime();
-		void					update(double time);
+		void					update(f3d::f64 time);
 
 		std::vector<CNode*>		m_objects;
 

@@ -5,25 +5,15 @@
 
 namespace f3d
 {
+
+namespace scene
+{
+	class CShape;
+}
+
 namespace renderer
 {
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	template <class T>
-	struct SVertices
-	{
-		f3d::u16		id;
-		std::vector<T>	vertices;
-
-		SVertices()
-			: id(0)
-		{
-		};
-	};
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	typedef  std::vector<SVertices<core::Vector2D>> TextureCoords;
 
 	class CGeometry
 	{
@@ -38,12 +28,10 @@ namespace renderer
 
 	protected:
 
-		SVertices<core::Vector3D>	m_vertex;
-		SVertices<core::Vector3D>	m_normal;
-		TextureCoords				m_texCoords;
-		SVertices<f3d::u32>			m_indices;
+		friend						f3d::scene::CShape;
 
-		f3d::u32					m_arrayId;
+		SVertexData&				getData();
+		SVertexData					m_data;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////

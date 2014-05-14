@@ -18,7 +18,7 @@ namespace renderer
 		virtual			~CDriverContextGL();
 
 		virtual void	driverInfo();
-		virtual void	checkForErrors();
+		virtual void	checkForErrors(const std::string& location = "");
 		virtual bool	createContext();
 
 	protected:

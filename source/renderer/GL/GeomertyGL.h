@@ -9,6 +9,23 @@ namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	enum EShaderAttribute
+	{
+		eAttributeVertex = 0,
+		eAttributeColor,
+		eAttributeNormal,
+		eAttributeBinormal,
+		eAttributeTangent,
+		eAttributeTexture0,
+		eAttributeTexture1,
+		eAttributeTexture2,
+		eAttributeTexture3,
+
+		eAttributeCount
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	class CGeometryGL : public CGeometry
 	{
 	public:

@@ -24,3 +24,8 @@ const core::Vector3D& CRenderer::getBackColor() const
 {
 	return m_backColor;
 }
+
+void CRenderer::checkForErrors(const std::string& location)
+{
+	m_context->checkForErrors(location);
+}

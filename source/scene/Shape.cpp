@@ -52,3 +52,8 @@ renderer::CMaterialPtr CShape::getMaterial() const
 {
 	return m_material;
 }
+
+SVertexData& CShape::getGeometryData()
+{
+	return m_geometry->getData();
+}

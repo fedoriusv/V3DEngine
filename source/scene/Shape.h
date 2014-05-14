@@ -46,6 +46,10 @@ namespace scene
 		renderer::CMaterialPtr	m_material;
 		renderer::CGeometryPtr	m_geometry;
 
+		SVertexData&			getGeometryData();
+
+
+
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////

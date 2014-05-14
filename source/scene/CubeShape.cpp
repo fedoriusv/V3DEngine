@@ -1,7 +1,9 @@
 #include "CubeShape.h"
+#include "renderer/Geometry.h"
 
 using namespace f3d;
 using namespace f3d::scene;
+using namespace f3d::renderer;
 
 CCubeShape::CCubeShape()
 {
@@ -63,4 +65,15 @@ void CCubeShape::init()
 		16, 19, 17, 17, 19, 18, // left
 		20, 23, 21, 21, 23, 22  // right
 	};
+
+
+	SVertexData& data = CShape::getGeometryData();
+	data.malloc(24, 36);
+	
+	memcpy(data.m_vertices.vertex.data(), vertex, sizeof(vertex));
+	memcpy(data.m_normals.vertex.data(), normals, sizeof(normals));
+	memcpy(data.m_texCoords.at(0).vertex.data(), texCoord, sizeof(texCoord));
+	memcpy(data.m_indices.vertex.data(), cubeIndices, sizeof(cubeIndices));
+
+	m_geometry->init();
 }

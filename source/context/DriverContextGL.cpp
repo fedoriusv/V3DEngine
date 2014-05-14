@@ -354,13 +354,20 @@ void CDriverContextGL::driverInfo()
 
 }
 
-void CDriverContextGL::checkForErrors()
+void CDriverContextGL::checkForErrors(const std::string& location)
 {
 #ifdef _DEBUG
 	GLenum glError = glGetError();
 	if ( glError != GL_NO_ERROR )
 	{
-		LOG_ERROR("GL Error: %s", glewGetErrorString(glError))
+		if (location.empty())
+		{
+			LOG_ERROR("GL Error: %s", glewGetErrorString(glError))
+		}
+		else
+		{
+			LOG_ERROR("GL %s: %s", location, glewGetErrorString(glError))
+		}
 	}
 #endif
 }

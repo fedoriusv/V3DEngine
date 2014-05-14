@@ -79,7 +79,7 @@ void CSceneManager::addNode(CNode* node)
 	}
 }
 
-void CSceneManager::update(double time)
+void CSceneManager::update(f3d::f64 time)
 {
 }
 

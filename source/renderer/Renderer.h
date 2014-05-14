@@ -27,6 +27,8 @@ namespace renderer
 		void					setBackColor(const core::Vector3D& color);
 		const core::Vector3D&	getBackColor() const;
 
+		void					checkForErrors(const std::string& location = "");
+
 	protected:
 
 		CDriverContextPtr		m_context;
