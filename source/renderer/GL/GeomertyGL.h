@@ -36,6 +36,7 @@ namespace renderer
 		void		init()    override;
 		void		update()  override;
 		void		free()    override;
+		void		refresh();
 
 	private:
 
@@ -57,6 +58,7 @@ namespace renderer
 		void		deleteVertexArray(f3d::u32& buffer);
 
 		void		initVertexAttribPointer(const f3d::u32 vertexAttrib, const f3d::u32 size);
+		void		refreshBufferData();
 
 	};
 

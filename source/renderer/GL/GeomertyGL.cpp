@@ -61,10 +61,62 @@ void CGeometryGL::init()
 
 void CGeometryGL::update()
 {
+	CGeometryGL::bindVertexArray(m_data.m_arrayId);
+
+	//glDrawElements(_mode, _vertexData.nIndices, GL_UNSIGNED_INT, NULL);
+	glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
+
+	glBindVertexArray(NULL);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//bindShader(0);
+
+	printOpenGLError("GLError Draw Simple: ");
 }
 
 void CGeometryGL::free()
 {
+	CGeometryGL::deleteVertexArray(m_data.m_arrayId);
+
+	CGeometryGL::deleteBuffers(m_data.m_vertices.id);
+	CGeometryGL::deleteBuffers(m_data.m_normals.id);
+	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+	{
+		CGeometryGL::deleteBuffers(m_data.m_texCoords.at(layer).id);
+	}
+	CGeometryGL::deleteBuffers(m_data.m_indices.id);
+}
+
+void CGeometryGL::refresh()
+{
+	//Vertex
+	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
+	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+	CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
+
+	//Normal
+	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
+	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+	CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
+
+	//TexCoords
+	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+	{
+		CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
+		CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+		CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
+	}
+
+	//Indices
+	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
+	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data.m_countIndices, NULL);
+	CGeometryGL::bufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLint)* m_data.m_countIndices, m_data.m_indices.vertex.data());
+
+	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
+	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 void CGeometryGL::genBuffers(f3d::u32& buffer)
