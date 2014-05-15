@@ -55,5 +55,15 @@ renderer::CMaterialPtr CShape::getMaterial() const
 
 SVertexData& CShape::getGeometryData()
 {
-	return m_geometry->getData();
+	return m_geometry->m_data;
+}
+
+EDrawMode CShape::getGeometryDrawMode() const
+{
+	return m_geometry->m_drawMode;
+}
+
+void CShape::setGeometryDrawMode(EDrawMode mode)
+{
+	m_geometry->m_drawMode = mode;
 }

@@ -16,6 +16,7 @@ CCubeShape::~CCubeShape()
 
 void CCubeShape::render()
 {
+	m_geometry->update();
 }
 
 void CCubeShape::update(f64 time)
@@ -74,6 +75,7 @@ void CCubeShape::init()
 	memcpy(data.m_normals.vertex.data(), normals, sizeof(normals));
 	memcpy(data.m_texCoords.at(0).vertex.data(), texCoord, sizeof(texCoord));
 	memcpy(data.m_indices.vertex.data(), cubeIndices, sizeof(cubeIndices));
+	CShape::setGeometryDrawMode(EDrawMode::eTriangles);
 
 	m_geometry->init();
 }

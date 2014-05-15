@@ -8,6 +8,8 @@ using namespace f3d;
 using namespace f3d::renderer;
 
 CGeometryGL::CGeometryGL()
+	: m_arrayId(0)
+	, m_drawModeGL(GL_TRIANGLE_STRIP)
 {
 }
 
@@ -23,8 +25,8 @@ void CGeometryGL::init()
 		return;
 	}
 
-	CGeometryGL::genVertexArray(m_data.m_arrayId);
-	CGeometryGL::bindVertexArray(m_data.m_arrayId);
+	CGeometryGL::genVertexArray(m_arrayId);
+	CGeometryGL::bindVertexArray(m_arrayId);
 
 	//Vertex
 	CGeometryGL::genBuffers(m_data.m_vertices.id);
@@ -52,33 +54,30 @@ void CGeometryGL::init()
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
 	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * m_data.m_countIndices, m_data.m_indices.vertex.data());
 
-	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("VBO Error");
+	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Init Error");
 
 	CGeometryGL::bindVertexArray(0);
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	m_drawModeGL = CGeometryGL::getGLDrawMode(m_drawMode);
 }
 
 void CGeometryGL::update()
 {
-	CGeometryGL::bindVertexArray(m_data.m_arrayId);
+	CGeometryGL::bindVertexArray(m_arrayId);
 
-	//glDrawElements(_mode, _vertexData.nIndices, GL_UNSIGNED_INT, NULL);
-	glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
+	glDrawElements(m_drawModeGL, m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
+	//glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
 
-	glBindVertexArray(NULL);
+	CGeometryGL::bindVertexArray(0);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//bindShader(0);
-
-	printOpenGLError("GLError Draw Simple: ");
+	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Update Error");
 }
 
 void CGeometryGL::free()
 {
-	CGeometryGL::deleteVertexArray(m_data.m_arrayId);
+	CGeometryGL::deleteVertexArray(m_arrayId);
 
 	CGeometryGL::deleteBuffers(m_data.m_vertices.id);
 	CGeometryGL::deleteBuffers(m_data.m_normals.id);
@@ -116,6 +115,8 @@ void CGeometryGL::refresh()
 
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Refresh Error");
 
 }
 
@@ -195,4 +196,32 @@ void CGeometryGL::initVertexAttribPointer(const f3d::u32 vertexAttrib, const f3d
 {
 	glEnableVertexAttribArray(vertexAttrib);
 	glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, GL_FALSE, NULL, NULL);
+}
+
+f3d::u32 CGeometryGL::getGLDrawMode(EDrawMode mode)
+{
+	switch (mode)
+	{
+		case EDrawMode::eTriangleStrip:
+		{
+			return GL_TRIANGLE_STRIP;
+		}
+
+		case EDrawMode::eTriangles:
+		{
+			return GL_TRIANGLES;
+		}
+		
+		case EDrawMode::eTriangleFan:
+		{
+			return GL_TRIANGLE_FAN;
+		}
+
+		default:
+		{
+			return GL_TRIANGLE_STRIP;
+		}
+	}
+
+	return GL_TRIANGLE_STRIP;
 }

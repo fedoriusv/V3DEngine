@@ -33,11 +33,9 @@ namespace f3d
 		f3d::u32                    m_countVertices;
 		f3d::u32                    m_countIndices;;
 
-		f3d::u32                    m_arrayId;
-
-		void clear();
-		void malloc(f3d::u32 count, f3d::u32 index = 0, f3d::u32 layer = 1);
-		bool empty() const;
+		void                        clear();
+		void                        malloc(f3d::u32 count, f3d::u32 index = 0, f3d::u32 layer = 1);
+		bool                        empty() const;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////

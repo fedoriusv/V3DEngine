@@ -34,11 +34,9 @@ void SVertexData::clear()
 		m_indices.vertex.clear();
 		m_indices.id = 0;
 	}
-	
-	m_countVertices = 0;
-	m_countIndices  = 0;
 
-	m_arrayId = 0;
+	m_countVertices = 0;
+	m_countIndices = 0;
 
 }
 

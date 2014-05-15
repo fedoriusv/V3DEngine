@@ -47,8 +47,8 @@ namespace scene
 		renderer::CGeometryPtr	m_geometry;
 
 		SVertexData&			getGeometryData();
-
-
+		renderer::EDrawMode		getGeometryDrawMode() const;
+		void					setGeometryDrawMode(renderer::EDrawMode mode);
 
 	};
 

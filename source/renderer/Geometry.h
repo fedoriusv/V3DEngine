@@ -15,23 +15,34 @@ namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	enum class EDrawMode
+	{
+		eTriangleStrip,
+		eTriangles,
+		eTriangleFan,
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	class CGeometry
 	{
 	public:
 
-									CGeometry();
-		virtual						~CGeometry();
+		CGeometry();
+		virtual           ~CGeometry();
 
-		virtual void				init()   = 0;
-		virtual void				update() = 0;
-		virtual void				free()   = 0;
+		virtual void      init()   = 0;
+		virtual void      update() = 0;
+		virtual void      free()   = 0;
 
 	protected:
 
-		friend						f3d::scene::CShape;
+		friend            f3d::scene::CShape;
 
-		SVertexData&				getData();
-		SVertexData					m_data;
+		SVertexData&      getData();
+
+		EDrawMode         m_drawMode;
+		SVertexData       m_data;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
