@@ -11,8 +11,3 @@ CGeometry::CGeometry()
 CGeometry::~CGeometry()
 {
 }
-
-SVertexData& CGeometry::getData()
-{
-	return m_data;
-}

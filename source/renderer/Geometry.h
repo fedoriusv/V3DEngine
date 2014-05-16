@@ -39,8 +39,6 @@ namespace renderer
 
 		friend            f3d::scene::CShape;
 
-		SVertexData&      getData();
-
 		EDrawMode         m_drawMode;
 		SVertexData       m_data;
 	};
