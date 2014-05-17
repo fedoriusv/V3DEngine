@@ -16,11 +16,30 @@ CCubeShape::~CCubeShape()
 
 void CCubeShape::render()
 {
-	m_geometry->update();
+    if (!m_visible)
+    {
+        return;
+    }
+
+    //Material->bind()
+
+    m_geometry->update();
 }
 
 void CCubeShape::update(f64 time)
 {
+    if (!m_visible)
+    {
+        return;
+    }
+
+    if (m_needUpdate)
+    {
+        CNode::updateTransform(time);
+        m_needUpdate = false;
+    }
+
+    //Renderer->updateTransform()
 }
 
 void CCubeShape::init()

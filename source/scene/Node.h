@@ -34,17 +34,21 @@ namespace scene
 		CNode*				getChildNodeByID	(u32 id)                     const;
 		CNode*				getChildNodeByName  (const std::string& name)    const;
 
-		virtual void				render()         = 0;
-		virtual void				update(f64 time) = 0;
+		virtual void        render()         = 0;
+		virtual void        update(f64 time) = 0;
 
-		virtual void				init()           = 0;
+		virtual void        init()           = 0;
 
 	protected:
+
+        void                updateTransform(f64 time);
 
 		CNode*				m_parentNode;
 		std::vector<CNode*>	m_childNodes;
 
 		core::Matrix4D		m_transform;
+        bool                m_visible;
+        bool                m_needUpdate;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

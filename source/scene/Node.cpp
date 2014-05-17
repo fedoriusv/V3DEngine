@@ -4,7 +4,9 @@ using namespace f3d;
 using namespace f3d::scene;
 
 CNode::CNode()
-: m_parentNode(nullptr)
+    : m_parentNode(nullptr)
+    , m_visible(true)
+    , m_needUpdate(true)
 {
 	m_type = EObjectType::eTypeNode;
 }
@@ -119,4 +121,9 @@ CNode* CNode::getChildNodeByName(const std::string& name) const
 		}
 	}
 	return nullptr;
+}
+
+void CNode::updateTransform(f64 time)
+{
+    //TODO: update childs
 }
