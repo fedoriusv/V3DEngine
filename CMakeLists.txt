@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.9)
 set(SOLUTION_NAME Fedoria3D)
 set(ENGINE_NAME Fedoria3DEngine)
 set(GLEW_PLOJECT glew_static)
-set(TINYXML_PLOJECT tinyxml2)
+set(TINYXML_PLOJECT tinyxml2static)
 set(TEST_PROJECT_0 CreateWindow)
 
 if(COMPILER_MSVC)
@@ -147,6 +147,7 @@ set (ENGINE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
 include_directories(
 	${SOURCE_DIR}
 	libs/glew/include
+	libs/tinyxml2
 	)
 
 add_library(
@@ -164,7 +165,10 @@ add_library(
 	${MAIN_HEADERS}        ${MAIN_SOURCES}
 	) 
 
-target_link_libraries(${ENGINE_NAME} ${GLEW_PLOJECT})
+target_link_libraries(${ENGINE_NAME} 
+	${GLEW_PLOJECT}
+	${TINYXML_PLOJECT}
+	)
 
 ################################
 #Additional Libs
@@ -172,7 +176,10 @@ add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(tests/${TEST_PROJECT_0})
 
-add_dependencies(${ENGINE_NAME} ${GLEW_PLOJECT})
+add_dependencies(${ENGINE_NAME} 
+	${GLEW_PLOJECT}
+	${TINYXML_PLOJECT}
+	)
 
 
 
