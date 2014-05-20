@@ -4,6 +4,26 @@ namespace f3d
 {
 namespace renderer
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const std::string k_shaderUniformName[EDefaultShaderUniforms::eCount] = {
+        "",
+        "transform.projectionMatrix",
+        "transform.modelMatrix",
+        "transform.viewMatrix",
+        "transform.normalMatrix",
+        "transform.viewPosition",
+        "transform.orthoMatrix"
+    };
+
+
+    const std::string& getShaderUniformNameByType(EDefaultShaderUniforms type)
+    {
+        return k_shaderUniformName[type];
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	CShaderUniform::CShaderUniform()
 		: CObject()
 		, m_uniformType( EShaderUniformType::eUniformInvalid )
@@ -18,11 +38,14 @@ namespace renderer
 		deallocMemory();
 	}
 
-	void CShaderUniform::setUniform( EShaderUniformType type, const std::string& attribute, void* value )
+    void CShaderUniform::setUniform(EShaderUniformType type, const std::string& attribute, void* value, EDefaultShaderUniforms val)
 	{
 		m_uniformType  = type;
 		m_attribute    = attribute;
-		m_uniformValue = allocMemory(type, value);
+        if (val == EDefaultShaderUniforms::eUserUniform)
+        {
+            m_uniformValue = allocMemory(type, value);
+        }
 	}
 
 	void* CShaderUniform::allocMemory( EShaderUniformType type, void* value )

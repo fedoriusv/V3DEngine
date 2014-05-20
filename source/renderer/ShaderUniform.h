@@ -23,6 +23,25 @@ namespace renderer
 		eCount,
 	};
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EDefaultShaderUniforms
+    {
+        eUserUniform = 0,
+        eTransformProjectionMatrix,
+        eTransformModelMatrix,
+        eTransformViewMatrix,
+        eTransformNormalMatrix,
+        eTransformViewPosition,
+        eTransformOrthoMatrix,
+
+        eCount,
+    };
+
+    extern const std::string k_shaderUniformName[EDefaultShaderUniforms::eCount];
+
+    extern const std::string& getShaderUniformNameByType(EDefaultShaderUniforms type);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	class CShaderUniform : public CObject
@@ -31,7 +50,7 @@ namespace renderer
 							CShaderUniform();
 							~CShaderUniform();
 
-		void				setUniform(EShaderUniformType type, const std::string& attribute, void* value);
+        void                setUniform(EShaderUniformType type, const std::string& attribute, void* value, EDefaultShaderUniforms val = eUserUniform);
 	protected:
 
 		EShaderUniformType	m_uniformType;
@@ -44,6 +63,11 @@ namespace renderer
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<CShaderUniform>			UniformPtr;
+    typedef std::map<std::string, UniformPtr>		UniformList;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 

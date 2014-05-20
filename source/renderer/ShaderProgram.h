@@ -11,11 +11,6 @@ namespace renderer
 {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<CShader>				ShaderPtr;
-	typedef std::vector<ShaderPtr>					ShaderList;
-	typedef std::shared_ptr<CShaderUniform>			UniformPtr;
-	typedef std::map<std::string, UniformPtr>		UniformList;
-
 	class CShaderProgram : public CObject
 	{
 	public:
@@ -53,6 +48,7 @@ namespace renderer
 		ShaderList		m_shaderList;
 		UniformList		m_uniformList;
 
+        void            setDefaultUniform(const std::string& name, EShaderUniformType type,  EDefaultShaderUniforms val);
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

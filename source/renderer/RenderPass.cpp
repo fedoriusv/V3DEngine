@@ -118,7 +118,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             return false;
         }
 
-        m_program->set
+        m_program->setDe
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
