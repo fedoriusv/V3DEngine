@@ -1,11 +1,14 @@
 #include "RenderPass.h"
-#include "utils/Logger.h"
+#include "Fedoria3D.h"
+#include "renderer/GL/ShaderProgramGL.h"
 
 using namespace f3d;
 using namespace f3d::renderer;
 
 CRenderPass::CRenderPass()
+    : m_program(nullptr)
 {
+    CRenderPass::init();
 }
 
 CRenderPass::~CRenderPass()
@@ -115,7 +118,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             return false;
         }
 
-
+        m_program->set
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -158,5 +161,30 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
     {
         LOG_ERROR("Error parse. Not exist xml element");
         return false;
+    }
+}
+
+void CRenderPass::init()
+{
+    platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
+
+    switch (type)
+    {
+        case platform::EDriverType::eDriverOpenGL:
+        {
+            m_program = std::make_shared<CShaderProgram>(CShaderProgramGL());
+        }
+            break;
+
+        case platform::EDriverType::eDriverDirect3D:
+        {
+            //m_geometry = std::make_shared<CGeometry>(CGeometryGL());
+        }
+            break;
+
+        default:
+        {
+            LOG_ERROR("Can`t Choose driver type");
+        }
     }
 }

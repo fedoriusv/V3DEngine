@@ -76,3 +76,11 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
     return true;
 
 }
+
+void CRenderTechique::load()
+{
+}
+
+void CRenderTechique::refresh()
+{
+}

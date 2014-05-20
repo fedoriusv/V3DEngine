@@ -1,5 +1,5 @@
 #include "Shape.h"
-#include "Fedoria3D.h"
+ 
 #include "renderer/GL/GeomertyGL.h"
 
 using namespace f3d;

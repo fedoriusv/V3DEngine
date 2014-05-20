@@ -22,9 +22,9 @@ namespace renderer
 						CShaderProgram();
 		virtual			~CShaderProgram();
 		
-		u32				getShaderID() const;
-		bool			isEnable() const;
-		void			setEnable( bool enable );
+		u32				getShaderID()   const;
+		bool			isEnable()      const;
+		void			setEnable(bool enable);
 		
 		void			setUniformInt    (const std::string& attribute, const u32             value );
 		void			setUniformFloat  (const std::string& attribute, const f32             value );
@@ -34,9 +34,9 @@ namespace renderer
 		void			setUniformMatrix3(const std::string& attribute, const core::Matrix3D& matrix);
 		void			setUniformMatrix4(const std::string& attribute, const core::Vector4D& matrix);
 
-		virtual void	create() = 0;
-		virtual void	destroy() = 0;
-		virtual void	bind() = 0;
+		virtual void	create()    = 0;
+		virtual void	destroy()   = 0;
+		virtual void	bind()      = 0;
 
 	protected:
 		

@@ -7,43 +7,46 @@
 
 namespace f3d
 {
-    namespace renderer
+namespace renderer
+{
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CRenderTechique;
+
+    class CRenderPass : public CObject
     {
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CRenderTechique;
-
-        class CRenderPass : public CObject
-        {
-        public:
-
-            CRenderPass();
-            virtual             ~CRenderPass();
+        CRenderPass();
+        virtual             ~CRenderPass();
 
 
-        private:
+    private:
 
-            friend              CRenderTechique;
+        friend              CRenderTechique;
 
-            bool                parse(tinyxml2::XMLElement* root);
+        void                init();
+        bool                parse(tinyxml2::XMLElement* root);
 
 
-            bool                parseUniforms    (tinyxml2::XMLElement* root);
-            bool                parseAttributes  (tinyxml2::XMLElement* root);
-            bool                parseSamplers    (tinyxml2::XMLElement* root);
-            bool                parseRenderTarget(tinyxml2::XMLElement* root);
-            bool                parseShaders     (tinyxml2::XMLElement* root);
+        bool                parseUniforms    (tinyxml2::XMLElement* root);
+        bool                parseAttributes  (tinyxml2::XMLElement* root);
+        bool                parseSamplers    (tinyxml2::XMLElement* root);
+        bool                parseRenderTarget(tinyxml2::XMLElement* root);
+        bool                parseShaders     (tinyxml2::XMLElement* root);
 
-            CShaderProgramPtr   m_program;
+        CShaderProgramPtr   m_program;
+        //RenderState
+        //RenderTarget
 
-        };
+    };
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        typedef std::shared_ptr<CRenderPass> CRenderPassPtr;
+    typedef std::shared_ptr<CRenderPass> CRenderPassPtr;
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_F3D_RENDER_PASS_H_
