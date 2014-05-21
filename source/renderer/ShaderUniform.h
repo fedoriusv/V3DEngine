@@ -7,27 +7,32 @@ namespace f3d
 {
 namespace renderer
 {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum EShaderUniformType
-	{
-		eUniformInvalid = -1,
-		eUniformInt,
-		eUniformFloat,
-		eUniformVector2,
-		eUniformVector3,
-		eUniformVector4,
-		eUniformMatrix3,
-		eUniformMatrix4,
-		
-		eCount,
-	};
+    enum EShaderUniformDataType
+    {
+        eUniformNone = 0,
+        eUniformInt,
+        eUniformFloat,
+        eUniformVector2,
+        eUniformVector3,
+        eUniformVector4,
+        eUniformMatrix3,
+        eUniformMatrix4,
+
+        eUniformTypeCount,
+    };
+
+    extern const std::string&           getShaderUniformNameByType(EShaderUniformDataType type);
+    extern const EShaderUniformDataType getShaderUniformTypeByName(const std::string& name);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EDefaultShaderUniforms
+    enum EDefaultShaderData
     {
         eUserUniform = 0,
+
+        /*Uniforms*/
         eTransformProjectionMatrix,
         eTransformModelMatrix,
         eTransformViewMatrix,
@@ -35,37 +40,52 @@ namespace renderer
         eTransformViewPosition,
         eTransformOrthoMatrix,
 
-        eCount,
+        /*Attributes*/
+        eAttributeVertex,
+        eAttributeColor,
+        eAttributeNormal,
+        eAttributeBinormal,
+        eAttributeTangent,
+        eAttributeTexture0,
+        eAttributeTexture1,
+        eAttributeTexture2,
+        eAttributeTexture3,
+
+        eDataCount,
     };
 
-    extern const std::string k_shaderUniformName[EDefaultShaderUniforms::eCount];
-
-    extern const std::string& getShaderUniformNameByType(EDefaultShaderUniforms type);
+    extern const std::string&           getShaderUniformNameByValue(EDefaultShaderData type);
+    extern const EDefaultShaderData     getShaderUniformValueByName(const std::string& name);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+    class CShaderProgram;
+
 	class CShaderUniform : public CObject
 	{
 	public:
-							CShaderUniform();
-							~CShaderUniform();
 
-        void                setUniform(EShaderUniformType type, const std::string& attribute, void* value, EDefaultShaderUniforms val = eUserUniform);
+        CShaderUniform();
+        virtual                 ~CShaderUniform();
+
+        void                    setUniform(EShaderUniformDataType type, const std::string& attribute, void* value, EDefaultShaderData val = eUserUniform);
+
 	protected:
 
-		EShaderUniformType	m_uniformType;
-		void*				m_uniformValue;
-		std::string			m_attribute;
+        EDefaultShaderData      m_defaultData;
+        EShaderUniformDataType  m_uniformType;
+		void*                   m_uniformValue;
+		std::string             m_attribute;
 
-		void*				allocMemory(EShaderUniformType type, void* value);
-		void				deallocMemory();
+        void*                   allocMemory(EShaderUniformDataType type, void* value);
+		void                    deallocMemory();
 		
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderUniform>			UniformPtr;
-    typedef std::map<std::string, UniformPtr>		UniformList;
+    typedef std::shared_ptr<CShaderUniform>         UniformPtr;
+    typedef std::map<std::string, UniformPtr>       UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

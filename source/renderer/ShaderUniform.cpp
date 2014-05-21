@@ -6,29 +6,88 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const std::string k_shaderUniformName[EDefaultShaderUniforms::eCount] = {
+    const std::string k_shaderUniformType[EShaderUniformDataType::eUniformTypeCount] = {
         "",
+        "int",
+        "float",
+        "vec2",
+        "vec3",
+        "vec4",
+        "mat3",
+        "mat4"
+    };
+
+    const std::string& getShaderUniformNameByType(EShaderUniformDataType type)
+    {
+        return k_shaderUniformType[type];
+    }
+
+    const EShaderUniformDataType getShaderUniformTypeByName(const std::string& name)
+    {
+        for (int i = 0; i < EShaderUniformDataType::eUniformTypeCount; ++i)
+        {
+            if (k_shaderUniformType[i].compare(name) == 0)
+            {
+                return (EShaderUniformDataType)i;
+            }
+        }
+
+        return eUniformNone;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const std::string k_shaderUniformName[EDefaultShaderData::eDataCount] = {
+        "",
+
+        /*Uniforms*/
         "transform.projectionMatrix",
         "transform.modelMatrix",
         "transform.viewMatrix",
         "transform.normalMatrix",
         "transform.viewPosition",
         "transform.orthoMatrix"
+
+        /*Attributes*/
+        "mesh.positions",
+        "mesh.colors",
+        "mesh.normals",
+        "mesh.benormals",
+        "mesh.tangets",
+        "mesh.texture0",
+        "mesh.texture1",
+        "mesh.texture2",
+        "mesh.texture3",
+
     };
 
 
-    const std::string& getShaderUniformNameByType(EDefaultShaderUniforms type)
+    const std::string& getShaderUniformNameByValue(EDefaultShaderData type)
     {
         return k_shaderUniformName[type];
+    }
+
+    const EDefaultShaderData getShaderUniformValueByName(const std::string& name)
+    {
+        for (int i = 0; i < EDefaultShaderData::eDataCount; ++i)
+        {
+            if (k_shaderUniformName[i].compare(name) == 0)
+            {
+                return (EDefaultShaderData)i;
+            }
+        }
+
+        return eUserUniform;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	CShaderUniform::CShaderUniform()
 		: CObject()
-		, m_uniformType( EShaderUniformType::eUniformInvalid )
-		, m_uniformValue ( nullptr )
-		, m_attribute ( "" )
+        , m_uniformType(EShaderUniformDataType::eUniformNone)
+        , m_defaultData(EDefaultShaderData::eUserUniform)
+		, m_uniformValue (nullptr)
+		, m_attribute ("")
 	{
 		m_type = EObjectType::eTypeShaderUniform;
 	}
@@ -38,17 +97,18 @@ namespace renderer
 		deallocMemory();
 	}
 
-    void CShaderUniform::setUniform(EShaderUniformType type, const std::string& attribute, void* value, EDefaultShaderUniforms val)
+    void CShaderUniform::setUniform(EShaderUniformDataType type, const std::string& attribute, void* value, EDefaultShaderData data)
 	{
 		m_uniformType  = type;
 		m_attribute    = attribute;
-        if (val == EDefaultShaderUniforms::eUserUniform)
+        m_defaultData  = data;
+        if (data != EDefaultShaderData::eUserUniform)
         {
             m_uniformValue = allocMemory(type, value);
         }
 	}
 
-	void* CShaderUniform::allocMemory( EShaderUniformType type, void* value )
+    void* CShaderUniform::allocMemory(EShaderUniformDataType type, void* value)
 	{
 		deallocMemory();
 		

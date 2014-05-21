@@ -11,6 +11,8 @@ namespace renderer
 {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderPass;
+
 	class CShaderProgram : public CObject
 	{
 	public:
@@ -21,21 +23,23 @@ namespace renderer
 		bool			isEnable()      const;
 		void			setEnable(bool enable);
 		
-		void			setUniformInt    (const std::string& attribute, const u32             value );
-		void			setUniformFloat  (const std::string& attribute, const f32             value );
-		void			setUniformVector2(const std::string& attribute, const core::Vector2D& vector);
-		void			setUniformVector3(const std::string& attribute, const core::Vector3D& vector);
-		void			setUniformVector4(const std::string& attribute, const core::Vector4D& vector);
-		void			setUniformMatrix3(const std::string& attribute, const core::Matrix3D& matrix);
-		void			setUniformMatrix4(const std::string& attribute, const core::Vector4D& matrix);
+		void			setUniformInt    (const std::string& name, const u32             value );
+		void			setUniformFloat  (const std::string& name, const f32             value );
+		void			setUniformVector2(const std::string& name, const core::Vector2D& vector);
+		void			setUniformVector3(const std::string& name, const core::Vector3D& vector);
+		void			setUniformVector4(const std::string& name, const core::Vector4D& vector);
+		void			setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
+		void			setUniformMatrix4(const std::string& name, const core::Vector4D& matrix);
 
 		virtual void	create()    = 0;
 		virtual void	destroy()   = 0;
 		virtual void	bind()      = 0;
 
 	protected:
+
+        friend          CRenderPass;
 		
-		bool			isExistAttribute(const std::string& attribute); 
+		bool			isExist(const std::string& name); 
 
 		void			addShader(ShaderPtr shader);
 		void			destroyShader(ShaderPtr shader);
@@ -48,7 +52,7 @@ namespace renderer
 		ShaderList		m_shaderList;
 		UniformList		m_uniformList;
 
-        void            setDefaultUniform(const std::string& name, EShaderUniformType type,  EDefaultShaderUniforms val);
+        void            setDefaultUniform(const std::string& name, EShaderUniformDataType type,  EDefaultShaderData data);
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

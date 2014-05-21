@@ -90,11 +90,11 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml element");
+        LOG_ERROR("Error parse. Not exist xml uniforms element");
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root->FirstChildElement("uniforms");
+    tinyxml2::XMLElement* varElement = root;
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
@@ -118,12 +118,14 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             return false;
         }
 
-        m_program->setDe
+        EDefaultShaderData      uniformName = getShaderUniformValueByName(varName);
+        EShaderUniformDataType  uniformType = (uniformName == EDefaultShaderData::eUserUniform) 
+            ? EShaderUniformDataType::eUniformNone : getShaderUniformTypeByName(varType);
+
+        m_program->setDefaultUniform(varName, uniformType, uniformName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
-
-
 
     return true;
 }
@@ -132,9 +134,35 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml element");
+        LOG_ERROR("Error parse. Not exist xml attributes element");
         return false;
     }
+
+    tinyxml2::XMLElement* varElement = root;
+    while (varElement)
+    {
+        const std::string varName = varElement->Attribute("name");
+        if (varName.empty())
+        {
+            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name);
+            return false;
+        }
+
+        const std::string varVal = varElement->Attribute("val");
+        if (varVal.empty())
+        {
+            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name, varName);
+            return false;
+        }
+
+        EDefaultShaderData uniformName = getShaderUniformValueByName(varName);
+
+        m_program->setDefaultUniform(varName, EShaderUniformDataType::eUniformNone, uniformName);
+
+        varElement = varElement->NextSiblingElement("uniforms");
+    }
+
+    return true;
 }
 
 bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
@@ -172,7 +200,7 @@ void CRenderPass::init()
     {
         case platform::EDriverType::eDriverOpenGL:
         {
-            m_program = std::make_shared<CShaderProgram>(CShaderProgramGL());
+            m_program = std::make_shared<CShaderProgramGL>(CShaderProgramGL());
         }
             break;
 
