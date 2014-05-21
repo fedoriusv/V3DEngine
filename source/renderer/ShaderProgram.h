@@ -3,7 +3,8 @@
 
 #include "Object.h"
 #include "Shader.h"
-#include "ShaderUniform.h"
+#include "ShaderData.h"
+#include "tinyxml2.h"
 
 namespace f3d
 {
@@ -23,14 +24,6 @@ namespace renderer
 		bool			isEnable()      const;
 		void			setEnable(bool enable);
 		
-		void			setUniformInt    (const std::string& name, const u32             value );
-		void			setUniformFloat  (const std::string& name, const f32             value );
-		void			setUniformVector2(const std::string& name, const core::Vector2D& vector);
-		void			setUniformVector3(const std::string& name, const core::Vector3D& vector);
-		void			setUniformVector4(const std::string& name, const core::Vector4D& vector);
-		void			setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-		void			setUniformMatrix4(const std::string& name, const core::Vector4D& matrix);
-
 		virtual void	create()    = 0;
 		virtual void	destroy()   = 0;
 		virtual void	bind()      = 0;
@@ -39,10 +32,14 @@ namespace renderer
 
         friend          CRenderPass;
 		
-		bool			isExist(const std::string& name); 
-
 		void			addShader(ShaderPtr shader);
 		void			destroyShader(ShaderPtr shader);
+
+        bool            parse(tinyxml2::XMLElement* root);
+        bool            parseUniforms(tinyxml2::XMLElement* root);
+        bool            parseAttributes(tinyxml2::XMLElement* root);
+        bool            parseSamplers(tinyxml2::XMLElement* root);
+        bool            parseShaders(tinyxml2::XMLElement* root);
 		
 		u32				m_shaderProgID;
 
@@ -50,9 +47,8 @@ namespace renderer
 		bool			m_isActive;
 
 		ShaderList		m_shaderList;
-		UniformList		m_uniformList;
+        CShaderDataPtr	m_shaderData;;
 
-        void            setDefaultUniform(const std::string& name, EShaderUniformDataType type,  EDefaultShaderData data);
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

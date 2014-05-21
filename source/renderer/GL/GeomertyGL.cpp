@@ -32,13 +32,13 @@ void CGeometryGL::init()
 	CGeometryGL::genBuffers(m_data.m_vertices.id);
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
 	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
-	CGeometryGL::initVertexAttribPointer(eAttributeVertex, 3);
+	CGeometryGL::initVertexAttribPointer(0, 3);
 
 	//Normal
 	CGeometryGL::genBuffers(m_data.m_normals.id);
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
 	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
-	CGeometryGL::initVertexAttribPointer(eAttributeNormal, 3);
+	CGeometryGL::initVertexAttribPointer(0, 3);
 
 	//TexCoords
 	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
@@ -46,7 +46,7 @@ void CGeometryGL::init()
 		CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
 		CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
 		CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
-		CGeometryGL::initVertexAttribPointer(eAttributeTexture0 + layer, 2);
+		CGeometryGL::initVertexAttribPointer(0 + layer, 2);
 	}
 
 	//Indices

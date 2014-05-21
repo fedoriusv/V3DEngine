@@ -32,35 +32,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
 
     m_name = passName;
 
-    //uniforms
-    tinyxml2::XMLElement*  uniformsElement = root->FirstChildElement("uniforms");
-    if (uniformsElement)
-    {
-        if (!parseUniforms(uniformsElement))
-        {
-            return false;
-        }
-    }
-
-    //attributes
-    tinyxml2::XMLElement*  attributesElement = root->FirstChildElement("attributes");
-    if (attributesElement)
-    {
-        if (!parseAttributes(attributesElement))
-        {
-            return false;
-        }
-    }
-
-    //samplers
-    tinyxml2::XMLElement*  samplersElement = root->FirstChildElement("samplers");
-    if (samplersElement)
-    {
-        if (!parseSamplers(samplersElement))
-        {
-            return false;
-        }
-    }
+    m_program->parse(root);
 
     //rendertarget
     tinyxml2::XMLElement*  rendertargetElement = root->FirstChildElement("rendertarget");
@@ -72,124 +44,17 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
         }
     }
 
-
-    //shaders
-    tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
-    if (shadersElement)
+    //renderstate
+    tinyxml2::XMLElement*  renderstateElement = root->FirstChildElement("renderstate");
+    if (renderstateElement)
     {
-        if (!parseShaders(shadersElement))
+        if (!parseRenderState(renderstateElement))
         {
             return false;
         }
     }
 
     return true;
-}
-
-bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
-{
-    if (!root)
-    {
-        LOG_ERROR("Error parse. Not exist xml uniforms element");
-        return false;
-    }
-
-    tinyxml2::XMLElement* varElement = root;
-    while (varElement)
-    {
-        const std::string varName = varElement->Attribute("name");
-        if (varName.empty())
-        {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name);
-            return false;
-        }
-
-        const std::string varType = varElement->Attribute("type");
-        if (varType.empty())
-        {
-            LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name, varName);
-            return false;
-        }
-
-        const std::string varVal = varElement->Attribute("val");
-        if (varVal.empty())
-        {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name, varName);
-            return false;
-        }
-
-        EDefaultShaderData      uniformName = getShaderUniformValueByName(varName);
-        EShaderUniformDataType  uniformType = (uniformName == EDefaultShaderData::eUserUniform) 
-            ? EShaderUniformDataType::eUniformNone : getShaderUniformTypeByName(varType);
-
-        m_program->setDefaultUniform(varName, uniformType, uniformName);
-
-        varElement = varElement->NextSiblingElement("uniforms");
-    }
-
-    return true;
-}
-
-bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
-{
-    if (!root)
-    {
-        LOG_ERROR("Error parse. Not exist xml attributes element");
-        return false;
-    }
-
-    tinyxml2::XMLElement* varElement = root;
-    while (varElement)
-    {
-        const std::string varName = varElement->Attribute("name");
-        if (varName.empty())
-        {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name);
-            return false;
-        }
-
-        const std::string varVal = varElement->Attribute("val");
-        if (varVal.empty())
-        {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name, varName);
-            return false;
-        }
-
-        EDefaultShaderData uniformName = getShaderUniformValueByName(varName);
-
-        m_program->setDefaultUniform(varName, EShaderUniformDataType::eUniformNone, uniformName);
-
-        varElement = varElement->NextSiblingElement("uniforms");
-    }
-
-    return true;
-}
-
-bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
-{
-    if (!root)
-    {
-        LOG_ERROR("Error parse. Not exist xml element");
-        return false;
-    }
-}
-
-bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
-{
-    if (!root)
-    {
-        LOG_ERROR("Error parse. Not exist xml element");
-        return false;
-    }
-}
-
-bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
-{
-    if (!root)
-    {
-        LOG_ERROR("Error parse. Not exist xml element");
-        return false;
-    }
 }
 
 void CRenderPass::init()
@@ -214,5 +79,23 @@ void CRenderPass::init()
         {
             LOG_ERROR("Can`t Choose driver type");
         }
+    }
+}
+
+bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("Error parse. Not exist xml element");
+        return false;
+    }
+}
+
+bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("Error parse. Not exist xml element");
+        return false;
     }
 }

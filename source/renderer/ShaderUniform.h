@@ -9,7 +9,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EShaderUniformDataType
+    enum EShaderDataType
     {
         eUniformNone = 0,
         eUniformInt,
@@ -23,16 +23,14 @@ namespace renderer
         eUniformTypeCount,
     };
 
-    extern const std::string&           getShaderUniformNameByType(EShaderUniformDataType type);
-    extern const EShaderUniformDataType getShaderUniformTypeByName(const std::string& name);
+    extern const std::string&    getShaderDataNameByType(EShaderDataType type);
+    extern const EShaderDataType getShaderDataTypeByName(const std::string& name);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EDefaultShaderData
+    enum EDefaultUniformData
     {
-        eUserUniform = 0,
-
-        /*Uniforms*/
+        eUserUniform = -1,
         eTransformProjectionMatrix,
         eTransformModelMatrix,
         eTransformViewMatrix,
@@ -40,22 +38,11 @@ namespace renderer
         eTransformViewPosition,
         eTransformOrthoMatrix,
 
-        /*Attributes*/
-        eAttributeVertex,
-        eAttributeColor,
-        eAttributeNormal,
-        eAttributeBinormal,
-        eAttributeTangent,
-        eAttributeTexture0,
-        eAttributeTexture1,
-        eAttributeTexture2,
-        eAttributeTexture3,
-
-        eDataCount,
+        eUniformsCount,
     };
 
-    extern const std::string&           getShaderUniformNameByValue(EDefaultShaderData type);
-    extern const EDefaultShaderData     getShaderUniformValueByName(const std::string& name);
+    extern const std::string&           getShaderUniformNameByType(EDefaultUniformData type);
+    extern const EDefaultUniformData    getShaderUniformTypeByName(const std::string& name);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -68,16 +55,16 @@ namespace renderer
         CShaderUniform();
         virtual                 ~CShaderUniform();
 
-        void                    setUniform(EShaderUniformDataType type, const std::string& attribute, void* value, EDefaultShaderData val = eUserUniform);
+        void                    setUniform(EShaderDataType type, const std::string& attribute, void* value, EDefaultUniformData data = eUserUniform);
 
 	protected:
 
-        EDefaultShaderData      m_defaultData;
-        EShaderUniformDataType  m_uniformType;
+        EDefaultUniformData     m_defaultData;
+        EShaderDataType         m_uniformType;
 		void*                   m_uniformValue;
 		std::string             m_attribute;
 
-        void*                   allocMemory(EShaderUniformDataType type, void* value);
+        void*                   allocMemory(EShaderDataType type, void* value);
 		void                    deallocMemory();
 		
 	};
