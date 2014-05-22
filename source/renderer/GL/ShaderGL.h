@@ -19,6 +19,10 @@ namespace renderer
         void    create(const std::string& body, EShaderType type)    override;
         void    load(const std::string& file, EShaderType type)      override;
         void    destroy()                                            override;
+
+    private:
+
+        void    initShader(u32& shader, const EShaderType type, void* body);
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

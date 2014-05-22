@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "ShaderProgram.h"
 #include "ShaderData.h"
+#include "RenderState.h"
 #include "tinyxml2.h"
 
 namespace f3d
@@ -41,7 +42,7 @@ namespace renderer
 
         ShaderProgramPtr    m_program;
         ShaderDataPtr       m_shaderData;
-        //RenderState
+        RenderStatePtr      m_renderState;
         //RenderTarget
 
     };
