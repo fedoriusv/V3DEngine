@@ -14,7 +14,7 @@ namespace renderer
 	{
 	public:
 
-									CDriverContext(const platform::CWindowPtr& window);
+									CDriverContext(const platform::WindowPtr& window);
 		virtual						~CDriverContext();
 
 		virtual void				driverInfo()                                     = 0;
@@ -22,16 +22,16 @@ namespace renderer
 		virtual bool				createContext()                                  = 0;
 
 		const core::Dimension2D&	getViewport() const;
-		const platform::CWindowPtr	getWindow() const;
+		const platform::WindowPtr	getWindow() const;
 
 	protected:
 
-		const platform::CWindowPtr	m_window;
+		const platform::WindowPtr	m_window;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<CDriverContext> CDriverContextPtr;
+	typedef std::shared_ptr<CDriverContext> DriverContextPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

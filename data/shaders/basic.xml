@@ -13,7 +13,7 @@
 		</samplers>
 		<rendertarget val="default"/>
 		<shader>
-			<vshader>
+			<var type="vertex" name="basic">
 				<![CDATA[
 						uniform highp mat4 inWorldViewProjMatrix;
 						uniform highp vec3 inTextureMatrix0[2];
@@ -29,8 +29,8 @@
 							uv = vec2(dot(inTextureMatrix0[0], vec3(inUV0, 1.)), dot(inTextureMatrix0[1], vec3(inUV0, 1.)));
 						}
 					   ]]>
-			</vshader>
-			<fshader>
+			</var>
+			<var type="fragment" name="basic">
 				<![CDATA[
 						varying highp vec2 uv;
 						uniform sampler2D texture0;
@@ -41,7 +41,7 @@
 							gl_FragColor = texColor0;
 						}
 					   ]]>
-			</fshader>
+			</var>
 		</shader>
 	</pass>
 </technique>

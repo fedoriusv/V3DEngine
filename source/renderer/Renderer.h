@@ -15,7 +15,7 @@ namespace renderer
 	{
 	public:
 
-								CRenderer(const CDriverContextPtr& context);
+								CRenderer(const DriverContextPtr& context);
 		virtual					~CRenderer();
 
 		virtual void			init()                         = 0;
@@ -32,7 +32,7 @@ namespace renderer
 
 	protected:
 
-		CDriverContextPtr		m_context;
+		DriverContextPtr		m_context;
 		
 		core::Vector3D			m_backColor;
 		core::Dimension2D		m_viewportSize;
@@ -40,7 +40,7 @@ namespace renderer
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<CRenderer>	CRendererPtr;
+	typedef std::shared_ptr<CRenderer>	RendererPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

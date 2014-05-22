@@ -11,7 +11,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef  std::vector<CRenderPassPtr>    CRenderPassList;
+    typedef  std::vector<RenderPassPtr>    CRenderPassList;
 
     class CRenderTechique : public stream::CResource
     {
@@ -20,9 +20,9 @@ namespace renderer
         CRenderTechique();
         virtual             ~CRenderTechique();
 
-        CRenderPassPtr      getRenderPass(u32 id) const;
+        RenderPassPtr      getRenderPass(u32 id) const;
         u32                 getRenderPassCount()  const;
-        void                addRenderPass(const CRenderPassPtr& pass);
+        void                addRenderPass(const RenderPassPtr& pass);
 
         void                load();
         void                refresh();
@@ -38,7 +38,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderTechique> CRenderTechiquePtr;
+    typedef std::shared_ptr<CRenderTechique> RenderTechiquePtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

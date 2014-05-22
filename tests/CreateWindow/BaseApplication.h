@@ -16,9 +16,9 @@ public:
 
 protected:
 
-	virtual f3d::platform::CPlatformPtr			getPlatform()          const final;
-	virtual f3d::event::CInputEventHandlerPtr	getInputEventHandler() const final;
-	virtual f3d::scene::CSceneManagerPtr		getSceneManager()      const final;
+	virtual f3d::platform::PlatformPtr			getPlatform()          const final;
+	virtual f3d::event::InputEventHandlerPtr	getInputEventHandler() const final;
+	virtual f3d::scene::SceneManagerPtr		    getSceneManager()      const final;
 
 private:
 

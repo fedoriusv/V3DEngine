@@ -6,7 +6,7 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CRendererGL::CRendererGL(const CDriverContextPtr& context)
+CRendererGL::CRendererGL(const DriverContextPtr& context)
 	: CRenderer(context)
 	, m_projectionMatrix(core::Matrix4D())
 	, m_viewMatrix(core::Matrix4D())

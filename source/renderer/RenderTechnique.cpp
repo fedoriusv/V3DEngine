@@ -14,7 +14,7 @@ CRenderTechique::~CRenderTechique()
     m_renderPassList.clear();
 }
 
-CRenderPassPtr CRenderTechique::getRenderPass(u32 id) const
+RenderPassPtr CRenderTechique::getRenderPass(u32 id) const
 {
     ASSERT(id <= m_renderPassList.size() || "RenderPass id error");
 
@@ -26,7 +26,7 @@ u32 CRenderTechique::getRenderPassCount() const
     return m_renderPassList.size();
 }
 
-void CRenderTechique::addRenderPass(const CRenderPassPtr& pass)
+void CRenderTechique::addRenderPass(const RenderPassPtr& pass)
 {
     if (pass)
     {
@@ -62,7 +62,7 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
 
     while (passElement)
     {
-        CRenderPassPtr pass = std::make_shared<CRenderPass>(CRenderPass());
+        RenderPassPtr pass = std::make_shared<CRenderPass>(CRenderPass());
         if (pass->parse(passElement))
         {
             LOG_ERROR("Error parse. Pass section");

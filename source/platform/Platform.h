@@ -17,7 +17,7 @@ namespace platform
 									CPlatform();
 		virtual						~CPlatform();
 
-		CWindowPtr					createWindowWithContext(
+		WindowPtr					createWindowWithContext(
 										const core::Dimension2D& size = core::Dimension2D(800U, 600),
 										const core::Dimension2D& pos  = core::Dimension2D(0U, 0U),
 										bool isFullscreen             = false,
@@ -27,8 +27,8 @@ namespace platform
 		bool						hasError()    const;
 		void						closeWindow() const;
 
-		CWindowPtr					getWindow()   const;
-		renderer::CRendererPtr		getRenderer() const;
+		WindowPtr					getWindow()   const;
+		renderer::RendererPtr		getRenderer() const;
 
 		const platform::EDriverType	getDriverType() const;
 	
@@ -38,16 +38,16 @@ namespace platform
 
 	private:
 
-		renderer::CRendererPtr		createRenderer(const renderer::CDriverContextPtr& driver, const WindowParam& param);
+		renderer::RendererPtr		createRenderer(const renderer::DriverContextPtr& driver, const WindowParam& param);
 
-		CWindowPtr					m_window;
-		renderer::CRendererPtr		m_renderer;
+		WindowPtr					m_window;
+		renderer::RendererPtr		m_renderer;
 		
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<CPlatform>	CPlatformPtr;
+	typedef std::shared_ptr<CPlatform>	PlatformPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

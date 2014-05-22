@@ -36,15 +36,15 @@ namespace scene
 
 		EShapeType				getShapeType() const;
 
-		void					setMaterial(renderer::CMaterialPtr material);
-		renderer::CMaterialPtr	getMaterial() const;
+		void					setMaterial(renderer::MaterialPtr material);
+		renderer::MaterialPtr	getMaterial() const;
 
 	protected:
 
 		EShapeType				m_shapeType;
 		
-		renderer::CMaterialPtr	m_material;
-		renderer::CGeometryPtr	m_geometry;
+		renderer::MaterialPtr	m_material;
+		renderer::GeometryPtr	m_geometry;
 
 		SVertexData&			getGeometryData();
 		renderer::EDrawMode		getGeometryDrawMode() const;

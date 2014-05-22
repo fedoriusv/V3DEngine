@@ -3,7 +3,6 @@
 
 #include "Object.h"
 #include "Shader.h"
-#include "ShaderData.h"
 #include "tinyxml2.h"
 
 namespace f3d
@@ -31,29 +30,21 @@ namespace renderer
 	protected:
 
         friend          CRenderPass;
-		
+
 		void			addShader(ShaderPtr shader);
 		void			destroyShader(ShaderPtr shader);
 
-        bool            parse(tinyxml2::XMLElement* root);
-        bool            parseUniforms(tinyxml2::XMLElement* root);
-        bool            parseAttributes(tinyxml2::XMLElement* root);
-        bool            parseSamplers(tinyxml2::XMLElement* root);
-        bool            parseShaders(tinyxml2::XMLElement* root);
-		
 		u32				m_shaderProgID;
 
 		bool			m_enable;
 		bool			m_isActive;
 
 		ShaderList		m_shaderList;
-        CShaderDataPtr	m_shaderData;;
-
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderProgram> CShaderProgramPtr;
+    typedef std::shared_ptr<CShaderProgram> ShaderProgramPtr;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

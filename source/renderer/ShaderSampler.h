@@ -7,19 +7,28 @@ namespace f3d
 {
 namespace renderer
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     class CShaderSampler : public CObject
     {
     public:
 
         CShaderSampler();
-        virtual ~CShaderSampler();
+        virtual         ~CShaderSampler();
 
-        void    setSampler(const std::string& attribute);
+        void            setSampler(const std::string& attribute);
 
     protected:
 
-        std::string m_attribute;
+        std::string     m_attribute;
     };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<CShaderSampler>            ShaderSamplerPtr;
+    typedef std::map<std::string, ShaderSamplerPtr>    SamplerList;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 

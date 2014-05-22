@@ -43,12 +43,12 @@ EShapeType CShape::getShapeType() const
 	return m_shapeType;
 }
 
-void CShape::setMaterial(renderer::CMaterialPtr material)
+void CShape::setMaterial(renderer::MaterialPtr material)
 {
 	m_material = material;
 }
 
-renderer::CMaterialPtr CShape::getMaterial() const
+renderer::MaterialPtr CShape::getMaterial() const
 {
 	return m_material;
 }

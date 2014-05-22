@@ -21,7 +21,7 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CDriverContextGL::CDriverContextGL(const platform::CWindowPtr& window)
+CDriverContextGL::CDriverContextGL(const platform::WindowPtr& window)
 	: CDriverContext(window)
 {
 }
@@ -238,8 +238,8 @@ bool CDriverContextGL::createWin32Context()
 	{
 		int attribs[] =
 		{
-			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-			WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+            WGL_CONTEXT_MAJOR_VERSION_ARB, OPENGL_VERSION_MAJOR,
+            WGL_CONTEXT_MINOR_VERSION_ARB, OPENGL_VERSION_MINOR,
 			WGL_CONTEXT_FLAGS_ARB,         WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 			WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 			0

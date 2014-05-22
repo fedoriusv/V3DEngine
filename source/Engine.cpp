@@ -36,17 +36,17 @@ bool CEngine::init()
 	return true;
 }
 
-CPlatformPtr CEngine::getPlatform() const
+PlatformPtr CEngine::getPlatform() const
 {
 	return m_platform;
 }
 
-event::CInputEventHandlerPtr CEngine::getInputEventHandler() const
+event::InputEventHandlerPtr CEngine::getInputEventHandler() const
 {
 	return m_inputEventHandler;
 }
 
-scene::CSceneManagerPtr CEngine::getSceneManager() const
+scene::SceneManagerPtr CEngine::getSceneManager() const
 {
 	return m_scene;
 }
@@ -74,7 +74,7 @@ bool CEngine::end()
 	return m_platform->end();
 }
 
-platform::CWindowPtr CEngine::getWindow() const
+platform::WindowPtr CEngine::getWindow() const
 {
 	if (!m_platform)
 	{
@@ -84,7 +84,7 @@ platform::CWindowPtr CEngine::getWindow() const
 	return m_platform->getWindow();
 }
 
-renderer::CRendererPtr CEngine::getRenderer() const
+renderer::RendererPtr CEngine::getRenderer() const
 {
 	if (!m_platform)
 	{

@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "ShaderUniform.h"
 #include "ShaderAttribute.h"
+#include "ShaderSampler.h"
 
 
 namespace f3d
@@ -11,6 +12,8 @@ namespace f3d
 namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CRenderPass;
 
     class CShaderData : public CObject
     {
@@ -29,7 +32,7 @@ namespace renderer
 
     protected:
 
-        friend          CShaderProgram;
+        friend          CRenderPass;
 
         bool			isExistUniform(const std::string& name);
         void            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);
@@ -42,12 +45,13 @@ namespace renderer
 
         AttributeList   m_attributeList;
         UniformList     m_uniformList;
+        SamplerList     m_samplerList;
 
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderData> CShaderDataPtr;
+    typedef std::shared_ptr<CShaderData> ShaderDataPtr;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

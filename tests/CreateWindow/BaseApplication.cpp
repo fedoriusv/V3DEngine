@@ -34,17 +34,17 @@ int BaseApplication::exec()
 	return 0;
 }
 
-platform::CPlatformPtr BaseApplication::getPlatform() const
+platform::PlatformPtr BaseApplication::getPlatform() const
 {
 	return m_engine->getPlatform();
 }
 
-event::CInputEventHandlerPtr BaseApplication::getInputEventHandler() const
+event::InputEventHandlerPtr BaseApplication::getInputEventHandler() const
 {
 	return m_engine->getInputEventHandler();
 }
 
-f3d::scene::CSceneManagerPtr BaseApplication::getSceneManager() const
+f3d::scene::SceneManagerPtr BaseApplication::getSceneManager() const
 {
 	return m_engine->getSceneManager();
 }

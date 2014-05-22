@@ -9,13 +9,18 @@ namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class EShaderType
+	enum EShaderType
 	{
 		eTypeUnknown = -1,
 		eTypeVertex,
 		eTypeFragment,
 		eTypeGeometry,
+
+        eShaderTypeCount
 	};
+
+    extern const std::string&   getShaderTypeNameByType(EShaderType type);
+    extern EShaderType          getShaderTypeByName(const std::string& name);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,8 +30,9 @@ namespace renderer
 						CShader();
 		virtual			~CShader();
 
-		virtual void	create( const std::string& file )	= 0;
-		virtual void	destroy()							= 0;
+        virtual void	create(const std::string& body, EShaderType type) = 0;
+        virtual void    load  (const std::string& file, EShaderType type) = 0;
+		virtual void	destroy()                                         = 0;
 
 		u32				getShaderID()		const;
 		EShaderType		getShaderType()		const;

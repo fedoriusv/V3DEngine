@@ -63,13 +63,13 @@ namespace renderer
         SMaterialData           m_materialData;
         
         TextureList             m_texture;
-        CRenderTechiquePtr      m_renderTechique;
+        RenderTechiquePtr       m_renderTechique;
 
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CMaterial> CMaterialPtr;
+    typedef std::shared_ptr<CMaterial> MaterialPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

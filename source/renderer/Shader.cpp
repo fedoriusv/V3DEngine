@@ -4,6 +4,35 @@ namespace f3d
 {
 namespace renderer
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const std::string k_shaderTypeName[EShaderType::eShaderTypeCount] = {
+
+        "vertex",
+        "fragment",
+        "geometry"
+    };
+
+    const std::string& getShaderTypeNameByType(EShaderType type)
+    {
+        return k_shaderTypeName[type];
+    }
+
+    EShaderType getShaderTypeByName(const std::string& name)
+    {
+        for (int i = 0; i < eShaderTypeCount; ++i)
+        {
+            if (k_shaderTypeName[i].compare(name) == 0)
+            {
+                return (EShaderType)i;
+            }
+        }
+
+        return EShaderType::eTypeUnknown;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	CShader::CShader()
 		: CObject()
 		, m_shaderID( -1 )
