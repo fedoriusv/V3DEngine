@@ -16,13 +16,14 @@ namespace renderer
         CShaderGL();
         virtual ~CShaderGL();
 
-        void    create(const std::string& body, EShaderType type)    override;
-        void    load(const std::string& file, EShaderType type)      override;
+        bool    create(const std::string& body, EShaderType type)    override;
+        bool    load  (const std::string& file, EShaderType type)    override;
         void    destroy()                                            override;
 
     private:
 
-        void    initShader(u32& shader, const EShaderType type, void* body);
+        bool    initShader(u32& shader, const EShaderType type, void* body);
+        void    deleteShader(u32 shader);
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

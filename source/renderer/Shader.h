@@ -30,8 +30,8 @@ namespace renderer
 						CShader();
 		virtual			~CShader();
 
-        virtual void	create(const std::string& body, EShaderType type) = 0;
-        virtual void    load  (const std::string& file, EShaderType type) = 0;
+        virtual bool	create(const std::string& body, EShaderType type) = 0;
+        virtual bool    load  (const std::string& file, EShaderType type) = 0;
 		virtual void	destroy()                                         = 0;
 
 		u32				getShaderID()		const;
@@ -39,6 +39,9 @@ namespace renderer
 		bool			getCompileStatus()	const;
 
 	protected:
+
+        char*           readShader(const std::string& file);
+        void			clearShader();
 
 		u32				m_shaderID;
 

@@ -245,7 +245,10 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         if (!shaderPath.empty())
         {
             LOG_INFO("Info parse. Create vshader from file: %s", shaderPath);
-            shader->load(shaderPath, type);
+            if (!shader->load(shaderPath, type))
+            {
+                LOG_ERROR("Error Load Shader %s", shaderPath);
+            }
         }
         else
         {
@@ -256,7 +259,10 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             }
 
             LOG_INFO("Info parse. Create vshader from data");
-            shader->create(shaderBody, type);
+            if (!shader->create(shaderBody, type))
+            {
+                LOG_ERROR("Error Load Shader body");
+            }
         }
 
         m_program->addShader(shader);

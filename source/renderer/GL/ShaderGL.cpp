@@ -1,4 +1,5 @@
 #include "ShaderGL.h"
+#include "utils/Logger.h"
 #include "GL/glew.h"
 
 using namespace f3d;
@@ -12,19 +13,45 @@ CShaderGL::~CShaderGL()
 {
 }
 
-void CShaderGL::create(const std::string& body, EShaderType type)
+bool CShaderGL::create(const std::string& body, EShaderType type)
 {
+    std::memcpy(m_data, body.c_str(), body.size());
+    if (!m_data)
+    {
+        LOG_ERROR("Shader: Empty Shader Body");
+        return false;
+    }
+
+    m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
+    CShaderGL::clearShader();
+
+    return m_compileStatus;
 }
 
-void CShaderGL::load(const std::string& file, EShaderType type)
+bool CShaderGL::load(const std::string& file, EShaderType type)
 {
+    m_data = reinterpret_cast<void*>(readShader(file));
+    m_shaderType = type;
+
+    if (!m_data)
+    {
+        LOG_ERROR("Shader: Empty Shader Body");
+        return false;
+    }
+
+    m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
+    CShaderGL::clearShader();
+
+    return m_compileStatus;
 }
 
 void CShaderGL::destroy()
 {
+    CShaderGL::deleteShader(m_shaderID);
+    m_shaderID = 0;
 }
 
-void CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
+bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 {
     switch (type)
     {
@@ -47,29 +74,43 @@ void CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
         break;
     }
 
-    GLchar* fsStringPtr[1];
-    fsStringPtr[0] = (GLchar*)body;
-    glShaderSource(shader, 1, (const GLchar**)fsStringPtr, NULL);
+    GLchar* stringPtr[1];
+    stringPtr[0] = (GLchar*)body;
+    glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
 
     glCompileShader(shader);
 
-    GLint testVal;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &testVal);
-    ASSERT(testVal == GL_TRUE || "Invalid Shader Program");
-#ifdef _DEBUG
-    GLint length;
-    GLchar buffer[1024];
-    glGetShaderInfoLog(shader, 1024, &length, buffer);
-    if (strlen(buffer) > 0)
+    GLint isCompiled;;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+    if (!isCompiled)
     {
-        std::function<const char*(int)> strFunc = [](int _type)
-        {
-            return _type == 1 ? "Vertex" : "Fragment";
-        };
+        GLint length;
+        GLint charsWritten;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
-        //LOG_CONSOLE("Shader Program " << strFunc(_typeShader)
-         //   << " id " << _shaderID << " :\n" << (const char*)buffer);
+        GLchar* buffer = new GLchar[length];
+        glGetShaderInfoLog(shader, length, &charsWritten, buffer);
+
+        LOG_ERROR("IniiShader: shader not compiled id: %s", shader);
+        if (strlen(buffer) > 0)
+        {
+            std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
+            {
+                return type == eTypeVertex ? "Vertex" : "Fragment";
+            };
+
+            LOG_ERROR("Shader [%s] Error: %s", strFunc(type), buffer);
+        }
     }
-#endif
-   // return (testVal == GL_TRUE) ? true : false;
+
+    return (isCompiled == GL_TRUE) ? true : false;
+}
+
+void CShaderGL::deleteShader(u32 shader)
+{
+    if (shader > 0)
+    {
+        ASSERT(glIsShader(shader) || "Invalid Index Deleted Shader");
+        glDeleteShader(shader);
+    }
 }
