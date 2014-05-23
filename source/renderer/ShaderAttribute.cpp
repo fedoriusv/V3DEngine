@@ -42,17 +42,28 @@ const EShaderAttribute getShaderAttributeTypeByName(const std::string& name)
 
 
 CShaderAttribute::CShaderAttribute()
-    : m_type(EShaderAttribute::eAttributeNone)
+    : m_typeAttr(EShaderAttribute::eAttributeNone)
     , m_attribute("")
 {
+    m_type = EObjectType::eTypeShaderAttribute;
 }
 
 CShaderAttribute::~CShaderAttribute()
 {
 }
 
-void CShaderAttribute::addAttribute(EShaderAttribute type, const std::string& attribute)
+void CShaderAttribute::setAttribute(EShaderAttribute type, const std::string& attribute)
 {
-    m_type = type;
+    m_typeAttr = type;
     m_attribute = attribute;
+}
+
+const std::string& CShaderAttribute::getAttributeName() const
+{
+    return m_attribute;
+}
+
+EShaderAttribute CShaderAttribute::getAttributeType() const
+{
+    return m_typeAttr;
 }

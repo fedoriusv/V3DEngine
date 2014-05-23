@@ -14,22 +14,26 @@ namespace renderer
     {
     public:
 
-        CShaderProgramGL();
+        CShaderProgramGL(const ShaderDataPtr& data);
         virtual ~CShaderProgramGL();
 
-        void    create()    override;
+        bool    create()    override;
         void    destroy()   override;
         void    bind()      override;
+        void    unbind()    override;
 
     private:
+
+        bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
 
         bool    initProgram(u32& shaderProgram, std::vector<u32>& shaders);
 
         void    attachShader(u32 shaderProgram, u32 shader);
         void    detachShader(u32 shaderProgram, u32 shader);
         void    bindAttrib(u32 shaderProgram, EShaderAttribute type, const std::string& name);
-        int     getAttrib(u32 shaderProgram, const std::string& name);
+        s32     getAttrib(u32 shaderProgram, const std::string& name);
         void    deleteProgram(u32 shaderProgram);
+        void    useProgram(u32 shaderProgram);
 
     };
 

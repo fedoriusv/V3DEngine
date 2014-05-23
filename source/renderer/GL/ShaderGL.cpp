@@ -114,3 +114,4 @@ void CShaderGL::deleteShader(u32 shader)
         glDeleteShader(shader);
     }
 }
+

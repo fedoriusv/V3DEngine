@@ -167,15 +167,20 @@ void CShaderData::addAttribute(const std::string& name, EShaderAttribute type)
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->addAttribute(type, name);
+        m_attributeList[name]->setAttribute(type, name);
     }
     else
     {
         AttributePtr uniform = std::make_shared<CShaderAttribute>();
 
-        uniform->addAttribute(type, name);
+        uniform->setAttribute(type, name);
         m_attributeList[name] = uniform;
     }
+}
+
+const AttributeList& CShaderData::getAttributeList() const
+{
+    return m_attributeList;
 }
 
 bool CShaderData::isExistSampler(const std::string& name)

@@ -17,6 +17,7 @@ namespace f3d
 		eTypeShader,
 		eTypeShaderProgram,
 		eTypeShaderUniform,
+        eTypeShaderAttribute,
 		eTypesCount
 	};
 

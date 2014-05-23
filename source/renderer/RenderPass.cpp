@@ -283,7 +283,7 @@ void CRenderPass::init()
     {
         case platform::EDriverType::eDriverOpenGL:
         {
-            m_program = std::make_shared<CShaderProgramGL>();
+            m_program = std::make_shared<CShaderProgramGL>(m_shaderData);
         }
             break;
 

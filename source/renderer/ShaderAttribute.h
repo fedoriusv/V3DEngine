@@ -37,11 +37,14 @@ namespace renderer
         CShaderAttribute();
         virtual             ~CShaderAttribute();
 
-        void                addAttribute(EShaderAttribute type, const std::string& attribute);
+        void                setAttribute(EShaderAttribute type, const std::string& attribute);
+
+        const std::string&  getAttributeName() const;
+        EShaderAttribute    getAttributeType() const;
 
     private:
 
-        EShaderAttribute    m_type;
+        EShaderAttribute    m_typeAttr;
         std::string         m_attribute;
 
 

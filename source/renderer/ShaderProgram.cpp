@@ -5,11 +5,12 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CShaderProgram::CShaderProgram()
+CShaderProgram::CShaderProgram(const ShaderDataPtr& data)
 	: CObject()
 	, m_shaderProgID(0)
 	, m_enable(true)
 	, m_isActive(false)
+    , m_shaderData(data)
 {
 	m_type = EObjectType::eTypeShaderProgram;
 }
@@ -29,31 +30,41 @@ bool CShaderProgram::isEnable() const
 	return m_enable;
 }
 
-void CShaderProgram::setEnable( bool enable )
+void CShaderProgram::setEnable(bool enable)
 {
 	m_enable = enable;
 }
 
-void CShaderProgram::addShader(ShaderPtr shaderProgram)
+void CShaderProgram::addShader(ShaderPtr shader)
 {
-	if (shaderProgram)
+	if (shader)
 	{
-		m_shaderList.push_back(shaderProgram);
+		m_shaderList.push_back(shader);
 	}
 }
 
-void CShaderProgram::destroyShader(ShaderPtr shaderProgram)
+void CShaderProgram::destroyShader(ShaderPtr shader)
 {
-	if (shaderProgram)
+    if (shader)
 	{
-		auto shader = std::find(m_shaderList.begin(), m_shaderList.end(), shaderProgram);
-		if (shader == m_shaderList.end())
+        auto current = std::find(m_shaderList.begin(), m_shaderList.end(), shader);
+        if (current == m_shaderList.end())
 		{
             LOG_ERROR("DestroyShader : Shader Program not found");
             return;
 		}
 
-		//TODO : not final
-		m_shaderList.erase(shader);
+        m_shaderList.erase(current);
 	}
+}
+
+void CShaderProgram::getShaderIDArray(std::vector<u32>& shaders)
+{
+    for (u32 i = 0; i < m_shaderList.size(); ++i)
+    {
+        if (m_shaderList[i]->getCompileStatus())
+        {
+            shaders.push_back(m_shaderList[i]->getShaderID());
+        }
+    }
 }
