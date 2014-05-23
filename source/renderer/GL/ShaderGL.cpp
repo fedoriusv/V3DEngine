@@ -84,23 +84,23 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
     if (!isCompiled)
     {
+        LOG_ERROR("IniiShader: shader not compiled id: %s", shader);
+#ifdef _DEBUG
         GLint length;
         GLint charsWritten;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
         GLchar* buffer = new GLchar[length];
         glGetShaderInfoLog(shader, length, &charsWritten, buffer);
-
-        LOG_ERROR("IniiShader: shader not compiled id: %s", shader);
         if (strlen(buffer) > 0)
         {
             std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
             {
                 return type == eTypeVertex ? "Vertex" : "Fragment";
             };
-
             LOG_ERROR("Shader [%s] Error: %s", strFunc(type), buffer);
         }
+#endif
     }
 
     return (isCompiled == GL_TRUE) ? true : false;
