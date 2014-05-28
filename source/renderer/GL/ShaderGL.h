@@ -23,6 +23,7 @@ namespace renderer
     private:
 
         bool    initShader(u32& shader, const EShaderType type, void* body);
+        u32     createShader(const EShaderType type);
         void    deleteShader(u32 shader);
     };
 

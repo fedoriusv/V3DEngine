@@ -53,26 +53,7 @@ void CShaderGL::destroy()
 
 bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 {
-    switch (type)
-    {
-        case eTypeVertex:
-        {
-            shader = glCreateShader(GL_VERTEX_SHADER);
-        }
-        break;
-
-        case eTypeFragment:
-        {
-            shader = glCreateShader(GL_FRAGMENT_SHADER);
-        }
-        break;
-
-        case eTypeGeometry:
-        {
-            //shader = glCreateShader(GL_VERTEX_SHADER);
-        }
-        break;
-    }
+    shader = CShaderGL::createShader(type);
 
     GLchar* stringPtr[1];
     stringPtr[0] = (GLchar*)body;
@@ -104,6 +85,45 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
     }
 
     return (isCompiled == GL_TRUE) ? true : false;
+}
+
+u32 CShaderGL::createShader(const EShaderType type)
+{
+    u32 shader = 0;
+
+    switch (type)
+    {
+        case eTypeVertex:
+        {
+            shader = glCreateShader(GL_VERTEX_SHADER);
+        }
+        break;
+
+        case eTypeFragment:
+        {
+            shader = glCreateShader(GL_FRAGMENT_SHADER);
+        }
+        break;
+
+        case eTypeGeometry:
+        {
+            shader = glCreateShader(GL_GEOMETRY_SHADER);
+        }
+        break;
+
+        case eTypeCompute:
+        {
+            shader = glCreateShader(GL_COMPUTE_SHADER);
+        }
+        break;
+
+        default:
+        break;
+
+    }
+
+    ASSERT(glIsShader(shader) || "Can not create Shader");
+    return shader;
 }
 
 void CShaderGL::deleteShader(u32 shader)

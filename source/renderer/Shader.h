@@ -15,6 +15,7 @@ namespace renderer
         eTypeVertex,
         eTypeFragment,
         eTypeGeometry,
+        eTypeCompute,
 
         eShaderTypeCount
     };

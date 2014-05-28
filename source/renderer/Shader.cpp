@@ -9,7 +9,8 @@ const std::string k_shaderTypeName[EShaderType::eShaderTypeCount] = {
 
     "vertex",
     "fragment",
-    "geometry"
+    "geometry",
+    "compute"
 };
 
 const std::string& getShaderTypeNameByType(EShaderType type)
