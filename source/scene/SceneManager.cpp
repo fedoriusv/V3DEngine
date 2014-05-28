@@ -37,8 +37,8 @@ void CSceneManager::draw()
 	{
 		CNode* item = (*iter);
 
-		//item->update(m_dDeltaTime);
-		//item->render();
+        item->update(m_deltaTime);
+		item->render();
 	}
 
 	f3d::CEngine::getInstance()->getRenderer()->postRender();

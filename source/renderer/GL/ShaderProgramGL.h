@@ -3,6 +3,7 @@
 
 #include "renderer/ShaderProgram.h"
 #include "renderer/ShaderAttribute.h"
+#include "renderer/ShaderUniform.h"
 
 namespace f3d
 {
@@ -32,8 +33,11 @@ namespace renderer
         void    detachShader(u32 shaderProgram, u32 shader);
         void    bindAttrib(u32 shaderProgram, EShaderAttribute type, const std::string& name);
         s32     getAttrib(u32 shaderProgram, const std::string& name);
+        void    createProgram(u32& shaderProgram);
         void    deleteProgram(u32 shaderProgram);
         void    useProgram(u32 shaderProgram);
+
+        bool    setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value);
 
     };
 

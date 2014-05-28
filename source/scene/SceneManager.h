@@ -8,49 +8,49 @@ namespace f3d
 {
 namespace scene
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CSceneManager
-	{
-	public:
+    class CSceneManager
+    {
+    public:
 
-								CSceneManager();
-								~CSceneManager();
+        CSceneManager();
+        ~CSceneManager();
 
-		void					init();
+        void                    init();
 
-		void					draw();
+        void                    draw();
 
-		void					clear();
-		bool					drop(CNode* node);
+        void                    clear();
+        bool                    drop(CNode* node);
 
-		void					addNode(CNode* node);
+        void                    addNode(CNode* node);
 
-		CNode*					getObjectByID(const s32 id);
-		CNode*					getObjectByName(const std::string& name);
+        CNode*                  getObjectByID(const s32 id);
+        CNode*                  getObjectByName(const std::string& name);
 
-		void					setBackgroundColor(const core::Vector3D& color);
+        void                    setBackgroundColor(const core::Vector3D& color);
 
-		const core::Vector3D&	getBackgroundColor() const;
+        const core::Vector3D&   getBackgroundColor() const;
 
-	private:
+    private:
 
-		double					m_currentTime;
-		double					m_deltaTime;
-		double					m_lastTime;
+        double                  m_currentTime;
+        double                  m_deltaTime;
+        double                  m_lastTime;
 
-		void					updateDeltaTime();
-		void					update(f3d::f64 time);
+        void                    updateDeltaTime();
+        void                    update(f64 time);
 
-		std::vector<CNode*>		m_objects;
+        std::vector<CNode*>     m_objects;
 
-	};
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<CSceneManager>	SceneManagerPtr;
+    typedef std::shared_ptr<CSceneManager>	SceneManagerPtr;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 

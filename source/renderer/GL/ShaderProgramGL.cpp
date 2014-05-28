@@ -90,8 +90,7 @@ void CShaderProgramGL::unbind()
 
 bool CShaderProgramGL::initProgram(u32& shaderProgram, std::vector<u32>& shaders)
 {
-    shaderProgram = glCreateProgram();
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Created Shader program");
+    CShaderProgramGL::createProgram(shaderProgram);
 
     for (u32 i = 0; i < shaders.size(); ++i)
     {
@@ -144,6 +143,12 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, std::vector<u32>& shaders
     return (linkStatus == GL_TRUE) ? true : false;
 }
 
+void CShaderProgramGL::createProgram(u32& shaderProgram)
+{
+    shaderProgram = glCreateProgram();
+    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Created Shader program");
+}
+
 void CShaderProgramGL::attachShader(u32 shaderProgram, u32 shader)
 {
     ASSERT(glIsProgram(shaderProgram) || "Invalid Index Attachment Shader program");
@@ -183,4 +188,84 @@ void CShaderProgramGL::useProgram(u32 shaderProgram)
 {
     ASSERT(glIsProgram(shaderProgram) || "Invalid Index bind Shader program");
     glUseProgram(shaderProgram);
+}
+
+bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value)
+{
+    int location = -1;
+
+    switch (type)
+    {
+        case EShaderDataType::eUniformNone:
+        {
+            location = -1;
+        }
+        break;
+
+        case EShaderDataType::eUniformInt:
+        {
+            GLint val = *(GLint*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniform1i(location, val);
+        }
+        break;
+
+        case EShaderDataType::eUniformFloat:
+        {
+            GLfloat val = *(GLfloat*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniform1f(location, val);
+        }
+        break;
+
+        case EShaderDataType::eUniformVector2:
+        {
+            core::Vector2D val = *(core::Vector2D*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniform2fv(location, 1, &val[0]);
+        }
+        break;
+
+        case EShaderDataType::eUniformVector3:
+        {
+            core::Vector3D val = *(core::Vector3D*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniform3fv(location, 1, &val[0]);
+        }
+        break;
+
+        case EShaderDataType::eUniformVector4:
+        {
+            core::Vector4D val = *(core::Vector4D*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniform4fv(location, 1, &val[0]);
+        }
+        break;
+
+        case EShaderDataType::eUniformMatrix3:
+        {
+            core::Matrix3D val = *(core::Matrix3D*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniformMatrix3fv(location, 1, GL_TRUE, val.getPtr());
+        }
+        break;
+    
+        case EShaderDataType::eUniformMatrix4:
+        {
+            core::Matrix4D val = *(core::Matrix4D*)value;
+            location = glGetUniformLocation(shader, attribute.data());
+            glUniformMatrix4fv(location, 1, GL_TRUE, val.getPtr());
+        }
+        break;
+    
+        default:
+        break;
+    }
+
+    if (location == -1)
+    {
+        LOG_ERROR(" Error Uniform Location: %s . Shader ID : %d", attribute.data(), shader);
+    }
+
+    return (location != -1);
 }

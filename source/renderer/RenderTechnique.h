@@ -20,7 +20,7 @@ namespace renderer
         CRenderTechique();
         virtual             ~CRenderTechique();
 
-        RenderPassPtr      getRenderPass(u32 id) const;
+        RenderPassPtr       getRenderPass(u32 id) const;
         u32                 getRenderPassCount()  const;
         void                addRenderPass(const RenderPassPtr& pass);
 

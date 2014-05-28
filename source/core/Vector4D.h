@@ -44,6 +44,8 @@ namespace core
 		bool			operator >  (const TVector4D<T>& other)			const;
 		bool			operator == (const TVector4D<T>& other)			const;
 		bool			operator != (const TVector4D<T>& other)			const;
+        T				operator [] (u32 index)                         const;
+        T&				operator [] (u32 index);
 
 		TVector4D<T>&	set(const T nx, const T ny, const T nz, const T nw = 0);
 		TVector4D<T>&	set(const TVector4D<T>& point);
@@ -331,6 +333,18 @@ namespace core
 	{
 		return !this->isEquals(other);
 	}
+
+    template<class T>
+    T TVector4D<T>::operator [] (u32 index) const
+    {
+        return ((T*)this)[index];
+    }
+
+    template<class T>
+    T& TVector4D<T>::operator [] (u32 index)
+    {
+        return ((T*)this)[index];
+    }
 
 	template<class T>
 	bool TVector4D<T>::isEquals(const TVector4D<T>& other, const T tolerance) const

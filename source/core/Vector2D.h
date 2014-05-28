@@ -41,6 +41,8 @@ namespace core
 		bool			operator >  (const TVector2D<T>&other)     const;
 		bool			operator == (const TVector2D<T>& other)    const;
 		bool			operator != (const TVector2D<T>& other)    const;
+        T				operator [] (u32 index)                    const;
+        T&				operator [] (u32 index);
 
 		TVector2D<T>&	set(const T nx, const T ny);
 		TVector2D<T>&	set(const TVector2D<T>& other);
@@ -283,6 +285,18 @@ namespace core
 	{
 		return !this->isEquals(other);;
 	}
+
+    template<class T>
+    T TVector2D<T>::operator [] (u32 index) const
+    {
+        return ((T*)this)[index];
+    }
+
+    template<class T>
+    T& TVector2D<T>::operator [] (u32 index)
+    {
+        return ((T*)this)[index];
+    }
 
 	template<class T>
 	TVector2D<T>& TVector2D<T>::set(const T nx, const T ny)

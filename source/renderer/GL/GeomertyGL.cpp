@@ -1,14 +1,17 @@
 #include "GeomertyGL.h"
 #include "GL/glew.h"
 
+#include "renderer/ShaderAttribute.h"
+#include "renderer/ShaderData.h"
 #include "utils/Logger.h"
 #include "Engine.h"
 
 using namespace f3d;
 using namespace f3d::renderer;
 
-CGeometryGL::CGeometryGL()
-	: m_arrayId(0)
+CGeometryGL::CGeometryGL(const ShaderDataPtr& shaderData)
+    : CGeometry(shaderData)
+	, m_arrayId(0)
 	, m_drawModeGL(GL_TRIANGLE_STRIP)
 {
 }
@@ -28,28 +31,67 @@ void CGeometryGL::init()
 	CGeometryGL::genVertexArray(m_arrayId);
 	CGeometryGL::bindVertexArray(m_arrayId);
 
-	//Vertex
-	CGeometryGL::genBuffers(m_data.m_vertices.id);
-	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
-	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
-	CGeometryGL::initVertexAttribPointer(0, 3);
+    const AttributeList& list = m_shaderData->getAttributeList();
+    for (auto attr : list)
+    {
+        EShaderAttribute type = attr.second->getAttributeType();
 
-	//Normal
-	CGeometryGL::genBuffers(m_data.m_normals.id);
-	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
-	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
-	CGeometryGL::initVertexAttribPointer(0, 3);
+        switch (type)
+        {
+            case EShaderAttribute::eAttributeVertex:
+            {
+                CGeometryGL::genBuffers(m_data.m_vertices.id);
+                CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
+                CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
+                CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);
+            }
+            break;
 
-	//TexCoords
-	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
-	{
-		CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
-		CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
-		CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
-		CGeometryGL::initVertexAttribPointer(0 + layer, 2);
-	}
+            case EShaderAttribute::eAttributeNormal:
+            {
+                CGeometryGL::genBuffers(m_data.m_normals.id);
+                CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
+                CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
+                CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeNormal, 3);
+            }
+            break;
 
-	//Indices
+            case EShaderAttribute::eAttributeColor:
+            {
+                //TODO: Color
+            }
+            break;
+
+            case EShaderAttribute::eAttributeBinormal:
+            {
+                //TODO: binormal
+            }
+            break;
+
+            case EShaderAttribute::eAttributeTangent:
+            {
+                //TODO: tangent
+            }
+            break;
+
+            case EShaderAttribute::eAttributeTexture0:
+            case EShaderAttribute::eAttributeTexture1:
+            case EShaderAttribute::eAttributeTexture2:
+            case EShaderAttribute::eAttributeTexture3:
+            {
+                for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+                {
+                    CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
+                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
+                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
+                    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeTexture0 + layer, 2);
+                }
+            }
+            break;
+        }
+    }
+	
+    //Indices
 	CGeometryGL::genBuffers(m_data.m_indices.id);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
 	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * m_data.m_countIndices, m_data.m_indices.vertex.data());
