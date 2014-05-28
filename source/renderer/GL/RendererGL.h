@@ -25,8 +25,6 @@ namespace renderer
     
     private:
     
-        virtual ShaderPtr   makeSharedShader() const       override;
-
         core::Matrix4D      m_projectionMatrix;
         core::Matrix4D      m_viewMatrix;
     };

@@ -12,8 +12,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
-
     class CRenderer : public Singleton<CRenderer>
     {
     public:
@@ -33,13 +31,7 @@ namespace renderer
 
         void                    checkForErrors(const std::string& location = "");
 
-        //virtual GeometryPtr   createGeometry() = 0;
-
     protected:
-
-        friend                  CRenderPass;
-
-        virtual ShaderPtr       makeSharedShader() const    = 0;;
 
         DriverContextPtr        m_context;
 

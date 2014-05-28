@@ -4,7 +4,7 @@
 #include "Object.h"
 #include "Shader.h"
 #include "ShaderData.h"
-#include "tinyxml2.h"
+
 
 namespace f3d
 {

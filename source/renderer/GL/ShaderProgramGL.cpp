@@ -1,7 +1,9 @@
 #include "ShaderProgramGL.h"
-#include "ShaderGL.h"
-#include "utils/Logger.h"
+#include "common.h"
 #include "GL/glew.h"
+
+#include "utils/Logger.h"
+#include "renderer/GL/ShaderGL.h"
 
 using namespace f3d;
 using namespace f3d::renderer;

@@ -41,35 +41,36 @@ namespace renderer
         eUniformsCount,
     };
 
-    extern const std::string&           getShaderUniformNameByType(EDefaultUniformData type);
-    extern const EDefaultUniformData    getShaderUniformTypeByName(const std::string& name);
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
     class CShaderProgram;
 
-	class CShaderUniform : public CObject
-	{
-	public:
+    class CShaderUniform : public CObject
+    {
+    public:
 
         CShaderUniform();
-        virtual                 ~CShaderUniform();
+        virtual                             ~CShaderUniform();
 
-        void                    setUniform(EShaderDataType type, const std::string& attribute, void* value, EDefaultUniformData data = eUserUniform);
+        void                                setUniform(EShaderDataType type, const std::string& attribute, void* value, EDefaultUniformData data = eUserUniform);
 
-	protected:
+        static const std::string&           getShaderUniformNameByValue(EDefaultUniformData type);
+        static const EDefaultUniformData    getShaderUniformValueByName(const std::string& name);
 
-        EDefaultUniformData     m_defaultData;
-        EShaderDataType         m_uniformType;
-		void*                   m_uniformValue;
-		std::string             m_attribute;
+    private:
 
-        void*                   allocMemory(EShaderDataType type, void* value);
-		void                    deallocMemory();
-		
-	};
+        EDefaultUniformData                 m_defaultData;
+        EShaderDataType                     m_uniformType;
+        void*                               m_uniformValue;
+        std::string                         m_attribute;
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
+        void*                               allocMemory(EShaderDataType type, void* value);
+        void                                deallocMemory();
+
+        static const std::string            s_shaderUniformName[EDefaultUniformData::eUniformsCount];
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<CShaderUniform>         UniformPtr;
     typedef std::map<std::string, UniformPtr>       UniformList;

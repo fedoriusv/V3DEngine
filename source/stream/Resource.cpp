@@ -35,6 +35,8 @@ CResource& CResource::operator=(const CResource& other)
     m_resourceName = other.m_resourceName;
     m_resourceFolder = other.m_resourceFolder;
     m_isLoaded = other.m_isLoaded;
+
+    return *this;
 }
 
 IStream* CResource::getStream() const

@@ -25,9 +25,6 @@ namespace renderer
         eAttributeCount,
     };
 
-    extern const std::string&       getShaderAttributeNameByType(EShaderAttribute type);
-    extern const EShaderAttribute   getShaderAttributeTypeByName(const std::string& name);
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CShaderAttribute : public CObject
@@ -35,19 +32,22 @@ namespace renderer
     public:
 
         CShaderAttribute();
-        virtual             ~CShaderAttribute();
+        virtual                         ~CShaderAttribute();
 
-        void                setAttribute(EShaderAttribute type, const std::string& attribute);
+        void                            setAttribute(EShaderAttribute type, const std::string& attribute);
 
-        const std::string&  getAttributeName() const;
-        EShaderAttribute    getAttributeType() const;
+        const std::string&              getAttributeName() const;
+        EShaderAttribute                getAttributeType() const;
+
+        static const std::string&       getShaderAttributeNameByType(EShaderAttribute type);
+        static const EShaderAttribute   getShaderAttributeTypeByName(const std::string& name);
 
     private:
 
-        EShaderAttribute    m_typeAttr;
-        std::string         m_attribute;
+        EShaderAttribute                m_typeAttr;
+        std::string                     m_attribute;
 
-
+        static const std::string        s_shaderAttributeName[EShaderAttribute::eAttributeCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

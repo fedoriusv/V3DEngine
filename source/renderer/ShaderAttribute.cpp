@@ -5,7 +5,7 @@ using namespace f3d::renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string k_shaderAttributeName[EShaderAttribute::eAttributeCount] = {
+const std::string CShaderAttribute::s_shaderAttributeName[EShaderAttribute::eAttributeCount] = {
 
     "mesh.positions",
     "mesh.colors",
@@ -20,16 +20,16 @@ const std::string k_shaderAttributeName[EShaderAttribute::eAttributeCount] = {
 };
 
 
-const std::string& getShaderAttributeNameByType(EShaderAttribute type)
+const std::string& CShaderAttribute::getShaderAttributeNameByType(EShaderAttribute type)
 {
-    return k_shaderAttributeName[type];
+    return s_shaderAttributeName[type];
 }
 
-const EShaderAttribute getShaderAttributeTypeByName(const std::string& name)
+const EShaderAttribute CShaderAttribute::getShaderAttributeTypeByName(const std::string& name)
 {
     for (int i = 0; i < eAttributeCount; ++i)
     {
-        if (k_shaderAttributeName[i].compare(name) == 0)
+        if (s_shaderAttributeName[i].compare(name) == 0)
         {
             return (EShaderAttribute)i;
         }

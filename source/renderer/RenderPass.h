@@ -1,11 +1,11 @@
 #ifndef _F3D_RENDER_PASS_H_
 #define _F3D_RENDER_PASS_H_
 
+#include "tinyxml2.h"
 #include "Object.h"
 #include "ShaderProgram.h"
 #include "ShaderData.h"
 #include "RenderState.h"
-#include "tinyxml2.h"
 
 namespace f3d
 {
@@ -35,9 +35,11 @@ namespace renderer
 
         friend              CRenderTechique;
 
-        void                init();
 
-        bool                parse(tinyxml2::XMLElement* root);
+        void                init();
+        ShaderPtr           makeSharedShader();
+
+        bool                parse            (tinyxml2::XMLElement* root);
 
         bool                parseUniforms    (tinyxml2::XMLElement* root);
         bool                parseAttributes  (tinyxml2::XMLElement* root);

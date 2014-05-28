@@ -3,7 +3,6 @@
 
 #include "utils/Logger.h"
 
-
 using namespace f3d;
 using namespace f3d::renderer;
 
@@ -66,7 +65,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 
     glCompileShader(shader);
 
-    GLint isCompiled;;
+    GLint isCompiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
     if (!isCompiled)
     {

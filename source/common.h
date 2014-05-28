@@ -32,6 +32,7 @@ namespace f3d
 
 #include <assert.h>
 #include <time.h>
+#include <cstdarg>
 
 #ifdef _DEBUG
 #	define ASSERT(x) assert(x)

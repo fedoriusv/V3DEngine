@@ -5,7 +5,7 @@ using namespace f3d::renderer;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string k_shaderTypeName[EShaderType::eShaderTypeCount] = {
+const std::string CShader::s_shaderTypeName[EShaderType::eShaderTypeCount] = {
 
     "vertex",
     "fragment",
@@ -13,16 +13,16 @@ const std::string k_shaderTypeName[EShaderType::eShaderTypeCount] = {
     "compute"
 };
 
-const std::string& getShaderTypeNameByType(EShaderType type)
+const std::string& CShader::getShaderTypeNameByType(EShaderType type)
 {
-    return k_shaderTypeName[type];
+    return s_shaderTypeName[type];
 }
 
-EShaderType getShaderTypeByName(const std::string& name)
+EShaderType CShader::getShaderTypeByName(const std::string& name)
 {
     for (int i = 0; i < eShaderTypeCount; ++i)
     {
-        if (k_shaderTypeName[i].compare(name) == 0)
+        if (s_shaderTypeName[i].compare(name) == 0)
         {
             return (EShaderType)i;
         }

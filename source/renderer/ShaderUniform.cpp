@@ -36,7 +36,7 @@ const EShaderDataType getShaderDataTypeByName(const std::string& name)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string k_shaderUniformName[EDefaultUniformData::eUniformsCount] = {
+const std::string CShaderUniform::s_shaderUniformName[EDefaultUniformData::eUniformsCount] = {
 
     "transform.projectionMatrix",
     "transform.modelMatrix",
@@ -48,21 +48,16 @@ const std::string k_shaderUniformName[EDefaultUniformData::eUniformsCount] = {
 };
 
 
-const std::string& getShaderUniformNameByValue(EDefaultUniformData type)
+const std::string& CShaderUniform::getShaderUniformNameByValue(EDefaultUniformData type)
 {
-    if (type < 0)
-    {
-        return "";
-    }
-
-    return k_shaderUniformName[type];
+    return s_shaderUniformName[type];
 }
 
-const EDefaultUniformData getShaderUniformValueByName(const std::string& name)
+const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std::string& name)
 {
     for (int i = 0; i < EDefaultUniformData::eUniformsCount; ++i)
     {
-        if (k_shaderUniformName[i].compare(name) == 0)
+        if (s_shaderUniformName[i].compare(name) == 0)
         {
             return (EDefaultUniformData)i;
         }
