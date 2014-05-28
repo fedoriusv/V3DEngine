@@ -11,8 +11,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef  std::vector<RenderPassPtr>    CRenderPassList;
-
     class CRenderTechique : public stream::CResource
     {
     public:
@@ -24,7 +22,7 @@ namespace renderer
         u32                 getRenderPassCount()  const;
         void                addRenderPass(const RenderPassPtr& pass);
 
-        void                load();
+        bool                init(stream::IStream* stream) override;
         void                refresh();
 
 
@@ -32,7 +30,7 @@ namespace renderer
 
         bool                parse(tinyxml2::XMLElement* root);
 
-        CRenderPassList     m_renderPassList;
+        RenderPassList      m_renderPassList;
 
     };
 

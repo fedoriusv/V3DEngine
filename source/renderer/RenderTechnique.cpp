@@ -77,7 +77,7 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
 
 }
 
-void CRenderTechique::load()
+bool CRenderTechique::init(stream::IStream* stream)
 {
 }
 

@@ -28,6 +28,7 @@ namespace f3d
 #include <memory>
 #include <fstream>
 #include <functional>
+#include <utility>
 
 #include <assert.h>
 #include <time.h>
