@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set(SOLUTION_NAME Fedoria3D)
-set(ENGINE_NAME Fedoria3DEngine)
+set(SOLUTION_NAME Valera3D)
+set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
 set(TEST_PROJECT_0 CreateWindow)

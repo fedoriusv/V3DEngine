@@ -1,4 +1,4 @@
-// Fedoria3D Engine (c) 2014 Fedor Nekrasov
+// Valera3D Engine (c) 2014
 
 #ifndef _F3D_CONFIG_H_
 #define _F3D_CONFIG_H_
