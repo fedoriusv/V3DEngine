@@ -1,5 +1,5 @@
 #include "Shape.h"
-#include "Fedoria3D.h"
+#include "Engine.h"
 #include "renderer/GL/GeomertyGL.h"
 
 using namespace f3d;
@@ -7,16 +7,23 @@ using namespace f3d::scene;
 using namespace f3d::renderer;
 
 CShape::CShape()
-	: m_geometry(nullptr)
-	, m_material(nullptr)
+    : m_geometry(nullptr)
+    , m_material(nullptr)
+{
+}
+
+void CShape::init()
 {
 	platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
 	
+    m_material = std::make_shared<CMaterial>();
+
 	switch (type)
 	{
 		case platform::EDriverType::eDriverOpenGL:
 		{
-			m_geometry = std::make_shared<CGeometryGL>(CGeometryGL());
+            //m_material->getRenderTechique()->getRenderPass(0)->
+            //m_geometry = std::make_shared<CGeometryGL>(CGeometryGL());
 		}
 		break;
 
@@ -31,7 +38,6 @@ CShape::CShape()
 			LOG_ERROR("Can`t Choose driver type");
 		}
 	}
-	
 }
 
 CShape::~CShape()

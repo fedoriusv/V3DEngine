@@ -20,8 +20,9 @@ int BaseApplication::exec()
 		delete this;
 		return 0;
 	}
+
 	this->init();
-	//m_engine->getSceneManager()->init();
+	getSceneManager()->init();
 
 	while (m_engine->begin())
 	{

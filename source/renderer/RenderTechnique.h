@@ -22,7 +22,10 @@ namespace renderer
         u32                 getRenderPassCount()  const;
         void                addRenderPass(const RenderPassPtr& pass);
 
-        bool                init(stream::IStream* stream) override;
+
+        void                init(stream::IStream* stream)   override;
+        bool                load()                          override;
+
         void                refresh();
 
 

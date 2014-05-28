@@ -1,4 +1,5 @@
-#include "scene/SceneManager.h"
+#include "SceneManager.h"
+#include "CubeShape.h"
 #include "Engine.h"
 
 #ifdef _PLATFORM_WIN_
@@ -23,7 +24,11 @@ CSceneManager::~CSceneManager()
 
 void CSceneManager::init()
 {
-	//
+    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    {
+        CNode* item = (*iter);
+        item->init();
+    }
 }
 
 void CSceneManager::draw()
@@ -128,4 +133,16 @@ void CSceneManager::setBackgroundColor(const core::Vector3D& color)
 const core::Vector3D& CSceneManager::getBackgroundColor() const
 {
 	return f3d::CEngine::getInstance()->getRenderer()->getBackColor();
+}
+
+CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const float size)
+{
+    CCubeShape* node = new CCubeShape();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setScale(size);
+
+    CSceneManager::addNode(node);
+
+    return node;
 }

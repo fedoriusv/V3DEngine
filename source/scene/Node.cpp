@@ -15,12 +15,12 @@ CNode::~CNode()
 {
 	if (m_parentNode)
 	{
-		m_parentNode->dettachChildNode(this);
+		m_parentNode->dettachChild(this);
 	}
 
 	for (CNode* node : m_childNodes)
 	{
-		node->setParentNode(nullptr);
+		node->setParent(nullptr);
 	}
 
 	m_childNodes.clear();
@@ -46,27 +46,32 @@ void CNode::setTransform(const core::Matrix4D& transform)
 	m_transform = transform;
 }
 
-void CNode::setParentNode(CNode* parent)
+void CNode::setParent(CNode* parent)
 {
+    if (!parent)
+    {
+        return;
+    }
+
 	if (m_parentNode)
 	{
-		m_parentNode->dettachChildNode(this);
+		m_parentNode->dettachChild(this);
 	}
 	m_parentNode = parent;
 }
 
-void CNode::attachChildNode(CNode* child)
+void CNode::attachChild(CNode* child)
 {
-	child->setParentNode(this);
+	child->setParent(this);
 	m_childNodes.push_back(child);
 }
 
-void CNode::dettachChildNode(CNode* child)
+void CNode::dettachChild(CNode* child)
 {
 	if (!m_childNodes.empty())
 	{
 		m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
-		child->setParentNode(nullptr);
+		child->setParent(nullptr);
 	}
 }
 
@@ -100,7 +105,7 @@ core::Matrix4D CNode::getAbsTransform() const
 	return m_transform;
 }
 
-CNode* CNode::getParentNode() const
+CNode* CNode::getParent() const
 {
 	return m_parentNode;
 }

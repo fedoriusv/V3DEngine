@@ -14,9 +14,11 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-	LOG_INFO("---------Init Application--------")
-	
-	//TODO: user data
+    LOG_INFO("---------Init Application--------");
+
+    //TODO: user data
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube());
+    cube->getMaterial()->loadRenderTechique("default.xml");
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }

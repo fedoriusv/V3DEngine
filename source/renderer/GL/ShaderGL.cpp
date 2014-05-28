@@ -1,6 +1,8 @@
 #include "ShaderGL.h"
-#include "utils/Logger.h"
 #include "GL/glew.h"
+
+#include "utils/Logger.h"
+
 
 using namespace f3d;
 using namespace f3d::renderer;
@@ -11,6 +13,9 @@ CShaderGL::CShaderGL()
 
 CShaderGL::~CShaderGL()
 {
+    CShader::clearShader();
+    CShaderGL::deleteShader(m_shaderID);
+    m_shaderID = 0;
 }
 
 bool CShaderGL::create(const std::string& body, EShaderType type)

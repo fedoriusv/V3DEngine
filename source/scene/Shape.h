@@ -39,6 +39,8 @@ namespace scene
 		void					setMaterial(renderer::MaterialPtr material);
 		renderer::MaterialPtr	getMaterial() const;
 
+        void                    init()  override;
+
 	protected:
 
 		EShapeType				m_shapeType;

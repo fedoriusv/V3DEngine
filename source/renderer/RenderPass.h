@@ -22,6 +22,14 @@ namespace renderer
         CRenderPass();
         virtual             ~CRenderPass();
 
+        ShaderProgramPtr    getShaderProgram() const;
+        void                setShaderProgram(const ShaderProgramPtr& program);
+
+        ShaderDataPtr       getShaderData() const;
+        void                setShaderData(const ShaderDataPtr& data);
+
+        RenderStatePtr      getRenderState() const;
+        void                setRenderState(const RenderStatePtr& state);
 
     private:
 
@@ -38,8 +46,6 @@ namespace renderer
         bool                parseRenderTarget(tinyxml2::XMLElement* root);
         bool                parseRenderState (tinyxml2::XMLElement* root);
 
-        ShaderPtr           makeSharedShader() const;
-
         ShaderProgramPtr    m_program;
         ShaderDataPtr       m_shaderData;
         RenderStatePtr      m_renderState;
@@ -49,7 +55,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderPass> RenderPassPtr;
+    typedef std::shared_ptr<CRenderPass>    RenderPassPtr;
+    typedef  std::vector<RenderPassPtr>     RenderPassList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

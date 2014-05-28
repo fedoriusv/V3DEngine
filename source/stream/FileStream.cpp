@@ -15,9 +15,9 @@ FileStream::FileStream()
 {
 }
 
-FileStream::FileStream(const std::string& fileName, EOpenMode openMode)
+FileStream::FileStream(const std::string& file, EOpenMode openMode)
 {
-    open(fileName, openMode);
+    open(file, openMode);
 }
 
 
@@ -26,7 +26,7 @@ FileStream::~FileStream()
     close();
 }
 
-bool FileStream::open(const std::string& fileName, EOpenMode openMode)
+bool FileStream::open(const std::string& file, EOpenMode openMode)
 {
     const char* mode = 0;
 
@@ -63,9 +63,9 @@ bool FileStream::open(const std::string& fileName, EOpenMode openMode)
         mode = "rb";
     }
 
-    m_fileName = fileName;
+    m_fileName = file;
 
-    m_fileHandler = fopen(fileName.c_str(), mode);
+    m_fileHandler = fopen(file.c_str(), mode);
 
     m_isOpen = m_fileHandler != nullptr;
 

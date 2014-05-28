@@ -26,6 +26,8 @@ namespace scene
 
         void                    addNode(CNode* node);
 
+        CNode*                  addCube(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const float size = 1.0f);
+
         CNode*                  getObjectByID(const s32 id);
         CNode*                  getObjectByName(const std::string& name);
 

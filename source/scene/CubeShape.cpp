@@ -44,6 +44,8 @@ void CCubeShape::update(f64 time)
 
 void CCubeShape::init()
 {
+    CShape::init();
+
 	f3d::f32 s = 0.5f;
 
 	f3d::f32 vertex[][3] =

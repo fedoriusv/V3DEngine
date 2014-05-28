@@ -18,7 +18,8 @@ namespace stream
         CResource();
         virtual             ~CResource();
 
-        virtual bool        init(IStream* stream) = 0;
+        virtual void        init(IStream* stream) = 0;
+        virtual bool        load()                = 0;
 
         IStream*            getStream() const;
         bool                isLoaded()  const;

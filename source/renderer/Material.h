@@ -23,15 +23,12 @@ namespace renderer
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CTexture>       TexturePtr;
-    typedef std::vector<TexturePtr>         TextureList;
-
     class CMaterial : public CObject
     {
     public:
 
-                                CMaterial();
-                                ~CMaterial();
+        CMaterial();
+        virtual                 ~CMaterial();
 
         void                    setAmbientColor (const core::Vector3D& color);
         void                    setDiffuseColor (const core::Vector3D& color);
@@ -57,6 +54,13 @@ namespace renderer
         void                    destroyTexture(u32 layer);
         
         void                    bind();
+
+        bool                    loadRenderTechique(const std::string& file);
+        bool                    loadRenderTechique(stream::IStream* stream);
+
+        void                    setRenderTechique(const RenderTechiquePtr& techique);
+        RenderTechiquePtr       getRenderTechique() const;
+
 
     protected:
 

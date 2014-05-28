@@ -14,19 +14,21 @@ namespace renderer
     public:
     
         CRendererGL(const DriverContextPtr& context);
-        virtual         ~CRendererGL();
+        virtual             ~CRendererGL();
     
-        void            init()                         override;
+        void                init()                         override;
     
-        void            preRender()                    override;
-        void            postRender()                   override;
+        void                preRender()                    override;
+        void                postRender()                   override;
     
-        void            reshape(u32 width, u32 height) override;
+        void                reshape(u32 width, u32 height) override;
     
     private:
     
-        core::Matrix4D  m_projectionMatrix;
-        core::Matrix4D  m_viewMatrix;
+        virtual ShaderPtr   makeSharedShader() const       override;
+
+        core::Matrix4D      m_projectionMatrix;
+        core::Matrix4D      m_viewMatrix;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

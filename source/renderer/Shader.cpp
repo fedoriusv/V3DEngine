@@ -45,8 +45,6 @@ CShader::CShader()
 
 CShader::~CShader()
 {
-    CShader::clearShader();
-    CShader::destroy();
 }
 
 u32 CShader::getShaderID() const

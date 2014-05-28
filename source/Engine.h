@@ -10,7 +10,8 @@ namespace f3d
 	class CEngine : public Singleton<CEngine>
 	{
 	public:
-										CEngine();
+
+		CEngine();
 		virtual							~CEngine();
 		
 		platform::PlatformPtr			getPlatform()          const;

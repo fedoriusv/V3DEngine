@@ -1,5 +1,5 @@
 #include "RenderPass.h"
-#include "Fedoria3D.h"
+#include "Engine.h"
 #include "renderer/GL/ShaderProgramGL.h"
 #include "renderer/GL/ShaderGL.h"
 
@@ -14,6 +14,36 @@ CRenderPass::CRenderPass()
 
 CRenderPass::~CRenderPass()
 {
+}
+
+ShaderProgramPtr CRenderPass::getShaderProgram() const
+{
+    return m_program;
+}
+
+void CRenderPass::setShaderProgram(const ShaderProgramPtr& program)
+{
+    m_program = program;
+}
+
+ShaderDataPtr CRenderPass::getShaderData() const
+{
+    return m_shaderData;
+}
+
+void CRenderPass::setShaderData(const ShaderDataPtr& data)
+{
+    m_shaderData = data;
+}
+
+RenderStatePtr CRenderPass::getRenderState() const
+{
+    return m_renderState;
+}
+
+void CRenderPass::setRenderState(const RenderStatePtr& state)
+{
+    m_renderState = state;
 }
 
 bool CRenderPass::parse(tinyxml2::XMLElement* root)
@@ -128,11 +158,11 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             return false;
         }
 
-        EDefaultUniformData uniformName = getShaderUniformTypeByName(varName);
-        EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
-            ? EShaderDataType::eUniformNone : getShaderDataTypeByName(varType);
+        //EDefaultUniformData uniformName = getShaderUniformTypeByName(varName);
+        //EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
+        //    ? EShaderDataType::eUniformNone : getShaderDataTypeByName(varType);
 
-        m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
+        //m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -165,10 +195,10 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
             return false;
         }
 
-        EShaderAttribute attribureName = getShaderAttributeTypeByName(varName);
-        m_shaderData->addAttribute(varName, attribureName);
+        //EShaderAttribute attribureName = getShaderAttributeTypeByName(varName);
+        //m_shaderData->addAttribute(varName, attribureName);
 
-        varElement = varElement->NextSiblingElement("uniforms");
+        //varElement = varElement->NextSiblingElement("uniforms");
     }
 
     return true;
@@ -212,7 +242,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
     tinyxml2::XMLElement*  shaderElement = root;
     while (shaderElement)
     {
-        ShaderPtr shader = CRenderPass::makeSharedShader();
+        ShaderPtr shader = f3d::CEngine::getInstance()->getRenderer()->makeSharedShader();
         if (!shader)
         {
             LOG_ERROR("Error parse. Could not create shader");
@@ -238,7 +268,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         }
         else
         {
-            type = getShaderTypeByName(shaderType);
+            //type = getShaderTypeByName(shaderType);
         }
 
         const std::string shaderPath = shaderElement->Attribute("path");
@@ -300,32 +330,6 @@ void CRenderPass::init()
     }
 
     m_shaderData = std::make_shared<CShaderData>();
-}
-
-ShaderPtr CRenderPass::makeSharedShader() const
-{
-    platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
-
-    switch (type)
-    {
-        case platform::EDriverType::eDriverOpenGL:
-        {
-           return std::make_shared<CShaderGL>();
-        }
-
-        case platform::EDriverType::eDriverDirect3D:
-        {
-           //return std::make_shared<CShaderD3D>();
-        }
-
-        default:
-        {
-           LOG_ERROR("Can`t Choose driver type");
-           return nullptr;
-        }
-    }
-
-    return nullptr;
 }
 
 bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
