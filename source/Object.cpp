@@ -1,6 +1,6 @@
 #include "Object.h"
 
-using namespace f3d;
+using namespace v3d;
 
 CObject::CObject()
     : m_id(-1)

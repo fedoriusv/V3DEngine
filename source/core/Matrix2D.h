@@ -4,7 +4,7 @@
 #include "Math.h"
 #include "Vector2D.h"
 
-namespace f3d
+namespace v3d
 {
 namespace core
 {

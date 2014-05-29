@@ -1,9 +1,9 @@
 #include "CubeShape.h"
 #include "renderer/Geometry.h"
 
-using namespace f3d;
-using namespace f3d::scene;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::scene;
+using namespace v3d::renderer;
 
 CCubeShape::CCubeShape()
 {
@@ -46,9 +46,9 @@ void CCubeShape::init()
 {
     CShape::init();
 
-	f3d::f32 s = 0.5f;
+	v3d::f32 s = 0.5f;
 
-	f3d::f32 vertex[][3] =
+	v3d::f32 vertex[][3] =
 	{
 		{ -s, -s,  s }, {  s, -s,  s }, {  s,  s,  s }, { -s,  s,  s },
 		{ -s, -s, -s }, { -s,  s, -s }, {  s,  s, -s }, {  s, -s, -s },
@@ -58,7 +58,7 @@ void CCubeShape::init()
 		{ -s, -s, -s }, { -s, -s,  s }, { -s,  s,  s }, { -s,  s, -s }
 	};
 
-	f3d::f32 normals[][3] =
+	v3d::f32 normals[][3] =
 	{
 		{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
 		{ 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f },
@@ -68,7 +68,7 @@ void CCubeShape::init()
 		{-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }
 	};
 
-	f3d::f32 texCoord[][2] =
+	v3d::f32 texCoord[][2] =
 	{
 		{ 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f },
 		{ 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f },
@@ -78,7 +78,7 @@ void CCubeShape::init()
 		{ 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }
 	};
 
-	f3d::u32 cubeIndices[] =
+	v3d::u32 cubeIndices[] =
 	{
 		 0,  3,  1,  1,  3,  2,	// front
 		 4,  7,  5,  5,  7,  6,	// back

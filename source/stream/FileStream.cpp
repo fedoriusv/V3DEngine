@@ -5,9 +5,9 @@
 #include <ostream>
 #include <istream>
 
-using namespace f3d;
-using namespace f3d::stream;
-using namespace f3d::core;
+using namespace v3d;
+using namespace v3d::stream;
+using namespace v3d::core;
 
 FileStream::FileStream()
     : m_fileHandler(nullptr)

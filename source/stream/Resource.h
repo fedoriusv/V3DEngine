@@ -4,7 +4,7 @@
 #include "Object.h"
 #include "stream/IStream.h"
 
-namespace f3d
+namespace v3d
 {
 namespace stream
 {

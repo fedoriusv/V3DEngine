@@ -4,9 +4,9 @@
 #include "renderer/GL/GeomertyGL.h"
 
 
-using namespace f3d;
-using namespace f3d::scene;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::scene;
+using namespace v3d::renderer;
 
 CShape::CShape()
     : m_geometry(nullptr)
@@ -16,7 +16,7 @@ CShape::CShape()
 
 void CShape::init()
 {
-	platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
+	platform::EDriverType type = v3d::CEngine::getInstance()->getPlatform()->getDriverType();
 	
     m_material = std::make_shared<CMaterial>();
 

@@ -3,8 +3,10 @@
 
 #include "Singleton.h"
 #include "context/DriverContext.h"
+#include "renderer/Shader.h"
+#include "renderer/ShaderProgram.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -15,26 +17,29 @@ namespace renderer
     public:
 
         CRenderer(const DriverContextPtr& context);
-        virtual                 ~CRenderer();
+        virtual                  ~CRenderer();
 
-        virtual void            init()                         = 0;
+        virtual void             init()                         = 0;
         
-        virtual void            preRender()                    = 0;
-        virtual void            postRender()                   = 0;
+        virtual void             preRender()                    = 0;
+        virtual void             postRender()                   = 0;
 
-        virtual void            reshape(u32 width, u32 height) = 0;
+        virtual void             reshape(u32 width, u32 height) = 0;
 
-        void                    setBackColor(const core::Vector3D& color);
-        const core::Vector3D&   getBackColor() const;
+        void                     setBackColor(const core::Vector3D& color);
+        const core::Vector3D&    getBackColor() const;
 
-        void                    checkForErrors(const std::string& location = "");
+        void                     checkForErrors(const std::string& location = "");
+
+        virtual ShaderPtr        makeSharedShader()                            = 0;
+        virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)  = 0;
 
     protected:
 
-        DriverContextPtr        m_context;
+        DriverContextPtr         m_context;
 
-        core::Vector3D          m_backColor;
-        core::Dimension2D       m_viewportSize;
+        core::Vector3D           m_backColor;
+        core::Dimension2D        m_viewportSize;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

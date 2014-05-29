@@ -6,8 +6,8 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CGeometryGL::CGeometryGL(const AttributeList& attributes)
     : CGeometry(attributes)
@@ -78,7 +78,7 @@ void CGeometryGL::init()
             case EShaderAttribute::eAttributeTexture2:
             case EShaderAttribute::eAttributeTexture3:
             {
-                for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+                for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
                 {
                     CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
                     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
@@ -95,7 +95,7 @@ void CGeometryGL::init()
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
 	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * m_data.m_countIndices, m_data.m_indices.vertex.data());
 
-	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Init Error");
+	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Init Error");
 
 	CGeometryGL::bindVertexArray(0);
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
@@ -113,7 +113,7 @@ void CGeometryGL::update()
 
 	CGeometryGL::bindVertexArray(0);
 
-	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Update Error");
+	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Update Error");
 }
 
 void CGeometryGL::free()
@@ -122,7 +122,7 @@ void CGeometryGL::free()
 
 	CGeometryGL::deleteBuffers(m_data.m_vertices.id);
 	CGeometryGL::deleteBuffers(m_data.m_normals.id);
-	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+	for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
 	{
 		CGeometryGL::deleteBuffers(m_data.m_texCoords.at(layer).id);
 	}
@@ -142,7 +142,7 @@ void CGeometryGL::refresh()
 	CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
 
 	//TexCoords
-	for (f3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+	for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
 	{
 		CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
 		CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
@@ -157,23 +157,23 @@ void CGeometryGL::refresh()
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	f3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Refresh Error");
+	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Refresh Error");
 
 }
 
-void CGeometryGL::genBuffers(f3d::u32& buffer)
+void CGeometryGL::genBuffers(v3d::u32& buffer)
 {
 	glGenBuffers(1, &buffer);
 	ASSERT(glIsBuffer(buffer) && "Invalid VBO index");
 }
 
-void CGeometryGL::bindBuffers(const f3d::u32 target, const f3d::u32 buffer)
+void CGeometryGL::bindBuffers(const v3d::u32 target, const v3d::u32 buffer)
 {
 	ASSERT(glIsBuffer(buffer) && "Invalid VBO index");
 	glBindBuffer(target, buffer);
 }
 
-void CGeometryGL::deleteBuffers(f3d::u32& buffer)
+void CGeometryGL::deleteBuffers(v3d::u32& buffer)
 {
 	if (buffer != 0)
 	{
@@ -182,49 +182,49 @@ void CGeometryGL::deleteBuffers(f3d::u32& buffer)
 	}
 }
 
-void CGeometryGL::bufferData(const f3d::u32 target, const f3d::u32 size, void* data)
+void CGeometryGL::bufferData(const v3d::u32 target, const v3d::u32 size, void* data)
 {
 	glBufferData(target, size, data, GL_STATIC_DRAW);
 }
 
-void CGeometryGL::bufferSubData(const f3d::u32 target, const f3d::u32 offset, const f3d::u32 size, void* data)
+void CGeometryGL::bufferSubData(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, void* data)
 {
 	glBufferSubData(target, offset, size, data);
 }
 
-void* CGeometryGL::mapBuffer(const f3d::u32 target, const f3d::u32 access)
+void* CGeometryGL::mapBuffer(const v3d::u32 target, const v3d::u32 access)
 {
 	return glMapBuffer(target, access);
 }
 
-void* CGeometryGL::mapBufferRange(const f3d::u32 target, const f3d::u32 offset, const f3d::u32 size, const f3d::u32 flags)
+void* CGeometryGL::mapBufferRange(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, const v3d::u32 flags)
 {
 	return glMapBufferRange(target, offset, size, flags);
 }
 
-bool CGeometryGL::unmapBuffer(const f3d::u32 target)
+bool CGeometryGL::unmapBuffer(const v3d::u32 target)
 {
 	return glUnmapBuffer(target) != 0;
 }
 
-void CGeometryGL::getBufferPointer(const f3d::u32 target, const f3d::u32 pname, void** params)
+void CGeometryGL::getBufferPointer(const v3d::u32 target, const v3d::u32 pname, void** params)
 {
 	glGetBufferPointerv(target, pname, params);
 }
 
-void CGeometryGL::genVertexArray(f3d::u32& buffer)
+void CGeometryGL::genVertexArray(v3d::u32& buffer)
 {
 	glGenVertexArrays(1, &buffer);
 	ASSERT(glIsVertexArray(buffer) && "Invalid VAO index");
 }
 
-void CGeometryGL::bindVertexArray(const f3d::u32 buffer)
+void CGeometryGL::bindVertexArray(const v3d::u32 buffer)
 {
 	ASSERT(glIsVertexArray(buffer) && "Invalid VAO index");
 	glBindVertexArray(buffer);
 }
 
-void CGeometryGL::deleteVertexArray(f3d::u32& buffer)
+void CGeometryGL::deleteVertexArray(v3d::u32& buffer)
 {
 	if (buffer)
 	{
@@ -233,13 +233,13 @@ void CGeometryGL::deleteVertexArray(f3d::u32& buffer)
 	}
 }
 
-void CGeometryGL::initVertexAttribPointer(const f3d::u32 vertexAttrib, const f3d::u32 size)
+void CGeometryGL::initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size)
 {
 	glEnableVertexAttribArray(vertexAttrib);
 	glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, GL_FALSE, NULL, NULL);
 }
 
-f3d::u32 CGeometryGL::getGLDrawMode(EDrawMode mode)
+v3d::u32 CGeometryGL::getGLDrawMode(EDrawMode mode)
 {
 	switch (mode)
 	{

@@ -2,7 +2,7 @@
 
 #include "Config.h"
 
-namespace f3d
+namespace v3d
 {
 	typedef unsigned char       u8;
 	typedef signed char         s8;

@@ -1,7 +1,7 @@
 #include "Node.h"
 
-using namespace f3d;
-using namespace f3d::scene;
+using namespace v3d;
+using namespace v3d::scene;
 
 CNode::CNode()
     : m_parentNode(nullptr)

@@ -5,8 +5,8 @@
 #include "Engine.h"
 #include "utils\Logger.h"
 
-using namespace f3d;
-using namespace f3d::platform;
+using namespace v3d;
+using namespace v3d::platform;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -345,10 +345,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			const int scancode = (lParam >> 16) & 0xff;
 			//const int key = translateKey(wParam, lParam);
 		
-			f3d::event::SKeyboardInputEventPtr event = std::make_shared<f3d::event::SKeyboardInputEvent>();
-			event->m_event = f3d::event::eKeyboardPressDown;
+			v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
+			event->m_event = v3d::event::eKeyboardPressDown;
 
-			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);
+			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);
 
 			return 0;
 		}
@@ -356,10 +356,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 		{
-			/*f3d::event::SKeyboardInputEvent event;
-			event.m_event = f3d::event::eKeyboardPressUp;
+			/*v3d::event::SKeyboardInputEvent event;
+			event.m_event = v3d::event::eKeyboardPressUp;
 
-			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 
 			return 0;
 		}
@@ -368,10 +368,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
 		{
-			/*f3d::event::SMouseInputEvent event;
-			event.m_event = f3d::event::eLeftMousePressedDown;
+			/*v3d::event::SMouseInputEvent event;
+			event.m_event = v3d::event::eLeftMousePressedDown;
 
-			f3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 
 			return 0;
 		}
@@ -380,8 +380,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_RBUTTONUP:
 		case WM_MBUTTONUP:
 		{
-			/*f3d::event::SMouseInputEvent event;
-			event.m_event = f3d::event::eLeftMousePressedUp;
+			/*v3d::event::SMouseInputEvent event;
+			event.m_event = v3d::event::eLeftMousePressedUp;
 
 			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
 

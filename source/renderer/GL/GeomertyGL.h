@@ -3,7 +3,7 @@
 
 #include "renderer/Geometry.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -23,30 +23,30 @@ namespace renderer
 
     private:
 
-        f3d::u32     m_drawModeGL;
-        f3d::u32     m_arrayId;
+        v3d::u32     m_drawModeGL;
+        v3d::u32     m_arrayId;
 
-        void         genBuffers(f3d::u32& buffer);
-        void         bindBuffers(const f3d::u32 target, const f3d::u32 buffer);
-        void         deleteBuffers(f3d::u32& buffer);
+        void         genBuffers(v3d::u32& buffer);
+        void         bindBuffers(const v3d::u32 target, const v3d::u32 buffer);
+        void         deleteBuffers(v3d::u32& buffer);
 
-        void         bufferData(const f3d::u32 target, const f3d::u32 size, void* data);
-        void         bufferSubData(const f3d::u32 target, const f3d::u32 offset, const f3d::u32 size, void* data);
+        void         bufferData(const v3d::u32 target, const v3d::u32 size, void* data);
+        void         bufferSubData(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, void* data);
 
-        void*        mapBuffer(const f3d::u32 target, const f3d::u32 access);
-        bool         unmapBuffer(const f3d::u32 target);
-        void*        mapBufferRange(const f3d::u32 target, const f3d::u32 offset, const f3d::u32 size, const f3d::u32 flags);
+        void*        mapBuffer(const v3d::u32 target, const v3d::u32 access);
+        bool         unmapBuffer(const v3d::u32 target);
+        void*        mapBufferRange(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, const v3d::u32 flags);
 
-        void         getBufferPointer(const f3d::u32 target, const f3d::u32 pname, void** params);
+        void         getBufferPointer(const v3d::u32 target, const v3d::u32 pname, void** params);
 
-        void         genVertexArray(f3d::u32& buffer);
-        void         bindVertexArray(const f3d::u32 buffer);
-        void         deleteVertexArray(f3d::u32& buffer);
+        void         genVertexArray(v3d::u32& buffer);
+        void         bindVertexArray(const v3d::u32 buffer);
+        void         deleteVertexArray(v3d::u32& buffer);
 
-        void         initVertexAttribPointer(const f3d::u32 vertexAttrib, const f3d::u32 size);
+        void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
         void         refreshBufferData();
 
-        f3d::u32     getGLDrawMode(EDrawMode mode);
+        v3d::u32     getGLDrawMode(EDrawMode mode);
 
     };
 

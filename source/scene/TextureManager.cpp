@@ -2,8 +2,8 @@
 #include "stream/FileStream.h"
 #include "renderer/Renderer.h"
 
-using namespace f3d;
-using namespace f3d::scene;
+using namespace v3d;
+using namespace v3d::scene;
 
 CTextureManager::CTextureManager()
 {

@@ -1,8 +1,8 @@
 #include "renderer/Renderer.h"
 #include "context/DriverContext.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
 	: m_context(context)
@@ -29,3 +29,4 @@ void CRenderer::checkForErrors(const std::string& location)
 {
 	m_context->checkForErrors(location);
 }
+

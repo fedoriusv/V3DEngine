@@ -3,7 +3,7 @@
 
 #include "renderer/Renderer.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -22,7 +22,10 @@ namespace renderer
         void                postRender()                   override;
     
         void                reshape(u32 width, u32 height) override;
-    
+
+        ShaderPtr           makeSharedShader()             override;
+        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)  override;
+
     private:
     
         core::Matrix4D      m_projectionMatrix;

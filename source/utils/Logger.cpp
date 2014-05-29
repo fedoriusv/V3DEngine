@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-using namespace f3d;
-using namespace f3d::utils;
+using namespace v3d;
+using namespace v3d::utils;
 
 const std::string k_loggerType[ELoggerType::eLoggerCount] =
 {

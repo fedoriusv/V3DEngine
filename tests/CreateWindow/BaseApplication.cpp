@@ -1,7 +1,7 @@
 #include "BaseApplication.h"
 
-using namespace f3d;
-using namespace f3d::platform;
+using namespace v3d;
+using namespace v3d::platform;
 
 BaseApplication::BaseApplication(int& argc, char** argv)
 {
@@ -45,7 +45,7 @@ event::InputEventHandlerPtr BaseApplication::getInputEventHandler() const
 	return m_engine->getInputEventHandler();
 }
 
-f3d::scene::SceneManagerPtr BaseApplication::getSceneManager() const
+scene::SceneManagerPtr BaseApplication::getSceneManager() const
 {
 	return m_engine->getSceneManager();
 }

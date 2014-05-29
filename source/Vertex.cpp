@@ -1,6 +1,6 @@
 #include "Vertex.h"
 
-using namespace f3d;
+using namespace v3d;
 
 void SVertexData::clear()
 {
@@ -40,7 +40,7 @@ void SVertexData::clear()
 
 }
 
-void SVertexData::malloc(f3d::u32 count, f3d::u32 index, f3d::u32 layer)
+void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer)
 {
 	clear();
 
@@ -48,7 +48,7 @@ void SVertexData::malloc(f3d::u32 count, f3d::u32 index, f3d::u32 layer)
 	m_vertices.vertex.reserve(count);
 	m_normals.vertex.reserve(count);
 
-	for (f3d::u32 i = 0; i < layer; ++i)
+	for (v3d::u32 i = 0; i < layer; ++i)
 	{
 		SVertices<core::Vector2D> texCoord;
 		texCoord.vertex.reserve(count);

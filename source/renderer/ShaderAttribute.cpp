@@ -1,7 +1,7 @@
 #include "ShaderAttribute.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 

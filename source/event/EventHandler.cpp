@@ -1,7 +1,7 @@
 #include "event/EventHandler.h"
 
-using namespace f3d;
-using namespace f3d::event;
+using namespace v3d;
+using namespace v3d::event;
 
 CEventHandler::CEventHandler()
 {

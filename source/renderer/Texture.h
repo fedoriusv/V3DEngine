@@ -4,7 +4,7 @@
 #include "Object.h"
 #include "stream/Resource.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {

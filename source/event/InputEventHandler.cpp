@@ -1,8 +1,8 @@
 #include "InputEventHandler.h"
 #include "utils/Logger.h"
 
-using namespace f3d;
-using namespace f3d::event;
+using namespace v3d;
+using namespace v3d::event;
 
 CInputEventHandler::CInputEventHandler()
 	: m_mousePosition(0,0)

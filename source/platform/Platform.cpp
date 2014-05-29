@@ -19,9 +19,9 @@
 #endif
 
 
-using namespace f3d;
-using namespace f3d::platform;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::platform;
+using namespace v3d::renderer;
 
 CPlatform::CPlatform()
 {

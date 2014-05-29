@@ -2,8 +2,8 @@
 #include "ShaderUniform.h"
 #include "utils/Logger.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CShaderProgram::CShaderProgram(const ShaderDataPtr& data)
 	: CObject()

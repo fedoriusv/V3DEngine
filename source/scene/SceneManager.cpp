@@ -6,9 +6,9 @@
 #	include <windows.h>
 #endif
 
-using namespace f3d;
-using namespace f3d::scene;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::scene;
+using namespace v3d::renderer;
 
 CSceneManager::CSceneManager()
 	: m_currentTime(0.0)
@@ -36,7 +36,7 @@ void CSceneManager::draw()
 	CSceneManager::updateDeltaTime();
 	CSceneManager::update(m_deltaTime);
 
-	f3d::CEngine::getInstance()->getRenderer()->preRender();
+	v3d::CEngine::getInstance()->getRenderer()->preRender();
 
 	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{
@@ -46,7 +46,7 @@ void CSceneManager::draw()
 		item->render();
 	}
 
-	f3d::CEngine::getInstance()->getRenderer()->postRender();
+	v3d::CEngine::getInstance()->getRenderer()->postRender();
 }
 
 void CSceneManager::clear()
@@ -84,7 +84,7 @@ void CSceneManager::addNode(CNode* node)
 	}
 }
 
-void CSceneManager::update(f3d::f64 time)
+void CSceneManager::update(v3d::f64 time)
 {
 }
 
@@ -127,12 +127,12 @@ CNode* CSceneManager::getObjectByName(const std::string& name)
 
 void CSceneManager::setBackgroundColor(const core::Vector3D& color)
 {
-	f3d::CEngine::getInstance()->getRenderer()->setBackColor(color);
+	v3d::CEngine::getInstance()->getRenderer()->setBackColor(color);
 }
 
 const core::Vector3D& CSceneManager::getBackgroundColor() const
 {
-	return f3d::CEngine::getInstance()->getRenderer()->getBackColor();
+	return v3d::CEngine::getInstance()->getRenderer()->getBackColor();
 }
 
 CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const float size)

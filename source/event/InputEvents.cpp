@@ -1,7 +1,7 @@
 #include "InputEvents.h"
 
-using namespace f3d;
-using namespace f3d::event;
+using namespace v3d;
+using namespace v3d::event;
 
 SInputEvent::SInputEvent()
 : m_eventType(eUnknownInputEvent)

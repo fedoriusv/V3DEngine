@@ -4,7 +4,7 @@
 #include "Vertex.h"
 #include "renderer/ShaderAttribute.h"
 
-namespace f3d
+namespace v3d
 {
 
 namespace scene
@@ -38,7 +38,7 @@ namespace renderer
 
     protected:
 
-        friend            f3d::scene::CShape;
+        friend            v3d::scene::CShape;
 
         EDrawMode         m_drawMode;
         SVertexData       m_data;

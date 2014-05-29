@@ -1,7 +1,7 @@
 #include "Window.h"
 
-using namespace f3d;
-using namespace f3d::platform;
+using namespace v3d;
+using namespace v3d::platform;
 
 CWindow::CWindow(const WindowParam& param)
 	: m_param(param)

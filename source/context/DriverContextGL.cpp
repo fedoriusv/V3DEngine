@@ -1,7 +1,6 @@
 #include "DriverContextGL.h"
 #include "utils/Logger.h"
 
-#define GLEW_STATIC
 #include "GL/glew.h"
 
 #if defined(_PLATFORM_WIN_)
@@ -18,8 +17,8 @@
 #include <iostream>
 #include <cstring>
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CDriverContextGL::CDriverContextGL(const platform::WindowPtr& window)
 	: CDriverContext(window)

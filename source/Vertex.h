@@ -3,14 +3,14 @@
 
 #include "common.h"
 
-namespace f3d
+namespace v3d
 {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	template <class T>
 	struct SVertices
 	{
-		f3d::u32        id;
+		v3d::u32        id;
 		std::vector<T>  vertex;
 
 		SVertices()
@@ -28,13 +28,13 @@ namespace f3d
 		SVertices<core::Vector3D>   m_vertices;
 		SVertices<core::Vector3D>   m_normals;
 		TextureCoords               m_texCoords;
-		SVertices<f3d::u32>         m_indices;
+		SVertices<v3d::u32>         m_indices;
 
-		f3d::u32                    m_countVertices;
-		f3d::u32                    m_countIndices;;
+		v3d::u32                    m_countVertices;
+		v3d::u32                    m_countIndices;;
 
 		void                        clear();
-		void                        malloc(f3d::u32 count, f3d::u32 index = 0, f3d::u32 layer = 1);
+		void                        malloc(v3d::u32 count, v3d::u32 index = 0, v3d::u32 layer = 1);
 		bool                        empty() const;
 	};
 

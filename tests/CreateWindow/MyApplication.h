@@ -12,7 +12,7 @@ public:
 	void	init() override;
 	void	run()  override;
 
-	void	onKeyboard(const f3d::event::SKeyboardInputEventPtr& event);
+	void	onKeyboard(const v3d::event::SKeyboardInputEventPtr& event);
 };
 
 #endif //_MY_APPLICATION_H_

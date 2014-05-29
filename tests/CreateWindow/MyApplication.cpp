@@ -1,6 +1,6 @@
 #include "MyApplication.h"
 
-using namespace f3d;
+using namespace v3d;
 
 MyApplication::MyApplication(int& argc, char** argv)
 	: BaseApplication(argc, argv)
@@ -28,7 +28,7 @@ void MyApplication::run()
 	//TODO: main loop
 }
 
-void MyApplication::onKeyboard(const f3d::event::SKeyboardInputEventPtr& event)
+void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
 {
 	int a = 0;
 }

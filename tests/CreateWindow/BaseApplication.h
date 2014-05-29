@@ -16,13 +16,13 @@ public:
 
 protected:
 
-	virtual f3d::platform::PlatformPtr			getPlatform()          const final;
-	virtual f3d::event::InputEventHandlerPtr	getInputEventHandler() const final;
-	virtual f3d::scene::SceneManagerPtr		    getSceneManager()      const final;
+	virtual v3d::platform::PlatformPtr			getPlatform()          const final;
+	virtual v3d::event::InputEventHandlerPtr	getInputEventHandler() const final;
+	virtual v3d::scene::SceneManagerPtr		    getSceneManager()      const final;
 
 private:
 
-	f3d::CEngine*								m_engine;
+	v3d::CEngine*								m_engine;
 };
 
 #endif //_BASE_APPLICATION_H_

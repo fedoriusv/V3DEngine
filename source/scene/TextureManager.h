@@ -7,7 +7,7 @@
 #include "stream/IStream.h"
 #include "ResourceDecoder.h"
 
-namespace f3d
+namespace v3d
 {
 namespace scene
 {

@@ -4,7 +4,7 @@
 #include "common.h"
 #include "KeyCodes.h"
 
-namespace f3d
+namespace v3d
 {
 namespace event
 {
@@ -72,7 +72,7 @@ namespace event
 
 		EInputEventType	m_eventType;
 		EPriority		m_priority;
-		f3d::u64		m_timeStamp;
+		v3d::u64		m_timeStamp;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,10 +86,10 @@ namespace event
 		SKeyboardInputEvent();
 		virtual ~SKeyboardInputEvent();
 
-		f3d::c8              m_character;
+		v3d::c8              m_character;
 		EKeyCode             m_key;
 		EKeyboardInputEvent  m_event;
-		f3d::u16             m_modifers;
+		v3d::u16             m_modifers;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,9 +104,9 @@ namespace event
 		virtual ~SMouseInputEvent();
 
 		core::Dimension2D m_position; //WARN: need class Point
-		f3d::f32          m_wheel;
+		v3d::f32          m_wheel;
 		EMouseInputEvent  m_event;
-		f3d::u16          m_modifers;
+		v3d::u16          m_modifers;
 
 	};
 

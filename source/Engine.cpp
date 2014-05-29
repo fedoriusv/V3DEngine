@@ -2,10 +2,10 @@
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"
 
-using namespace f3d;
-using namespace f3d::platform;
-using namespace f3d::event;
-using namespace f3d::scene;
+using namespace v3d;
+using namespace v3d::platform;
+using namespace v3d::event;
+using namespace v3d::scene;
 
 CEngine::CEngine()
 : m_platform(nullptr)
