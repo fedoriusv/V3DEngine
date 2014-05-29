@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -11,22 +11,17 @@ namespace renderer
 
     enum EShaderDataType
     {
-        eUniformNone = 0,
-        eUniformInt,
-        eUniformFloat,
-        eUniformVector2,
-        eUniformVector3,
-        eUniformVector4,
-        eUniformMatrix3,
-        eUniformMatrix4,
+        eDataNone = 0,
+        eDataInt,
+        eDataFloat,
+        eDataVector2,
+        eDataVector3,
+        eDataVector4,
+        eDataMatrix3,
+        eDataMatrix4,
 
-        eUniformTypeCount,
+        eDataTypeCount,
     };
-
-    extern const std::string&    getShaderDataNameByType(EShaderDataType type);
-    extern const EShaderDataType getShaderDataTypeByName(const std::string& name);
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum EDefaultUniformData
     {

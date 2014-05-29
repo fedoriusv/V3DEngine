@@ -1,12 +1,15 @@
-#include "renderer/GL/RendererGL.h"
-#include "GL/glew.h"
+#include "RendererGL.h"
+#include "ShaderGL.h"
+#include "ShaderProgramGL.h"
 
 #include "utils/Logger.h"
 #include "context/DriverContext.h"
 
 
-using namespace f3d;
-using namespace f3d::renderer;
+#include "GL/glew.h"
+
+using namespace v3d;
+using namespace v3d::renderer;
 
 CRendererGL::CRendererGL(const DriverContextPtr& context)
 	: CRenderer(context)
@@ -59,4 +62,14 @@ void CRendererGL::reshape(u32 width, u32 height)
 
 	GLfloat aspectRatio = (GLfloat)m_viewportSize.width / (GLfloat)m_viewportSize.height;
 	m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.1f, 100.0f);
+}
+
+ShaderPtr CRendererGL::makeSharedShader()
+{
+    return std::make_shared<CShaderGL>();
+}
+
+ShaderProgramPtr CRendererGL::makeSharedProgram(const ShaderDataPtr& data)
+{
+    return std::make_shared<CShaderProgramGL>(data);
 }

@@ -4,7 +4,7 @@
 #include "common.h"
 #include "Singleton.h"
 
-namespace f3d
+namespace v3d
 {
 namespace utils
 {
@@ -56,10 +56,10 @@ namespace utils
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if USE_LOGGER
-#	define LOG_GEBUG(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerDebug, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
-#	define LOG_INFO(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerInfo, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
-#	define LOG_WARRNING(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerWarning, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
-#	define LOG_ERROR(messages, ...) f3d::utils::CLogger::getInstance()->log(f3d::utils::ELoggerType::eLoggerError, f3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_GEBUG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerDebug, v3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_INFO(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerInfo, v3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_WARRNING(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerWarning, v3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
+#	define LOG_ERROR(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerError, v3d::utils::ELogOut::eConsoleLog, messages, __VA_ARGS__);
 #else
 #	define LOG_GEBUG(messages, ...)
 #	define LOG_INFO(messages, ...)

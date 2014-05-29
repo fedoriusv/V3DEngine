@@ -5,8 +5,8 @@
 #include "utils/Logger.h"
 #include "renderer/GL/ShaderGL.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CShaderProgramGL::CShaderProgramGL(const ShaderDataPtr& data)
     : CShaderProgram(data)
@@ -29,46 +29,46 @@ bool CShaderProgramGL::create()
 
 }
 
-//bool CShaderProgramGL::create(const std::string& vShader, const std::string& fShader, u32 arg, ...)
-//{
-//    if (vShader.empty() || fShader.empty())
-//    {
-//        ASSERT(false && "Empty Shader FileName");
-//        return false;
-//    }
-//
-//    ShaderPtr vshader = std::make_shared<CShaderGL>();
-//    vshader->create(vShader, EShaderType::eTypeVertex);
-//    CShaderProgram::addShader(vshader);
-//
-//    ShaderPtr fshader = std::make_shared<CShaderGL>();
-//    fshader->create(fShader, EShaderType::eTypeFragment);
-//    CShaderProgram::addShader(fshader);
-//
-//
-//    va_list argList;
-//    va_start(argList, arg);
-//    for (u32 i = 0; i < arg; i += 2)
-//    {
-//        char* strName = va_arg(argList, char*);
-//        int type = va_arg(argList, int);
-//
-//        ShaderPtr shader = std::make_shared<CShaderGL>();
-//        shader->create(strName, (EShaderType)type);
-//
-//        CShaderProgram::addShader(shader);
-//    }
-//    va_end(argList);
-//
-//
-//    std::vector<u32> shadersId;
-//    CShaderProgram::getShaderIDArray(shadersId);
-//
-//    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
-//    shadersId.clear();
-//
-//    return status;
-//}
+bool CShaderProgramGL::create(const std::string& vShader, const std::string& fShader, u32 arg, ...)
+{
+    if (vShader.empty() || fShader.empty())
+    {
+        ASSERT(false && "Empty Shader FileName");
+        return false;
+    }
+
+    ShaderPtr vshader = std::make_shared<CShaderGL>();
+    vshader->create(vShader, EShaderType::eTypeVertex);
+    CShaderProgram::addShader(vshader);
+
+    ShaderPtr fshader = std::make_shared<CShaderGL>();
+    fshader->create(fShader, EShaderType::eTypeFragment);
+    CShaderProgram::addShader(fshader);
+
+
+    va_list argList;
+    va_start(argList, arg);
+    for (u32 i = 0; i < arg; i += 2)
+    {
+        char* strName = va_arg(argList, char*);
+        int type = va_arg(argList, int);
+
+        ShaderPtr shader = std::make_shared<CShaderGL>();
+        shader->create(strName, (EShaderType)type);
+
+        CShaderProgram::addShader(shader);
+    }
+    va_end(argList);
+
+
+    std::vector<u32> shadersId;
+    CShaderProgram::getShaderIDArray(shadersId);
+
+    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
+    shadersId.clear();
+
+    return status;
+}
 
 void CShaderProgramGL::destroy()
 {
@@ -198,13 +198,13 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
 
     switch (type)
     {
-        case EShaderDataType::eUniformNone:
+    case EShaderDataType::eDataNone:
         {
             location = -1;
         }
         break;
 
-        case EShaderDataType::eUniformInt:
+        case EShaderDataType::eDataInt:
         {
             GLint val = *(GLint*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -212,7 +212,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
 
-        case EShaderDataType::eUniformFloat:
+        case EShaderDataType::eDataFloat:
         {
             GLfloat val = *(GLfloat*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -220,7 +220,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
 
-        case EShaderDataType::eUniformVector2:
+        case EShaderDataType::eDataVector2:
         {
             core::Vector2D val = *(core::Vector2D*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -228,7 +228,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
 
-        case EShaderDataType::eUniformVector3:
+        case EShaderDataType::eDataVector3:
         {
             core::Vector3D val = *(core::Vector3D*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -236,7 +236,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
 
-        case EShaderDataType::eUniformVector4:
+        case EShaderDataType::eDataVector4:
         {
             core::Vector4D val = *(core::Vector4D*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -244,7 +244,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
 
-        case EShaderDataType::eUniformMatrix3:
+        case EShaderDataType::eDataMatrix3:
         {
             core::Matrix3D val = *(core::Matrix3D*)value;
             location = glGetUniformLocation(shader, attribute.data());
@@ -252,7 +252,7 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
         }
         break;
     
-        case EShaderDataType::eUniformMatrix4:
+        case EShaderDataType::eDataMatrix4:
         {
             core::Matrix4D val = *(core::Matrix4D*)value;
             location = glGetUniformLocation(shader, attribute.data());

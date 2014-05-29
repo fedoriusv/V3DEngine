@@ -1,38 +1,7 @@
 #include "ShaderUniform.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const std::string k_shaderDataType[EShaderDataType::eUniformTypeCount] = {
-    "",
-    "int",
-    "float",
-    "vec2",
-    "vec3",
-    "vec4",
-    "mat3",
-    "mat4"
-};
-
-const std::string& getShaderDataNameByType(EShaderDataType type)
-{
-    return k_shaderDataType[type];
-}
-
-const EShaderDataType getShaderDataTypeByName(const std::string& name)
-{
-    for (int i = 0; i < EShaderDataType::eUniformTypeCount; ++i)
-    {
-        if (k_shaderDataType[i].compare(name) == 0)
-        {
-            return (EShaderDataType)i;
-        }
-    }
-
-    return eUniformNone;
-}
+using namespace v3d;
+using namespace v3d::renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +38,7 @@ const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderUniform::CShaderUniform()
-    : m_uniformType(EShaderDataType::eUniformNone)
+    : m_uniformType(EShaderDataType::eDataNone)
     , m_defaultData(EDefaultUniformData::eUserUniform)
 	, m_uniformValue (nullptr)
 	, m_attribute ("")
@@ -100,49 +69,49 @@ void* CShaderUniform::allocMemory(EShaderDataType type, void* value)
 
 	switch(type)
 	{
-	case eUniformInt:
+	case eDataInt:
 		{
 			uniformValue = new int();
 			memcpy(uniformValue, value, sizeof(int));
 
 			return uniformValue;
 		}
-	case eUniformFloat:
+	case eDataFloat:
 		{
 			uniformValue = new float();
 			memcpy(uniformValue, value, sizeof(float));
 
 			return uniformValue;
 		}
-	case eUniformVector2:
+	case eDataVector2:
 		{
 			uniformValue = new core::Vector2D();
 			memcpy(uniformValue, value, sizeof(core::Vector2D));
 
 			return uniformValue;
 		}
-	case eUniformVector3:
+	case eDataVector3:
 		{
 			uniformValue = new core::Vector3D();
 			memcpy(uniformValue, value, sizeof(core::Vector3D));
 
 			return uniformValue;
 		}
-	case eUniformVector4:
+	case eDataVector4:
 		{
 			uniformValue = new core::Vector4D();
 			memcpy(uniformValue, value, sizeof(core::Vector4D));
 
 			return uniformValue;
 		}
-	case eUniformMatrix3:
+	case eDataMatrix3:
 		{
 			uniformValue = new core::Matrix3D();
 			memcpy(uniformValue, value, sizeof(core::Matrix3D));
 
 			return uniformValue;
 		}
-	case eUniformMatrix4:
+	case eDataMatrix4:
 		{
 			uniformValue = new core::Matrix4D();
 			memcpy(uniformValue, value, sizeof(core::Matrix4D));

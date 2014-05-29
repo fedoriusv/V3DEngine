@@ -9,7 +9,7 @@
 #include "RenderState.h"
 
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -38,7 +38,6 @@ namespace renderer
         friend              CRenderTechique;
 
         void                init();
-        ShaderPtr           makeSharedShader();
 
         bool                parse            (tinyxml2::XMLElement* root);
 

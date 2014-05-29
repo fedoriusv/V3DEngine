@@ -3,13 +3,14 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "renderer/GL/ShaderProgramGL.h"
-//#include "renderer/GL/ShaderGL.h"
 
-using namespace f3d;
-using namespace f3d::renderer;
+using namespace v3d;
+using namespace v3d::renderer;
 
 CRenderPass::CRenderPass()
     : m_program(nullptr)
+    , m_shaderData(nullptr)
+    , m_renderState(nullptr)
 {
     CRenderPass::init();
 }
@@ -161,10 +162,10 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
         }
 
         EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varName);
-        //EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
-        //    ? EShaderDataType::eUniformNone : getShaderDataTypeByName(varType);
+        EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
+            ? EShaderDataType::eDataNone : CShaderData::getShaderDataTypeByName(varType);
 
-        //m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
+        m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -198,7 +199,7 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
         }
 
         EShaderAttribute attribureName = CShaderAttribute::getShaderAttributeTypeByName(varName);
-        //m_shaderData->addAttribute(varName, attribureName);
+        m_shaderData->addAttribute(varName, attribureName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -224,7 +225,7 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
             return false;
         }
 
-        //m_shaderData->addSampler(varName);
+        m_shaderData->addSampler(varName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -244,7 +245,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
     tinyxml2::XMLElement*  shaderElement = root;
     while (shaderElement)
     {
-        ShaderPtr shader = CRenderPass::makeSharedShader();
+        ShaderPtr shader = v3d::CEngine::getInstance()->getRenderer()->makeSharedShader();
         if (!shader)
         {
             LOG_ERROR("Error parse. Could not create shader");
@@ -297,68 +298,20 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             }
         }
 
-        //m_program->addShader(shader);
+        m_program->addShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("shader");
     }
 
-    //m_program->create();
+    m_program->create();
 
     return true;
 }
 
 void CRenderPass::init()
 {
-    platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
-
-    switch (type)
-    {
-        case platform::EDriverType::eDriverOpenGL:
-        {
-            m_program = std::make_shared<CShaderProgram>(m_shaderData);
-        }
-            break;
-
-        case platform::EDriverType::eDriverDirect3D:
-        {
-            //m_geometry = std::make_shared<CGeometry>(CGeometryGL());
-        }
-            break;
-
-        default:
-        {
-            LOG_ERROR("Can`t Choose driver type");
-        }
-    }
-
     m_shaderData = std::make_shared<CShaderData>();
-}
-
-ShaderPtr CRenderPass::makeSharedShader()
-{
-    platform::EDriverType type = f3d::CEngine::getInstance()->getPlatform()->getDriverType();
-
-    ShaderPtr shader = nullptr;
-
-    switch (type)
-    {
-        case platform::EDriverType::eDriverOpenGL:
-        {
-         //                                           shader = std::make_shared<CShaderGL>();
-        }
-        break;
-
-        case platform::EDriverType::eDriverDirect3D:
-        {
-            //shader = std::make_shared<CShaderGL>(m_shaderData);
-        }
-        break;
-
-        default:
-            break;
-    }
-
-    return shader;
+    m_program = v3d::CEngine::getInstance()->getRenderer()->makeSharedProgram(m_shaderData);
 }
 
 bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)

@@ -7,43 +7,54 @@
 #include "ShaderSampler.h"
 
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CRenderPass;
 
     class CShaderData : public CObject
     {
     public:
 
         CShaderData();
-        virtual                 ~CShaderData();
+        virtual                         ~CShaderData();
 
-        void                    setUniformInt    (const std::string& name, const u32             value);
-        void                    setUniformFloat  (const std::string& name, const f32             value);
-        void                    setUniformVector2(const std::string& name, const core::Vector2D& vector);
-        void                    setUniformVector3(const std::string& name, const core::Vector3D& vector);
-        void                    setUniformVector4(const std::string& name, const core::Vector4D& vector);
-        void                    setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-        void                    setUniformMatrix4(const std::string& name, const core::Vector4D& matrix);
+        void                            setUniformInt    (const std::string& name, const u32             value);
+        void                            setUniformFloat  (const std::string& name, const f32             value);
+        void                            setUniformVector2(const std::string& name, const core::Vector2D& vector);
+        void                            setUniformVector3(const std::string& name, const core::Vector3D& vector);
+        void                            setUniformVector4(const std::string& name, const core::Vector4D& vector);
+        void                            setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
+        void                            setUniformMatrix4(const std::string& name, const core::Vector4D& matrix);
 
-        const AttributeList&    getAttributeList() const;
+        const AttributeList&            getAttributeList() const;
+
+        static const std::string&       getShaderDataNameByType(EShaderDataType type);
+        static const EShaderDataType    getShaderDataTypeByName(const std::string& name);
 
     protected:
 
-        bool                    isExistUniform(const std::string& name);
-        void                    addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);
+        friend                          CRenderPass;
 
-        bool                    isExistAttribute(const std::string& name);
-        void                    addAttribute(const std::string& name, EShaderAttribute type);
+        bool                            isExistUniform(const std::string& name);
+        void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);
 
-        bool                    isExistSampler(const std::string& name);
-        void                    addSampler(const std::string& name);
+        bool                            isExistAttribute(const std::string& name);
+        void                            addAttribute(const std::string& name, EShaderAttribute type);
 
-        AttributeList           m_attributeList;
-        UniformList             m_uniformList;
-        SamplerList             m_samplerList;
+        bool                            isExistSampler(const std::string& name);
+        void                            addSampler(const std::string& name);
+
+        AttributeList                   m_attributeList;
+        UniformList                     m_uniformList;
+        SamplerList                     m_samplerList;
+
+    private:
+
+        static const std::string       s_shaderDataType[EShaderDataType::eDataTypeCount];
 
     };
 

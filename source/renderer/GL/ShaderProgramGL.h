@@ -3,7 +3,7 @@
 
 #include "renderer/ShaderProgram.h"
 
-namespace f3d
+namespace v3d
 {
 namespace renderer
 {
@@ -16,14 +16,14 @@ namespace renderer
         CShaderProgramGL(const ShaderDataPtr& data);
         virtual ~CShaderProgramGL();
 
-        bool    create();  // override;
-        void    destroy(); //  override;
-        void    bind();  // override;
-        void    unbind();   // override;
+        bool    create()    override;
+        void    destroy()   override;
+        void    bind()      override;
+        void    unbind()    override;
 
     private:
 
-      //  bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
+        bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
 
         bool    initProgram(u32& shaderProgram, std::vector<u32>& shaders);
 
