@@ -69,13 +69,11 @@ const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderUniform::CShaderUniform()
-	: CObject()
-    , m_uniformType(EShaderDataType::eUniformNone)
+    : m_uniformType(EShaderDataType::eUniformNone)
     , m_defaultData(EDefaultUniformData::eUserUniform)
 	, m_uniformValue (nullptr)
 	, m_attribute ("")
 {
-	m_type = EObjectType::eTypeShaderUniform;
 }
 
 CShaderUniform::~CShaderUniform()

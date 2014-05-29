@@ -2,8 +2,6 @@
 #define _F3D_SHADER_PROGRAM_GL_H_
 
 #include "renderer/ShaderProgram.h"
-#include "renderer/ShaderAttribute.h"
-#include "renderer/ShaderUniform.h"
 
 namespace f3d
 {
@@ -18,14 +16,14 @@ namespace renderer
         CShaderProgramGL(const ShaderDataPtr& data);
         virtual ~CShaderProgramGL();
 
-        bool    create()    override;
-        void    destroy()   override;
-        void    bind()      override;
-        void    unbind()    override;
+        bool    create();  // override;
+        void    destroy(); //  override;
+        void    bind();  // override;
+        void    unbind();   // override;
 
     private:
 
-        bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
+      //  bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
 
         bool    initProgram(u32& shaderProgram, std::vector<u32>& shaders);
 

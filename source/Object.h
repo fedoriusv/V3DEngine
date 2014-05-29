@@ -16,8 +16,6 @@ namespace f3d
 		eTypeMesh,
 		eTypeShader,
 		eTypeShaderProgram,
-		eTypeShaderUniform,
-        eTypeShaderAttribute,
 		eTypesCount
 	};
 

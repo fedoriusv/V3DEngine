@@ -1,6 +1,8 @@
 #include "Shape.h"
 #include "Engine.h"
+#include "utils/Logger.h"
 #include "renderer/GL/GeomertyGL.h"
+
 
 using namespace f3d;
 using namespace f3d::scene;

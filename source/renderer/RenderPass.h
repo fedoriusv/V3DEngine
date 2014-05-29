@@ -2,10 +2,12 @@
 #define _F3D_RENDER_PASS_H_
 
 #include "tinyxml2.h"
+
 #include "Object.h"
 #include "ShaderProgram.h"
 #include "ShaderData.h"
 #include "RenderState.h"
+
 
 namespace f3d
 {
@@ -34,7 +36,6 @@ namespace renderer
     private:
 
         friend              CRenderTechique;
-
 
         void                init();
         ShaderPtr           makeSharedShader();

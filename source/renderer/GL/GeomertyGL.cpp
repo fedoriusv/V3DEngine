@@ -9,8 +9,8 @@
 using namespace f3d;
 using namespace f3d::renderer;
 
-CGeometryGL::CGeometryGL(const ShaderDataPtr& shaderData)
-    : CGeometry(shaderData)
+CGeometryGL::CGeometryGL(const AttributeList& attributes)
+    : CGeometry(attributes)
 	, m_arrayId(0)
 	, m_drawModeGL(GL_TRIANGLE_STRIP)
 {
@@ -31,8 +31,7 @@ void CGeometryGL::init()
 	CGeometryGL::genVertexArray(m_arrayId);
 	CGeometryGL::bindVertexArray(m_arrayId);
 
-    const AttributeList& list = m_shaderData->getAttributeList();
-    for (auto attr : list)
+    for (auto attr : m_attributes)
     {
         EShaderAttribute type = attr.second->getAttributeType();
 

@@ -1,8 +1,8 @@
 #ifndef _F3D_GEOMETRY_H_
 #define _F3D_GEOMETRY_H_
 
-#include "common.h"
-#include "renderer/ShaderData.h"
+#include "Vertex.h"
+#include "renderer/ShaderAttribute.h"
 
 namespace f3d
 {
@@ -29,7 +29,7 @@ namespace renderer
     {
     public:
 
-        CGeometry(const ShaderDataPtr& shaderData);
+        CGeometry(const AttributeList& attributes);
         virtual           ~CGeometry();
 
         virtual void      init()   = 0;
@@ -42,7 +42,7 @@ namespace renderer
 
         EDrawMode         m_drawMode;
         SVertexData       m_data;
-        ShaderDataPtr     m_shaderData;
+        AttributeList     m_attributes;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

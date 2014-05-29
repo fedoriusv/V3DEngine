@@ -3,8 +3,6 @@
 
 #include "Singleton.h"
 #include "context/DriverContext.h"
-#include "renderer/ShaderUniform.h"
-#include "renderer/Shader.h"
 
 namespace f3d
 {

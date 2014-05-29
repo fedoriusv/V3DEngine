@@ -29,46 +29,46 @@ bool CShaderProgramGL::create()
 
 }
 
-bool CShaderProgramGL::create(const std::string& vShader, const std::string& fShader, u32 arg, ...)
-{
-    if (vShader.empty() || fShader.empty())
-    {
-        ASSERT(false && "Empty Shader FileName");
-        return false;
-    }
-
-    ShaderPtr vshader = std::make_shared<CShaderGL>();
-    vshader->create(vShader, EShaderType::eTypeVertex);
-    CShaderProgram::addShader(vshader);
-
-    ShaderPtr fshader = std::make_shared<CShaderGL>();
-    fshader->create(fShader, EShaderType::eTypeFragment);
-    CShaderProgram::addShader(fshader);
-
-
-    va_list argList;
-    va_start(argList, arg);
-    for (u32 i = 0; i < arg; i += 2)
-    {
-        char* strName = va_arg(argList, char*);
-        int type = va_arg(argList, int);
-
-        ShaderPtr shader = std::make_shared<CShaderGL>();
-        shader->create(strName, (EShaderType)type);
-
-        CShaderProgram::addShader(shader);
-    }
-    va_end(argList);
-
-
-    std::vector<u32> shadersId;
-    CShaderProgram::getShaderIDArray(shadersId);
-
-    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
-    shadersId.clear();
-
-    return status;
-}
+//bool CShaderProgramGL::create(const std::string& vShader, const std::string& fShader, u32 arg, ...)
+//{
+//    if (vShader.empty() || fShader.empty())
+//    {
+//        ASSERT(false && "Empty Shader FileName");
+//        return false;
+//    }
+//
+//    ShaderPtr vshader = std::make_shared<CShaderGL>();
+//    vshader->create(vShader, EShaderType::eTypeVertex);
+//    CShaderProgram::addShader(vshader);
+//
+//    ShaderPtr fshader = std::make_shared<CShaderGL>();
+//    fshader->create(fShader, EShaderType::eTypeFragment);
+//    CShaderProgram::addShader(fshader);
+//
+//
+//    va_list argList;
+//    va_start(argList, arg);
+//    for (u32 i = 0; i < arg; i += 2)
+//    {
+//        char* strName = va_arg(argList, char*);
+//        int type = va_arg(argList, int);
+//
+//        ShaderPtr shader = std::make_shared<CShaderGL>();
+//        shader->create(strName, (EShaderType)type);
+//
+//        CShaderProgram::addShader(shader);
+//    }
+//    va_end(argList);
+//
+//
+//    std::vector<u32> shadersId;
+//    CShaderProgram::getShaderIDArray(shadersId);
+//
+//    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
+//    shadersId.clear();
+//
+//    return status;
+//}
 
 void CShaderProgramGL::destroy()
 {

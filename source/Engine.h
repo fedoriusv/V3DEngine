@@ -1,7 +1,11 @@
 #ifndef _F3D_ENGINE_H_
 #define _F3D_ENGINE_H_
 
-#include "Valera3D.h"
+#include "platform/Platform.h"
+#include "platform/Window.h"
+#include "event/InputEventHandler.h"
+#include "scene/SceneManager.h"
+#include "renderer/Renderer.h"
 
 namespace f3d
 {

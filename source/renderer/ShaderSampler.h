@@ -1,7 +1,7 @@
 #ifndef _F3D_SHADER_SAMPLER_H_
 #define _F3D_SHADER_SAMPLER_H_
 
-#include "Object.h"
+#include "common.h"
 
 namespace f3d
 {
@@ -9,7 +9,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderSampler : public CObject
+    class CShaderSampler
     {
     public:
 

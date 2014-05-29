@@ -1,7 +1,6 @@
 #ifndef _F3D_RESOURCE_H_
 #define _F3D_RESOURCE_H_
 
-#include "common.h"
 #include "Object.h"
 #include "stream/IStream.h"
 

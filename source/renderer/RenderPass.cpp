@@ -1,8 +1,9 @@
 #include "RenderPass.h"
 
 #include "Engine.h"
-#include "renderer/GL/ShaderGL.h"
+#include "utils/Logger.h"
 #include "renderer/GL/ShaderProgramGL.h"
+//#include "renderer/GL/ShaderGL.h"
 
 using namespace f3d;
 using namespace f3d::renderer;
@@ -197,7 +198,7 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
         }
 
         EShaderAttribute attribureName = CShaderAttribute::getShaderAttributeTypeByName(varName);
-        m_shaderData->addAttribute(varName, attribureName);
+        //m_shaderData->addAttribute(varName, attribureName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -223,7 +224,7 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
             return false;
         }
 
-        m_shaderData->addSampler(varName);
+        //m_shaderData->addSampler(varName);
 
         varElement = varElement->NextSiblingElement("uniforms");
     }
@@ -296,12 +297,12 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             }
         }
 
-        m_program->addShader(shader);
+        //m_program->addShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("shader");
     }
 
-    m_program->create();
+    //m_program->create();
 
     return true;
 }
@@ -314,7 +315,7 @@ void CRenderPass::init()
     {
         case platform::EDriverType::eDriverOpenGL:
         {
-            m_program = std::make_shared<CShaderProgramGL>(m_shaderData);
+            m_program = std::make_shared<CShaderProgram>(m_shaderData);
         }
             break;
 
@@ -343,7 +344,7 @@ ShaderPtr CRenderPass::makeSharedShader()
     {
         case platform::EDriverType::eDriverOpenGL:
         {
-            shader = std::make_shared<CShaderGL>();
+         //                                           shader = std::make_shared<CShaderGL>();
         }
         break;
 

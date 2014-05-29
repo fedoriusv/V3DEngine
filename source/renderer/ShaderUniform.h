@@ -1,7 +1,7 @@
 #ifndef _F3D_SHADER_UNIFORM_H_
 #define _F3D_SHADER_UNIFORM_H_
 
-#include "Object.h"
+#include "common.h"
 
 namespace f3d
 {
@@ -43,9 +43,7 @@ namespace renderer
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-    class CShaderProgram;
-
-    class CShaderUniform : public CObject
+    class CShaderUniform
     {
     public:
 

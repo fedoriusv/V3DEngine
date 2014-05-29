@@ -45,7 +45,6 @@ CShaderAttribute::CShaderAttribute()
     : m_typeAttr(EShaderAttribute::eAttributeNone)
     , m_attribute("")
 {
-    m_type = EObjectType::eTypeShaderAttribute;
 }
 
 CShaderAttribute::~CShaderAttribute()

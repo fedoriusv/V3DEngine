@@ -13,8 +13,6 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
-
     class CShaderData : public CObject
     {
     public:
@@ -33,8 +31,6 @@ namespace renderer
         const AttributeList&    getAttributeList() const;
 
     protected:
-
-        friend                  CRenderPass;
 
         bool                    isExistUniform(const std::string& name);
         void                    addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);

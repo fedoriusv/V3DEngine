@@ -30,7 +30,7 @@ void CRenderTechique::addRenderPass(const RenderPassPtr& pass)
 {
     if (pass)
     {
-        m_renderPassList.push_back(pass);
+       m_renderPassList.push_back(pass);
     }
 }
 
@@ -62,13 +62,13 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
 
     while (passElement)
     {
-        RenderPassPtr pass = std::make_shared<CRenderPass>(CRenderPass());
+        RenderPassPtr pass = std::make_shared<CRenderPass>();
         if (pass->parse(passElement))
         {
             LOG_ERROR("Error parse. Pass section");
             return false;
         }
-        m_renderPassList.push_back(pass);
+        CRenderTechique::addRenderPass(pass);
 
         passElement = passElement->NextSiblingElement("pass");
     }

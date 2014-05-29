@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CGeometryGL(const ShaderDataPtr& shaderData);
+        CGeometryGL(const AttributeList& attributes);
         virtual      ~CGeometryGL();
         
         void         init()    override;

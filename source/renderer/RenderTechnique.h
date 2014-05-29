@@ -1,9 +1,10 @@
 #ifndef _F3D_RENDER_TECHNIQUE_H_
 #define _F3D_RENDER_TECHNIQUE_H_
 
-#include "tinyxml2.h"
 #include "stream/Resource.h"
 #include "RenderPass.h"
+#include "tinyxml2.h"
+
 
 namespace f3d
 {

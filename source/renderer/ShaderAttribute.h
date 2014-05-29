@@ -1,7 +1,7 @@
 #ifndef _F3D_SHADER_ATTRIBUTE_H_
 #define _F3D_SHADER_ATTRIBUTE_H_
 
-#include "Object.h"
+#include "common.h"
 
 namespace f3d
 {
@@ -27,7 +27,7 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderAttribute : public CObject
+    class CShaderAttribute
     {
     public:
 
