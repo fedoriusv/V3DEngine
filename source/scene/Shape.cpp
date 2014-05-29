@@ -12,34 +12,35 @@ CShape::CShape()
     : m_geometry(nullptr)
     , m_material(nullptr)
 {
+    m_material = std::make_shared<CMaterial>();
+
+    platform::EDriverType type = v3d::CEngine::getInstance()->getPlatform()->getDriverType();
+
+    switch (type)
+    {
+        case platform::EDriverType::eDriverOpenGL:
+        {
+            m_geometry = std::make_shared<CGeometryGL>();
+        }
+        break;
+
+        case platform::EDriverType::eDriverDirect3D:
+        {
+            //m_geometry = std::make_shared<CGeometry>(CGeometryGL());
+        }
+        break;
+
+        default:
+        {
+            LOG_ERROR("Can`t Choose driver type");
+        }
+    }
+
 }
 
 void CShape::init()
 {
-	platform::EDriverType type = v3d::CEngine::getInstance()->getPlatform()->getDriverType();
-	
-    m_material = std::make_shared<CMaterial>();
-
-	switch (type)
-	{
-		case platform::EDriverType::eDriverOpenGL:
-		{
-            //m_material->getRenderTechique()->getRenderPass(0)->
-            //m_geometry = std::make_shared<CGeometryGL>(CGeometryGL());
-		}
-		break;
-
-		case platform::EDriverType::eDriverDirect3D:
-		{
-			//m_geometry = std::make_shared<CGeometry>(CGeometryGL());
-		}
-		break;
-
-		default:
-		{
-			LOG_ERROR("Can`t Choose driver type");
-		}
-	}
+    ///TODO:!!!
 }
 
 CShape::~CShape()

@@ -1,4 +1,5 @@
 #include "FileStream.h"
+#include "utils/Logger.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,11 @@ FileStream::FileStream()
 FileStream::FileStream(const std::string& file, EOpenMode openMode)
 {
     open(file, openMode);
+
+    if (!m_isOpen)
+    {
+        LOG_ERROR("Can not read file: %s", file.c_str());
+    }
 }
 
 

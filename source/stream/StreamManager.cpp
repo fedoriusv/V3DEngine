@@ -12,7 +12,7 @@ CStreamManager::~CStreamManager()
 {
 }
 
-IStream* CStreamManager::createFileStream(const std::string& file)
+FileStream* CStreamManager::createFileStream(const std::string& file)
 {
     return new FileStream(file);
 }

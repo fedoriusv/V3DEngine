@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "stream/StreamManager.h"
 #include "utils/Logger.h"
+#include "stream/FileStream.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -176,7 +177,11 @@ RenderTechiquePtr CMaterial::getRenderTechique() const
 
 bool CMaterial::loadRenderTechique(const std::string& file)
 {
-    stream::IStream* stream = stream::CStreamManager::getInstance()->createFileStream(file);
+    stream::FileStream* stream = stream::CStreamManager::getInstance()->createFileStream(file);
+    if (!stream->isOpen())
+    {
+        return false;
+    }
 
     RenderTechiquePtr techique = std::make_shared<CRenderTechique>();
     techique->init(stream);

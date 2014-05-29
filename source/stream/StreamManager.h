@@ -10,16 +10,16 @@ namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class IStream;
+    class FileStream;
 
     class CStreamManager : public Singleton<CStreamManager>
     {
     public:
 
         CStreamManager();
-        virtual     ~CStreamManager();
+        virtual         ~CStreamManager();
 
-        IStream*    createFileStream(const std::string& file);
+        FileStream*    createFileStream(const std::string& file);
 
     };
 
