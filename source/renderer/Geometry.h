@@ -2,16 +2,10 @@
 #define _F3D_GEOMETRY_H_
 
 #include "Vertex.h"
-#include "renderer/ShaderAttribute.h"
+#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
-
-namespace scene
-{
-    class CShape;
-}
-
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,26 +17,36 @@ namespace renderer
         eTriangleFan,
     };
 
+    enum class EGeomertyType
+    {
+        eGeomertyStatic,
+        eGeomertyDynamic
+    };
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CGeometry
     {
     public:
 
-        CGeometry(const AttributeList& attributes);
-        virtual           ~CGeometry();
+        CGeometry(const RenderTechiquePtr& techique);
+        virtual             ~CGeometry();
 
-        virtual void      init()   = 0;
-        virtual void      update() = 0;
-        virtual void      free()   = 0;
+        virtual void        init()   = 0;
+        virtual void        update() = 0;
+        virtual void        free()   = 0;
+
+        SVertexData&        getData();
+
+        EDrawMode           getDrawMode() const;
+        void                setDrawMode(EDrawMode mode);
 
     protected:
 
-        friend            v3d::scene::CShape;
-
-        EDrawMode         m_drawMode;
-        SVertexData       m_data;
-        AttributeList     m_attributes;
+        EDrawMode           m_drawMode;
+        EGeomertyType       m_geometyType;
+        SVertexData         m_data;
+        RenderTechiquePtr   m_techique;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

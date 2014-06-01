@@ -119,7 +119,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, std::vector<u32>& shaders
         s32 id = CShaderProgramGL::getAttrib(shaderProgram, name);
         if ((EShaderAttribute)id != type)
         {
-            LOG_ERROR("InitShaderProgram: Invalid attribute Index for: %s", name);
+            LOG_ERROR("InitShaderProgram: Invalid attribute Index for: %s", name.c_str());
         }
     }
 
@@ -127,7 +127,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, std::vector<u32>& shaders
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("InitShaderProgram: shader program not compiled id: %s", shaderProgram);
+        LOG_ERROR("InitShaderProgram: shader program not compiled id: %d", shaderProgram);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;

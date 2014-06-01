@@ -1,6 +1,7 @@
 #include "RendererGL.h"
 #include "ShaderGL.h"
 #include "ShaderProgramGL.h"
+#include "GeomertyGL.h"
 
 #include "utils/Logger.h"
 #include "context/DriverContext.h"
@@ -72,4 +73,9 @@ ShaderPtr CRendererGL::makeSharedShader()
 ShaderProgramPtr CRendererGL::makeSharedProgram(const ShaderDataPtr& data)
 {
     return std::make_shared<CShaderProgramGL>(data);
+}
+
+GeometryPtr CRendererGL::makeSharedGeometry(const RenderTechiquePtr& techique)
+{
+    return std::make_shared<CGeometryGL>(techique);
 }

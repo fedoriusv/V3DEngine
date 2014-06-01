@@ -5,6 +5,7 @@
 #include <fstream>
 #include <ostream>
 #include <istream>
+#include <sys/stat.h>
 
 using namespace v3d;
 using namespace v3d::stream;
@@ -12,11 +13,15 @@ using namespace v3d::core;
 
 FileStream::FileStream()
     : m_fileHandler(nullptr)
+    , m_fileSize(0)
     , m_isOpen(false)
 {
 }
 
 FileStream::FileStream(const std::string& file, EOpenMode openMode)
+    : m_fileHandler(nullptr)
+    , m_fileSize(0)
+    , m_isOpen(false)
 {
     open(file, openMode);
 
@@ -34,6 +39,11 @@ FileStream::~FileStream()
 
 bool FileStream::open(const std::string& file, EOpenMode openMode)
 {
+    if (m_isOpen)
+    {
+        return true;
+    }
+
     const char* mode = 0;
 
     if ((openMode & e_in) == openMode)
@@ -70,9 +80,8 @@ bool FileStream::open(const std::string& file, EOpenMode openMode)
     }
 
     m_fileName = file;
-
-    m_fileHandler = fopen(file.c_str(), mode);
-
+    fopen_s(&m_fileHandler, m_fileName.c_str(), mode);
+ 
     m_isOpen = m_fileHandler != nullptr;
 
     return m_isOpen;
@@ -176,12 +185,19 @@ u32 FileStream::read(bool& value)
 
 u32 FileStream::read(std::string& value)
 {
-    u32 strLen = 0;
-    u32 ret = fread(&strLen, sizeof(u32), 1, m_fileHandler);
-    c8* str = new c8[strLen];
-    ret += read(&str, sizeof(c8), strLen);
-    value = str;
-    delete[] str;
+    ASSERT(m_fileHandler && "File Handler nullptr");
+
+    FileStream::seekEnd(0);
+    m_fileSize = FileStream::tell();
+    rewind(m_fileHandler);
+
+    c8* buffer = new c8[m_fileSize + 1];
+    const u32 ret = fread(buffer, sizeof(c8), m_fileSize, m_fileHandler);
+    buffer[m_fileSize] = '\0';
+
+    value = buffer;
+    delete[] buffer;
+
     return ret;
 }
 
@@ -271,25 +287,34 @@ u32 FileStream::write(const std::string& value)
     return ret;
 }
 
-
 void FileStream::seekBeg(const u32 offset)
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
     fseek(m_fileHandler, offset, SEEK_SET);
+}
+
+void FileStream::seekEnd(const u32 offset)
+{
+    ASSERT(m_fileHandler && "File Handler nullptr");
+    fseek(m_fileHandler, offset, SEEK_END);
 }
 
 void FileStream::seekCur(const u32 offset)
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
     fseek(m_fileHandler, offset, SEEK_CUR);
 }
 
 u32 FileStream::tell()
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
     u32 tell = ftell(m_fileHandler);
     return tell;
 }
 
 u32 FileStream::size()
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
     if (m_fileSize == 0)
     {
         u32 currentPos = tell();
@@ -314,8 +339,25 @@ std::string FileStream::getName() const
     return m_fileName;
 }
 
-
-bool FileStream::isFileExist(const std::string& fileName)
+bool FileStream::isFileExist(const std::string& file)
 {
-    return false;
+    struct stat status;
+    int ret = stat(file.c_str(), &status);
+    return (ret == 0);
+}
+
+bool FileStream::isDirectory(const std::string& path)
+{
+    struct stat status;
+    int ret = stat(path.c_str(), &status);
+    if (ret != -1)
+    {
+        ret = ((status.st_mode & S_IFDIR) != 0) ? 1 : 0;
+    }
+    return ret;
+}
+
+bool FileStream::remove(const std::string& file)
+{
+    return remove(file.c_str()) == 0;
 }

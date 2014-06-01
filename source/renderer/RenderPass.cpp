@@ -143,21 +143,21 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name);
+            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
             return false;
         }
 
         const std::string varType = varElement->Attribute("type");
         if (varType.empty())
         {
-            LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name, varName);
+            LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
             return false;
         }
 
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name, varName);
+            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
             return false;
         }
 
@@ -187,14 +187,14 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name);
+            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
             return false;
         }
 
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name, varName);
+            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
             return false;
         }
 
@@ -221,7 +221,7 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find sampler name from pass '%s'", m_name);
+            LOG_ERROR("Cannot find sampler name from pass '%s'", m_name.c_str());
             return false;
         }
 
@@ -277,10 +277,10 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         const std::string shaderPath = shaderElement->Attribute("path");
         if (!shaderPath.empty())
         {
-            LOG_INFO("Info parse. Create vshader from file: %s", shaderPath);
+            LOG_INFO("Info parse. Create vshader from file: %s", shaderPath.c_str());
             if (!shader->load(shaderPath, type))
             {
-                LOG_ERROR("Error Load Shader %s", shaderPath);
+                LOG_ERROR("Error Load Shader %s", shaderPath.c_str());
             }
         }
         else

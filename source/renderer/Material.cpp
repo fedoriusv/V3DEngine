@@ -187,7 +187,7 @@ bool CMaterial::loadRenderTechique(const std::string& file)
     techique->init(stream);
     if (techique->load())
     {
-        LOG_ERROR("Streaming error read file [%s]", file);
+        LOG_ERROR("Streaming error read file [%s]", file.c_str());
         return false;
     }
 
@@ -200,7 +200,7 @@ bool CMaterial::loadRenderTechique(stream::IStream* stream)
     techique->init(stream);
     if (techique->load())
     {
-        LOG_ERROR("Streaming error read file [%s]", stream->getName());
+        LOG_ERROR("Streaming error read file [%s]", stream->getName().c_str());
         return false;
     }
 

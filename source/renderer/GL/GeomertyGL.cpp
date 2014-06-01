@@ -9,10 +9,10 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CGeometryGL::CGeometryGL(const AttributeList& attributes)
-    : CGeometry(attributes)
-	, m_arrayId(0)
-	, m_drawModeGL(GL_TRIANGLE_STRIP)
+CGeometryGL::CGeometryGL(const RenderTechiquePtr& techique)
+    : CGeometry(techique)
+    , m_arrayId(0)
+    , m_drawModeGL(GL_TRIANGLE_STRIP)
 {
 }
 
@@ -28,65 +28,73 @@ void CGeometryGL::init()
 		return;
 	}
 
-	CGeometryGL::genVertexArray(m_arrayId);
-	CGeometryGL::bindVertexArray(m_arrayId);
+    CGeometryGL::genVertexArray(m_arrayId);
+    CGeometryGL::bindVertexArray(m_arrayId);
 
-    for (auto attr : m_attributes)
+    //TODO!: render pass
+
+    for (int idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
     {
-        EShaderAttribute type = attr.second->getAttributeType();
+        const RenderPassPtr pass = m_techique->getRenderPass(idx);
+        const AttributeList& attributes = pass->getShaderData()->getAttributeList();
 
-        switch (type)
+        for (auto attr : attributes)
         {
-            case EShaderAttribute::eAttributeVertex:
-            {
-                CGeometryGL::genBuffers(m_data.m_vertices.id);
-                CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
-                CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
-                CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);
-            }
-            break;
+            EShaderAttribute type = attr.second->getAttributeType();
 
-            case EShaderAttribute::eAttributeNormal:
+            switch (type)
             {
-                CGeometryGL::genBuffers(m_data.m_normals.id);
-                CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
-                CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
-                CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeNormal, 3);
-            }
-            break;
-
-            case EShaderAttribute::eAttributeColor:
-            {
-                //TODO: Color
-            }
-            break;
-
-            case EShaderAttribute::eAttributeBinormal:
-            {
-                //TODO: binormal
-            }
-            break;
-
-            case EShaderAttribute::eAttributeTangent:
-            {
-                //TODO: tangent
-            }
-            break;
-
-            case EShaderAttribute::eAttributeTexture0:
-            case EShaderAttribute::eAttributeTexture1:
-            case EShaderAttribute::eAttributeTexture2:
-            case EShaderAttribute::eAttributeTexture3:
-            {
-                for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+                case EShaderAttribute::eAttributeVertex:
                 {
-                    CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
-                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
-                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
-                    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeTexture0 + layer, 2);
+                    CGeometryGL::genBuffers(m_data.m_vertices.id);
+                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
+                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
+                    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);
                 }
+                break;
+
+                case EShaderAttribute::eAttributeNormal:
+                {
+                    CGeometryGL::genBuffers(m_data.m_normals.id);
+                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
+                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
+                    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeNormal, 3);
+                }
+                break;
+
+                case EShaderAttribute::eAttributeColor:
+                {
+                    //TODO: Color
+                }
+                break;
+
+                case EShaderAttribute::eAttributeBinormal:
+                {
+                    //TODO: binormal
+                }
+                break;
+
+                case EShaderAttribute::eAttributeTangent:
+                {
+                    //TODO: tangent
+                }
+                break;
+
+                case EShaderAttribute::eAttributeTexture0:
+                case EShaderAttribute::eAttributeTexture1:
+                case EShaderAttribute::eAttributeTexture2:
+                case EShaderAttribute::eAttributeTexture3:
+                {
+                    for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+                    {
+                        CGeometryGL::genBuffers(m_data.m_texCoords.at(layer).id);
+                        CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
+                        CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
+                        CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeTexture0 + layer, 2);
+                    }
+                }
+                break;
             }
-            break;
         }
     }
 	
@@ -131,25 +139,82 @@ void CGeometryGL::free()
 
 void CGeometryGL::refresh()
 {
-	//Vertex
-	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
-	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
-	CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
+    if (m_data.empty())
+    {
+        LOG_WARRNING("Data empty");
+        return;
+    }
 
-	//Normal
-	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
-	CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
-	CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
+    for (int idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
+    {
+        const RenderPassPtr pass = m_techique->getRenderPass(idx);
+        const AttributeList& attributes = pass->getShaderData()->getAttributeList();
 
-	//TexCoords
-	for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
-	{
-		CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
-		CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
-		CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
-	}
+        for (auto attr : attributes)
+        {
+            EShaderAttribute type = attr.second->getAttributeType();
 
-	//Indices
+            switch (type)
+            {
+                case EShaderAttribute::eAttributeVertex:
+                {
+                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_vertices.id);
+                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+                    CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_vertices.vertex.data());
+                }
+                break;
+
+                case EShaderAttribute::eAttributeNormal:
+                {
+                    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_normals.id);
+                    CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+                    CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 3, m_data.m_normals.vertex.data());
+                }
+                break;
+
+                case EShaderAttribute::eAttributeColor:
+                {
+                    //TODO: Color
+                }
+                break;
+
+                case EShaderAttribute::eAttributeBinormal:
+                {
+                    //TODO: binormal
+                }
+                break;
+
+                case EShaderAttribute::eAttributeTangent:
+                {
+                    //TODO: tangent
+                }
+                break;
+
+                case EShaderAttribute::eAttributeTexture0:
+                case EShaderAttribute::eAttributeTexture1:
+                case EShaderAttribute::eAttributeTexture2:
+                case EShaderAttribute::eAttributeTexture3:
+                {
+                    for (v3d::u32 layer = 0; layer < m_data.m_texCoords.size(); ++layer)
+                    {
+                        CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data.m_texCoords.at(layer).id);
+                        CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* m_data.m_countVertices * 3, NULL);
+                        CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* m_data.m_countVertices * 2, m_data.m_texCoords.at(layer).vertex.data());
+                    }
+                }
+                break;
+
+                default:
+                {
+                    LOG_WARRNING("Unknown Attribute: %s", CShaderAttribute::getShaderAttributeNameByType(type).c_str());
+                }
+                break;
+            }
+        }
+
+    }
+
+    //Indices
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
 	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data.m_countIndices, NULL);
 	CGeometryGL::bufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLint)* m_data.m_countIndices, m_data.m_indices.vertex.data());

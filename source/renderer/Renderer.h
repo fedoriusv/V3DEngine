@@ -5,6 +5,7 @@
 #include "context/DriverContext.h"
 #include "renderer/Shader.h"
 #include "renderer/ShaderProgram.h"
+#include "renderer/Geometry.h"
 
 namespace v3d
 {
@@ -31,8 +32,9 @@ namespace renderer
 
         void                     checkForErrors(const std::string& location = "");
 
-        virtual ShaderPtr        makeSharedShader()                            = 0;
-        virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)  = 0;
+        virtual ShaderPtr        makeSharedShader()                                    = 0;
+        virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)          = 0;
+        virtual GeometryPtr      makeSharedGeometry(const RenderTechiquePtr& techique) = 0;
 
     protected:
 

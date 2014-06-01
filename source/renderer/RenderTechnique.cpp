@@ -87,30 +87,34 @@ bool CRenderTechique::load()
     stream::IStream* stream = CResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("Empty Stream with name [%s] form RenderTechique", CResource::getResourseName());
+        LOG_ERROR("Empty Stream with name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 
     m_renderPassList.clear();
 
     tinyxml2::XMLDocument doc;
-    
-    stream->seekBeg(0);
-    s32 size = stream->size();
     std::string data;
-    stream->read(data);
+
+    u32 size = stream->size();
+    if (size > 0)
+    {
+        stream->seekBeg(0);
+        stream->read(data);
+    }
+    //stream->close();
 
     tinyxml2::XMLError success = doc.Parse(data.c_str());
-    if (!success)
+    if (success)
     {
-        LOG_ERROR("Error Parse Stream name [%s] form RenderTechique", CResource::getResourseName());
+        LOG_ERROR("Error Parse Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 
     tinyxml2::XMLElement* rootElement = doc.FirstChildElement("technique");
     if (!rootElement)
     {
-        LOG_ERROR("Can not find technique in Stream name [%s] form RenderTechique", CResource::getResourseName());
+        LOG_ERROR("Can not find technique in Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 

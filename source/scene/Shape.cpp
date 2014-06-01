@@ -13,34 +13,19 @@ CShape::CShape()
     , m_material(nullptr)
 {
     m_material = std::make_shared<CMaterial>();
-
-    platform::EDriverType type = v3d::CEngine::getInstance()->getPlatform()->getDriverType();
-
-    switch (type)
-    {
-        case platform::EDriverType::eDriverOpenGL:
-        {
-            m_geometry = std::make_shared<CGeometryGL>();
-        }
-        break;
-
-        case platform::EDriverType::eDriverDirect3D:
-        {
-            //m_geometry = std::make_shared<CGeometry>(CGeometryGL());
-        }
-        break;
-
-        default:
-        {
-            LOG_ERROR("Can`t Choose driver type");
-        }
-    }
-
 }
 
 void CShape::init()
 {
-    ///TODO:!!!
+    RenderTechiquePtr techique = m_material->getRenderTechique();
+    if (!techique)
+    {
+        LOG_ERROR("CShape: Do not exist RenderTechique");
+        ASSERT(false && "CShape: Do not exist RenderTechique");
+        return;
+    }
+
+    m_geometry = v3d::CEngine::getInstance()->getRenderer()->makeSharedGeometry(techique);
 }
 
 CShape::~CShape()
@@ -64,15 +49,15 @@ renderer::MaterialPtr CShape::getMaterial() const
 
 SVertexData& CShape::getGeometryData()
 {
-	return m_geometry->m_data;
+    return m_geometry->getData();
 }
 
 EDrawMode CShape::getGeometryDrawMode() const
 {
-	return m_geometry->m_drawMode;
+	return m_geometry->getDrawMode();
 }
 
 void CShape::setGeometryDrawMode(EDrawMode mode)
 {
-	m_geometry->m_drawMode = mode;
+	m_geometry->setDrawMode(mode);
 }

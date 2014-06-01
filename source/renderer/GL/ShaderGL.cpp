@@ -69,7 +69,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
     if (!isCompiled)
     {
-        LOG_ERROR("IniiShader: shader not compiled id: %s", shader);
+        LOG_ERROR("InitShader: shader not compiled id: %d", shader);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;
@@ -81,7 +81,20 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
         {
             std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
             {
-                return type == eTypeVertex ? "Vertex" : "Fragment";
+                switch (type)
+                {
+                    case eTypeVertex:
+                        return "Vertex";
+                    case eTypeFragment:
+                        return "Fragment";
+                    case eTypeGeometry:
+                        return "Geometry";
+                    case eTypeCompute:
+                        return "Compute";
+                    default:
+                        return "Unknown";
+                }
+                return "Unknown";
             };
             LOG_ERROR("Shader [%s] Error: %s", strFunc(type), buffer);
         }

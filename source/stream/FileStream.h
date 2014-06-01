@@ -24,7 +24,9 @@ namespace stream
 			e_create = 1 << 5
 		};
 
-		static bool isFileExist(const std::string& fileName);
+		static bool isFileExist(const std::string& file);
+        static bool isDirectory(const std::string& path);
+        static bool remove(const std::string& file);
 
 		FileStream();
 		FileStream(const std::string& file, EOpenMode openMode = e_in);
@@ -66,6 +68,7 @@ namespace stream
 		u32     write(const std::string& value)                          override;
 
 		void    seekBeg(const u32 offset)                                override;
+        void    seekEnd(const u32 offset)                                override;
 		void    seekCur(const u32 offset)                                override;
 		u32     tell()                                                   override;
 		u32     size()                                                   override;

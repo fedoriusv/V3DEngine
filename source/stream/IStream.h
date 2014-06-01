@@ -54,6 +54,7 @@ namespace stream
 		virtual u32     write(const std::string& value) = 0;
 
 		virtual void    seekBeg(const u32 offset)       = 0;
+        virtual void    seekEnd(const u32 offset)       = 0;
 		virtual void    seekCur(const u32 offset)       = 0;
 
 		virtual u32     tell()                          = 0;

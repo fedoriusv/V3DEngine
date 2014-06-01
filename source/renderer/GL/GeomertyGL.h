@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CGeometryGL(const AttributeList& attributes);
+        CGeometryGL(const RenderTechiquePtr& techique);
         virtual      ~CGeometryGL();
         
         void         init()    override;
@@ -22,6 +22,8 @@ namespace renderer
         void         refresh();
 
     private:
+
+        void         initAttribute(u32 pass);
 
         v3d::u32     m_drawModeGL;
         v3d::u32     m_arrayId;
