@@ -1,18 +1,20 @@
-<technique name="basic" version="100">
+<technique name="default" version="100">
 	<pass name="pass0">
 		<uniforms>
-			<var name="inWorldViewProjMatrix" val="matrix.worldviewproj"/>
-			<var name="inTextureMatrix0" val="matrix.texture0.2vec3"/>
+			<var name="projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+			<var name="modelMatrix" type="mat4" val="transform.modelMatrix"/>
+			<var name="viewMatrix" type="mat4" val="transform.viewMatrix"/>
+			<var name="normalMatrix" type="mat4" val="transform.normalMatrix"/>
+			<var name="viewPosition" type="vec3" val="transform.viewPosition"/>
 		</uniforms>
 		<attributes>
-			<var name="inPos" val="mesh.positions"/>
-			<var name="inUV0" val="mesh.uv0"/>
+			<var name="positions" type="vec3" val="mesh.positions"/>
 		</attributes>
-		<samplers>
+		<samplers> 
 			<var name="texture0"/>
 		</samplers>
 		<rendertarget val="default"/>
-		<shader>
+		<shaders>
 			<var type="vertex" name="basic">
 				<![CDATA[
 						uniform highp mat4 inWorldViewProjMatrix;
@@ -42,6 +44,6 @@
 						}
 					   ]]>
 			</var>
-		</shader>
+		</shaders>
 	</pass>
 </technique>

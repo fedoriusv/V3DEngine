@@ -107,6 +107,8 @@ bool FileStream::isOpen() const
 
 u32 FileStream::read(void* buffer, const u32 size, const u32 count)
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
+
     const u32 ret = fread(buffer, size, count, m_fileHandler);
     return ret;
 }

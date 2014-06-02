@@ -137,37 +137,43 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root;
+    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
             LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
         const std::string varType = varElement->Attribute("type");
         if (varType.empty())
         {
             LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
             LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
-        EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varName);
+        EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varVal);
         EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
             ? EShaderDataType::eDataNone : CShaderData::getShaderDataTypeByName(varType);
 
         m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
 
-        varElement = varElement->NextSiblingElement("uniforms");
+        varElement = varElement->NextSiblingElement("var");
     }
 
     return true;
@@ -181,27 +187,31 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root;
+    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
             LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
             LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
-        EShaderAttribute attribureName = CShaderAttribute::getShaderAttributeTypeByName(varName);
+        EShaderAttribute attribureName = CShaderAttribute::getShaderAttributeTypeByName(varVal);
         m_shaderData->addAttribute(varName, attribureName);
 
-        varElement = varElement->NextSiblingElement("uniforms");
+        varElement = varElement->NextSiblingElement("var");
     }
 
     return true;
@@ -215,19 +225,21 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root;
+    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
             LOG_ERROR("Cannot find sampler name from pass '%s'", m_name.c_str());
-            return false;
+
+            varElement = varElement->NextSiblingElement("var");
+            continue;
         }
 
         m_shaderData->addSampler(varName);
 
-        varElement = varElement->NextSiblingElement("uniforms");
+        varElement = varElement->NextSiblingElement("var");
     }
 
     return true;
