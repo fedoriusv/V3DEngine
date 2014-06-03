@@ -1,10 +1,11 @@
 #include "GeomertyGL.h"
-#include "GL/glew.h"
 
 #include "renderer/ShaderAttribute.h"
 #include "renderer/ShaderData.h"
 #include "utils/Logger.h"
 #include "Engine.h"
+
+#include "GL/glew.h"
 
 using namespace v3d;
 using namespace v3d::renderer;

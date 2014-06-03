@@ -3,11 +3,10 @@
 #include "ShaderProgramGL.h"
 #include "GeomertyGL.h"
 
+#include "GL/glew.h"
+
 #include "utils/Logger.h"
 #include "context/DriverContext.h"
-
-
-#include "GL/glew.h"
 
 using namespace v3d;
 using namespace v3d::renderer;

@@ -1,7 +1,7 @@
 #include "ShaderGL.h"
-#include "GL/glew.h"
 
 #include "utils/Logger.h"
+#include "GL/glew.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -19,12 +19,19 @@ CShaderGL::~CShaderGL()
 
 bool CShaderGL::create(const std::string& body, EShaderType type)
 {
-    std::memcpy(m_data, body.c_str(), body.size());
-    if (!m_data)
+    if (body.empty())
     {
         LOG_ERROR("Shader: Empty Shader Body");
         return false;
     }
+
+    m_shaderType = type;
+
+    c8* data = (c8*)malloc(body.size() + 1);
+    memcpy(data, body.data(), body.size());
+    data[body.size()] = '\0';
+
+    m_data = (void*)data;
 
     m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
     CShaderGL::clearShader();

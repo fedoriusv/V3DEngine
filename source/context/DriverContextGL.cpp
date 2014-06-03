@@ -258,7 +258,7 @@ bool CDriverContextGL::createWin32Context()
 
 	LOG_INFO("Win32 Context GL successful created")
 
-	return true;
+    return true;
 }
 
 #elif defined(_PLATFORM_LINUX_)

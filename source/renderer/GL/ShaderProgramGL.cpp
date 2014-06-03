@@ -1,9 +1,8 @@
 #include "ShaderProgramGL.h"
-#include "common.h"
-#include "GL/glew.h"
 
 #include "utils/Logger.h"
 #include "renderer/GL/ShaderGL.h"
+#include "GL/glew.h"
 
 using namespace v3d;
 using namespace v3d::renderer;

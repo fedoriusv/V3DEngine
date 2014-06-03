@@ -254,14 +254,16 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
     }
 
     //vshader
-    tinyxml2::XMLElement*  shaderElement = root;
+    tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
         ShaderPtr shader = v3d::CEngine::getInstance()->getRenderer()->makeSharedShader();
         if (!shader)
         {
             LOG_ERROR("Error parse. Could not create shader");
-            return false;
+
+            shaderElement = shaderElement->NextSiblingElement("var");
+            continue;
         }
 
         const std::string shaderName = shaderElement->Attribute("name");
@@ -286,16 +288,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             type = CShader::getShaderTypeByName(shaderType);
         }
 
-        const std::string shaderPath = shaderElement->Attribute("path");
-        if (!shaderPath.empty())
-        {
-            LOG_INFO("Info parse. Create vshader from file: %s", shaderPath.c_str());
-            if (!shader->load(shaderPath, type))
-            {
-                LOG_ERROR("Error Load Shader %s", shaderPath.c_str());
-            }
-        }
-        else
+        if (!shaderElement->Attribute("path"))
         {
             const std::string shaderBody = shaderElement->GetText();
             if (shaderBody.empty())
@@ -309,10 +302,19 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
                 LOG_ERROR("Error Load Shader body");
             }
         }
+        else
+        {
+            const std::string shaderPath = shaderElement->Attribute("path");
+            LOG_INFO("Info parse. Create vshader from file: %s", shaderPath.c_str());
+            if (!shader->load(shaderPath, type))
+            {
+                LOG_ERROR("Error Load Shader %s", shaderPath.c_str());
+            }
+        }
 
-        m_program->addShader(shader);
+       m_program->addShader(shader);
 
-        shaderElement = shaderElement->NextSiblingElement("shader");
+        shaderElement = shaderElement->NextSiblingElement("var");
     }
 
     m_program->create();
