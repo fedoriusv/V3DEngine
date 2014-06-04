@@ -63,7 +63,7 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
     while (passElement)
     {
         RenderPassPtr pass = std::make_shared<CRenderPass>();
-        if (pass->parse(passElement))
+        if (!pass->parse(passElement))
         {
             LOG_ERROR("Error parse. Pass section");
             return false;

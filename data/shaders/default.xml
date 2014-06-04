@@ -35,7 +35,7 @@
 
 					void main()
 					{
-						vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
+						vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
 						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
 					}
 				]]>

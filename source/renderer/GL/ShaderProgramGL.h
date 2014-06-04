@@ -25,7 +25,7 @@ namespace renderer
 
         bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
 
-        bool    initProgram(u32& shaderProgram, std::vector<u32>& shaders);
+        bool    initProgram(u32& shaderProgram, const std::vector<u32>& shaders);
 
         void    attachShader(u32 shaderProgram, u32 shader);
         void    detachShader(u32 shaderProgram, u32 shader);

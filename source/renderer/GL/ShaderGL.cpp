@@ -64,6 +64,7 @@ void CShaderGL::destroy()
 
 bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 {
+
     shader = CShaderGL::createShader(type);
 
     GLchar* stringPtr[1];

@@ -89,7 +89,7 @@ void CShaderProgramGL::unbind()
     CShaderProgramGL::useProgram(0);
 }
 
-bool CShaderProgramGL::initProgram(u32& shaderProgram, std::vector<u32>& shaders)
+bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& shaders)
 {
     CShaderProgramGL::createProgram(shaderProgram);
 

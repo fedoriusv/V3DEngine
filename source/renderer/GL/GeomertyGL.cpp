@@ -34,7 +34,7 @@ void CGeometryGL::init()
 
     //TODO!: render pass
 
-    for (int idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
+    for (u32 idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr pass = m_techique->getRenderPass(idx);
         const AttributeList& attributes = pass->getShaderData()->getAttributeList();
@@ -146,7 +146,7 @@ void CGeometryGL::refresh()
         return;
     }
 
-    for (int idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
+    for (u32 idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr pass = m_techique->getRenderPass(idx);
         const AttributeList& attributes = pass->getShaderData()->getAttributeList();

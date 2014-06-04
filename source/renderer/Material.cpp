@@ -185,11 +185,13 @@ bool CMaterial::loadRenderTechique(const std::string& file)
 
     RenderTechiquePtr techique = std::make_shared<CRenderTechique>();
     techique->init(stream);
-    if (techique->load())
+    if (!techique->load())
     {
         LOG_ERROR("Streaming error read file [%s]", file.c_str());
         return false;
     }
+
+    m_renderTechique = techique;
 
     return true;
 }
