@@ -45,20 +45,20 @@ void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer)
 	clear();
 
 	m_countVertices = count;
-	m_vertices.vertex.reserve(count);
-	m_normals.vertex.reserve(count);
+    m_vertices.vertex.resize(count);
+	m_normals.vertex.resize(count);
 
 	for (v3d::u32 i = 0; i < layer; ++i)
 	{
 		SVertices<core::Vector2D> texCoord;
-		texCoord.vertex.reserve(count);
+		texCoord.vertex.resize(count);
 
 		m_texCoords.push_back(texCoord);
 
 	}
 
 	m_countIndices  = index;
-	m_indices.vertex.reserve(index);
+    m_indices.vertex.resize(index);
 
 }
 

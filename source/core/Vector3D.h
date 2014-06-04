@@ -21,6 +21,7 @@ namespace core
 
 		TVector3D<T>	operator -  ()                             const;
 		TVector3D<T>&	operator =  (const TVector3D<T>& other);
+        TVector3D<T>&	operator =  (const T* other);
 		TVector3D<T>	operator +  (const TVector3D<T>& other)    const;
 		TVector3D<T>&	operator += (const TVector3D<T>& other);
 		TVector3D<T>	operator +  (const T scalar)               const;
@@ -146,11 +147,27 @@ namespace core
 	template<class T>
 	TVector3D<T>& TVector3D<T>::operator = (const TVector3D<T>& other)
 	{
+        if (this == &other)
+        {
+            return *this;
+        }
+
 		x = other.x;
 		y = other.y;
 		z = other.z;
+
 		return *this;
 	}
+
+    template<class T>
+    TVector3D<T>& TVector3D<T>::operator = (const T* other)
+    {
+        x = other[0];
+        y = other[1];
+        z = other[2];
+
+        return *this;
+    }
 
 	template<class T>
 	TVector3D<T> TVector3D<T>::operator + (const TVector3D<T>& other) const
