@@ -46,9 +46,10 @@ void CCubeShape::init()
 {
     CShape::init();
 
-	v3d::f32 s = 0.5f;
+	f32 s = 0.5f;
+    u32 count = 24;
 
-	v3d::f32 vertex[][3] =
+	f32 vertex[][3] =
 	{
 		{ -s, -s,  s }, {  s, -s,  s }, {  s,  s,  s }, { -s,  s,  s },
 		{ -s, -s, -s }, { -s,  s, -s }, {  s,  s, -s }, {  s, -s, -s },
@@ -58,7 +59,7 @@ void CCubeShape::init()
 		{ -s, -s, -s }, { -s, -s,  s }, { -s,  s,  s }, { -s,  s, -s }
 	};
 
-	v3d::f32 normals[][3] =
+	f32 normals[][3] =
 	{
 		{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
 		{ 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f }, { 0.0f, 0.0f,-1.0f },
@@ -68,7 +69,7 @@ void CCubeShape::init()
 		{-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }, {-1.0f, 0.0f, 0.0f }
 	};
 
-	v3d::f32 texCoord[][2] =
+	f32 texCoord[][2] =
 	{
 		{ 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f },
 		{ 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f },
@@ -78,7 +79,7 @@ void CCubeShape::init()
 		{ 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }
 	};
 
-	v3d::u32 cubeIndices[] =
+	u32 cubeIndices[] =
 	{
 		 0,  3,  1,  1,  3,  2,	// front
 		 4,  7,  5,  5,  7,  6,	// back
@@ -90,8 +91,16 @@ void CCubeShape::init()
 
 
 	SVertexData& data = CShape::getGeometryData();
-	data.malloc(24, 36);
-	
+    data.malloc(36, 36);
+
+
+    for (u32 i = 0; i < count; ++i)
+    {
+
+        data.m_vertices.vertex[i] = core::Vector3D(vertex[i][0], vertex[i][1], vertex[i][2]);
+    }
+    //std::copy(cubeIndices, cubeIndices+2, data.m_vertices.vertex.begin());
+
 	memcpy(data.m_vertices.vertex.data(), vertex, sizeof(vertex));
 	memcpy(data.m_normals.vertex.data(), normals, sizeof(normals));
 	memcpy(data.m_texCoords.at(0).vertex.data(), texCoord, sizeof(texCoord));
