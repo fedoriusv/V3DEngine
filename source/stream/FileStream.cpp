@@ -356,10 +356,10 @@ bool FileStream::isDirectory(const std::string& path)
     {
         ret = ((status.st_mode & S_IFDIR) != 0) ? 1 : 0;
     }
-    return ret;
+    return (ret != 0);
 }
 
 bool FileStream::remove(const std::string& file)
 {
-    return remove(file.c_str()) == 0;
+    return remove(file) == 0;
 }
