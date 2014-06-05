@@ -21,27 +21,27 @@ namespace v3d
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CObject
-	{
-	public:
+    class CObject
+    {
+    public:
 
-		CObject();
-		~CObject();
+        CObject();
+        ~CObject();
 
-		const s32			getID() const;
-		const std::string	getName() const;
-		const EObjectType	getObjectType() const;
+        const s32           getID() const;
+        const std::string&  getName() const;
+        const EObjectType   getObjectType() const;
 
-		void				setID(const s32 id);
-		void				setName(const std::string& name);
+        void                setID(const s32 id);
+        void                setName(const std::string& name);
 
-	protected:
-		
-		s32					m_id;
-		std::string			m_name;
-		EObjectType			m_type;
+    protected:
 
-	};
+        s32                 m_id;
+        std::string         m_name;
+        EObjectType         m_type;
+
+    };
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }

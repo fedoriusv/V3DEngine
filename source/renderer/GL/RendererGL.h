@@ -23,14 +23,10 @@ namespace renderer
     
         void                reshape(u32 width, u32 height) override;
 
-        ShaderPtr           makeSharedShader()             override;
+        ShaderPtr           makeSharedShader()                                    override;
         ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)          override;
         GeometryPtr         makeSharedGeometry(const RenderTechiquePtr& techique) override;
 
-    private:
-    
-        core::Matrix4D      m_projectionMatrix;
-        core::Matrix4D      m_viewMatrix;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

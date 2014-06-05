@@ -21,8 +21,8 @@ void CCubeShape::render()
         return;
     }
 
-    //Material->bind()
-
+    m_material->bind();
+   
     m_geometry->update();
 }
 

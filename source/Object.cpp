@@ -13,7 +13,7 @@ CObject::~CObject()
 {
 }
 
-const std::string CObject::getName() const
+const std::string& CObject::getName() const
 {
 	return m_name;
 }

@@ -12,6 +12,9 @@ CShape::CShape()
     : m_geometry(nullptr)
     , m_material(nullptr)
 {
+    m_nodeType = ENodeType::eNodeShape;
+    LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
+
     m_material = std::make_shared<CMaterial>();
 }
 

@@ -27,6 +27,8 @@ namespace renderer
 
         virtual void             reshape(u32 width, u32 height) = 0;
 
+        virtual void             updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up);
+
         void                     setBackColor(const core::Vector3D& color);
         const core::Vector3D&    getBackColor() const;
 
@@ -42,6 +44,10 @@ namespace renderer
 
         core::Vector3D           m_backColor;
         core::Dimension2D        m_viewportSize;
+
+        core::Matrix4D           m_projectionMatrix;
+        core::Matrix4D           m_viewMatrix;
+        core::Vector3D           m_viewPosition;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

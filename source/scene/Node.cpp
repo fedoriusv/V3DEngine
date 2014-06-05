@@ -1,12 +1,30 @@
 #include "Node.h"
+#include "utils/Logger.h"
 
 using namespace v3d;
 using namespace v3d::scene;
+
+std::string  CNode::s_nodeTypes[ENodeType::eNodeCount] = {
+
+    "Shape",
+    "Model",
+    "Camera",
+    "Light",
+    "Fog",
+    "SkyBox",
+    "Font",
+};
+
+const std::string& CNode::getNodeNameByType(ENodeType type)
+{
+    return  s_nodeTypes[type];
+}
 
 CNode::CNode()
     : m_parentNode(nullptr)
     , m_visible(true)
     , m_needUpdate(true)
+    , m_nodeType(ENodeType::eNodeUnknown)
 {
 	m_type = EObjectType::eTypeNode;
 }

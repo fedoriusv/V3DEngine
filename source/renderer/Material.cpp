@@ -102,6 +102,7 @@ void CMaterial::setTexture(const u32 layer, const std::string& file)
 		return;
 	}
 
+    
 	TexturePtr oldTexture = m_texture[layer];
 	//TODO: del old texture if will not need more
 	
@@ -116,7 +117,7 @@ void CMaterial::setTexture(const u32 layer, const std::string* files[6])
 {
 	if (layer >= ETextureLayer::eTextureLayerMax)
 	{
-		//ASSERT "Texture Layer range out";
+        ASSERT(false && "Texture Layer range out");
 		return;
 	}
 
@@ -134,12 +135,9 @@ void CMaterial::destroyTexture(u32 layer)
 {
 	if (layer >= ETextureLayer::eTextureLayerMax)
 	{
-		//ASSERT "Texture Layer range out";
+        ASSERT(false && "Texture Layer range out");
 		return;
 	}
-
-	TexturePtr oldTexture = m_texture[layer];
-	//TODO: del old texture if will not need more
 
 	m_texture[layer] = nullptr;
 
@@ -149,13 +147,10 @@ void CMaterial::setTexture( const u32 layer, TexturePtr texture )
 {
 	if ( layer >= ETextureLayer::eTextureLayerMax )
 	{
-		//ASSERT "Texture Layer range out";
+        ASSERT(false && "Texture Layer range out");
 		return;
 	}
 
-	TexturePtr oldTexture = m_texture[layer];
-	//TODO: del old texture if will not need more
-	
 	m_texture[layer] = texture;
 
 }
