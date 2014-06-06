@@ -33,6 +33,8 @@ namespace renderer
         RenderStatePtr      getRenderState() const;
         void                setRenderState(const RenderStatePtr& state);
 
+        void                bind();
+
     private:
 
         friend              CRenderTechique;

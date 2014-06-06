@@ -33,6 +33,12 @@ namespace renderer
         eTransformViewPosition,
         eTransformOrthoMatrix,
 
+        eMaterialAmbient,
+        eMaterialDiffuse,
+        eMaterialSpecular,
+        eMaterialEmission,
+        eMaterialShininess,
+
         eUniformsCount,
     };
 

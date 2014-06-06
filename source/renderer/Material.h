@@ -53,8 +53,6 @@ namespace renderer
 
         void                    destroyTexture(u32 layer);
         
-        void                    bind();
-
         bool                    loadRenderTechique(const std::string& file);
         bool                    loadRenderTechique(stream::IStream* stream);
 

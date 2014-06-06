@@ -21,8 +21,9 @@ void CCubeShape::render()
         return;
     }
 
-    m_material->bind();
+    m_renderJob->job();
    
+    //TODO: need to render pass
     m_geometry->update();
 }
 

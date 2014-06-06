@@ -12,7 +12,13 @@ const std::string CShaderUniform::s_shaderUniformName[EDefaultUniformData::eUnif
     "transform.viewMatrix",
     "transform.normalMatrix",
     "transform.viewPosition",
-    "transform.orthoMatrix"
+    "transform.orthoMatrix",
+
+    "material.ambient",
+    "material.diffuse",
+    "material.specular",
+    "material.emission",
+    "material.shininess"
 
 };
 

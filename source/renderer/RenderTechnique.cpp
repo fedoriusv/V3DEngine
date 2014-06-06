@@ -14,7 +14,7 @@ CRenderTechique::~CRenderTechique()
     m_renderPassList.clear();
 }
 
-RenderPassPtr CRenderTechique::getRenderPass(u32 id) const
+const RenderPassPtr& CRenderTechique::getRenderPass(u32 id) const
 {
     ASSERT(id <= m_renderPassList.size() || "RenderPass id error");
 

@@ -6,10 +6,10 @@ namespace renderer
 {
 	CTexture::CTexture()
 		: CResource()
-		, m_textureID( -1 )
-		, m_target( ETextureTarget::eTargetUnknown )
-		, m_minFilter( ETextureFilter::eFilterLinear )
-		, m_magFilter( ETextureFilter::eFilterLinear )
+		, m_textureID(0)
+		, m_target(ETextureTarget::eTargetUnknown)
+		, m_minFilter(ETextureFilter::eFilterLinear)
+		, m_magFilter(ETextureFilter::eFilterLinear)
 	{
 		m_type = EObjectType::eTypeTexture;
 
@@ -18,16 +18,16 @@ namespace renderer
 		m_data.depth  = 0;
 		m_data.type   = EImageType::eTypeUnsignedByte;
 		m_data.format = EImageFormat::eFormatRGB;
-		m_data.data   = NULL;
+		m_data.data   = nullptr;
 	}
 
 
 	CTexture::~CTexture()
 	{
-		if (m_data.data != NULL)
+        if (m_data.data != nullptr)
 		{
 			free(m_data.data);
-			m_data.data = NULL;
+            m_data.data = nullptr;
 		}
 	}
 
@@ -51,7 +51,7 @@ namespace renderer
 		return m_magFilter;
 	}
 
-	void CTexture::setFilterType( ETextureFilter minFilter, ETextureFilter magFilter )
+	void CTexture::setFilterType(ETextureFilter minFilter, ETextureFilter magFilter)
 	{
 		m_minFilter = minFilter;
 		m_magFilter = magFilter;

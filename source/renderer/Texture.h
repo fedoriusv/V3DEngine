@@ -66,10 +66,10 @@ namespace renderer
 
 	enum ETextureLayer
 	{
-		eTextureLayer_0 = 0,
-		eTextureLayer_1,
-		eTextureLayer_2,
-		eTextureLayer_3,
+		eTextureLayer0 = 0,
+		eTextureLayer1,
+		eTextureLayer2,
+		eTextureLayer3,
 
 		eTextureLayerMax,
 	};
@@ -94,10 +94,10 @@ namespace renderer
 		CTexture();
 		virtual			~CTexture();
 
-		virtual void	bind(s32 textureLayer) = 0;
-		virtual void	create(const std::string& file) = 0;
+		virtual void	bind(s32 textureLayer)              = 0;
+		virtual void	create(const std::string& file)     = 0;
 		virtual void	create(const std::string* files[6]) = 0;
-		virtual void	destroy() = 0;
+		virtual void	destroy()                           = 0;
 
 		void			init(stream::IStream* stream) override;
 

@@ -29,6 +29,8 @@ void CShape::init()
     }
 
     m_geometry = v3d::CEngine::getInstance()->getRenderer()->makeSharedGeometry(techique);
+
+    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry);
 }
 
 CShape::~CShape()
@@ -40,7 +42,7 @@ EShapeType CShape::getShapeType() const
 	return m_shapeType;
 }
 
-void CShape::setMaterial(renderer::MaterialPtr material)
+void CShape::setMaterial(const renderer::MaterialPtr& material)
 {
 	m_material = material;
 }

@@ -349,3 +349,8 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
         return false;
     }
 }
+
+void CRenderPass::bind()
+{
+
+}

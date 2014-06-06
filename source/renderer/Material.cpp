@@ -73,11 +73,6 @@ f32 CMaterial::getShininess() const
 	return m_materialData.shininess;
 }
 	
-void CMaterial::bind()
-{
-	//TODO: do somethig)
-}
-
 TexturePtr CMaterial::getTexture(const u32 layer) const
 {
 	if (layer >= ETextureLayer::eTextureLayerMax)

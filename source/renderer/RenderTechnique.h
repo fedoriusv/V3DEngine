@@ -17,24 +17,24 @@ namespace renderer
     public:
 
         CRenderTechique();
-        virtual             ~CRenderTechique();
+        virtual              ~CRenderTechique();
 
-        RenderPassPtr       getRenderPass(u32 id) const;
-        u32                 getRenderPassCount()  const;
-        void                addRenderPass(const RenderPassPtr& pass);
+        const RenderPassPtr& getRenderPass(u32 id) const;
+        u32                  getRenderPassCount()  const;
+        void                 addRenderPass(const RenderPassPtr& pass);
 
 
-        void                init(stream::IStream* stream)   override;
-        bool                load()                          override;
+        void                 init(stream::IStream* stream)   override;
+        bool                 load()                          override;
 
-        void                refresh();
+        void                 refresh();
 
 
     private:
 
-        bool                parse(tinyxml2::XMLElement* root);
+        bool                 parse(tinyxml2::XMLElement* root);
 
-        RenderPassList      m_renderPassList;
+        RenderPassList       m_renderPassList;
 
     };
 

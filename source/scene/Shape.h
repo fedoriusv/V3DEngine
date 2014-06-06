@@ -4,6 +4,7 @@
 #include "scene/Node.h"
 #include "renderer/Material.h"
 #include "renderer/Geometry.h"
+#include "renderer/RenderJob.h"
 
 namespace v3d
 {
@@ -27,32 +28,33 @@ namespace scene
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CShape : public CNode
-	{
-	public:
+    class CShape : public CNode
+    {
+    public:
 
-								CShape();
-		virtual					~CShape();
+        CShape();
+        virtual                 ~CShape();
 
-		EShapeType				getShapeType() const;
+        EShapeType              getShapeType() const;
 
-		void					setMaterial(renderer::MaterialPtr material);
-		renderer::MaterialPtr	getMaterial() const;
+        void                    setMaterial(const renderer::MaterialPtr& material);
+        renderer::MaterialPtr   getMaterial() const;
 
         void                    init()  override;
 
-	protected:
+    protected:
 
-		EShapeType				m_shapeType;
-		
-		renderer::MaterialPtr	m_material;
-		renderer::GeometryPtr	m_geometry;
+        EShapeType              m_shapeType;
 
-		SVertexData&			getGeometryData();
-		renderer::EDrawMode		getGeometryDrawMode() const;
-		void					setGeometryDrawMode(renderer::EDrawMode mode);
+        renderer::MaterialPtr   m_material;
+        renderer::GeometryPtr   m_geometry;
+        renderer::RenderJobPtr  m_renderJob;
 
-	};
+        SVertexData&            getGeometryData();
+        renderer::EDrawMode     getGeometryDrawMode() const;
+        void                    setGeometryDrawMode(renderer::EDrawMode mode);
+
+    };
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
