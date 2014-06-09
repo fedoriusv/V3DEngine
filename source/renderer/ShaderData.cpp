@@ -5,7 +5,7 @@ using namespace v3d::renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShaderData::s_shaderDataType[EShaderDataType::eDataTypeCount] = {
+const std::string CShaderData::s_shaderDataType[EShaderDataType::eTypeCount] = {
     "",
     "int",
     "float",
@@ -23,7 +23,7 @@ const std::string& CShaderData::getShaderDataNameByType(EShaderDataType type)
 
 const EShaderDataType CShaderData::getShaderDataTypeByName(const std::string& name)
 {
-    for (int i = 0; i < EShaderDataType::eDataTypeCount; ++i)
+    for (int i = 0; i < EShaderDataType::eTypeCount; ++i)
     {
         if (s_shaderDataType[i].compare(name) == 0)
         {
@@ -31,7 +31,7 @@ const EShaderDataType CShaderData::getShaderDataTypeByName(const std::string& na
         }
     }
 
-    return EShaderDataType::eDataNone;
+    return EShaderDataType::eNone;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +61,21 @@ bool CShaderData::isExistUniform(const std::string& name)
     return false;
 }
 
+bool CShaderData::isExistUniform(EDefaultUniformData type)
+{
+    UniformList::iterator iter = m_uniformList.begin();
+
+    while (iter != m_uniformList.end())
+    {
+        if ((*iter).second->m_defaultData == type)
+        {
+            return true;
+        }
+        ++iter;
+    }
+    return false;
+}
+
 bool CShaderData::isExistAttribute(const std::string& name)
 {
     AttributeList::iterator iter = m_attributeList.begin();
@@ -80,13 +95,13 @@ void CShaderData::setUniformInt(const std::string& name, const u32 value)
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataInt, name, (void*)(&value));
+        m_uniformList[name]->setUniform(EShaderDataType::eInt, name, (void*)(&value));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataInt, name, (void*)(&value));
+        uniform->setUniform(EShaderDataType::eInt, name, (void*)(&value));
         m_uniformList[name] = uniform;
     }
 }
@@ -95,13 +110,13 @@ void CShaderData::setUniformFloat(const std::string& name, const f32 value)
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataFloat, name, (void*)(&value));
+        m_uniformList[name]->setUniform(EShaderDataType::eFloat, name, (void*)(&value));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataFloat, name, (void*)(&value));
+        uniform->setUniform(EShaderDataType::eFloat, name, (void*)(&value));
         m_uniformList[name] = uniform;
     }
 }
@@ -110,13 +125,13 @@ void CShaderData::setUniformVector2(const std::string& name, const core::Vector2
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataVector2, name, (void*)(&vector));
+        m_uniformList[name]->setUniform(EShaderDataType::eVector2, name, (void*)(&vector));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataVector2, name, (void*)(&vector));
+        uniform->setUniform(EShaderDataType::eVector2, name, (void*)(&vector));
         m_uniformList[name] = uniform;
     }
 }
@@ -125,13 +140,13 @@ void CShaderData::setUniformVector3(const std::string& name, const core::Vector3
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataVector3, name, (void*)(&vector));
+        m_uniformList[name]->setUniform(EShaderDataType::eVector3, name, (void*)(&vector));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataVector3, name, (void*)(&vector));
+        uniform->setUniform(EShaderDataType::eVector3, name, (void*)(&vector));
         m_uniformList[name] = uniform;
     }
 }
@@ -140,13 +155,13 @@ void CShaderData::setUniformVector4(const std::string& name, const core::Vector4
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataVector4, name, (void*)(&vector));
+        m_uniformList[name]->setUniform(EShaderDataType::eVector4, name, (void*)(&vector));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataVector4, name, (void*)(&vector));
+        uniform->setUniform(EShaderDataType::eVector4, name, (void*)(&vector));
         m_uniformList[name] = uniform;
     }
 }
@@ -155,28 +170,28 @@ void CShaderData::setUniformMatrix3(const std::string& name, const core::Matrix3
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataMatrix3, name, (void*)(&matrix));
+        m_uniformList[name]->setUniform(EShaderDataType::eMatrix3, name, (void*)(&matrix));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataMatrix3, name, (void*)(&matrix));
+        uniform->setUniform(EShaderDataType::eMatrix3, name, (void*)(&matrix));
         m_uniformList[name] = uniform;
     }
 }
 
-void CShaderData::setUniformMatrix4(const std::string& name, const core::Vector4D& matrix)
+void CShaderData::setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix)
 {
     if (isExistAttribute(name))
     {
-        m_uniformList[name]->setUniform(eDataMatrix4, name, (void*)(&matrix));
+        m_uniformList[name]->setUniform(EShaderDataType::eMatrix4, name, (void*)(&matrix));
     }
     else
     {
         UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-        uniform->setUniform(eDataMatrix4, name, (void*)(&matrix));
+        uniform->setUniform(EShaderDataType::eMatrix4, name, (void*)(&matrix));
         m_uniformList[name] = uniform;
     }
 }
@@ -223,4 +238,132 @@ bool CShaderData::isExistSampler(const std::string& name)
 
 void CShaderData::addSampler(const std::string& name)
 {
+    //TODO:
+}
+
+const std::string CShaderData::findByUniformData(EDefaultUniformData type)
+{
+    UniformList::iterator iter = m_uniformList.begin();
+
+    while (iter != m_uniformList.end())
+    {
+        if ((*iter).second->m_defaultData == type)
+        {
+            return (*iter).first;
+        }
+        ++iter;
+    }
+    return "";
+}
+
+void CShaderData::setUniformInt(EDefaultUniformData type, const u32 value)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eInt, name, (void*)(&value));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eInt, name, (void*)(&value));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformFloat(EDefaultUniformData type, const f32 value)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eFloat, name, (void*)(&value));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eFloat, name, (void*)(&value));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eVector2, name, (void*)(&vector));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eVector2, name, (void*)(&vector));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eVector3, name, (void*)(&vector));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eVector3, name, (void*)(&vector));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eVector4, name, (void*)(&vector));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eVector4, name, (void*)(&vector));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eMatrix3, name, (void*)(&matrix));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eMatrix3, name, (void*)(&matrix));
+        m_uniformList[name] = uniform;
+    }
+}
+
+void CShaderData::setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix)
+{
+    const std::string name = findByUniformData(type);
+    if (!name.empty())
+    {
+        m_uniformList[name]->setUniform(EShaderDataType::eMatrix4, name, (void*)(&matrix));
+    }
+    else
+    {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
+
+        uniform->setUniform(EShaderDataType::eMatrix4, name, (void*)(&matrix));
+        m_uniformList[name] = uniform;
+    }
 }

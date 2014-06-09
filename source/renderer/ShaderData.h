@@ -28,24 +28,35 @@ namespace renderer
         void                            setUniformVector3(const std::string& name, const core::Vector3D& vector);
         void                            setUniformVector4(const std::string& name, const core::Vector4D& vector);
         void                            setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-        void                            setUniformMatrix4(const std::string& name, const core::Vector4D& matrix);
+        void                            setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
+
+        void                            setUniformInt    (EDefaultUniformData type, const u32             value);
+        void                            setUniformFloat  (EDefaultUniformData type, const f32             value);
+        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector);
+        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector);
+        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector);
+        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix);
+        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix);
 
         const AttributeList&            getAttributeList() const;
 
         static const std::string&       getShaderDataNameByType(EShaderDataType type);
         static const EShaderDataType    getShaderDataTypeByName(const std::string& name);
 
+        bool                            isExistUniform(const std::string& name);
+        bool                            isExistUniform(EDefaultUniformData type);
+        bool                            isExistAttribute(const std::string& name);
+        bool                            isExistSampler(const std::string& name);
+
     protected:
 
         friend                          CRenderPass;
 
-        bool                            isExistUniform(const std::string& name);
+        const std::string               findByUniformData(EDefaultUniformData type);
         void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);
 
-        bool                            isExistAttribute(const std::string& name);
         void                            addAttribute(const std::string& name, EShaderAttribute type);
 
-        bool                            isExistSampler(const std::string& name);
         void                            addSampler(const std::string& name);
 
         AttributeList                   m_attributeList;
@@ -54,7 +65,7 @@ namespace renderer
 
     private:
 
-        static const std::string       s_shaderDataType[EShaderDataType::eDataTypeCount];
+        static const std::string       s_shaderDataType[EShaderDataType::eTypeCount];
 
     };
 

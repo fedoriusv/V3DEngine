@@ -120,7 +120,7 @@ void CGeometryGL::draw()
 	CGeometryGL::bindVertexArray(m_arrayId);
 
 	glDrawElements(m_drawModeGL, m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
-	//glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
+	////glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
 
 	CGeometryGL::bindVertexArray(0);
 

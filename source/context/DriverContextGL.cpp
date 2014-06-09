@@ -365,7 +365,7 @@ void CDriverContextGL::checkForErrors(const std::string& location)
 		}
 		else
 		{
-			LOG_ERROR("GL %s: %s", location, glewGetErrorString(glError))
+			LOG_ERROR("GL %s: %s", location.c_str(), glewGetErrorString(glError))
 		}
 	}
 #endif

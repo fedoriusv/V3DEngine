@@ -10,6 +10,8 @@ namespace scene
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CCamera;
+
     class CSceneManager
     {
     public:
@@ -28,6 +30,9 @@ namespace scene
 
         CNode*                  addCube(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const float size = 1.0f);
 
+        CNode*                  addCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), 
+                                    const core::Vector3D& target = core::Vector3D(0.0f, 0.0f, -1.0f), const core::Vector3D& up = core::Vector3D(0.0f, 1.0f, 0.0f));
+
         CNode*                  getObjectByID(const s32 id);
         CNode*                  getObjectByName(const std::string& name);
 
@@ -45,6 +50,7 @@ namespace scene
         void                    update(f64 time);
 
         std::vector<CNode*>     m_objects;
+        CCamera*                m_camera;
 
     };
 

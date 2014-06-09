@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "CubeShape.h"
+#include "Camera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
 
@@ -15,6 +16,7 @@ CSceneManager::CSceneManager()
 	: m_currentTime(0.0)
 	, m_deltaTime(0.0)
 	, m_lastTime(0.0)
+    , m_camera(nullptr)
 {
 }
 
@@ -144,6 +146,25 @@ CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const fl
     node->setParent(parent);
     node->setPosition(pos);
     node->setScale(size);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
+{
+    CCamera* node = new CCamera();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setTarget(target);
+    node->setUpVector(up);
+    if (m_camera)
+    {
+        m_camera->m_active = false;
+    }
+    m_camera = node;
+    m_camera->m_active = true;
 
     CSceneManager::addNode(node);
 

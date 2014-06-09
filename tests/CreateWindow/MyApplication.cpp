@@ -17,8 +17,10 @@ void MyApplication::init()
     LOG_INFO("---------Init Application--------");
 
     //TODO: user data
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube());
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
     cube->getMaterial()->loadRenderTechique("shaders/default.xml");
+
+    getSceneManager()->addCamera(0, core::Vector3D(0, 1, 0), core::Vector3D(0, 0, -3));
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }

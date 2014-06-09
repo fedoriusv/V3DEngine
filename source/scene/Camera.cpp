@@ -43,6 +43,10 @@ bool CCamera::isActive() const
     return m_active;
 }
 
+void CCamera::init()
+{
+}
+
 void CCamera::render()
 {
     if (!m_visible)

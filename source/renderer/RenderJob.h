@@ -17,12 +17,21 @@ namespace renderer
         CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty);
         ~CRenderJob();
 
-        void    job();
+        void                setMaterial(const MaterialPtr& material);
+        const MaterialPtr&  getMaterial() const;
+
+        void                setGeomery(const GeometryPtr& geomerty);
+        const GeometryPtr&  getGeometry() const;
+
+        void                job();
 
     private:
 
-        MaterialPtr m_material;
-        GeometryPtr m_geomerty;
+        void                updateMaterial(const ShaderDataPtr& data);
+        void                updateTransform(const ShaderDataPtr& data);
+
+        MaterialPtr         m_material;
+        GeometryPtr         m_geomerty;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

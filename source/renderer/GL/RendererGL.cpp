@@ -30,6 +30,29 @@ void CRendererGL::init()
 
     glEnable(GL_MULTISAMPLE);
 
+
+    ////
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    //glEnable(GL_DEPTH);
+    glEnable(GL_DEPTH_TEST);
+    glClearDepth(1.0f);
+    //glDepthFunc(GL_LEQUAL);
+    //glShadeModel(GL_SMOOTH);
+
+    glDisable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
+
+
+    //glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    ////
+
+
 #ifdef _DEBUG
 	m_context->checkForErrors();
 #endif

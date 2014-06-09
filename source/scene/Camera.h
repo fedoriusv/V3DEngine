@@ -9,6 +9,8 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CSceneManager;
+
     class CCamera : public CNode
     {
     public:
@@ -22,12 +24,15 @@ namespace scene
         core::Vector3D      getTarget() const;
         core::Vector3D      getUpVector() const;
 
-        void                render();
-        void                update(f64 time);
+        void                render()        override;
+        void                update(f64 time)override;
+        void                init()          override;
 
         bool                isActive() const;
 
     private:
+
+        friend              CSceneManager;
 
         core::Vector3D      m_up;
         core::Vector3D      m_target;
