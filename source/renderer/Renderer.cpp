@@ -10,6 +10,8 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_projectionMatrix(core::Matrix4D())
     , m_viewMatrix(core::Matrix4D())
     , m_viewPosition(core::Vector3D(0.0f))
+    , m_modelMatrix(core::Matrix4D())
+    , m_normalMatrix(core::Matrix4D())
 {
 	m_viewportSize = context->getWindow()->getSize();
 }
@@ -39,3 +41,12 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
     m_viewMatrix.makeTransposed();
     m_viewPosition = pos;
 }
+
+void CRenderer::updateTransform(const core::Matrix4D& transform)
+{
+    m_modelMatrix = transform;
+
+    m_modelMatrix.getInverse(m_normalMatrix);
+    m_modelMatrix.makeTransposed();
+}
+

@@ -39,6 +39,8 @@ namespace renderer
 
         virtual bool    create(const std::string& vShader, const std::string& fShader, u32 arg = 0, ...) = 0;
 
+        virtual bool    setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
+
         u32             m_shaderProgID;
 
         bool            m_enable;

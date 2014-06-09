@@ -11,13 +11,13 @@ namespace renderer
 
     enum EShaderType
     {
-        eTypeUnknown = -1,
-        eTypeVertex,
-        eTypeFragment,
-        eTypeGeometry,
-        eTypeCompute,
+        eUnknown = -1,
+        eVertex,
+        eFragment,
+        eGeometry,
+        eCompute,
 
-        eShaderTypeCount
+        eCount
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,8 +41,8 @@ namespace renderer
 
     protected:
 
-        char*                       readShader(const std::string& file);
-        void                        clearShader();
+        char*                       read(const std::string& file);
+        void                        clear();
 
         u32                         m_shaderID;
 
@@ -52,7 +52,7 @@ namespace renderer
 
     private:
 
-        static const std::string    s_shaderTypeName[EShaderType::eShaderTypeCount];
+        static const std::string    s_shaderTypeName[EShaderType::eCount];
 
     };
 

@@ -104,16 +104,18 @@ void CGeometryGL::init()
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
 	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * m_data.m_countIndices, m_data.m_indices.vertex.data());
 
-	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Init Error");
+    RENDERER->checkForErrors("GeometryGL Init Error");
 
 	CGeometryGL::bindVertexArray(0);
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	m_drawModeGL = CGeometryGL::getGLDrawMode(m_drawMode);
+
+    RENDERER->checkForErrors("GeometryGL Init Error");
 }
 
-void CGeometryGL::update()
+void CGeometryGL::draw()
 {
 	CGeometryGL::bindVertexArray(m_arrayId);
 
@@ -122,7 +124,7 @@ void CGeometryGL::update()
 
 	CGeometryGL::bindVertexArray(0);
 
-	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Update Error");
+    RENDERER->checkForErrors("GeometryGL Update Error");
 }
 
 void CGeometryGL::free()
@@ -223,7 +225,7 @@ void CGeometryGL::refresh()
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	v3d::CEngine::getInstance()->getRenderer()->checkForErrors("GeometryGL Refresh Error");
+    RENDERER->checkForErrors("GeometryGL Refresh Error");
 
 }
 

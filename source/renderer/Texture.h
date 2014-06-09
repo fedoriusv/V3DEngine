@@ -12,66 +12,86 @@ namespace renderer
 
 	enum class ETextureTarget
 	{
-		eTargetUnknown = -1,
-		eTargetTexture1D,
-		eTargetTexture2D,
-		eTargetTexture3D,
-		eTargetTextureCubeMap,
+		eUnknown = -1,
+		eTexture1D,
+		eTexture2D,
+		eTexture3D,
+		eTextureCubeMap,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	enum class ETextureFilter
 	{
-		eFilterNearest,
-		eFilterLinear,
+		eNearest,
+		eLinear,
 
-		eFilterNearestMipmapNearest,
-		eFilterLinearMipmapNearest,
-		eFilterNearestMipmapLinear,
-		eFilterLinearMipmapLinear,
+		eNearestMipmapNearest,
+		eLinearMipmapNearest,
+		eNearestMipmapLinear,
+		eLinearMipmapLinear,
+
+
 	};
+
+    enum EAnisotropic
+    {
+        eAnisotropic2x  = 1 << 1,
+        eAnisotropic4x  = 1 << 2,
+        eAnisotropic8x  = 1 << 3,
+        eAnisotropic16x = 1 << 4,
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum class EWrapType
+    {
+        eRepeat,
+        eClampToEdge,
+        eMirroredRepeat,
+        eClampToBorder,
+    };
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	enum class EImageType
 	{
-		eTypeByte,
-		eTypeUnsignedByte,
-		eTypeShort,
-		eTypeUnsignedShort,
-		eTypeInt,
-		eTypeUnsignedInt,
-		eTypeFloat,
-		eTypeDouble,
-		eTypeHalf,
+		eByte,
+		eUnsignedByte,
+		eShort,
+		eUnsignedShort,
+		eInt,
+		eUnsignedInt,
+		eFloat,
+		eDouble,
+		eHalf,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	enum class EImageFormat
 	{
-		eFormatColorIndex,
-		eFormatAlpha,
-		eFormatRGB,
-		eFormatRGBA,
-		eFormatBGR,
-		eFormatBGRA,
-		eFormatLumiance,
-		eFormatLuminanceAlpha,
-		eFormatDepthComponent,
+		eColorIndex,
+		eAlpha,
+		eRGB,
+		eRGBA,
+		eBGR,
+		eBGRA,
+		eLumiance,
+		eLuminanceAlpha,
+		eDepthComponent,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	enum ETextureLayer
 	{
-		eTextureLayer0 = 0,
-		eTextureLayer1,
-		eTextureLayer2,
-		eTextureLayer3,
+		eLayer0 = 0,
+		eLayer1,
+		eLayer2,
+		eLayer3,
 
-		eTextureLayerMax,
+		eLayerMax,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,41 +106,54 @@ namespace renderer
 		void*			data;
 	};
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CTexture : public stream::CResource
-	{
-	public:
-		CTexture();
-		virtual			~CTexture();
-
-		virtual void	bind(s32 textureLayer)              = 0;
-		virtual void	create(const std::string& file)     = 0;
-		virtual void	create(const std::string* files[6]) = 0;
-		virtual void	destroy()                           = 0;
-
-		void			init(stream::IStream* stream) override;
-
-		u32				getTextureID()	const;
-		ETextureTarget	getTarget()		const;
-		ETextureFilter	getMinFiler()	const;
-		ETextureFilter	getMagFiler()	const;
-
-		void			setFilterType(ETextureFilter minFilter, ETextureFilter magFilter);
-
-	protected:
-
-		u32				m_textureID;
-
-		ETextureTarget	m_target;
-		STextureData	m_data;
-
-		ETextureFilter	m_minFilter;
-		ETextureFilter	m_magFilter;
-
-	};
+    typedef std::vector<STextureData>  TextureData;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CTexture : public stream::CResource
+    {
+    public:
+        CTexture();
+        virtual         ~CTexture();
+
+        virtual void    bind(u32 layer)                     = 0;
+        virtual void    unbind(u32 layer)                   = 0;
+        virtual bool    create()                            = 0;
+        virtual void    destroy()                           = 0;
+
+        void            init(stream::IStream* stream) override;
+        bool            load()                        override;
+
+		u32				getTextureID()  const;
+		ETextureTarget	getTarget()     const;
+		ETextureFilter	getMinFiler()   const;
+		ETextureFilter	getMagFiler()   const;
+        EWrapType       getWrap()       const;
+        EAnisotropic    getAnisotropic()const;
+
+        void            setFilterType(ETextureFilter min, ETextureFilter mag);
+        void            setWrap(EWrapType wrap);
+        void            setAnisotropicLevel(EAnisotropic level);
+
+    protected:
+
+        void            clear();
+
+        u32             m_textureID;
+
+        ETextureTarget  m_target;
+        TextureData     m_data;
+
+        ETextureFilter  m_minFilter;
+        ETextureFilter  m_magFilter;
+        EAnisotropic    m_anisotropicLevel;
+        EWrapType       m_wrap;
+
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<CTexture>       TexturePtr;
     typedef std::vector<TexturePtr>         TextureList;

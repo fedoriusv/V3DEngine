@@ -15,7 +15,7 @@
 		</samplers>
 		<rendertarget val="default"/>
 		<shaders>
-			<var type="vertex" name="basic">
+			<var type="vertex" name="vdefault">
 				<![CDATA[
 					#version 330
 					#define POSITION 	0
@@ -40,7 +40,7 @@
 					}
 				]]>
 			</var>
-			<var type="fragment" name="basic">
+			<var type="fragment" name="fdefault">
 				<![CDATA[
 					#version 330
 					out vec4 fragColor;

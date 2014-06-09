@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "CubeShape.h"
 #include "Engine.h"
+#include "utils/Logger.h"
 
 #ifdef _PLATFORM_WIN_
 #	include <windows.h>
@@ -29,6 +30,8 @@ void CSceneManager::init()
         CNode* item = (*iter);
         item->init();
     }
+
+    LOG_INFO("Scene: Init completed");
 }
 
 void CSceneManager::draw()
@@ -36,7 +39,7 @@ void CSceneManager::draw()
 	CSceneManager::updateDeltaTime();
 	CSceneManager::update(m_deltaTime);
 
-	v3d::CEngine::getInstance()->getRenderer()->preRender();
+	RENDERER->preRender();
 
 	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{
@@ -46,7 +49,7 @@ void CSceneManager::draw()
 		item->render();
 	}
 
-	v3d::CEngine::getInstance()->getRenderer()->postRender();
+    RENDERER->postRender();
 }
 
 void CSceneManager::clear()

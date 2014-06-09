@@ -5,7 +5,7 @@ using namespace v3d::renderer;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShader::s_shaderTypeName[EShaderType::eShaderTypeCount] = {
+const std::string CShader::s_shaderTypeName[EShaderType::eCount] = {
 
     "vertex",
     "fragment",
@@ -20,7 +20,7 @@ const std::string& CShader::getShaderTypeNameByType(EShaderType type)
 
 EShaderType CShader::getShaderTypeByName(const std::string& name)
 {
-    for (int i = 0; i < eShaderTypeCount; ++i)
+    for (int i = 0; i < eCount; ++i)
     {
         if (s_shaderTypeName[i].compare(name) == 0)
         {
@@ -28,7 +28,7 @@ EShaderType CShader::getShaderTypeByName(const std::string& name)
         }
     }
 
-    return EShaderType::eTypeUnknown;
+    return EShaderType::eUnknown;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ EShaderType CShader::getShaderTypeByName(const std::string& name)
 CShader::CShader()
 	: CObject()
 	, m_shaderID(0)
-	, m_shaderType(EShaderType::eTypeUnknown)
+	, m_shaderType(EShaderType::eUnknown)
 	, m_compileStatus(false)
 	, m_data(nullptr)
 {
@@ -62,10 +62,10 @@ bool CShader::getCompileStatus() const
 	return m_compileStatus;
 }
 
-char* CShader::readShader(const std::string& file)
+char* CShader::read(const std::string& file)
 {
     FILE* pFile;
-    char* content = NULL;
+    char* content = nullptr;
 
     int count = 0;
 
@@ -73,7 +73,7 @@ char* CShader::readShader(const std::string& file)
     {
         fopen_s(&pFile, file.c_str(), "rt");
 
-        if (pFile != NULL)
+        if (pFile != nullptr)
         {
             fseek(pFile, 0, SEEK_END);
             count = ftell(pFile);
@@ -94,11 +94,11 @@ char* CShader::readShader(const std::string& file)
 }
 
 
-void CShader::clearShader()
+void CShader::clear()
 {
-    if (m_data != NULL)
+    if (m_data != nullptr)
     {
         free(m_data);
-        m_data = NULL;
+        m_data = nullptr;
     }
 }

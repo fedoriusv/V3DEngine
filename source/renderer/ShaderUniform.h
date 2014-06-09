@@ -11,16 +11,16 @@ namespace renderer
 
     enum EShaderDataType
     {
-        eDataNone = 0,
-        eDataInt,
-        eDataFloat,
-        eDataVector2,
-        eDataVector3,
-        eDataVector4,
-        eDataMatrix3,
-        eDataMatrix4,
+        eNone = 0,
+        eInt,
+        eFloat,
+        eVector2,
+        eVector3,
+        eVector4,
+        eMatrix3,
+        eMatrix4,
 
-        eDataTypeCount,
+        eTypeCount,
     };
 
     enum EDefaultUniformData
@@ -44,6 +44,8 @@ namespace renderer
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+    class CShaderData;
+
     class CShaderUniform
     {
     public:
@@ -53,10 +55,15 @@ namespace renderer
 
         void                                setUniform(EShaderDataType type, const std::string& attribute, void* value, EDefaultUniformData data = eUserUniform);
 
+        EShaderDataType                     getUniformType() const;
+        void*                               getUniforValue() const;
+
         static const std::string&           getShaderUniformNameByValue(EDefaultUniformData type);
         static const EDefaultUniformData    getShaderUniformValueByName(const std::string& name);
 
     private:
+
+        friend                              CShaderData;
 
         EDefaultUniformData                 m_defaultData;
         EShaderDataType                     m_uniformType;

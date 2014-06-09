@@ -17,7 +17,7 @@ namespace renderer
         virtual      ~CGeometryGL();
         
         void         init()    override;
-        void         update()  override;
+        void         draw()    override;
         void         free()    override;
         void         refresh();
 

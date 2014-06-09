@@ -1,6 +1,7 @@
 #include "ShaderGL.h"
 
 #include "utils/Logger.h"
+#include "Engine.h"
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -12,7 +13,7 @@ CShaderGL::CShaderGL()
 
 CShaderGL::~CShaderGL()
 {
-    CShader::clearShader();
+    CShader::clear();
     CShaderGL::deleteShader(m_shaderID);
     m_shaderID = 0;
 }
@@ -34,14 +35,14 @@ bool CShaderGL::create(const std::string& body, EShaderType type)
     m_data = (void*)data;
 
     m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
-    CShaderGL::clearShader();
+    CShaderGL::clear();
 
     return m_compileStatus;
 }
 
 bool CShaderGL::load(const std::string& file, EShaderType type)
 {
-    m_data = reinterpret_cast<void*>(readShader(file));
+    m_data = reinterpret_cast<void*>(read(file));
     m_shaderType = type;
 
     if (!m_data)
@@ -51,7 +52,7 @@ bool CShaderGL::load(const std::string& file, EShaderType type)
     }
 
     m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
-    CShaderGL::clearShader();
+    CShaderGL::clear();
 
     return m_compileStatus;
 }
@@ -91,13 +92,13 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
             {
                 switch (type)
                 {
-                    case eTypeVertex:
+                    case EShaderType::eVertex:
                         return "Vertex";
-                    case eTypeFragment:
+                    case EShaderType::eFragment:
                         return "Fragment";
-                    case eTypeGeometry:
+                    case EShaderType::eGeometry:
                         return "Geometry";
-                    case eTypeCompute:
+                    case EShaderType::eCompute:
                         return "Compute";
                     default:
                         return "Unknown";
@@ -109,6 +110,8 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 #endif
     }
 
+    RENDERER->checkForErrors("Init Shader Error");
+
     return (isCompiled == GL_TRUE) ? true : false;
 }
 
@@ -118,25 +121,25 @@ u32 CShaderGL::createShader(const EShaderType type)
 
     switch (type)
     {
-        case eTypeVertex:
+        case EShaderType::eVertex:
         {
             shader = glCreateShader(GL_VERTEX_SHADER);
         }
         break;
 
-        case eTypeFragment:
+        case EShaderType::eFragment:
         {
             shader = glCreateShader(GL_FRAGMENT_SHADER);
         }
         break;
 
-        case eTypeGeometry:
+        case EShaderType::eGeometry:
         {
             shader = glCreateShader(GL_GEOMETRY_SHADER);
         }
         break;
 
-        case eTypeCompute:
+        case EShaderType::eCompute:
         {
             shader = glCreateShader(GL_COMPUTE_SHADER);
         }

@@ -35,7 +35,7 @@ namespace renderer
         void    deleteProgram(u32 shaderProgram);
         void    useProgram(u32 shaderProgram);
 
-        bool    setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value);
+        bool    setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value) override;
 
     };
 

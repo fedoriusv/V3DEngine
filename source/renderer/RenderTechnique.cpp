@@ -34,6 +34,11 @@ void CRenderTechique::addRenderPass(const RenderPassPtr& pass)
     }
 }
 
+const RenderPassList& CRenderTechique::getRenderPassList() const
+{
+    return m_renderPassList;
+}
+
 bool CRenderTechique::parse(tinyxml2::XMLElement* root)
 {
     const int techniqueVersion = root->IntAttribute("version");

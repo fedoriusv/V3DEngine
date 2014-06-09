@@ -11,6 +11,7 @@ CRenderPass::CRenderPass()
     : m_program(nullptr)
     , m_shaderData(nullptr)
     , m_renderState(nullptr)
+    , m_enable(true)
 {
     CRenderPass::init();
 }
@@ -169,7 +170,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
 
         EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varVal);
         EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
-            ? EShaderDataType::eDataNone : CShaderData::getShaderDataTypeByName(varType);
+            ? EShaderDataType::eNone : CShaderData::getShaderDataTypeByName(varType);
 
         m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
 
@@ -276,11 +277,11 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             LOG_WARRNING("Warrning parse. empty vshader name");
         }
 
-        EShaderType type = EShaderType::eTypeVertex;
+        EShaderType type = EShaderType::eVertex;
         const std::string shaderType = shaderElement->Attribute("type");
         if (shaderType.empty())
         {
-            type = EShaderType::eTypeVertex;
+            type = EShaderType::eVertex;
             LOG_WARRNING("Warrning parse. Shader have not type. Set Vertex type");
         }
         else
@@ -293,10 +294,10 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             const std::string shaderBody = shaderElement->GetText();
             if (shaderBody.empty())
             {
-                LOG_WARRNING("Warrning parse. empty vshader body");
+                LOG_WARRNING("Warrning parse. Empty shader body");
             }
 
-            LOG_INFO("Info parse. Create vshader from data");
+            LOG_INFO("Info parse. Create shader [%s] from data", shaderName.c_str());
             if (!shader->create(shaderBody, type))
             {
                 LOG_ERROR("Error Load Shader body");
@@ -305,7 +306,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         else
         {
             const std::string shaderPath = shaderElement->Attribute("path");
-            LOG_INFO("Info parse. Create vshader from file: %s", shaderPath.c_str());
+            LOG_INFO("Info parse. Create shader from file: %s", shaderPath.c_str());
             if (!shader->load(shaderPath, type))
             {
                 LOG_ERROR("Error Load Shader %s", shaderPath.c_str());
@@ -352,5 +353,25 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
 
 void CRenderPass::bind()
 {
+    if (!m_enable || !m_program->isEnable())
+    {
+        m_program->unbind();
+        return;
+    }
 
+    m_program->bind();
+
+    const UniformList& list = m_shaderData->m_uniformList;
+
+    for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
+    {
+        EShaderDataType type = uniform->second->getUniformType();
+        void* value = uniform->second->getUniforValue();
+        const std::string& attr = uniform->first;
+
+        m_program->setUniform(type, m_program->getShaderID(), attr, value);
+    }
+
+    //TODO: bind samplers
+    //TODO: render states
 }

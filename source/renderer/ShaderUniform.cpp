@@ -44,7 +44,7 @@ const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderUniform::CShaderUniform()
-    : m_uniformType(EShaderDataType::eDataNone)
+    : m_uniformType(EShaderDataType::eNone)
     , m_defaultData(EDefaultUniformData::eUserUniform)
 	, m_uniformValue (nullptr)
 	, m_attribute ("")
@@ -75,49 +75,49 @@ void* CShaderUniform::allocMemory(EShaderDataType type, void* value)
 
 	switch(type)
 	{
-	case eDataInt:
+    case EShaderDataType::eInt:
 		{
 			uniformValue = new int();
 			memcpy(uniformValue, value, sizeof(int));
 
 			return uniformValue;
 		}
-	case eDataFloat:
+    case EShaderDataType::eFloat:
 		{
 			uniformValue = new float();
 			memcpy(uniformValue, value, sizeof(float));
 
 			return uniformValue;
 		}
-	case eDataVector2:
+    case EShaderDataType::eVector2:
 		{
 			uniformValue = new core::Vector2D();
 			memcpy(uniformValue, value, sizeof(core::Vector2D));
 
 			return uniformValue;
 		}
-	case eDataVector3:
+    case EShaderDataType::eVector3:
 		{
 			uniformValue = new core::Vector3D();
 			memcpy(uniformValue, value, sizeof(core::Vector3D));
 
 			return uniformValue;
 		}
-	case eDataVector4:
+    case EShaderDataType::eVector4:
 		{
 			uniformValue = new core::Vector4D();
 			memcpy(uniformValue, value, sizeof(core::Vector4D));
 
 			return uniformValue;
 		}
-	case eDataMatrix3:
+    case EShaderDataType::eMatrix3:
 		{
 			uniformValue = new core::Matrix3D();
 			memcpy(uniformValue, value, sizeof(core::Matrix3D));
 
 			return uniformValue;
 		}
-	case eDataMatrix4:
+    case EShaderDataType::eMatrix4:
 		{
 			uniformValue = new core::Matrix4D();
 			memcpy(uniformValue, value, sizeof(core::Matrix4D));
@@ -136,5 +136,15 @@ void CShaderUniform::deallocMemory()
 		delete m_uniformValue;
 		m_uniformValue = nullptr;
 	}
+}
+
+EShaderDataType CShaderUniform::getUniformType() const
+{
+    return m_uniformType;
+}
+
+void* CShaderUniform::getUniforValue() const
+{
+    return m_uniformValue;
 }
 

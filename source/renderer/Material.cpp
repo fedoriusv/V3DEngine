@@ -8,6 +8,7 @@ using namespace v3d::renderer;
 
 CMaterial::CMaterial()
 	: CObject()
+    , m_needUpdate(true)
 {
 	m_type = EObjectType::eTypeMaterial;
 
@@ -26,26 +27,31 @@ CMaterial::~CMaterial()
 void CMaterial::setAmbientColor(const core::Vector3D& color)
 {
 	m_materialData.ambient = color;
+    m_needUpdate = true;
 }
 	
 void CMaterial::setDiffuseColor(const core::Vector3D& color)
 {
 	m_materialData.diffuse = color;
+    m_needUpdate = true;
 }
 
 void CMaterial::setSpecularColor(const core::Vector3D& color)
 {
 	m_materialData.specular = color;
+    m_needUpdate = true;
 }
 
 void CMaterial::setEmissionColor(const core::Vector3D& color)
 {
 	m_materialData.emission = color;
+    m_needUpdate = true;
 }
 
 void CMaterial::setShininess(const f32 value)
 {
 	m_materialData.shininess = value;
+    m_needUpdate = true;
 }
 	
 const core::Vector3D& CMaterial::getAmbientColor() const
@@ -75,7 +81,7 @@ f32 CMaterial::getShininess() const
 	
 TexturePtr CMaterial::getTexture(const u32 layer) const
 {
-	if (layer >= ETextureLayer::eTextureLayerMax)
+	if (layer >= ETextureLayer::eLayerMax)
 	{
 		ASSERT(false && "invalid texture layer") ;
 		return nullptr;
@@ -91,7 +97,7 @@ u32 CMaterial::getTextureCount() const
 	
 void CMaterial::setTexture(const u32 layer, const std::string& file)
 {
-	if (layer >= ETextureLayer::eTextureLayerMax)
+    if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
 		return;
@@ -110,7 +116,7 @@ void CMaterial::setTexture(const u32 layer, const std::string& file)
 
 void CMaterial::setTexture(const u32 layer, const std::string* files[6])
 {
-	if (layer >= ETextureLayer::eTextureLayerMax)
+    if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
 		return;
@@ -128,7 +134,7 @@ void CMaterial::setTexture(const u32 layer, const std::string* files[6])
 
 void CMaterial::destroyTexture(u32 layer)
 {
-	if (layer >= ETextureLayer::eTextureLayerMax)
+    if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
 		return;
@@ -140,7 +146,7 @@ void CMaterial::destroyTexture(u32 layer)
 
 void CMaterial::setTexture( const u32 layer, TexturePtr texture )
 {
-	if ( layer >= ETextureLayer::eTextureLayerMax )
+    if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
 		return;

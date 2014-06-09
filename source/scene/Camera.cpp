@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Engine.h"
 #include "utils/Logger.h"
 
 using namespace v3d;
@@ -59,6 +60,6 @@ void CCamera::update(f64 time)
 
     if (m_active)
     {
-        //Render->updateCamera();
+        CEngine::getInstance()->getRenderer()->updateCamera(m_transform.getTranslation(), m_target, m_up);
     }
 }

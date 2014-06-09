@@ -1,5 +1,6 @@
 #include "CubeShape.h"
 #include "renderer/Geometry.h"
+#include "Engine.h"
 
 using namespace v3d;
 using namespace v3d::scene;
@@ -22,9 +23,6 @@ void CCubeShape::render()
     }
 
     m_renderJob->job();
-   
-    //TODO: need to render pass
-    m_geometry->update();
 }
 
 void CCubeShape::update(f64 time)
@@ -34,13 +32,7 @@ void CCubeShape::update(f64 time)
         return;
     }
 
-    if (m_needUpdate)
-    {
-        CNode::updateTransform(time);
-        m_needUpdate = false;
-    }
-
-    //Renderer->updateTransform()
+    CNode::updateTransform(time);
 }
 
 void CCubeShape::init()

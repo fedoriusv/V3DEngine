@@ -1,4 +1,5 @@
 #include "Node.h"
+#include "Engine.h"
 #include "utils/Logger.h"
 
 using namespace v3d;
@@ -148,5 +149,9 @@ CNode* CNode::getChildNodeByName(const std::string& name) const
 
 void CNode::updateTransform(f64 time)
 {
-    //TODO: update childs
+    if (m_needUpdate)
+    {
+        RENDERER->updateTransform(m_transform);
+        m_needUpdate = false;
+    }
 }

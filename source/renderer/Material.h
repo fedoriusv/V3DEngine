@@ -23,6 +23,8 @@ namespace renderer
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderJob;
+
     class CMaterial : public CObject
     {
     public:
@@ -62,10 +64,14 @@ namespace renderer
 
     protected:
 
+        friend                  CRenderJob;
+
         SMaterialData           m_materialData;
         
         TextureList             m_texture;
         RenderTechiquePtr       m_renderTechique;
+
+        bool                    m_needUpdate;
 
     };
 

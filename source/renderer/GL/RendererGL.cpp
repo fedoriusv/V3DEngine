@@ -28,6 +28,8 @@ void CRendererGL::init()
 	reshape(m_viewportSize.width, m_viewportSize.height);
 	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
 
+    glEnable(GL_MULTISAMPLE);
+
 #ifdef _DEBUG
 	m_context->checkForErrors();
 #endif

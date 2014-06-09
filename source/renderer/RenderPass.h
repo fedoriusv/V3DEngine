@@ -55,6 +55,8 @@ namespace renderer
         RenderStatePtr      m_renderState;
         //RenderTarget
 
+        bool                m_enable;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
