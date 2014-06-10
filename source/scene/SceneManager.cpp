@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "SampleShape.h"
 #include "CubeShape.h"
 #include "Camera.h"
 #include "Engine.h"
@@ -138,6 +139,17 @@ void CSceneManager::setBackgroundColor(const core::Vector3D& color)
 const core::Vector3D& CSceneManager::getBackgroundColor() const
 {
 	return v3d::CEngine::getInstance()->getRenderer()->getBackColor();
+}
+
+CNode* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)
+{
+    CSampleShape* node = new CSampleShape();
+    node->setParent(parent);
+    node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;
 }
 
 CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const float size)

@@ -312,7 +312,7 @@ void CWindowWin32::create()
 	HDC hDc = GetDC( m_window );
 	m_context = hDc;
 
-	LOG_INFO("Window Size (%d, %d)", m_param.size.width, m_param.size.height)
+    LOG_INFO("Window Size (%d, %d)", m_param.size.width, m_param.size.height);
 }
 
 void CWindowWin32::close()

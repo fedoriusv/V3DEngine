@@ -28,6 +28,7 @@ namespace scene
 
         void                    addNode(CNode* node);
 
+        CNode*                  addSample(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f));
         CNode*                  addCube(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const float size = 1.0f);
 
         CNode*                  addCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), 

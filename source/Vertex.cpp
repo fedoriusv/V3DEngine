@@ -64,8 +64,7 @@ void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer)
 
 bool SVertexData::empty() const
 {
-	return m_vertices.vertex.empty() 
-		|| m_normals.vertex.empty() 
-		|| m_texCoords.at(0).vertex.empty() 
-		|| m_indices.vertex.empty();
+    return m_vertices.vertex.empty()
+        || m_normals.vertex.empty()
+        || m_texCoords.at(0).vertex.empty();
 }

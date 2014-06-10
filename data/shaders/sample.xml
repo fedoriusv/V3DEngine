@@ -1,0 +1,46 @@
+<technique name="sample" version="100">
+	<pass name="pass0">
+		<uniforms>
+			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+		</uniforms>
+		<attributes>
+			<var name="positions" type="vec3" val="mesh.positions"/>
+		</attributes>
+		<samplers> 
+		</samplers>
+		<rendertarget val="default"/>
+		<shaders>
+			<var type="vertex" name="vdefault">
+				<![CDATA[
+					#version 330
+					#define POSITION 	0
+
+					layout (location = POSITION) in vec3 positions;
+
+					struct Transform
+					{
+						mat4 projectionMatrix;
+					};
+
+					uniform Transform transform;
+
+					void main()
+					{
+						gl_Position = transform.projectionMatrix * vec4(positions, 1.0);
+					}
+				]]>
+			</var>
+			<var type="fragment" name="fdefault">
+				<![CDATA[
+					#version 330
+					out vec4 fragColor;
+
+					void main()
+					{
+						fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+					}
+				]]>
+			</var>
+		</shaders>
+	</pass>
+</technique>

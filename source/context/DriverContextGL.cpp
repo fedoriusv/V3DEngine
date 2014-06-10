@@ -94,13 +94,13 @@ bool CDriverContextGL::createWin32Context()
 
 	if (!tempWindow)
 	{
-		LOG_ERROR("Cannot create a temp window")
+        LOG_ERROR("Cannot create a temp window");
 		UnregisterClass(className, hInstance);
 		
 		return false;
 	}
 
-	HDC hDC = GetDC( tempWindow );
+	HDC tempDC = GetDC(tempWindow);
 
 	// Set up pixel format descriptor with desired parameters
 	PIXELFORMATDESCRIPTOR pfd = {
@@ -125,25 +125,25 @@ bool CDriverContextGL::createWin32Context()
 	};
 
 	GLuint pixelFormat;
-	pixelFormat = ChoosePixelFormat(hDC, &pfd);
-	SetPixelFormat(hDC, pixelFormat, &pfd);
+    pixelFormat = ChoosePixelFormat(tempDC, &pfd);
+    SetPixelFormat(tempDC, pixelFormat, &pfd);
 	
-	HGLRC hRc = wglCreateContext(hDC);
+    HGLRC hRc = wglCreateContext(tempDC);
 	if (!hRc)
 	{
-		LOG_ERROR("Cannot create a temporary GL rendering context")
-		ReleaseDC(tempWindow, hDC);
+        LOG_ERROR("Cannot create a temporary GL rendering context");
+        ReleaseDC(tempWindow, tempDC);
 		DestroyWindow(tempWindow);
 		UnregisterClass(className, hInstance);
 		
 		return false;
 	}
 
-	if (!wglMakeCurrent(hDC, hRc))
+    if (!wglMakeCurrent(tempDC, hRc))
 	{
-		LOG_ERROR("Cannot activate a temporary GL rendering context")
+        LOG_ERROR("Cannot activate a temporary GL rendering context");
 		wglDeleteContext(hRc);
-		ReleaseDC(tempWindow, hDC);
+        ReleaseDC(tempWindow, tempDC);
 		DestroyWindow(tempWindow);
 		UnregisterClass(className, hInstance);
 		
@@ -195,41 +195,40 @@ bool CDriverContextGL::createWin32Context()
 	
 	while(numFormats == 0)
 	{
-		if ( !wglChoosePixelFormatARB(hDC, iAttributes, fAttributes, 1, &newPixelFormat, &numFormats) )
+        if (!wglChoosePixelFormatARB(tempDC, iAttributes, fAttributes, 1, &newPixelFormat, &numFormats))
 		{
-			LOG_ERROR("Can't Find A Suitable ExPixelFormat")
+            LOG_ERROR("Can't Find A Suitable ExPixelFormat");
 			return false;
 		}
 
 		--iAttributes[21]; //WGL_SAMPLES_ARB, antiAlias
 		if (iAttributes[21] < 0)
 		{
-			LOG_ERROR("Can't Choose ExPixelFormat")
+            LOG_ERROR("Can't Choose ExPixelFormat");
 			iAttributes[21] = 0;
 			break;
 		}
 	}
 
-	wglMakeCurrent(hDC, NULL);
+    wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(hRc);
-	ReleaseDC(tempWindow, hDC);
+    ReleaseDC(tempWindow, tempDC);
 	DestroyWindow(tempWindow);
-	UnregisterClass(className, hInstance);
+    UnregisterClass(className, hInstance);
 
-	
-	// Get HWND
+   // Get HWND
 	HWND window = std::static_pointer_cast<const platform::CWindowWin32>(m_window)->getHandleWindow();
-	
-	hDC = GetDC( window );
+
+	HDC hDC = GetDC(window);
 	if (!hDC)
 	{
-		LOG_ERROR("Cannot create a GL device context")
+        LOG_ERROR("Cannot create a GL device context");
 		return false;
 	}
 
-	if ( newPixelFormat == 0 || !SetPixelFormat(hDC, newPixelFormat, &pfd) )
+    if ( newPixelFormat == 0 || !SetPixelFormat(hDC, newPixelFormat, &pfd) )
 	{
-		LOG_WARRNING("Cannot create ExPixelFormat. Set default pixel format")
+        LOG_WARRNING("Cannot create ExPixelFormat. Set default pixel format");
 		newPixelFormat = ChoosePixelFormat(hDC, &pfd);
 		hRc = wglCreateContext(hDC);
 	}
@@ -244,8 +243,9 @@ bool CDriverContextGL::createWin32Context()
 			0
 		};
 
-		hRc = wglCreateContextAttribsARB( hDC, 0, attribs );
+		hRc = wglCreateContextAttribsARB(hDC, 0, attribs);
 	}
+
 
 	if ( !hRc || !wglMakeCurrent(hDC, hRc) )
 	{

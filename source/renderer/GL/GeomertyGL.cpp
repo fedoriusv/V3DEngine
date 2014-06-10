@@ -32,8 +32,6 @@ void CGeometryGL::init()
     CGeometryGL::genVertexArray(m_arrayId);
     CGeometryGL::bindVertexArray(m_arrayId);
 
-    //TODO!: render pass
-
     for (u32 idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr pass = m_techique->getRenderPass(idx);
@@ -99,10 +97,14 @@ void CGeometryGL::init()
         }
     }
 	
+
     //Indices
-	CGeometryGL::genBuffers(m_data.m_indices.id);
-	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
-	CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * m_data.m_countIndices, m_data.m_indices.vertex.data());
+    if (m_data.m_countIndices > 0)
+    {
+        CGeometryGL::genBuffers(m_data.m_indices.id);
+        CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data.m_indices.id);
+        CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data.m_countIndices, m_data.m_indices.vertex.data());
+    }
 
     RENDERER->checkForErrors("GeometryGL Init Error");
 
@@ -119,9 +121,17 @@ void CGeometryGL::draw()
 {
 	CGeometryGL::bindVertexArray(m_arrayId);
 
-	glDrawElements(m_drawModeGL, m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
-	////glDrawArrays(_mode, _firstPoint, (_count == 0) ? _vertexData.nVertices : _count);
-
+    if (m_data.m_countIndices > 0)
+    {
+        glDrawElements(m_drawModeGL, m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
+    }
+    else
+    {
+        u32 firstPoint = 0;
+        u32 countPoints = m_data.m_countVertices;
+        glDrawArrays(m_drawModeGL, firstPoint, countPoints);
+    }
+	
 	CGeometryGL::bindVertexArray(0);
 
     RENDERER->checkForErrors("GeometryGL Update Error");

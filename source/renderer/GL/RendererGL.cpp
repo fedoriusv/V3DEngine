@@ -84,7 +84,7 @@ void CRendererGL::reshape(u32 width, u32 height)
 	glViewport(0, 0, m_viewportSize.width, m_viewportSize.height);
 
 	GLfloat aspectRatio = (GLfloat)m_viewportSize.width / (GLfloat)m_viewportSize.height;
-	m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.1f, 100.0f);
+	m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 }
 
 ShaderPtr CRendererGL::makeSharedShader()
