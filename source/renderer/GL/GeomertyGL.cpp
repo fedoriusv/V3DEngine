@@ -10,8 +10,8 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CGeometryGL::CGeometryGL(const RenderTechiquePtr& techique)
-    : CGeometry(techique)
+CGeometryGL::CGeometryGL(const RenderTechniquePtr& technique)
+    : CGeometry(technique)
     , m_arrayId(0)
     , m_drawModeGL(GL_TRIANGLE_STRIP)
 {
@@ -32,9 +32,9 @@ void CGeometryGL::init()
     CGeometryGL::genVertexArray(m_arrayId);
     CGeometryGL::bindVertexArray(m_arrayId);
 
-    for (u32 idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
+    for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
-        const RenderPassPtr pass = m_techique->getRenderPass(idx);
+        const RenderPassPtr pass = m_technique->getRenderPass(idx);
         const AttributeList& attributes = pass->getShaderData()->getAttributeList();
 
         for (auto attr : attributes)
@@ -158,9 +158,9 @@ void CGeometryGL::refresh()
         return;
     }
 
-    for (u32 idx = 0; idx < m_techique->getRenderPassCount(); ++idx)
+    for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
-        const RenderPassPtr pass = m_techique->getRenderPass(idx);
+        const RenderPassPtr pass = m_technique->getRenderPass(idx);
         const AttributeList& attributes = pass->getShaderData()->getAttributeList();
 
         for (auto attr : attributes)

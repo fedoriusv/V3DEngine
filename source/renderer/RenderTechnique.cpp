@@ -5,28 +5,28 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CRenderTechique::CRenderTechique()
+CRenderTechnique::CRenderTechnique()
 {
 }
 
-CRenderTechique::~CRenderTechique()
+CRenderTechnique::~CRenderTechnique()
 {
     m_renderPassList.clear();
 }
 
-const RenderPassPtr& CRenderTechique::getRenderPass(u32 id) const
+const RenderPassPtr& CRenderTechnique::getRenderPass(u32 id) const
 {
     ASSERT(id <= m_renderPassList.size() || "RenderPass id error");
 
     return m_renderPassList[id];
 }
 
-u32 CRenderTechique::getRenderPassCount() const
+u32 CRenderTechnique::getRenderPassCount() const
 {
     return m_renderPassList.size();
 }
 
-void CRenderTechique::addRenderPass(const RenderPassPtr& pass)
+void CRenderTechnique::addRenderPass(const RenderPassPtr& pass)
 {
     if (pass)
     {
@@ -34,12 +34,12 @@ void CRenderTechique::addRenderPass(const RenderPassPtr& pass)
     }
 }
 
-const RenderPassList& CRenderTechique::getRenderPassList() const
+const RenderPassList& CRenderTechnique::getRenderPassList() const
 {
     return m_renderPassList;
 }
 
-bool CRenderTechique::parse(tinyxml2::XMLElement* root)
+bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 {
     const int techniqueVersion = root->IntAttribute("version");
     if (techniqueVersion != SHADER_PARSER )
@@ -73,7 +73,7 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
             LOG_ERROR("Error parse. Pass section");
             return false;
         }
-        CRenderTechique::addRenderPass(pass);
+        CRenderTechnique::addRenderPass(pass);
 
         passElement = passElement->NextSiblingElement("pass");
     }
@@ -82,12 +82,12 @@ bool CRenderTechique::parse(tinyxml2::XMLElement* root)
 
 }
 
-void CRenderTechique::init(stream::IStream* stream)
+void CRenderTechnique::init(stream::IStream* stream)
 {
     CResource::setStream(stream);
 }
 
-bool CRenderTechique::load()
+bool CRenderTechnique::load()
 {
     stream::IStream* stream = CResource::getStream();
     if (!stream)
@@ -123,10 +123,11 @@ bool CRenderTechique::load()
         return false;
     }
 
-    return CRenderTechique::parse(rootElement);
+    return CRenderTechnique::parse(rootElement);
 
 }
 
-void CRenderTechique::refresh()
+void CRenderTechnique::refresh()
 {
+    //TODO: refresh
 }

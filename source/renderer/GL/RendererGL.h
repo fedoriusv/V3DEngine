@@ -1,5 +1,5 @@
-#ifndef _F3D_RENDERER_GL_H_
-#define _F3D_RENDERER_GL_H_
+#ifndef _V3D_RENDERER_GL_H_
+#define _V3D_RENDERER_GL_H_
 
 #include "renderer/Renderer.h"
 
@@ -23,9 +23,9 @@ namespace renderer
     
         void                reshape(u32 width, u32 height) override;
 
-        ShaderPtr           makeSharedShader()                                    override;
-        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)          override;
-        GeometryPtr         makeSharedGeometry(const RenderTechiquePtr& techique) override;
+        ShaderPtr           makeSharedShader()                                     override;
+        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)           override;
+        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)override;
 
     };
 
@@ -33,4 +33,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_RENDERER_GL_H_
+#endif //_V3D_RENDERER_GL_H_

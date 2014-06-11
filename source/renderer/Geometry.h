@@ -1,5 +1,5 @@
-#ifndef _F3D_GEOMETRY_H_
-#define _F3D_GEOMETRY_H_
+#ifndef _V3D_GEOMETRY_H_
+#define _V3D_GEOMETRY_H_
 
 #include "Vertex.h"
 #include "renderer/RenderTechnique.h"
@@ -29,7 +29,7 @@ namespace renderer
     {
     public:
 
-        CGeometry(const RenderTechiquePtr& techique);
+        CGeometry(const RenderTechniquePtr& technique);
         virtual             ~CGeometry();
 
         virtual void        init()   = 0;
@@ -51,7 +51,7 @@ namespace renderer
         EDrawMode           m_drawMode;
         EGeomertyType       m_geometyType;
         SVertexData         m_data;
-        RenderTechiquePtr   m_techique;
+        RenderTechniquePtr  m_technique;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,4 +62,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_GEOMETRY_H_
+#endif //_V3D_GEOMETRY_H_

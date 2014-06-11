@@ -1,5 +1,5 @@
-#ifndef _F3D_RENDERER_H_
-#define _F3D_RENDERER_H_
+#ifndef _V3D_RENDERER_H_
+#define _V3D_RENDERER_H_
 
 #include "Singleton.h"
 #include "context/DriverContext.h"
@@ -37,9 +37,9 @@ namespace renderer
 
         void                     checkForErrors(const std::string& location = "");
 
-        virtual ShaderPtr        makeSharedShader()                                    = 0;
-        virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)          = 0;
-        virtual GeometryPtr      makeSharedGeometry(const RenderTechiquePtr& techique) = 0;
+        virtual ShaderPtr        makeSharedShader()                                      = 0;
+        virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)            = 0;
+        virtual GeometryPtr      makeSharedGeometry(const RenderTechniquePtr& technique) = 0;
 
     protected:
 
@@ -65,4 +65,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_RENDERER_H_
+#endif //_V3D_RENDERER_H_

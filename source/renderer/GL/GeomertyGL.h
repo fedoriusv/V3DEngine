@@ -1,5 +1,5 @@
-#ifndef _F3D_GEOMETRY_GL__H_
-#define _F3D_GEOMETRY_GL_H_
+#ifndef _V3D_GEOMETRY_GL__H_
+#define _V3D_GEOMETRY_GL_H_
 
 #include "renderer/Geometry.h"
 
@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CGeometryGL(const RenderTechiquePtr& techique);
+        CGeometryGL(const RenderTechniquePtr& technique);
         virtual      ~CGeometryGL();
         
         void         init()    override;
@@ -56,4 +56,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_GEOMETRY_GL_H_
+#endif //_V3D_GEOMETRY_GL_H_

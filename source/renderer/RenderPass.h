@@ -1,5 +1,5 @@
-#ifndef _F3D_RENDER_PASS_H_
-#define _F3D_RENDER_PASS_H_
+#ifndef _V3D_RENDER_PASS_H_
+#define _V3D_RENDER_PASS_H_
 
 #include "tinyxml2.h"
 
@@ -15,7 +15,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechique;
+    class CRenderTechnique;
 
     class CRenderPass : public CObject
     {
@@ -37,7 +37,7 @@ namespace renderer
 
     private:
 
-        friend              CRenderTechique;
+        friend              CRenderTechnique;
 
         void                init();
 
@@ -68,4 +68,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_RENDER_PASS_H_
+#endif //_V3D_RENDER_PASS_H_

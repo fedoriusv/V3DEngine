@@ -3,10 +3,10 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CGeometry::CGeometry(const RenderTechiquePtr& techique)
-	: m_drawMode(EDrawMode::eTriangleStrip)
+CGeometry::CGeometry(const RenderTechniquePtr& technique)
+    : m_drawMode(EDrawMode::eTriangleStrip)
     , m_geometyType(EGeomertyType::eGeomertyStatic)
-    , m_techique(techique)
+    , m_technique(technique)
 {
 }
 

@@ -1,5 +1,5 @@
-#ifndef _F3D_RENDER_TECHNIQUE_H_
-#define _F3D_RENDER_TECHNIQUE_H_
+#ifndef _V3D_RENDER_TECHNIQUE_H_
+#define _V3D_RENDER_TECHNIQUE_H_
 
 #include "stream/Resource.h"
 #include "RenderPass.h"
@@ -12,12 +12,12 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechique : public stream::CResource
+    class CRenderTechnique : public stream::CResource
     {
     public:
 
-        CRenderTechique();
-        virtual              ~CRenderTechique();
+        CRenderTechnique();
+        virtual              ~CRenderTechnique();
 
         const RenderPassPtr& getRenderPass(u32 id) const;
         u32                  getRenderPassCount()  const;
@@ -42,10 +42,11 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderTechique> RenderTechiquePtr;
+    typedef std::shared_ptr<CRenderTechnique>            RenderTechniquePtr;
+    typedef std::map<std::string, RenderTechniquePtr>    RenderTechniqueMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif //_F3D_RENDER_TECHNIQUE_H_
+#endif //_V3D_RENDER_TECHNIQUE_H_
