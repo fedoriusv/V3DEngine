@@ -1,4 +1,8 @@
 #include "Texture.h"
+#include "utils/Logger.h"
+#ifdef USE_DEVIL
+#   include "IL/il.h"
+#endif
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -21,6 +25,65 @@ CTexture::~CTexture()
     CTexture::clear();
     m_data.clear();
 }
+
+void CTexture::init(stream::IStream* stream)
+{
+    CResource::setStream(stream);
+}
+
+bool CTexture::load()
+{
+    stream::IStream* stream = CResource::getStream();
+    if (!stream)
+    {
+        LOG_ERROR("Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
+        return false;
+    }
+
+    /*u32 size = stream->size();
+    u8* data = new u8[size];
+    if (size > 0)
+    {
+        stream->seekBeg(0);
+        stream->read(*data);
+    }*/
+    stream->close();
+
+#ifdef USE_DEVIL
+    return loadDevIL();
+#endif //USE_DEVIL
+
+    return false;
+}
+
+#ifdef USE_DEVIL
+bool CTexture::loadDevIL()
+{
+    /*std::string file = CResource::getResourseName();
+    bool success = ilLoadImage((wchar_t*)file.c_str());
+    ASSERT(success == 1 && "Invalid Texture");
+
+    m_data. = ilGetInteger(IL_IMAGE_WIDTH);
+    _textureData._iHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+    _textureData._iDepth = ilGetInteger(IL_IMAGE_DEPTH);
+    _textureData._eFormat = (IMAGE_FORMAT)ilGetInteger(IL_IMAGE_FORMAT);
+    _textureData._eType = (IMAGE_TYPE)ilGetInteger(IL_IMAGE_TYPE);
+
+    ilConvertImage(_textureData._eFormat, _textureData._eType);
+
+    if (_textureData._data != NULL)
+    {
+        delete _textureData._data;
+        _textureData._data = NULL;
+    }
+
+    _textureData._data = (ILubyte*)malloc(ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
+    memcpy(_textureData._data, ilGetData(), ilGetInteger(IL_IMAGE_SIZE_OF_DATA));*/
+
+    //return (success == 1) ? true : false;
+    return false;
+}
+#endif //USE_DEVIL
 
 void CTexture::clear()
 {

@@ -148,6 +148,7 @@ include_directories(
 	${SOURCE_DIR}
 	libs/glew/include
 	libs/tinyxml2
+	libs/DevIL/include
 	)
 
 add_library(

@@ -258,7 +258,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
     tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
-        ShaderPtr shader = v3d::CEngine::getInstance()->getRenderer()->makeSharedShader();
+        ShaderPtr shader = RENDERER->makeSharedShader();
         if (!shader)
         {
             LOG_ERROR("Error parse. Could not create shader");
@@ -330,7 +330,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
 void CRenderPass::init()
 {
     m_shaderData = std::make_shared<CShaderData>();
-    m_program = v3d::CEngine::getInstance()->getRenderer()->makeSharedProgram(m_shaderData);
+    m_program = RENDERER->makeSharedProgram(m_shaderData);
 }
 
 bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)

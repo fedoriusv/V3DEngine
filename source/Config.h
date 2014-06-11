@@ -14,6 +14,7 @@
 #define SHADER_PARSER 100
 
 #define USE_LOGGER 1
+#define USE_DEVIL
 
 //Compiler
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +63,10 @@
 #   define OPENGL_VERSION_MINOR 3
 
 #   define GLEW_STATIC
+
+#   ifdef USE_DEVIL
+#       define ILUT_USE_OPENGL
+#	endif
 
 #endif
 

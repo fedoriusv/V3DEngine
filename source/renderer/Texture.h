@@ -139,6 +139,10 @@ namespace renderer
 
     protected:
 
+#ifdef USE_DEVIL
+        bool            loadDevIL();
+#endif //USE_DEVIL
+
         void            clear();
 
         u32             m_textureID;

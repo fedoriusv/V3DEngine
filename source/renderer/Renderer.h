@@ -6,6 +6,7 @@
 #include "renderer/Shader.h"
 #include "renderer/ShaderProgram.h"
 #include "renderer/Geometry.h"
+#include "renderer/Texture.h"
 
 namespace v3d
 {
@@ -40,6 +41,7 @@ namespace renderer
         virtual ShaderPtr        makeSharedShader()                                      = 0;
         virtual ShaderProgramPtr makeSharedProgram(const ShaderDataPtr& data)            = 0;
         virtual GeometryPtr      makeSharedGeometry(const RenderTechniquePtr& technique) = 0;
+        virtual TexturePtr       makeSharedTexture()                                     = 0;
 
     protected:
 

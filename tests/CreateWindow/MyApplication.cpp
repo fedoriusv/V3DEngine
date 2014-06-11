@@ -20,6 +20,7 @@ void MyApplication::init()
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
     scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addSample(0, core::Vector3D(0, 0, -5)));
     cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
+    cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     getSceneManager()->addCamera(0, core::Vector3D(0, 0, -3.0f));
 

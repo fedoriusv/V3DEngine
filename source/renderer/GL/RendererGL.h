@@ -23,9 +23,10 @@ namespace renderer
     
         void                reshape(u32 width, u32 height) override;
 
-        ShaderPtr           makeSharedShader()                                     override;
-        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)           override;
-        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)override;
+        ShaderPtr           makeSharedShader()                                      override;
+        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)            override;
+        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique) override;
+        TexturePtr          makeSharedTexture()                                     override;
 
     };
 

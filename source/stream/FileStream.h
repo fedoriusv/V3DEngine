@@ -33,7 +33,7 @@ namespace stream
         ~FileStream();
 
 		bool    open(const std::string& file, EOpenMode openMode = e_in);
-		void    close();
+		void    close()                                                 override;
 
 		bool    isOpen() const;
 

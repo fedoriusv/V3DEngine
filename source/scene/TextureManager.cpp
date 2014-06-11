@@ -1,12 +1,15 @@
 #include "TextureManager.h"
 #include "stream/FileStream.h"
 #include "renderer/Renderer.h"
+#include "utils/Logger.h"
+#include "Engine.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 
 CTextureManager::CTextureManager()
 {
+    CTextureManager::registerPath("../../../../data/");
 }
 
 CTextureManager::~CTextureManager()
@@ -43,25 +46,22 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
 			const bool isFileExist = stream::FileStream::isFileExist(fullName);
 			if( isFileExist )
 			{	
-				stream::FileStream stream(fullName, stream::FileStream::e_in); 
+                stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
 
-				if( stream.isOpen() )
+				if( stream->isOpen() )
 				{
-					auto predCanDecode = [fileExtension]( DecoderPtr decoder ) -> bool
-					{
-						return decoder->isExtensionSupported( fileExtension );
-					};
+                    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
 
-					DecoderPtr decoder = *std::find_if( m_decoders.begin(), m_decoders.end(), predCanDecode );
-				
-					ResourcePtr texture = decoder->decode(stream);
+                    texture->init(stream);
+                    if (!texture->load())
+                    {
+                        LOG_ERROR("Streaming error read file [%s]", name.c_str());
+                        return nullptr;
+                    }
 
-					if(texture)
-					{
-                        renderer::TexturePtr texturePtr = std::static_pointer_cast< renderer::CTexture >(texture);
-                        m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(name, texturePtr));
-						return texturePtr;
-					}
+                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(name, texture));
+
+                    return texture;
 				}
 			}
 		}

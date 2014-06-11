@@ -19,6 +19,7 @@ namespace stream
 		u32             read(T& value);
 
 		virtual u32     read(void* buffer, const u32 size, const u32 count = 1) = 0;
+        virtual void    close()                                                 = 0;
 
 		virtual u32     read(u8& value)                 = 0;
 		virtual u32     read(s8& value)                 = 0;

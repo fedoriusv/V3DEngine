@@ -3,6 +3,7 @@
 #include "utils/Logger.h"
 #include "stream/FileStream.h"
 #include "scene/RenderTechniqueManager.h"
+#include "scene/TextureManager.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -96,31 +97,32 @@ u32 CMaterial::getTextureCount() const
 	return m_texture.size();
 }
 	
-void CMaterial::setTexture(const u32 layer, const std::string& file)
+bool CMaterial::setTexture(const u32 layer, const std::string& file)
 {
     if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
-		return;
+		return false;
 	}
 
+    TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
+    if (!texture)
+    {
+        LOG_ERROR("Error read file [%s]", file.c_str());
+        return false;
+    }
     
-	TexturePtr oldTexture = m_texture[layer];
-	//TODO: del old texture if will not need more
-	
-	//TexturePtr newTexture = std::make_shared<CTexture>();
-	//TODO: need lower name file
-	//newTexture->create(file);
+    m_texture[layer] = texture;
 
-	//m_texture[layer] = newTexture;
+    return true;
 }
 
-void CMaterial::setTexture(const u32 layer, const std::string* files[6])
+bool CMaterial::setTexture(const u32 layer, const std::string* files[6])
 {
     if (layer >= ETextureLayer::eLayerMax)
 	{
         ASSERT(false && "Texture Layer range out");
-		return;
+		return false;
 	}
 
 	TexturePtr oldTexture = m_texture[layer];
@@ -131,6 +133,8 @@ void CMaterial::setTexture(const u32 layer, const std::string* files[6])
 	//newTexture->create(files);
 
 	//m_texture[layer] = newTexture;
+
+    return true;
 }
 
 void CMaterial::destroyTexture(u32 layer)

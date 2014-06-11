@@ -6,6 +6,7 @@
 #include "renderer/Texture.h"
 #include "stream/IStream.h"
 #include "ResourceDecoder.h"
+#include "Singleton.h"
 
 namespace v3d
 {
@@ -13,7 +14,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureManager
+    class CTextureManager : public Singleton<CTextureManager>
     {
     public:
 

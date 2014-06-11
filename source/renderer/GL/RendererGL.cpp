@@ -2,6 +2,7 @@
 #include "ShaderGL.h"
 #include "ShaderProgramGL.h"
 #include "GeomertyGL.h"
+#include "TextureGL.h"
 
 #include "GL/glew.h"
 
@@ -100,4 +101,9 @@ ShaderProgramPtr CRendererGL::makeSharedProgram(const ShaderDataPtr& data)
 GeometryPtr CRendererGL::makeSharedGeometry(const RenderTechniquePtr& technique)
 {
     return std::make_shared<CGeometryGL>(technique);
+}
+
+TexturePtr CRendererGL::makeSharedTexture()
+{
+    return std::make_shared<CTextureGL>();
 }

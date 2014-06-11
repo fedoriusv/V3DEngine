@@ -28,7 +28,7 @@ void CShape::init()
         return;
     }
 
-    m_geometry = v3d::CEngine::getInstance()->getRenderer()->makeSharedGeometry(technique);
+    m_geometry = RENDERER->makeSharedGeometry(technique);
 
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry);
 }

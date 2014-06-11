@@ -107,7 +107,7 @@ bool CRenderTechnique::load()
         stream->seekBeg(0);
         stream->read(data);
     }
-    //stream->close();
+    stream->close();
 
     tinyxml2::XMLError success = doc.Parse(data.c_str());
     if (success)
