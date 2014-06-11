@@ -1,5 +1,5 @@
-#ifndef _F3D_DRIVER_CONTEXT_GL_H_
-#define _F3D_DRIVER_CONTEXT_GL_H_
+#ifndef _V3D_DRIVER_CONTEXT_GL_H_
+#define _V3D_DRIVER_CONTEXT_GL_H_
 
 #include "DriverContext.h"
 
@@ -34,4 +34,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_DRIVER_CONTEXT_GL_H_
+#endif //_V3D_DRIVER_CONTEXT_GL_H_

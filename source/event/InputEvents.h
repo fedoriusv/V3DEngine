@@ -1,5 +1,5 @@
-#ifndef _F3D_INPUT_EVENTS_H_
-#define _F3D_INPUT_EVENTS_H_
+#ifndef _V3D_INPUT_EVENTS_H_
+#define _V3D_INPUT_EVENTS_H_
 
 #include "common.h"
 #include "KeyCodes.h"
@@ -119,4 +119,4 @@ namespace event
 }
 
 
-#endif //_F3D_INPUT_EVENTS_H_
+#endif //_V3D_INPUT_EVENTS_H_

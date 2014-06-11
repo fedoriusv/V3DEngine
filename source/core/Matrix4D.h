@@ -1,5 +1,5 @@
-#ifndef _F3D_MATRIX_4D_H_
-#define _F3D_MATRIX_4D_H_
+#ifndef _V3D_MATRIX_4D_H_
+#define _V3D_MATRIX_4D_H_
 
 #include "Vector3D.h"
 #include "Vector4D.h"
@@ -802,4 +802,4 @@ namespace core
 
 }
 }
-#endif //_F3D_MATRIX_4D_H_
+#endif //_V3D_MATRIX_4D_H_

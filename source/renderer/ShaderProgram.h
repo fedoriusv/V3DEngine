@@ -1,5 +1,5 @@
-#ifndef _F3D_SHADER_PROGRAM_H_
-#define _F3D_SHADER_PROGRAM_H_
+#ifndef _V3D_SHADER_PROGRAM_H_
+#define _V3D_SHADER_PROGRAM_H_
 
 #include "Object.h"
 #include "Shader.h"
@@ -58,4 +58,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_SHADER_PROGRAM_H_
+#endif //_V3D_SHADER_PROGRAM_H_

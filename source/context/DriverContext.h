@@ -1,5 +1,5 @@
-#ifndef _F3D_DRIVER_CONTEXT_H_
-#define _F3D_DRIVER_CONTEXT_H_
+#ifndef _V3D_DRIVER_CONTEXT_H_
+#define _V3D_DRIVER_CONTEXT_H_
 
 #include "common.h"
 #include "platform/Window.h"
@@ -37,4 +37,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_DRIVER_CONTEXT_H_
+#endif //_V3D_DRIVER_CONTEXT_H_

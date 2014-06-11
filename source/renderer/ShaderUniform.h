@@ -1,5 +1,5 @@
-#ifndef _F3D_SHADER_UNIFORM_H_
-#define _F3D_SHADER_UNIFORM_H_
+#ifndef _V3D_SHADER_UNIFORM_H_
+#define _V3D_SHADER_UNIFORM_H_
 
 #include "common.h"
 
@@ -85,4 +85,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_SHADER_UNIFORM_H_
+#endif //_V3D_SHADER_UNIFORM_H_

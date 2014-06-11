@@ -1,5 +1,5 @@
-#ifndef _F3D_MATRIX_2D_
-#define _F3D_MATRIX_2D_
+#ifndef _V3D_MATRIX_2D_
+#define _V3D_MATRIX_2D_
 
 #include "Math.h"
 #include "Vector2D.h"
@@ -420,4 +420,4 @@ namespace core
 
 }
 }
-#endif  //_F3D_MATRIX_2D_
+#endif  //_V3D_MATRIX_2D_

@@ -1,5 +1,5 @@
-#ifndef _F3D_STREAM_MANAGER_H_
-#define _F3D_STREAM_MANAGER_H_
+#ifndef _V3D_STREAM_MANAGER_H_
+#define _V3D_STREAM_MANAGER_H_
 
 #include "Singleton.h"
 #include "common.h"
@@ -27,4 +27,4 @@ namespace stream
 }
 }
 
-#endif //_F3D_STREAM_MANAGER_H_
+#endif //_V3D_STREAM_MANAGER_H_

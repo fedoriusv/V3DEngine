@@ -1,5 +1,5 @@
-#ifndef _F3D_SINGLETON_H_
-#define _F3D_SINGLETON_H_
+#ifndef _V3D_SINGLETON_H_
+#define _V3D_SINGLETON_H_
 
 namespace v3d
 {
@@ -62,4 +62,4 @@ namespace v3d
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
-#endif //_F3D_SINGLETON_H_
+#endif //_V3D_SINGLETON_H_

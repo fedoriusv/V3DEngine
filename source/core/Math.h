@@ -1,5 +1,5 @@
-#ifndef _F3D_MATH_H_
-#define _F3D_MATH_H_
+#ifndef _V3D_MATH_H_
+#define _V3D_MATH_H_
 
 #include <math.h>
 
@@ -181,4 +181,4 @@ namespace core
 }
 }
 
-#endif //_F3D_MATH_H_
+#endif //_V3D_MATH_H_

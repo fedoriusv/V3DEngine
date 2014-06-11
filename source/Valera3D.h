@@ -1,7 +1,7 @@
 // Valera Engine (c) 2014
 
-#ifndef _F3D_VALERA_3D_H_
-#define _F3D_VALERA_3D_H_
+#ifndef _V3D_VALERA_3D_H_
+#define _V3D_VALERA_3D_H_
 
 #include "common.h"
 #include "Singleton.h"
@@ -13,4 +13,4 @@
 #include "scene/CubeShape.h"
 
 
-#endif //_F3D_VALERA_3D_H_
+#endif //_V3D_VALERA_3D_H_

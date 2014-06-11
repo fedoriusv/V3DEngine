@@ -1,5 +1,5 @@
-#ifndef _F3D_WINDOW_WIN32_H_
-#define _F3D_WINDOW_WIN32_H_
+#ifndef _V3D_WINDOW_WIN32_H_
+#define _V3D_WINDOW_WIN32_H_
 
 #include "Window.h"
 #include <windows.h>
@@ -53,4 +53,4 @@ namespace platform
 }
 }
 
-#endif //_F3D_WINDOW_WIN32_H_
+#endif //_V3D_WINDOW_WIN32_H_

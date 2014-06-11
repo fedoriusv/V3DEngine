@@ -1,5 +1,5 @@
-#ifndef _F3D_CUBE_SHAPE_H_
-#define _F3D_CUBE_SHAPE_H_
+#ifndef _V3D_CUBE_SHAPE_H_
+#define _V3D_CUBE_SHAPE_H_
 
 #include "scene/Shape.h"
 
@@ -26,4 +26,4 @@ namespace scene
 }
 }
 
-#endif //_F3D_CUBE_SHAPE_H_
+#endif //_V3D_CUBE_SHAPE_H_

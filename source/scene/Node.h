@@ -1,5 +1,5 @@
-#ifndef _F3D_NODE_H_
-#define _F3D_NODE_H_
+#ifndef _V3D_NODE_H_
+#define _V3D_NODE_H_
 
 #include "Object.h"
 
@@ -80,4 +80,4 @@ namespace scene
 }
 }
 
-#endif //_F3D_NODE_H_
+#endif //_V3D_NODE_H_

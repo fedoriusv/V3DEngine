@@ -1,5 +1,5 @@
-#ifndef _F3D_SHADER_DATA_H_
-#define _F3D_SHADER_DATA_H_
+#ifndef _V3D_SHADER_DATA_H_
+#define _V3D_SHADER_DATA_H_
 
 #include "Object.h"
 #include "ShaderUniform.h"
@@ -77,4 +77,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_SHADER_DATA_H_
+#endif //_V3D_SHADER_DATA_H_

@@ -1,5 +1,5 @@
-#ifndef _F3D_ENGINE_H_
-#define _F3D_ENGINE_H_
+#ifndef _V3D_ENGINE_H_
+#define _V3D_ENGINE_H_
 
 #include "platform/Platform.h"
 #include "platform/Window.h"
@@ -43,4 +43,4 @@ namespace v3d
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
-#endif //_F3D_ENGINE_H_
+#endif //_V3D_ENGINE_H_

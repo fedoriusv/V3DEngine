@@ -1,7 +1,7 @@
 // Valera3D Engine (c) 2014
 
-#ifndef _F3D_CONFIG_H_
-#define _F3D_CONFIG_H_
+#ifndef _V3D_CONFIG_H_
+#define _V3D_CONFIG_H_
 
 //Version 2.0.0
 #define VERSION_MAJOR		2
@@ -68,4 +68,4 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#endif //_F3D_FEDORIA_CONFIG_H_
+#endif //_V3D_FEDORIA_CONFIG_H_

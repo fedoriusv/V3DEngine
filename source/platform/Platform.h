@@ -1,5 +1,5 @@
-#ifndef _F3D_PLATFORM_H_
-#define _F3D_PLATFORM_H_
+#ifndef _V3D_PLATFORM_H_
+#define _V3D_PLATFORM_H_
 
 #include "Window.h"
 #include "renderer/Renderer.h"
@@ -52,4 +52,4 @@ namespace platform
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
-#endif //_F3D_PLATFORM_H_
+#endif //_V3D_PLATFORM_H_

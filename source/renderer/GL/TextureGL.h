@@ -1,5 +1,5 @@
-#ifndef _F3D_TEXTURE_GL_H_
-#define _F3D_TEXTURE_GL_H_
+#ifndef _V3D_TEXTURE_GL_H_
+#define _V3D_TEXTURE_GL_H_
 
 #include "renderer/Texture.h"
 
@@ -7,6 +7,8 @@ namespace v3d
 {
 namespace renderer
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     class CTextureGL : public CTexture
     {
     public:
@@ -48,7 +50,9 @@ namespace renderer
 
         u32            m_samplerID;
    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif //_F3D_TEXTURE_GL_H_
+#endif //_V3D_TEXTURE_GL_H_

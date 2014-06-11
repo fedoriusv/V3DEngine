@@ -1,5 +1,5 @@
-#ifndef _F3D_RENDERJOB_H_
-#define _F3D_RENDERJOB_H_
+#ifndef _V3D_RENDERJOB_H_
+#define _V3D_RENDERJOB_H_
 
 #include "Material.h"
 #include "Geometry.h"
@@ -42,4 +42,4 @@ namespace renderer
 }
 }
 
-#endif //_F3D_RENDERJOB_H_
+#endif //_V3D_RENDERJOB_H_
