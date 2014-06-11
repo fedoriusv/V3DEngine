@@ -20,15 +20,15 @@ CShape::CShape()
 
 void CShape::init()
 {
-    RenderTechiquePtr techique = m_material->getRenderTechique();
-    if (!techique)
+    RenderTechniquePtr technique = m_material->getRenderTechique();
+    if (!technique)
     {
         LOG_ERROR("CShape: Do not exist RenderTechique");
         ASSERT(false && "CShape: Do not exist RenderTechique");
         return;
     }
 
-    m_geometry = v3d::CEngine::getInstance()->getRenderer()->makeSharedGeometry(techique);
+    m_geometry = v3d::CEngine::getInstance()->getRenderer()->makeSharedGeometry(technique);
 
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry);
 }
@@ -47,7 +47,7 @@ void CShape::setMaterial(const renderer::MaterialPtr& material)
 	m_material = material;
 }
 
-renderer::MaterialPtr CShape::getMaterial() const
+const renderer::MaterialPtr& CShape::getMaterial() const
 {
 	return m_material;
 }

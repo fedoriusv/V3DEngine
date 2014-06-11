@@ -1,5 +1,5 @@
-#ifndef _F3D_SHAPE_H_
-#define _F3D_SHAPE_H_
+#ifndef _V3D_SHAPE_H_
+#define _V3D_SHAPE_H_
 
 #include "scene/Node.h"
 #include "renderer/Material.h"
@@ -34,26 +34,26 @@ namespace scene
     public:
 
         CShape();
-        virtual                 ~CShape();
+        virtual                      ~CShape();
 
-        EShapeType              getShapeType() const;
+        EShapeType                   getShapeType() const;
 
-        void                    setMaterial(const renderer::MaterialPtr& material);
-        renderer::MaterialPtr   getMaterial() const;
+        void                         setMaterial(const renderer::MaterialPtr& material);
+        const renderer::MaterialPtr& getMaterial() const;
 
-        void                    init()  override;
+        void                         init()  override;
 
     protected:
 
-        EShapeType              m_shapeType;
+        EShapeType                   m_shapeType;
 
-        renderer::MaterialPtr   m_material;
-        renderer::GeometryPtr   m_geometry;
-        renderer::RenderJobPtr  m_renderJob;
+        renderer::MaterialPtr        m_material;
+        renderer::GeometryPtr        m_geometry;
+        renderer::RenderJobPtr       m_renderJob;
 
-        SVertexData&            getGeometryData();
-        renderer::EDrawMode     getGeometryDrawMode() const;
-        void                    setGeometryDrawMode(renderer::EDrawMode mode);
+        SVertexData&                getGeometryData();
+        renderer::EDrawMode         getGeometryDrawMode() const;
+        void                        setGeometryDrawMode(renderer::EDrawMode mode);
 
     };
 
@@ -61,4 +61,4 @@ namespace scene
 }
 }
 
-#endif //_F3D_SHAPE_H_
+#endif //_V3D_SHAPE_H_
