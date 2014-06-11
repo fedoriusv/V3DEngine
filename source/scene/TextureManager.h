@@ -1,5 +1,5 @@
-#ifndef _F3D_TEXTURE_MANAGER_H_
-#define _F3D_TEXTURE_MANAGER_H_
+#ifndef _V3D_TEXTURE_MANAGER_H_
+#define _V3D_TEXTURE_MANAGER_H_
 
 #include "common.h"
 #include "Singleton.h"
@@ -11,38 +11,38 @@ namespace v3d
 {
 namespace scene
 {
-	typedef std::shared_ptr<CResourceDecoder>   DecoderPtr;
-	typedef std::shared_ptr<renderer::CTexture> TexturePtr;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CTextureManager
-	{
-		public:
+    class CTextureManager
+    {
+    public:
 
-			CTextureManager();
-			~CTextureManager();
+        CTextureManager();
+        ~CTextureManager();
 
-			TexturePtr get( const std::string& name ); 
-			
-			TexturePtr load( const std::string& name ); 
+        renderer::TexturePtr    get(const std::string& name);
+        renderer::TexturePtr    load(const std::string& name);
 
-			void	   unload( const std::string& name );
-			void	   unload( TexturePtr texture );
+        void	                unload( const std::string& name );
+        void	                unload(const renderer::TexturePtr& texture);
 
-			void	   unloadAll();
+        void	                unloadAll();
 
-			void	   registerPatch( const std::string& patch );
-			void	   registerDecoder( DecoderPtr decoder );
+        void	                registerPath( const std::string& path );
+        void	                registerDecoder( DecoderPtr decoder );
 
-			void	   unregisterPatch( const std::string& patch );
-			void	   unregisterDecoder( DecoderPtr decoder );
+        void	                unregisterPath( const std::string& path );
+        void	                unregisterDecoder( DecoderPtr decoder );
 
-		private:
+    private:
 
-			std::map<std::string, TexturePtr>   m_textures;
-			std::vector<DecoderPtr>				m_decoders;
-			std::vector<std::string>			m_pathes;
-	};
+        renderer::TextureMap    m_textures;
+        std::vector<DecoderPtr> m_decoders;
+        std::vector<std::string>m_pathes;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif
+#endif //_V3D_TEXTURE_MANAGER_H_

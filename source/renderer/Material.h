@@ -1,5 +1,5 @@
-#ifndef _F3D_MATERIAL_H_
-#define _F3D_MATERIAL_H_
+#ifndef _V3D_MATERIAL_H_
+#define _V3D_MATERIAL_H_
 
 #include "Texture.h"
 #include "ShaderProgram.h"
@@ -55,11 +55,11 @@ namespace renderer
 
         void                    destroyTexture(u32 layer);
         
-        bool                    loadRenderTechique(const std::string& file);
-        bool                    loadRenderTechique(stream::IStream* stream);
+        bool                    setRenderTechnique(const std::string& file);
+        bool                    setRenderTechnique(stream::IStream* stream);
 
-        void                    setRenderTechique(const RenderTechiquePtr& techique);
-        RenderTechiquePtr       getRenderTechique() const;
+        void                    setRenderTechnique(const RenderTechniquePtr& technique);
+        RenderTechniquePtr      getRenderTechique() const;
 
 
     protected:
@@ -69,7 +69,7 @@ namespace renderer
         SMaterialData           m_materialData;
         
         TextureList             m_texture;
-        RenderTechiquePtr       m_renderTechique;
+        RenderTechniquePtr      m_renderTechnique;
 
         bool                    m_needUpdate;
 
@@ -83,4 +83,4 @@ namespace renderer
 
 }
 }
-#endif //_F3D_MATERIAL_H_
+#endif //_V3D_MATERIAL_H_

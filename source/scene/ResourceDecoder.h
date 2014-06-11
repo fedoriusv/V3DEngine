@@ -1,5 +1,5 @@
-#ifndef _F3D_RESOURCE_DECODER_H_
-#define _F3D_RESOURCE_DECODER_H_
+#ifndef _V3D_RESOURCE_DECODER_H_
+#define _V3D_RESOURCE_DECODER_H_
 
 #include "common.h"
 #include "stream/IStream.h"
@@ -9,6 +9,8 @@ namespace v3d
 {
 namespace scene
 {
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	typedef std::shared_ptr<stream::CResource> ResourcePtr;
 	
 	class CResourceDecoder
@@ -31,7 +33,13 @@ namespace scene
 
 			std::vector<std::string>		m_supportedExtensions;
 	};
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<CResourceDecoder>   DecoderPtr;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif
+#endif //_V3D_RESOURCE_DECODER_H_

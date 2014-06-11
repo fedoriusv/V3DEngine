@@ -2,6 +2,7 @@
 #include "stream/StreamManager.h"
 #include "utils/Logger.h"
 #include "stream/FileStream.h"
+#include "scene/RenderTechniqueManager.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -166,46 +167,43 @@ float CMaterial::getTransparency() const
 	return m_materialData.transparency;
 }
 
-RenderTechiquePtr CMaterial::getRenderTechique() const
+RenderTechniquePtr CMaterial::getRenderTechique() const
 {
-    return m_renderTechique;
+    return m_renderTechnique;
 }
 
-bool CMaterial::loadRenderTechique(const std::string& file)
+bool CMaterial::setRenderTechnique(const std::string& file)
 {
-    stream::FileStream* stream = stream::CStreamManager::getInstance()->createFileStream(file);
-    if (!stream->isOpen())
+    RenderTechniquePtr technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    if (!technique)
     {
+        LOG_ERROR("Error read file [%s]", file.c_str());
         return false;
     }
 
-    RenderTechiquePtr techique = std::make_shared<CRenderTechique>();
-    techique->init(stream);
-    if (!techique->load())
-    {
-        LOG_ERROR("Streaming error read file [%s]", file.c_str());
-        return false;
-    }
-
-    m_renderTechique = techique;
+    m_renderTechnique = technique;
 
     return true;
 }
 
-bool CMaterial::loadRenderTechique(stream::IStream* stream)
+bool CMaterial::setRenderTechnique(stream::IStream* stream)
 {
-    RenderTechiquePtr techique = std::make_shared<CRenderTechique>();
-    techique->init(stream);
-    if (techique->load())
+    RenderTechniquePtr technique = std::make_shared<CRenderTechnique>();
+    technique->init(stream);
+    if (technique->load())
     {
         LOG_ERROR("Streaming error read file [%s]", stream->getName().c_str());
         return false;
     }
 
+    scene::CRenderTechniqueManager::getInstance()->add(technique);
+    m_renderTechnique = technique;
+
     return true;
 }
 
-void CMaterial::setRenderTechique(const RenderTechiquePtr& techique)
+void CMaterial::setRenderTechnique(const RenderTechniquePtr& technique)
 {
-    m_renderTechique = techique;
+    scene::CRenderTechniqueManager::getInstance()->add(technique);
+    m_renderTechnique = technique;
 }

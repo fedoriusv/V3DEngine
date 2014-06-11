@@ -1,5 +1,5 @@
-#ifndef _F3D_TEXTURE_H_
-#define _F3D_TEXTURE_H_
+#ifndef _V3D_TEXTURE_H_
+#define _V3D_TEXTURE_H_
 
 #include "Object.h"
 #include "stream/Resource.h"
@@ -155,11 +155,12 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CTexture>       TexturePtr;
-    typedef std::vector<TexturePtr>         TextureList;
+    typedef std::shared_ptr<CTexture>           TexturePtr;
+    typedef std::vector<TexturePtr>             TextureList;
+    typedef std::map<std::string, TexturePtr>   TextureMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif //_F3D_TEXTURE_H_
+#endif //_V3D_TEXTURE_H_

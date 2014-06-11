@@ -5,7 +5,6 @@ using namespace v3d::scene;
 
 CResourceDecoder::CResourceDecoder()
 {
-
 }
 
 CResourceDecoder::CResourceDecoder( const std::string supportedExtensions[] )
@@ -15,7 +14,7 @@ CResourceDecoder::CResourceDecoder( const std::string supportedExtensions[] )
 
 CResourceDecoder::~CResourceDecoder()
 {
-
+    m_supportedExtensions.clear();
 }
 
 bool CResourceDecoder::isExtensionSupported( const std::string& extension )  const
@@ -25,6 +24,7 @@ bool CResourceDecoder::isExtensionSupported( const std::string& extension )  con
 	{
 		return true;
 	}
+
 	return false;
 }
 

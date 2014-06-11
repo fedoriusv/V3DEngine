@@ -7,7 +7,6 @@ using namespace v3d::scene;
 
 CTextureManager::CTextureManager()
 {
-
 }
 
 CTextureManager::~CTextureManager()
@@ -15,13 +14,12 @@ CTextureManager::~CTextureManager()
 	unloadAll();
 }
 
-TexturePtr CTextureManager::get( const std::string& name )
+renderer::TexturePtr CTextureManager::get( const std::string& name )
 {
 	return m_textures[name];
 }
 
-
-TexturePtr CTextureManager::load( const std::string& name )
+renderer::TexturePtr CTextureManager::load(const std::string& name)
 {
 	auto it = m_textures.find( name );
 
@@ -39,13 +37,13 @@ TexturePtr CTextureManager::load( const std::string& name )
 			fileExtension = std::string( name.begin() + pos, name.end() );
 		}
 
-		for( std::string& path : m_pathes )
+        for (std::string& path : m_pathes)
 		{
 			const std::string fullName = path + name;
-			const bool isFileExist = stream::FileStream::isFileExist( fullName );
+			const bool isFileExist = stream::FileStream::isFileExist(fullName);
 			if( isFileExist )
 			{	
-				stream::FileStream stream( fullName, stream::FileStream::e_in ); 
+				stream::FileStream stream(fullName, stream::FileStream::e_in); 
 
 				if( stream.isOpen() )
 				{
@@ -56,12 +54,12 @@ TexturePtr CTextureManager::load( const std::string& name )
 
 					DecoderPtr decoder = *std::find_if( m_decoders.begin(), m_decoders.end(), predCanDecode );
 				
-					ResourcePtr texture = decoder->decode( stream );
+					ResourcePtr texture = decoder->decode(stream);
 
-					if( texture )
+					if(texture)
 					{
-						TexturePtr texturePtr = std::static_pointer_cast< renderer::CTexture >( texture );
-						m_textures.insert( std::map<std::string, TexturePtr>::value_type( name, texturePtr ) ); 
+                        renderer::TexturePtr texturePtr = std::static_pointer_cast< renderer::CTexture >(texture);
+                        m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(name, texturePtr));
 						return texturePtr;
 					}
 				}
@@ -71,7 +69,6 @@ TexturePtr CTextureManager::load( const std::string& name )
 
 	return nullptr;
 }
-
 
 void CTextureManager::unload( const std::string& name )
 {
@@ -83,9 +80,9 @@ void CTextureManager::unload( const std::string& name )
 	}
 }
 
-void CTextureManager::unload( TexturePtr texture )
+void CTextureManager::unload(const renderer::TexturePtr& texture)
 {
-	auto predDelete = [texture]( const std::pair<std::string, TexturePtr>& pair ) -> bool
+    auto predDelete = [texture](const std::pair<std::string, renderer::TexturePtr>& pair) -> bool
 	{
 		return pair.second == texture;
 	};
@@ -98,16 +95,14 @@ void CTextureManager::unload( TexturePtr texture )
 	}
 }
 
-
 void CTextureManager::unloadAll()
 {
 	m_textures.clear();
 }
 
-
-void CTextureManager::registerPatch( const std::string& patch )
+void CTextureManager::registerPath( const std::string& path )
 {
-	m_pathes.push_back( patch );
+	m_pathes.push_back( path );
 }
 
 void CTextureManager::registerDecoder( DecoderPtr decoder )
@@ -115,9 +110,9 @@ void CTextureManager::registerDecoder( DecoderPtr decoder )
 	m_decoders.push_back( decoder );
 }
 
-void CTextureManager::unregisterPatch( const std::string& patch )
+void CTextureManager::unregisterPath( const std::string& path )
 {
-	auto it = std::find( m_pathes.begin(), m_pathes.end(), patch );
+	auto it = std::find( m_pathes.begin(), m_pathes.end(), path );
 	if( it != m_pathes.end() )
 	{
 		m_pathes.erase( std::remove( m_pathes.begin(), m_pathes.end(), *it ), m_pathes.end() );
