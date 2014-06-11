@@ -237,7 +237,7 @@ void CWindowWin32::create()
 	LOG_INFO("Create Windows")
 
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	LPCWSTR className = __TEXT("FedoriaWin32");
+	LPCWSTR className = __TEXT("V3DWin32");
 
 	// Register Class
 	WNDCLASSEX wcex;
@@ -324,7 +324,7 @@ void CWindowWin32::close()
 	
 	DestroyWindow(m_window);
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	UnregisterClass(__TEXT("FedoriaWin32"), hInstance);
+	UnregisterClass(__TEXT("V3DWin32"), hInstance);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

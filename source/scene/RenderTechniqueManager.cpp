@@ -8,6 +8,7 @@ using namespace v3d::scene;
 CRenderTechniqueManager::CRenderTechniqueManager()
 {
     CRenderTechniqueManager::registerPath("../../../../data/");
+    CRenderTechniqueManager::registerPath("data/");
 }
 
 CRenderTechniqueManager::~CRenderTechniqueManager()

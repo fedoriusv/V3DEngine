@@ -50,7 +50,7 @@ bool CDriverContextGL::createWin32Context()
 
 	// Create a window to test antialiasing support
 	HINSTANCE hInstance = GetModuleHandle(NULL);
-	LPCWSTR className = __TEXT("FedoriaWin32GL");
+    LPCWSTR className = __TEXT("V3DWin32GL");
 
 	// Register Class
 	WNDCLASSEX wcex;
@@ -151,7 +151,7 @@ bool CDriverContextGL::createWin32Context()
 	}
 
 	const GLubyte* version = glewGetString(GLEW_VERSION);
-	LOG_INFO("GLEW Init. Version %s", version)
+    LOG_INFO("GLEW Init. Version %s", version);
 	GLenum error = glewInit();
 	if (error !=  GLEW_OK )
 	{
@@ -164,7 +164,7 @@ bool CDriverContextGL::createWin32Context()
 		!wglewIsSupported("WGL_ARB_pixel_format"  ) || 
 		!wglewIsSupported("WGL_ARB_multisample"   )  )
 	{
-		LOG_ERROR("Error Supported GLEW Lib")
+        LOG_ERROR("Error Supported GLEW Lib");
 		return false;	
 	}
 
@@ -249,14 +249,22 @@ bool CDriverContextGL::createWin32Context()
 
 	if ( !hRc || !wglMakeCurrent(hDC, hRc) )
 	{
-		LOG_ERROR("Can't Create GL Rendering Context")
+        LOG_ERROR("Can't Create GL Rendering Context");
 		return false;
 	}
+
+    GLenum error_after = glewInit();
+    if (error_after != GLEW_OK)
+    {
+        const GLubyte* errorStr = glewGetErrorString(error);
+        LOG_ERROR("Couldn't initialize GLEW again: %s", errorStr);
+        return false;
+    }
 
 	int pf = GetPixelFormat(hDC);
 	DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
-	LOG_INFO("Win32 Context GL successful created")
+    LOG_INFO("Win32 Context GL successful created");
 
     return true;
 }
