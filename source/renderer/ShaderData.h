@@ -13,6 +13,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderJob;
     class CRenderPass;
 
     class CShaderData : public CObject
@@ -30,14 +31,6 @@ namespace renderer
         void                            setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
         void                            setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
 
-        void                            setUniformInt    (EDefaultUniformData type, const u32             value);
-        void                            setUniformFloat  (EDefaultUniformData type, const f32             value);
-        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector);
-        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector);
-        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector);
-        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix);
-        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix);
-
         const AttributeList&            getAttributeList() const;
 
         static const std::string&       getShaderDataNameByType(EShaderDataType type);
@@ -51,6 +44,15 @@ namespace renderer
     protected:
 
         friend                          CRenderPass;
+        friend                          CRenderJob;
+
+        void                            setUniformInt    (EDefaultUniformData type, const u32             value);
+        void                            setUniformFloat  (EDefaultUniformData type, const f32             value);
+        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector);
+        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector);
+        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector);
+        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix);
+        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix);
 
         const std::string               findByUniformData(EDefaultUniformData type);
         void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);

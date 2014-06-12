@@ -37,9 +37,9 @@ void CRenderer::checkForErrors(const std::string& location)
 
 void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
 {
-    m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
-    m_viewMatrix.makeTransposed();
-    m_viewPosition = pos;
+    //m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
+    //m_viewMatrix.makeTransposed();
+    //m_viewPosition = pos;
 }
 
 void CRenderer::updateTransform(const core::Matrix4D& transform)

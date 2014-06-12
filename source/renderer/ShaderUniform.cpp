@@ -61,7 +61,7 @@ void CShaderUniform::setUniform(EShaderDataType type, const std::string& attribu
 	m_uniformType  = type;
 	m_attribute    = attribute;
     m_defaultData  = data;
-    if (data == EDefaultUniformData::eUserUniform)
+    if (value)
     {
         m_uniformValue = allocMemory(type, value);
     }

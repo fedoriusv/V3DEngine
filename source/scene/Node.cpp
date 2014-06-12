@@ -48,21 +48,25 @@ CNode::~CNode()
 void CNode::setPosition(const core::Vector3D& position)
 {
 	m_transform.setTranslation(position);
+    m_needUpdate = true;
 }
 
 void CNode::setRotation(const core::Vector3D& rotation)
 {
 	m_transform.setRotation(rotation);
+    m_needUpdate = true;
 }
 
 void CNode::setScale(const core::Vector3D& scale)
 {
 	m_transform.setScale(scale);
+    m_needUpdate = true;
 }
 
 void CNode::setTransform(const core::Matrix4D& transform)
 {
 	m_transform = transform;
+    m_needUpdate = true;
 }
 
 void CNode::setParent(CNode* parent)
@@ -83,6 +87,7 @@ void CNode::attachChild(CNode* child)
 {
 	child->setParent(this);
 	m_childNodes.push_back(child);
+    m_needUpdate = true;
 }
 
 void CNode::dettachChild(CNode* child)
@@ -91,6 +96,7 @@ void CNode::dettachChild(CNode* child)
 	{
 		m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
 		child->setParent(nullptr);
+        m_needUpdate = true;
 	}
 }
 
@@ -145,6 +151,16 @@ CNode* CNode::getChildNodeByName(const std::string& name) const
 		}
 	}
 	return nullptr;
+}
+
+void CNode::setVisible(bool visible)
+{
+    m_visible = visible;
+}
+
+bool CNode::isVisible() const
+{
+    return m_visible;
 }
 
 void CNode::updateTransform(f64 time)

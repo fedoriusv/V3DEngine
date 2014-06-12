@@ -32,23 +32,23 @@ void CInputEventHandler::update()
 
 bool CInputEventHandler::onEvent(const SInputEventPtr event)
 {
-	switch (event->m_eventType)
+	switch (event->_eventType)
 	{
 		case eKeyboardInputEvent:
 		{
 			const SKeyboardInputEventPtr keyEvent = std::static_pointer_cast<SKeyboardInputEvent>(event);
 
-			switch (keyEvent->m_event)
+			switch (keyEvent->_event)
 			{
 				case eKeyboardPressDown:
 				{
-					m_keysPressed[keyEvent->m_key] = true;
+					m_keysPressed[keyEvent->_key] = true;
 					break;
 				}
 
 				case eKeyboardPressUp:
 				{
-					m_keysPressed[keyEvent->m_key] = false;
+					m_keysPressed[keyEvent->_key] = false;
 					break;
 				}
 
@@ -71,10 +71,10 @@ bool CInputEventHandler::onEvent(const SInputEventPtr event)
 			
 			for (u32 state = 0; state < eMouseCount; ++state)
 			{
-				m_mouseStates[state] = state == mouseEvent->m_event;
+				m_mouseStates[state] = state == mouseEvent->_event;
 			}
 			
-			switch (mouseEvent->m_event)
+			switch (mouseEvent->_event)
 			{
 				case	eMouseMoved:
 				case	eLeftMousePressedDown:
@@ -96,8 +96,8 @@ bool CInputEventHandler::onEvent(const SInputEventPtr event)
 				}
 			}
 
-			m_mousePosition = mouseEvent->m_position;
-			m_mouseWheel = mouseEvent->m_wheel;
+			m_mousePosition = mouseEvent->_position;
+			m_mouseWheel = mouseEvent->_wheel;
 
 			if (m_mouseSignature)
 			{

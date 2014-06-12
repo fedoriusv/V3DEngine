@@ -1,4 +1,4 @@
-// Valera3D Engine (c) 2014
+// Valera3D Engine (c) 2014 Bogdan Klochko / Fedor Nekrasov
 
 #ifndef _V3D_CONFIG_H_
 #define _V3D_CONFIG_H_

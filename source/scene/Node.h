@@ -56,6 +56,9 @@ namespace scene
         
         virtual void                init()           = 0;
 
+        void                        setVisible(bool visible);
+        bool                        isVisible() const;
+
         static const std::string&   getNodeNameByType(ENodeType type);
 
     protected:

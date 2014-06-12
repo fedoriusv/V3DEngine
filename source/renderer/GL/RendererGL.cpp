@@ -30,7 +30,7 @@ void CRendererGL::init()
 	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
 
     glEnable(GL_MULTISAMPLE);
-
+    //glDisable(GL_MULTISAMPLE);
 
     ////
 

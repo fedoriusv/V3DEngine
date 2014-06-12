@@ -70,9 +70,9 @@ namespace event
 
 		bool			operator<(const SInputEvent& event);
 
-		EInputEventType	m_eventType;
-		EPriority		m_priority;
-		v3d::u64		m_timeStamp;
+		EInputEventType	_eventType;
+		EPriority		_priority;
+		v3d::u64		_timeStamp;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,10 +86,10 @@ namespace event
 		SKeyboardInputEvent();
 		virtual ~SKeyboardInputEvent();
 
-		v3d::c8              m_character;
-		EKeyCode             m_key;
-		EKeyboardInputEvent  m_event;
-		v3d::u16             m_modifers;
+		v3d::c8              _character;
+		EKeyCode             _key;
+		EKeyboardInputEvent  _event;
+		v3d::u16             _modifers;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,10 +103,10 @@ namespace event
 		SMouseInputEvent();
 		virtual ~SMouseInputEvent();
 
-		core::Dimension2D m_position; //WARN: need class Point
-		v3d::f32          m_wheel;
-		EMouseInputEvent  m_event;
-		v3d::u16          m_modifers;
+		core::Dimension2D _position; //WARN: need class Point
+		v3d::f32          _wheel;
+		EMouseInputEvent  _event;
+		v3d::u16          _modifers;
 
 	};
 

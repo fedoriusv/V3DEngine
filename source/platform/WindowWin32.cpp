@@ -343,10 +343,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 		{
 			const int scancode = (lParam >> 16) & 0xff;
-			//const int key = translateKey(wParam, lParam);
 		
 			v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
-			event->m_event = v3d::event::eKeyboardPressDown;
+			event->_event = v3d::event::eKeyboardPressDown;
+            event->_key = (EKeyCode)wParam;
+            event->_character = (c8)wParam;
 
 			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);
 
