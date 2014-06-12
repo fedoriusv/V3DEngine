@@ -16,6 +16,10 @@ namespace core
 
 		TMatrix4D();
 		TMatrix4D(const TMatrix4D<T>& other);
+        TMatrix4D(const TVector4D<T>& col0,
+            const TVector4D<T>& col1,
+            const TVector4D<T>& col2,
+            const TVector4D<T>& col3);
 		TMatrix4D(const T* matrix);
 		TMatrix4D(T m0,	T m1,	T m2,	T m3,
 				T m4,	T m5,	T m6,	T m7,
@@ -135,39 +139,60 @@ namespace core
 
 	inline Matrix4D buildLookAtMatrix(const Vector3D& position, const Vector3D& target, const Vector3D& upVector)
 	{
-		Matrix4D outMatrix;
+		//Matrix4D outMatrix;
 
-		f32* matrix = outMatrix.getPtr();
+		//f32* matrix = outMatrix.getPtr();
 
-		Vector3D axisZ = target - position;
-		axisZ.normalize();
+		//Vector3D axisZ = target - position;
+		//axisZ.normalize();
 
-		Vector3D axisX = crossProduct(upVector, axisZ);
-		axisX.normalize();
+		//Vector3D axisX = crossProduct(upVector, axisZ);
+		//axisX.normalize();
 
-		Vector3D axisY = crossProduct(axisZ, axisX);
+		//Vector3D axisY = crossProduct(axisZ, axisX);
 
-		matrix[0] = axisX.x;
-		matrix[1] = axisY.x;
-		matrix[2] = axisZ.x;
-		matrix[3] = 0;
+		//matrix[0] = axisX.x;
+		//matrix[1] = axisY.x;
+		//matrix[2] = axisZ.x;
+		//matrix[3] = 0;
 
-		matrix[4] = axisX.y;
-		matrix[5] = axisY.y;
-		matrix[6] = axisZ.y;
-		matrix[7] = 0;
+		//matrix[4] = axisX.y;
+		//matrix[5] = axisY.y;
+		//matrix[6] = axisZ.y;
+		//matrix[7] = 0;
 
-		matrix[8] = axisX.z;
-		matrix[9] = axisY.z;
-		matrix[10] = axisZ.z;
-		matrix[11] = 0;
+		//matrix[8] = axisX.z;
+		//matrix[9] = axisY.z;
+		//matrix[10] = axisZ.z;
+		//matrix[11] = 0;
 
-		matrix[12] = -dotProduct(axisX, position);
-		matrix[13] = -dotProduct(axisY, position);
-		matrix[14] = -dotProduct(axisZ, position);
-		matrix[15] = 1;
+		//matrix[12] = -dotProduct(axisX, position);
+		//matrix[13] = -dotProduct(axisY, position);
+		//matrix[14] = -dotProduct(axisZ, position);
+		//matrix[15] = 1;
 
-		return outMatrix;
+		////return outMatrix;
+
+
+        Matrix4D m4EyeFrame;
+        Vector3D v3X, v3Y, v3Z;
+        v3Y = upVector;
+        v3Y.normalize();
+
+        v3Z = position - target;
+        v3Z.normalize();
+
+        v3X = crossProduct(v3Y, v3Z);
+        v3X.normalize();
+        
+        v3Y = crossProduct(v3Z, v3X);
+
+        m4EyeFrame = Matrix4D(Vector4D(v3X), Vector4D(v3Y), Vector4D(v3Z), Vector4D(position));
+
+        m4EyeFrame.makeInverse();
+
+        return m4EyeFrame;
+
 	}
 
 
@@ -188,6 +213,30 @@ namespace core
 	{
 		memcpy(m_matrix, matrix, 16 * sizeof(T));
 	}
+
+    template <class T>
+    TMatrix4D<T>::TMatrix4D(const TVector4D<T>& col0,
+        const TVector4D<T>& col1,
+        const TVector4D<T>& col2,
+        const TVector4D<T>& col3)
+    {
+        m_matrix[0] = col0.x;
+        m_matrix[1] = col0.y;
+        m_matrix[2] = col0.z;
+        m_matrix[3] = col0.w;
+        m_matrix[4] = col1.x;
+        m_matrix[5] = col1.y;
+        m_matrix[6] = col1.z;
+        m_matrix[7] = col1.w;
+        m_matrix[8] = col2.x;
+        m_matrix[9] = col2.y;
+        m_matrix[10] = col2.z;
+        m_matrix[11] = col2.w;
+        m_matrix[12] = col3.x;
+        m_matrix[13] = col3.y;
+        m_matrix[14] = col3.z;
+        m_matrix[15] = col3.w;
+    }
 
 	template <class T>
 	TMatrix4D<T>::TMatrix4D(T m0, T m1, T m2, T m3,

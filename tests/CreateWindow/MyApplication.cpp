@@ -25,7 +25,7 @@ void MyApplication::init()
     cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
     cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
-    getSceneManager()->addCamera(0, Vector3D(0, 0, 0.0f));
+    getSceneManager()->addCamera(0, Vector3D(0, 0, -3.0f));
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }
