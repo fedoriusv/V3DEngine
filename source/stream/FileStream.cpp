@@ -336,7 +336,7 @@ void FileStream::unmap()
 {
 
 }
-std::string FileStream::getName() const
+const std::string& FileStream::getName() const
 {
     return m_fileName;
 }

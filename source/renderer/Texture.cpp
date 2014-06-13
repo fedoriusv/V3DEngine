@@ -40,48 +40,53 @@ bool CTexture::load()
         return false;
     }
 
-    /*u32 size = stream->size();
+    bool success = false;
+
+#ifdef USE_DEVIL
+    success = loadDevIL();
+#else
+    u32 size = stream->size();
     u8* data = new u8[size];
     if (size > 0)
     {
         stream->seekBeg(0);
         stream->read(*data);
-    }*/
+    }
+#endif //USE_DEVIL
+    
     stream->close();
 
-#ifdef USE_DEVIL
-    return loadDevIL();
-#endif //USE_DEVIL
-
-    return false;
+    return success;
 }
 
 #ifdef USE_DEVIL
 bool CTexture::loadDevIL()
 {
-    /*std::string file = CResource::getResourseName();
-    bool success = ilLoadImage((wchar_t*)file.c_str());
+    std::string file = CResource::getStreamName();
+    ILboolean success = ilLoadImage("../../../ ./data/textures/box.jpg");
     ASSERT(success == 1 && "Invalid Texture");
 
-    m_data. = ilGetInteger(IL_IMAGE_WIDTH);
-    _textureData._iHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-    _textureData._iDepth = ilGetInteger(IL_IMAGE_DEPTH);
-    _textureData._eFormat = (IMAGE_FORMAT)ilGetInteger(IL_IMAGE_FORMAT);
-    _textureData._eType = (IMAGE_TYPE)ilGetInteger(IL_IMAGE_TYPE);
-
-    ilConvertImage(_textureData._eFormat, _textureData._eType);
-
-    if (_textureData._data != NULL)
+    for (u32 i = 0; i < m_data.size(); ++i)
     {
-        delete _textureData._data;
-        _textureData._data = NULL;
+        m_data[i].width = ilGetInteger(IL_IMAGE_WIDTH);
+        m_data[i].height = ilGetInteger(IL_IMAGE_HEIGHT);
+        m_data[i].depth = ilGetInteger(IL_IMAGE_DEPTH);
+        m_data[i].format = (EImageFormat)ilGetInteger(IL_IMAGE_FORMAT);
+        m_data[i].type = (EImageType)ilGetInteger(IL_IMAGE_TYPE);
+
+        ilConvertImage((ILenum)m_data[i].format, (ILenum)m_data[i].type);
+
+        if (m_data[i].data != nullptr)
+        {
+            delete m_data[i].data;
+            m_data[i].data = nullptr;
+        }
+
+        m_data[i].data = (ILubyte*)malloc(ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
+        memcpy(m_data[i].data, ilGetData(), ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
     }
 
-    _textureData._data = (ILubyte*)malloc(ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
-    memcpy(_textureData._data, ilGetData(), ilGetInteger(IL_IMAGE_SIZE_OF_DATA));*/
-
-    //return (success == 1) ? true : false;
-    return false;
+    return (success == IL_TRUE) ? true : false;
 }
 #endif //USE_DEVIL
 

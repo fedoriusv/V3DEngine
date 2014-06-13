@@ -86,3 +86,8 @@ void CResource::setLoaded(bool loaded)
 {
     m_isLoaded = loaded;
 }
+
+const std::string& CResource::getStreamName() const
+{
+    return m_stream->getName();
+}

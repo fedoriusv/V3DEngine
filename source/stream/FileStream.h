@@ -76,7 +76,7 @@ namespace stream
 		void*   map(const u32 size)                                      override;
 		void    unmap()                                                  override;
 
-		std::string  getName() const                                     override;
+        const std::string& getName() const                               override;
 
 	protected:
 

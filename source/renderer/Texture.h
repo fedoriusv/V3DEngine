@@ -36,10 +36,11 @@ namespace renderer
 
     enum EAnisotropic
     {
-        eAnisotropic2x  = 1 << 1,
-        eAnisotropic4x  = 1 << 2,
-        eAnisotropic8x  = 1 << 3,
-        eAnisotropic16x = 1 << 4,
+        eAnisotropicNone = 0,
+        eAnisotropic2x   = 1 << 1,
+        eAnisotropic4x   = 1 << 2,
+        eAnisotropic8x   = 1 << 3,
+        eAnisotropic16x  = 1 << 4,
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,30 +57,30 @@ namespace renderer
 
 	enum class EImageType
 	{
-		eByte,
-		eUnsignedByte,
-		eShort,
-		eUnsignedShort,
-		eInt,
-		eUnsignedInt,
-		eFloat,
-		eDouble,
-		eHalf,
+        eByte           = 0x1400,
+        eUnsignedByte   = 0x1401,
+        eShort          = 0x1402,
+        eUnsignedShort  = 0x1403,
+        eInt            = 0x1404,
+        eUnsignedInt    = 0x1405,
+        eFloat          = 0x1406,
+        eDouble         = 0x140A,
+        eHalf           = 0x140B,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	enum class EImageFormat
 	{
-		eColorIndex,
-		eAlpha,
-		eRGB,
-		eRGBA,
-		eBGR,
-		eBGRA,
-		eLumiance,
-		eLuminanceAlpha,
-		eDepthComponent,
+        eColorIndex     = 0x1900,
+        eAlpha          = 0x1906,
+        eRGB            = 0x1907,
+        eRGBA           = 0x1908,
+        eBGR            = 0x80E0,
+        eBGRA           = 0x80E1,
+        eLumiance       = 0x1909,
+        eLuminanceAlpha = 0x190A,
+        eDepthComponent = 0x1902,
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

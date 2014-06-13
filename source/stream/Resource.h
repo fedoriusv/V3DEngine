@@ -29,6 +29,8 @@ namespace stream
         const std::string&  getResourseFolder() const;
         void                setResourseFolder(const std::string& folder);
 
+        const std::string&  getStreamName() const;
+
     protected:
         
         CResource(const CResource& other);

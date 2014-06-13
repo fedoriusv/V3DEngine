@@ -44,8 +44,19 @@ elseif(UNIX OR APPLE)
 endif()
 
 ################################
-#Source Dir
+
 set(SOURCE_DIR source)
+set(LIB_DIR ..\\..\\libs)
+
+if(WIN32)
+	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\lib\\win32\\unicode\\DevIL)
+	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
+else(WIN32)
+	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\DevIL)
+endif(WIN32)
+
+################################
+#Source Dir
 
 set(MAIN_FILE 
 	${SOURCE_DIR}/Object.cpp
@@ -169,6 +180,7 @@ add_library(
 target_link_libraries(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
+	${DEVIL_LIB}
 	)
 
 ################################
