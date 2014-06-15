@@ -27,12 +27,7 @@ void CCubeShape::render()
 
 void CCubeShape::update(f64 time)
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    CNode::updateTransform(time);
+    CNode::update(time);
 }
 
 void CCubeShape::init()

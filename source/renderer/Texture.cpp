@@ -63,7 +63,7 @@ bool CTexture::load()
 bool CTexture::loadDevIL()
 {
     std::string file = CResource::getStreamName();
-    ILboolean success = ilLoadImage("../../../ ./data/textures/box.jpg");
+    ILboolean success = ilLoadImage(L"textures/box.jpg");
     ASSERT(success == 1 && "Invalid Texture");
 
     for (u32 i = 0; i < m_data.size(); ++i)

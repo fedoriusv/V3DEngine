@@ -5,7 +5,7 @@
 using namespace v3d;
 using namespace v3d::scene;
 
-std::string  CNode::s_nodeTypes[ENodeType::eNodeCount] = {
+std::string  CNode::s_nodeTypes[ENodeType::eCount] = {
 
     "Shape",
     "Model",
@@ -25,7 +25,11 @@ CNode::CNode()
     : m_parentNode(nullptr)
     , m_visible(true)
     , m_needUpdate(true)
-    , m_nodeType(ENodeType::eNodeUnknown)
+    , m_nodeType(ENodeType::eUnknown)
+    , m_priority(0.0f)
+    , m_position(core::Vector3D(0.0f))
+    , m_rotation(core::Vector3D(0.0f))
+    , m_scale(core::Vector3D(1.0f))
 {
 	m_type = EObjectType::eTypeNode;
 }
@@ -47,25 +51,36 @@ CNode::~CNode()
 
 void CNode::setPosition(const core::Vector3D& position)
 {
-	m_transform.setTranslation(position);
+    m_position = position;
+    bool hasTranslate = (position.x != 0.0f || position.y != 0.0f || position.z != 0.0f);
+    CNode::updateTransform(hasTranslate ? ENodeTransform::eTranslation : ENodeTransform::eNone);
+
     m_needUpdate = true;
 }
 
 void CNode::setRotation(const core::Vector3D& rotation)
 {
-	m_transform.setRotation(rotation);
+    m_rotation = rotation;
+    bool hasRotation = (rotation.x != 0.0f || rotation.y != 0.0f || rotation.z != 0.0f);
+    CNode::updateTransform(hasRotation ? ENodeTransform::eRotation : ENodeTransform::eNone);
+
     m_needUpdate = true;
 }
 
 void CNode::setScale(const core::Vector3D& scale)
 {
-	m_transform.setScale(scale);
+    m_scale = scale;
+    bool hasScale = (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f);
+    CNode::updateTransform(hasScale ? ENodeTransform::eScale : ENodeTransform::eNone);
+
     m_needUpdate = true;
 }
 
 void CNode::setTransform(const core::Matrix4D& transform)
 {
 	m_transform = transform;
+    CNode::updateTransform(ENodeTransform::eTransform);
+
     m_needUpdate = true;
 }
 
@@ -100,19 +115,19 @@ void CNode::dettachChild(CNode* child)
 	}
 }
 
-core::Vector3D CNode::getPosition() const
+const core::Vector3D& CNode::getPosition() const
 {
-	return m_transform.getTranslation();
+	return m_position;
 }
 
-core::Vector3D CNode::getRotation() const
+const core::Vector3D& CNode::getRotation() const
 {
-	return m_transform.getRotation();
+	return m_rotation;
 }
 
-core::Vector3D CNode::getScale() const
+const core::Vector3D& CNode::getScale() const
 {
-	return m_transform.getScale();
+	return m_scale;
 }
 
 core::Matrix4D CNode::getTransform() const
@@ -135,6 +150,11 @@ CNode* CNode::getParent() const
 	return m_parentNode;
 }
 
+f32 CNode::getPriority() const
+{
+    return m_priority;
+}
+
 CNode* CNode::getChildNodeByID(u32 id) const
 {
 	return m_childNodes[id];
@@ -153,6 +173,11 @@ CNode* CNode::getChildNodeByName(const std::string& name) const
 	return nullptr;
 }
 
+ENodeType CNode::getNodeType() const
+{
+    return m_nodeType;
+}
+
 void CNode::setVisible(bool visible)
 {
     m_visible = visible;
@@ -163,8 +188,52 @@ bool CNode::isVisible() const
     return m_visible;
 }
 
-void CNode::updateTransform(f64 time)
+void CNode::updateTransform(ENodeTransform transform)
 {
+    switch (transform)
+    {
+    case ENodeTransform::eTranslation:
+        m_transform.setTranslation(m_position);
+        break;
+
+    case ENodeTransform::eRotation:
+        m_transform.setRotation(m_rotation);
+        break;
+
+    case ENodeTransform::eScale:
+        m_transform.setScale(m_scale);
+        break;
+
+    case ENodeTransform::eAll:
+        m_transform.setTranslation(m_position);
+        m_transform.setScale(m_scale);
+        m_transform.setRotation(m_rotation);
+        break;
+
+    case ENodeTransform::eTransform:
+        m_position = m_transform.getTranslation();
+        m_rotation = m_transform.getRotation();
+        m_scale    = m_transform.getScale();
+        break;
+
+    case ENodeTransform::eNone:
+        break;
+    }
+
+    for (std::vector<CNode*>::iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
+    {
+        (*iter)->updateTransform(transform);
+        (*iter)->m_needUpdate = true;
+    }
+}
+
+void CNode::update(f64 time)
+{
+    if (!m_visible)
+    {
+        return;
+    }
+
     if (m_needUpdate)
     {
         RENDERER->updateTransform(m_transform);

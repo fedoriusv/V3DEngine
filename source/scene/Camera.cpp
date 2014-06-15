@@ -10,7 +10,7 @@ CCamera::CCamera()
     , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
     , m_active(false)
 {
-    m_nodeType = ENodeType::eNodeCamera;
+    m_nodeType = ENodeType::eCamera;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 }
 

@@ -27,12 +27,7 @@ void CSampleShape::render()
 
 void CSampleShape::update(f64 time)
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    CNode::updateTransform(time);
+    CNode::update(time);
 }
 
 void CSampleShape::init()

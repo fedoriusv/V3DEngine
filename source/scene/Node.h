@@ -11,19 +11,33 @@ namespace scene
 
     enum ENodeType
     {
-        eNodeUnknown = -1,
-        eNodeShape,
-        eNodeModel,
-        eNodeCamera,
-        eNodeLight,
-        eNodeFog,
-        eNodeSkyBox,
-        eNodeFont,
+        eUnknown = -1,
+        eShape,
+        eModel,
+        eCamera,
+        eLight,
+        eFog,
+        eSkyBox,
+        eFont,
 
-        eNodeCount
+        eCount
      };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum class ENodeTransform
+    {
+        eNone,
+        eTransform,
+        eTranslation,
+        eRotation,
+        eScale,
+        eAll
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CSceneManager;
 
     class CNode : public CObject
     {
@@ -41,42 +55,51 @@ namespace scene
         void                        attachChild (CNode* child);
         void                        dettachChild(CNode* child);
                                     
-        core::Vector3D              getPosition     ()                           const;
-        core::Vector3D              getRotation     ()                           const;
-        core::Vector3D              getScale        ()                           const;
-        core::Matrix4D              getTransform    ()                           const;
-        core::Matrix4D              getAbsTransform ()                           const;
+        const core::Vector3D&       getPosition()           const;
+        const core::Vector3D&       getRotation()           const;
+        const core::Vector3D&       getScale()              const;
+        core::Matrix4D              getTransform()          const;
+        core::Matrix4D              getAbsTransform()       const;
                                     
         CNode*                      getParent       ()                           const;
         CNode*                      getChildNodeByID(u32 id)                     const;
         CNode*                      getChildNodeByName(const std::string& name)  const;
                                     
         virtual void                render()         = 0;
-        virtual void                update(f64 time) = 0;
+        virtual void                update(f64 time);
         
         virtual void                init()           = 0;
 
         void                        setVisible(bool visible);
         bool                        isVisible() const;
 
+        ENodeType                   getNodeType() const;
+        f32                         getPriority() const;
         static const std::string&   getNodeNameByType(ENodeType type);
 
     protected:
 
-        void                        updateTransform(f64 time);
+        friend                      CSceneManager;
+
+        void                        updateTransform(ENodeTransform transform);
 
         CNode*                      m_parentNode;
         std::vector<CNode*>         m_childNodes;
 
+        core::Vector3D              m_position;
+        core::Vector3D              m_rotation;
+        core::Vector3D              m_scale;
         core::Matrix4D              m_transform;
-        bool                        m_visible;
-        bool                        m_needUpdate;
 
+        bool                        m_visible;
         ENodeType                   m_nodeType;
+
+        bool                        m_needUpdate;
+        f32                         m_priority;
 
     private:
 
-        static std::string          s_nodeTypes[ENodeType::eNodeCount];
+        static std::string          s_nodeTypes[ENodeType::eCount];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
