@@ -109,6 +109,7 @@ endif()
 #Core Source
 file(GLOB CORE_HEADERS ${SOURCE_DIR}/core/*.h)
 file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.cpp)
+file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.inl)
 
 #Renderer Source
 file(GLOB RENDERER_HEADERS ${SOURCE_DIR}/renderer/*.h)
