@@ -129,7 +129,7 @@ bool CPlatform::hasError() const
 
 renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context, const WindowParam& param)
 {
-	RendererPtr renderer = nullptr;
+    RendererPtr renderer = nullptr;
 
 	if (!context)
 	{

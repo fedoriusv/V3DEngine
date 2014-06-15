@@ -139,42 +139,6 @@ namespace core
 
 	inline Matrix4D buildLookAtMatrix(const Vector3D& position, const Vector3D& target, const Vector3D& upVector)
 	{
-		//Matrix4D outMatrix;
-
-		//f32* matrix = outMatrix.getPtr();
-
-		//Vector3D axisZ = target - position;
-		//axisZ.normalize();
-
-		//Vector3D axisX = crossProduct(upVector, axisZ);
-		//axisX.normalize();
-
-		//Vector3D axisY = crossProduct(axisZ, axisX);
-
-		//matrix[0] = axisX.x;
-		//matrix[1] = axisY.x;
-		//matrix[2] = axisZ.x;
-		//matrix[3] = 0;
-
-		//matrix[4] = axisX.y;
-		//matrix[5] = axisY.y;
-		//matrix[6] = axisZ.y;
-		//matrix[7] = 0;
-
-		//matrix[8] = axisX.z;
-		//matrix[9] = axisY.z;
-		//matrix[10] = axisZ.z;
-		//matrix[11] = 0;
-
-		//matrix[12] = -dotProduct(axisX, position);
-		//matrix[13] = -dotProduct(axisY, position);
-		//matrix[14] = -dotProduct(axisZ, position);
-		//matrix[15] = 1;
-
-		////return outMatrix;
-
-
-        Matrix4D m4EyeFrame;
         Vector3D v3X, v3Y, v3Z;
         v3Y = upVector;
         v3Y.normalize();
@@ -187,11 +151,11 @@ namespace core
         
         v3Y = crossProduct(v3Z, v3X);
 
-        m4EyeFrame = Matrix4D(Vector4D(v3X), Vector4D(v3Y), Vector4D(v3Z), Vector4D(position));
+        Matrix4D outMatrix;
+        outMatrix = Matrix4D(Vector4D(v3X), Vector4D(v3Y), Vector4D(v3Z), Vector4D(position));
+        //outMatrix.makeInverse();
 
-        m4EyeFrame.makeInverse();
-
-        return m4EyeFrame;
+        return outMatrix;
 
 	}
 

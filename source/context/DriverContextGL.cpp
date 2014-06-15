@@ -253,13 +253,7 @@ bool CDriverContextGL::createWin32Context()
 		return false;
 	}
 
-    GLenum error_after = glewInit();
-    if (error_after != GLEW_OK)
-    {
-        const GLubyte* errorStr = glewGetErrorString(error);
-        LOG_ERROR("Couldn't initialize GLEW again: %s", errorStr);
-        return false;
-    }
+    CDriverContextGL::checkForErrors("Create Context");
 
 	int pf = GetPixelFormat(hDC);
 	DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
@@ -358,7 +352,6 @@ void CDriverContextGL::driverInfo()
 	glewIsSupported("GL_ARB_vertex_buffer_object");
 	glewIsSupported("GL_ARB_vertex_array_object");
 	glewIsSupported("GL_ARB_sampler_objects");*/
-
 }
 
 void CDriverContextGL::checkForErrors(const std::string& location)

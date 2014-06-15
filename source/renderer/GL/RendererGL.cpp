@@ -24,7 +24,8 @@ CRendererGL::~CRendererGL()
 
 void CRendererGL::init()
 {
-	LOG_INFO("OpenGL Render Init")
+
+    LOG_INFO("OpenGL Render Init");
 
 	reshape(m_viewportSize.width, m_viewportSize.height);
 	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
@@ -43,7 +44,7 @@ void CRendererGL::init()
     //glDepthFunc(GL_LEQUAL);
     //glShadeModel(GL_SMOOTH);
 
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
     //glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
 
@@ -55,7 +56,7 @@ void CRendererGL::init()
 
 
 #ifdef _DEBUG
-	m_context->checkForErrors();
+	m_context->checkForErrors("Render Init");
 #endif
 }
 
