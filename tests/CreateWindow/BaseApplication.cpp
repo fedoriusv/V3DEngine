@@ -21,6 +21,7 @@ int BaseApplication::exec()
 		return 0;
 	}
 
+    LOG_INFO("---------Init Application--------");
 	this->init();
 	getSceneManager()->init();
 

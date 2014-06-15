@@ -92,6 +92,63 @@ void CSceneManager::addNode(CNode* node)
 
 void CSceneManager::update(v3d::f64 time)
 {
+    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    {
+        CNode* node = (*iter);
+
+        switch (node->getNodeType())
+        {
+            case ENodeType::eShape:
+            {
+                if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
+                {
+                    f32 priority = 0.0f;
+                    if (m_camera)
+                    {
+                        priority = (node->getPosition() - m_camera->getPosition()).length();
+                    }
+                    else
+                    {
+                        priority = node->getPosition().z;
+                    }
+                    node->m_priority = priority;
+                }
+            }
+            break;
+
+            case ENodeType::eModel:
+            {
+            /* if (static_cast<CModel*>(node)->getMaterial()->getTransparency() > 0.0f)
+               {
+                   float priority = 0.0f;
+                   if (m_camera)
+                   {
+                       priority = length(node->getPosition() - m_camera->getPosition());
+                   }
+                   else
+                   {
+                       priority = node->getPosition().z;
+                   }
+                   node->m_priority = priority;
+               }*/
+            }
+            break;
+
+            case ENodeType::eCamera:
+            {
+                node->m_priority = 1000000.0f;
+            }
+            break;
+
+            default:
+            break;
+        }
+    }
+
+        std::sort(m_objects.begin(), m_objects.end(), [](CNode* node0, CNode* node1)
+        {
+            return  (node0->getPriority() > node1->getPriority());
+        });
 }
 
 void CSceneManager::updateDeltaTime()
