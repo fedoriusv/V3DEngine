@@ -62,7 +62,17 @@ bool CTexture::load()
 #ifdef USE_DEVIL
 bool CTexture::loadDevIL()
 {
+    std::function<wchar_t*(const char*)> charToWChar = [](const char* text)
+    {
+        size_t size = strlen(text) + 1;
+        wchar_t* wa = new wchar_t[size];
+        mbstowcs(wa, text, size);
+        return wa;
+    };
+
     std::string file = CResource::getStreamName();
+    
+    //ILboolean success = ilLoadImage(charToWChar(file.c_str()));
     ILboolean success = ilLoadImage(L"textures/box.jpg");
     ASSERT(success == 1 && "Invalid Texture");
 

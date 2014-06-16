@@ -10,28 +10,30 @@ namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class ETextureTarget
+	enum ETextureTarget
 	{
 		eUnknown = -1,
 		eTexture1D,
 		eTexture2D,
 		eTexture3D,
 		eTextureCubeMap,
+
+        eTargetCount
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class ETextureFilter
+	enum ETextureFilter
 	{
 		eNearest,
 		eLinear,
 
 		eNearestMipmapNearest,
-		eLinearMipmapNearest,
 		eNearestMipmapLinear,
+        eLinearMipmapNearest,
 		eLinearMipmapLinear,
 
-
+        eFilterCount
 	};
 
     enum EAnisotropic
@@ -45,42 +47,48 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum class EWrapType
+    enum EWrapType
     {
         eRepeat,
-        eClampToEdge,
         eMirroredRepeat,
+        eClampToEdge,
         eClampToBorder,
+
+        eWrapCount
     };
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class EImageType
+	enum EImageType
 	{
-        eByte           = 0x1400,
-        eUnsignedByte   = 0x1401,
-        eShort          = 0x1402,
-        eUnsignedShort  = 0x1403,
-        eInt            = 0x1404,
-        eUnsignedInt    = 0x1405,
-        eFloat          = 0x1406,
-        eDouble         = 0x140A,
-        eHalf           = 0x140B,
+        eByte,
+        eUnsignedByte,
+        eShort,
+        eUnsignedShort,
+        eInt,
+        eUnsignedInt,
+        eFloat,
+        eDouble,
+        eHalf,
+
+        eTypeCount
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class EImageFormat
+	enum EImageFormat
 	{
-        eColorIndex     = 0x1900,
-        eAlpha          = 0x1906,
-        eRGB            = 0x1907,
-        eRGBA           = 0x1908,
-        eBGR            = 0x80E0,
-        eBGRA           = 0x80E1,
-        eLumiance       = 0x1909,
-        eLuminanceAlpha = 0x190A,
-        eDepthComponent = 0x1902,
+        eColorIndex,
+        eAlpha,
+        eRGB,
+        eRGBA,
+        eBGR,
+        eBGRA,
+        eLumiance,
+        eLuminanceAlpha,
+        eDepthComponent,
+
+        eFormatCount
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
