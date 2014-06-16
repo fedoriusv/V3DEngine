@@ -5,7 +5,7 @@ using namespace v3d::renderer;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShader::s_shaderTypeName[EShaderType::eCount] = {
+const std::string CShader::s_shaderTypeName[EShaderType::eShaderCount] = {
 
     "vertex",
     "fragment",
@@ -20,7 +20,7 @@ const std::string& CShader::getShaderTypeNameByType(EShaderType type)
 
 EShaderType CShader::getShaderTypeByName(const std::string& name)
 {
-    for (int i = 0; i < eCount; ++i)
+    for (int i = 0; i < eShaderCount; ++i)
     {
         if (s_shaderTypeName[i].compare(name) == 0)
         {
@@ -28,7 +28,7 @@ EShaderType CShader::getShaderTypeByName(const std::string& name)
         }
     }
 
-    return EShaderType::eUnknown;
+    return EShaderType::eShaderUnknown;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ EShaderType CShader::getShaderTypeByName(const std::string& name)
 CShader::CShader()
 	: CObject()
 	, m_shaderID(0)
-	, m_shaderType(EShaderType::eUnknown)
+    , m_shaderType(EShaderType::eShaderUnknown)
 	, m_compileStatus(false)
 	, m_data(nullptr)
 {

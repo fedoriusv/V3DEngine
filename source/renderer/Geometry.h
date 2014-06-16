@@ -10,11 +10,13 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum class EDrawMode
+    enum EDrawMode
     {
         eTriangleStrip,
         eTriangles,
         eTriangleFan,
+
+        eCount
     };
 
     enum class EGeomertyType

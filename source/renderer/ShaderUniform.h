@@ -11,16 +11,16 @@ namespace renderer
 
     enum EShaderDataType
     {
-        eNone = 0,
-        eInt,
-        eFloat,
-        eVector2,
-        eVector3,
-        eVector4,
-        eMatrix3,
-        eMatrix4,
+        eTypeNone = 0,
+        eTypeInt,
+        eTypeFloat,
+        eTypeVector2,
+        eTypeVector3,
+        eTypeVector4,
+        eTypeMatrix3,
+        eTypeMatrix4,
 
-        eTypeCount,
+        eShaderDataCount,
     };
 
     enum EDefaultUniformData

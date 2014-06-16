@@ -44,7 +44,7 @@ const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std:
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderUniform::CShaderUniform()
-    : m_uniformType(EShaderDataType::eNone)
+    : m_uniformType(EShaderDataType::eTypeNone)
     , m_defaultData(EDefaultUniformData::eUserUniform)
 	, m_uniformValue (nullptr)
 	, m_attribute ("")
@@ -75,49 +75,49 @@ void* CShaderUniform::allocMemory(EShaderDataType type, void* value)
 
 	switch(type)
 	{
-    case EShaderDataType::eInt:
+    case EShaderDataType::eTypeInt:
 		{
 			uniformValue = new int();
 			memcpy(uniformValue, value, sizeof(int));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eFloat:
+    case EShaderDataType::eTypeFloat:
 		{
 			uniformValue = new float();
 			memcpy(uniformValue, value, sizeof(float));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eVector2:
+    case EShaderDataType::eTypeVector2:
 		{
 			uniformValue = new core::Vector2D();
 			memcpy(uniformValue, value, sizeof(core::Vector2D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eVector3:
+    case EShaderDataType::eTypeVector3:
 		{
 			uniformValue = new core::Vector3D();
 			memcpy(uniformValue, value, sizeof(core::Vector3D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eVector4:
+    case EShaderDataType::eTypeVector4:
 		{
 			uniformValue = new core::Vector4D();
 			memcpy(uniformValue, value, sizeof(core::Vector4D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eMatrix3:
+    case EShaderDataType::eTypeMatrix3:
 		{
 			uniformValue = new core::Matrix3D();
 			memcpy(uniformValue, value, sizeof(core::Matrix3D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eMatrix4:
+    case EShaderDataType::eTypeMatrix4:
 		{
 			uniformValue = new core::Matrix4D();
 			memcpy(uniformValue, value, sizeof(core::Matrix4D));

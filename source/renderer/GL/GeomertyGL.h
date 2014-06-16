@@ -25,7 +25,6 @@ namespace renderer
 
         void         initAttribute(u32 pass);
 
-        v3d::u32     m_drawModeGL;
         v3d::u32     m_arrayId;
 
         void         genBuffers(v3d::u32& buffer);
@@ -47,8 +46,6 @@ namespace renderer
 
         void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
         void         refreshBufferData();
-
-        v3d::u32     getGLDrawMode(EDrawMode mode);
 
     };
 

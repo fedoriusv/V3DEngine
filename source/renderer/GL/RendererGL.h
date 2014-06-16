@@ -27,6 +27,7 @@ namespace renderer
         ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)            override;
         GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique) override;
         TexturePtr          makeSharedTexture()                                     override;
+        RenderStatePtr      makeSharedRenderState()                                 override;
 
     };
 

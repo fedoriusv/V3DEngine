@@ -11,13 +11,13 @@ namespace renderer
 
     enum EShaderType
     {
-        eUnknown = -1,
+        eShaderUnknown = -1,
         eVertex,
         eFragment,
         eGeometry,
         eCompute,
 
-        eCount
+        eShaderCount
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ namespace renderer
 
     private:
 
-        static const std::string    s_shaderTypeName[EShaderType::eCount];
+        static const std::string    s_shaderTypeName[EShaderType::eShaderCount];
 
     };
 

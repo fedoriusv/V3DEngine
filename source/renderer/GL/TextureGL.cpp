@@ -8,7 +8,7 @@ using namespace v3d::renderer;
 
 #define TEXTURE_CUBE_MAP_COUNT 6
 
-GLenum ECubeMap[TEXTURE_CUBE_MAP_COUNT] =
+GLenum ECubeMapGL[TEXTURE_CUBE_MAP_COUNT] =
 {
     GL_TEXTURE_CUBE_MAP_POSITIVE_X,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -16,6 +16,58 @@ GLenum ECubeMap[TEXTURE_CUBE_MAP_COUNT] =
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
     GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
+GLenum ETextureTargetGL[ETextureTarget::eTargetCount] =
+{
+    GL_TEXTURE_1D,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_3D,
+    GL_TEXTURE_CUBE_MAP,
+};
+
+GLenum ETextureFilterGL[ETextureFilter::eFilterCount] =
+{
+    GL_NEAREST,
+    GL_LINEAR,
+    GL_NEAREST_MIPMAP_NEAREST,
+    GL_NEAREST_MIPMAP_LINEAR,
+    GL_LINEAR_MIPMAP_NEAREST,
+    GL_LINEAR_MIPMAP_LINEAR,
+};
+
+GLenum EWrapTypeGL[EWrapType::eWrapCount] =
+{
+    GL_REPEAT,
+    GL_MIRRORED_REPEAT,
+    GL_CLAMP_TO_EDGE,
+    GL_CLAMP_TO_BORDER,
+};
+
+GLenum EImageFormatGL[EImageFormat::eFormatCount] =
+{
+    GL_COLOR_INDEX,
+    GL_ALPHA,
+    GL_RGB,
+    GL_RGBA,
+    GL_BGR,
+    GL_BGRA,
+    GL_LUMINANCE,
+    GL_LUMINANCE_ALPHA,
+    GL_DEPTH_COMPONENT,
+};
+
+GLenum EImageTypeGL[EImageType::eTypeCount] =
+{
+    GL_BYTE,
+    GL_UNSIGNED_BYTE,
+    GL_SHORT,
+    GL_UNSIGNED_SHORT,
+    GL_INT,
+    GL_UNSIGNED_INT,
+    GL_FLOAT,
+    GL_DOUBLE,
+    GL_HALF_FLOAT,
 };
 
 CTextureGL::CTextureGL()
@@ -29,17 +81,17 @@ CTextureGL::~CTextureGL()
 
 void CTextureGL::bind(u32 layer)
 {
-    CTextureGL::bindSampler(getGLTextureTarget(m_target), m_samplerID);
+    CTextureGL::bindSampler(ETextureTargetGL[m_target], m_samplerID);
     CTextureGL::activeTextureLayer(layer);
-    CTextureGL::bindTexture(m_textureID, getGLTextureTarget(m_target));
+    CTextureGL::bindTexture(m_textureID, ETextureTargetGL[m_target]);
 
     RENDERER->checkForErrors("Bind Texture Error");
 }
 
 void CTextureGL::unbind(u32 layer)
 {
-    CTextureGL::bindSampler(getGLTextureTarget(m_target), 0);
-    CTextureGL::bindTexture(0, getGLTextureTarget(m_target));
+    CTextureGL::bindSampler(ETextureTargetGL[m_target], 0);
+    CTextureGL::bindTexture(0, ETextureTargetGL[m_target]);
 
     RENDERER->checkForErrors("Unbind Texture Error");
 }
@@ -49,11 +101,11 @@ bool CTextureGL::create()
     bool success = false;
 
     CTextureGL::genTexture(m_textureID);
-    CTextureGL::bindTexture(getGLTextureTarget(m_target), m_textureID);
+    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
 
     CTextureGL::genSampler(m_samplerID);
-    CTextureGL::wrapSampler(m_samplerID, getGLWrapSampler(m_wrap));
-    CTextureGL::filterSampler(m_samplerID, getGLFilterSampler(m_minFilter), getGLFilterSampler(m_magFilter));
+    CTextureGL::wrapSampler(m_samplerID, EWrapTypeGL[m_wrap]);
+    CTextureGL::filterSampler(m_samplerID, ETextureFilterGL[m_minFilter], ETextureFilterGL[m_magFilter]);
     CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
 
     switch (m_target)
@@ -91,10 +143,10 @@ bool CTextureGL::create()
 
     if (m_minFilter > ETextureFilter::eLinear)
     {
-        CTextureGL::generateMipmap(getGLTextureTarget(m_target));
+        CTextureGL::generateMipmap(ETextureTargetGL[m_target]);
     }
 
-    CTextureGL::bindTexture(getGLTextureTarget(m_target), 0);
+    CTextureGL::bindTexture(ETextureTargetGL[m_target], 0);
 
     RENDERER->checkForErrors("Create Texture Error");
 
@@ -194,164 +246,13 @@ void CTextureGL::generateMipmap(u32 target)
     glGenerateMipmap(target);
 }
 
-u32 CTextureGL::getGLFilterSampler(ETextureFilter filter)
-{
-    switch (filter)
-    {
-    case ETextureFilter::eNearest:
-        return GL_NEAREST;
-
-    case ETextureFilter::eLinear:
-        return GL_LINEAR;
-
-    case ETextureFilter::eNearestMipmapNearest:
-        return GL_NEAREST_MIPMAP_NEAREST;
-
-    case ETextureFilter::eNearestMipmapLinear:
-        return GL_NEAREST_MIPMAP_LINEAR;
-
-    case ETextureFilter::eLinearMipmapNearest:
-        return GL_LINEAR_MIPMAP_NEAREST;
-
-    case ETextureFilter::eLinearMipmapLinear:
-        return GL_LINEAR_MIPMAP_LINEAR;
-
-    default:
-        return GL_LINEAR;
-    }
-
-    return GL_LINEAR;
-}
-
-u32 CTextureGL::getGLWrapSampler(EWrapType wrap)
-{
-    switch (wrap)
-    {
-    case EWrapType::eRepeat:
-        return GL_REPEAT;
-
-    case EWrapType::eMirroredRepeat:
-        return GL_MIRRORED_REPEAT;
-
-    case EWrapType::eClampToBorder:
-        return GL_CLAMP_TO_BORDER;
-
-    case EWrapType::eClampToEdge:
-        return GL_CLAMP_TO_EDGE;
-
-     default:
-        return GL_CLAMP_TO_EDGE;
-    }
-
-    return GL_CLAMP_TO_EDGE;
-}
-
-u32 CTextureGL::getGLTextureTarget(ETextureTarget target)
-{
-    switch (target)
-    {
-    case ETextureTarget::eTexture1D:
-        return GL_TEXTURE_1D;
-
-    case ETextureTarget::eTexture2D:
-        return GL_TEXTURE_2D;
-
-    case ETextureTarget::eTexture3D:
-        return GL_TEXTURE_3D;
-
-    case ETextureTarget::eTextureCubeMap:
-        return GL_TEXTURE_CUBE_MAP;
-
-    default:
-        return GL_TEXTURE_2D;
-    }
-
-    return GL_TEXTURE_2D;
-}
-
-u32 CTextureGL::getGLImageFormat(EImageFormat format)
-{
-    switch (format)
-    {
-    case EImageFormat::eRGB:
-        return GL_RGB;
-
-    case EImageFormat::eBGR:
-        return GL_BGR;
-
-    case EImageFormat::eRGBA:
-        return GL_RGBA;
-
-    case EImageFormat::eBGRA:
-        return GL_BGRA;
-
-    case EImageFormat::eAlpha:
-        return GL_ALPHA;
-
-    case EImageFormat::eColorIndex:
-        return GL_COLOR_INDEX;
-
-    case EImageFormat::eDepthComponent:
-        return GL_DEPTH_COMPONENT;
-
-    case EImageFormat::eLumiance:
-        return GL_LUMINANCE;
-
-    case EImageFormat::eLuminanceAlpha:
-        return GL_LUMINANCE_ALPHA;
-
-    default:
-        return GL_RGB;
-    };
-
-    return GL_RGB;
-}
-
-inline u32 CTextureGL::getGLImageType(EImageType type)
-{
-    switch (type)
-    {
-    case EImageType::eByte:
-        return GL_BYTE;
-
-    case EImageType::eUnsignedByte:
-        return GL_UNSIGNED_BYTE;
-
-    case EImageType::eShort:
-        return GL_SHORT;
-
-    case EImageType::eUnsignedShort:
-        return GL_UNSIGNED_SHORT;
-
-    case EImageType::eInt:
-        return GL_INT;
-
-    case EImageType::eUnsignedInt:
-        return GL_UNSIGNED_INT;
-
-    case EImageType::eFloat:
-        return GL_FLOAT;
-
-    case EImageType::eDouble:
-        return GL_DOUBLE;
-
-    case EImageType::eHalf:
-        return GL_HALF_FLOAT;
-
-    default:
-        return GL_UNSIGNED_BYTE;
-    };
-
-    return GL_UNSIGNED_BYTE;
-}
-
 void CTextureGL::initTexture2D(u32 texture)
 {
     CTextureGL::bindTexture(GL_TEXTURE_2D, texture);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    u32 format = getGLImageFormat(m_data[0].format);
+    u32 format = EImageFormatGL[m_data[0].format];
 
     std::function<s32(s32)> internalFormat = [](s32 format)
     {
@@ -372,7 +273,7 @@ void CTextureGL::initTexture2D(u32 texture)
     };
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat(format), m_data[0].width, m_data[0].height, 0, 
-        format, getGLImageType(m_data[0].type), m_data[0].data);
+        format, EImageTypeGL[m_data[0].type], m_data[0].data);
 }
 
 void CTextureGL::initTextureCubeMap(u32 texture)
@@ -384,7 +285,7 @@ void CTextureGL::initTextureCubeMap(u32 texture)
 
     for (u32 i = 0; i < TEXTURE_CUBE_MAP_COUNT; ++i)
     {
-        glTexImage2D(ECubeMap[i], 0, GL_RGB, m_data[i].width, m_data[i].height, 0, getGLImageFormat(m_data[i].format),
-            getGLImageType(m_data[i].type), m_data[i].data);
+        glTexImage2D(ECubeMapGL[i], 0, GL_RGB, m_data[i].width, m_data[i].height, 0, EImageFormatGL[m_data[i].format],
+            EImageTypeGL[m_data[i].type], m_data[i].data);
     }
 }

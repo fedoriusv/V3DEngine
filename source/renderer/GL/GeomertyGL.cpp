@@ -10,10 +10,17 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
+GLenum EDrawModeGL[EDrawMode::eCount] =
+{
+    GL_TRIANGLE_STRIP,
+    GL_TRIANGLES,
+    GL_TRIANGLE_FAN
+};
+
+
 CGeometryGL::CGeometryGL(const RenderTechniquePtr& technique)
     : CGeometry(technique)
     , m_arrayId(0)
-    , m_drawModeGL(GL_TRIANGLE_STRIP)
 {
 }
 
@@ -112,8 +119,6 @@ void CGeometryGL::init()
 	CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 	CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	m_drawModeGL = CGeometryGL::getGLDrawMode(m_drawMode);
-
     RENDERER->checkForErrors("GeometryGL Init Error");
 }
 
@@ -123,13 +128,13 @@ void CGeometryGL::draw()
 
     if (m_data.m_countIndices > 0)
     {
-        glDrawElements(m_drawModeGL, m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
+        glDrawElements(EDrawModeGL[m_drawMode], m_data.m_countIndices, GL_UNSIGNED_INT, NULL);
     }
     else
     {
         u32 firstPoint = 0;
         u32 countPoints = m_data.m_countVertices;
-        glDrawArrays(m_drawModeGL, firstPoint, countPoints);
+        glDrawArrays(EDrawModeGL[m_drawMode], firstPoint, countPoints);
     }
 	
 	CGeometryGL::bindVertexArray(0);
@@ -315,32 +320,4 @@ void CGeometryGL::initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d
 {
 	glEnableVertexAttribArray(vertexAttrib);
 	glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, GL_FALSE, NULL, NULL);
-}
-
-v3d::u32 CGeometryGL::getGLDrawMode(EDrawMode mode)
-{
-	switch (mode)
-	{
-		case EDrawMode::eTriangleStrip:
-		{
-			return GL_TRIANGLE_STRIP;
-		}
-
-		case EDrawMode::eTriangles:
-		{
-			return GL_TRIANGLES;
-		}
-		
-		case EDrawMode::eTriangleFan:
-		{
-			return GL_TRIANGLE_FAN;
-		}
-
-		default:
-		{
-			return GL_TRIANGLE_STRIP;
-		}
-	}
-
-	return GL_TRIANGLE_STRIP;
 }

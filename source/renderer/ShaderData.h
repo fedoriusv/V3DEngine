@@ -67,7 +67,7 @@ namespace renderer
 
     private:
 
-        static const std::string       s_shaderDataType[EShaderDataType::eTypeCount];
+        static const std::string       s_shaderDataType[EShaderDataType::eShaderDataCount];
 
     };
 

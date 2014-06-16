@@ -42,12 +42,6 @@ namespace renderer
         void            anisotropicSampler(u32 sampler, u32 level);
         void            generateMipmap(u32 target);
 
-        inline u32     getGLFilterSampler(ETextureFilter filter);
-        inline u32     getGLWrapSampler(EWrapType wrap);
-        inline u32     getGLTextureTarget(ETextureTarget target);
-        inline u32     getGLImageFormat(EImageFormat format);
-        inline u32     getGLImageType(EImageType type);
-
         u32            m_samplerID;
    };
 

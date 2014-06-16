@@ -3,6 +3,7 @@
 #include "ShaderProgramGL.h"
 #include "GeomertyGL.h"
 #include "TextureGL.h"
+#include "RenderStateGL.h"
 
 #include "GL/glew.h"
 
@@ -33,20 +34,11 @@ void CRendererGL::init()
     glEnable(GL_MULTISAMPLE);
     //glDisable(GL_MULTISAMPLE);
 
-    ////
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     //glEnable(GL_DEPTH);
     glEnable(GL_DEPTH_TEST);
     glClearDepth(1.0f);
     //glDepthFunc(GL_LEQUAL);
     //glShadeModel(GL_SMOOTH);
-
-    //glDisable(GL_CULL_FACE);
-    //glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
 
 
     //glEnable(GL_BLEND);
@@ -107,4 +99,9 @@ GeometryPtr CRendererGL::makeSharedGeometry(const RenderTechniquePtr& technique)
 TexturePtr CRendererGL::makeSharedTexture()
 {
     return std::make_shared<CTextureGL>();
+}
+
+RenderStatePtr CRendererGL::makeSharedRenderState()
+{
+    return std::make_shared<CRenderStateGL>();
 }

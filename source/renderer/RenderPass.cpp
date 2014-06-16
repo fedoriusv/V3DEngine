@@ -170,7 +170,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
 
         EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varVal);
         EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
-            ? EShaderDataType::eNone : CShaderData::getShaderDataTypeByName(varType);
+            ? EShaderDataType::eTypeNone : CShaderData::getShaderDataTypeByName(varType);
 
         m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
 
@@ -331,6 +331,7 @@ void CRenderPass::init()
 {
     m_shaderData = std::make_shared<CShaderData>();
     m_program = RENDERER->makeSharedProgram(m_shaderData);
+    m_renderState = RENDERER->makeSharedRenderState();
 }
 
 bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
@@ -346,13 +347,39 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml element");
+        LOG_ERROR("Error parse. Not exist xml renderstate element");
         return false;
     }
+
+    if (root->Attribute("polygonmode"))
+    {
+        const std::string polygonmodeStr = root->Attribute("polygonmode");
+
+        ERenderPolygonMode polygonmode = CRenderState::getPolygonModeByName(polygonmodeStr);
+        m_renderState->setPolygonMode(polygonmode);
+    }
+    
+    if (root->Attribute("winding"))
+    {
+        const std::string windingStr = root->Attribute("winding");
+
+        ERenderWinding  winding = (windingStr == "ccw") ? ERenderWinding::eWindingCCW : ERenderWinding::eWindingCW;
+        m_renderState->setWinding(winding);
+    }
+
+    if (root->BoolAttribute("cullface"))
+    {
+        bool cullface = root->BoolAttribute("cullface");
+        m_renderState->setCullFace(cullface);
+    }
+
+    return true;
 }
 
 void CRenderPass::bind()
 {
+    m_renderState->bind();
+
     if (!m_enable || !m_program->isEnable())
     {
         m_program->unbind();
@@ -371,7 +398,4 @@ void CRenderPass::bind()
 
         m_program->setUniform(type, m_program->getShaderID(), attr, value);
     }
-
-    //TODO: bind samplers
-    //TODO: render states
 }

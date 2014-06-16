@@ -9,12 +9,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum ERenderCullFace
-    {
-        eCullBack,
-        ECullFront
-    };
-
     enum ERenderWinding
     {
         eWindingCW,
@@ -25,7 +19,9 @@ namespace renderer
     {
         ePolyModeFill,
         ePolyModeLine,
-        ePolyModePoint
+        ePolyModePoint,
+
+        ePolygonModeCount
     };
 
     //TODO:add blend
@@ -37,21 +33,29 @@ namespace renderer
     public:
 
         CRenderState();
-        virtual             ~CRenderState();
+        virtual                   ~CRenderState();
+                                  
+        bool                      getCullFace()    const;
+        ERenderWinding            getWinding()     const;
+        ERenderPolygonMode        getPolygonMode() const;
+                                  
+        void                      setCullFace(bool type);
+        void                      setWinding(ERenderWinding type);
+        void                      setPolygonMode(ERenderPolygonMode type);
 
-        ERenderCullFace     getCullFace()    const;
-        ERenderWinding      getWinding()     const;
-        ERenderPolygonMode  getPolygonMode() const;
+        virtual void              bind() = 0;
 
-        void                setCullFace(ERenderCullFace type);
-        void                getWinding(ERenderWinding type);
-        void                getPolygonMode(ERenderPolygonMode type);
+        static ERenderPolygonMode getPolygonModeByName(const std::string& name);
 
     protected:
 
-        ERenderCullFace     m_cullFace;
-        ERenderWinding      m_winding;
-        ERenderPolygonMode  m_polygonMode;
+        bool                      m_cullFace;
+        ERenderWinding            m_winding;
+        ERenderPolygonMode        m_polygonMode;
+
+    private:
+
+        static const std::string s_renderPolygonMode[ERenderPolygonMode::ePolygonModeCount];
 
     };
 
@@ -62,6 +66,5 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
-
 
 #endif //_V3D_RENDER_STATE_H_
