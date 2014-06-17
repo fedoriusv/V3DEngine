@@ -50,3 +50,8 @@ void CRenderer::updateTransform(const core::Matrix4D& transform)
     m_modelMatrix.makeTransposed();
 }
 
+const core::Dimension2D& CRenderer::getViewportSize() const
+{
+    return m_viewportSize;
+}
+

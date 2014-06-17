@@ -2,6 +2,7 @@
 #include "SampleShape.h"
 #include "CubeShape.h"
 #include "Camera.h"
+#include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
 
@@ -224,6 +225,25 @@ CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const fl
 CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
 {
     CCamera* node = new CCamera();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setTarget(target);
+    node->setUpVector(up);
+    if (m_camera)
+    {
+        m_camera->m_active = false;
+    }
+    m_camera = node;
+    m_camera->m_active = true;
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
+{
+    CCamera* node = new CFPSCamera();
     node->setParent(parent);
     node->setPosition(pos);
     node->setTarget(target);

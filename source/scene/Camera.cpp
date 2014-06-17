@@ -5,10 +5,14 @@
 using namespace v3d;
 using namespace v3d::scene;
 
+const f32 k_lod = 10000.0f;
+
 CCamera::CCamera()
     : m_target(core::Vector3D(0.0f))
     , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
     , m_active(false)
+    , m_min(-k_lod, -k_lod, -k_lod)
+    , m_max(k_lod, k_lod, k_lod)
 {
     m_nodeType = ENodeType::eCamera;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());

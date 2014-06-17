@@ -30,7 +30,7 @@ namespace scene
 
         bool                isActive() const;
 
-    private:
+    protected:
 
         friend              CSceneManager;
 
@@ -38,6 +38,9 @@ namespace scene
         core::Vector3D      m_target;
 
         bool                m_active;
+
+        core::Vector3D      m_max;
+        core::Vector3D      m_min;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

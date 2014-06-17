@@ -44,6 +44,8 @@ namespace renderer
         virtual TexturePtr       makeSharedTexture()                                     = 0;
         virtual RenderStatePtr   makeSharedRenderState()                                 = 0;
 
+        const core::Dimension2D& getViewportSize() const;
+
     protected:
 
         friend                   CRenderJob;
