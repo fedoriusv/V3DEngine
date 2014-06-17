@@ -1,7 +1,7 @@
 #include "FPSCamera.h"
-#ifdef _WIN32
+#ifdef _PLATFORM_WIN_
 #	include <windows.h>
-#endif // _WIN32
+#endif //_PLATFORM_WIN_
 #include "Engine.h"
 
 
@@ -9,7 +9,12 @@ using namespace v3d;
 using namespace v3d::scene;
 
 CFPSCamera::CFPSCamera()
+    : m_speed(0.001f)
 {
+    m_keys._forward = EKeyCode::eKeyKey_W;
+    m_keys._back    = EKeyCode::eKeyKey_S;
+    m_keys._left    = EKeyCode::eKeyKey_A;
+    m_keys._right   = EKeyCode::eKeyKey_D;
 }
 
 CFPSCamera::~CFPSCamera()
@@ -40,6 +45,8 @@ void CFPSCamera::move(const Vector3D& direction)
         m_position = pos;
         m_target = view;
     }
+
+    CNode::updateTransform(ENodeTransform::eTranslation);
 }
 
 bool CFPSCamera::isPointOut(const Vector3D& point)
@@ -55,27 +62,25 @@ bool CFPSCamera::isPointOut(const Vector3D& point)
 
 void CFPSCamera::rotateByMouse()
 {
-    s32 middleX = RENDERER->getViewportSize().width/2;
-    s32 middleY = RENDERER->getViewportSize().height/2;
-    f32 angleY = 0.0f;
-    f32 angleZ = 0.0f;
+    Vector3D middle(0, 0);
+    middle.x = static_cast<f32>(RENDERER->getViewportSize().width / 2);
+    middle.y = static_cast<f32>(RENDERER->getViewportSize().height / 2);
 
     static f32 currentRotX = 0.0f;
     
-    ShowCursor(0);
+    //ShowCursor(0);
 
     Vector3D position(0, 0);
     CFPSCamera::getCursorPosition(position);
 
-    if ((position.x == middleX) && (position.y == middleY))
+    if (position == middle)
     {
         return;
     }
 
-    CFPSCamera::setCursorPosition(Vector3D(position.x, position.y));
+    CFPSCamera::setCursorPosition(middle);
     
-    angleY = static_cast<f32>(middleX - position.x)/ 1000.0f;
-    angleZ = static_cast<f32>(middleY - position.y)/1000.0f;
+    Vector3D angle = (middle - position) / 1000.0f;
 
     static f32 lastRotX = 0.0f;
     lastRotX = -currentRotX;
@@ -101,10 +106,10 @@ void CFPSCamera::rotateByMouse()
     }
     else
     {
-        rotate(angleZ, vAxis);
+        rotate(angle.y, vAxis);
     }
 
-    rotate(angleY, Vector3D(0, 1, 0));
+    rotate(angle.x, Vector3D(0, 1, 0));
 }
 
 void CFPSCamera::rotate(f32 angle, Vector3D& point)
@@ -134,25 +139,69 @@ void CFPSCamera::rotate(f32 angle, Vector3D& point)
 
 void CFPSCamera::setCursorPosition(const Vector3D& position)
 {
-#ifdef _WIN32
-    SetCursorPos(static_cast<u32>(position.x), static_cast<u32>(position.y));
-#endif //_WIN32
+#ifdef _PLATFORM_WIN_
+    SetCursorPos(static_cast<s32>(position.x), static_cast<s32>(position.y));
+#endif //_PLATFORM_WIN_
 }
 
 void CFPSCamera::getCursorPosition(Vector3D& position)
 {
-#ifdef _WIN32
+#ifdef _PLATFORM_WIN_
     POINT mouse;
     GetCursorPos(&mouse);
 
     position.x = static_cast<f32>(mouse.x);
     position.y = static_cast<f32>(mouse.y);
-#endif //_WIN32
+#endif //_PLATFORM_WIN_
 
 }
 
 void CFPSCamera::update(f64 time)
 {
+    if (!m_visible)
+    {
+        return;
+    }
+
+    if (m_active)
+    {
+        f32 s = m_speed * static_cast<f32>(time);
+        if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
+        {
+            CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
+        }
+        if (INPUT_EVENTS->isKeyPressed(m_keys._back))
+        {
+            CFPSCamera::move(Vector3D(0.0f, 0.0f, -s));
+        }
+        if (INPUT_EVENTS->isKeyPressed(m_keys._left))
+        {
+            CFPSCamera::move(Vector3D(-s, 0.0f, 0.0f));
+        }
+        if (INPUT_EVENTS->isKeyPressed(m_keys._right))
+        {
+            CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
+        }
+    }
+
     CFPSCamera::rotateByMouse();
     CCamera::update(time);
+}
+
+void CFPSCamera::setSpeed(f32 speed)
+{
+    m_speed = speed;
+}
+
+f32 CFPSCamera::getSpeed() const
+{
+    return m_speed;
+}
+
+void CFPSCamera::setMoveKeys(const SMoveKeys& keys)
+{
+    m_keys._forward = keys._forward;
+    m_keys._back = keys._back;
+    m_keys._left = keys._left;
+    m_keys._right = keys._right;
 }

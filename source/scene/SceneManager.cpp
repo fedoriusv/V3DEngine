@@ -241,13 +241,15 @@ CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const 
     return node;
 }
 
-CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
+CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const f32 speed)
 {
-    CCamera* node = new CFPSCamera();
+    CFPSCamera* node = new CFPSCamera();
     node->setParent(parent);
     node->setPosition(pos);
-    node->setTarget(target);
-    node->setUpVector(up);
+    node->setPosition(target);
+    node->setUpVector(Vector3D(0.0f, 1.0f, 0.0f));
+    node->setSpeed(speed);
+
     if (m_camera)
     {
         m_camera->m_active = false;

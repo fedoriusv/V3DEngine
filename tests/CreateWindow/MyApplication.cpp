@@ -26,7 +26,7 @@ void MyApplication::init()
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
 
-    getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1), Vector3D(0, 1, 0));
+    getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }
@@ -47,14 +47,14 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
         return;
     }
 
-    if (event->_key == EKeyCode::eKeyKey_W)
+   /* if (event->_key == EKeyCode::eKeyKey_W)
     {
         node->setPosition(Vector3D(node->getPosition().x, node->getPosition().y, node->getPosition().z + step));
     }
     if (event->_key == EKeyCode::eKeyKey_S)
     {
         node->setPosition(Vector3D(node->getPosition().x, node->getPosition().y, node->getPosition().z - step));
-    }
+    }*/
     if (event->_key == EKeyCode::eKeyUp)
     {
         node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
@@ -70,6 +70,10 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     if (event->_key == EKeyCode::eKeyRight)
     {
         node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
+    }
+    if (event->_key == EKeyCode::eKeyEscape)
+    {
+        getPlatform()->closeWindow();
     }
 
     getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));

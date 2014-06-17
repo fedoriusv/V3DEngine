@@ -68,6 +68,6 @@ void CCamera::update(f64 time)
 
     if (m_active)
     {
-        RENDERER->updateCamera(m_transform.getTranslation(), m_target, m_up);
+        RENDERER->updateCamera(m_position, m_target, m_up);
     }
 }

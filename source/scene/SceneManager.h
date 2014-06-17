@@ -34,8 +34,7 @@ namespace scene
         CNode*                  addCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const core::Vector3D& target = core::Vector3D(0.0f, 0.0f, -1.0f), 
                                     const core::Vector3D& up = core::Vector3D(0.0f, 1.0f, 0.0f));
 
-        CNode*                  addFPSCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const core::Vector3D& target = core::Vector3D(0.0f, 0.0f, -1.0f),
-                                    const core::Vector3D& up = core::Vector3D(0.0f, 1.0f, 0.0f));
+        CNode*                  addFPSCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.0f), const core::Vector3D& target = core::Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);
 
         CNode*                  getObjectByID(const s32 id);
         CNode*                  getObjectByName(const std::string& name);

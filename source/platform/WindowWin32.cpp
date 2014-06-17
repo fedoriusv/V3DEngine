@@ -349,7 +349,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             event->_key = (EKeyCode)wParam;
             event->_character = (c8)wParam;
 
-			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);
+			INPUT_EVENTS->pushEvent(event);
 
 			return 0;
 		}
@@ -357,10 +357,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 		{
-			/*v3d::event::SKeyboardInputEvent event;
-			event.m_event = v3d::event::eKeyboardPressUp;
+            v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
+            event->_event = v3d::event::eKeyboardPressUp;
+            event->_key = (EKeyCode)wParam;
+            event->_character = (c8)wParam;
 
-			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+            INPUT_EVENTS->pushEvent(event);
 
 			return 0;
 		}
