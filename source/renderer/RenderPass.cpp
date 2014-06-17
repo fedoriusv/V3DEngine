@@ -367,11 +367,8 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
         m_renderState->setWinding(winding);
     }
 
-    if (root->BoolAttribute("cullface"))
-    {
-        bool cullface = root->BoolAttribute("cullface");
-        m_renderState->setCullFace(cullface);
-    }
+    bool cullface = root->BoolAttribute("cullface");
+    m_renderState->setCullFace(cullface);
 
     return true;
 }

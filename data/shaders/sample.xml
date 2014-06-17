@@ -10,7 +10,7 @@
 		</attributes>
 		<samplers> 
 		</samplers>
-		<renderstate polygonmode="fill" winding="cw" cullface="true" />
+		<renderstate polygonmode="line" winding="cw" cullface="true"/>
 		<rendertarget val="default"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
