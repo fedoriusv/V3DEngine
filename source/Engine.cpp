@@ -1,6 +1,8 @@
 #include "Engine.h"
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"
+#include "scene/RenderTechniqueManager.h"
+#include "scene/TextureManager.h"
 
 using namespace v3d;
 using namespace v3d::platform;
@@ -19,6 +21,8 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
+    CRenderTechniqueManager::freeInstance();
+    CTextureManager::freeInstance();
 }
 
 bool CEngine::init()

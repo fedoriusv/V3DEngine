@@ -35,6 +35,7 @@ void CShape::init()
 
 CShape::~CShape()
 {
+    m_geometry->free();
 }
 
 EShapeType CShape::getShapeType() const

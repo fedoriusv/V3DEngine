@@ -25,12 +25,15 @@ int BaseApplication::exec()
 	this->init();
 	getSceneManager()->init();
 
+    LOG_INFO("---------Run Application--------");
 	while (m_engine->begin())
 	{
 		this->run();
 
 		m_engine->end();
 	}
+
+    LOG_INFO("---------Exit Application--------");
 
 	delete this;
 	return 0;

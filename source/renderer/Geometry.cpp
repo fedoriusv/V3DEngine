@@ -12,6 +12,7 @@ CGeometry::CGeometry(const RenderTechniquePtr& technique)
 
 CGeometry::~CGeometry()
 {
+    m_data.clear();
 }
 
 SVertexData& CGeometry::getData()
