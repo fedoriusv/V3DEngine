@@ -15,6 +15,7 @@ CTexture::CTexture()
 	, m_magFilter(ETextureFilter::eLinear)
     , m_wrap(EWrapType::eClampToEdge)
     , m_anisotropicLevel(EAnisotropic::eAnisotropic16x)
+    , m_enable(false)
 {
 	m_type = EObjectType::eTypeTexture;
 }
@@ -41,6 +42,27 @@ bool CTexture::load()
     }
 
     bool success = false;
+
+    switch (m_target)
+    {
+        case ETextureTarget::eTexture1D:
+        case ETextureTarget::eTexture2D:
+        case ETextureTarget::eTexture3D:
+
+            m_data.resize(1);
+            break;
+
+        case ETextureTarget::eTextureCubeMap:
+
+            m_data.resize(6);
+            break;
+
+        case ETextureTarget::eUnknown:
+        default:
+
+            ASSERT(true && "Invalid Select Texture target");
+            return false;
+    }
 
 #ifdef USE_DEVIL
     success = loadDevIL();
@@ -72,32 +94,111 @@ bool CTexture::loadDevIL()
 
     std::string file = CResource::getStreamName();
     
-    //ILboolean success = ilLoadImage(charToWChar(file.c_str()));
-    ILboolean success = ilLoadImage(L"textures/box.jpg");
-    ASSERT(success == 1 && "Invalid Texture");
+    ilInit();
+    ILboolean success = ilLoadImage(charToWChar(file.c_str()));
+    ASSERT(success == IL_TRUE && "Invalid Texture");
+    if (!success)
+    {
+        return false;
+    }
+
+    CTexture::clear();
 
     for (u32 i = 0; i < m_data.size(); ++i)
     {
         m_data[i].width = ilGetInteger(IL_IMAGE_WIDTH);
         m_data[i].height = ilGetInteger(IL_IMAGE_HEIGHT);
         m_data[i].depth = ilGetInteger(IL_IMAGE_DEPTH);
-        m_data[i].format = (EImageFormat)ilGetInteger(IL_IMAGE_FORMAT);
-        m_data[i].type = (EImageType)ilGetInteger(IL_IMAGE_TYPE);
+        ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
+        m_data[i].format = convertILFormat(format);
+        ILenum type = ilGetInteger(IL_IMAGE_TYPE);
+        m_data[i].type = convertILType(type);
 
-        ilConvertImage((ILenum)m_data[i].format, (ILenum)m_data[i].type);
+        ilConvertImage(format, type);
 
-        if (m_data[i].data != nullptr)
-        {
-            delete m_data[i].data;
-            m_data[i].data = nullptr;
-        }
-
-        m_data[i].data = (ILubyte*)malloc(ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
-        memcpy(m_data[i].data, ilGetData(), ilGetInteger(IL_IMAGE_SIZE_OF_DATA));
+        u32 size = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
+        m_data[i].data = (ILubyte*)malloc(size);
+        memcpy(m_data[i].data, ilGetData(), size);
     }
 
-    return (success == IL_TRUE) ? true : false;
+    return true;
 }
+
+EImageFormat CTexture::convertILFormat(u32 format)
+{
+    switch (format)
+    {
+        case IL_COLOR_INDEX:
+            return EImageFormat::eColorIndex;
+
+        case IL_ALPHA:
+            return EImageFormat::eAlpha;
+
+        case IL_RGB:
+            return EImageFormat::eRGB;
+
+        case IL_RGBA:
+            return EImageFormat::eRGBA;
+
+        case IL_BGR:
+            return EImageFormat::eBGR;
+
+        case IL_BGRA:
+            return EImageFormat::eBGRA;
+
+        case IL_LUMINANCE:
+            return EImageFormat::eLumiance;
+
+        case IL_LUMINANCE_ALPHA:
+            return EImageFormat::eLuminanceAlpha;
+
+        default:
+            ASSERT(true && "Invalid IL Format");
+            return EImageFormat::eRGB;
+    }
+
+    return EImageFormat::eRGB;
+}
+
+EImageType CTexture::convertILType(u32 type)
+{
+    switch (type)
+    {
+    case IL_BYTE:
+        return EImageType::eByte;
+
+    case IL_UNSIGNED_BYTE:
+        return EImageType::eUnsignedByte;
+
+    case IL_SHORT:
+        return EImageType::eShort;
+
+    case IL_UNSIGNED_SHORT:
+        return EImageType::eUnsignedShort;
+
+    case IL_INT:
+        return EImageType::eInt;
+
+    case IL_UNSIGNED_INT:
+        return EImageType::eUnsignedInt;
+
+    case IL_FLOAT:
+        return EImageType::eFloat;
+
+    case IL_DOUBLE:
+        return EImageType::eDouble;
+
+    case IL_HALF:
+        return EImageType::eHalf;
+
+    default:
+        ASSERT(true && "Invalid IL Type");
+        return EImageType::eUnsignedByte;
+    }
+
+    return EImageType::eUnsignedByte;
+}
+
 #endif //USE_DEVIL
 
 void CTexture::clear()
@@ -156,4 +257,9 @@ void CTexture::setWrap(EWrapType wrap)
 EWrapType CTexture::getWrap() const
 {
     return m_wrap;
+}
+
+bool CTexture::isEnable() const
+{
+    return m_enable;
 }

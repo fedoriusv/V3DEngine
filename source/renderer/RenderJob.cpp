@@ -49,7 +49,15 @@ void CRenderJob::job()
     for (u32 layer = 0; layer < m_material->getTextureCount(); ++layer)
     {
         TexturePtr texture = m_material->getTexture(layer);
-        texture->bind(layer);
+
+        if (texture->isEnable())
+        {
+            texture->bind(layer);
+        }
+        else
+        {
+            texture->unbind(layer);
+        }
     }
 
     m_geomerty->draw();

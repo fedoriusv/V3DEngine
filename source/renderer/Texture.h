@@ -6,6 +6,12 @@
 
 namespace v3d
 {
+
+namespace scene
+{
+    class CTextureManager;
+}
+
 namespace renderer
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +141,8 @@ namespace renderer
         void            init(stream::IStream* stream) override;
         bool            load()                        override;
 
+        bool            isEnable()      const;
+
 		u32				getTextureID()  const;
 		ETextureTarget	getTarget()     const;
 		ETextureFilter	getMinFiler()   const;
@@ -148,8 +156,12 @@ namespace renderer
 
     protected:
 
+        friend          v3d::scene::CTextureManager;
+
 #ifdef USE_DEVIL
         bool            loadDevIL();
+        EImageFormat    convertILFormat(u32 format);
+        EImageType      convertILType(u32 format);
 #endif //USE_DEVIL
 
         void            clear();
@@ -158,6 +170,8 @@ namespace renderer
 
         ETextureTarget  m_target;
         TextureData     m_data;
+
+        bool            m_enable;
 
         ETextureFilter  m_minFilter;
         ETextureFilter  m_magFilter;
@@ -171,6 +185,7 @@ namespace renderer
     typedef std::shared_ptr<CTexture>           TexturePtr;
     typedef std::vector<TexturePtr>             TextureList;
     typedef std::map<std::string, TexturePtr>   TextureMap;
+    typedef std::map<const u32, TexturePtr>     TextureLayers;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

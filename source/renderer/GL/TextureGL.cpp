@@ -150,6 +150,11 @@ bool CTextureGL::create()
 
     RENDERER->checkForErrors("Create Texture Error");
 
+    if (success)
+    {
+        m_enable = true;
+    }
+
     return success;
 }
 

@@ -16,7 +16,7 @@ namespace scene
     public:
 
         CRenderTechniqueManager();
-        ~CRenderTechniqueManager();
+        virtual                     ~CRenderTechniqueManager();
 
         void                         add(const renderer::RenderTechniquePtr& technique);
         renderer::RenderTechniquePtr get(const std::string& name);

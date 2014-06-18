@@ -68,7 +68,7 @@ namespace renderer
 
         SMaterialData           m_materialData;
         
-        TextureList             m_texture;
+        TextureLayers           m_texture;
         RenderTechniquePtr      m_renderTechnique;
 
         bool                    m_needUpdate;

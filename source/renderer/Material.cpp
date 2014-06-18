@@ -89,7 +89,7 @@ TexturePtr CMaterial::getTexture(const u32 layer) const
 		return nullptr;
 	}
 
-	return m_texture[layer];
+	return m_texture.at(layer);
 }
 	
 u32 CMaterial::getTextureCount() const
@@ -111,7 +111,7 @@ bool CMaterial::setTexture(const u32 layer, const std::string& file)
         LOG_ERROR("Error read file [%s]", file.c_str());
         return false;
     }
-    
+
     m_texture[layer] = texture;
 
     return true;

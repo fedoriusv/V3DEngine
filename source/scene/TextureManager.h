@@ -19,7 +19,7 @@ namespace scene
     public:
 
         CTextureManager();
-        ~CTextureManager();
+        virtual                 ~CTextureManager();
 
         renderer::TexturePtr    get(const std::string& name);
         renderer::TexturePtr    load(const std::string& name);

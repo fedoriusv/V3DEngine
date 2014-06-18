@@ -16,12 +16,12 @@ namespace renderer
         CRendererGL(const DriverContextPtr& context);
         virtual             ~CRendererGL();
     
-        void                init()                         override;
+        void                init()                                                  override;
     
-        void                preRender()                    override;
-        void                postRender()                   override;
+        void                preRender()                                             override;
+        void                postRender()                                            override;
     
-        void                reshape(u32 width, u32 height) override;
+        void                reshape(u32 width, u32 height)                          override;
 
         ShaderPtr           makeSharedShader()                                      override;
         ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)            override;

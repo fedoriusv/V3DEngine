@@ -48,14 +48,21 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
 			{	
                 stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
 
-				if( stream->isOpen() )
+				if(stream->isOpen())
 				{
                     renderer::TexturePtr texture = RENDERER->makeSharedTexture();
 
                     texture->init(stream);
+                    texture->m_target = renderer::ETextureTarget::eTexture2D;
                     if (!texture->load())
                     {
                         LOG_ERROR("Streaming error read file [%s]", name.c_str());
+                        return nullptr;
+                    }
+                    
+                    if (!texture->create())
+                    {
+                        LOG_ERROR("Error to Create Texture file [%s]", name.c_str());
                         return nullptr;
                     }
 
