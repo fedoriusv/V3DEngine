@@ -20,13 +20,16 @@ void MyApplication::init()
     scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
+    //cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
     cube->getMaterial()->setTexture(0, "textures/box.jpg");
-    cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
+
 
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
 
-    getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    //getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
 
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }

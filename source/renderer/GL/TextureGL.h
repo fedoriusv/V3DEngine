@@ -36,7 +36,7 @@ namespace renderer
 
         void            genSampler(u32& sampler);
         void            deleteSampler(u32 sampler);
-        void            bindSampler(u32 target, u32 sampler);
+        void            bindSampler(u32 texture, u32 sampler);
         void            wrapSampler(u32 sampler, u32 wrap);
         void            filterSampler(u32 sampler, u32 min, u32 mag);
         void            anisotropicSampler(u32 sampler, u32 level);

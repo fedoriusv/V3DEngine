@@ -81,17 +81,17 @@ CTextureGL::~CTextureGL()
 
 void CTextureGL::bind(u32 layer)
 {
-    CTextureGL::bindSampler(ETextureTargetGL[m_target], m_samplerID);
     CTextureGL::activeTextureLayer(layer);
-    CTextureGL::bindTexture(m_textureID, ETextureTargetGL[m_target]);
+    CTextureGL::bindSampler(m_textureID, m_samplerID);
+    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
 
     RENDERER->checkForErrors("Bind Texture Error");
 }
 
 void CTextureGL::unbind(u32 layer)
 {
-    CTextureGL::bindSampler(ETextureTargetGL[m_target], 0);
-    CTextureGL::bindTexture(0, ETextureTargetGL[m_target]);
+    CTextureGL::bindSampler(0, m_samplerID);
+    CTextureGL::bindTexture(ETextureTargetGL[m_target], 0);
 
     RENDERER->checkForErrors("Unbind Texture Error");
 }
@@ -101,12 +101,6 @@ bool CTextureGL::create()
     bool success = false;
 
     CTextureGL::genTexture(m_textureID);
-    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
-
-    CTextureGL::genSampler(m_samplerID);
-    CTextureGL::wrapSampler(m_samplerID, EWrapTypeGL[m_wrap]);
-    CTextureGL::filterSampler(m_samplerID, ETextureFilterGL[m_minFilter], ETextureFilterGL[m_magFilter]);
-    CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
 
     switch (m_target)
     {
@@ -141,6 +135,15 @@ bool CTextureGL::create()
             break;
     }
 
+    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
+
+    CTextureGL::genSampler(m_samplerID);
+    CTextureGL::bindSampler(m_textureID, m_samplerID);
+    CTextureGL::wrapSampler(m_samplerID, EWrapTypeGL[m_wrap]);
+    CTextureGL::filterSampler(m_samplerID, ETextureFilterGL[m_minFilter], ETextureFilterGL[m_magFilter]);
+    CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
+    CTextureGL::bindSampler(0, m_samplerID);
+    
     if (m_minFilter > ETextureFilter::eLinear)
     {
         CTextureGL::generateMipmap(ETextureTargetGL[m_target]);
@@ -228,13 +231,13 @@ void CTextureGL::genSampler(u32& sampler)
     ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
 }
 
-void CTextureGL::bindSampler(u32 target, u32 sampler)
+void CTextureGL::bindSampler(u32 texture, u32 sampler)
 {
     if (sampler != 0)
     {
         ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
     }
-    glBindSampler(target, sampler);
+    glBindSampler(texture, sampler);
 }
 
 void CTextureGL::deleteSampler(u32 sampler)

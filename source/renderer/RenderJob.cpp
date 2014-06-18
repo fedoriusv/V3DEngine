@@ -100,15 +100,6 @@ void CRenderJob::updateMaterial(const ShaderDataPtr& data)
 
 void CRenderJob::updateTransform(const ShaderDataPtr& data)
 {
-    /*static bool temp = true;
-
-    if (!temp)
-    {
-        return;
-    }
-
-    temp = false;*/
-
     if (data->isExistUniform(eTransformProjectionMatrix))
     {
         data->setUniformMatrix4(eTransformProjectionMatrix, RENDERER->m_projectionMatrix);
