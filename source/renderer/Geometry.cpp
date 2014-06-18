@@ -34,7 +34,7 @@ void CGeometry::copyVertices(const f32 vertices[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data.m_vertices.vertex[i] = vertices[i];
+        m_data._vertices.vertex[i] = vertices[i];
     }
 }
 
@@ -42,7 +42,7 @@ void CGeometry::copyNormals(const f32 normals[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data.m_normals.vertex[i] = normals[i];
+        m_data._normals.vertex[i] = normals[i];
     }
 }
 
@@ -50,12 +50,12 @@ void CGeometry::copyTexCoords(const f32 texCoords[][2], u32 laye, u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data.m_texCoords[laye].vertex[i] = texCoords[i];
+        m_data._texCoords[laye].vertex[i] = texCoords[i];
     }
 }
 
 void CGeometry::copyIndices(const u32* indices, u32 size)
 {
-    std::copy(indices, indices + size, m_data.m_indices.vertex.begin());
+    std::copy(indices, indices + size, m_data._indices.vertex.begin());
 }
 

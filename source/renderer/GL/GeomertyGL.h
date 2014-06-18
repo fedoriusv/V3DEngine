@@ -19,7 +19,7 @@ namespace renderer
         void         init()    override;
         void         draw()    override;
         void         free()    override;
-        void         refresh();
+        void         refresh() override;
 
     private:
 

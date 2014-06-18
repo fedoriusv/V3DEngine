@@ -4,21 +4,21 @@ using namespace v3d;
 
 void SVertexData::clear()
 {
-	if (!m_vertices.vertex.empty())
+	if (!_vertices.vertex.empty())
 	{
-		m_vertices.vertex.clear();
-		m_vertices.id = 0;
+		_vertices.vertex.clear();
+		_vertices.id = 0;
 	}
 
-	if (!m_normals.vertex.empty())
+	if (!_normals.vertex.empty())
 	{
-		m_normals.vertex.clear();
-		m_normals.id = 0;
+		_normals.vertex.clear();
+		_normals.id = 0;
 	}
 
-	if (!m_texCoords.empty())
+	if (!_texCoords.empty())
 	{
-		for (auto layer : m_texCoords)
+		for (auto layer : _texCoords)
 		{
 			if (!layer.vertex.empty())
 			{
@@ -26,17 +26,17 @@ void SVertexData::clear()
 				layer.id = 0;
 			}
 		}
-		m_texCoords.clear();
+		_texCoords.clear();
 	}
 
-	if (!m_indices.vertex.empty())
+	if (!_indices.vertex.empty())
 	{
-		m_indices.vertex.clear();
-		m_indices.id = 0;
+		_indices.vertex.clear();
+		_indices.id = 0;
 	}
 
-	m_countVertices = 0;
-	m_countIndices = 0;
+	_countVertices = 0;
+	_countIndices = 0;
 
 }
 
@@ -44,27 +44,27 @@ void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer)
 {
 	clear();
 
-	m_countVertices = count;
-    m_vertices.vertex.resize(count);
-	m_normals.vertex.resize(count);
+	_countVertices = count;
+    _vertices.vertex.resize(count);
+	_normals.vertex.resize(count);
 
 	for (v3d::u32 i = 0; i < layer; ++i)
 	{
 		SVertices<core::Vector2D> texCoord;
 		texCoord.vertex.resize(count);
 
-		m_texCoords.push_back(texCoord);
+		_texCoords.push_back(texCoord);
 
 	}
 
-	m_countIndices  = index;
-    m_indices.vertex.resize(index);
+	_countIndices  = index;
+    _indices.vertex.resize(index);
 
 }
 
 bool SVertexData::empty() const
 {
-    return m_vertices.vertex.empty()
-        || m_normals.vertex.empty()
-        || m_texCoords.at(0).vertex.empty();
+    return _vertices.vertex.empty()
+        || _normals.vertex.empty()
+        || _texCoords.at(0).vertex.empty();
 }

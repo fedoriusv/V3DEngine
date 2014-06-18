@@ -37,6 +37,7 @@ namespace renderer
         virtual void        init()   = 0;
         virtual void        draw()   = 0;
         virtual void        free()   = 0;
+        virtual void        refresh()= 0;
 
         SVertexData&        getData();
 

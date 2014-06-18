@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 #include "SampleShape.h"
 #include "CubeShape.h"
+#include "SphereShape.h"
+#include "CylinderShape.h"
 #include "Camera.h"
 #include "FPSCamera.h"
 #include "Engine.h"
@@ -216,6 +218,29 @@ CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const fl
     node->setParent(parent);
     node->setPosition(pos);
     node->setScale(size);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const float radius)
+{
+    CSphereShape* node = new CSphereShape();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setRadius(radius);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const float radius, const float height)
+{
+    CCylinderShape* node = new CCylinderShape(radius, height);
+    node->setParent(parent);
+    node->setPosition(pos);
 
     CSceneManager::addNode(node);
 

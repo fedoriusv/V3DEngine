@@ -25,13 +25,13 @@ namespace v3d
 
 	struct SVertexData
 	{
-		SVertices<core::Vector3D>   m_vertices;
-		SVertices<core::Vector3D>   m_normals;
-		TextureCoords               m_texCoords;
-		SVertices<v3d::u32>         m_indices;
+		SVertices<core::Vector3D>   _vertices;
+		SVertices<core::Vector3D>   _normals;
+		TextureCoords               _texCoords;
+		SVertices<v3d::u32>         _indices;
 
-		v3d::u32                    m_countVertices;
-		v3d::u32                    m_countIndices;;
+		v3d::u32                    _countVertices;
+		v3d::u32                    _countIndices;;
 
 		void                        clear();
 		void                        malloc(v3d::u32 count, v3d::u32 index = 0, v3d::u32 layer = 1);
