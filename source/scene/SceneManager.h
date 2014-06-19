@@ -32,6 +32,7 @@ namespace scene
         CNode*                  addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const float size = 1.0f);
         CNode*                  addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float radius = 1.0f);
         CNode*                  addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float radius = 0.5f, const float height = 1.0f);
+        CNode*                  addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float minorRadius = 0.5f, const float majorRadius = 1.0f);
 
         CNode*                  addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
         CNode*                  addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);

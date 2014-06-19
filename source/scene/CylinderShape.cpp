@@ -34,9 +34,8 @@ void CCylinderShape::init()
 {
     CShape::init();
 
-    u32 major = 20;
-    u32 minor = 20;
-    f64 radius = m_radius;
+    const u32 major = 20U;
+    const u32 minor = 20U;
 
     f64 majorStep = (f64)m_height / major;
     f64 minorStep = 2.0 * k_pi / minor;
@@ -53,14 +52,14 @@ void CCylinderShape::init()
         for (u32 j = 0; j <= minor; ++j)
         {
             f64 a = j * minorStep;
-            f32 x = (f32)(radius * cos(a));
-            f32 y = (f32)(radius * sin(a));
+            f32 x = (f32)(m_radius * cos(a));
+            f32 y = (f32)(m_radius * sin(a));
 
             ++index;
             data._texCoords.at(0).vertex[index].x = j / (f32)minor;
             data._texCoords.at(0).vertex[index].y = i / (f32)major;
-            data._normals.vertex[index].x =  x / (f32)radius;
-            data._normals.vertex[index].y =  y / (f32)radius;
+            data._normals.vertex[index].x = x / (f32)m_radius;
+            data._normals.vertex[index].y = y / (f32)m_radius;
             data._normals.vertex[index].z = 0.0f;
             data._vertices.vertex[index].x = x;
             data._vertices.vertex[index].y = y;
@@ -69,8 +68,8 @@ void CCylinderShape::init()
             ++index;
             data._texCoords.at(0).vertex[index].x = j / (f32)minor;
             data._texCoords.at(0).vertex[index].y = (i + 1) / (f32)major;
-            data._normals.vertex[index].x = x / (f32)radius;
-            data._normals.vertex[index].y = y / (f32)radius;
+            data._normals.vertex[index].x = x / (f32)m_radius;
+            data._normals.vertex[index].y = y / (f32)m_radius;
             data._normals.vertex[index].z = 0.0f;
             data._vertices.vertex[index].x = x;
             data._vertices.vertex[index].y = y;

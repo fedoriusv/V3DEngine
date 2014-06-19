@@ -13,7 +13,7 @@ namespace v3d
         {
         public:
 
-            CSphereShape();
+            CSphereShape(const f32 radius = 1.0f);
             virtual     ~CSphereShape();
 
             void        render()         override;
@@ -21,18 +21,11 @@ namespace v3d
 
             void        init()           override;
 
-            void        setSlices(const u32 value);
-            void        setStacks(const u32 value);
             void        setRadius(const f32 radius);
-
-            u32         getSlices() const;
-            u32         getStacks() const;
             f32         getRadius() const;
 
         private:
 
-            u32         m_slices;
-            u32         m_stacks;
             f32         m_radius;
 
         };
