@@ -19,7 +19,7 @@ void MyApplication::init()
     //TODO: init
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addSphere(0, core::Vector3D(0, 0, -5)));
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addDisk(0, core::Vector3D(0, 0, -5)));
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addPlane(0, core::Vector3D(0, 0, -5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/sample.xml");

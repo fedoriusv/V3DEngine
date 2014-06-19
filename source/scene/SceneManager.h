@@ -29,11 +29,12 @@ namespace scene
         void                    addNode(CNode* node);
 
         CNode*                  addSample(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f));
-        CNode*                  addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const float size = 1.0f);
-        CNode*                  addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float radius = 1.0f);
-        CNode*                  addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float radius = 0.5f, const float height = 1.0f);
-        CNode*                  addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float minorRadius = 0.5f, const float majorRadius = 1.0f);
-        CNode*                  addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const float minorRadius = 1.0f, const float majorRadius = 2.0f);
+        CNode*                  addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const f32 size = 1.0f);
+        CNode*                  addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 1.0f);
+        CNode*                  addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 0.5f, const f32 height = 1.0f);
+        CNode*                  addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 0.5f, const f32 majorRadius = 1.0f);
+        CNode*                  addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 1.0f, const f32 majorRadius = 2.0f);
+        CNode*                  addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 extent = 2.0f);
 
         CNode*                  addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
         CNode*                  addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);

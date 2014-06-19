@@ -5,6 +5,7 @@
 #include "CylinderShape.h"
 #include "TorusShape.h"
 #include "DiskShape.h"
+#include "PlaneShape.h"
 #include "Camera.h"
 #include "FPSCamera.h"
 #include "Engine.h"
@@ -214,7 +215,7 @@ CNode* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)
     return node;
 }
 
-CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const float size)
+CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const f32 size)
 {
     CCubeShape* node = new CCubeShape();
     node->setParent(parent);
@@ -226,7 +227,7 @@ CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const fl
     return node;
 }
 
-CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const float radius)
+CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const f32 radius)
 {
     CSphereShape* node = new CSphereShape(radius);
     node->setParent(parent);
@@ -237,7 +238,7 @@ CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const float 
     return node;
 }
 
-CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const float radius, const float height)
+CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const f32 radius, const f32 height)
 {
     CCylinderShape* node = new CCylinderShape(radius, height);
     node->setParent(parent);
@@ -248,7 +249,7 @@ CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const floa
     return node;
 }
 
-CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const float minorRadius, const float majorRadius)
+CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const f32 minorRadius, const f32 majorRadius)
 {
     CTorusShape* node = new CTorusShape(minorRadius, majorRadius);
     node->setParent(parent);
@@ -259,9 +260,20 @@ CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const float m
     return node;
 }
 
-CNode* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, const float minorRadius, const float majorRadius)
+CNode* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, const f32 minorRadius, const f32 majorRadius)
 {
     CDiskShape* node = new CDiskShape(minorRadius, majorRadius);
+    node->setParent(parent);
+    node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, const f32 extent)
+{
+    CPlaneShape* node = new CPlaneShape(extent);
     node->setParent(parent);
     node->setPosition(pos);
 
