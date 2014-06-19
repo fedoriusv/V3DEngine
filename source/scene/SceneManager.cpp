@@ -4,6 +4,7 @@
 #include "SphereShape.h"
 #include "CylinderShape.h"
 #include "TorusShape.h"
+#include "DiskShape.h"
 #include "Camera.h"
 #include "FPSCamera.h"
 #include "Engine.h"
@@ -250,6 +251,17 @@ CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const floa
 CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const float minorRadius, const float majorRadius)
 {
     CTorusShape* node = new CTorusShape(minorRadius, majorRadius);
+    node->setParent(parent);
+    node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, const float minorRadius, const float majorRadius)
+{
+    CDiskShape* node = new CDiskShape(minorRadius, majorRadius);
     node->setParent(parent);
     node->setPosition(pos);
 

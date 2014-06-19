@@ -43,7 +43,7 @@ void CTorusShape::init()
     SVertexData& data = CShape::getGeometryData();
     data.malloc(numMajor * (numMinor + 1) * 2);
 
-    int index = -1;
+    s32 index = -1;
     for (u32 i = 0; i < numMajor; ++i)
     {
         f64 a0 = i * majorStep;

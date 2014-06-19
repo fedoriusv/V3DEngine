@@ -43,7 +43,7 @@ void CCylinderShape::init()
     SVertexData& data = CShape::getGeometryData();
     data.malloc(major * (minor + 1) * 2);
 
-    int index = -1;
+    s32 index = -1;
     for (u32 i = 0; i < major; ++i)
     {
         f32 z0 = 0.5f * m_height - i * (f32)majorStep;
