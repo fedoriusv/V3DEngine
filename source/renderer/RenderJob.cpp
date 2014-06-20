@@ -44,23 +44,27 @@ void CRenderJob::job()
         CRenderJob::updateMaterial(pass->getShaderData());
 
         pass->bind();
+
+        for (u32 layer = 0; layer < m_material->getTextureCount(); ++layer)
+        {
+            TexturePtr texture = m_material->getTexture(layer);
+
+            if (texture->isEnable())
+            {
+                texture->bind(layer);
+            }
+            else
+            {
+                texture->unbind(layer);
+            }
+        }
+
+        m_geomerty->draw();
     }
 
-    for (u32 layer = 0; layer < m_material->getTextureCount(); ++layer)
-    {
-        TexturePtr texture = m_material->getTexture(layer);
-
-        if (texture->isEnable())
-        {
-            texture->bind(layer);
-        }
-        else
-        {
-            texture->unbind(layer);
-        }
-    }
-
-    m_geomerty->draw();
+    //TODO: draw debug normals;
+    //if debug mode
+    //m_debugNormals->draw();
 }
 
 void CRenderJob::updateMaterial(const ShaderDataPtr& data)

@@ -32,6 +32,7 @@ namespace renderer
 
         MaterialPtr         m_material;
         GeometryPtr         m_geomerty;
+        //DebugNormalsPtr     m_debugNormals;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

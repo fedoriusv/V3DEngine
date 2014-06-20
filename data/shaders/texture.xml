@@ -13,7 +13,7 @@
 		<samplers>
 			<var name="sampler0"/>
 		</samplers>
-		<renderstate polygonmode="line" winding="cw" cullface="false"/>
+		<renderstate polygonmode="full" winding="cw" cullface="false"/>
 		<rendertarget val="default"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
@@ -70,7 +70,6 @@
 
 					void main()
 					{
-						//fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 						fragColor = texture(sampler0, fragVertex.texCoord0);
 					}
 				]]>
