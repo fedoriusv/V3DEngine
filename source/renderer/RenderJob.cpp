@@ -62,9 +62,6 @@ void CRenderJob::job()
         m_geomerty->draw();
     }
 
-    //TODO: draw debug normals;
-    //if debug mode
-    //m_debugNormals->draw();
 }
 
 void CRenderJob::updateMaterial(const ShaderDataPtr& data)

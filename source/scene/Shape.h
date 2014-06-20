@@ -5,6 +5,7 @@
 #include "renderer/Material.h"
 #include "renderer/Geometry.h"
 #include "renderer/RenderJob.h"
+#include "renderer/DebugDraw.h"
 
 namespace v3d
 {
@@ -50,6 +51,9 @@ namespace scene
         renderer::MaterialPtr        m_material;
         renderer::GeometryPtr        m_geometry;
         renderer::RenderJobPtr       m_renderJob;
+#ifdef _DEBUG
+        renderer::DebugDrawPtr      m_debug;
+#endif
 
         SVertexData&                getGeometryData();
         renderer::EDrawMode         getGeometryDrawMode() const;

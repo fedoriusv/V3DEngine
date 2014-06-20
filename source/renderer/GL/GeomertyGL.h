@@ -9,43 +9,44 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CDebugDrawGL;
+
     class CGeometryGL : public CGeometry
     {
     public:
 
         CGeometryGL(const RenderTechniquePtr& technique);
-        virtual      ~CGeometryGL();
+        virtual             ~CGeometryGL();
         
-        void         init()    override;
-        void         draw()    override;
-        void         free()    override;
-        void         refresh() override;
+        void                init()    override;
+        void                draw()    override;
+        void                free()    override;
+        void                refresh() override;
 
     private:
 
-        void         initAttribute(u32 pass);
+        friend              CDebugDrawGL;
 
-        v3d::u32     m_arrayId;
+        v3d::u32            m_arrayId;
 
-        void         genBuffers(v3d::u32& buffer);
-        void         bindBuffers(const v3d::u32 target, const v3d::u32 buffer);
-        void         deleteBuffers(v3d::u32& buffer);
+        static void         genBuffers(v3d::u32& buffer);
+        static void         bindBuffers(const v3d::u32 target, const v3d::u32 buffer);
+        static void         deleteBuffers(v3d::u32& buffer);
 
-        void         bufferData(const v3d::u32 target, const v3d::u32 size, void* data);
-        void         bufferSubData(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, void* data);
+        static void         bufferData(const v3d::u32 target, const v3d::u32 size, void* data);
+        static void         bufferSubData(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, void* data);
 
-        void*        mapBuffer(const v3d::u32 target, const v3d::u32 access);
-        bool         unmapBuffer(const v3d::u32 target);
-        void*        mapBufferRange(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, const v3d::u32 flags);
+        static void*        mapBuffer(const v3d::u32 target, const v3d::u32 access);
+        static bool         unmapBuffer(const v3d::u32 target);
+        static void*        mapBufferRange(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, const v3d::u32 flags);
 
-        void         getBufferPointer(const v3d::u32 target, const v3d::u32 pname, void** params);
+        static void         getBufferPointer(const v3d::u32 target, const v3d::u32 pname, void** params);
 
-        void         genVertexArray(v3d::u32& buffer);
-        void         bindVertexArray(const v3d::u32 buffer);
-        void         deleteVertexArray(v3d::u32& buffer);
+        static void         genVertexArray(v3d::u32& buffer);
+        static void         bindVertexArray(const v3d::u32 buffer);
+        static void         deleteVertexArray(v3d::u32& buffer);
 
-        void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
-        void         refreshBufferData();
+        static void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
 
     };
 

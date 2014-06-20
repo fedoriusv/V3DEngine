@@ -4,6 +4,7 @@
 #include "GeomertyGL.h"
 #include "TextureGL.h"
 #include "RenderStateGL.h"
+#include "DebugDrawGL.h"
 
 #include "GL/glew.h"
 
@@ -104,4 +105,9 @@ TexturePtr CRendererGL::makeSharedTexture()
 RenderStatePtr CRendererGL::makeSharedRenderState()
 {
     return std::make_shared<CRenderStateGL>();
+}
+
+DebugDrawPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
+{
+    return std::make_shared<CDebugDrawGL>(geometry);
 }

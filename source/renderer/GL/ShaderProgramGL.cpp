@@ -29,20 +29,20 @@ bool CShaderProgramGL::create()
 
 }
 
-bool CShaderProgramGL::create(const std::string& vShader, const std::string& fShader, u32 arg, ...)
+bool CShaderProgramGL::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
 {
-    if (vShader.empty() || fShader.empty())
+    if (vertex.empty() || fragment.empty())
     {
         ASSERT(false && "Empty Shader FileName");
         return false;
     }
 
     ShaderPtr vshader = std::make_shared<CShaderGL>();
-    vshader->create(vShader, EShaderType::eVertex);
+    vshader->create(vertex, EShaderType::eVertex);
     CShaderProgram::addShader(vshader);
 
     ShaderPtr fshader = std::make_shared<CShaderGL>();
-    fshader->create(fShader, EShaderType::eFragment);
+    fshader->create(fragment, EShaderType::eFragment);
     CShaderProgram::addShader(fshader);
 
 

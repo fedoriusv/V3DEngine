@@ -89,4 +89,8 @@ void CCubeShape::init()
     CShape::setGeometryDrawMode(EDrawMode::eTriangles);
 
 	m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
 }

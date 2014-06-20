@@ -11,6 +11,9 @@ using namespace v3d::renderer;
 CShape::CShape()
     : m_geometry(nullptr)
     , m_material(nullptr)
+#ifdef _DEBUG
+    , m_debug(nullptr)
+#endif
 {
     m_nodeType = ENodeType::eShape;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
@@ -29,13 +32,18 @@ void CShape::init()
     }
 
     m_geometry = RENDERER->makeSharedGeometry(technique);
-
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry);
+#ifdef _DEBUG
+    m_debug = RENDERER->makeDebugDraw(m_geometry);
+#endif
 }
 
 CShape::~CShape()
 {
     m_geometry->free();
+#ifdef _DEBUG
+    m_debug->free();
+#endif
 }
 
 EShapeType CShape::getShapeType() const

@@ -7,6 +7,7 @@
 #include "renderer/ShaderProgram.h"
 #include "renderer/Geometry.h"
 #include "renderer/Texture.h"
+#include "renderer/DebugDraw.h"
 
 namespace v3d
 {
@@ -43,6 +44,9 @@ namespace renderer
         virtual GeometryPtr      makeSharedGeometry(const RenderTechniquePtr& technique) = 0;
         virtual TexturePtr       makeSharedTexture()                                     = 0;
         virtual RenderStatePtr   makeSharedRenderState()                                 = 0;
+#ifdef _DEBUG
+        virtual DebugDrawPtr     makeDebugDraw(const GeometryPtr& geometry)              = 0;
+#endif
 
         const core::Dimension2D& getViewportSize() const;
 
@@ -60,6 +64,7 @@ namespace renderer
         core::Vector3D           m_viewPosition;
         core::Matrix4D           m_modelMatrix;
         core::Matrix4D           m_normalMatrix;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

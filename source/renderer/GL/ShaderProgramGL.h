@@ -23,7 +23,7 @@ namespace renderer
 
     private:
 
-        bool    create(const std::string& vShader, const std::string& fShader, u32 arg, ...) override;
+        bool    create(const std::string& vertex, const std::string& fragment, u32 arg, ...) override;
 
         bool    initProgram(u32& shaderProgram, const std::vector<u32>& shaders);
 

@@ -12,6 +12,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
+    class CDebugDraw;
 
     class CShaderProgram : public CObject
     {
@@ -31,13 +32,14 @@ namespace renderer
 	protected:
 
         friend          CRenderPass;
+        friend          CDebugDraw;
 
         void            addShader(ShaderPtr shader);
         void            destroyShader(ShaderPtr shader);
 
         void            getShaderIDArray(std::vector<u32>& shaders);
 
-        virtual bool    create(const std::string& vShader, const std::string& fShader, u32 arg = 0, ...) = 0;
+        virtual bool    create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...) = 0;
 
         virtual bool    setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
 

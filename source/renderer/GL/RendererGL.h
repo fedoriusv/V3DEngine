@@ -28,7 +28,9 @@ namespace renderer
         GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique) override;
         TexturePtr          makeSharedTexture()                                     override;
         RenderStatePtr      makeSharedRenderState()                                 override;
-
+#ifdef _DEBUG
+        DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)              override;
+#endif
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
