@@ -69,17 +69,9 @@ void CRendererGL::postRender()
 
 void CRendererGL::reshape(u32 width, u32 height)
 {
-	if (height == 0)
-	{
-		height = 1;
-	}
-	m_viewportSize.width  = width;
-	m_viewportSize.height = height;
+    CRenderer::reshape(width, height);
 
-	glViewport(0, 0, m_viewportSize.width, m_viewportSize.height);
-
-	GLfloat aspectRatio = (GLfloat)m_viewportSize.width / (GLfloat)m_viewportSize.height;
-	m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
+    glViewport(0, 0, width, height);
 }
 
 ShaderPtr CRendererGL::makeSharedShader()
@@ -107,7 +99,9 @@ RenderStatePtr CRendererGL::makeSharedRenderState()
     return std::make_shared<CRenderStateGL>();
 }
 
+#ifdef _DEBUG
 DebugDrawPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
 {
     return std::make_shared<CDebugDrawGL>(geometry);
 }
+#endif

@@ -1,4 +1,4 @@
-<technique name="sample" version="100">
+<technique name="simple" version="100">
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>

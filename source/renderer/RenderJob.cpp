@@ -38,7 +38,7 @@ void CRenderJob::job()
 {
     for (u32 i = 0; i < m_material->getRenderTechique()->getRenderPassCount(); ++i)
     {
-        RenderPassPtr pass = m_material->getRenderTechique()->getRenderPass(i);
+        const RenderPassPtr& pass = m_material->getRenderTechique()->getRenderPass(i);
 
         CRenderJob::updateTransform(pass->getShaderData());
         CRenderJob::updateMaterial(pass->getShaderData());
@@ -101,6 +101,11 @@ void CRenderJob::updateMaterial(const ShaderDataPtr& data)
 
 void CRenderJob::updateTransform(const ShaderDataPtr& data)
 {
+   /* if (!RENDERER->m_updated)
+    {
+        return;
+    }*/
+
     if (data->isExistUniform(eTransformProjectionMatrix))
     {
         data->setUniformMatrix4(eTransformProjectionMatrix, RENDERER->m_projectionMatrix);
@@ -125,4 +130,6 @@ void CRenderJob::updateTransform(const ShaderDataPtr& data)
     {
         data->setUniformVector3(eTransformViewPosition, RENDERER->m_viewPosition);
     }
+
+    //RENDERER->m_updated = false;
 }

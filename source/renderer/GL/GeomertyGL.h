@@ -48,6 +48,9 @@ namespace renderer
 
         static void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
 
+        static void         drawElements(const u32 mode, const u32 count);
+        static void         drawArrays(const u32 mode, const u32 first, const u32 count);
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

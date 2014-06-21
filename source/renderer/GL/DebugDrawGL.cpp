@@ -6,8 +6,31 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-const std::string k_vertex = "";
-const std::string k_fragment = "";
+const std::string k_vertex =  "#version 330\n\
+                              #define POSITION 0\n\
+                              layout(location = POSITION) in vec3 positions;\n\
+                              \n\
+                              struct Transform\n\
+                              {\n\
+                                mat4 projectionMatrix;\n\
+                                mat4 modelMatrix;\n\
+                                mat4 viewMatrix;\n\
+                              };\n\
+                              uniform Transform transform;\n\
+                              \n\
+                              void main()\n\
+                              {\n\
+                                vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);\n\
+                                gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;\n\
+                              }";
+
+const std::string k_fragment = "#version 330\n\
+                                out vec4 fragColor;\n\
+                                \n\
+                                void main()\n\
+                                {\n\
+                                    fragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n\
+                                }";
 
 CDebugDrawGL::CDebugDrawGL(const GeometryPtr& geometry)
 : CDebugDraw(geometry)
@@ -22,11 +45,29 @@ CDebugDrawGL::~CDebugDrawGL()
 
 void CDebugDrawGL::draw()
 {
-    CGeometryGL::bindVertexArray(m_arrayId);
+    CDebugDraw::bind();
 
-    glDrawArrays(GL_LINES, 0, m_normals.vertex.size());
+    switch (m_flag)
+    {
+        case EDebugDraw::eDrawNormals:
 
-    CGeometryGL::bindVertexArray(0);
+            CGeometryGL::bindVertexArray(m_arrayId);
+            CGeometryGL::drawArrays(GL_LINES, 0, m_normals.vertex.size());
+            CGeometryGL::bindVertexArray(0);
+            break;
+
+        case EDebugDraw::eDrawAll:
+
+            CGeometryGL::bindVertexArray(m_arrayId);
+            CGeometryGL::drawArrays(GL_LINES, 0, m_normals.vertex.size());
+            CGeometryGL::bindVertexArray(0);
+            break;
+
+        case EDebugDraw::eDrawNone:
+        default:
+
+            break;
+    }
 
     RENDERER->checkForErrors("CDebugDrawGL Update Error");
 }

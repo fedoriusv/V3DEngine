@@ -12,6 +12,7 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_viewPosition(core::Vector3D(0.0f))
     , m_modelMatrix(core::Matrix4D())
     , m_normalMatrix(core::Matrix4D())
+    , m_debugMode(false)
 {
 	m_viewportSize = context->getWindow()->getSize();
 }
@@ -35,11 +36,26 @@ void CRenderer::checkForErrors(const std::string& location)
 	m_context->checkForErrors(location);
 }
 
+void CRenderer::reshape(u32 width, u32 height)
+{
+    if (height == 0)
+    {
+        height = 1;
+    }
+    m_viewportSize.width = width;
+    m_viewportSize.height = height;
+
+    f32 aspectRatio = (f32)m_viewportSize.width / (f32)m_viewportSize.height;
+    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
+
+}
+
 void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
 {
     m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
     m_viewMatrix.makeTransposed();
     m_viewPosition = pos;
+
 }
 
 void CRenderer::updateTransform(const core::Matrix4D& transform)
@@ -48,9 +64,20 @@ void CRenderer::updateTransform(const core::Matrix4D& transform)
 
     m_modelMatrix.getInverse(m_normalMatrix);
     m_modelMatrix.makeTransposed();
+
 }
 
 const core::Dimension2D& CRenderer::getViewportSize() const
 {
     return m_viewportSize;
+}
+
+void CRenderer::setDebugMode(bool active)
+{
+    m_debugMode = active;
+}
+
+bool CRenderer::isDebugMode() const
+{
+    return m_debugMode;
 }

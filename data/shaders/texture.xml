@@ -26,7 +26,7 @@
 
 					layout (location = POSITION)  in vec3 positions;
 					layout (location = NORMAL)    in vec3 normals;
-					layout (location = TEXCOORD0) in vec2 texCoord0;
+					layout (location = TEXCOORD0) in vec2 texture0;
 
 					struct Transform
 					{
@@ -48,7 +48,7 @@
 					{
 						vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
 						
-						fragVertex.texCoord0 = texCoord0;
+						fragVertex.texCoord0 = texture0;
 
 						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
 					}

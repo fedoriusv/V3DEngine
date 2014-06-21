@@ -15,6 +15,7 @@ namespace renderer
         eTriangleStrip,
         eTriangles,
         eTriangleFan,
+        eLines,
 
         eCount
     };

@@ -14,7 +14,8 @@ GLenum EDrawModeGL[EDrawMode::eCount] =
 {
     GL_TRIANGLE_STRIP,
     GL_TRIANGLES,
-    GL_TRIANGLE_FAN
+    GL_TRIANGLE_FAN,
+    GL_LINES
 };
 
 
@@ -126,13 +127,11 @@ void CGeometryGL::draw()
 
     if (m_data._countIndices > 0)
     {
-        glDrawElements(EDrawModeGL[m_drawMode], m_data._countIndices, GL_UNSIGNED_INT, NULL);
+        CGeometryGL::drawElements(EDrawModeGL[m_drawMode], m_data._countIndices);
     }
     else
     {
-        u32 firstPoint = 0;
-        u32 countPoints = m_data._countVertices;
-        glDrawArrays(EDrawModeGL[m_drawMode], firstPoint, countPoints);
+        CGeometryGL::drawArrays(EDrawModeGL[m_drawMode], 0, m_data._countVertices);
     }
 	
 	CGeometryGL::bindVertexArray(0);
@@ -320,4 +319,14 @@ void CGeometryGL::initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d
 {
 	glEnableVertexAttribArray(vertexAttrib);
 	glVertexAttribPointer(vertexAttrib, size, GL_FLOAT, GL_FALSE, NULL, NULL);
+}
+
+void CGeometryGL::drawElements(const u32 mode, const u32 count)
+{
+    glDrawElements(mode, count, GL_UNSIGNED_INT, NULL);
+}
+
+void CGeometryGL::drawArrays(const u32 mode, const u32 first, const u32 count)
+{
+    glDrawArrays(mode, first, count);
 }

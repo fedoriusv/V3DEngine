@@ -10,6 +10,8 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CDebugDraw;
+
     class CRenderJob
     {
     public:
@@ -27,12 +29,13 @@ namespace renderer
 
     private:
 
+        friend              CDebugDraw;
+
         void                updateMaterial(const ShaderDataPtr& data);
-        void                updateTransform(const ShaderDataPtr& data);
+        static void         updateTransform(const ShaderDataPtr& data);
 
         MaterialPtr         m_material;
         GeometryPtr         m_geomerty;
-        //DebugNormalsPtr     m_debugNormals;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
