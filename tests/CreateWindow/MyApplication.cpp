@@ -17,21 +17,25 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     //TODO: init
-    //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addTorus(0, core::Vector3D(0, 0, -5)));
+    scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
+    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
+    torus->getMaterial()->setRenderTechnique("shaders/texture.xml");
+
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
-    cube->getMaterial()->setTexture(0, "textures/box.jpg");
     cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
+    cube->getMaterial()->setTexture(0, "textures/box.jpg");
+  
 
 
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
 
     //getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
-    getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
-
+    BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }
 
@@ -44,6 +48,7 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
 {
     f32 step = 0.1f;
     f32 angle = 5.0f;
+    static bool debug = false;
 
     CNode* node = getSceneManager()->getObjectByName("cube");
     if (!node)
@@ -78,6 +83,11 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     if (event->_key == EKeyCode::eKeyEscape)
     {
         getPlatform()->closeWindow();
+    }
+    if (event->_key == EKeyCode::eKeyKey_N && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+    {
+        debug = !debug;
+        getSceneManager()->setDebugMode(debug);
     }
 
     getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));

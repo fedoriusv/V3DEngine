@@ -17,12 +17,7 @@ CSampleShape::~CSampleShape()
 
 void CSampleShape::render()
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    m_renderJob->job();
+    CShape::render();
 }
 
 void CSampleShape::update(f64 time)

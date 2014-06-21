@@ -32,6 +32,11 @@ CSceneManager::~CSceneManager()
 	CSceneManager::clear();
 }
 
+void CSceneManager::setDebugMode(bool active)
+{
+    RENDERER->setDebugMode(active);
+}
+
 void CSceneManager::init()
 {
     for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)

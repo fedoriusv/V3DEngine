@@ -17,12 +17,7 @@ CPlaneShape::~CPlaneShape()
 
 void CPlaneShape::render()
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    m_renderJob->job();
+    CShape::render();
 }
 
 void CPlaneShape::update(f64 time)
@@ -82,10 +77,16 @@ void CPlaneShape::init()
     if (data._vertices.id == 0)
     {
         m_geometry->init();
+#ifdef _DEBUG
+        m_debug->init();
+#endif
     }
     else
     {
         m_geometry->refresh();
+#ifdef _DEBUG
+        m_debug->refresh();
+#endif
     }
 }
 

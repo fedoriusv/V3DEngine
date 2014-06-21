@@ -43,8 +43,11 @@ namespace scene
         CNode*                  getObjectByName(const std::string& name);
 
         void                    setBackgroundColor(const Vector3D& color);
-
         const core::Vector3D&   getBackgroundColor() const;
+
+#ifdef _DEBUG
+        void                     setDebugMode(bool active);
+#endif
 
     private:
 

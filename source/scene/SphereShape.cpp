@@ -18,12 +18,7 @@ CSphereShape::~CSphereShape()
 
 void CSphereShape::render()
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    m_renderJob->job();
+    CShape::render();
 }
 
 void CSphereShape::update(f64 time)
@@ -130,7 +125,20 @@ void CSphereShape::init()
 
     CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
 
-    m_geometry->init();
+    if (data._vertices.id == 0)
+    {
+        m_geometry->init();
+#ifdef _DEBUG
+        m_debug->init();
+#endif
+    }
+    else
+    {
+        m_geometry->refresh();
+#ifdef _DEBUG
+        m_debug->refresh();
+#endif
+    }
 }
 
 void CSphereShape::setRadius(const f32 radius)

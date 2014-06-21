@@ -17,12 +17,7 @@ CCubeShape::~CCubeShape()
 
 void CCubeShape::render()
 {
-    if (!m_visible)
-    {
-        return;
-    }
-
-    m_renderJob->job();
+    CShape::render();
 }
 
 void CCubeShape::update(f64 time)

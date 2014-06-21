@@ -234,9 +234,10 @@ void CNode::update(f64 time)
         return;
     }
 
-    if (m_needUpdate)
+    RENDERER->updateTransform(m_transform);
+    /*if (m_needUpdate)
     {
         RENDERER->updateTransform(m_transform);
         m_needUpdate = false;
-    }
+    }*/
 }
