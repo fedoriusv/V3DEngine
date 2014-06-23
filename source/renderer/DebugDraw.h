@@ -13,8 +13,9 @@ namespace renderer
 
     enum EDebugDraw
     {
-        eDrawNone = 0, 
+        eDrawNone    = 0, 
         eDrawNormals = 1 << 0,
+        eDrawEdges   = 1 << 1,
 
         eDrawAll
     };

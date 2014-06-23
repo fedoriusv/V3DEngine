@@ -14,33 +14,33 @@ namespace scene
 
 namespace renderer
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum ETextureTarget
-	{
-		eUnknown = -1,
-		eTexture1D,
-		eTexture2D,
-		eTexture3D,
-		eTextureCubeMap,
+    enum ETextureTarget
+    {
+        eUnknown = -1,
+        eTexture1D,
+        eTexture2D,
+        eTexture3D,
+        eTextureCubeMap,
 
         eTargetCount
-	};
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum ETextureFilter
-	{
-		eNearest,
-		eLinear,
+    enum ETextureFilter
+    {
+        eNearest,
+        eLinear,
 
-		eNearestMipmapNearest,
-		eNearestMipmapLinear,
+        eNearestMipmapNearest,
+        eNearestMipmapLinear,
         eLinearMipmapNearest,
-		eLinearMipmapLinear,
+        eLinearMipmapLinear,
 
         eFilterCount
-	};
+    };
 
     enum EAnisotropic
     {
@@ -63,10 +63,10 @@ namespace renderer
         eWrapCount
     };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum EImageType
-	{
+    enum EImageType
+    {
         eByte,
         eUnsignedByte,
         eShort,
@@ -78,12 +78,12 @@ namespace renderer
         eHalf,
 
         eTypeCount
-	};
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum EImageFormat
-	{
+    enum EImageFormat
+    {
         eColorIndex,
         eAlpha,
         eRGB,
@@ -95,37 +95,37 @@ namespace renderer
         eDepthComponent,
 
         eFormatCount
-	};
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum ETextureLayer
-	{
-		eLayer0 = 0,
-		eLayer1,
-		eLayer2,
-		eLayer3,
+    enum ETextureLayer
+    {
+        eLayer0 = 0,
+        eLayer1,
+        eLayer2,
+        eLayer3,
 
-		eLayerMax,
-	};
+        eLayerMax,
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	struct STextureData
-	{
-		u16				width;
-		u16				height;
-		u16				depth;
-		EImageFormat	format;
-		EImageType		type;
-		void*			data;
-	};
+    struct STextureData
+    {
+        u16             width;
+        u16             height;
+        u16             depth;
+        EImageFormat    format;
+        EImageType      type;
+        void*           data;
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::vector<STextureData>  TextureData;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CTexture : public stream::CResource
     {
@@ -143,10 +143,10 @@ namespace renderer
 
         bool            isEnable()      const;
 
-		u32				getTextureID()  const;
-		ETextureTarget	getTarget()     const;
-		ETextureFilter	getMinFiler()   const;
-		ETextureFilter	getMagFiler()   const;
+        u32             getTextureID()  const;
+        ETextureTarget  getTarget()     const;
+        ETextureFilter  getMinFiler()   const;
+        ETextureFilter  getMagFiler()   const;
         EWrapType       getWrap()       const;
         EAnisotropic    getAnisotropic()const;
 
