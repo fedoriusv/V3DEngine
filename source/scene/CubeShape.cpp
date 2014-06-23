@@ -73,17 +73,17 @@ void CCubeShape::init()
 	};
 
 
-	SVertexData& data = CShape::getGeometryData();
+    SVertexData& data = CShape::getGeometryData();
     data.malloc(count, 36);
 
-    m_geometry->copyVertices(vertex, count);
-    m_geometry->copyNormals(normals, count);
-    m_geometry->copyTexCoords(texCoord, 0, count);
-    m_geometry->copyIndices(indices, 36);
+    m_geometry->copyToVertices(vertex, count);
+    m_geometry->copyToNormals(normals, count);
+    m_geometry->copyToTexCoords(texCoord, 0, count);
+    m_geometry->copyToIndices(indices, 36);
     
     CShape::setGeometryDrawMode(EDrawMode::eTriangles);
 
-	m_geometry->init();
+    m_geometry->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif

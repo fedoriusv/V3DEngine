@@ -9,34 +9,34 @@
 
 namespace v3d
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    class CEngine : public Singleton<CEngine>
+    {
+    public:
+    
+        CEngine();
+        virtual                         ~CEngine();
 
-	class CEngine : public Singleton<CEngine>
-	{
-	public:
+        platform::PlatformPtr           getPlatform()          const;
+        event::InputEventHandlerPtr     getInputEventHandler() const;
+        scene::SceneManagerPtr          getSceneManager()      const;
+        platform::WindowPtr             getWindow()            const;
+        renderer::RendererPtr           getRenderer()          const;
 
-		CEngine();
-		virtual							~CEngine();
-		
-		platform::PlatformPtr			getPlatform()          const;
-		event::InputEventHandlerPtr 	getInputEventHandler() const;
-		scene::SceneManagerPtr			getSceneManager()      const;
-		platform::WindowPtr			    getWindow()            const;
-		renderer::RendererPtr			getRenderer()          const;
+        bool                            init();
+        bool                            begin();
+        bool                            end();
 
-		bool							init();
-		bool							begin();
-		bool							end();
+    private:
 
-	private:
+        platform::PlatformPtr           m_platform;
+        event::InputEventHandlerPtr     m_inputEventHandler;
+        scene::SceneManagerPtr          m_scene;
 
-		platform::PlatformPtr			m_platform;
-		event::InputEventHandlerPtr	    m_inputEventHandler;
-		scene::SceneManagerPtr			m_scene;
+    };
 
-	};
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define RENDERER CEngine::getInstance()->getRenderer()
 #define INPUT_EVENTS  CEngine::getInstance()->getInputEventHandler()

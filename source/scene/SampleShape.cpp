@@ -29,19 +29,38 @@ void CSampleShape::init()
 {
     CShape::init();
 
-    const float triangle[][3] = 
+    const f32 vertex[][3] =
     {
          -1.0f, -1.0f, 0.0f,
           0.0f,  1.0f, 0.0f, 
           1.0f, -1.0f, 0.0f,
     };
 
+    const f32 normal[][3] =
+    {
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+    };
+
+    const f32 texCoord[][2] =
+    {
+        0.0f, 0.0f,
+        0.5f, 1.0f,
+        1.0f, 0.0f,
+    };
+
 
     SVertexData& data = CShape::getGeometryData();
     data.malloc(3, 0);
 
-    m_geometry->copyVertices(triangle, 3);
+    m_geometry->copyToVertices(vertex, 3);
+    m_geometry->copyToNormals(normal, 3);
+    m_geometry->copyToTexCoords(texCoord, 0, 3);
     CShape::setGeometryDrawMode(EDrawMode::eTriangles);
 
     m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
 }

@@ -30,7 +30,7 @@ void CGeometry::setDrawMode(EDrawMode mode)
     m_drawMode = mode;
 }
 
-void CGeometry::copyVertices(const f32 vertices[][3], u32 size)
+void CGeometry::copyToVertices(const f32 vertices[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
@@ -38,7 +38,7 @@ void CGeometry::copyVertices(const f32 vertices[][3], u32 size)
     }
 }
 
-void CGeometry::copyNormals(const f32 normals[][3], u32 size)
+void CGeometry::copyToNormals(const f32 normals[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
@@ -46,7 +46,7 @@ void CGeometry::copyNormals(const f32 normals[][3], u32 size)
     }
 }
 
-void CGeometry::copyTexCoords(const f32 texCoords[][2], u32 laye, u32 size)
+void CGeometry::copyToTexCoords(const f32 texCoords[][2], u32 laye, u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
@@ -54,7 +54,7 @@ void CGeometry::copyTexCoords(const f32 texCoords[][2], u32 laye, u32 size)
     }
 }
 
-void CGeometry::copyIndices(const u32* indices, u32 size)
+void CGeometry::copyToIndices(const u32* indices, u32 size)
 {
     std::copy(indices, indices + size, m_data._indices.vertex.begin());
 }

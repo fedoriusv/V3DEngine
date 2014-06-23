@@ -11,8 +11,6 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef std::shared_ptr<stream::CResource> ResourcePtr;
-	
 	class CResourceDecoder
 	{
 		public:
@@ -22,7 +20,7 @@ namespace scene
 
 			virtual ~CResourceDecoder();
 
-			virtual ResourcePtr				decode( stream::IStream& stream ) = 0;
+            virtual stream::ResourcePtr		decode(stream::IStream& stream) = 0;
 			
 			bool							isExtensionSupported( const std::string& extension ) const;
 			void							setSupportedExtensions( const std::string supportedExtensions[] );

@@ -45,10 +45,10 @@ namespace renderer
         EDrawMode           getDrawMode() const;
         void                setDrawMode(EDrawMode mode);
 
-        void                copyVertices (const f32 vertices[][3], u32 size);
-        void                copyNormals  (const f32 normals[][3], u32 size);
-        void                copyTexCoords(const f32 texCoords[][2], u32 layer, u32 size);
-        void                copyIndices  (const u32* indices, u32 size);
+        void                copyToVertices (const f32 vertices[][3], u32 size);
+        void                copyToNormals  (const f32 normals[][3], u32 size);
+        void                copyToTexCoords(const f32 texCoords[][2], u32 layer, u32 size);
+        void                copyToIndices  (const u32* indices, u32 size);
 
     protected:
 
