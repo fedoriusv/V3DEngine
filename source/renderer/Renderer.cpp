@@ -12,7 +12,9 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_viewPosition(core::Vector3D(0.0f))
     , m_modelMatrix(core::Matrix4D())
     , m_normalMatrix(core::Matrix4D())
+#ifdef _DEBUG
     , m_debugMode(false)
+#endif
 {
 	m_viewportSize = context->getWindow()->getSize();
 }
@@ -72,6 +74,7 @@ const core::Dimension2D& CRenderer::getViewportSize() const
     return m_viewportSize;
 }
 
+#ifdef _DEBUG
 void CRenderer::setDebugMode(bool active)
 {
     m_debugMode = active;
@@ -81,3 +84,4 @@ bool CRenderer::isDebugMode() const
 {
     return m_debugMode;
 }
+#endif

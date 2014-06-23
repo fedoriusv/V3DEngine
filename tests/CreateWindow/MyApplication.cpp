@@ -16,17 +16,21 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    //TODO: init
-    scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
-    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
-    torus->getMaterial()->setRenderTechnique("shaders/texture.xml");
-
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0,core::Vector3D(0,0,-5)));
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 0, -5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/sample.xml");
     cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
     cube->getMaterial()->setTexture(0, "textures/box.jpg");
+
+    //TODO: init
+    scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
+    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
+    torus->getMaterial()->setRenderTechnique("shaders/texture.xml");
+
+    scene::CShape* cube1 = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(1, -1, -5)));
+    cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+    cube1->getMaterial()->setTexture(0, "textures/wall.bmp");
   
 
 

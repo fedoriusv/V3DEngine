@@ -32,10 +32,12 @@ CSceneManager::~CSceneManager()
 	CSceneManager::clear();
 }
 
+#ifdef _DEBUG
 void CSceneManager::setDebugMode(bool active)
 {
     RENDERER->setDebugMode(active);
 }
+#endif
 
 void CSceneManager::init()
 {
