@@ -98,6 +98,7 @@ void CShape::render()
     }
 
     m_renderJob->job(m_needUpdate);
+    //TODO:
     //m_needUpdate = false;
 
 #ifdef _DEBUG

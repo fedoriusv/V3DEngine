@@ -24,7 +24,10 @@ renderer::TexturePtr CTextureManager::get( const std::string& name )
 
 renderer::TexturePtr CTextureManager::load(const std::string& name)
 {
-	auto it = m_textures.find( name );
+    std::string nameStr = name;
+    std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
+
+    auto it = m_textures.find(nameStr);
 
 	if( it != m_textures.end() )
 	{
@@ -34,15 +37,15 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
 	{	
 		std::string fileExtension;
 					
-		const size_t pos = name.find( '.' );
+        const size_t pos = nameStr.find('.');
 		if( pos != std::string::npos )
 		{
-			fileExtension = std::string( name.begin() + pos, name.end() );
+            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
 		}
 
         for (std::string& path : m_pathes)
 		{
-			const std::string fullName = path + name;
+            const std::string fullName = path + nameStr;
 			const bool isFileExist = stream::FileStream::isFileExist(fullName);
 			if( isFileExist )
 			{	
@@ -56,17 +59,17 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
                     texture->m_target = renderer::ETextureTarget::eTexture2D;
                     if (!texture->load())
                     {
-                        LOG_ERROR("Streaming error read file [%s]", name.c_str());
+                        LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
                     
                     if (!texture->create())
                     {
-                        LOG_ERROR("Error to Create Texture file [%s]", name.c_str());
+                        LOG_ERROR("Error to Create Texture file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
-                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(name, texture));
+                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(nameStr, texture));
 
                     return texture;
 				}

@@ -29,7 +29,10 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::get(const std::string& nam
 
 renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
 {
-    auto it = m_renderTechniques.find(name);
+    std::string nameStr = name;
+    std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
+
+    auto it = m_renderTechniques.find(nameStr);
 
     if (it != m_renderTechniques.end())
     {
@@ -39,15 +42,15 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
     {
         std::string fileExtension;
 
-        const size_t pos = name.find('.');
+        const size_t pos = nameStr.find('.');
         if (pos != std::string::npos)
         {
-            fileExtension = std::string(name.begin() + pos, name.end());
+            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
         }
 
         for (std::string& path : m_pathes)
         {
-            const std::string fullName = path + name;
+            const std::string fullName = path + nameStr;
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
@@ -60,11 +63,11 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
                     technique->init(stream);
                     if (!technique->load())
                     {
-                        LOG_ERROR("Streaming error read file [%s]", name.c_str());
+                        LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
-                    m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(name, technique));
+                    m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
 
                     return technique;
                     
