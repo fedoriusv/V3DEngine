@@ -16,7 +16,7 @@ namespace renderer
     {
     public:
 
-        CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty);
+        CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty, const Matrix4D& transform);
         ~CRenderJob();
 
         void                setMaterial(const MaterialPtr& material);
@@ -25,7 +25,10 @@ namespace renderer
         void                setGeomery(const GeometryPtr& geomerty);
         const GeometryPtr&  getGeometry() const;
 
-        void                job();
+        void                setTransform(const Matrix4D& transform);
+        const Matrix4D&     getTransform() const;
+
+        void                job(const bool updated);
 
     private:
 
@@ -36,6 +39,9 @@ namespace renderer
 
         MaterialPtr         m_material;
         GeometryPtr         m_geomerty;
+        Matrix4D            m_transform;
+
+        bool                m_transformUpdate;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

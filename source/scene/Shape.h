@@ -43,6 +43,7 @@ namespace scene
         const renderer::MaterialPtr& getMaterial() const;
 
         void                         init()  override;
+        void                         update(f64 time) override;
         void                         render() override;
 
     protected:

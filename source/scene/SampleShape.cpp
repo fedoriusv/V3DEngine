@@ -22,7 +22,7 @@ void CSampleShape::render()
 
 void CSampleShape::update(f64 time)
 {
-    CNode::update(time);
+    CShape::update(time);
 }
 
 void CSampleShape::init()

@@ -22,7 +22,7 @@ void CPlaneShape::render()
 
 void CPlaneShape::update(f64 time)
 {
-    CNode::update(time);
+    CShape::update(time);
 }
 
 void CPlaneShape::init()

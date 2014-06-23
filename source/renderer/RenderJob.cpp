@@ -4,9 +4,10 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty)
+CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty, const Matrix4D& transform)
     : m_material(material)
     , m_geomerty(geomerty)
+    , m_transform(transform)
 {
 }
 
@@ -34,13 +35,27 @@ const GeometryPtr& CRenderJob::getGeometry() const
     return m_geomerty;
 }
 
-void CRenderJob::job()
+void CRenderJob::setTransform(const Matrix4D& transform)
+{
+    m_transform = transform;
+}
+
+const Matrix4D& CRenderJob::getTransform() const
+{
+    return m_transform;
+}
+
+void CRenderJob::job(const bool updated)
 {
     for (u32 i = 0; i < m_material->getRenderTechique()->getRenderPassCount(); ++i)
     {
         const RenderPassPtr& pass = m_material->getRenderTechique()->getRenderPass(i);
 
-        CRenderJob::updateTransform(pass->getShaderData());
+        if (updated)
+        {
+            CRenderJob::updateTransform(pass->getShaderData());
+        }
+
         CRenderJob::updateMaterial(pass->getShaderData());
 
         pass->bind();
@@ -101,11 +116,6 @@ void CRenderJob::updateMaterial(const ShaderDataPtr& data)
 
 void CRenderJob::updateTransform(const ShaderDataPtr& data)
 {
-   /* if (!RENDERER->m_updated)
-    {
-        return;
-    }*/
-
     if (data->isExistUniform(eTransformProjectionMatrix))
     {
         data->setUniformMatrix4(eTransformProjectionMatrix, RENDERER->m_projectionMatrix);
@@ -130,6 +140,4 @@ void CRenderJob::updateTransform(const ShaderDataPtr& data)
     {
         data->setUniformVector3(eTransformViewPosition, RENDERER->m_viewPosition);
     }
-
-    //RENDERER->m_updated = false;
 }

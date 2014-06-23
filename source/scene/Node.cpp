@@ -226,18 +226,3 @@ void CNode::updateTransform(ENodeTransform transform)
         (*iter)->m_needUpdate = true;
     }
 }
-
-void CNode::update(f64 time)
-{
-    if (!m_visible)
-    {
-        return;
-    }
-
-    RENDERER->updateTransform(m_transform);
-    /*if (m_needUpdate)
-    {
-        RENDERER->updateTransform(m_transform);
-        m_needUpdate = false;
-    }*/
-}

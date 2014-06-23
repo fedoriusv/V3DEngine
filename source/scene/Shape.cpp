@@ -32,7 +32,7 @@ void CShape::init()
     }
 
     m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry);
+    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_transform);
 #ifdef _DEBUG
     m_debug = RENDERER->makeDebugDraw(m_geometry);
     m_debug->setDebugFlag(EDebugDraw::eDrawAll);
@@ -77,6 +77,19 @@ void CShape::setGeometryDrawMode(EDrawMode mode)
 	m_geometry->setDrawMode(mode);
 }
 
+void CShape::update(f64 time)
+{
+    if (!m_visible)
+    {
+        return;
+    }
+
+    if (m_needUpdate)
+    {
+        RENDERER->updateTransform(m_transform);
+    }
+}
+
 void CShape::render()
 {
     if (!m_visible)
@@ -84,7 +97,8 @@ void CShape::render()
         return;
     }
 
-    m_renderJob->job();
+    m_renderJob->job(m_needUpdate);
+    //m_needUpdate = false;
 
 #ifdef _DEBUG
     if (RENDERER->isDebugMode())

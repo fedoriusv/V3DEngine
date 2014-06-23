@@ -23,7 +23,7 @@ void CSphereShape::render()
 
 void CSphereShape::update(f64 time)
 {
-    CNode::update(time);
+    CShape::update(time);
 }
 
 void CSphereShape::init()

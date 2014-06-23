@@ -22,7 +22,7 @@ void CCylinderShape::render()
 
 void CCylinderShape::update(f64 time)
 {
-    CNode::update(time);
+    CShape::update(time);
 }
 
 void CCylinderShape::init()
