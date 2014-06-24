@@ -37,8 +37,8 @@ void MyApplication::init()
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
 
-    //getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
-    BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    //BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 }

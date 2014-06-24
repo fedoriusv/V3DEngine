@@ -1,4 +1,5 @@
 #include "RenderJob.h"
+#include "scene/Light.h"
 #include "Engine.h"
 
 using namespace v3d;
@@ -51,12 +52,14 @@ void CRenderJob::job(const bool updated)
     {
         const RenderPassPtr& pass = m_material->getRenderTechique()->getRenderPass(i);
 
+        const ShaderDataPtr& data = pass->getShaderData();
         if (updated)
         {
-            CRenderJob::updateTransform(pass->getShaderData());
+            CRenderJob::updateTransform(data);
         }
 
-        CRenderJob::updateMaterial(pass->getShaderData());
+        CRenderJob::updateMaterial(data);
+        CRenderJob::updateLight(data);
 
         pass->bind();
 
@@ -140,4 +143,75 @@ void CRenderJob::updateTransform(const ShaderDataPtr& data)
     {
         data->setUniformVector3(eTransformViewPosition, RENDERER->m_viewPosition);
     }
+}
+
+void CRenderJob::updateLight(const ShaderDataPtr& data)
+{
+    if (RENDERER->m_lightList.empty())
+    {
+        return;
+    }
+
+    std::vector<scene::CLight*> lights = RENDERER->m_lightList;
+    const Vector3D& pos = m_transform.getTranslation();
+
+    std::remove_if(lights.begin(), lights.end(), [pos](scene::CLight* light) -> bool
+    {
+        if (!light->isVisible())
+        {
+            return true;
+        }
+
+        f32 distance = (light->getPosition() - pos).length();
+        if (light->getRadius() < distance)
+        {
+            return true;
+        }
+
+        return true;
+    });
+
+    if (data->isExistUniform(eLightCount))
+    {
+        data->setUniformInt(eLightCount, lights.size());
+    }
+
+    if (lights.empty())
+    {
+        return;
+    }
+
+    for (std::vector<scene::CLight*>::const_iterator light = lights.begin(); light < lights.end(); ++light)
+    {
+        if (data->isExistUniform(eLightAmbient))
+        {
+            data->setUniformVector4(eLightAmbient, (*light)->getAmbient());
+        }
+
+        if (data->isExistUniform(eLightDiffuse))
+        {
+            data->setUniformVector4(eLightDiffuse, (*light)->getDiffuse());
+        }
+
+        if (data->isExistUniform(eLightSpecular))
+        {
+            data->setUniformVector4(eLightSpecular, (*light)->getSpecular());
+        }
+
+        if (data->isExistUniform(eLightDirection))
+        {
+            data->setUniformVector3(eLightDirection, (*light)->getDirection());
+        }
+
+        if (data->isExistUniform(eLightAttenuation))
+        {
+            data->setUniformVector3(eLightAttenuation, (*light)->getAttenuation());
+        }
+
+        if (data->isExistUniform(eLightRadius))
+        {
+            data->setUniformFloat(eLightRadius, (*light)->getRadius());
+        }
+    }
+
 }

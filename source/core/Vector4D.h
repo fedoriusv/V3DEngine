@@ -17,7 +17,7 @@ namespace core
 
 		TVector4D();
 		TVector4D(T nx);
-		TVector4D(T nx, T nw = 0);
+		TVector4D(T nx, T nw);
 		TVector4D(T nx, T ny, T nz, T nw = 0);
 		TVector4D(const TVector4D<T>& other);
 		TVector4D(const TVector3D<T>& other, T nw = 0);

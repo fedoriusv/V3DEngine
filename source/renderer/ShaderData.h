@@ -48,13 +48,13 @@ namespace renderer
         friend                          CRenderJob;
         friend                          CDebugDraw;
 
-        void                            setUniformInt    (EDefaultUniformData type, const u32             value);
-        void                            setUniformFloat  (EDefaultUniformData type, const f32             value);
-        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector);
-        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector);
-        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector);
-        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix);
-        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix);
+        void                            setUniformInt    (EDefaultUniformData type, const u32             value,  const u32 idx);
+        void                            setUniformFloat  (EDefaultUniformData type, const f32             value,  const u32 idx);
+        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector, const u32 idx);
+        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector, const u32 idx);
+        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector, const u32 idx);
+        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix, const u32 idx);
+        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix, const u32 idx);
 
         const std::string               findByUniformData(EDefaultUniformData type);
         void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);

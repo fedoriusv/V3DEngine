@@ -39,6 +39,14 @@ namespace renderer
         eMaterialEmission,
         eMaterialShininess,
 
+        eLightCount,
+        eLightAmbient,
+        eLightDiffuse,
+        eLightSpecular,
+        eLightDirection,
+        eLightAttenuation,
+        eLightRadius,
+
         eUniformsCount,
     };
 

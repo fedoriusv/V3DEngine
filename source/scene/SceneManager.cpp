@@ -7,6 +7,7 @@
 #include "DiskShape.h"
 #include "PlaneShape.h"
 #include "Camera.h"
+#include "Light.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -112,6 +113,7 @@ void CSceneManager::update(v3d::f64 time)
         switch (node->getNodeType())
         {
             case ENodeType::eShape:
+            case ENodeType::eModel:
             {
                 if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
                 {
@@ -129,27 +131,16 @@ void CSceneManager::update(v3d::f64 time)
             }
             break;
 
-            case ENodeType::eModel:
-            {
-            /* if (static_cast<CModel*>(node)->getMaterial()->getTransparency() > 0.0f)
-               {
-                   float priority = 0.0f;
-                   if (m_camera)
-                   {
-                       priority = length(node->getPosition() - m_camera->getPosition());
-                   }
-                   else
-                   {
-                       priority = node->getPosition().z;
-                   }
-                   node->m_priority = priority;
-               }*/
-            }
-            break;
-
             case ENodeType::eCamera:
             {
                 node->m_priority = 1000000.0f;
+            }
+            break;
+
+            case ENodeType::eLight:
+            case ENodeType::eFog:
+            {
+                node->m_priority = -1000000.0f;
             }
             break;
 
@@ -325,6 +316,20 @@ CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, con
     m_camera->m_active = true;
 
     CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4D& diffuse, const f32 radius)
+{
+    CLight* node = new CLight();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setDiffuse(diffuse);
+    node->setRadius(radius);
+
+    CSceneManager::addNode(node);
+    RENDERER->addLight(node);
 
     return node;
 }

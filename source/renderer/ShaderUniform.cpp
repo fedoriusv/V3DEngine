@@ -20,6 +20,14 @@ const std::string CShaderUniform::s_shaderUniformName[EDefaultUniformData::eUnif
     "material.emission",
     "material.shininess"
 
+    "light.count",
+    "light.ambient",
+    "light.diffuse",
+    "light.specular",
+    "light.direction",
+    "light.attenuation",
+    "light.radius",
+
 };
 
 

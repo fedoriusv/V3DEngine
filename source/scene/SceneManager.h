@@ -36,6 +36,8 @@ namespace scene
         CNode*                  addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 1.0f, const f32 majorRadius = 2.0f);
         CNode*                  addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 extent = 2.0f);
 
+        CNode*                  addLight(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 1.0f), const Vector4D& diffuse = Vector4D(1.0f), const f32 radius = 100.0f);
+
         CNode*                  addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
         CNode*                  addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);
 
@@ -51,9 +53,9 @@ namespace scene
 
     private:
 
-        double                  m_currentTime;
-        double                  m_deltaTime;
-        double                  m_lastTime;
+        f64                     m_currentTime;
+        f64                     m_deltaTime;
+        f64                     m_lastTime;
 
         void                    updateDeltaTime();
         void                    update(f64 time);

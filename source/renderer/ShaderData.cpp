@@ -256,7 +256,7 @@ const std::string CShaderData::findByUniformData(EDefaultUniformData type)
     return "";
 }
 
-void CShaderData::setUniformInt(EDefaultUniformData type, const u32 value)
+void CShaderData::setUniformInt(EDefaultUniformData type, const u32 value, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -272,7 +272,7 @@ void CShaderData::setUniformInt(EDefaultUniformData type, const u32 value)
     }
 }
 
-void CShaderData::setUniformFloat(EDefaultUniformData type, const f32 value)
+void CShaderData::setUniformFloat(EDefaultUniformData type, const f32 value, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -288,7 +288,7 @@ void CShaderData::setUniformFloat(EDefaultUniformData type, const f32 value)
     }
 }
 
-void CShaderData::setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector)
+void CShaderData::setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -304,7 +304,7 @@ void CShaderData::setUniformVector2(EDefaultUniformData type, const core::Vector
     }
 }
 
-void CShaderData::setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector)
+void CShaderData::setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -320,7 +320,7 @@ void CShaderData::setUniformVector3(EDefaultUniformData type, const core::Vector
     }
 }
 
-void CShaderData::setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector)
+void CShaderData::setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -336,7 +336,7 @@ void CShaderData::setUniformVector4(EDefaultUniformData type, const core::Vector
     }
 }
 
-void CShaderData::setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix)
+void CShaderData::setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())
@@ -352,7 +352,7 @@ void CShaderData::setUniformMatrix3(EDefaultUniformData type, const core::Matrix
     }
 }
 
-void CShaderData::setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix)
+void CShaderData::setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix, const u32 idx)
 {
     const std::string name = findByUniformData(type);
     if (!name.empty())

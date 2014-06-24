@@ -21,6 +21,12 @@ CRenderer::CRenderer(const DriverContextPtr& context)
 
 CRenderer::~CRenderer()
 {
+    m_lightList.clear();
+}
+
+void CRenderer::addLight(scene::CLight* lights)
+{
+    m_lightList.push_back(lights);
 }
 
 void CRenderer::setBackColor(const core::Vector3D& color)

@@ -34,6 +34,7 @@ namespace renderer
 
         friend              CDebugDraw;
 
+        void                updateLight(const ShaderDataPtr& data);
         void                updateMaterial(const ShaderDataPtr& data);
         static void         updateTransform(const ShaderDataPtr& data);
 
