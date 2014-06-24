@@ -57,6 +57,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
     m_name = techniqueName;
 
+    LOG_INFO("Info parse. Parse render technique [%s]", m_name.c_str());
 
     tinyxml2::XMLElement* passElement = root->FirstChildElement("pass");
     if (!passElement)

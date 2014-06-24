@@ -1,4 +1,4 @@
-<technique name="sample" version="100">
+<technique name="texture" version="100">
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -7,7 +7,6 @@
 		</uniforms>
 		<attributes>
 			<var name="positions" type="vec3" val="mesh.positions"/>
-			<var name="normals" type="vec3" val="mesh.normals"/>
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
 		<samplers>
@@ -25,7 +24,6 @@
 					#define TEXCOORD0 	5
 
 					layout (location = POSITION)  in vec3 positions;
-					layout (location = NORMAL)    in vec3 normals;
 					layout (location = TEXCOORD0) in vec2 texture0;
 
 					struct Transform

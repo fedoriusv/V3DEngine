@@ -1,0 +1,143 @@
+<technique name="light" version="100">
+	<pass name="pass0">
+		<uniforms>
+			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+			<var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+			<var name="transform.normalMatrix" type="mat4" val="transform.normalMatrix"/>
+			<var name="transform.viewPosition" type="vec3" val="transform.viewPosition"/>
+			
+			<var name="material.ambient" type="vec4" val="material.ambient"/>
+			<var name="material.diffuse" type="vec4" val="material.diffuse"/>
+			<var name="material.specular" type="vec4" val="material.specular"/>
+			<var name="material.emission" type="vec4" val="material.emission"/>
+			<var name="material.shininess" type="float" val="material.shininess"/>
+			
+			<var name="light.ambient" type="vec4" array="1" val="light.ambient"/>
+			<var name="light.diffuse" type="vec4" array="1" val="light.diffuse"/>
+			<var name="light.specular" type="vec4" array="1" val="light.specular"/>
+			<var name="light.position" type="vec4" array="1" val="light.position"/>
+			<var name="light.attenuation" type="vec3" array="1" val="light.attenuation"/>
+		</uniforms>
+		<attributes>
+			<var name="positions" type="vec3" val="mesh.positions"/>
+			<var name="normals" type="vec3" val="mesh.normals"/>
+		</attributes>
+		<samplers>
+		</samplers>
+		<renderstate polygonmode="full" winding="cw" cullface="false"/>
+		<rendertarget val="default"/>
+		<shaders>
+			<var type="vertex" name="vdefault">
+				<![CDATA[
+					#version 330
+
+					#define POSITION 	0
+					#define NORMAL 		2
+
+					layout (location = POSITION)  in vec3 positions;
+					layout (location = NORMAL)    in vec3 normals;
+
+					struct Transform
+					{
+						mat4 modelMatrix;
+						mat4 viewMatrix;
+						mat4 projectionMatrix;
+						mat4 normalMatrix;
+						vec3 viewPosition;
+					};
+					uniform Transform transform;
+
+					struct Light
+					{
+						vec4 	position;
+						vec4 	ambient;
+						vec4 	diffuse;
+						vec4 	specular;
+						vec3 	attenuation;
+					};
+					uniform Light light[8];
+					
+					struct Vertex 
+					{
+						vec3  normal;
+						vec3  lightDir;
+						vec3  viewDir;
+						float distance;
+					};
+					out Vertex fragVertex;
+
+					void main()
+					{
+						vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+						vec4 lightDir = light[0].position - vertex;
+						vec4 vNormal  = transform.normalMatrix * vec4(normals, 0.0);
+						
+						fragVertex.normal = vNormal.xyz; 
+						fragVertex.lightDir = vec3(lightDir);
+						fragVertex.viewDir = transform.viewPosition - vec3(vertex);
+						fragVertex.distance	= length(lightDir);
+
+						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
+					}
+				]]>
+			</var>
+			<var type="fragment" name="fdefault">
+				<![CDATA[
+					#version 330
+					
+					struct Material
+					{
+						vec4  ambient;
+						vec4  diffuse;
+						vec4  specular;
+						vec4  emission;
+						float shininess;
+					};
+					uniform Material material;
+					
+					struct Light
+					{
+						vec4 	position;
+						vec4 	ambient;
+						vec4 	diffuse;
+						vec4 	specular;
+						vec3 	attenuation;
+					};
+					uniform Light light[8];
+
+					struct Vertex 
+					{
+						vec3  normal;
+						vec3  lightDir;
+						vec3  viewDir;
+						float distance;
+					};
+
+					in 	Vertex 	fragVertex;
+					out vec4 	fragColor;
+
+					void main()
+					{
+						vec3 normal   = normalize(fragVertex.normal);
+						vec3 lightDir = normalize(fragVertex.lightDir);
+						vec3 viewDir  = normalize(fragVertex.viewDir);
+
+						float attenuation = 1.0 / (light[0].attenuation[0] +
+									light[0].attenuation[1] * fragVertex.distance +
+									light[0].attenuation[2] * fragVertex.distance * fragVertex.distance);
+						
+						fragColor = material.emission;
+						fragColor += material.ambient * light[0].ambient * attenuation;
+						
+						float NdotL = max(dot(normal, lightDir), 0.0);
+						fragColor += material.diffuse * light[0].diffuse * NdotL;
+						
+						float RdotVpow = max(pow(dot(reflect(-lightDir, normal), viewDir), material.shininess), 0.0);
+						fragColor += material.specular * light[0].specular * RdotVpow * attenuation;
+					}
+				]]>
+			</var>
+		</shaders>
+	</pass>
+</technique>

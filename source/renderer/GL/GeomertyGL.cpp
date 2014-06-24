@@ -123,7 +123,7 @@ void CGeometryGL::init()
 
 void CGeometryGL::draw()
 {
-	CGeometryGL::bindVertexArray(m_arrayId);
+    CGeometryGL::bindVertexArray(m_arrayId);
 
     if (m_data._countIndices > 0)
     {
@@ -133,10 +133,10 @@ void CGeometryGL::draw()
     {
         CGeometryGL::drawArrays(EDrawModeGL[m_drawMode], 0, m_data._countVertices);
     }
-	
-	CGeometryGL::bindVertexArray(0);
 
-    RENDERER->checkForErrors("GeometryGL Update Error");
+    CGeometryGL::bindVertexArray(0);
+
+    RENDERER->checkForErrors("GeometryGL Draw Error");
 }
 
 void CGeometryGL::free()

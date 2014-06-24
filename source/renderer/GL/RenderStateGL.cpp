@@ -1,5 +1,5 @@
 #include "RenderStateGL.h"
-
+#include "Engine.h"
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -33,5 +33,8 @@ void CRenderStateGL::bind()
     glFrontFace(ERenderWindingGL[m_winding]);
     m_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
+
     //TODO:
+
+    RENDERER->checkForErrors("CRenderStateGL Bind Error");
 }

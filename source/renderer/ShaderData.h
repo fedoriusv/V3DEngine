@@ -48,13 +48,13 @@ namespace renderer
         friend                          CRenderJob;
         friend                          CDebugDraw;
 
-        void                            setUniformInt    (EDefaultUniformData type, const u32             value,  const u32 idx);
-        void                            setUniformFloat  (EDefaultUniformData type, const f32             value,  const u32 idx);
-        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector, const u32 idx);
-        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector, const u32 idx);
-        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector, const u32 idx);
-        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix, const u32 idx);
-        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix, const u32 idx);
+        void                            setUniformInt    (EDefaultUniformData type, const u32             value,  const s32 idx = -1);
+        void                            setUniformFloat  (EDefaultUniformData type, const f32             value,  const s32 idx = -1);
+        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector, const s32 idx = -1);
+        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector, const s32 idx = -1);
+        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector, const s32 idx = -1);
+        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix, const s32 idx = -1);
+        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix, const s32 idx = -1);
 
         const std::string               findByUniformData(EDefaultUniformData type);
         void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);

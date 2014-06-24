@@ -213,57 +213,78 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
 
         case EShaderDataType::eTypeInt:
         {
-            GLint val = *(GLint*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniform1i(location, val);
+            if (location > -1)
+            {
+                GLint val = *(GLint*)value;
+                glUniform1i(location, val);
+            }
         }
         break;
 
         case EShaderDataType::eTypeFloat:
         {
-            GLfloat val = *(GLfloat*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniform1f(location, val);
+            if (location > -1)
+            {
+                GLfloat val = *(GLfloat*)value;
+                glUniform1f(location, val);
+            }
         }
         break;
 
         case EShaderDataType::eTypeVector2:
         {
-            core::Vector2D val = *(core::Vector2D*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniform2fv(location, 1, &val[0]);
+            if (location > -1)
+            {
+                core::Vector2D val = *(core::Vector2D*)value;
+                glUniform2fv(location, 1, &val[0]);
+            }
         }
         break;
 
         case EShaderDataType::eTypeVector3:
         {
-            core::Vector3D val = *(core::Vector3D*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniform3fv(location, 1, &val[0]);
+            if (location > -1)
+            {
+                core::Vector3D val = *(core::Vector3D*)value;
+                glUniform3fv(location, 1, &val[0]);
+            }
         }
         break;
 
         case EShaderDataType::eTypeVector4:
         {
-            core::Vector4D val = *(core::Vector4D*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniform4fv(location, 1, &val[0]);
+            if (location > -1)
+            {
+                core::Vector4D val = *(core::Vector4D*)value;
+                glUniform4fv(location, 1, &val[0]);
+            }
         }
         break;
 
         case EShaderDataType::eTypeMatrix3:
         {
-            core::Matrix3D val = *(core::Matrix3D*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniformMatrix3fv(location, 1, GL_TRUE, val.getPtr());
+            if (location > -1)
+            {
+                core::Matrix3D val = *(core::Matrix3D*)value;
+                glUniformMatrix3fv(location, 1, GL_TRUE, val.getPtr());
+            }
         }
         break;
     
         case EShaderDataType::eTypeMatrix4:
         {
-            core::Matrix4D val = *(core::Matrix4D*)value;
             location = glGetUniformLocation(shader, attribute.data());
-            glUniformMatrix4fv(location, 1, GL_TRUE, val.getPtr());
+            if (location > -1)
+            {
+                core::Matrix4D val = *(core::Matrix4D*)value;
+                glUniformMatrix4fv(location, 1, GL_TRUE, val.getPtr());
+            }
         }
         break;
     
@@ -275,6 +296,8 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
     {
         LOG_ERROR(" Error Uniform Location: %s . Shader ID : %d", attribute.data(), shader);
     }
+
+    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + attribute);
 
     return (location != -1);
 }
