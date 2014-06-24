@@ -16,23 +16,23 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 0, -5)));
-    CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 0, -5)));
+    //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
-    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
-    cube->getMaterial()->setTexture(0, "textures/box.jpg");
+    cube->getMaterial()->setRenderTechnique("shaders/light.xml");
+    //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     //TODO: init
     scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");
 
-    scene::CShape* cube1 = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(1, -1, -5)));
+    scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1, -1, -5)));
     cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-    cube1->getMaterial()->setTexture(0, "textures/wall.bmp");
+    cube1->getMaterial()->setTexture(0, "textures/box.jpg");
   
-
+    BaseApplication::getSceneManager()->addLight();
 
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
@@ -68,19 +68,19 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     {
         node->setPosition(Vector3D(node->getPosition().x, node->getPosition().y, node->getPosition().z - step));
     }*/
-    if (event->_key == EKeyCode::eKeyUp)
+    if (event->_key == EKeyCode::eKeyUp && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
         node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
     }
-    if (event->_key == EKeyCode::eKeyDown)
+    if (event->_key == EKeyCode::eKeyDown && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
         node->setRotation(Vector3D(node->getRotation().x - angle, node->getRotation().y, node->getRotation().z));
     }
-    if (event->_key == EKeyCode::eKeyLeft)
+    if (event->_key == EKeyCode::eKeyLeft && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
         node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y + angle, node->getRotation().z));
     }
-    if (event->_key == EKeyCode::eKeyRight)
+    if (event->_key == EKeyCode::eKeyRight && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
         node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
     }

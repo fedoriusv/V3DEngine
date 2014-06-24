@@ -169,10 +169,23 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
         }
 
         EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varVal);
+
         EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
             ? EShaderDataType::eTypeNone : CShaderData::getShaderDataTypeByName(varType);
 
-        m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
+        const u32 array = varElement->IntAttribute("array");
+        if (array > 0)
+        {
+            for (u32 index = 0; index < array; ++index)
+            {
+                const std::string varNameIdx = CRenderPass::attachIndexToUniform(varName, index);
+                m_shaderData->addDefaultUniform(varNameIdx, uniformType, uniformName);
+            }
+        }
+        else
+        {
+            m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
+        }
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -395,4 +408,19 @@ void CRenderPass::bind()
 
         m_program->setUniform(type, m_program->getShaderID(), attr, value);
     }
+}
+
+const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)
+{
+    size_t pos = name.find_first_of(".");
+    if (pos == std::string::npos)
+    {
+        std::string idxName(name + "[" + std::to_string(idx) + "]");
+
+        return idxName;
+    }
+
+    std::string idxName(name.substr(0, pos) + "[" + std::to_string(idx) + "]" + name.substr(pos, name.size()));
+
+    return idxName;
 }

@@ -63,8 +63,8 @@ void CRenderJob::job(const bool updated)
 
         pass->bind();
 
-        for (u32 layer = 0; layer < m_material->getTextureCount(); ++layer)
-        {
+       for (u32 layer = 0; layer < m_material->getTextureCount(); ++layer)
+       {
             TexturePtr texture = m_material->getTexture(layer);
 
             if (texture->isEnable())
@@ -171,9 +171,9 @@ void CRenderJob::updateLight(const ShaderDataPtr& data)
         return true;
     });
 
-    if (data->isExistUniform(eLightCount))
+    if (data->isExistUniform(eLightsCount))
     {
-        data->setUniformInt(eLightCount, lights.size());
+        data->setUniformInt(eLightsCount, lights.size());
     }
 
     if (lights.empty())
@@ -181,36 +181,42 @@ void CRenderJob::updateLight(const ShaderDataPtr& data)
         return;
     }
 
+    s32 index = 0;
     for (std::vector<scene::CLight*>::const_iterator light = lights.begin(); light < lights.end(); ++light)
     {
+        if (data->isExistUniform(eLightPosition))
+        {
+            data->setUniformVector4(eLightPosition, Vector4D((*light)->getPosition(), 0.0f), index);
+        }
+
         if (data->isExistUniform(eLightAmbient))
         {
-            data->setUniformVector4(eLightAmbient, (*light)->getAmbient());
+            data->setUniformVector4(eLightAmbient, (*light)->getAmbient(), index);
         }
 
         if (data->isExistUniform(eLightDiffuse))
         {
-            data->setUniformVector4(eLightDiffuse, (*light)->getDiffuse());
+            data->setUniformVector4(eLightDiffuse, (*light)->getDiffuse(), index);
         }
 
         if (data->isExistUniform(eLightSpecular))
         {
-            data->setUniformVector4(eLightSpecular, (*light)->getSpecular());
+            data->setUniformVector4(eLightSpecular, (*light)->getSpecular(), index);
         }
 
         if (data->isExistUniform(eLightDirection))
         {
-            data->setUniformVector3(eLightDirection, (*light)->getDirection());
+            data->setUniformVector3(eLightDirection, (*light)->getDirection(), index);
         }
 
         if (data->isExistUniform(eLightAttenuation))
         {
-            data->setUniformVector3(eLightAttenuation, (*light)->getAttenuation());
+            data->setUniformVector3(eLightAttenuation, (*light)->getAttenuation(), index);
         }
 
         if (data->isExistUniform(eLightRadius))
         {
-            data->setUniformFloat(eLightRadius, (*light)->getRadius());
+            data->setUniformFloat(eLightRadius, (*light)->getRadius(), index);
         }
     }
 

@@ -26,6 +26,7 @@ namespace renderer
     enum EDefaultUniformData
     {
         eUserUniform = -1,
+
         eTransformProjectionMatrix,
         eTransformModelMatrix,
         eTransformViewMatrix,
@@ -39,7 +40,9 @@ namespace renderer
         eMaterialEmission,
         eMaterialShininess,
 
-        eLightCount,
+        eLightsCount,
+
+        eLightPosition,
         eLightAmbient,
         eLightDiffuse,
         eLightSpecular,
