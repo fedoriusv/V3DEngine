@@ -13,7 +13,10 @@ CDebugDraw::CDebugDraw(const GeometryPtr& geometry)
     , m_fragment(nullptr)
     , m_flag(EDebugFlag::eDebugNone)
 {
-    s_tehnique = std::make_shared<CRenderTechnique>();
+    if (!s_tehnique)
+    {
+        s_tehnique = std::make_shared<CRenderTechnique>();
+    }
 
     for (u32 i = 0; i < EDebugDraw::eDrawCount; ++i)
     {
@@ -21,6 +24,25 @@ CDebugDraw::CDebugDraw(const GeometryPtr& geometry)
         m_objects[i]._drawMode = EDrawMode::eLines;
         m_objects[i]._vertex.id = 0;
     }
+}
+
+CDebugDraw::CDebugDraw(const Vector3D* pos, const f32* radius)
+    : m_geometry(nullptr)
+    , m_vertex(nullptr)
+    , m_fragment(nullptr)
+    , m_flag(EDebugFlag::eDebugLights)
+{
+    if (!s_tehnique)
+    {
+        s_tehnique = std::make_shared<CRenderTechnique>();
+    }
+
+    m_objects[EDebugDraw::eDrawLights]._arrayId = 0;
+    m_objects[EDebugDraw::eDrawLights]._drawMode = EDrawMode::eLines;
+    m_objects[EDebugDraw::eDrawLights]._vertex.id = 0;
+    m_objects[EDebugDraw::eDrawLights]._vectors = pos;
+    m_objects[EDebugDraw::eDrawLights]._param = radius;
+
 }
 
 CDebugDraw::~CDebugDraw()
@@ -54,8 +76,8 @@ void CDebugDraw::init()
     }
     if (m_flag & EDebugFlag::eDebugLights)
     {
-        int a = 0;
-        //
+        CDebugDraw::initDrawLightData();
+        initDraw(m_objects[EDebugDraw::eDrawLights]);
     }
 }
 
@@ -128,6 +150,12 @@ void CDebugDraw::initDrawShader()
 
 void CDebugDraw::initDrawNormalsData()
 {
+    if (!m_geometry)
+    {
+        ASSERT(false || "CDebugDraw Empty Geometry");
+        return;
+    }
+
     const SVertexData& data = m_geometry->getData();
 
     f32 s = 0.3f;
@@ -147,8 +175,14 @@ void CDebugDraw::initDrawNormalsData()
 
 void CDebugDraw::initDrawEdgeData()
 {
-    const SVertexData& data = m_geometry->getData();
+    if (!m_geometry)
+    {
+        ASSERT(false || "CDebugDraw Empty Geometry");
+        return;
+    }
 
+    const SVertexData& data = m_geometry->getData();
+    
     SVertices<core::Vector3D>& edges = m_objects[eDrawEdges]._vertex;
     SVertices<u32>& edgesIdx = m_objects[eDrawEdges]._index;
     m_objects[eDrawEdges]._drawMode = m_geometry->getDrawMode();
@@ -164,4 +198,18 @@ void CDebugDraw::initDrawEdgeData()
         edgesIdx.vertex.resize(data._countIndices);
         std::copy(data._indices.vertex.begin(), data._indices.vertex.end(), edgesIdx.vertex.begin());
     }
+}
+
+void CDebugDraw::initDrawLightData()
+{
+    const f32 s = 0.3f;
+    const f32 vertex[][3] =
+    {
+        { -s, -s, s  }, { s, -s, s  }, { s, s, s  }, { -s, s, s  },
+        { -s, -s, -s }, { -s, s, -s }, { s, s, -s }, { s, -s, -s },
+        { -s, s, -s  }, { -s, s, s  }, { s, s, s  }, { s, s, -s  },
+        { -s, -s, -s }, { s, -s, -s }, { s, -s, s }, { -s, -s, s },
+        { s, -s, -s  }, { s, s, -s  }, { s, s, s  }, { s, -s, s  },
+        { -s, -s, -s }, { -s, -s, s }, { -s, s, s }, { -s, s, -s }
+    };
 }

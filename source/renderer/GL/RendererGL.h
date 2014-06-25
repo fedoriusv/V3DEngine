@@ -30,6 +30,7 @@ namespace renderer
         RenderStatePtr      makeSharedRenderState()                                 override;
 #ifdef _DEBUG
         DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)              override;
+        DebugDrawPtr        makeDebugLight(Vector3D* position, f32* radius)         override;
 #endif
     };
 

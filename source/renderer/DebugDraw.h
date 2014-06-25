@@ -15,6 +15,7 @@ namespace renderer
     {
         eDrawNormals = 0,
         eDrawEdges,
+        eDrawLights,
 
         eDrawCount
     };
@@ -39,6 +40,9 @@ namespace renderer
         SVertices<v3d::u32>       _index;
         u32                       _arrayId;
         u32                       _drawMode;
+
+        const Vector3D*           _vectors;
+        const f32*                _param;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +52,7 @@ namespace renderer
     public:
 
         CDebugDraw(const GeometryPtr& geometry);
+        CDebugDraw(const Vector3D* position, const f32* radius);
         virtual                     ~CDebugDraw();
                                    
         void                        init();
@@ -67,6 +72,7 @@ namespace renderer
 
         void                        initDrawNormalsData();
         void                        initDrawEdgeData();
+        void                        initDrawLightData();
 
         static RenderTechniquePtr   s_tehnique;
         

@@ -104,4 +104,9 @@ DebugDrawPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
 {
     return std::make_shared<CDebugDrawGL>(geometry);
 }
+
+DebugDrawPtr CRendererGL::makeDebugLight(Vector3D* position, f32* radius)
+{
+    return  std::make_shared<CDebugDrawGL>(position, radius);
+}
 #endif

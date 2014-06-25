@@ -42,7 +42,14 @@ const std::string k_fragment = "#version 330\n\
                                 }";
 
 CDebugDrawGL::CDebugDrawGL(const GeometryPtr& geometry)
-: CDebugDraw(geometry)
+    : CDebugDraw(geometry)
+{
+    m_vertex = &k_vertex;
+    m_fragment = &k_fragment;
+}
+
+CDebugDraw(const Vector3D* position, const f32* radius)
+: CDebugDraw(position, radius)
 {
     m_vertex = &k_vertex;
     m_fragment = &k_fragment;

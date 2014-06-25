@@ -2,6 +2,7 @@
 #define _V3D_LIGHT_H_
 
 #include "Node.h"
+#include "renderer/DebugDraw.h"
 
 namespace v3d
 {
@@ -27,29 +28,33 @@ namespace scene
     public:
 
         CLight();
-        virtual     ~CLight();
+        virtual                   ~CLight();
 
-        void                render()         override;
-        void                update(f64 time) override;
-        void                init()           override;
-
-        void                setAmbient(const Vector4D& color);
-        void                setDiffuse(const Vector4D& color);
-        void                setSpecular(const Vector4D& color);
-        void                setRadius(const f32 radius);
-        void                setAttenuation(const Vector3D& attenuation);
-        void                setDirection(const Vector3D& direction);
-
-        const Vector4D&     getAmbient()        const;
-        const Vector4D&     getDiffuse()        const;
-        const Vector4D&     getSpecular()       const;
-        f32                 getRadius()         const;
-        const Vector3D&     getAttenuation()    const;
-        const Vector3D&     getDirection()      const;
+        void                      render()         override;
+        void                      update(f64 time) override;
+        void                      init()           override;
+                                  
+        void                      setAmbient(const Vector4D& color);
+        void                      setDiffuse(const Vector4D& color);
+        void                      setSpecular(const Vector4D& color);
+        void                      setRadius(const f32 radius);
+        void                      setAttenuation(const Vector3D& attenuation);
+        void                      setDirection(const Vector3D& direction);
+                                  
+        const Vector4D&           getAmbient()        const;
+        const Vector4D&           getDiffuse()        const;
+        const Vector4D&           getSpecular()       const;
+        f32                       getRadius()         const;
+        const Vector3D&           getAttenuation()    const;
+        const Vector3D&           getDirection()      const;
 
     private:
 
-        SLightData  m_data;
+        SLightData                m_data;
+
+#ifdef _DEBUG
+        renderer::DebugDrawPtr   m_debug;
+#endif
 
     };
 

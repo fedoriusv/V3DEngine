@@ -51,6 +51,7 @@ namespace renderer
         virtual RenderStatePtr      makeSharedRenderState()                                 = 0;
 #ifdef _DEBUG
         virtual DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)              = 0;
+        virtual DebugDrawPtr        makeDebugLight(Vector3D* position, f32* radius)         = 0;
         void                        setDebugMode(bool active);
         bool                        isDebugMode() const;
 #endif
