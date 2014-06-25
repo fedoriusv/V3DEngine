@@ -17,12 +17,16 @@ namespace v3d
             virtual             ~CDebugDrawGL();
 
             void                draw()    override;
-            void                refresh() override;
             void                free()    override;
 
         private:
 
-            virtual void        initDrawNormalsData();
+            void                initDraw(SDebugObject& object)    override;
+            void                refreshDraw(SDebugObject& object) override;
+
+            void                drawNormals();
+            void                drawEdges();
+
         };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////

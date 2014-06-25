@@ -42,7 +42,7 @@ void CGeometryGL::init()
 
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
-        const RenderPassPtr pass = m_technique->getRenderPass(idx);
+        const RenderPassPtr& pass = m_technique->getRenderPass(idx);
         const AttributeList& attributes = pass->getShaderData()->getAttributeList();
 
         for (auto attr : attributes)

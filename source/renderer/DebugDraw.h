@@ -13,11 +13,32 @@ namespace renderer
 
     enum EDebugDraw
     {
-        eDrawNone    = 0, 
-        eDrawNormals = 1 << 0,
-        eDrawEdges   = 1 << 1,
+        eDrawNormals = 0,
+        eDrawEdges,
 
-        eDrawAll
+        eDrawCount
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EDebugFlag
+    {
+        eDebugNone    = -1,
+        eDebugNormals = 0x00000001,
+        eDebugEdges   = 0x00000010,
+        eDebugLights  = 0x00000100,
+
+        eDebugAll     = 0x10000000
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    struct SDebugObject
+    {
+        SVertices<core::Vector3D> _vertex;
+        SVertices<v3d::u32>       _index;
+        u32                       _arrayId;
+        u32                       _drawMode;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,30 +51,33 @@ namespace renderer
         virtual                     ~CDebugDraw();
                                    
         void                        init();
-        void                        bind();
+        void                        refresh();
+        void                        bind(const Vector4D& color);
 
         virtual void                draw()    = 0;
-        virtual void                refresh() = 0;
         virtual void                free()    = 0;
 
-        void                        setDebugFlag(EDebugDraw flag);
+        void                        setDebugFlag(s32 flag);
 
     protected:
 
-        void                        initDrawNormalsShader();
-        virtual void                initDrawNormalsData();
+        void                        initDrawShader();
+        virtual void                initDraw(SDebugObject& object)    = 0;
+        virtual void                refreshDraw(SDebugObject& object) = 0;
 
-        static RenderTechniquePtr   m_tehnique;
+        void                        initDrawNormalsData();
+        void                        initDrawEdgeData();
+
+        static RenderTechniquePtr   s_tehnique;
         
         GeometryPtr                 m_geometry;
-        SVertices<core::Vector3D>   m_normals;
-        EDebugDraw                  m_flag;
+
+        SDebugObject                m_objects[eDrawCount];
+
+        s32                         m_flag;
 
         const std::string*          m_vertex;
         const std::string*          m_fragment;
-
-        u32                         m_arrayId;
-
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
