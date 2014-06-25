@@ -35,7 +35,7 @@ void CShape::init()
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_transform);
 #ifdef _DEBUG
     m_debug = RENDERER->makeDebugDraw(m_geometry);
-    m_debug->setDebugFlag(EDebugDraw::eDrawAll);
+    m_debug->setDebugFlag(EDebugFlag::eDebugNormals | EDebugFlag::eDebugEdges);
 #endif
 }
 

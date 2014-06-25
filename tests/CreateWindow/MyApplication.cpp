@@ -54,6 +54,16 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     f32 angle = 5.0f;
     static bool debug = false;
 
+    if (event->_key == EKeyCode::eKeyEscape)
+    {
+        getPlatform()->closeWindow();
+    }
+    if (event->_key == EKeyCode::eKeyKey_N && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+    {
+        debug = !debug;
+        getSceneManager()->setDebugMode(debug);
+    }
+
     CNode* node = getSceneManager()->getObjectByName("cube");
     if (!node)
     {
@@ -84,16 +94,7 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     {
         node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
     }
-    if (event->_key == EKeyCode::eKeyEscape)
-    {
-        getPlatform()->closeWindow();
-    }
-    if (event->_key == EKeyCode::eKeyKey_N && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        debug = !debug;
-        getSceneManager()->setDebugMode(debug);
-    }
-
+    
     getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
     
 }

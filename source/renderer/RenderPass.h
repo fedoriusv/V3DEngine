@@ -27,7 +27,7 @@ namespace renderer
         ShaderProgramPtr    getShaderProgram() const;
         void                setShaderProgram(const ShaderProgramPtr& program);
 
-        ShaderDataPtr       getShaderData() const;
+        const ShaderDataPtr& getShaderData() const;
         void                setShaderData(const ShaderDataPtr& data);
 
         RenderStatePtr      getRenderState() const;

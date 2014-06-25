@@ -30,7 +30,7 @@ void CRenderPass::setShaderProgram(const ShaderProgramPtr& program)
     m_program = program;
 }
 
-ShaderDataPtr CRenderPass::getShaderData() const
+const ShaderDataPtr& CRenderPass::getShaderData() const
 {
     return m_shaderData;
 }
