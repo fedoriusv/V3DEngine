@@ -126,6 +126,8 @@ void CDiskShape::init()
         m_debug->refresh();
 #endif
     }
+
+    m_initialiazed = true;
 }
 
 void CDiskShape::setMinorRadius(const f32 radius)

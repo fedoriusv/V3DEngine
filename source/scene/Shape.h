@@ -5,7 +5,7 @@
 #include "renderer/Material.h"
 #include "renderer/Geometry.h"
 #include "renderer/RenderJob.h"
-#include "renderer/DebugDraw.h"
+#include "renderer/DebugGeometry.h"
 
 namespace v3d
 {
@@ -42,9 +42,9 @@ namespace scene
         void                         setMaterial(const renderer::MaterialPtr& material);
         const renderer::MaterialPtr& getMaterial() const;
 
-        void                         init()  override;
-        void                         update(f64 time) override;
-        void                         render() override;
+        void                         init()             override;
+        void                         update(f64 time)   override;
+        void                         render()           override;
 
     protected:
 
@@ -54,12 +54,12 @@ namespace scene
         renderer::GeometryPtr        m_geometry;
         renderer::RenderJobPtr       m_renderJob;
 #ifdef _DEBUG
-        renderer::DebugDrawPtr      m_debug;
+        renderer::DebugGeometryPtr   m_debug;
 #endif
 
-        SVertexData&                getGeometryData();
-        renderer::EDrawMode         getGeometryDrawMode() const;
-        void                        setGeometryDrawMode(renderer::EDrawMode mode);
+        SVertexData&                 getGeometryData();
+        renderer::EDrawMode          getGeometryDrawMode() const;
+        void                         setGeometryDrawMode(renderer::EDrawMode mode);
 
     };
 

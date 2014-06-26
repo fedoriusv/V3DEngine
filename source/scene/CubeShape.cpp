@@ -88,4 +88,5 @@ void CCubeShape::init()
     m_debug->init();
 #endif
 
+    m_initialiazed = true;
 }

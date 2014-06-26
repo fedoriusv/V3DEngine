@@ -30,6 +30,7 @@ CNode::CNode()
     , m_position(core::Vector3D(0.0f))
     , m_rotation(core::Vector3D(0.0f))
     , m_scale(core::Vector3D(1.0f))
+    , m_initialiazed(false)
 {
 	m_type = EObjectType::eTypeNode;
 }

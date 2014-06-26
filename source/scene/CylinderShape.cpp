@@ -88,6 +88,8 @@ void CCylinderShape::init()
         m_debug->refresh();
 #endif
     }
+
+    m_initialiazed = true;
 }
 
 void CCylinderShape::setRadius(const f32 radius)

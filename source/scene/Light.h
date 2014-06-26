@@ -2,7 +2,7 @@
 #define _V3D_LIGHT_H_
 
 #include "Node.h"
-#include "renderer/DebugDraw.h"
+#include "renderer/DebugLight.h"
 
 namespace v3d
 {
@@ -53,7 +53,7 @@ namespace scene
         SLightData                m_data;
 
 #ifdef _DEBUG
-        renderer::DebugDrawPtr   m_debug;
+        renderer::DebugLightPtr   m_debug;
 #endif
 
     };

@@ -29,8 +29,8 @@ namespace renderer
         TexturePtr          makeSharedTexture()                                         override;
         RenderStatePtr      makeSharedRenderState()                                     override;
 #ifdef _DEBUG
-        DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)                  override;
-        DebugDrawPtr        makeDebugLight(const Vector3D* position, const f32* radius) override;
+        DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              override;
+        DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) override;
 #endif
     };
 

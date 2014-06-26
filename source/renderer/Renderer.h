@@ -3,11 +3,12 @@
 
 #include "Singleton.h"
 #include "context/DriverContext.h"
-#include "renderer/Shader.h"
-#include "renderer/ShaderProgram.h"
-#include "renderer/Geometry.h"
-#include "renderer/Texture.h"
-#include "renderer/DebugDraw.h"
+#include "Shader.h"
+#include "ShaderProgram.h"
+#include "Geometry.h"
+#include "Texture.h"
+#include "DebugGeometry.h"
+#include "DebugLight.h"
 
 namespace v3d
 {
@@ -50,8 +51,8 @@ namespace renderer
         virtual TexturePtr          makeSharedTexture()                                          = 0;
         virtual RenderStatePtr      makeSharedRenderState()                                      = 0;
 #ifdef _DEBUG
-        virtual DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)                   = 0;
-        virtual DebugDrawPtr        makeDebugLight(const Vector3D* position, const f32* radius)  = 0;
+        virtual DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              = 0;
+        virtual DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) = 0;
         void                        setDebugMode(bool active);
         bool                        isDebugMode() const;
 #endif

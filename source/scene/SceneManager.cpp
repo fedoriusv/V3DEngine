@@ -21,16 +21,16 @@ using namespace v3d::scene;
 using namespace v3d::renderer;
 
 CSceneManager::CSceneManager()
-	: m_currentTime(0.0)
-	, m_deltaTime(0.0)
-	, m_lastTime(0.0)
+    : m_currentTime(0.0)
+    , m_deltaTime(0.0)
+    , m_lastTime(0.0)
     , m_camera(nullptr)
 {
 }
 
 CSceneManager::~CSceneManager()
 {
-	CSceneManager::clear();
+    CSceneManager::clear();
 }
 
 #ifdef _DEBUG
@@ -53,18 +53,18 @@ void CSceneManager::init()
 
 void CSceneManager::draw()
 {
-	CSceneManager::updateDeltaTime();
-	CSceneManager::update(m_deltaTime);
+    CSceneManager::updateDeltaTime();
+    CSceneManager::update(m_deltaTime);
 
-	RENDERER->preRender();
+    RENDERER->preRender();
 
-	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-	{
-		CNode* item = (*iter);
+    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    {
+        CNode* item = (*iter);
 
         item->update(m_deltaTime);
-		item->render();
-	}
+        item->render();
+    }
 
     RENDERER->postRender();
 }

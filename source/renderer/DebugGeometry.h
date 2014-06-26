@@ -1,8 +1,8 @@
-#ifndef _V3D_DEBUG_DRAW_H_
-#define _V3D_DEBUG_DRAW_H_
+#ifndef _V3D_DEBUG_GEOMETRY_H_
+#define _V3D_DEBUG_GEOMETRY_H_
 
 #include "Object.h"
-#include "RenderTechnique.h"
+#include "RenderPass.h"
 #include "Geometry.h"
 
 namespace v3d
@@ -11,25 +11,23 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EDebugDraw
+    enum EDebugGeometryFlag
     {
-        eDrawNormals = 0,
-        eDrawEdges,
-        eDrawLights,
+        eGeometryFlagNone    = -1,
+        eGeometryFlagNormals = 0x00000001,
+        eGeometryFlagEdges   = 0x00000010,
 
-        eDrawCount
+        eGeometryFlagAll     = 0x10000000
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EDebugFlag
+    enum EDebugGeometry
     {
-        eDebugNone    = -1,
-        eDebugNormals = 0x00000001,
-        eDebugEdges   = 0x00000010,
-        eDebugLights  = 0x00000100,
+        eGeometryNormals = 0,
+        eGeometryEdges,
 
-        eDebugAll     = 0x10000000
+        eGeometryCount
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,24 +38,20 @@ namespace renderer
         SVertices<v3d::u32>       _index;
         u32                       _arrayId;
         u32                       _drawMode;
-
-        const core::Vector3D*     _vector;
-        const f32*                _param;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugDraw : public CObject
+    class CDebugGeometry : public CObject
     {
     public:
 
-        CDebugDraw(const GeometryPtr& geometry);
-        CDebugDraw(const core::Vector3D* position, const f32* radius);
-        virtual                     ~CDebugDraw();
+        CDebugGeometry(const GeometryPtr& geometry);
+        virtual                     ~CDebugGeometry();
                                    
         void                        init();
         void                        refresh();
-        void                        bind(const Vector4D& color);
+        void                        bind();
 
         virtual void                draw()    = 0;
         virtual void                free()    = 0;
@@ -66,19 +60,18 @@ namespace renderer
 
     protected:
 
-        void                        initDrawShader();
+        void                        initShader();
         virtual void                initDraw(SDebugObject& object)    = 0;
         virtual void                refreshDraw(SDebugObject& object) = 0;
 
         void                        initDrawNormalsData();
         void                        initDrawEdgeData();
-        void                        initDrawLightData();
 
-        static RenderTechniquePtr   s_tehnique;
+        static RenderPassPtr        s_pass;
         
         GeometryPtr                 m_geometry;
 
-        SDebugObject                m_objects[eDrawCount];
+        SDebugObject                m_objects[EDebugGeometry::eGeometryCount];
 
         s32                         m_flag;
 
@@ -88,10 +81,10 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CDebugDraw> DebugDrawPtr;
+    typedef std::shared_ptr<CDebugGeometry> DebugGeometryPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif //_V3D_DEBUG_DRAW_H_
+#endif //_V3D_DEBUG_GEOMETRY_H_

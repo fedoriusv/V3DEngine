@@ -5,8 +5,8 @@ using namespace v3d;
 using namespace v3d::renderer;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
-	: m_context(context)
-	, m_backColor(core::Vector3D(0))
+    : m_context(context)
+    , m_backColor(core::Vector3D(0))
     , m_projectionMatrix(core::Matrix4D())
     , m_viewMatrix(core::Matrix4D())
     , m_viewPosition(core::Vector3D(0.0f))
@@ -16,7 +16,7 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_debugMode(false)
 #endif
 {
-	m_viewportSize = context->getWindow()->getSize();
+    m_viewportSize = context->getWindow()->getSize();
 }
 
 CRenderer::~CRenderer()

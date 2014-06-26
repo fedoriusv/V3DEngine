@@ -10,7 +10,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugDraw;
+    class CDebugGeometry;
 
     class CRenderJob
     {
@@ -32,7 +32,7 @@ namespace renderer
 
     private:
 
-        friend              CDebugDraw;
+        friend              CDebugGeometry;
 
         void                updateLight(const ShaderDataPtr& data);
         void                updateMaterial(const ShaderDataPtr& data);

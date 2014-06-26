@@ -88,6 +88,8 @@ void CPlaneShape::init()
         m_debug->refresh();
 #endif
     }
+
+    m_initialiazed = true;
 }
 
 void CPlaneShape::setExtent(const f32 extent)

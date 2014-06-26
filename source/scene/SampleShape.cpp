@@ -63,4 +63,6 @@ void CSampleShape::init()
 #ifdef _DEBUG
     m_debug->init();
 #endif
+
+    m_initialiazed = true;
 }

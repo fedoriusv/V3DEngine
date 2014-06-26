@@ -35,7 +35,7 @@ void CShape::init()
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_transform);
 #ifdef _DEBUG
     m_debug = RENDERER->makeDebugDraw(m_geometry);
-    m_debug->setDebugFlag(EDebugFlag::eDebugNormals | EDebugFlag::eDebugEdges);
+    m_debug->setDebugFlag(EDebugGeometryFlag::eGeometryFlagNormals | EDebugGeometryFlag::eGeometryFlagEdges);
 #endif
 }
 
@@ -79,7 +79,7 @@ void CShape::setGeometryDrawMode(EDrawMode mode)
 
 void CShape::update(f64 time)
 {
-    if (!m_visible)
+    if (!m_visible || !m_initialiazed)
     {
         return;
     }
@@ -92,7 +92,7 @@ void CShape::update(f64 time)
 
 void CShape::render()
 {
-    if (!m_visible)
+    if (!m_visible || !m_initialiazed)
     {
         return;
     }

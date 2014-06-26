@@ -139,6 +139,8 @@ void CSphereShape::init()
         m_debug->refresh();
 #endif
     }
+
+    m_initialiazed = true;
 }
 
 void CSphereShape::setRadius(const f32 radius)

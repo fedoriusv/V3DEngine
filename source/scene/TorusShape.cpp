@@ -99,6 +99,8 @@ void CTorusShape::init()
         m_debug->refresh();
 #endif
     }
+
+    m_initialiazed = true;
 }
 
 void CTorusShape::setMinorRadius(const f32 radius)

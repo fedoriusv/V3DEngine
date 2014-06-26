@@ -12,7 +12,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
-    class CDebugDraw;
+    class CDebugGeometry;
 
     class CShaderProgram : public CObject
     {
@@ -32,7 +32,7 @@ namespace renderer
 	protected:
 
         friend          CRenderPass;
-        friend          CDebugDraw;
+        friend          CDebugGeometry;
 
         void            addShader(ShaderPtr shader);
         void            destroyShader(ShaderPtr shader);

@@ -1,4 +1,4 @@
-#include "DebugDrawGL.h"
+#include "DebugGeometryGL.h"
 #include "GeomertyGL.h"
 #include "Engine.h"
 #include "GL/glew.h"
@@ -42,97 +42,67 @@ const std::string k_fragment = "#version 330\n\
                                     fragColor = color;\n\
                                 }";
 
-CDebugDrawGL::CDebugDrawGL(const GeometryPtr& geometry)
-    : CDebugDraw(geometry)
+CDebugGeometryGL::CDebugGeometryGL(const GeometryPtr& geometry)
+    : CDebugGeometry(geometry)
 {
     m_vertex = &k_vertex;
     m_fragment = &k_fragment;
 }
 
-CDebugDrawGL::CDebugDrawGL(const Vector3D* position, const f32* radius)
-    : CDebugDraw(position, radius)
-{
-    m_vertex = &k_vertex;
-    m_fragment = &k_fragment;
-}
-
-CDebugDrawGL::~CDebugDrawGL()
+CDebugGeometryGL::~CDebugGeometryGL()
 {
 }
 
-void CDebugDrawGL::draw()
+void CDebugGeometryGL::draw()
 {
-    if (m_flag == EDebugFlag::eDebugAll)
+    if (m_flag & EDebugGeometryFlag::eGeometryFlagNormals)
     {
-        CDebugDrawGL::drawNormals();
-        CDebugDrawGL::drawEdges();
-
-        RENDERER->checkForErrors("CDebugDrawGL Update Error");
-
-        return;
+        CDebugGeometryGL::drawNormals();
     }
-
-    if (m_flag & EDebugFlag::eDebugNormals)
+    if (m_flag & EDebugGeometryFlag::eGeometryFlagEdges)
     {
-        CDebugDrawGL::drawNormals();
-    }
-    if (m_flag & EDebugFlag::eDebugEdges)
-    {
-        CDebugDrawGL::drawEdges();
-    }
-    if (m_flag & EDebugFlag::eDebugLights)
-    {
-        CDebugDrawGL::drawLights();
+        CDebugGeometryGL::drawEdges();
     }
 
     RENDERER->checkForErrors("CDebugDrawGL Update Error");
 }
 
-void CDebugDrawGL::drawNormals()
+void CDebugGeometryGL::drawNormals()
 {
-    CDebugDraw::bind(Vector4D(0.0f, 1.0f, 0.0f, 1.0f));
-    u32 mode = EDebugModeGL[m_objects[EDebugDraw::eDrawNormals]._drawMode];
+    const ShaderDataPtr& data = s_pass->getShaderData();
+    data->setUniformVector4("color", Vector4D(0.0f, 1.0f, 0.0f, 1.0f));
 
-    CGeometryGL::bindVertexArray(m_objects[EDebugDraw::eDrawNormals]._arrayId);
-    CGeometryGL::drawArrays(mode, 0, m_objects[EDebugDraw::eDrawNormals]._vertex.vertex.size());
+    CDebugGeometry::bind();
+
+    u32 mode = EDebugModeGL[m_objects[EDebugGeometry::eGeometryNormals]._drawMode];
+
+    CGeometryGL::bindVertexArray(m_objects[EDebugGeometry::eGeometryNormals]._arrayId);
+    CGeometryGL::drawArrays(mode, 0, m_objects[EDebugGeometry::eGeometryNormals]._vertex.vertex.size());
     CGeometryGL::bindVertexArray(0);
 }
 
-void CDebugDrawGL::drawEdges()
+void CDebugGeometryGL::drawEdges()
 {
-    CDebugDraw::bind(Vector4D(1.0f, 0.0f, 0.0f, 1.0f));
-    u32 mode = EDebugModeGL[m_objects[EDebugDraw::eDrawEdges]._drawMode];
+    const ShaderDataPtr& data = s_pass->getShaderData();
+    data->setUniformVector4("color", Vector4D(1.0f, 0.0f, 0.0f, 1.0f));
 
-    CGeometryGL::bindVertexArray(m_objects[EDebugDraw::eDrawEdges]._arrayId);
-    if (m_objects[EDebugDraw::eDrawEdges]._index.vertex.size() > 0)
+    CDebugGeometry::bind();
+
+    u32 mode = EDebugModeGL[m_objects[EDebugGeometry::eGeometryEdges]._drawMode];
+
+    CGeometryGL::bindVertexArray(m_objects[EDebugGeometry::eGeometryEdges]._arrayId);
+    if (m_objects[EDebugGeometry::eGeometryEdges]._index.vertex.size() > 0)
     {
-        CGeometryGL::drawElements(mode, m_objects[EDebugDraw::eDrawEdges]._index.vertex.size());
+        CGeometryGL::drawElements(mode, m_objects[EDebugGeometry::eGeometryEdges]._index.vertex.size());
     }
     else
     {
-        CGeometryGL::drawArrays(mode, 0, m_objects[EDebugDraw::eDrawEdges]._vertex.vertex.size());
+        CGeometryGL::drawArrays(mode, 0, m_objects[EDebugGeometry::eGeometryEdges]._vertex.vertex.size());
     }
     CGeometryGL::bindVertexArray(0);
 }
 
-void CDebugDrawGL::drawLights()
-{
-    CDebugDraw::bind(Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
-    u32 mode = EDebugModeGL[m_objects[EDebugDraw::eDrawLights]._drawMode];
-
-    CGeometryGL::bindVertexArray(m_objects[EDebugDraw::eDrawLights]._arrayId);
-    if (m_objects[EDebugDraw::eDrawLights]._index.vertex.size() > 0)
-    {
-        CGeometryGL::drawElements(mode, m_objects[EDebugDraw::eDrawLights]._index.vertex.size());
-    }
-    else
-    {
-        CGeometryGL::drawArrays(mode, 0, m_objects[EDebugDraw::eDrawLights]._vertex.vertex.size());
-    }
-    CGeometryGL::bindVertexArray(0);
-}
-
-void CDebugDrawGL::initDraw(SDebugObject& object)
+void CDebugGeometryGL::initDraw(SDebugObject& object)
 {
     CGeometryGL::genVertexArray(object._arrayId);
 
@@ -155,7 +125,7 @@ void CDebugDrawGL::initDraw(SDebugObject& object)
     RENDERER->checkForErrors("CDebugDrawGL Init Error");
 }
 
-void CDebugDrawGL::refreshDraw(SDebugObject& object)
+void CDebugGeometryGL::refreshDraw(SDebugObject& object)
 {
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
     CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* object._vertex.vertex.size() * 3, NULL);
@@ -173,12 +143,12 @@ void CDebugDrawGL::refreshDraw(SDebugObject& object)
     RENDERER->checkForErrors("CDebugDrawGL Refresh Error");
 }
 
-void CDebugDrawGL::free()
+void CDebugGeometryGL::free()
 {
     CGeometryGL::bindVertexArray(0);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 
-    for (u32 i = 0; i < EDebugDraw::eDrawCount; ++i)
+    for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
     {
         CGeometryGL::deleteVertexArray(m_objects[i]._arrayId);
         CGeometryGL::deleteBuffers(m_objects[i]._vertex.id);

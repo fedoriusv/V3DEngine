@@ -95,6 +95,7 @@ namespace scene
         ENodeType                   m_nodeType;
 
         bool                        m_needUpdate;
+        bool                        m_initialiazed;
         f32                         m_priority;
 
     private:

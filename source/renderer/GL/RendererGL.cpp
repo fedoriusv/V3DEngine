@@ -4,7 +4,8 @@
 #include "GeomertyGL.h"
 #include "TextureGL.h"
 #include "RenderStateGL.h"
-#include "DebugDrawGL.h"
+#include "DebugGeometryGL.h"
+#include "DebugLightGL.h"
 
 #include "GL/glew.h"
 
@@ -100,13 +101,13 @@ RenderStatePtr CRendererGL::makeSharedRenderState()
 }
 
 #ifdef _DEBUG
-DebugDrawPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
+DebugGeometryPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
 {
-    return std::make_shared<CDebugDrawGL>(geometry);
+    return std::make_shared<CDebugGeometryGL>(geometry);
 }
 
-DebugDrawPtr CRendererGL::makeDebugLight(const Vector3D* position, const f32* radius)
+DebugLightPtr CRendererGL::makeDebugLight(const Vector3D& position, const scene::SLightData& data)
 {
-    return std::make_shared<CDebugDrawGL>(position, radius);
+    return std::make_shared<CDebugLightGL>(position, data);
 }
 #endif
