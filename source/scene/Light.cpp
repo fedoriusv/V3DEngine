@@ -81,6 +81,12 @@ const Vector3D& CLight::getDirection() const
 
 void CLight::render()
 {
+#ifdef _DEBUG
+    if (RENDERER->isDebugMode())
+    {
+        m_debug->draw();
+    }
+#endif
 }
 
 void CLight::update(f64 time)
@@ -97,7 +103,7 @@ void CLight::init()
     m_data._attenuation = Vector3D(0.5f, 0.0f, 0.02f);
 
 #ifdef _DEBUG
-    m_debug = RENDERER->makeDebugLight(m_position, m_data._radius);
+    m_debug = RENDERER->makeDebugLight(&m_position, &m_data._radius);
     m_debug->setDebugFlag(EDebugFlag::eDebugLights);
     m_debug->init();
 #endif

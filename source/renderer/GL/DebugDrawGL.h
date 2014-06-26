@@ -14,7 +14,7 @@ namespace v3d
         public:
 
             CDebugDrawGL(const GeometryPtr& geometry);
-            CDebugDraw(const Vector3D* position, const f32* radius);
+            CDebugDrawGL(const Vector3D* position, const f32* radius);
             virtual             ~CDebugDrawGL();
 
             void                draw()    override;
@@ -27,6 +27,7 @@ namespace v3d
 
             void                drawNormals();
             void                drawEdges();
+            void                drawLights();
 
         };
 

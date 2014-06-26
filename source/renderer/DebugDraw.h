@@ -41,7 +41,7 @@ namespace renderer
         u32                       _arrayId;
         u32                       _drawMode;
 
-        const Vector3D*           _vectors;
+        const core::Vector3D*     _vector;
         const f32*                _param;
     };
 
@@ -52,7 +52,7 @@ namespace renderer
     public:
 
         CDebugDraw(const GeometryPtr& geometry);
-        CDebugDraw(const Vector3D* position, const f32* radius);
+        CDebugDraw(const core::Vector3D* position, const f32* radius);
         virtual                     ~CDebugDraw();
                                    
         void                        init();

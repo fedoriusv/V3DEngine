@@ -4,6 +4,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
+using namespace v3d::core;
 using namespace v3d::renderer;
 
 GLenum EDebugModeGL[EDrawMode::eCount] =
@@ -48,8 +49,8 @@ CDebugDrawGL::CDebugDrawGL(const GeometryPtr& geometry)
     m_fragment = &k_fragment;
 }
 
-CDebugDraw(const Vector3D* position, const f32* radius)
-: CDebugDraw(position, radius)
+CDebugDrawGL::CDebugDrawGL(const Vector3D* position, const f32* radius)
+    : CDebugDraw(position, radius)
 {
     m_vertex = &k_vertex;
     m_fragment = &k_fragment;
@@ -79,6 +80,10 @@ void CDebugDrawGL::draw()
     {
         CDebugDrawGL::drawEdges();
     }
+    if (m_flag & EDebugFlag::eDebugLights)
+    {
+        CDebugDrawGL::drawLights();
+    }
 
     RENDERER->checkForErrors("CDebugDrawGL Update Error");
 }
@@ -106,6 +111,23 @@ void CDebugDrawGL::drawEdges()
     else
     {
         CGeometryGL::drawArrays(mode, 0, m_objects[EDebugDraw::eDrawEdges]._vertex.vertex.size());
+    }
+    CGeometryGL::bindVertexArray(0);
+}
+
+void CDebugDrawGL::drawLights()
+{
+    CDebugDraw::bind(Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
+    u32 mode = EDebugModeGL[m_objects[EDebugDraw::eDrawLights]._drawMode];
+
+    CGeometryGL::bindVertexArray(m_objects[EDebugDraw::eDrawLights]._arrayId);
+    if (m_objects[EDebugDraw::eDrawLights]._index.vertex.size() > 0)
+    {
+        CGeometryGL::drawElements(mode, m_objects[EDebugDraw::eDrawLights]._index.vertex.size());
+    }
+    else
+    {
+        CGeometryGL::drawArrays(mode, 0, m_objects[EDebugDraw::eDrawLights]._vertex.vertex.size());
     }
     CGeometryGL::bindVertexArray(0);
 }

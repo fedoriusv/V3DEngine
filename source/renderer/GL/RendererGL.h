@@ -16,21 +16,21 @@ namespace renderer
         CRendererGL(const DriverContextPtr& context);
         virtual             ~CRendererGL();
     
-        void                init()                                                  override;
+        void                init()                                                      override;
     
-        void                preRender()                                             override;
-        void                postRender()                                            override;
+        void                preRender()                                                 override;
+        void                postRender()                                                override;
     
-        void                reshape(u32 width, u32 height)                          override;
+        void                reshape(u32 width, u32 height)                              override;
 
-        ShaderPtr           makeSharedShader()                                      override;
-        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)            override;
-        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique) override;
-        TexturePtr          makeSharedTexture()                                     override;
-        RenderStatePtr      makeSharedRenderState()                                 override;
+        ShaderPtr           makeSharedShader()                                          override;
+        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                override;
+        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)     override;
+        TexturePtr          makeSharedTexture()                                         override;
+        RenderStatePtr      makeSharedRenderState()                                     override;
 #ifdef _DEBUG
-        DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)              override;
-        DebugDrawPtr        makeDebugLight(Vector3D* position, f32* radius)         override;
+        DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)                  override;
+        DebugDrawPtr        makeDebugLight(const Vector3D* position, const f32* radius) override;
 #endif
     };
 

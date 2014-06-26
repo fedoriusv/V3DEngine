@@ -44,14 +44,14 @@ namespace renderer
 
         void                        checkForErrors(const std::string& location = "");
 
-        virtual ShaderPtr           makeSharedShader()                                      = 0;
-        virtual ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)            = 0;
-        virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique) = 0;
-        virtual TexturePtr          makeSharedTexture()                                     = 0;
-        virtual RenderStatePtr      makeSharedRenderState()                                 = 0;
+        virtual ShaderPtr           makeSharedShader()                                           = 0;
+        virtual ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                 = 0;
+        virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)      = 0;
+        virtual TexturePtr          makeSharedTexture()                                          = 0;
+        virtual RenderStatePtr      makeSharedRenderState()                                      = 0;
 #ifdef _DEBUG
-        virtual DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)              = 0;
-        virtual DebugDrawPtr        makeDebugLight(Vector3D* position, f32* radius)         = 0;
+        virtual DebugDrawPtr        makeDebugDraw(const GeometryPtr& geometry)                   = 0;
+        virtual DebugDrawPtr        makeDebugLight(const Vector3D* position, const f32* radius)  = 0;
         void                        setDebugMode(bool active);
         bool                        isDebugMode() const;
 #endif

@@ -3,6 +3,7 @@
 #include "Engine.h"
 
 using namespace v3d;
+using namespace v3d::core;
 using namespace v3d::renderer;
 
 RenderTechniquePtr CDebugDraw::s_tehnique = nullptr;
@@ -26,7 +27,7 @@ CDebugDraw::CDebugDraw(const GeometryPtr& geometry)
     }
 }
 
-CDebugDraw::CDebugDraw(const Vector3D* pos, const f32* radius)
+CDebugDraw::CDebugDraw(const Vector3D* position, const f32* radius)
     : m_geometry(nullptr)
     , m_vertex(nullptr)
     , m_fragment(nullptr)
@@ -40,7 +41,7 @@ CDebugDraw::CDebugDraw(const Vector3D* pos, const f32* radius)
     m_objects[EDebugDraw::eDrawLights]._arrayId = 0;
     m_objects[EDebugDraw::eDrawLights]._drawMode = EDrawMode::eLines;
     m_objects[EDebugDraw::eDrawLights]._vertex.id = 0;
-    m_objects[EDebugDraw::eDrawLights]._vectors = pos;
+    m_objects[EDebugDraw::eDrawLights]._vector = position;
     m_objects[EDebugDraw::eDrawLights]._param = radius;
 
 }
@@ -106,7 +107,6 @@ void CDebugDraw::refresh()
     }
     if (m_flag & EDebugFlag::eDebugLights)
     {
-        int a = 0;
         //
     }
 }
@@ -205,11 +205,37 @@ void CDebugDraw::initDrawLightData()
     const f32 s = 0.3f;
     const f32 vertex[][3] =
     {
-        { -s, -s, s  }, { s, -s, s  }, { s, s, s  }, { -s, s, s  },
-        { -s, -s, -s }, { -s, s, -s }, { s, s, -s }, { s, -s, -s },
-        { -s, s, -s  }, { -s, s, s  }, { s, s, s  }, { s, s, -s  },
-        { -s, -s, -s }, { s, -s, -s }, { s, -s, s }, { -s, -s, s },
-        { s, -s, -s  }, { s, s, -s  }, { s, s, s  }, { s, -s, s  },
-        { -s, -s, -s }, { -s, -s, s }, { -s, s, s }, { -s, s, -s }
+        {-s,-s, s }, { s,-s, s }, { s, s, s }, {-s, s, s },
+        {-s,-s,-s }, {-s, s,-s }, { s, s,-s }, { s,-s,-s },
+        {-s, s,-s }, {-s, s, s }, { s, s, s }, { s, s,-s },
+        {-s,-s,-s }, { s,-s,-s }, { s,-s, s }, {-s,-s, s },
+        { s,-s,-s }, { s, s,-s }, { s, s, s }, { s,-s, s },
+        {-s,-s,-s }, {-s,-s, s }, {-s, s, s }, {-s, s,-s }
     };
+
+    const u32 indices[] =
+    {
+        0,  3,  1,  1,  3,  2,
+        4,  7,  5,  5,  7,  6,
+        8,  11, 9,  9,  11, 10,
+        12, 15, 13, 13, 15, 14,
+        16, 19, 17, 17, 19, 18,
+        20, 23, 21, 21, 23, 22
+    };
+
+    SVertices<core::Vector3D>& light = m_objects[eDrawLights]._vertex;
+    SVertices<u32>& lightIdx = m_objects[eDrawLights]._index;
+    m_objects[eDrawLights]._drawMode = eTriangles;
+
+    light.vertex.clear();
+    light.vertex.resize(24);
+
+    for (u32 i = 0; i < 24; ++i)
+    {
+        light.vertex[i] = vertex[i];
+    }
+
+    lightIdx.vertex.clear();
+    lightIdx.vertex.resize(36);
+    std::copy(indices, indices + 36, lightIdx.vertex.begin());
 }
