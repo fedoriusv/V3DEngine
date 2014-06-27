@@ -11,6 +11,7 @@
 #include "utils/Logger.h"
 #include "scene/Shape.h"
 #include "scene/CubeShape.h"
+#include "scene/Camera.h"
 
 
 #endif //_V3D_VALERA_3D_H_

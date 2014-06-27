@@ -182,10 +182,10 @@ void CFPSCamera::update(f64 time)
         {
             CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
         }
-    }
 
-    CFPSCamera::rotateByMouse();
-    CCamera::update(time);
+        CFPSCamera::rotateByMouse();
+        CCamera::update(time);
+    }
 }
 
 void CFPSCamera::setSpeed(f32 speed)

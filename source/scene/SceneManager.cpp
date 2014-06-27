@@ -40,6 +40,26 @@ void CSceneManager::setDebugMode(bool active)
 }
 #endif
 
+void CSceneManager::setActiveCamera(CCamera* camera)
+{
+    if (m_camera)
+    {
+        m_camera->m_active = false;
+    }
+    m_camera = camera;
+    m_camera->m_active = true;
+}
+
+const CCamera* CSceneManager::getActiveCamera(CCamera* camera)
+{
+    return m_camera;
+}
+
+bool CSceneManager::isActiveCamera(CCamera* camera)
+{
+    return m_camera == camera;
+}
+
 void CSceneManager::init()
 {
     for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)

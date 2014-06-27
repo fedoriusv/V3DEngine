@@ -48,8 +48,12 @@ namespace scene
         const core::Vector3D&   getBackgroundColor() const;
 
 #ifdef _DEBUG
-        void                     setDebugMode(bool active);
+        void                    setDebugMode(bool active);
 #endif
+
+        void                    setActiveCamera(CCamera* camera);
+        const CCamera*          getActiveCamera(CCamera* camera);
+        bool                    isActiveCamera(CCamera* camera);
 
     private:
 
