@@ -6,10 +6,6 @@
 
 namespace v3d
 {
-namespace renderer
-{
-    class CRenderJob;
-}
 namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,8 +49,6 @@ namespace scene
         const Vector3D&           getDirection()      const;
 
     private:
-
-        friend                    renderer::CRenderJob;
 
         SLightData                m_data;
 

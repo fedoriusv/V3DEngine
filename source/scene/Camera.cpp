@@ -57,6 +57,8 @@ void CCamera::render()
     {
         return;
     }
+
+    RENDERER->needUpdateCamera(m_needUpdate);
 }
 
 void CCamera::update(f64 time)
@@ -66,7 +68,7 @@ void CCamera::update(f64 time)
         return;
     }
 
-    if (m_active)
+    if (m_active && m_needUpdate)
     {
         RENDERER->updateCamera(m_position, m_target, m_up);
     }

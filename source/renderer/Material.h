@@ -23,7 +23,7 @@ namespace renderer
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderJob;
+    class CRenderer;
 
     class CMaterial : public CObject
     {
@@ -64,7 +64,7 @@ namespace renderer
 
     protected:
 
-        friend                  CRenderJob;
+        friend                  CRenderer;
 
         SMaterialData           m_materialData;
         

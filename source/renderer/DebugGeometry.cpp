@@ -33,6 +33,11 @@ CDebugGeometry::~CDebugGeometry()
 
 void CDebugGeometry::init()
 {
+    if (m_flag == EDebugGeometryFlag::eGeometryFlagNone)
+    {
+        return;
+    }
+
     CDebugGeometry::initShader();
 
     if (m_flag & EDebugGeometryFlag::eGeometryFlagNormals)
@@ -65,7 +70,7 @@ void CDebugGeometry::refresh()
 void CDebugGeometry::bind()
 {
     const ShaderDataPtr& data = s_pass->getShaderData();
-    CRenderJob::updateTransform(data);
+    //CRenderJob::updateTransform(data);
 
     s_pass->bind();
 }

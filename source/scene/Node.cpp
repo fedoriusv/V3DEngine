@@ -191,6 +191,11 @@ bool CNode::isVisible() const
 
 void CNode::updateTransform(ENodeTransform transform)
 {
+    if (!m_visible)
+    {
+        return;
+    }
+
     switch (transform)
     {
     case ENodeTransform::eTranslation:

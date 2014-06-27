@@ -36,6 +36,11 @@ void CDebugLight::setDebugFlag(s32 flag)
 
 void CDebugLight::init()
 {
+    if (m_flag == EDebugLightFlag::eLightFlagNone)
+    {
+        return;
+    }
+
     CDebugLight::initShader();
 
     if (m_flag & EDebugLightFlag::eLightFlagPosition)

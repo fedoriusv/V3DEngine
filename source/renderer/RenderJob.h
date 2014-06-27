@@ -29,22 +29,14 @@ namespace renderer
         void                setTransform(const Matrix4D& transform);
         const Matrix4D&     getTransform() const;
 
-        void                job(const bool updated);
-
     private:
 
         friend              CDebugGeometry;
         friend              CDebugLight;
 
-        void                updateLight(const ShaderDataPtr& data);
-        void                updateMaterial(const ShaderDataPtr& data);
-        static void         updateTransform(const ShaderDataPtr& data);
-
         MaterialPtr         m_material;
         GeometryPtr         m_geomerty;
         Matrix4D            m_transform;
-
-        bool                m_transformUpdate;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

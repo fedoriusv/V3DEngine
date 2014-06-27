@@ -13,9 +13,8 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderJob;
     class CRenderPass;
-
+    class CRenderer;
     class CDebugGeometry;
     class CDebugLight;
 
@@ -47,7 +46,7 @@ namespace renderer
     protected:
 
         friend                          CRenderPass;
-        friend                          CRenderJob;
+        friend                          CRenderer;
 
         friend                          CDebugGeometry;
         friend                          CDebugLight;

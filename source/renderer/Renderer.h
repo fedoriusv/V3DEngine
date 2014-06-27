@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include "Geometry.h"
 #include "Texture.h"
+#include "RenderJob.h"
 #include "DebugGeometry.h"
 #include "DebugLight.h"
 
@@ -21,7 +22,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderJob;
     class CDebugLight;
 
     class CRenderer : public Singleton<CRenderer>
@@ -36,10 +36,12 @@ namespace renderer
         virtual void                preRender()                    = 0;
         virtual void                postRender()                   = 0;
 
+        void                        draw(const RenderJobPtr& job, bool updateTransform);
+
         virtual void                reshape(u32 width, u32 height);
 
         void                        updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up);
-        void                        updateTransform(const core::Matrix4D& transform);
+        void                        needUpdateCamera(bool update);
 
         void                        setBackColor(const core::Vector3D& color);
         const core::Vector3D&       getBackColor() const;
@@ -62,10 +64,14 @@ namespace renderer
 
     protected:
 
-        friend                      CRenderJob;
         friend                      scene::CSceneManager;
 
         friend                      CDebugLight;
+
+        void                        updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data);
+        void                        updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data);
+        void                        updateTransform(const core::Matrix4D& transform, const ShaderDataPtr& data);
+        void                        updateView(const ShaderDataPtr& data);
 
         DriverContextPtr            m_context;
 
@@ -75,8 +81,8 @@ namespace renderer
         core::Matrix4D              m_projectionMatrix;
         core::Matrix4D              m_viewMatrix;
         core::Vector3D              m_viewPosition;
-        core::Matrix4D              m_modelMatrix;
-        core::Matrix4D              m_normalMatrix;
+
+        bool                        m_updateCamera;
 
 #ifdef _DEBUG
         bool                        m_debugMode;

@@ -77,6 +77,7 @@ void CFPSCamera::rotateByMouse()
     {
         return;
     }
+    m_needUpdate = true;
 
     CFPSCamera::setCursorPosition(middle);
     
@@ -169,18 +170,22 @@ void CFPSCamera::update(f64 time)
         if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
+            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._back))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, -s));
+            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._left))
         {
             CFPSCamera::move(Vector3D(-s, 0.0f, 0.0f));
+            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._right))
         {
             CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
+            m_needUpdate = true;
         }
 
         CFPSCamera::rotateByMouse();
