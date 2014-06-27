@@ -41,9 +41,7 @@ namespace renderer
     struct SDebugLight
     {
         SVertices<core::Vector3D> _vertex;
-        SVertices<v3d::u32>       _index;
         u32                       _arrayId;
-        u32                       _drawMode;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,6 @@ namespace renderer
         virtual                  ~CDebugLight();
 
         void                     init();
-        void                     refresh();
         void                     bind();
 
         virtual void             draw() = 0;
@@ -64,9 +61,11 @@ namespace renderer
 
         void                     setDebugFlag(s32 flag);
 
-    private:
+    protected:
 
         void                     initShader();
+        virtual void             initDraw(SDebugLight& object) = 0;
+
         void                     initLightPosition();
 
         static RenderPassPtr     s_pass;

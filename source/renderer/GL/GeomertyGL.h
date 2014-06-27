@@ -10,6 +10,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CDebugGeometryGL;
+    class CDebugLightGL;
 
     class CGeometryGL : public CGeometry
     {
@@ -26,6 +27,7 @@ namespace renderer
     private:
 
         friend              CDebugGeometryGL;
+        friend              CDebugLightGL;
 
         v3d::u32            m_arrayId;
 

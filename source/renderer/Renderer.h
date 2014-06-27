@@ -22,6 +22,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderJob;
+    class CDebugLight;
 
     class CRenderer : public Singleton<CRenderer>
     {
@@ -63,6 +64,8 @@ namespace renderer
 
         friend                      CRenderJob;
         friend                      scene::CSceneManager;
+
+        friend                      CDebugLight;
 
         DriverContextPtr            m_context;
 

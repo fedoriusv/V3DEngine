@@ -16,6 +16,12 @@ namespace renderer
 
         void        draw() override;
         void        free() override;
+
+    private:
+
+        void        initDraw(SDebugLight& object) override;
+
+        void        drawLightPosition();
     };
 }
 }

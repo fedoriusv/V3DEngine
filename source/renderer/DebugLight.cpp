@@ -1,15 +1,28 @@
 #include "DebugLight.h"
-#include "Geometry.h"
+#include "RenderJob.h"
+#include "Engine.h"
 
 using namespace v3d;
 using namespace v3d::core;
 using namespace v3d::renderer;
+
+RenderPassPtr CDebugLight::s_pass = nullptr;
 
 CDebugLight::CDebugLight(const core::Vector3D& position, const scene::SLightData& data)
     : m_data(data)
     , m_position(position)
     , m_flag(EDebugLightFlag::eLightFlagNone)
 {
+    if (!s_pass)
+    {
+        s_pass = std::make_shared<CRenderPass>();
+    }
+
+    for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
+    {
+        m_objects[i]._arrayId = 0;
+        m_objects[i]._vertex.id = 0;
+    }
 }
 
 CDebugLight::~CDebugLight()
@@ -23,46 +36,80 @@ void CDebugLight::setDebugFlag(s32 flag)
 
 void CDebugLight::init()
 {
-}
+    CDebugLight::initShader();
 
-void CDebugLight::refresh()
-{
+    if (m_flag & EDebugLightFlag::eLightFlagPosition)
+    {
+        CDebugLight::initLightPosition();
+        initDraw(m_objects[EDebugLight::eDebugLightPosition]);
+    }
+    if (m_flag & EDebugLightFlag::eLightFlagDirection)
+    {
+       //TODO:
+    }
+    if (m_flag & EDebugLightFlag::eLightFlagRadius)
+    {
+        //TODO:
+    }
 }
 
 void CDebugLight::bind()
 {
+    const ShaderDataPtr& data = s_pass->getShaderData();
+
+    data->setUniformVector4("color", Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
+    data->setUniformMatrix4("transform.projectionMatrix", RENDERER->m_projectionMatrix);
+    data->setUniformMatrix4("transform.viewMatrix", RENDERER->m_viewMatrix);
+    core::Matrix4D modelMatrix;
+    modelMatrix.setTranslation(m_position);
+    data->setUniformMatrix4("transform.modelMatrix", modelMatrix);
+
+    s_pass->bind();
+
+    RENDERER->checkForErrors("CDebugLight Bind Error");
 }
 
 void CDebugLight::initShader()
 {
+    const ShaderDataPtr& data = s_pass->getShaderData();
+
+    data->addAttribute("positions", eAttributeVertex);
+    data->addDefaultUniform("transform.projectionMatrix", eTypeMatrix4, eTransformProjectionMatrix);
+    data->addDefaultUniform("transform.modelMatrix", eTypeMatrix4, eTransformModelMatrix);
+    data->addDefaultUniform("transform.viewMatrix", eTypeMatrix4, eTransformViewMatrix);
+    data->setUniformVector4("color", Vector4D(0.0f));
+
+    s_pass->getRenderState()->setCullFace(false);
+    s_pass->getRenderState()->setPolygonMode(ERenderPolygonMode::ePolyModeLine);
+
+    ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
+    program->create(*m_vertex, *m_fragment);
+
+    s_pass->setShaderProgram(program);
 }
 
 void CDebugLight::initLightPosition()
 {
-    const f32 s = 0.3f;
+    const f32 s = 0.1f;
     const f32 vertex[][3] =
     {
-        { -s, -s, s  }, { s, -s, s  }, { s, s, s  }, { -s, s, s  },
-        { -s, -s, -s }, { -s, s, -s }, { s, s, -s }, { s, -s, -s },
-        { -s, s, -s  }, { -s, s, s  }, { s, s, s  }, { s, s, -s  },
-        { -s, -s, -s }, { s, -s, -s }, { s, -s, s }, { -s, -s, s },
-        { s, -s, -s  }, { s, s, -s  }, { s, s, s  }, { s, -s, s  },
-        { -s, -s, -s }, { -s, -s, s }, { -s, s, s }, { -s, s, -s }
-    };
+        {-s, s, -s},  {s, s, -s },
+        { s, s, -s},  {s, -s, -s},
+        { s, -s, -s}, {-s,-s, -s},
+        {-s, -s, -s}, {-s, s, -s},
 
-    const u32 indices[] =
-    {
-        0,  3,  1,  1,  3,  2,
-        4,  7,  5,  5,  7,  6,
-        8,  11, 9,  9,  11, 10,
-        12, 15, 13, 13, 15, 14,
-        16, 19, 17, 17, 19, 18,
-        20, 23, 21, 21, 23, 22
+        {-s, s, s }, { s, s, s  },
+        { s, s, s }, { s, -s, s },
+        { s, -s, s}, {-s, -s, s },
+        {-s, -s, s}, {-s, s, s  },
+
+        {-s, s, s }, {-s, s, -s },
+        { s, s, s }, { s, s, -s },
+        { s, -s, s}, { s, -s, -s},
+        {-s, -s, s}, {-s, -s, -s}
     };
 
     SVertices<core::Vector3D>& light = m_objects[EDebugLight::eDebugLightPosition]._vertex;
-    SVertices<u32>& lightIdx = m_objects[EDebugLight::eDebugLightPosition]._index;
-    m_objects[EDebugLight::eDebugLightPosition]._drawMode = EDrawMode::eTriangles;
 
     light.vertex.clear();
     light.vertex.resize(24);
@@ -71,8 +118,4 @@ void CDebugLight::initLightPosition()
     {
         light.vertex[i] = vertex[i];
     }
-
-    lightIdx.vertex.clear();
-    lightIdx.vertex.resize(36);
-    std::copy(indices, indices + 36, lightIdx.vertex.begin());
 }

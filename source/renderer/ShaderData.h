@@ -15,7 +15,9 @@ namespace renderer
 
     class CRenderJob;
     class CRenderPass;
+
     class CDebugGeometry;
+    class CDebugLight;
 
     class CShaderData : public CObject
     {
@@ -46,7 +48,9 @@ namespace renderer
 
         friend                          CRenderPass;
         friend                          CRenderJob;
+
         friend                          CDebugGeometry;
+        friend                          CDebugLight;
 
         void                            setUniformInt    (EDefaultUniformData type, const u32             value,  const s32 idx = -1);
         void                            setUniformFloat  (EDefaultUniformData type, const f32             value,  const s32 idx = -1);
