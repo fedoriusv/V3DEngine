@@ -33,7 +33,10 @@ void CRendererGL::init()
 	reshape(m_viewportSize.width, m_viewportSize.height);
 	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
 
+    m_context->setVSync(false);
+
     glEnable(GL_MULTISAMPLE);
+
     //glDisable(GL_MULTISAMPLE);
 
     //glEnable(GL_DEPTH);

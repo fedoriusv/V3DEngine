@@ -371,3 +371,14 @@ void CDriverContextGL::checkForErrors(const std::string& location)
 	}
 #endif
 }
+
+bool CDriverContextGL::setVSync(bool use)
+{
+    BOOL succeed = FALSE;
+    if (WGLEW_EXT_swap_control)
+    {
+        succeed = wglSwapIntervalEXT(use ? 1 : 0);
+    }
+
+    return succeed ? true : false;
+}

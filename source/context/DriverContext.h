@@ -8,32 +8,34 @@ namespace v3d
 {
 namespace renderer
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CDriverContext
-	{
-	public:
+    class CDriverContext
+    {
+    public:
 
-									CDriverContext(const platform::WindowPtr& window);
-		virtual						~CDriverContext();
+        CDriverContext(const platform::WindowPtr& window);
+        virtual                     ~CDriverContext();
 
-		virtual void				driverInfo()                                     = 0;
-		virtual void				checkForErrors(const std::string& location = "") = 0;
-		virtual bool				createContext()                                  = 0;
+        virtual void                driverInfo()                                     = 0;
+        virtual void                checkForErrors(const std::string& location = "") = 0;
+        virtual bool                createContext()                                  = 0;
 
-		const core::Dimension2D&	getViewport() const;
-		const platform::WindowPtr	getWindow() const;
+        virtual bool                setVSync(bool use)                               = 0;
 
-	protected:
+        const core::Dimension2D&	getViewport() const;
+        const platform::WindowPtr	getWindow() const;
 
-		const platform::WindowPtr	m_window;
-	};
+    protected:
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+        const platform::WindowPtr	m_window;
+    };
 
-	typedef std::shared_ptr<CDriverContext> DriverContextPtr;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    typedef std::shared_ptr<CDriverContext> DriverContextPtr;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
