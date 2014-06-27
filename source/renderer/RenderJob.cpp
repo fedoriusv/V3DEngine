@@ -182,8 +182,13 @@ void CRenderJob::updateLight(const ShaderDataPtr& data)
     }
 
     s32 index = 0;
-    for (std::vector<scene::CLight*>::const_iterator light = lights.begin(); light < lights.end(); ++light)
+    for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
     {
+        if (!(*light)->m_needUpdate)
+        {
+            //continue;
+        }
+
         if (data->isExistUniform(eLightPosition))
         {
             data->setUniformVector4(eLightPosition, Vector4D((*light)->getPosition(), 0.0f), index);
@@ -218,6 +223,8 @@ void CRenderJob::updateLight(const ShaderDataPtr& data)
         {
             data->setUniformFloat(eLightRadius, (*light)->getRadius(), index);
         }
+
+        (*light)->m_needUpdate = false;
     }
 
 }

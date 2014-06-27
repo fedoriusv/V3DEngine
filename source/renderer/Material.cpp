@@ -9,8 +9,7 @@ using namespace v3d;
 using namespace v3d::renderer;
 
 CMaterial::CMaterial()
-	: CObject()
-    , m_needUpdate(true)
+    : m_needUpdate(true)
 {
 	m_type = EObjectType::eTypeMaterial;
 

@@ -7,8 +7,9 @@ using namespace v3d::scene;
 using namespace v3d::renderer;
 
 CLight::CLight()
+    : m_needUpdate(true)
 #ifdef _DEBUG
-    : m_debug(nullptr)
+    , m_debug(nullptr)
 #endif
 {
     m_nodeType = ENodeType::eLight;
@@ -22,31 +23,37 @@ CLight::~CLight()
 void CLight::setAmbient(const Vector4D& color)
 {
     m_data._ambient = color;
+    m_needUpdate = true;
 }
 
 void CLight::setDiffuse(const Vector4D& color)
 {
     m_data._diffuse = color;
+    m_needUpdate = true;
 }
 
 void CLight::setSpecular(const Vector4D& color)
 {
     m_data._specular = color;
+    m_needUpdate = true;
 }
 
 void CLight::setRadius(const f32 radius)
 {
     m_data._radius = radius;
+    m_needUpdate = true;
 }
 
 void CLight::setAttenuation(const Vector3D& attenuation)
 {
     m_data._attenuation = attenuation;
+    m_needUpdate = true;
 }
 
 void CLight::setDirection(const Vector3D& direction)
 {
     m_data._direction = direction;
+    m_needUpdate = true;
 }
 
 const Vector4D& CLight::getAmbient() const

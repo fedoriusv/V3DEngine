@@ -6,6 +6,10 @@
 
 namespace v3d
 {
+namespace renderer
+{
+    class CRenderJob;
+}
 namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +54,11 @@ namespace scene
 
     private:
 
+        friend                    renderer::CRenderJob;
+
         SLightData                m_data;
+
+        bool                      m_needUpdate;
 
 #ifdef _DEBUG
         renderer::DebugLightPtr   m_debug;
