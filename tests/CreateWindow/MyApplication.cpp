@@ -28,24 +28,38 @@ void MyApplication::init()
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");
 
-    scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1, -1, -5)));
-    cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-    cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+    for (u32 j = 0; j < 10; ++j)
+    {
+        for (u32 i = 0; i < 10; ++i)
+        {
+            scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
+            cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+            cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+        }
+    }
   
-    BaseApplication::getSceneManager()->addLight();
+    BaseApplication::getSceneManager()->addLight()->setName("light");
 
     cube->setRotation(Vector3D(10, 120, 0));
     Vector3D test = cube->getRotation();
 
-    BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
-    //BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    scene::CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    fpsCamera->setName("fpsCamera");
+    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0, 0, -1));
+    camera->setName("camera");
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
+    BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
 }
 
 void MyApplication::run()
 {
 	//TODO: main loop
+}
+
+void MyApplication::onMouse(const v3d::event::SMouseInputEventPtr& event)
+{
+
 }
 
 void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
@@ -54,47 +68,84 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
     f32 angle = 5.0f;
     static bool debug = false;
 
-    if (event->_key == EKeyCode::eKeyEscape)
+    if (event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
-        getPlatform()->closeWindow();
-    }
-    if (event->_key == EKeyCode::eKeyKey_N && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        debug = !debug;
-        getSceneManager()->setDebugMode(debug);
-    }
 
-    CNode* node = getSceneManager()->getObjectByName("cube");
-    if (!node)
-    {
-        return;
-    }
+        if (event->_key == EKeyCode::eKeyEscape)
+        {
+            getPlatform()->closeWindow();
+        }
+        if (event->_key == EKeyCode::eKeyKey_N)
+        {
+            debug = !debug;
+            BaseApplication::getSceneManager()->setDebugMode(debug);
+        }
+        if (event->_key == EKeyCode::eKeyKey_V)
+        {
+            CCamera* fpsCamera = static_cast<CCamera*>(getSceneManager()->getObjectByName("fpsCamera"));
+            CCamera* camera = static_cast<CCamera*>(getSceneManager()->getObjectByName("camera"));
+            if (!fpsCamera || !camera)
+            {
+                return;
+            }
 
-   /* if (event->_key == EKeyCode::eKeyKey_W)
-    {
-        node->setPosition(Vector3D(node->getPosition().x, node->getPosition().y, node->getPosition().z + step));
-    }
-    if (event->_key == EKeyCode::eKeyKey_S)
-    {
-        node->setPosition(Vector3D(node->getPosition().x, node->getPosition().y, node->getPosition().z - step));
-    }*/
-    if (event->_key == EKeyCode::eKeyUp && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
-    }
-    if (event->_key == EKeyCode::eKeyDown && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        node->setRotation(Vector3D(node->getRotation().x - angle, node->getRotation().y, node->getRotation().z));
-    }
-    if (event->_key == EKeyCode::eKeyLeft && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y + angle, node->getRotation().z));
-    }
-    if (event->_key == EKeyCode::eKeyRight && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
-    {
-        node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
+            if (getSceneManager()->isActiveCamera(fpsCamera))
+            {
+                camera->setPosition(fpsCamera->getPosition());
+                camera->setTarget(fpsCamera->getTarget());
+                getSceneManager()->setActiveCamera(camera);
+            }
+            else if (getSceneManager()->isActiveCamera(camera))
+            {
+                fpsCamera->setPosition(camera->getPosition());
+                fpsCamera->setTarget(camera->getTarget());
+                getSceneManager()->setActiveCamera(fpsCamera);
+            }
+
+        }
+
+
+        CNode* light = getSceneManager()->getObjectByName("light");
+        if (light)
+        {
+            if (event->_key == EKeyCode::eKeyKey_J)
+            {
+                light->setPosition(Vector3D(light->getPosition().x - step, light->getPosition().y, light->getPosition().z));
+            }
+
+            if (event->_key == EKeyCode::eKeyKey_L)
+            {
+                light->setPosition(Vector3D(light->getPosition().x + step, light->getPosition().y, light->getPosition().z));
+            }
+        }
+
+        ///
+        CNode* node = getSceneManager()->getObjectByName("cube");
+        if (!node)
+        {
+            return;
+        }
+
+        if (event->_key == EKeyCode::eKeyUp && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        {
+            node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
+        }
+        if (event->_key == EKeyCode::eKeyDown && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        {
+            node->setRotation(Vector3D(node->getRotation().x - angle, node->getRotation().y, node->getRotation().z));
+        }
+        if (event->_key == EKeyCode::eKeyLeft && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        {
+            node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y + angle, node->getRotation().z));
+        }
+        if (event->_key == EKeyCode::eKeyRight && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        {
+            node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
+        }
+
+        getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
     }
     
-    getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
+   
     
 }

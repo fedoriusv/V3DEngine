@@ -24,8 +24,7 @@ namespace renderer
         void                initDraw(SDebugObject& object)    override;
         void                refreshDraw(SDebugObject& object) override;
 
-        void                drawNormals();
-        void                drawEdges();
+        void                drawObject(const SDebugObject& object);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
