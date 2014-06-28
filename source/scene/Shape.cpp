@@ -67,12 +67,12 @@ SVertexData& CShape::getGeometryData()
     return m_geometry->getData();
 }
 
-EDrawMode CShape::getGeometryDrawMode() const
+CGeometry::EDrawMode CShape::getGeometryDrawMode() const
 {
 	return m_geometry->getDrawMode();
 }
 
-void CShape::setGeometryDrawMode(EDrawMode mode)
+void CShape::setGeometryDrawMode(CGeometry::EDrawMode mode)
 {
 	m_geometry->setDrawMode(mode);
 }
@@ -94,7 +94,7 @@ void CShape::render()
         return;
     }
 
-    RENDERER->draw(m_renderJob, m_needUpdate);
+    RENDERER->draw(m_renderJob);
     //m_needUpdate = false;
 
 #ifdef _DEBUG

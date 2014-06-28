@@ -57,7 +57,7 @@ void CSampleShape::init()
     m_geometry->copyToVertices(vertex, 3);
     m_geometry->copyToNormals(normal, 3);
     m_geometry->copyToTexCoords(texCoord, 0, 3);
-    CShape::setGeometryDrawMode(EDrawMode::eTriangles);
+    CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
     m_geometry->init();
 #ifdef _DEBUG

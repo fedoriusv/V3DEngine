@@ -59,33 +59,33 @@ void CTorusShape::init()
             vNormal.normalize();
             ++index;
 
-            data._texCoords.at(0).vertex[index].x = (f32)(i) / (f32)(numMajor);
-            data._texCoords.at(0).vertex[index].y = (f32)(j) / (f32)(numMinor);
-            data._normals.vertex[index].x = vNormal.x;
-            data._normals.vertex[index].y = vNormal.y;
-            data._normals.vertex[index].z = vNormal.z;
-            data._vertices.vertex[index].x = x0 * r;
-            data._vertices.vertex[index].y = y0 * r;
-            data._vertices.vertex[index].z = z;
+            data._texCoords.at(0)[index].x = (f32)(i) / (f32)(numMajor);
+            data._texCoords.at(0)[index].y = (f32)(j) / (f32)(numMinor);
+            data._normals[index].x = vNormal.x;
+            data._normals[index].y = vNormal.y;
+            data._normals[index].z = vNormal.z;
+            data._vertices[index].x = x0 * r;
+            data._vertices[index].y = y0 * r;
+            data._vertices[index].z = z;
 
             vNormal = Vector3D(x1*c, y1*c, z / m_minorRadius);
             vNormal.normalize();
             ++index;
 
-            data._texCoords.at(0).vertex[index].x = (f32)(i + 1) / (f32)(numMajor);
-            data._texCoords.at(0).vertex[index].y = (f32)(j) / (f32)(numMinor);
-            data._normals.vertex[index].x = vNormal.x;
-            data._normals.vertex[index].y = vNormal.y;
-            data._normals.vertex[index].z = vNormal.z;
-            data._vertices.vertex[index].x = x1 * r;
-            data._vertices.vertex[index].y = y1 * r;
-            data._vertices.vertex[index].z = z;
+            data._texCoords.at(0)[index].x = (f32)(i + 1) / (f32)(numMajor);
+            data._texCoords.at(0)[index].y = (f32)(j) / (f32)(numMinor);
+            data._normals[index].x = vNormal.x;
+            data._normals[index].y = vNormal.y;
+            data._normals[index].z = vNormal.z;
+            data._vertices[index].x = x1 * r;
+            data._vertices[index].y = y1 * r;
+            data._vertices[index].z = z;
         }
     }
 
-    CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    if (data._vertices.id == 0)
+    if (data._verticesId == 0)
     {
         m_geometry->init();
 #ifdef _DEBUG

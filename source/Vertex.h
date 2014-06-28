@@ -5,38 +5,34 @@
 
 namespace v3d
 {
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	template <class T>
-	struct SVertices
-	{
-		v3d::u32        id;
-		std::vector<T>  vertex;
+    typedef  std::vector<std::vector<core::Vector2D>> TextureCoords;
 
-		SVertices()
-			: id(0)
-		{
-		};
-	};
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    struct SVertexData
+    {
+        std::vector<core::Vector3D>   _vertices;
+        std::vector<core::Vector3D>   _normals;
+        std::vector<core::Vector3D>   _colors;
+        std::vector<core::Vector3D>   _tangents;
+        TextureCoords                 _texCoords;
 
-	typedef  std::vector<SVertices<core::Vector2D>> TextureCoords;
+        std::vector<v3d::u32>         _indices;
 
-	struct SVertexData
-	{
-		SVertices<core::Vector3D>   _vertices;
-		SVertices<core::Vector3D>   _normals;
-		TextureCoords               _texCoords;
-		SVertices<v3d::u32>         _indices;
+        v3d::u32                      _verticesId;
+        v3d::u32                      _indicesId;
 
-		v3d::u32                    _countVertices;
-		v3d::u32                    _countIndices;;
+        v3d::u32                      _countVertices;
+        v3d::u32                      _countIndices;
 
-		void                        clear();
-		void                        malloc(v3d::u32 count, v3d::u32 index = 0, v3d::u32 layer = 1);
-		bool                        empty() const;
-	};
+        void                          clear();
+        void                          malloc(v3d::u32 count, v3d::u32 index = 0, v3d::u32 layer = 1, bool color = false, bool tangent = false);
+        bool                          empty() const;
+
+        SVertexData();
+    };
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 

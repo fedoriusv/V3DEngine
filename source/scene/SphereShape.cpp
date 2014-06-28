@@ -64,28 +64,28 @@ void CSphereShape::init()
             f32 z = crho;
 
             ++index;
-            data._texCoords.at(0).vertex[index].x = s;
-            data._texCoords.at(0).vertex[index].y = t;
-            data._normals.vertex[index].x = x;
-            data._normals.vertex[index].y = y ;
-            data._normals.vertex[index].z = z;
-            data._vertices.vertex[index].x = x * m_radius;
-            data._vertices.vertex[index].y = y * m_radius;
-            data._vertices.vertex[index].z = z * m_radius;
+            data._texCoords.at(0)[index].x = s;
+            data._texCoords.at(0)[index].y = t;
+            data._normals[index].x = x;
+            data._normals[index].y = y ;
+            data._normals[index].z = z;
+            data._vertices[index].x = x * m_radius;
+            data._vertices[index].y = y * m_radius;
+            data._vertices[index].z = z * m_radius;
 
             x = stheta * srhodrho;
             y = ctheta * srhodrho;
             z = crhodrho;
 
             ++index;
-            data._texCoords.at(0).vertex[index].x = s;
-            data._texCoords.at(0).vertex[index].y = t - dt;
-            data._normals.vertex[index].x = x;
-            data._normals.vertex[index].y = y;
-            data._normals.vertex[index].z = z;
-            data._vertices.vertex[index].x = x * m_radius;
-            data._vertices.vertex[index].y = y * m_radius;
-            data._vertices.vertex[index].z = z * m_radius;
+            data._texCoords.at(0)[index].x = s;
+            data._texCoords.at(0)[index].y = t - dt;
+            data._normals[index].x = x;
+            data._normals[index].y = y;
+            data._normals[index].z = z;
+            data._vertices[index].x = x * m_radius;
+            data._vertices[index].y = y * m_radius;
+            data._vertices[index].z = z * m_radius;
 
             theta = ((j + 1) == slices) ? 0.0f : (j + 1) * dtheta;
             stheta = (f32)(-sin(theta));
@@ -97,35 +97,35 @@ void CSphereShape::init()
 
             s += ds;
             ++index;
-            data._texCoords.at(0).vertex[index].x = s;
-            data._texCoords.at(0).vertex[index].y = t;
-            data._normals.vertex[index].x = x;
-            data._normals.vertex[index].y = y;
-            data._normals.vertex[index].z = z;
-            data._vertices.vertex[index].x =  x * m_radius;
-            data._vertices.vertex[index].y  = y * m_radius;
-            data._vertices.vertex[index].z = z * m_radius;
+            data._texCoords.at(0)[index].x = s;
+            data._texCoords.at(0)[index].y = t;
+            data._normals[index].x = x;
+            data._normals[index].y = y;
+            data._normals[index].z = z;
+            data._vertices[index].x =  x * m_radius;
+            data._vertices[index].y  = y * m_radius;
+            data._vertices[index].z = z * m_radius;
 
             x = stheta * srhodrho;
             y = ctheta * srhodrho;
             z = crhodrho;
 
             ++index;
-            data._texCoords.at(0).vertex[index].x = s;
-            data._texCoords.at(0).vertex[index].y = t - dt;
-            data._normals.vertex[index].x = x;
-            data._normals.vertex[index].y = y;
-            data._normals.vertex[index].z = z;
-            data._vertices.vertex[index].x = x * m_radius;
-            data._vertices.vertex[index].y = y * m_radius;
-            data._vertices.vertex[index].z = z * m_radius;
+            data._texCoords.at(0)[index].x = s;
+            data._texCoords.at(0)[index].y = t - dt;
+            data._normals[index].x = x;
+            data._normals[index].y = y;
+            data._normals[index].z = z;
+            data._vertices[index].x = x * m_radius;
+            data._vertices[index].y = y * m_radius;
+            data._vertices[index].z = z * m_radius;
         }
         t -= dt;
     }
 
-    CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    if (data._vertices.id == 0)
+    if (data._verticesId == 0)
     {
         m_geometry->init();
 #ifdef _DEBUG

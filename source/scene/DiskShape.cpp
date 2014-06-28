@@ -64,55 +64,55 @@ void CDiskShape::init()
 
             // Inner First
             ++index;
-            data._vertices.vertex[index].x = cos(theyta) * inner;
-            data._vertices.vertex[index].y = sin(theyta) * inner;
-            data._vertices.vertex[index].z = 0.0f;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 0.0f;
-            data._normals.vertex[index].z = 1.0f;
-            data._texCoords.at(0).vertex[index].x = (((cos(theyta) * inner) * radialScale) + 1.0f) * 0.5f;
-            data._texCoords.at(0).vertex[index].y = (((sin(theyta) * inner) * radialScale) + 1.0f) * 0.5f;
+            data._vertices[index].x = cos(theyta) * inner;
+            data._vertices[index].y = sin(theyta) * inner;
+            data._vertices[index].z = 0.0f;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 0.0f;
+            data._normals[index].z = 1.0f;
+            data._texCoords.at(0)[index].x = (((cos(theyta) * inner) * radialScale) + 1.0f) * 0.5f;
+            data._texCoords.at(0)[index].y = (((sin(theyta) * inner) * radialScale) + 1.0f) * 0.5f;
 
 
             // Outer First
             ++index;
-            data._vertices.vertex[index].x = cos(theyta) * outer;
-            data._vertices.vertex[index].y = sin(theyta) * outer;
-            data._vertices.vertex[index].z = 0.0f;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 0.0f;
-            data._normals.vertex[index].z = 1.0f;
-            data._texCoords.at(0).vertex[index].x = (((cos(theyta) * outer) * radialScale) + 1.0f) * 0.5f;
-            data._texCoords.at(0).vertex[index].y = (((sin(theyta) * outer) * radialScale) + 1.0f) * 0.5f;
+            data._vertices[index].x = cos(theyta) * outer;
+            data._vertices[index].y = sin(theyta) * outer;
+            data._vertices[index].z = 0.0f;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 0.0f;
+            data._normals[index].z = 1.0f;
+            data._texCoords.at(0)[index].x = (((cos(theyta) * outer) * radialScale) + 1.0f) * 0.5f;
+            data._texCoords.at(0)[index].y = (((sin(theyta) * outer) * radialScale) + 1.0f) * 0.5f;
 
             // Inner Second
             ++index;
-            data._vertices.vertex[index].x = cos(theytaNext) * inner;
-            data._vertices.vertex[index].y = sin(theytaNext) * inner;
-            data._vertices.vertex[index].z = 0.0f;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 0.0f;
-            data._normals.vertex[index].z = 1.0f;
-            data._texCoords.at(0).vertex[index].x = (((cos(theytaNext) * inner) * radialScale) + 1.0f) * 0.5f;
-            data._texCoords.at(0).vertex[index].y = (((sin(theytaNext) * inner) * radialScale) + 1.0f) * 0.5f;
+            data._vertices[index].x = cos(theytaNext) * inner;
+            data._vertices[index].y = sin(theytaNext) * inner;
+            data._vertices[index].z = 0.0f;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 0.0f;
+            data._normals[index].z = 1.0f;
+            data._texCoords.at(0)[index].x = (((cos(theytaNext) * inner) * radialScale) + 1.0f) * 0.5f;
+            data._texCoords.at(0)[index].y = (((sin(theytaNext) * inner) * radialScale) + 1.0f) * 0.5f;
 
 
             // Outer Second
             ++index;
-            data._vertices.vertex[index].x = cos(theytaNext) * outer;
-            data._vertices.vertex[index].y = sin(theytaNext) * outer;
-            data._vertices.vertex[index].z = 0.0f;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 0.0f;
-            data._normals.vertex[index].z = 1.0f;
-            data._texCoords.at(0).vertex[index].x = (((cos(theytaNext) * outer) * radialScale) + 1.0f) * 0.5f;
-            data._texCoords.at(0).vertex[index].y = (((sin(theytaNext) * outer) * radialScale) + 1.0f) * 0.5f;
+            data._vertices[index].x = cos(theytaNext) * outer;
+            data._vertices[index].y = sin(theytaNext) * outer;
+            data._vertices[index].z = 0.0f;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 0.0f;
+            data._normals[index].z = 1.0f;
+            data._texCoords.at(0)[index].x = (((cos(theytaNext) * outer) * radialScale) + 1.0f) * 0.5f;
+            data._texCoords.at(0)[index].y = (((sin(theytaNext) * outer) * radialScale) + 1.0f) * 0.5f;
         }
     }
 
-    CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    if (data._vertices.id == 0)
+    if (data._verticesId == 0)
     {
         m_geometry->init();
 #ifdef _DEBUG

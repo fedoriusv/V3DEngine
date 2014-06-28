@@ -35,31 +35,31 @@ namespace scene
     public:
 
         CShape();
-        virtual                      ~CShape();
+        virtual                         ~CShape();
 
-        EShapeType                   getShapeType() const;
+        EShapeType                      getShapeType() const;
+                                        
+        void                            setMaterial(const renderer::MaterialPtr& material);
+        const renderer::MaterialPtr&    getMaterial() const;
 
-        void                         setMaterial(const renderer::MaterialPtr& material);
-        const renderer::MaterialPtr& getMaterial() const;
-
-        void                         init()             override;
-        void                         update(f64 time)   override;
-        void                         render()           override;
+        void                            init()             override;
+        void                            update(f64 time)   override;
+        void                            render()           override;
 
     protected:
 
-        EShapeType                   m_shapeType;
-
-        renderer::MaterialPtr        m_material;
-        renderer::GeometryPtr        m_geometry;
-        renderer::RenderJobPtr       m_renderJob;
-#ifdef _DEBUG
-        renderer::DebugGeometryPtr   m_debug;
+        EShapeType                      m_shapeType;
+                                        
+        renderer::MaterialPtr           m_material;
+        renderer::GeometryPtr           m_geometry;
+        renderer::RenderJobPtr          m_renderJob;
+#ifdef _DEBUG                           
+        renderer::DebugGeometryPtr      m_debug;
 #endif
 
-        SVertexData&                 getGeometryData();
-        renderer::EDrawMode          getGeometryDrawMode() const;
-        void                         setGeometryDrawMode(renderer::EDrawMode mode);
+        SVertexData&                   getGeometryData();
+        renderer::CGeometry::EDrawMode getGeometryDrawMode() const;
+        void                           setGeometryDrawMode(renderer::CGeometry::EDrawMode mode);
 
     };
 

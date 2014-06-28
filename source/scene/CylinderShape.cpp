@@ -51,30 +51,30 @@ void CCylinderShape::init()
             f32 y = (f32)(m_radius * sin(a));
 
             ++index;
-            data._texCoords.at(0).vertex[index].x = j / (f32)minor;
-            data._texCoords.at(0).vertex[index].y = i / (f32)major;
-            data._normals.vertex[index].x = x / (f32)m_radius;
-            data._normals.vertex[index].y = y / (f32)m_radius;
-            data._normals.vertex[index].z = 0.0f;
-            data._vertices.vertex[index].x = x;
-            data._vertices.vertex[index].y = y;
-            data._vertices.vertex[index].z = z0;
+            data._texCoords.at(0)[index].x = j / (f32)minor;
+            data._texCoords.at(0)[index].y = i / (f32)major;
+            data._normals[index].x = x / (f32)m_radius;
+            data._normals[index].y = y / (f32)m_radius;
+            data._normals[index].z = 0.0f;
+            data._vertices[index].x = x;
+            data._vertices[index].y = y;
+            data._vertices[index].z = z0;
 
             ++index;
-            data._texCoords.at(0).vertex[index].x = j / (f32)minor;
-            data._texCoords.at(0).vertex[index].y = (i + 1) / (f32)major;
-            data._normals.vertex[index].x = x / (f32)m_radius;
-            data._normals.vertex[index].y = y / (f32)m_radius;
-            data._normals.vertex[index].z = 0.0f;
-            data._vertices.vertex[index].x = x;
-            data._vertices.vertex[index].y = y;
-            data._vertices.vertex[index].z = z1;
+            data._texCoords.at(0)[index].x = j / (f32)minor;
+            data._texCoords.at(0)[index].y = (i + 1) / (f32)major;
+            data._normals[index].x = x / (f32)m_radius;
+            data._normals[index].y = y / (f32)m_radius;
+            data._normals[index].z = 0.0f;
+            data._vertices[index].x = x;
+            data._vertices[index].y = y;
+            data._vertices[index].z = z1;
         }
     }
 
-    CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    if (data._vertices.id == 0)
+    if (data._verticesId == 0)
     {
         m_geometry->init();
 #ifdef _DEBUG

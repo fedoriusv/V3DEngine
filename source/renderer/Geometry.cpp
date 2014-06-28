@@ -20,7 +20,7 @@ SVertexData& CGeometry::getData()
     return m_data;
 }
 
-EDrawMode CGeometry::getDrawMode() const
+CGeometry::EDrawMode CGeometry::getDrawMode() const
 {
     return m_drawMode;
 }
@@ -34,7 +34,7 @@ void CGeometry::copyToVertices(const f32 vertices[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data._vertices.vertex[i] = vertices[i];
+        m_data._vertices[i] = vertices[i];
     }
 }
 
@@ -42,7 +42,7 @@ void CGeometry::copyToNormals(const f32 normals[][3], u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data._normals.vertex[i] = normals[i];
+        m_data._normals[i] = normals[i];
     }
 }
 
@@ -50,12 +50,12 @@ void CGeometry::copyToTexCoords(const f32 texCoords[][2], u32 laye, u32 size)
 {
     for (u32 i = 0; i < size; ++i)
     {
-        m_data._texCoords[laye].vertex[i] = texCoords[i];
+        m_data._texCoords[laye][i] = texCoords[i];
     }
 }
 
 void CGeometry::copyToIndices(const u32* indices, u32 size)
 {
-    std::copy(indices, indices + size, m_data._indices.vertex.begin());
+    std::copy(indices, indices + size, m_data._indices.begin());
 }
 

@@ -81,7 +81,7 @@ void CCubeShape::init()
     m_geometry->copyToTexCoords(texCoord, 0, count);
     m_geometry->copyToIndices(indices, 36);
     
-    CShape::setGeometryDrawMode(EDrawMode::eTriangles);
+    CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
     m_geometry->init();
 #ifdef _DEBUG

@@ -31,24 +31,26 @@ namespace renderer
 
         v3d::u32            m_arrayId;
 
-        static void         genBuffers(v3d::u32& buffer);
-        static void         bindBuffers(const v3d::u32 target, const v3d::u32 buffer);
-        static void         deleteBuffers(v3d::u32& buffer);
+        s32                 computeVertexSize(const AttributeList& attributes);
 
-        static void         bufferData(const v3d::u32 target, const v3d::u32 size, void* data);
-        static void         bufferSubData(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, void* data);
+        static void         genBuffers(u32& buffer);
+        static void         bindBuffers(const u32 target, const u32 buffer);
+        static void         deleteBuffers(u32& buffer);
 
-        static void*        mapBuffer(const v3d::u32 target, const v3d::u32 access);
-        static bool         unmapBuffer(const v3d::u32 target);
-        static void*        mapBufferRange(const v3d::u32 target, const v3d::u32 offset, const v3d::u32 size, const v3d::u32 flags);
+        static void         bufferData(const u32 target, const u32 size, void* data);
+        static void         bufferSubData(const u32 target, const u32 offset, const u32 size, void* data);
 
-        static void         getBufferPointer(const v3d::u32 target, const v3d::u32 pname, void** params);
+        static void*        mapBuffer(const u32 target, const u32 access);
+        static bool         unmapBuffer(const u32 target);
+        static void*        mapBufferRange(const u32 target, const u32 offset, const u32 size, const u32 flags);
 
-        static void         genVertexArray(v3d::u32& buffer);
-        static void         bindVertexArray(const v3d::u32 buffer);
-        static void         deleteVertexArray(v3d::u32& buffer);
+        static void         getBufferPointer(const u32 target, const u32 pname, void** params);
 
-        static void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const v3d::u32 size);
+        static void         genVertexArray(u32& buffer);
+        static void         bindVertexArray(const u32 buffer);
+        static void         deleteVertexArray(u32& buffer);
+
+        static void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const u32 count, bool normalized = false, const u32 size = 0, const u32 offset = 0);
 
         static void         drawElements(const u32 mode, const u32 count);
         static void         drawArrays(const u32 mode, const u32 first, const u32 count);

@@ -2,69 +2,95 @@
 
 using namespace v3d;
 
+SVertexData::SVertexData()
+    : _verticesId(0)
+    , _indicesId(0)
+    , _countVertices(0)
+    , _countIndices(0)
+{
+}
+
 void SVertexData::clear()
 {
-	if (!_vertices.vertex.empty())
+	if (!_vertices.empty())
 	{
-		_vertices.vertex.clear();
-		_vertices.id = 0;
+		_vertices.clear();
 	}
 
-	if (!_normals.vertex.empty())
+	if (!_normals.empty())
 	{
-		_normals.vertex.clear();
-		_normals.id = 0;
+		_normals.clear();
 	}
+
+    if (!_colors.empty())
+    {
+        _colors.clear();
+    }
+
+    if (!_tangents.empty())
+    {
+        _tangents.clear();
+    }
 
 	if (!_texCoords.empty())
 	{
 		for (auto layer : _texCoords)
 		{
-			if (!layer.vertex.empty())
+			if (!layer.empty())
 			{
-				layer.vertex.clear();
-				layer.id = 0;
+				layer.clear();
 			}
 		}
 		_texCoords.clear();
 	}
 
-	if (!_indices.vertex.empty())
+	if (!_indices.empty())
 	{
-		_indices.vertex.clear();
-		_indices.id = 0;
+		_indices.clear();
 	}
 
 	_countVertices = 0;
 	_countIndices = 0;
-
 }
 
-void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer)
+void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer, bool color, bool tangent)
 {
-	clear();
+    clear();
 
-	_countVertices = count;
-    _vertices.vertex.resize(count);
-	_normals.vertex.resize(count);
+    _countVertices = count;
+    _vertices.resize(count);
+    _normals.resize(count);
+    if (color)
+    {
+        _colors.resize(count);
+    }
+    if (tangent)
+    {
+        _tangents.resize(tangent);
+    }
 
-	for (v3d::u32 i = 0; i < layer; ++i)
-	{
-		SVertices<core::Vector2D> texCoord;
-		texCoord.vertex.resize(count);
+    for (v3d::u32 i = 0; i < layer; ++i)
+    {
+        std::vector<core::Vector2D> texCoord;
+        texCoord.resize(count);
 
-		_texCoords.push_back(texCoord);
+        _texCoords.push_back(texCoord);
+    }
 
-	}
-
-	_countIndices  = index;
-    _indices.vertex.resize(index);
+    _countIndices  = index;
+    if (index > 0)
+    {
+        _indices.resize(index);
+    }
 
 }
 
 bool SVertexData::empty() const
 {
-    return _vertices.vertex.empty()
-        || _normals.vertex.empty()
-        || _texCoords.at(0).vertex.empty();
+    return _vertices.empty()
+        && _normals.empty()
+        && _texCoords.at(0).empty()
+        && _colors.empty()
+        && _tangents.empty();
+
 }

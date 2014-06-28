@@ -47,34 +47,34 @@ void CPlaneShape::init()
         {
             ++index;
 
-            data._texCoords.at(0).vertex[index].x = s;
-            data._texCoords.at(0).vertex[index].y = t;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 1.0f;
-            data._normals.vertex[index].z = 0.0f;
-            data._vertices.vertex[index].x = strip;
-            data._vertices.vertex[index].y = y;
-            data._vertices.vertex[index].z = run;
+            data._texCoords.at(0)[index].x = s;
+            data._texCoords.at(0)[index].y = t;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 1.0f;
+            data._normals[index].z = 0.0f;
+            data._vertices[index].x = strip;
+            data._vertices[index].y = y;
+            data._vertices[index].z = run;
 
             ++index;
             
-            data._texCoords.at(0).vertex[index].x = s + texStep;
-            data._texCoords.at(0).vertex[index].y = t;
-            data._normals.vertex[index].x = 0.0f;
-            data._normals.vertex[index].y = 1.0f;
-            data._normals.vertex[index].z = 0.0f;
-            data._vertices.vertex[index].x = strip + step;
-            data._vertices.vertex[index].y = y;
-            data._vertices.vertex[index].z = run;
+            data._texCoords.at(0)[index].x = s + texStep;
+            data._texCoords.at(0)[index].y = t;
+            data._normals[index].x = 0.0f;
+            data._normals[index].y = 1.0f;
+            data._normals[index].z = 0.0f;
+            data._vertices[index].x = strip + step;
+            data._vertices[index].y = y;
+            data._vertices[index].z = run;
 
             t += texStep;
         }
         s += texStep;
     }
 
-    CShape::setGeometryDrawMode(EDrawMode::eTriangleStrip);
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    if (data._vertices.id == 0)
+    if (data._verticesId == 0)
     {
         m_geometry->init();
 #ifdef _DEBUG
