@@ -32,6 +32,7 @@ namespace renderer
         v3d::u32            m_arrayId;
 
         s32                 computeVertexSize(const AttributeList& attributes);
+        void                initBufferData(const AttributeList& attributes);
 
         static void         genBuffers(u32& buffer);
         static void         bindBuffers(const u32 target, const u32 buffer);
