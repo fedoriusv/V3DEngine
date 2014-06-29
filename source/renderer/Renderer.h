@@ -36,12 +36,10 @@ namespace renderer
         virtual void                preRender()                    = 0;
         virtual void                postRender()                   = 0;
 
-        void                        draw(const RenderJobPtr& job, bool updateTransform);
-
+        void                        draw(const RenderJobPtr& job);
         virtual void                reshape(u32 width, u32 height);
 
         void                        updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up);
-        void                        needUpdateCamera(bool update);
 
         void                        setBackColor(const core::Vector3D& color);
         const core::Vector3D&       getBackColor() const;
@@ -68,10 +66,9 @@ namespace renderer
 
         friend                      CDebugLight;
 
-        void                        updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data);
-        void                        updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data);
-        void                        updateTransform(const core::Matrix4D& transform, const ShaderDataPtr& data);
-        void                        updateView(const ShaderDataPtr& data);
+        virtual void                updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data)     = 0;
+        virtual void                updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data)      = 0;
+        void                        updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass);
 
         DriverContextPtr            m_context;
 

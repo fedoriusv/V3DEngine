@@ -5,14 +5,14 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-GLenum ERenderPolygonModeGL[] =
+GLenum EPolygonModeGL[] =
 {
     GL_FILL,
     GL_LINE,
     GL_POINT
 };
 
-GLenum ERenderWindingGL[] =
+GLenum EWindingGL[] =
 {
     GL_CW,
     GL_CCW
@@ -28,9 +28,9 @@ CRenderStateGL::~CRenderStateGL()
 
 void CRenderStateGL::bind()
 {
-    glPolygonMode(GL_FRONT_AND_BACK, ERenderPolygonModeGL[m_polygonMode]);
+    glPolygonMode(GL_FRONT_AND_BACK, EPolygonModeGL[m_polygonMode]);
 
-    glFrontFace(ERenderWindingGL[m_winding]);
+    glFrontFace(EWindingGL[m_winding]);
     m_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
 

@@ -9,53 +9,57 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum ERenderWinding
-    {
-        eWindingCW,
-        eWindingCCW
-    };
-
-    enum ERenderPolygonMode
-    {
-        ePolyModeFill,
-        ePolyModeLine,
-        ePolyModePoint,
-
-        ePolygonModeCount
-    };
-
-    //TODO:add blend
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
     class CRenderState
     {
     public:
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        enum EWinding
+        {
+            eWindingCW,
+            eWindingCCW
+        };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        enum EPolygonMode
+        {
+            ePolyModeFill,
+            ePolyModeLine,
+            ePolyModePoint,
+
+            eModeCount
+        };
+
+        //TODO:add blend
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         CRenderState();
         virtual                   ~CRenderState();
-                                  
+
         bool                      getCullFace()    const;
-        ERenderWinding            getWinding()     const;
-        ERenderPolygonMode        getPolygonMode() const;
+        EWinding                  getWinding()     const;
+        EPolygonMode              getPolygonMode() const;
                                   
         void                      setCullFace(bool type);
-        void                      setWinding(ERenderWinding type);
-        void                      setPolygonMode(ERenderPolygonMode type);
+        void                      setWinding(EWinding type);
+        void                      setPolygonMode(EPolygonMode type);
 
         virtual void              bind() = 0;
 
-        static ERenderPolygonMode getPolygonModeByName(const std::string& name);
+        static EPolygonMode       getPolygonModeByName(const std::string& name);
 
     protected:
 
         bool                      m_cullFace;
-        ERenderWinding            m_winding;
-        ERenderPolygonMode        m_polygonMode;
+        EWinding                  m_winding;
+        EPolygonMode              m_polygonMode;
 
     private:
 
-        static const std::string s_renderPolygonMode[ERenderPolygonMode::ePolygonModeCount];
+        static const std::string  s_renderPolygonMode[EPolygonMode::eModeCount];
 
     };
 

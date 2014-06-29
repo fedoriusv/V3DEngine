@@ -11,55 +11,58 @@ namespace renderer
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    struct SMaterialData
-    {
-       core::Vector3D   ambient;
-       core::Vector3D   diffuse;
-       core::Vector3D   specular;
-       core::Vector3D   emission;
-       f32              shininess;
-       f32              transparency;
-    };
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     class CRenderer;
 
     class CMaterial : public CObject
     {
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        struct SMaterialData
+        {
+           core::Vector3D   ambient;
+           core::Vector3D   diffuse;
+           core::Vector3D   specular;
+           core::Vector3D   emission;
+           f32              shininess;
+           f32              transparency;
+        };
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public:
 
         CMaterial();
-        virtual                 ~CMaterial();
+        virtual                   ~CMaterial();
 
-        void                    setAmbientColor (const core::Vector3D& color);
-        void                    setDiffuseColor (const core::Vector3D& color);
-        void                    setSpecularColor(const core::Vector3D& color);
-        void                    setEmissionColor(const core::Vector3D& color);
-        void                    setShininess(f32 value);
-        void                    setTransparency(f32 value);
+        void                      setAmbientColor (const core::Vector3D& color);
+        void                      setDiffuseColor (const core::Vector3D& color);
+        void                      setSpecularColor(const core::Vector3D& color);
+        void                      setEmissionColor(const core::Vector3D& color);
+        void                      setShininess(f32 value);
+        void                      setTransparency(f32 value);
 
-        const core::Vector3D&   getAmbientColor()  const;
-        const core::Vector3D&   getDiffuseColor()  const;
-        const core::Vector3D&   getSpecularColor() const;
-        const core::Vector3D&   getEmissionColor() const;
-        f32                     getShininess()     const;
-        f32                     getTransparency()  const;
+        const core::Vector3D&     getAmbientColor()  const;
+        const core::Vector3D&     getDiffuseColor()  const;
+        const core::Vector3D&     getSpecularColor() const;
+        const core::Vector3D&     getEmissionColor() const;
+        f32                       getShininess()     const;
+        f32                       getTransparency()  const;
 
-        bool                    setTexture(const u32 layer, const std::string& file);
-        bool                    setTexture(const u32 layer, const std::string* files[6]);
-        void                    setTexture(const u32 layer, TexturePtr texture);
+        bool                      setTexture(const u32 layer, const std::string& file);
+        bool                      setTexture(const u32 layer, const std::string* files[6]);
+        void                      setTexture(const u32 layer, TexturePtr texture);
         
-        TexturePtr              getTexture(const u32 layer) const;
-        u32                     getTextureCount()           const;
+        const TexturePtr&         getTexture(const u32 layer) const;
+        u32                       getTextureCount()           const;
 
-        void                    destroyTexture(u32 layer);
+        void                      destroyTexture(u32 layer);
         
-        bool                    setRenderTechnique(const std::string& file);
-        bool                    setRenderTechnique(stream::IStream* stream);
+        bool                      setRenderTechnique(const std::string& file);
+        bool                      setRenderTechnique(stream::IStream* stream);
 
-        void                    setRenderTechnique(const RenderTechniquePtr& technique);
-        RenderTechniquePtr      getRenderTechique() const;
+        void                      setRenderTechnique(const RenderTechniquePtr& technique);
+        const RenderTechniquePtr& getRenderTechique() const;
 
 
     protected:

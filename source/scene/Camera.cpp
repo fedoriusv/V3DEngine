@@ -57,8 +57,6 @@ void CCamera::render()
     {
         return;
     }
-
-    RENDERER->needUpdateCamera(m_needUpdate);
 }
 
 void CCamera::update(f64 time)

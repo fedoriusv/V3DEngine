@@ -9,27 +9,29 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EShaderAttribute
-    {
-        eAttributeNone = -1,
-        eAttributeVertex,
-        eAttributeColor,
-        eAttributeNormal,
-        eAttributeBinormal,
-        eAttributeTangent,
-        eAttributeTexture0,
-        eAttributeTexture1,
-        eAttributeTexture2,
-        eAttributeTexture3,
-
-        eAttributeCount,
-    };
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
     class CShaderAttribute
     {
     public:
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        enum EShaderAttribute
+        {
+            eAttributeNone = -1,
+            eAttributeVertex,
+            eAttributeColor,
+            eAttributeNormal,
+            eAttributeBinormal,
+            eAttributeTangent,
+            eAttributeTexture0,
+            eAttributeTexture1,
+            eAttributeTexture2,
+            eAttributeTexture3,
+
+            eAttributeCount,
+        };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         CShaderAttribute();
         virtual                         ~CShaderAttribute();
@@ -39,15 +41,15 @@ namespace renderer
         const std::string&              getAttributeName() const;
         EShaderAttribute                getAttributeType() const;
 
-        static const std::string&       getShaderAttributeNameByType(EShaderAttribute type);
-        static const EShaderAttribute   getShaderAttributeTypeByName(const std::string& name);
+        static const std::string&       getAttributeNameByType(EShaderAttribute type);
+        static const EShaderAttribute   getAttributeTypeByName(const std::string& name);
 
     private:
 
         EShaderAttribute                m_typeAttr;
         std::string                     m_attribute;
 
-        static const std::string        s_shaderAttributeName[EShaderAttribute::eAttributeCount];
+        static const std::string        s_attributeName[EShaderAttribute::eAttributeCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

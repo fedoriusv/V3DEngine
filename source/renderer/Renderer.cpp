@@ -40,12 +40,7 @@ const core::Vector3D& CRenderer::getBackColor() const
 
 void CRenderer::checkForErrors(const std::string& location)
 {
-	m_context->checkForErrors(location);
-}
-
-void CRenderer::needUpdateCamera(bool update)
-{
-    m_updateCamera = update;
+    m_context->checkForErrors(location);
 }
 
 void CRenderer::reshape(u32 width, u32 height)
@@ -58,7 +53,7 @@ void CRenderer::reshape(u32 width, u32 height)
     m_viewportSize.height = height;
 
     f32 aspectRatio = (f32)m_viewportSize.width / (f32)m_viewportSize.height;
-    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
+    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 10.0f);
 
 }
 
@@ -75,31 +70,24 @@ const core::Dimension2D& CRenderer::getViewportSize() const
     return m_viewportSize;
 }
 
-void CRenderer::draw(const RenderJobPtr& job, bool updateTransform)
+void CRenderer::draw(const RenderJobPtr& job)
 {
     const MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geomerty = job->getGeometry();
+    const u32 passCount = material->getRenderTechique()->getRenderPassCount();
 
-    for (u32 i = 0; i < material->getRenderTechique()->getRenderPassCount(); ++i)
+    for (u32 i = 0; i < passCount; ++i)
     {
         const RenderPassPtr& pass = material->getRenderTechique()->getRenderPass(i);
-
-        const ShaderDataPtr& data = pass->getShaderData();
-        
-        if (updateTransform)
-        {
-            CRenderer::updateTransform(job->getTransform(), data);
-        }
-
-        CRenderer::updateView(data);
-        CRenderer::updateMaterial(material, data);
-        CRenderer::updateLight(job->getTransform(), data);
-
         pass->bind();
+
+        updateTransform(job->getTransform(), pass);
+        //updateMaterial(material, data);
+        //updateLight(job->getTransform(), data);
 
         for (u32 layer = 0; layer < material->getTextureCount(); ++layer)
         {
-            TexturePtr texture = material->getTexture(layer);
+            const TexturePtr& texture = material->getTexture(layer);
 
             //TODO: check for sampler data
             if (texture->isEnable())
@@ -116,169 +104,6 @@ void CRenderer::draw(const RenderJobPtr& job, bool updateTransform)
     }
 }
 
-void CRenderer::updateTransform(const core::Matrix4D& transform, const ShaderDataPtr& data)
-{
-    if (data->isExistUniform(eTransformProjectionMatrix))
-    {
-        data->setUniformMatrix4(eTransformProjectionMatrix, m_projectionMatrix);
-    }
-
-    if (data->isExistUniform(eTransformModelMatrix))
-    {
-        core::Matrix4D modelMatrix = transform;
-        modelMatrix.makeTransposed();
-
-        data->setUniformMatrix4(eTransformModelMatrix, modelMatrix);
-    }
-
-    if (data->isExistUniform(eTransformNormalMatrix))
-    {
-        core::Matrix4D normalMatrix;
-        transform.getInverse(normalMatrix);
-
-        data->setUniformMatrix4(eTransformNormalMatrix, normalMatrix);
-    }
-}
-
-void CRenderer::updateView(const ShaderDataPtr& data)
-{
-    if (!m_updateCamera)
-    {
-        return;
-    }
-
-    if (data->isExistUniform(eTransformViewMatrix))
-    {
-        data->setUniformMatrix4(eTransformViewMatrix, m_viewMatrix);
-    }
-
-    if (data->isExistUniform(eTransformViewPosition))
-    {
-        data->setUniformVector3(eTransformViewPosition, m_viewPosition);
-    }
-
-    m_updateCamera = false;
-}
-
-void CRenderer::updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data)
-{
-    if (!material->m_needUpdate)
-    {
-        return;
-    }
-
-    if (data->isExistUniform(eMaterialAmbient))
-    {
-        data->setUniformVector4(eMaterialAmbient, material->getAmbientColor());
-    }
-
-    if (data->isExistUniform(eMaterialDiffuse))
-    {
-        data->setUniformVector4(eMaterialDiffuse, material->getDiffuseColor());
-    }
-
-    if (data->isExistUniform(eMaterialSpecular))
-    {
-        data->setUniformVector4(eMaterialSpecular, material->getSpecularColor());
-    }
-
-    if (data->isExistUniform(eMaterialEmission))
-    {
-        data->setUniformVector4(eMaterialEmission, material->getEmissionColor());
-    }
-
-    if (data->isExistUniform(eMaterialShininess))
-    {
-        data->setUniformFloat(eMaterialShininess, material->getShininess());
-    }
-
-    material->m_needUpdate = false;
-}
-
-void CRenderer::updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data)
-{
-    if (m_lightList.empty())
-    {
-        return;
-    }
-
-    //std::vector<scene::CLight*> lights = m_lightList;
-    //const Vector3D& pos = transform.getTranslation();
-
-    //std::remove_if(lights.begin(), lights.end(), [pos](scene::CLight* light) -> bool
-    //{
-    //    if (!light->isVisible())
-    //    {
-    //        return true;
-    //    }
-
-    //    f32 distance = (light->getPosition() - pos).length();
-    //    if (light->getRadius() < distance)
-    //    {
-    //        return true;
-    //    }
-
-    //    return true;
-    //});
-
-    //if (data->isExistUniform(eLightsCount))
-    //{
-    //    data->setUniformInt(eLightsCount, lights.size());
-    //}
-
-    //if (lights.empty())
-    //{
-    //    return;
-    //}
-
-    //s32 index = 0;
-    //for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
-    //{
-    //    if (!(*light)->m_needUpdate)
-    //    {
-    //        //continue;
-    //    }
-
-    //    if (data->isExistUniform(eLightPosition))
-    //    {
-    //        data->setUniformVector4(eLightPosition, Vector4D((*light)->getPosition(), 0.0f), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightAmbient))
-    //    {
-    //        data->setUniformVector4(eLightAmbient, (*light)->getAmbient(), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightDiffuse))
-    //    {
-    //        data->setUniformVector4(eLightDiffuse, (*light)->getDiffuse(), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightSpecular))
-    //    {
-    //        data->setUniformVector4(eLightSpecular, (*light)->getSpecular(), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightDirection))
-    //    {
-    //        data->setUniformVector3(eLightDirection, (*light)->getDirection(), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightAttenuation))
-    //    {
-    //        data->setUniformVector3(eLightAttenuation, (*light)->getAttenuation(), index);
-    //    }
-
-    //    if (data->isExistUniform(eLightRadius))
-    //    {
-    //        data->setUniformFloat(eLightRadius, (*light)->getRadius(), index);
-    //    }
-
-    //    (*light)->m_needUpdate = false;
-    //}
-
-}
-
 #ifdef _DEBUG
 void CRenderer::setDebugMode(bool active)
 {
@@ -290,3 +115,41 @@ bool CRenderer::isDebugMode() const
     return m_debugMode;
 }
 #endif
+
+void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
+{
+    const ShaderDataPtr& data = pass->getShaderData();
+    const ShaderProgramPtr& program = pass->getShaderProgram();
+    const u32 shader = program->getShaderID();
+
+    if (data->isExistUniform(CShaderDefaultUniform::eTransformProjectionMatrix))
+    {
+        program->setUniformMatrix4(shader, "transform.projectionMatrix", m_projectionMatrix);
+    }
+
+    if (data->isExistUniform(CShaderDefaultUniform::eTransformModelMatrix))
+    {
+        core::Matrix4D modelMatrix(transform);
+        modelMatrix.makeTransposed();
+
+        program->setUniformMatrix4(shader, "transform.modelMatrix", modelMatrix);
+    }
+
+    if (data->isExistUniform(CShaderDefaultUniform::eTransformViewMatrix))
+    {
+        program->setUniformMatrix4(shader, "transform.viewMatrix", m_viewMatrix);
+    }
+
+    if (data->isExistUniform(CShaderDefaultUniform::eTransformViewPosition))
+    {
+        program->setUniformVector3(shader, "transform.viewPosition", m_viewPosition);
+    }
+
+    if (data->isExistUniform(CShaderDefaultUniform::eTransformNormalMatrix))
+    {
+        core::Matrix4D normalMatrix;
+        transform.getInverse(normalMatrix);
+
+        program->setUniformMatrix4(shader, "transform.normalMatrix", normalMatrix);
+    }
+}

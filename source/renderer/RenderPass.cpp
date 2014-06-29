@@ -2,7 +2,7 @@
 
 #include "Engine.h"
 #include "utils/Logger.h"
-#include "renderer/GL/ShaderProgramGL.h"
+
 
 using namespace v3d;
 using namespace v3d::renderer;
@@ -150,15 +150,6 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             continue;
         }
 
-        const std::string varType = varElement->Attribute("type");
-        if (varType.empty())
-        {
-            LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-
-            varElement = varElement->NextSiblingElement("var");
-            continue;
-        }
-
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
@@ -168,10 +159,31 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             continue;
         }
 
-        EDefaultUniformData uniformName = CShaderUniform::getShaderUniformValueByName(varVal);
+        bool defaultUniform = true;
+        CShaderUniform::EDataType uniformType = CShaderUniform::eTypeNone;
+        CShaderDefaultUniform::EUniformData uniformName = CShaderDefaultUniform::getValueByName(varVal);
+        if (uniformName == CShaderDefaultUniform::eUniformUnknown)
+        {
+            const std::string varType = varElement->Attribute("type");
+            if (varType.empty())
+            {
+                LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
 
-        EShaderDataType  uniformType = (uniformName == EDefaultUniformData::eUserUniform)
-            ? EShaderDataType::eTypeNone : CShaderData::getShaderDataTypeByName(varType);
+                varElement = varElement->NextSiblingElement("var");
+                continue;
+            }
+
+            uniformType = CShaderData::getDataTypeByName(varType);
+            if (uniformType == CShaderUniform::eTypeNone)
+            {
+                LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
+
+                varElement = varElement->NextSiblingElement("var");
+                continue;
+            }
+
+            defaultUniform = false;
+        }
 
         const u32 array = varElement->IntAttribute("array");
         if (array > 0)
@@ -179,12 +191,27 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             for (u32 index = 0; index < array; ++index)
             {
                 const std::string varNameIdx = CRenderPass::attachIndexToUniform(varName, index);
-                m_shaderData->addDefaultUniform(varNameIdx, uniformType, uniformName);
+                if (defaultUniform)
+                {
+                    m_shaderData->addDefaultUniform(varNameIdx, uniformName);
+                }
+                else
+                {
+                    m_shaderData->addUniform(varNameIdx, uniformType);
+                }
+               
             }
         }
         else
         {
-            m_shaderData->addDefaultUniform(varName, uniformType, uniformName);
+            if (defaultUniform)
+            {
+                m_shaderData->addDefaultUniform(varName, uniformName);
+            }
+            else
+            {
+                m_shaderData->addUniform(varName, uniformType);
+            }
         }
 
         varElement = varElement->NextSiblingElement("var");
@@ -222,7 +249,7 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
             continue;
         }
 
-        EShaderAttribute attribureName = CShaderAttribute::getShaderAttributeTypeByName(varVal);
+        CShaderAttribute::EShaderAttribute attribureName = CShaderAttribute::getAttributeTypeByName(varVal);
         m_shaderData->addAttribute(varName, attribureName);
 
         varElement = varElement->NextSiblingElement("var");
@@ -290,11 +317,11 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             LOG_WARRNING("Warrning parse. empty vshader name");
         }
 
-        EShaderType type = EShaderType::eVertex;
+        CShader::EShaderType type = CShader::eVertex;
         const std::string shaderType = shaderElement->Attribute("type");
         if (shaderType.empty())
         {
-            type = EShaderType::eVertex;
+            type = CShader::eVertex;
             LOG_WARRNING("Warrning parse. Shader have not type. Set Vertex type");
         }
         else
@@ -368,7 +395,7 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
     {
         const std::string polygonmodeStr = root->Attribute("polygonmode");
 
-        ERenderPolygonMode polygonmode = CRenderState::getPolygonModeByName(polygonmodeStr);
+        CRenderState::EPolygonMode polygonmode = CRenderState::getPolygonModeByName(polygonmodeStr);
         m_renderState->setPolygonMode(polygonmode);
     }
     
@@ -376,7 +403,7 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
     {
         const std::string windingStr = root->Attribute("winding");
 
-        ERenderWinding  winding = (windingStr == "ccw") ? ERenderWinding::eWindingCCW : ERenderWinding::eWindingCW;
+        CRenderState::EWinding  winding = (windingStr == "ccw") ? CRenderState::eWindingCCW : CRenderState::eWindingCW;
         m_renderState->setWinding(winding);
     }
 
@@ -399,14 +426,13 @@ void CRenderPass::bind()
     m_program->bind();
 
     const UniformList& list = m_shaderData->m_uniformList;
-
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
-        EShaderDataType type = uniform->second->getUniformType();
+        CShaderUniform::EDataType type = uniform->second->getUniformType();
+        const std::string& attribute = uniform->first;
         void* value = uniform->second->getUniforValue();
-        const std::string& attr = uniform->first;
 
-        m_program->setUniform(type, m_program->getShaderID(), attr, value);
+        m_program->setUniform(type, m_program->getShaderID(), attribute, value);
     }
 }
 

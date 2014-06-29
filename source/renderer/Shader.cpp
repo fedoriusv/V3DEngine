@@ -18,7 +18,7 @@ const std::string& CShader::getShaderTypeNameByType(EShaderType type)
     return s_shaderTypeName[type];
 }
 
-EShaderType CShader::getShaderTypeByName(const std::string& name)
+CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 {
     for (int i = 0; i < eShaderCount; ++i)
     {
@@ -52,7 +52,7 @@ u32 CShader::getShaderID() const
 	return m_shaderID;
 }
 
-EShaderType CShader::getShaderType() const
+CShader::EShaderType CShader::getShaderType() const
 {
 	return m_shaderType;
 }

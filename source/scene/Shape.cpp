@@ -84,7 +84,7 @@ void CShape::update(f64 time)
         return;
     }
 
-    m_renderJob->setTransform(m_transform);
+    m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
 void CShape::render()

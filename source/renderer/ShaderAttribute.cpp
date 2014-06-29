@@ -5,7 +5,7 @@ using namespace v3d::renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShaderAttribute::s_shaderAttributeName[EShaderAttribute::eAttributeCount] = {
+const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttributeCount] = {
 
     "mesh.positions",
     "mesh.colors",
@@ -20,16 +20,16 @@ const std::string CShaderAttribute::s_shaderAttributeName[EShaderAttribute::eAtt
 };
 
 
-const std::string& CShaderAttribute::getShaderAttributeNameByType(EShaderAttribute type)
+const std::string& CShaderAttribute::getAttributeNameByType(EShaderAttribute type)
 {
-    return s_shaderAttributeName[type];
+    return s_attributeName[type];
 }
 
-const EShaderAttribute CShaderAttribute::getShaderAttributeTypeByName(const std::string& name)
+const CShaderAttribute::EShaderAttribute CShaderAttribute::getAttributeTypeByName(const std::string& name)
 {
     for (int i = 0; i < eAttributeCount; ++i)
     {
-        if (s_shaderAttributeName[i].compare(name) == 0)
+        if (s_attributeName[i].compare(name) == 0)
         {
             return (EShaderAttribute)i;
         }
@@ -62,7 +62,7 @@ const std::string& CShaderAttribute::getAttributeName() const
     return m_attribute;
 }
 
-EShaderAttribute CShaderAttribute::getAttributeType() const
+CShaderAttribute::EShaderAttribute CShaderAttribute::getAttributeType() const
 {
     return m_typeAttr;
 }

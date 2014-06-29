@@ -42,7 +42,7 @@ namespace renderer
         void            anisotropicSampler(u32 sampler, u32 level);
         void            generateMipmap(u32 target);
 
-        u32            m_samplerID;
+        u32             m_samplerID;
    };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

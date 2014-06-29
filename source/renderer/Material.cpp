@@ -80,7 +80,7 @@ f32 CMaterial::getShininess() const
 	return m_materialData.shininess;
 }
 	
-TexturePtr CMaterial::getTexture(const u32 layer) const
+const TexturePtr& CMaterial::getTexture(const u32 layer) const
 {
 	if (layer >= ETextureLayer::eLayerMax)
 	{
@@ -170,7 +170,7 @@ float CMaterial::getTransparency() const
 	return m_materialData.transparency;
 }
 
-RenderTechniquePtr CMaterial::getRenderTechique() const
+const RenderTechniquePtr& CMaterial::getRenderTechique() const
 {
     return m_renderTechnique;
 }

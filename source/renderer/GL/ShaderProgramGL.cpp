@@ -38,11 +38,11 @@ bool CShaderProgramGL::create(const std::string& vertex, const std::string& frag
     }
 
     ShaderPtr vshader = std::make_shared<CShaderGL>();
-    vshader->create(vertex, EShaderType::eVertex);
+    vshader->create(vertex, CShader::eVertex);
     CShaderProgram::addShader(vshader);
 
     ShaderPtr fshader = std::make_shared<CShaderGL>();
-    fshader->create(fragment, EShaderType::eFragment);
+    fshader->create(fragment, CShader::eFragment);
     CShaderProgram::addShader(fshader);
 
 
@@ -54,7 +54,7 @@ bool CShaderProgramGL::create(const std::string& vertex, const std::string& frag
         int type = va_arg(argList, int);
 
         ShaderPtr shader = std::make_shared<CShaderGL>();
-        shader->create(strName, (EShaderType)type);
+        shader->create(strName, (CShader::EShaderType)type);
 
         CShaderProgram::addShader(shader);
     }
@@ -103,7 +103,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
     for (auto attribute : data)
     {
         const std::string& name = attribute.second->getAttributeName();
-        EShaderAttribute type = attribute.second->getAttributeType();
+        CShaderAttribute::EShaderAttribute type = attribute.second->getAttributeType();
 
         CShaderProgramGL::bindAttrib(shaderProgram, type, name);
     }
@@ -114,10 +114,10 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
     for (auto attribute : data)
     {
         const std::string& name = attribute.second->getAttributeName();
-        EShaderAttribute type = attribute.second->getAttributeType();
+        CShaderAttribute::EShaderAttribute type = attribute.second->getAttributeType();
         
         s32 id = CShaderProgramGL::getAttrib(shaderProgram, name);
-        if ((EShaderAttribute)id != type)
+        if ((CShaderAttribute::EShaderAttribute)id != type)
         {
             LOG_ERROR("InitShaderProgram: Invalid attribute Index for: %s", name.c_str());
         }
@@ -167,7 +167,7 @@ void CShaderProgramGL::detachShader(u32 shaderProgram, u32 shader)
     glDetachShader(shaderProgram, shader);
 }
 
-void CShaderProgramGL::bindAttrib(u32 shaderProgram, EShaderAttribute type, const std::string& name)
+void CShaderProgramGL::bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name)
 {
     ASSERT(glIsProgram(shaderProgram) || "Invalid Index bindAttrib Shader program");
     glBindAttribLocation(shaderProgram, type, name.c_str());
@@ -199,97 +199,69 @@ void CShaderProgramGL::useProgram(u32 shaderProgram)
     RENDERER->checkForErrors("Bind ShaderProgram Error");
 }
 
-bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const std::string& attribute, void* value)
+bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value)
 {
-    int location = -1;
+    GLint location = -1;
 
     switch (type)
     {
-    case EShaderDataType::eTypeNone:
-        {
-            location = -1;
-        }
-        break;
+        case CShaderUniform::eTypeNone:
+            {
+                location = -1;
+            }
+            break;
 
-        case EShaderDataType::eTypeInt:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeInt:
             {
                 GLint val = *(GLint*)value;
-                glUniform1i(location, val);
+                location = setUniformInt(shader, attribute, val);
             }
-        }
-        break;
+            break;
 
-        case EShaderDataType::eTypeFloat:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeFloat:
             {
                 GLfloat val = *(GLfloat*)value;
-                glUniform1f(location, val);
+                location = setUniformFloat(shader, attribute, val);
             }
-        }
-        break;
+            break;
 
-        case EShaderDataType::eTypeVector2:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeVector2:
             {
                 core::Vector2D val = *(core::Vector2D*)value;
-                glUniform2fv(location, 1, &val[0]);
+                location = setUniformVector2(shader, attribute, val);
             }
-        }
-        break;
+            break;
 
-        case EShaderDataType::eTypeVector3:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeVector3:
             {
                 core::Vector3D val = *(core::Vector3D*)value;
-                glUniform3fv(location, 1, &val[0]);
+                location = setUniformVector3(shader, attribute, val);
             }
-        }
-        break;
+            break;
 
-        case EShaderDataType::eTypeVector4:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeVector4:
             {
                 core::Vector4D val = *(core::Vector4D*)value;
-                glUniform4fv(location, 1, &val[0]);
+                location = setUniformVector4(shader, attribute, val);
             }
-        }
-        break;
+            break;
 
-        case EShaderDataType::eTypeMatrix3:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+        case CShaderUniform::eTypeMatrix3:
             {
                 core::Matrix3D val = *(core::Matrix3D*)value;
-                glUniformMatrix3fv(location, 1, GL_TRUE, val.getPtr());
+                location = setUniformMatrix3(shader, attribute, val);
             }
-        }
-        break;
-    
-        case EShaderDataType::eTypeMatrix4:
-        {
-            location = glGetUniformLocation(shader, attribute.data());
-            if (location > -1)
+            break;
+        
+        case CShaderUniform::eTypeMatrix4:
             {
                 core::Matrix4D val = *(core::Matrix4D*)value;
-                glUniformMatrix4fv(location, 1, GL_TRUE, val.getPtr());
+                location = setUniformMatrix4(shader, attribute, val);
             }
-        }
-        break;
+            break;
     
         default:
-        break;
+            break;
     }
 
     if (location == -1)
@@ -300,4 +272,80 @@ bool CShaderProgramGL::setUniform(EShaderDataType type, const u32 shader, const 
     RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + attribute);
 
     return (location != -1);
+}
+
+s32 CShaderProgramGL::setUniformInt(const u32 shader, const std::string& name, const u32 value)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniform1i(location, value);
+    }
+
+    return location;
+}
+
+s32 CShaderProgramGL::setUniformFloat(const u32 shader, const std::string& name, const f32 value)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniform1f(location, value);
+    }
+
+    return location;
+}
+
+s32 CShaderProgramGL::setUniformVector2(const u32 shader, const std::string& name, core::Vector2D& vector)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniform2fv(location, 1, &vector[0]);
+    }
+
+    return location;
+}
+s32 CShaderProgramGL::setUniformVector3(const u32 shader, const std::string& name, core::Vector3D& vector)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniform3fv(location, 1, &vector[0]);
+    }
+
+    return location;
+}
+
+s32 CShaderProgramGL::setUniformVector4(const u32 shader, const std::string& name, core::Vector4D& vector)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniform4fv(location, 1, &vector[0]);
+    }
+
+    return location;
+}
+
+s32 CShaderProgramGL::setUniformMatrix3(const u32 shader, const std::string& name, const core::Matrix3D& matrix)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniformMatrix3fv(location, 1, GL_TRUE, matrix.getPtr());
+    }
+
+    return location;
+}
+
+s32 CShaderProgramGL::setUniformMatrix4(const u32 shader, const std::string& name, const core::Matrix4D& matrix)
+{
+    GLint location = glGetUniformLocation(shader, name.data());
+    if (location > -1)
+    {
+        glUniformMatrix4fv(location, 1, GL_TRUE, matrix.getPtr());
+    }
+
+    return location;
 }

@@ -3,59 +3,9 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const std::string CShaderUniform::s_shaderUniformName[EDefaultUniformData::eUniformsCount] = {
-
-    "transform.projectionMatrix",
-    "transform.modelMatrix",
-    "transform.viewMatrix",
-    "transform.normalMatrix",
-    "transform.viewPosition",
-    "transform.orthoMatrix",
-
-    "material.ambient",
-    "material.diffuse",
-    "material.specular",
-    "material.emission",
-    "material.shininess",
-
-    "lights.count",
-
-    "light.position",
-    "light.ambient",
-    "light.diffuse",
-    "light.specular",
-    "light.direction",
-    "light.attenuation",
-    "light.radius",
-
-};
-
-
-const std::string& CShaderUniform::getShaderUniformNameByValue(EDefaultUniformData type)
-{
-    return s_shaderUniformName[type];
-}
-
-const EDefaultUniformData CShaderUniform::getShaderUniformValueByName(const std::string& name)
-{
-    for (int i = 0; i < EDefaultUniformData::eUniformsCount; ++i)
-    {
-        if (s_shaderUniformName[i].compare(name) == 0)
-        {
-            return (EDefaultUniformData)i;
-        }
-    }
-
-    return eUserUniform;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderUniform::CShaderUniform()
-    : m_uniformType(EShaderDataType::eTypeNone)
-    , m_defaultData(EDefaultUniformData::eUserUniform)
+: m_uniformType(EDataType::eTypeNone)
 	, m_uniformValue (nullptr)
 	, m_attribute ("")
 {
@@ -66,18 +16,17 @@ CShaderUniform::~CShaderUniform()
 	deallocMemory();
 }
 
-void CShaderUniform::setUniform(EShaderDataType type, const std::string& attribute, void* value, EDefaultUniformData data)
+void CShaderUniform::setUniform(EDataType type, const std::string& attribute, void* value)
 {
 	m_uniformType  = type;
 	m_attribute    = attribute;
-    m_defaultData  = data;
     if (value)
     {
         m_uniformValue = allocMemory(type, value);
     }
 }
 
-void* CShaderUniform::allocMemory(EShaderDataType type, void* value)
+void* CShaderUniform::allocMemory(EDataType type, void* value)
 {
 	deallocMemory();
 	
@@ -85,49 +34,49 @@ void* CShaderUniform::allocMemory(EShaderDataType type, void* value)
 
 	switch(type)
 	{
-    case EShaderDataType::eTypeInt:
+    case EDataType::eTypeInt:
 		{
 			uniformValue = new int();
 			memcpy(uniformValue, value, sizeof(int));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeFloat:
+    case EDataType::eTypeFloat:
 		{
 			uniformValue = new float();
 			memcpy(uniformValue, value, sizeof(float));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeVector2:
+    case EDataType::eTypeVector2:
 		{
 			uniformValue = new core::Vector2D();
 			memcpy(uniformValue, value, sizeof(core::Vector2D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeVector3:
+    case EDataType::eTypeVector3:
 		{
 			uniformValue = new core::Vector3D();
 			memcpy(uniformValue, value, sizeof(core::Vector3D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeVector4:
+    case EDataType::eTypeVector4:
 		{
 			uniformValue = new core::Vector4D();
 			memcpy(uniformValue, value, sizeof(core::Vector4D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeMatrix3:
+    case EDataType::eTypeMatrix3:
 		{
 			uniformValue = new core::Matrix3D();
 			memcpy(uniformValue, value, sizeof(core::Matrix3D));
 
 			return uniformValue;
 		}
-    case EShaderDataType::eTypeMatrix4:
+    case EDataType::eTypeMatrix4:
 		{
 			uniformValue = new core::Matrix4D();
 			memcpy(uniformValue, value, sizeof(core::Matrix4D));
@@ -148,7 +97,7 @@ void CShaderUniform::deallocMemory()
 	}
 }
 
-EShaderDataType CShaderUniform::getUniformType() const
+CShaderUniform::EDataType CShaderUniform::getUniformType() const
 {
     return m_uniformType;
 }
@@ -157,4 +106,3 @@ void* CShaderUniform::getUniforValue() const
 {
     return m_uniformValue;
 }
-

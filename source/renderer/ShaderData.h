@@ -5,6 +5,7 @@
 #include "ShaderUniform.h"
 #include "ShaderAttribute.h"
 #include "ShaderSampler.h"
+#include "ShaderDefaultUniform.h"
 
 
 namespace v3d
@@ -14,7 +15,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
-    class CRenderer;
+
     class CDebugGeometry;
     class CDebugLight;
 
@@ -35,44 +36,34 @@ namespace renderer
 
         const AttributeList&            getAttributeList() const;
 
-        static const std::string&       getShaderDataNameByType(EShaderDataType type);
-        static const EShaderDataType    getShaderDataTypeByName(const std::string& name);
+        static const std::string&       getDataNameByType(CShaderUniform::EDataType type);
+        static const CShaderUniform::EDataType getDataTypeByName(const std::string& name);
 
         bool                            isExistUniform(const std::string& name);
-        bool                            isExistUniform(EDefaultUniformData type);
+        bool                            isExistUniform(CShaderDefaultUniform::EUniformData type);
         bool                            isExistAttribute(const std::string& name);
         bool                            isExistSampler(const std::string& name);
 
     protected:
 
         friend                          CRenderPass;
-        friend                          CRenderer;
 
         friend                          CDebugGeometry;
         friend                          CDebugLight;
 
-        void                            setUniformInt    (EDefaultUniformData type, const u32             value,  const s32 idx = -1);
-        void                            setUniformFloat  (EDefaultUniformData type, const f32             value,  const s32 idx = -1);
-        void                            setUniformVector2(EDefaultUniformData type, const core::Vector2D& vector, const s32 idx = -1);
-        void                            setUniformVector3(EDefaultUniformData type, const core::Vector3D& vector, const s32 idx = -1);
-        void                            setUniformVector4(EDefaultUniformData type, const core::Vector4D& vector, const s32 idx = -1);
-        void                            setUniformMatrix3(EDefaultUniformData type, const core::Matrix3D& matrix, const s32 idx = -1);
-        void                            setUniformMatrix4(EDefaultUniformData type, const core::Matrix4D& matrix, const s32 idx = -1);
-
-        const std::string               findByUniformData(EDefaultUniformData type);
-        void                            addDefaultUniform(const std::string& name, EShaderDataType type, EDefaultUniformData data);
-
-        void                            addAttribute(const std::string& name, EShaderAttribute type);
-
+        void                            addUniform(const std::string& name, CShaderUniform::EDataType type);
+        void                            addDefaultUniform(const std::string& name, CShaderDefaultUniform::EUniformData data);
+        void                            addAttribute(const std::string& name, CShaderAttribute::EShaderAttribute type);
         void                            addSampler(const std::string& name);
 
         AttributeList                   m_attributeList;
         UniformList                     m_uniformList;
+        DefaultUniformList              m_defaultUniformList;
         SamplerList                     m_samplerList;
 
     private:
 
-        static const std::string       s_shaderDataType[EShaderDataType::eShaderDataCount];
+        static const std::string       s_dataType[CShaderUniform::eTypeCount];
 
     };
 

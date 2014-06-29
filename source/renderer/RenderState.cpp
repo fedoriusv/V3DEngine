@@ -3,29 +3,29 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-const std::string CRenderState::s_renderPolygonMode[ERenderPolygonMode::ePolygonModeCount] =
+const std::string CRenderState::s_renderPolygonMode[EPolygonMode::eModeCount] =
 {
     "fill",
     "line",
     "point"
 };
 
-ERenderPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
+CRenderState::EPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
 {
-    for (int i = 0; i < ERenderPolygonMode::ePolygonModeCount; ++i)
+    for (int i = 0; i < CRenderState::eModeCount; ++i)
     {
         if (s_renderPolygonMode[i].compare(name) == 0)
         {
-            return (ERenderPolygonMode)i;
+            return (CRenderState::EPolygonMode)i;
         }
     }
 
-    return ERenderPolygonMode::ePolyModeFill;
+    return CRenderState::ePolyModeFill;
 }
 
 CRenderState::CRenderState()
-    : m_polygonMode(ERenderPolygonMode::ePolyModeFill)
-    , m_winding(ERenderWinding::eWindingCW)
+    : m_polygonMode(EPolygonMode::ePolyModeFill)
+    , m_winding(EWinding::eWindingCW)
     , m_cullFace(true)
 {
 }
@@ -39,12 +39,12 @@ bool CRenderState::getCullFace() const
     return m_cullFace;
 }
 
-ERenderWinding CRenderState::getWinding() const
+CRenderState::EWinding CRenderState::getWinding() const
 {
     return m_winding;
 }
 
-ERenderPolygonMode CRenderState::getPolygonMode() const
+CRenderState::EPolygonMode CRenderState::getPolygonMode() const
 {
     return m_polygonMode;
 }
@@ -54,12 +54,12 @@ void CRenderState::setCullFace(bool type)
     m_cullFace = type;
 }
 
-void CRenderState::setWinding(ERenderWinding type)
+void CRenderState::setWinding(EWinding type)
 {
     m_winding = type;
 }
 
-void CRenderState::setPolygonMode(ERenderPolygonMode type)
+void CRenderState::setPolygonMode(EPolygonMode type)
 {
     m_polygonMode = type;
 }
