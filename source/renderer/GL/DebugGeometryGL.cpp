@@ -7,7 +7,7 @@ using namespace v3d;
 using namespace v3d::core;
 using namespace v3d::renderer;
 
-GLenum EDebugGeometryModeGL[EDrawMode::eCount] =
+GLenum EDebugGeometryModeGL[CGeometry::eCount] =
 {
     GL_TRIANGLE_STRIP,
     GL_TRIANGLES,
@@ -77,7 +77,7 @@ void CDebugGeometryGL::drawObject(const SDebugObject& object)
 {
     CDebugGeometry::bind();
 
-    u32 mode = EDebugGeometryModeGL[object._drawMode];
+   /* u32 mode = EDebugGeometryModeGL[object._drawMode];
     CGeometryGL::bindVertexArray(object._arrayId);
     if (object._index.vertex.size() > 0)
     {
@@ -86,7 +86,7 @@ void CDebugGeometryGL::drawObject(const SDebugObject& object)
     else
     {
         CGeometryGL::drawArrays(mode, 0, object._vertex.vertex.size());
-    }
+    }*/
     CGeometryGL::bindVertexArray(0);
 }
 
@@ -96,7 +96,7 @@ void CDebugGeometryGL::initDraw(SDebugObject& object)
 
     CGeometryGL::bindVertexArray(object._arrayId);
 
-    CGeometryGL::genBuffers(object._vertex.id);
+   /* CGeometryGL::genBuffers(object._vertex.id);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
     CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* object._vertex.vertex.size() * 3, object._vertex.vertex.data());
     CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);
@@ -106,7 +106,7 @@ void CDebugGeometryGL::initDraw(SDebugObject& object)
         CGeometryGL::genBuffers(object._index.id);
         CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, object._index.id);
         CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* object._index.vertex.size(), object._index.vertex.data());
-    }
+    }*/
 
     CGeometryGL::bindVertexArray(0);
 
@@ -115,7 +115,7 @@ void CDebugGeometryGL::initDraw(SDebugObject& object)
 
 void CDebugGeometryGL::refreshDraw(SDebugObject& object)
 {
-    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
+   /* CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
     CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* object._vertex.vertex.size() * 3, NULL);
     CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* object._vertex.vertex.size() * 3, object._vertex.vertex.data());
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
@@ -126,7 +126,7 @@ void CDebugGeometryGL::refreshDraw(SDebugObject& object)
         CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, object._index.id);
         CGeometryGL::bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)* object._index.vertex.size(), NULL);
         CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* object._index.vertex.size(), object._index.vertex.data());
-    }
+    }*/
 
     RENDERER->checkForErrors("CDebugDrawGL Refresh Error");
 }
@@ -136,11 +136,11 @@ void CDebugGeometryGL::free()
     CGeometryGL::bindVertexArray(0);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 
-    for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
+   /* for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
     {
         CGeometryGL::deleteVertexArray(m_objects[i]._arrayId);
         CGeometryGL::deleteBuffers(m_objects[i]._vertex.id);
-    }
+    }*/
 
     RENDERER->checkForErrors("CDebugDrawGL Free Error");
 }

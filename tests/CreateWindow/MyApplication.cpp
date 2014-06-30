@@ -28,9 +28,9 @@ void MyApplication::init()
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
 
-    for (u32 j = 0; j < 10; ++j)
+    for (u32 j = 0; j < 50; ++j)
     {
-        for (u32 i = 0; i < 10; ++i)
+        for (u32 i = 0; i < 50; ++i)
         {
             scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
             cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
@@ -78,7 +78,9 @@ void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
         if (event->_key == EKeyCode::eKeyKey_N)
         {
             debug = !debug;
+#ifdef _DEBUG
             BaseApplication::getSceneManager()->setDebugMode(debug);
+#endif
         }
         if (event->_key == EKeyCode::eKeyKey_V)
         {

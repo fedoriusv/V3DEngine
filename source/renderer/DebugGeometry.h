@@ -34,8 +34,8 @@ namespace renderer
 
     struct SDebugObject
     {
-        SVertices<core::Vector3D> _vertex;
-        SVertices<v3d::u32>       _index;
+       /* SVertices<core::Vector3D> _vertex;
+        SVertices<v3d::u32>       _index;*/
         u32                       _arrayId;
         u32                       _drawMode;
     };

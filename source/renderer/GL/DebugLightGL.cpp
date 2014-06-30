@@ -69,11 +69,11 @@ void CDebugLightGL::free()
     CGeometryGL::bindVertexArray(0);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
 
-    for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
+    /*for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
     {
         CGeometryGL::deleteVertexArray(m_objects[i]._arrayId);
         CGeometryGL::deleteBuffers(m_objects[i]._vertex.id);
-    }
+    }*/
 
     RENDERER->checkForErrors("CDebugLightGL Free Error");
 }
@@ -84,10 +84,10 @@ void CDebugLightGL::initDraw(SDebugLight& object)
 
     CGeometryGL::bindVertexArray(object._arrayId);
 
-    CGeometryGL::genBuffers(object._vertex.id);
+    /*CGeometryGL::genBuffers(object._vertex.id);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
     CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* object._vertex.vertex.size() * 3, object._vertex.vertex.data());
-    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);
+    CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);*/
 
     CGeometryGL::bindVertexArray(0);
 
@@ -98,9 +98,9 @@ void CDebugLightGL::drawLightPosition()
 {
     CDebugLight::bind();
 
-    CGeometryGL::bindVertexArray(m_objects[EDebugLight::eDebugLightPosition]._arrayId);
+   /* CGeometryGL::bindVertexArray(m_objects[EDebugLight::eDebugLightPosition]._arrayId);
     CGeometryGL::drawArrays(GL_LINES, 0, m_objects[EDebugLight::eDebugLightPosition]._vertex.vertex.size());
-    CGeometryGL::bindVertexArray(0);
+    CGeometryGL::bindVertexArray(0);*/
 
     RENDERER->checkForErrors("CDebugLightGL Update Error2");
 }

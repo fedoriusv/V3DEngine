@@ -40,7 +40,7 @@ namespace renderer
 
     struct SDebugLight
     {
-        SVertices<core::Vector3D> _vertex;
+        //SVertices<core::Vector3D> _vertex;
         u32                       _arrayId;
     };
 

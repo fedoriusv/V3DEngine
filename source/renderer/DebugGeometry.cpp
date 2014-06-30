@@ -19,12 +19,12 @@ CDebugGeometry::CDebugGeometry(const GeometryPtr& geometry)
         s_pass = std::make_shared<CRenderPass>();
     }
 
-    for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
+   /* for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
     {
         m_objects[i]._arrayId = 0;
         m_objects[i]._drawMode = EDrawMode::eLines;
         m_objects[i]._vertex.id = 0;
-    }
+    }*/
 }
 
 CDebugGeometry::~CDebugGeometry()
@@ -84,14 +84,14 @@ void CDebugGeometry::initShader()
 {
     const ShaderDataPtr& data = s_pass->getShaderData();
 
-    data->addAttribute("positions", eAttributeVertex);
-    data->addDefaultUniform("transform.projectionMatrix", eTypeMatrix4, eTransformProjectionMatrix);
-    data->addDefaultUniform("transform.modelMatrix", eTypeMatrix4, eTransformModelMatrix);
-    data->addDefaultUniform("transform.viewMatrix", eTypeMatrix4, eTransformViewMatrix);
+    data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
+    data->addDefaultUniform("transform.projectionMatrix", CShaderDefaultUniform::eTransformProjectionMatrix);
+    data->addDefaultUniform("transform.modelMatrix", CShaderDefaultUniform::eTransformModelMatrix);
+    data->addDefaultUniform("transform.viewMatrix", CShaderDefaultUniform::eTransformViewMatrix);
     data->setUniformVector4("color", Vector4D(0.0f));
 
     s_pass->getRenderState()->setCullFace(false);
-    s_pass->getRenderState()->setPolygonMode(ERenderPolygonMode::ePolyModeLine);
+    s_pass->getRenderState()->setPolygonMode(CRenderState::ePolyModeLine);
 
     ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
     program->create(*m_vertex, *m_fragment);
@@ -110,7 +110,7 @@ void CDebugGeometry::initDrawNormalsData()
     const SVertexData& data = m_geometry->getData();
 
     f32 s = 0.3f;
-    SVertices<core::Vector3D>& normals = m_objects[EDebugGeometry::eGeometryNormals]._vertex;
+   /* SVertices<core::Vector3D>& normals = m_objects[EDebugGeometry::eGeometryNormals]._vertex;
     normals.vertex.clear();
 
     for (u32 i = 0; i < data._countVertices; ++i)
@@ -121,7 +121,7 @@ void CDebugGeometry::initDrawNormalsData()
             (data._vertices.vertex[i].y + data._normals.vertex[i].y * s),
             (data._vertices.vertex[i].z + data._normals.vertex[i].z * s)
             ));
-    }
+    }*/
 }
 
 void CDebugGeometry::initDrawEdgeData()
@@ -134,7 +134,7 @@ void CDebugGeometry::initDrawEdgeData()
 
     const SVertexData& data = m_geometry->getData();
     
-    SVertices<core::Vector3D>& edges = m_objects[EDebugGeometry::eGeometryEdges]._vertex;
+    /*SVertices<core::Vector3D>& edges = m_objects[EDebugGeometry::eGeometryEdges]._vertex;
     SVertices<u32>& edgesIdx = m_objects[EDebugGeometry::eGeometryEdges]._index;
     m_objects[EDebugGeometry::eGeometryEdges]._drawMode = m_geometry->getDrawMode();
 
@@ -148,5 +148,5 @@ void CDebugGeometry::initDrawEdgeData()
     {
         edgesIdx.vertex.resize(data._countIndices);
         std::copy(data._indices.vertex.begin(), data._indices.vertex.end(), edgesIdx.vertex.begin());
-    }
+    }*/
 }

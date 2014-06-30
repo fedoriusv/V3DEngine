@@ -18,11 +18,11 @@ CDebugLight::CDebugLight(const core::Vector3D& position, const scene::SLightData
         s_pass = std::make_shared<CRenderPass>();
     }
 
-    for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
+   /* for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
     {
         m_objects[i]._arrayId = 0;
         m_objects[i]._vertex.id = 0;
-    }
+    }*/
 }
 
 CDebugLight::~CDebugLight()
@@ -78,14 +78,14 @@ void CDebugLight::initShader()
 {
     const ShaderDataPtr& data = s_pass->getShaderData();
 
-    data->addAttribute("positions", eAttributeVertex);
-    data->addDefaultUniform("transform.projectionMatrix", eTypeMatrix4, eTransformProjectionMatrix);
-    data->addDefaultUniform("transform.modelMatrix", eTypeMatrix4, eTransformModelMatrix);
-    data->addDefaultUniform("transform.viewMatrix", eTypeMatrix4, eTransformViewMatrix);
+    data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
+    data->addDefaultUniform("transform.projectionMatrix", CShaderDefaultUniform::eTransformProjectionMatrix);
+    data->addDefaultUniform("transform.modelMatrix", CShaderDefaultUniform::eTransformModelMatrix);
+    data->addDefaultUniform("transform.viewMatrix", CShaderDefaultUniform::eTransformViewMatrix);
     data->setUniformVector4("color", Vector4D(0.0f));
 
     s_pass->getRenderState()->setCullFace(false);
-    s_pass->getRenderState()->setPolygonMode(ERenderPolygonMode::ePolyModeLine);
+    s_pass->getRenderState()->setPolygonMode(CRenderState::ePolyModeLine);
 
     ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
     program->create(*m_vertex, *m_fragment);
@@ -114,7 +114,7 @@ void CDebugLight::initLightPosition()
         {-s, -s, s}, {-s, -s, -s}
     };
 
-    SVertices<core::Vector3D>& light = m_objects[EDebugLight::eDebugLightPosition]._vertex;
+   /* SVertices<core::Vector3D>& light = m_objects[EDebugLight::eDebugLightPosition]._vertex;
 
     light.vertex.clear();
     light.vertex.resize(24);
@@ -122,5 +122,5 @@ void CDebugLight::initLightPosition()
     for (u32 i = 0; i < 24; ++i)
     {
         light.vertex[i] = vertex[i];
-    }
+    }*/
 }
