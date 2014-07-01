@@ -75,13 +75,20 @@ void CRenderer::draw(const RenderJobPtr& job)
     const MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geomerty = job->getGeometry();
     const u32 passCount = material->getRenderTechique()->getRenderPassCount();
+    const core::Matrix4D& transform = job->getTransform();
 
     for (u32 i = 0; i < passCount; ++i)
     {
         const RenderPassPtr& pass = material->getRenderTechique()->getRenderPass(i);
+
+        if (!checkLOD(transform, pass))
+        {
+            continue;
+        }
+
         pass->bind();
 
-        updateTransform(job->getTransform(), pass);
+        updateTransform(transform, pass);
         //updateMaterial(material, data);
         //updateLight(job->getTransform(), data);
 
@@ -152,4 +159,16 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
         program->setUniformMatrix4(shader, "transform.normalMatrix", normalMatrix);
     }
+}
+
+bool CRenderer::checkLOD(const core::Matrix4D& transform, const RenderPassPtr& pass)
+{
+    const RenderLODPtr& lod = pass->getRenderLOD();
+
+    if (lod->getGeometryDistance() < (transform.getTranslation() - m_viewPosition).length())
+    {
+        return false;
+    }
+
+    return true;
 }

@@ -13,12 +13,12 @@ CMaterial::CMaterial()
 {
 	m_type = EObjectType::eTypeMaterial;
 
-	m_materialData.ambient      = core::Vector3D(0.2f, 0.2f, 0.2f);
-	m_materialData.diffuse      = core::Vector3D(0.2f, 0.2f, 0.2f);
-	m_materialData.specular     = core::Vector3D(1.0f, 1.0f, 1.0f);
-	m_materialData.emission     = core::Vector3D(0.0f, 0.0f, 0.0f);
-	m_materialData.shininess    = 128U;
-	m_materialData.transparency = 1.0f;
+	m_materialData._ambient      = core::Vector3D(0.2f, 0.2f, 0.2f);
+	m_materialData._diffuse      = core::Vector3D(0.2f, 0.2f, 0.2f);
+	m_materialData._specular     = core::Vector3D(1.0f, 1.0f, 1.0f);
+	m_materialData._emission     = core::Vector3D(0.0f, 0.0f, 0.0f);
+	m_materialData._shininess    = 128U;
+	m_materialData._transparency = 1.0f;
 }
 
 CMaterial::~CMaterial()
@@ -27,60 +27,60 @@ CMaterial::~CMaterial()
 
 void CMaterial::setAmbientColor(const core::Vector3D& color)
 {
-	m_materialData.ambient = color;
+	m_materialData._ambient = color;
     m_needUpdate = true;
 }
 	
 void CMaterial::setDiffuseColor(const core::Vector3D& color)
 {
-	m_materialData.diffuse = color;
+	m_materialData._diffuse = color;
     m_needUpdate = true;
 }
 
 void CMaterial::setSpecularColor(const core::Vector3D& color)
 {
-	m_materialData.specular = color;
+	m_materialData._specular = color;
     m_needUpdate = true;
 }
 
 void CMaterial::setEmissionColor(const core::Vector3D& color)
 {
-	m_materialData.emission = color;
+	m_materialData._emission = color;
     m_needUpdate = true;
 }
 
 void CMaterial::setShininess(const f32 value)
 {
-	m_materialData.shininess = value;
+	m_materialData._shininess = value;
     m_needUpdate = true;
 }
 	
 const core::Vector3D& CMaterial::getAmbientColor() const
 {
-	return m_materialData.ambient;
+	return m_materialData._ambient;
 }
 
 const core::Vector3D& CMaterial::getDiffuseColor() const
 {
-	return m_materialData.diffuse;
+	return m_materialData._diffuse;
 }
 
 const core::Vector3D& CMaterial::getSpecularColor() const
 {
-	return m_materialData.specular;
+	return m_materialData._specular;
 }
 
 const core::Vector3D& CMaterial::getEmissionColor() const
 {
-	return m_materialData.emission;
+	return m_materialData._emission;
 }
 
 f32 CMaterial::getShininess() const
 {
-	return m_materialData.shininess;
+	return m_materialData._shininess;
 }
 	
-const TexturePtr& CMaterial::getTexture(const u32 layer) const
+const TexturePtr CMaterial::getTexture(const u32 layer) const
 {
 	if (layer >= ETextureLayer::eLayerMax)
 	{
@@ -124,14 +124,14 @@ bool CMaterial::setTexture(const u32 layer, const std::string* files[6])
 		return false;
 	}
 
-	TexturePtr oldTexture = m_texture[layer];
-	//TODO: del old texture if will not need more
-	
-	//TexturePtr newTexture = std::make_shared<CTexture>();
-	//TODO: need lower name file
-	//newTexture->create(files);
+    TexturePtr texture = scene::CTextureManager::getInstance()->load(files);
+    if (!texture)
+    {
+        LOG_ERROR("Error read cubemap files");
+        return false;
+    }
 
-	//m_texture[layer] = newTexture;
+    m_texture[layer] = texture;
 
     return true;
 }
@@ -162,12 +162,12 @@ void CMaterial::setTexture( const u32 layer, TexturePtr texture )
 
 void CMaterial::setTransparency(const f32 value)
 {
-	m_materialData.transparency = (value > 1.0f) ? 1.0f : value;
+	m_materialData._transparency = (value > 1.0f) ? 1.0f : value;
 }
 
 float CMaterial::getTransparency() const
 {
-	return m_materialData.transparency;
+	return m_materialData._transparency;
 }
 
 const RenderTechniquePtr& CMaterial::getRenderTechique() const

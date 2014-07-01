@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include "ShaderData.h"
 #include "RenderState.h"
+#include "RenderLOD.h"
 
 
 namespace v3d
@@ -22,42 +23,47 @@ namespace renderer
     public:
 
         CRenderPass();
-        virtual             ~CRenderPass();
+        virtual               ~CRenderPass();
 
-        ShaderProgramPtr    getShaderProgram() const;
-        void                setShaderProgram(const ShaderProgramPtr& program);
+        ShaderProgramPtr      getShaderProgram() const;
+        void                  setShaderProgram(const ShaderProgramPtr& program);
 
-        const ShaderDataPtr& getShaderData() const;
-        void                setShaderData(const ShaderDataPtr& data);
+        const ShaderDataPtr&  getShaderData() const;
+        void                  setShaderData(const ShaderDataPtr& data);
 
-        RenderStatePtr      getRenderState() const;
-        void                setRenderState(const RenderStatePtr& state);
+        const RenderStatePtr& getRenderState() const;
+        void                  setRenderState(const RenderStatePtr& state);
 
-        void                bind();
+        const RenderLODPtr&   getRenderLOD() const;
+        void                  setRenderLOD(const RenderLODPtr& lod);
+
+        void                  bind();
 
     private:
 
-        friend              CRenderTechnique;
+        friend                CRenderTechnique;
 
-        void                init();
+        void                  init();
 
-        bool                parse            (tinyxml2::XMLElement* root);
+        bool                  parse            (tinyxml2::XMLElement* root);
 
-        bool                parseUniforms    (tinyxml2::XMLElement* root);
-        bool                parseAttributes  (tinyxml2::XMLElement* root);
-        bool                parseSamplers    (tinyxml2::XMLElement* root);
-        bool                parseShaders     (tinyxml2::XMLElement* root);
-        bool                parseRenderTarget(tinyxml2::XMLElement* root);
-        bool                parseRenderState (tinyxml2::XMLElement* root);
+        bool                  parseUniforms    (tinyxml2::XMLElement* root);
+        bool                  parseAttributes  (tinyxml2::XMLElement* root);
+        bool                  parseSamplers    (tinyxml2::XMLElement* root);
+        bool                  parseShaders     (tinyxml2::XMLElement* root);
+        bool                  parseRenderTarget(tinyxml2::XMLElement* root);
+        bool                  parseRenderState (tinyxml2::XMLElement* root);
+        bool                  parseRenderLOD   (tinyxml2::XMLElement* root);
 
-        const std::string   attachIndexToUniform(const std::string& name, s32 idx);
+        const std::string     attachIndexToUniform(const std::string& name, s32 idx);
 
-        ShaderProgramPtr    m_program;
-        ShaderDataPtr       m_shaderData;
-        RenderStatePtr      m_renderState;
+        ShaderProgramPtr      m_program;
+        ShaderDataPtr         m_shaderData;
+        RenderStatePtr        m_renderState;
+        RenderLODPtr          m_lods;
         //RenderTarget
 
-        bool                m_enable;
+        bool                  m_enable;
 
     };
 

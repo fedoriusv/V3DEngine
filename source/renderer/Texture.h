@@ -115,24 +115,6 @@ namespace renderer
     {
     public:
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        struct STextureData
-        {
-            u16             width;
-            u16             height;
-            u16             depth;
-            EImageFormat    format;
-            EImageType      type;
-            void*           data;
-        };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        typedef std::vector<STextureData>  TextureData;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
         CTexture();
         virtual         ~CTexture();
 
@@ -156,6 +138,20 @@ namespace renderer
         void            setFilterType(ETextureFilter min, ETextureFilter mag);
         void            setWrap(EWrapType wrap);
         void            setAnisotropicLevel(EAnisotropic level);
+
+    private:
+
+        struct STextureData
+        {
+            u16             _width;
+            u16             _height;
+            u16             _depth;
+            EImageFormat    _format;
+            EImageType      _type;
+            void*           _data;
+        };
+
+        typedef std::vector<STextureData>  TextureData;
 
     protected:
 

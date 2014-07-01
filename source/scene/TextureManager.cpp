@@ -22,6 +22,13 @@ renderer::TexturePtr CTextureManager::get( const std::string& name )
 	return m_textures[name];
 }
 
+renderer::TexturePtr CTextureManager::load(const std::string* files[6])
+{
+    //TODO: load cubemap
+
+    return nullptr;
+}
+
 renderer::TexturePtr CTextureManager::load(const std::string& name)
 {
     std::string nameStr = name;

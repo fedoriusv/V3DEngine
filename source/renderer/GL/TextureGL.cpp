@@ -260,7 +260,7 @@ void CTextureGL::initTexture2D(u32 texture)
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    u32 format = EImageFormatGL[m_data[0].format];
+    u32 format = EImageFormatGL[m_data[0]._format];
 
     std::function<s32(s32)> internalFormat = [](s32 format)
     {
@@ -280,8 +280,8 @@ void CTextureGL::initTexture2D(u32 texture)
         return format;
     };
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat(format), m_data[0].width, m_data[0].height, 0, 
-        format, EImageTypeGL[m_data[0].type], m_data[0].data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat(format), m_data[0]._width, m_data[0]._height, 0, 
+        format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
 }
 
 void CTextureGL::initTextureCubeMap(u32 texture)
@@ -293,7 +293,7 @@ void CTextureGL::initTextureCubeMap(u32 texture)
 
     for (u32 i = 0; i < TEXTURE_CUBE_MAP_COUNT; ++i)
     {
-        glTexImage2D(ECubeMapGL[i], 0, GL_RGB, m_data[i].width, m_data[i].height, 0, EImageFormatGL[m_data[i].format],
-            EImageTypeGL[m_data[i].type], m_data[i].data);
+        glTexImage2D(ECubeMapGL[i], 0, GL_RGB, m_data[i]._width, m_data[i]._height, 0, EImageFormatGL[m_data[i]._format],
+            EImageTypeGL[m_data[i]._type], m_data[i]._data);
     }
 }

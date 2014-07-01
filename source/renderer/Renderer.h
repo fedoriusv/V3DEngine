@@ -69,6 +69,7 @@ namespace renderer
         virtual void                updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data)     = 0;
         virtual void                updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data)      = 0;
         void                        updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass);
+        bool                        checkLOD(const core::Matrix4D& transform, const RenderPassPtr& pass);
 
         DriverContextPtr            m_context;
 

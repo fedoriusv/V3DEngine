@@ -23,6 +23,7 @@ namespace scene
 
         renderer::TexturePtr    get(const std::string& name);
         renderer::TexturePtr    load(const std::string& name);
+        renderer::TexturePtr    load(const std::string* files[6]);
 
         void	                unload( const std::string& name );
         void	                unload(const renderer::TexturePtr& texture);

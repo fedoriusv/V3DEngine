@@ -15,21 +15,6 @@ namespace renderer
 
     class CMaterial : public CObject
     {
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        struct SMaterialData
-        {
-           core::Vector3D   ambient;
-           core::Vector3D   diffuse;
-           core::Vector3D   specular;
-           core::Vector3D   emission;
-           f32              shininess;
-           f32              transparency;
-        };
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public:
 
         CMaterial();
@@ -53,7 +38,7 @@ namespace renderer
         bool                      setTexture(const u32 layer, const std::string* files[6]);
         void                      setTexture(const u32 layer, TexturePtr texture);
         
-        const TexturePtr&         getTexture(const u32 layer) const;
+        const TexturePtr          getTexture(const u32 layer) const;
         u32                       getTextureCount()           const;
 
         void                      destroyTexture(u32 layer);
@@ -64,6 +49,17 @@ namespace renderer
         void                      setRenderTechnique(const RenderTechniquePtr& technique);
         const RenderTechniquePtr& getRenderTechique() const;
 
+    private:
+
+        struct SMaterialData
+        {
+            core::Vector3D   _ambient;
+            core::Vector3D   _diffuse;
+            core::Vector3D   _specular;
+            core::Vector3D   _emission;
+            f32              _shininess;
+            f32              _transparency;
+        };
 
     protected:
 

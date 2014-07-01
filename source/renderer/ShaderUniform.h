@@ -7,29 +7,27 @@ namespace v3d
 {
 namespace renderer
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     class CShaderUniform
     {
     public:
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
+        enum EDataType
+        {
+            eTypeNone = 0,
+            eTypeInt,
+            eTypeFloat,
+            eTypeVector2,
+            eTypeVector3,
+            eTypeVector4,
+            eTypeMatrix3,
+            eTypeMatrix4,
 
-    enum EDataType
-    {
-        eTypeNone = 0,
-        eTypeInt,
-        eTypeFloat,
-        eTypeVector2,
-        eTypeVector3,
-        eTypeVector4,
-        eTypeMatrix3,
-        eTypeMatrix4,
+            eTypeCount,
+        };
 
-        eTypeCount,
-    };
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        CShaderUniform();
+       CShaderUniform();
         virtual                             ~CShaderUniform();
 
         void                                setUniform(EDataType type, const std::string& attribute, void* value);

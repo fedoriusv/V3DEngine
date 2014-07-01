@@ -11,6 +11,7 @@ CRenderPass::CRenderPass()
     : m_program(nullptr)
     , m_shaderData(nullptr)
     , m_renderState(nullptr)
+    , m_lods(nullptr)
     , m_enable(true)
 {
     CRenderPass::init();
@@ -40,7 +41,7 @@ void CRenderPass::setShaderData(const ShaderDataPtr& data)
     m_shaderData = data;
 }
 
-RenderStatePtr CRenderPass::getRenderState() const
+const RenderStatePtr& CRenderPass::getRenderState() const
 {
     return m_renderState;
 }
@@ -122,6 +123,16 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     if (renderstateElement)
     {
         if (!parseRenderState(renderstateElement))
+        {
+            return false;
+        }
+    }
+
+    //lod
+    tinyxml2::XMLElement*  renderlodElement = root->FirstChildElement("lod");
+    if (renderlodElement)
+    {
+        if (!parseRenderLOD(renderlodElement))
         {
             return false;
         }
@@ -370,6 +381,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
 void CRenderPass::init()
 {
     m_shaderData = std::make_shared<CShaderData>();
+    m_lods = std::make_shared<CRenderLOD>();
     m_program = RENDERER->makeSharedProgram(m_shaderData);
     m_renderState = RENDERER->makeSharedRenderState();
 }
@@ -413,6 +425,24 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
     return true;
 }
 
+bool CRenderPass::parseRenderLOD(tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("Error parse. Not exist xml lod element");
+        return false;
+    }
+
+    f32 geometryLod = root->FloatAttribute("geometry");
+    if (geometryLod > 0)
+    {
+        m_lods->setGeometryDistance(geometryLod);
+    }
+
+    return true;
+}
+
+
 void CRenderPass::bind()
 {
     m_renderState->bind();
@@ -449,4 +479,14 @@ const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32
     std::string idxName(name.substr(0, pos) + "[" + std::to_string(idx) + "]" + name.substr(pos, name.size()));
 
     return idxName;
+}
+
+const RenderLODPtr& CRenderPass::getRenderLOD() const
+{
+    return m_lods;
+}
+
+void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
+{
+    m_lods = lod;
 }

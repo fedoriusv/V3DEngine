@@ -14,6 +14,7 @@
 		</samplers>
 		<renderstate polygonmode="fill" winding="cw" cullface="true"/>
 		<rendertarget val="default"/>
+		<lod geometry="10.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[

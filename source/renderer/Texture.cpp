@@ -106,19 +106,19 @@ bool CTexture::loadDevIL()
 
     for (u32 i = 0; i < m_data.size(); ++i)
     {
-        m_data[i].width = ilGetInteger(IL_IMAGE_WIDTH);
-        m_data[i].height = ilGetInteger(IL_IMAGE_HEIGHT);
-        m_data[i].depth = ilGetInteger(IL_IMAGE_DEPTH);
+        m_data[i]._width = ilGetInteger(IL_IMAGE_WIDTH);
+        m_data[i]._height = ilGetInteger(IL_IMAGE_HEIGHT);
+        m_data[i]._depth = ilGetInteger(IL_IMAGE_DEPTH);
         ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
-        m_data[i].format = convertILFormat(format);
+        m_data[i]._format = convertILFormat(format);
         ILenum type = ilGetInteger(IL_IMAGE_TYPE);
-        m_data[i].type = convertILType(type);
+        m_data[i]._type = convertILType(type);
 
         ilConvertImage(format, type);
 
         u32 size = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
-        m_data[i].data = (ILubyte*)malloc(size);
-        memcpy(m_data[i].data, ilGetData(), size);
+        m_data[i]._data = (ILubyte*)malloc(size);
+        memcpy(m_data[i]._data, ilGetData(), size);
     }
 
     return true;
@@ -205,10 +205,10 @@ void CTexture::clear()
 {
     for (TextureData::iterator i = m_data.begin(); i < m_data.end(); ++i)
     {
-        if ((*i).data != nullptr)
+        if ((*i)._data != nullptr)
         {
-            free((*i).data);
-            (*i).data = nullptr;
+            free((*i)._data);
+            (*i)._data = nullptr;
         }
     }
 }
