@@ -54,8 +54,10 @@ namespace renderer
         bool                  parseRenderTarget(tinyxml2::XMLElement* root);
         bool                  parseRenderState (tinyxml2::XMLElement* root);
         bool                  parseRenderLOD   (tinyxml2::XMLElement* root);
+        bool                  parseUserUniform (tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type);
 
         const std::string     attachIndexToUniform(const std::string& name, s32 idx);
+        void                  parseArrayValue(const std::string& val, f32* array, u32 count);
 
         ShaderProgramPtr      m_program;
         ShaderDataPtr         m_shaderData;
