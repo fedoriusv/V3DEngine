@@ -85,10 +85,10 @@ void CDebugGeometry::initShader()
     const ShaderDataPtr& data = s_pass->getShaderData();
 
     data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
-    data->addDefaultUniform("transform.projectionMatrix", CShaderDefaultUniform::eTransformProjectionMatrix);
-    data->addDefaultUniform("transform.modelMatrix", CShaderDefaultUniform::eTransformModelMatrix);
-    data->addDefaultUniform("transform.viewMatrix", CShaderDefaultUniform::eTransformViewMatrix);
-    data->setUniformVector4("color", Vector4D(0.0f));
+    data->addDefaultUniform("transform.projectionMatrix", eTransformProjectionMatrix);
+    data->addDefaultUniform("transform.modelMatrix", eTransformModelMatrix);
+    data->addDefaultUniform("transform.viewMatrix", eTransformViewMatrix);
+    data->addUniformVector4("color", Vector4D(0.0f));
 
     s_pass->getRenderState()->setCullFace(false);
     s_pass->getRenderState()->setPolygonMode(CRenderState::ePolyModeLine);

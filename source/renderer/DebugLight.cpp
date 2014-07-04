@@ -62,12 +62,12 @@ void CDebugLight::bind()
 {
     const ShaderDataPtr& data = s_pass->getShaderData();
 
-    data->setUniformVector4("color", Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
-    data->setUniformMatrix4("transform.projectionMatrix", RENDERER->m_projectionMatrix);
-    data->setUniformMatrix4("transform.viewMatrix", RENDERER->m_viewMatrix);
+    data->addUniformVector4("color", Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
+    data->addUniformMatrix4("transform.projectionMatrix", RENDERER->m_projectionMatrix);
+    data->addUniformMatrix4("transform.viewMatrix", RENDERER->m_viewMatrix);
     core::Matrix4D modelMatrix;
     modelMatrix.setTranslation(m_position);
-    data->setUniformMatrix4("transform.modelMatrix", modelMatrix);
+    data->addUniformMatrix4("transform.modelMatrix", modelMatrix);
 
     s_pass->bind();
 
@@ -79,10 +79,10 @@ void CDebugLight::initShader()
     const ShaderDataPtr& data = s_pass->getShaderData();
 
     data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
-    data->addDefaultUniform("transform.projectionMatrix", CShaderDefaultUniform::eTransformProjectionMatrix);
-    data->addDefaultUniform("transform.modelMatrix", CShaderDefaultUniform::eTransformModelMatrix);
-    data->addDefaultUniform("transform.viewMatrix", CShaderDefaultUniform::eTransformViewMatrix);
-    data->setUniformVector4("color", Vector4D(0.0f));
+    data->addDefaultUniform("transform.projectionMatrix", eTransformProjectionMatrix);
+    data->addDefaultUniform("transform.modelMatrix", eTransformModelMatrix);
+    data->addDefaultUniform("transform.viewMatrix", eTransformViewMatrix);
+    data->addUniformVector4("color", Vector4D(0.0f));
 
     s_pass->getRenderState()->setCullFace(false);
     s_pass->getRenderState()->setPolygonMode(CRenderState::ePolyModeLine);

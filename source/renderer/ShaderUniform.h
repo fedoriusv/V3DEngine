@@ -9,6 +9,40 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    enum EUniformData
+    {
+        eUniformUser = -1,
+
+        eTransformProjectionMatrix,
+        eTransformModelMatrix,
+        eTransformViewMatrix,
+        eTransformNormalMatrix,
+        eTransformViewPosition,
+        eTransformOrthoMatrix,
+
+        eMaterialAmbient,
+        eMaterialDiffuse,
+        eMaterialSpecular,
+        eMaterialEmission,
+        eMaterialShininess,
+
+        eLightsCount,
+
+        eLightPosition,
+        eLightAmbient,
+        eLightDiffuse,
+        eLightSpecular,
+        eLightDirection,
+        eLightAttenuation,
+        eLightRadius,
+
+        eUniformsCount,
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CShaderData;
+
     class CShaderUniform
     {
     public:
@@ -35,14 +69,24 @@ namespace renderer
         EDataType                           getUniformType() const;
         void*                               getUniforValue() const;
 
+        static const std::string&           getNameByValue(EUniformData type);
+        static const EUniformData           getValueByName(const std::string& name);
+
     private:
+
+        friend                              CShaderData;
+
+        void                                setUniform(const std::string& attribute, EUniformData data);
 
         EDataType                           m_uniformType;
         void*                               m_uniformValue;
         std::string                         m_attribute;
+        EUniformData                        m_uniformData;
 
         void*                               allocMemory(EDataType type, void* value);
         void                                deallocMemory();
+
+        static const std::string            s_uniformName[eUniformsCount];
 
     };
 

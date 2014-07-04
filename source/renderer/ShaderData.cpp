@@ -57,9 +57,9 @@ bool CShaderData::isExistUniform(const std::string& name)
     return false;
 }
 
-bool CShaderData::isExistUniform(CShaderDefaultUniform::EUniformData type)
+bool CShaderData::isExistUniform(EUniformData type)
 {
-    DefaultUniformList::const_iterator iter = m_defaultUniformList.find(CShaderDefaultUniform::s_uniformName[type]);
+    UniformList::const_iterator iter = m_defaultUniformList.find(CShaderUniform::s_uniformName[type]);
     if (iter != m_defaultUniformList.end())
     {
         return true;
@@ -80,7 +80,7 @@ bool CShaderData::isExistAttribute(const std::string& name)
 
 }
 
-void CShaderData::setUniformInt(const std::string& name, const u32 value)
+void CShaderData::addUniformInt(const std::string& name, const u32 value)
 {
     if (isExistUniform(name))
     {
@@ -95,7 +95,7 @@ void CShaderData::setUniformInt(const std::string& name, const u32 value)
     }
 }
 
-void CShaderData::setUniformFloat(const std::string& name, const f32 value)
+void CShaderData::addUniformFloat(const std::string& name, const f32 value)
 {
     if (isExistUniform(name))
     {
@@ -110,7 +110,7 @@ void CShaderData::setUniformFloat(const std::string& name, const f32 value)
     }
 }
 
-void CShaderData::setUniformVector2(const std::string& name, const core::Vector2D& vector)
+void CShaderData::addUniformVector2(const std::string& name, const core::Vector2D& vector)
 {
     if (isExistUniform(name))
     {
@@ -125,7 +125,7 @@ void CShaderData::setUniformVector2(const std::string& name, const core::Vector2
     }
 }
 
-void CShaderData::setUniformVector3(const std::string& name, const core::Vector3D& vector)
+void CShaderData::addUniformVector3(const std::string& name, const core::Vector3D& vector)
 {
     if (isExistUniform(name))
     {
@@ -140,7 +140,7 @@ void CShaderData::setUniformVector3(const std::string& name, const core::Vector3
     }
 }
 
-void CShaderData::setUniformVector4(const std::string& name, const core::Vector4D& vector)
+void CShaderData::addUniformVector4(const std::string& name, const core::Vector4D& vector)
 {
     if (isExistUniform(name))
     {
@@ -155,7 +155,7 @@ void CShaderData::setUniformVector4(const std::string& name, const core::Vector4
     }
 }
 
-void CShaderData::setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix)
+void CShaderData::addUniformMatrix3(const std::string& name, const core::Matrix3D& matrix)
 {
     if (isExistUniform(name))
     {
@@ -170,7 +170,7 @@ void CShaderData::setUniformMatrix3(const std::string& name, const core::Matrix3
     }
 }
 
-void CShaderData::setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix)
+void CShaderData::addUniformMatrix4(const std::string& name, const core::Matrix4D& matrix)
 {
     if (isExistUniform(name))
     {
@@ -200,7 +200,7 @@ void CShaderData::addUniform(const std::string& name, CShaderUniform::EDataType 
     }
 }
 
-void CShaderData::addDefaultUniform(const std::string& name, CShaderDefaultUniform::EUniformData data)
+void CShaderData::addDefaultUniform(const std::string& name, EUniformData data)
 {
     if (isExistUniform(data))
     {
@@ -208,7 +208,7 @@ void CShaderData::addDefaultUniform(const std::string& name, CShaderDefaultUnifo
     }
     else
     {
-        DefaultUniformPtr uniform = std::make_shared<CShaderDefaultUniform>();
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
 
         uniform->setUniform(name, data);
         m_defaultUniformList[name] = uniform;

@@ -5,7 +5,6 @@
 #include "ShaderUniform.h"
 #include "ShaderAttribute.h"
 #include "ShaderSampler.h"
-#include "ShaderDefaultUniform.h"
 
 
 namespace v3d
@@ -26,13 +25,13 @@ namespace renderer
         CShaderData();
         virtual                         ~CShaderData();
 
-        void                            setUniformInt    (const std::string& name, const u32             value);
-        void                            setUniformFloat  (const std::string& name, const f32             value);
-        void                            setUniformVector2(const std::string& name, const core::Vector2D& vector);
-        void                            setUniformVector3(const std::string& name, const core::Vector3D& vector);
-        void                            setUniformVector4(const std::string& name, const core::Vector4D& vector);
-        void                            setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-        void                            setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
+        void                            addUniformInt    (const std::string& name, const u32             value);
+        void                            addUniformFloat  (const std::string& name, const f32             value);
+        void                            addUniformVector2(const std::string& name, const core::Vector2D& vector);
+        void                            addUniformVector3(const std::string& name, const core::Vector3D& vector);
+        void                            addUniformVector4(const std::string& name, const core::Vector4D& vector);
+        void                            addUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
+        void                            addUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
 
         const AttributeList&            getAttributeList() const;
 
@@ -40,7 +39,7 @@ namespace renderer
         static const CShaderUniform::EDataType getDataTypeByName(const std::string& name);
 
         bool                            isExistUniform(const std::string& name);
-        bool                            isExistUniform(CShaderDefaultUniform::EUniformData type);
+        bool                            isExistUniform(EUniformData type);
         bool                            isExistAttribute(const std::string& name);
         bool                            isExistSampler(const std::string& name);
 
@@ -52,13 +51,13 @@ namespace renderer
         friend                          CDebugLight;
 
         void                            addUniform(const std::string& name, CShaderUniform::EDataType type);
-        void                            addDefaultUniform(const std::string& name, CShaderDefaultUniform::EUniformData data);
+        void                            addDefaultUniform(const std::string& name, EUniformData data);
         void                            addAttribute(const std::string& name, CShaderAttribute::EShaderAttribute type);
         void                            addSampler(const std::string& name);
 
         AttributeList                   m_attributeList;
         UniformList                     m_uniformList;
-        DefaultUniformList              m_defaultUniformList;
+        UniformList                     m_defaultUniformList;
         SamplerList                     m_samplerList;
 
     private:

@@ -59,13 +59,13 @@ void CDebugGeometryGL::draw()
 
     if (m_flag & EDebugGeometryFlag::eGeometryFlagNormals)
     {
-        data->setUniformVector4("color", Vector4D(0.0f, 1.0f, 0.0f, 1.0f));
+        data->addUniformVector4("color", Vector4D(0.0f, 1.0f, 0.0f, 1.0f));
 
         CDebugGeometryGL::drawObject(m_objects[EDebugGeometry::eGeometryNormals]);
     }
     if (m_flag & EDebugGeometryFlag::eGeometryFlagEdges)
     {
-        data->setUniformVector4("color", Vector4D(1.0f, 0.0f, 0.0f, 1.0f));
+        data->addUniformVector4("color", Vector4D(1.0f, 0.0f, 0.0f, 1.0f));
 
         CDebugGeometryGL::drawObject(m_objects[EDebugGeometry::eGeometryEdges]);
     }

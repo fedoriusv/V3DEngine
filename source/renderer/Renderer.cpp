@@ -129,12 +129,12 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     const ShaderProgramPtr& program = pass->getShaderProgram();
     const u32 shader = program->getShaderID();
 
-    if (data->isExistUniform(CShaderDefaultUniform::eTransformProjectionMatrix))
+    if (data->isExistUniform(eTransformProjectionMatrix))
     {
         program->setUniformMatrix4(shader, "transform.projectionMatrix", m_projectionMatrix);
     }
 
-    if (data->isExistUniform(CShaderDefaultUniform::eTransformModelMatrix))
+    if (data->isExistUniform(eTransformModelMatrix))
     {
         core::Matrix4D modelMatrix(transform);
         modelMatrix.makeTransposed();
@@ -142,17 +142,17 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         program->setUniformMatrix4(shader, "transform.modelMatrix", modelMatrix);
     }
 
-    if (data->isExistUniform(CShaderDefaultUniform::eTransformViewMatrix))
+    if (data->isExistUniform(eTransformViewMatrix))
     {
         program->setUniformMatrix4(shader, "transform.viewMatrix", m_viewMatrix);
     }
 
-    if (data->isExistUniform(CShaderDefaultUniform::eTransformViewPosition))
+    if (data->isExistUniform(eTransformViewPosition))
     {
         program->setUniformVector3(shader, "transform.viewPosition", m_viewPosition);
     }
 
-    if (data->isExistUniform(CShaderDefaultUniform::eTransformNormalMatrix))
+    if (data->isExistUniform(eTransformNormalMatrix))
     {
         core::Matrix4D normalMatrix;
         transform.getInverse(normalMatrix);

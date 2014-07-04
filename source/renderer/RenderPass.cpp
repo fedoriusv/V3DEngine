@@ -172,8 +172,8 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
 
         bool defaultUniform = true;
         CShaderUniform::EDataType uniformType = CShaderUniform::eTypeNone;
-        CShaderDefaultUniform::EUniformData uniformName = CShaderDefaultUniform::getValueByName(varVal);
-        if (uniformName == CShaderDefaultUniform::eUniformUnknown)
+        EUniformData uniformName = CShaderUniform::getValueByName(varVal);
+        if (uniformName == EUniformData::eUniformUser)
         {
             const std::string varType = varElement->Attribute("type");
             if (varType.empty())

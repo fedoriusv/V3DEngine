@@ -3,11 +3,61 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = {
+
+    "transform.projectionMatrix",
+    "transform.modelMatrix",
+    "transform.viewMatrix",
+    "transform.normalMatrix",
+    "transform.viewPosition",
+    "transform.orthoMatrix",
+
+    "material.ambient",
+    "material.diffuse",
+    "material.specular",
+    "material.emission",
+    "material.shininess",
+
+    "lights.count",
+
+    "light.position",
+    "light.ambient",
+    "light.diffuse",
+    "light.specular",
+    "light.direction",
+    "light.attenuation",
+    "light.radius",
+};
+
+
+const std::string& CShaderUniform::getNameByValue(EUniformData type)
+{
+    return s_uniformName[type];
+}
+
+const EUniformData CShaderUniform::getValueByName(const std::string& name)
+{
+    for (int i = 0; i < EUniformData::eUniformsCount; ++i)
+    {
+        if (s_uniformName[i].compare(name) == 0)
+        {
+            return (EUniformData)i;
+        }
+    }
+
+    return EUniformData::eUniformUser;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 CShaderUniform::CShaderUniform()
 : m_uniformType(EDataType::eTypeNone)
-	, m_uniformValue (nullptr)
-	, m_attribute ("")
+    , m_uniformValue (nullptr)
+    , m_attribute ("")
+    , m_uniformData(EUniformData::eUniformUser)
 {
 }
 
@@ -18,12 +68,19 @@ CShaderUniform::~CShaderUniform()
 
 void CShaderUniform::setUniform(EDataType type, const std::string& attribute, void* value)
 {
-	m_uniformType  = type;
-	m_attribute    = attribute;
+    m_uniformType  = type;
+    m_attribute    = attribute;
     if (value)
     {
         m_uniformValue = allocMemory(type, value);
     }
+}
+
+void CShaderUniform::setUniform(const std::string& attribute, EUniformData data)
+{
+    m_attribute = attribute;
+    m_uniformData = data;
+
 }
 
 void* CShaderUniform::allocMemory(EDataType type, void* value)
