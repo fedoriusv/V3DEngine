@@ -52,8 +52,8 @@ namespace scene
 #endif
 
         void                    setActiveCamera(CCamera* camera);
-        const CCamera*          getActiveCamera(CCamera* camera);
-        bool                    isActiveCamera(CCamera* camera);
+        const CCamera*          getActiveCamera(const CCamera* camera);
+        bool                    isActiveCamera(const CCamera* camera);
 
     private:
 
@@ -67,6 +67,10 @@ namespace scene
         std::vector<CNode*>     m_objects;
         CCamera*                m_camera;
 
+
+        std::vector<CNode*>     m_drawObjects;
+
+        bool                    checkDistance(const CNode* node, const f32 distance);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

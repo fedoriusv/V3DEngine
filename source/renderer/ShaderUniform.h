@@ -25,6 +25,7 @@ namespace renderer
         eMaterialSpecular,
         eMaterialEmission,
         eMaterialShininess,
+        eMaterialTransparency,
 
         eLightsCount,
 
@@ -68,6 +69,7 @@ namespace renderer
 
         EDataType                           getUniformType() const;
         void*                               getUniforValue() const;
+        EUniformData                        getUniformData() const;
 
         static const std::string&           getNameByValue(EUniformData type);
         static const EUniformData           getValueByName(const std::string& name);
@@ -83,7 +85,7 @@ namespace renderer
         std::string                         m_attribute;
         EUniformData                        m_uniformData;
 
-        void*                               allocMemory(EDataType type, void* value);
+        void                                allocMemory(EDataType type, void* value);
         void                                deallocMemory();
 
         static const std::string            s_uniformName[eUniformsCount];

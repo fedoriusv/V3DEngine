@@ -18,59 +18,59 @@ namespace renderer
     public:
 
         CMaterial();
-        virtual                   ~CMaterial();
+        virtual                     ~CMaterial();
 
-        void                      setAmbientColor (const core::Vector3D& color);
-        void                      setDiffuseColor (const core::Vector3D& color);
-        void                      setSpecularColor(const core::Vector3D& color);
-        void                      setEmissionColor(const core::Vector3D& color);
-        void                      setShininess(f32 value);
-        void                      setTransparency(f32 value);
+        void                        setAmbientColor (const core::Vector3D& color);
+        void                        setDiffuseColor (const core::Vector3D& color);
+        void                        setSpecularColor(const core::Vector3D& color);
+        void                        setEmissionColor(const core::Vector3D& color);
+        void                        setShininess(f32 value);
+        void                        setTransparency(f32 value);
 
-        const core::Vector3D&     getAmbientColor()  const;
-        const core::Vector3D&     getDiffuseColor()  const;
-        const core::Vector3D&     getSpecularColor() const;
-        const core::Vector3D&     getEmissionColor() const;
-        f32                       getShininess()     const;
-        f32                       getTransparency()  const;
+        const core::Vector3D&       getAmbientColor()  const;
+        const core::Vector3D&       getDiffuseColor()  const;
+        const core::Vector3D&       getSpecularColor() const;
+        const core::Vector3D&       getEmissionColor() const;
+        f32                         getShininess()     const;
+        f32                         getTransparency()  const;
 
-        bool                      setTexture(const u32 layer, const std::string& file);
-        bool                      setTexture(const u32 layer, const std::string* files[6]);
-        void                      setTexture(const u32 layer, TexturePtr texture);
+        bool                        setTexture(const u32 layer, const std::string& file);
+        bool                        setTexture(const u32 layer, const std::string* files[6]);
+        void                        setTexture(const u32 layer, TexturePtr texture);
         
-        const TexturePtr          getTexture(const u32 layer) const;
-        u32                       getTextureCount()           const;
+        const TexturePtr            getTexture(const u32 layer) const;
+        u32                         getTextureCount()           const;
 
-        void                      destroyTexture(u32 layer);
+        void                        destroyTexture(u32 layer);
         
-        bool                      setRenderTechnique(const std::string& file);
-        bool                      setRenderTechnique(stream::IStream* stream);
+        bool                        setRenderTechnique(const std::string& file);
+        bool                        setRenderTechnique(stream::IStream* stream);
 
-        void                      setRenderTechnique(const RenderTechniquePtr& technique);
-        const RenderTechniquePtr& getRenderTechique() const;
+        void                        setRenderTechnique(const RenderTechniquePtr& technique);
+        const RenderTechniquePtr&   getRenderTechique() const;
 
     private:
 
         struct SMaterialData
         {
-            core::Vector3D   _ambient;
-            core::Vector3D   _diffuse;
-            core::Vector3D   _specular;
-            core::Vector3D   _emission;
-            f32              _shininess;
-            f32              _transparency;
+            core::Vector3D          _ambient;
+            core::Vector3D          _diffuse;
+            core::Vector3D          _specular;
+            core::Vector3D          _emission;
+            f32                     _shininess;
+            f32                     _transparency;
         };
 
     protected:
 
-        friend                  CRenderer;
+        friend                      CRenderer;
 
-        SMaterialData           m_materialData;
+        SMaterialData               m_materialData;
         
-        TextureLayers           m_texture;
-        RenderTechniquePtr      m_renderTechnique;
+        TextureLayers               m_texture;
+        RenderTechniquePtr          m_renderTechnique;
 
-        bool                    m_needUpdate;
+        bool                        m_needUpdate;
 
     };
 

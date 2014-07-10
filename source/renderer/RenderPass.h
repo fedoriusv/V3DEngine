@@ -16,6 +16,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderer;
     class CRenderTechnique;
 
     class CRenderPass : public CObject
@@ -41,6 +42,7 @@ namespace renderer
 
     private:
 
+        friend                CRenderer;
         friend                CRenderTechnique;
 
         void                  init();

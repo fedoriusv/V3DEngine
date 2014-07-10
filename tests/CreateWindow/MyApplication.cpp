@@ -25,7 +25,7 @@ void MyApplication::init()
 
     //TODO: init
     /*scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
-    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
+    torus->getMaterial()->setTexture(0, "textures/wall.bmp");v
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
 
     for (u32 j = 0; j < 50; ++j)
@@ -33,19 +33,20 @@ void MyApplication::init()
         for (u32 i = 0; i < 50; ++i)
         {
             scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
-            cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-            cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+            //cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+            cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
+            //cube1->getMaterial()->setTexture(0, "textures/box.jpg");
         }
     }
   
-   // BaseApplication::getSceneManager()->addLight()->setName("light");
+   BaseApplication::getSceneManager()->addLight()->setName("light");
 
     //cube->setRotation(Vector3D(10, 120, 0));
     //Vector3D test = cube->getRotation();
 
-    scene::CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7, 0, 0.7));
+    scene::CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
-    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.7, 0, 0.7));
+    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     camera->setName("camera");
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));

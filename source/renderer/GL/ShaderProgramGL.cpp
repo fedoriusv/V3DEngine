@@ -296,33 +296,33 @@ s32 CShaderProgramGL::setUniformFloat(const u32 shader, const std::string& name,
     return location;
 }
 
-s32 CShaderProgramGL::setUniformVector2(const u32 shader, const std::string& name, core::Vector2D& vector)
+s32 CShaderProgramGL::setUniformVector2(const u32 shader, const std::string& name, const core::Vector2D& vector)
 {
     GLint location = glGetUniformLocation(shader, name.data());
     if (location > -1)
     {
-        glUniform2fv(location, 1, &vector[0]);
+        glUniform2fv(location, 1, &vector.x);
     }
 
     return location;
 }
-s32 CShaderProgramGL::setUniformVector3(const u32 shader, const std::string& name, core::Vector3D& vector)
+s32 CShaderProgramGL::setUniformVector3(const u32 shader, const std::string& name, const core::Vector3D& vector)
 {
     GLint location = glGetUniformLocation(shader, name.data());
     if (location > -1)
     {
-        glUniform3fv(location, 1, &vector[0]);
+        glUniform3fv(location, 1, &vector.x);
     }
 
     return location;
 }
 
-s32 CShaderProgramGL::setUniformVector4(const u32 shader, const std::string& name, core::Vector4D& vector)
+s32 CShaderProgramGL::setUniformVector4(const u32 shader, const std::string& name, const core::Vector4D& vector)
 {
     GLint location = glGetUniformLocation(shader, name.data());
     if (location > -1)
     {
-        glUniform4fv(location, 1, &vector[0]);
+        glUniform4fv(location, 1, &vector.x);
     }
 
     return location;

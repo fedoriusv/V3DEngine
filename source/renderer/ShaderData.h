@@ -34,6 +34,9 @@ namespace renderer
         void                            addUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
 
         const AttributeList&            getAttributeList() const;
+        const UniformList&              getUniformList() const;
+        const UniformList&              getDefaultUniformList() const;
+        const SamplerList&              getSamplerList() const;
 
         static const std::string&       getDataNameByType(CShaderUniform::EDataType type);
         static const CShaderUniform::EDataType getDataTypeByName(const std::string& name);
@@ -41,7 +44,7 @@ namespace renderer
         bool                            isExistUniform(const std::string& name);
         bool                            isExistUniform(EUniformData type);
         bool                            isExistAttribute(const std::string& name);
-        bool                            isExistSampler(const std::string& name);
+        bool                            isExistSampler(const u32 layer);
 
     protected:
 

@@ -235,12 +235,43 @@ const AttributeList& CShaderData::getAttributeList() const
     return m_attributeList;
 }
 
-bool CShaderData::isExistSampler(const std::string& name)
+const UniformList& CShaderData::getUniformList() const
 {
+    return m_uniformList;
+}
+
+const UniformList& CShaderData::getDefaultUniformList() const
+{
+    return m_defaultUniformList;
+}
+
+const SamplerList& CShaderData::getSamplerList() const
+{
+    return m_samplerList;
+}
+
+bool CShaderData::isExistSampler(const u32 layer)
+{
+    if (m_samplerList.size() > layer)
+    {
+        return true;
+    }
+
     return false;
 }
 
 void CShaderData::addSampler(const std::string& name)
 {
-    //TODO:
+    for (SamplerList::const_iterator iter = m_samplerList.begin(); iter < m_samplerList.end(); ++iter)
+    {
+        if ((*iter)->getAttribute() == name)
+        {
+            SamplerPtr sampler = std::make_shared<CShaderSampler>();
+            sampler->setSampler(name);
+
+            m_samplerList.push_back(sampler);
+
+            return;
+        }
+    }
 }

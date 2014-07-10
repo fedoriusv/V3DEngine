@@ -52,9 +52,9 @@ namespace renderer
 
         virtual s32     setUniformInt(const u32 shader, const std::string& name, const u32 value)                               = 0;
         virtual s32     setUniformFloat(const u32 shader, const std::string& name, const f32 value)                             = 0;
-        virtual s32     setUniformVector2(const u32 shader, const std::string& name, core::Vector2D& vector)                    = 0;
-        virtual s32     setUniformVector3(const u32 shader, const std::string& name, core::Vector3D& vector)                    = 0;
-        virtual s32     setUniformVector4(const u32 shader, const std::string& name, core::Vector4D& vector)                    = 0;
+        virtual s32     setUniformVector2(const u32 shader, const std::string& name, const core::Vector2D& vector)              = 0;
+        virtual s32     setUniformVector3(const u32 shader, const std::string& name, const core::Vector3D& vector)              = 0;
+        virtual s32     setUniformVector4(const u32 shader, const std::string& name, const core::Vector4D& vector)              = 0;
         virtual s32     setUniformMatrix3(const u32 shader, const std::string& name, const core::Matrix3D& matrix)              = 0;
         virtual s32     setUniformMatrix4(const u32 shader, const std::string& name, const core::Matrix4D& matrix)              = 0;
 

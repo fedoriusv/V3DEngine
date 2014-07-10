@@ -32,11 +32,6 @@ namespace renderer
         DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              override;
         DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) override;
 #endif
-
-    private:
-
-        void                updateLight(const core::Matrix4D& transform, const ShaderDataPtr& data)     override;
-        void                updateMaterial(const MaterialPtr& material, const ShaderDataPtr& data)      override;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

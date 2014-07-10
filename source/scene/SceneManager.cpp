@@ -50,12 +50,12 @@ void CSceneManager::setActiveCamera(CCamera* camera)
     m_camera->m_active = true;
 }
 
-const CCamera* CSceneManager::getActiveCamera(CCamera* camera)
+const CCamera* CSceneManager::getActiveCamera(const CCamera* camera)
 {
     return m_camera;
 }
 
-bool CSceneManager::isActiveCamera(CCamera* camera)
+bool CSceneManager::isActiveCamera(const CCamera* camera)
 {
     return m_camera == camera;
 }
@@ -78,7 +78,7 @@ void CSceneManager::draw()
 
     RENDERER->preRender();
 
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (std::vector<CNode*>::iterator iter = m_drawObjects.begin(); iter < m_drawObjects.end(); ++iter)
     {
         CNode* item = (*iter);
 
@@ -91,6 +91,8 @@ void CSceneManager::draw()
 
 void CSceneManager::clear()
 {
+    m_drawObjects.clear();
+
 	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
 	{
 		delete (*iter);
@@ -126,6 +128,8 @@ void CSceneManager::addNode(CNode* node)
 
 void CSceneManager::update(v3d::f64 time)
 {
+    m_drawObjects.clear();
+
     for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         CNode* node = (*iter);
@@ -135,9 +139,9 @@ void CSceneManager::update(v3d::f64 time)
             case ENodeType::eShape:
             case ENodeType::eModel:
             {
+                f32 priority = 0.0f;
                 if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
                 {
-                    f32 priority = 0.0f;
                     if (m_camera)
                     {
                         priority = (node->getPosition() - m_camera->getPosition()).length();
@@ -148,12 +152,22 @@ void CSceneManager::update(v3d::f64 time)
                     }
                     node->m_priority = priority;
                 }
+
+                if (checkDistance(node, priority))
+                {
+                    m_drawObjects.push_back(node);
+                }
             }
             break;
 
             case ENodeType::eCamera:
             {
                 node->m_priority = 1000000.0f;
+
+                if (static_cast<CCamera*>(node)->isActive())
+                {
+                    m_drawObjects.push_back(node);
+                }
             }
             break;
 
@@ -169,7 +183,7 @@ void CSceneManager::update(v3d::f64 time)
         }
     }
 
-        std::sort(m_objects.begin(), m_objects.end(), [](CNode* node0, CNode* node1)
+    std::sort(m_drawObjects.begin(), m_drawObjects.end(), [](CNode* node0, CNode* node1)
         {
             return  (node0->getPriority() > node1->getPriority());
         });
@@ -220,6 +234,24 @@ void CSceneManager::setBackgroundColor(const core::Vector3D& color)
 const core::Vector3D& CSceneManager::getBackgroundColor() const
 {
 	return v3d::CEngine::getInstance()->getRenderer()->getBackColor();
+}
+
+bool CSceneManager::checkDistance(const CNode* node, const f32 distance)
+{
+    if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)
+    {
+        const RenderTechniquePtr& technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
+        for (int pass = 0; pass < technique->getRenderPassCount(); ++pass)
+        {
+            const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();
+            if (lod->getGeometryDistance() < distance && lod->getGeometryDistance() > 0)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 CNode* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)

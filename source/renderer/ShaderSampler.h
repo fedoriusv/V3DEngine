@@ -14,19 +14,20 @@ namespace renderer
     public:
 
         CShaderSampler();
-        virtual         ~CShaderSampler();
+        virtual                 ~CShaderSampler();
 
-        void            setSampler(const std::string& attribute);
+        void                    setSampler(const std::string& attribute);
+        const std::string&      getAttribute() const;
 
     protected:
 
-        std::string     m_attribute;
+        std::string             m_attribute;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderSampler>            ShaderSamplerPtr;
-    typedef std::map<std::string, ShaderSamplerPtr>    SamplerList;
+    typedef std::shared_ptr<CShaderSampler>    SamplerPtr;
+    typedef std::vector<SamplerPtr>            SamplerList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

@@ -95,6 +95,11 @@ void CWindowWin32::setResizeble(bool value)
 
 void CWindowWin32::setFullScreen(bool value)
 {
+    if (m_param.isFullscreen == value)
+    {
+        return;
+    }
+
 	LONG_PTR style = WS_POPUP;
 	if (!value)
 	{

@@ -16,3 +16,8 @@ void CShaderSampler::setSampler(const std::string& attribute)
 {
     m_attribute = attribute;
 }
+
+const std::string& CShaderSampler::getAttribute() const
+{
+    return m_attribute;
+}
