@@ -4,6 +4,7 @@ set(SOLUTION_NAME Valera3D)
 set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
+set(FREETYPE2_PROJECT freetype2)
 set(TEST_PROJECT_0 CreateWindow)
 
 if(COMPILER_MSVC)
@@ -160,6 +161,7 @@ include_directories(
 	${SOURCE_DIR}
 	libs/glew/include
 	libs/tinyxml2
+	libs/freetype2
 	libs/DevIL/include
 	)
 
@@ -181,6 +183,7 @@ add_library(
 target_link_libraries(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
+	${FREETYPE2_PROJECT}
 	${DEVIL_LIB}
 	)
 
@@ -188,11 +191,13 @@ target_link_libraries(${ENGINE_NAME}
 #Additional Libs
 add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
+add_subdirectory(libs/freetype2)
 add_subdirectory(tests/${TEST_PROJECT_0})
 
 add_dependencies(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
+	${FREETYPE2_PROJECT}
 	)
 
 
