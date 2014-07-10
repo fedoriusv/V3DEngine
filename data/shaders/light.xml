@@ -7,12 +7,11 @@
 			<var name="transform.normalMatrix" type="mat4" val="transform.normalMatrix"/>
 			<var name="transform.viewPosition" type="vec3" val="transform.viewPosition"/>
 			
-			<var name="material.ambient" type="vec3" val="material.ambient"/>
-			<var name="material.diffuse" type="vec3" val="material.diffuse"/>
-			<var name="material.specular" type="vec3" val="material.specular"/>
-			<var name="material.emission" type="vec3" val="material.emission"/>
+			<var name="material.ambient" type="vec4" val="material.ambient"/>
+			<var name="material.diffuse" type="vec4" val="material.diffuse"/>
+			<var name="material.specular" type="vec4" val="material.specular"/>
+			<var name="material.emission" type="vec4" val="material.emission"/>
 			<var name="material.shininess" type="float" val="material.shininess"/>
-			<var name="material.transparency" type="float" val="material.transparency"/>
 			
 			<var name="light.ambient" type="vec4" array="1" val="light.ambient"/>
 			<var name="light.diffuse" type="vec4" array="1" val="light.diffuse"/>
@@ -26,7 +25,7 @@
 		</attributes>
 		<samplers>
 		</samplers>
-		<renderstate polygonmode="full" winding="cw" cullface="false"/>
+		<renderstate polygonmode="full" winding="cw" cullface="true"/>
 		<rendertarget val="default"/>
 		<lod geometry="10.0"/>
 		<shaders>
@@ -90,10 +89,10 @@
 					
 					struct Material
 					{
-						vec3  ambient;
-						vec3  diffuse;
-						vec3  specular;
-						vec3  emission;
+						vec4  ambient;
+						vec4  diffuse;
+						vec4  specular;
+						vec4  emission;
 						float shininess;
 						float transparency;
 					};
@@ -130,14 +129,14 @@
 									light[0].attenuation[1] * fragVertex.distance +
 									light[0].attenuation[2] * fragVertex.distance * fragVertex.distance);
 						
-						fragColor = vec4(material.emission, 1.0);
-						fragColor += vec4(material.ambient, 1.0) * light[0].ambient * attenuation;
+						fragColor = material.emission;
+						fragColor += material.ambient * light[0].ambient * attenuation;
 						
 						float NdotL = max(dot(normal, lightDir), 0.0);
-						fragColor += vec4(material.diffuse, 1.0) * light[0].diffuse * NdotL;
+						fragColor += material.diffuse * light[0].diffuse * NdotL;
 						
 						float RdotVpow = max(pow(dot(reflect(-lightDir, normal), viewDir), material.shininess), 0.0);
-						fragColor += vec4(material.specular, 1.0) * light[0].specular * RdotVpow * attenuation;
+						fragColor +=  material.specular * light[0].specular * RdotVpow * attenuation;
 					}
 				]]>
 			</var>

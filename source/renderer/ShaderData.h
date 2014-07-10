@@ -44,7 +44,7 @@ namespace renderer
         bool                            isExistUniform(const std::string& name);
         bool                            isExistUniform(EUniformData type);
         bool                            isExistAttribute(const std::string& name);
-        bool                            isExistSampler(const u32 layer);
+        bool                            isExistSampler(const std::string& name);
 
     protected:
 

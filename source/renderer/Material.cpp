@@ -13,10 +13,10 @@ CMaterial::CMaterial()
 {
 	m_type = EObjectType::eTypeMaterial;
 
-	m_materialData._ambient      = core::Vector3D(0.2f, 0.2f, 0.2f);
-	m_materialData._diffuse      = core::Vector3D(0.2f, 0.2f, 0.2f);
-	m_materialData._specular     = core::Vector3D(1.0f, 1.0f, 1.0f);
-	m_materialData._emission     = core::Vector3D(0.0f, 0.0f, 0.0f);
+	m_materialData._ambient      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
+	m_materialData._diffuse      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
+	m_materialData._specular     = core::Vector4D(1.0f);
+	m_materialData._emission     = core::Vector4D(0.0f);
 	m_materialData._shininess    = 128U;
 	m_materialData._transparency = 1.0f;
 }
@@ -25,25 +25,27 @@ CMaterial::~CMaterial()
 {
 }
 
-void CMaterial::setAmbientColor(const core::Vector3D& color)
+void CMaterial::setAmbientColor(const core::Vector4D& color)
 {
 	m_materialData._ambient = color;
     m_needUpdate = true;
 }
 	
-void CMaterial::setDiffuseColor(const core::Vector3D& color)
+void CMaterial::setDiffuseColor(const core::Vector4D& color)
 {
 	m_materialData._diffuse = color;
+    m_materialData._diffuse.w = (m_materialData._diffuse.w > 1.0f) ? 1.0f : m_materialData._diffuse.w;
+    CMaterial::setTransparency(m_materialData._diffuse.w);
     m_needUpdate = true;
 }
 
-void CMaterial::setSpecularColor(const core::Vector3D& color)
+void CMaterial::setSpecularColor(const core::Vector4D& color)
 {
 	m_materialData._specular = color;
     m_needUpdate = true;
 }
 
-void CMaterial::setEmissionColor(const core::Vector3D& color)
+void CMaterial::setEmissionColor(const core::Vector4D& color)
 {
 	m_materialData._emission = color;
     m_needUpdate = true;
@@ -55,22 +57,22 @@ void CMaterial::setShininess(const f32 value)
     m_needUpdate = true;
 }
 	
-const core::Vector3D& CMaterial::getAmbientColor() const
+const core::Vector4D& CMaterial::getAmbientColor() const
 {
 	return m_materialData._ambient;
 }
 
-const core::Vector3D& CMaterial::getDiffuseColor() const
+const core::Vector4D& CMaterial::getDiffuseColor() const
 {
 	return m_materialData._diffuse;
 }
 
-const core::Vector3D& CMaterial::getSpecularColor() const
+const core::Vector4D& CMaterial::getSpecularColor() const
 {
 	return m_materialData._specular;
 }
 
-const core::Vector3D& CMaterial::getEmissionColor() const
+const core::Vector4D& CMaterial::getEmissionColor() const
 {
 	return m_materialData._emission;
 }

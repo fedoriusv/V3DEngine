@@ -16,7 +16,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 0, -5)));
+   // scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     //cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
@@ -33,13 +33,14 @@ void MyApplication::init()
         for (u32 i = 0; i < 50; ++i)
         {
             scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
-            //cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-            cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
-            //cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+            cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+            //cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
+            //cube1->getMaterial()->setDiffuseColor(Vector3D(0, 0, 1));
+            cube1->getMaterial()->setTexture(0, "textures/box.jpg");
         }
     }
   
-   BaseApplication::getSceneManager()->addLight()->setName("light");
+    //BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 
     //cube->setRotation(Vector3D(10, 120, 0));
     //Vector3D test = cube->getRotation();

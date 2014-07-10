@@ -96,7 +96,7 @@ void CRenderer::draw(const RenderJobPtr& job)
         for (u32 layer = 0; layer < material->getTextureCount(); ++layer)
         {
             const TexturePtr& texture = material->getTexture(layer);
-            if (pass->getShaderData()->isExistSampler(layer))
+            if (pass->getShaderData()->getSamplerList().size() >= layer)
             {
                 if (texture->isEnable())
                 {
@@ -207,22 +207,22 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
         {
         case EUniformData::eMaterialAmbient:
     
-            program->setUniformVector3(shader, "material.ambient", material->getAmbientColor());
+            program->setUniformVector4(shader, "material.ambient", material->getAmbientColor());
             break;
 
         case EUniformData::eMaterialDiffuse:
 
-            program->setUniformVector3(shader, "material.diffuse", material->getSpecularColor());
+            program->setUniformVector4(shader, "material.specular", material->getSpecularColor());
             break;
 
         case EUniformData::eMaterialSpecular:
 
-            program->setUniformVector3(shader, "material.diffuse", material->getDiffuseColor());
+            program->setUniformVector4(shader, "material.diffuse", material->getDiffuseColor());
             break;
 
         case EUniformData::eMaterialEmission:
 
-            program->setUniformVector3(shader, "material.emission", material->getEmissionColor());
+            program->setUniformVector4(shader, "material.emission", material->getEmissionColor());
             break;
 
         case EUniformData::eMaterialShininess:

@@ -20,17 +20,17 @@ namespace renderer
         CMaterial();
         virtual                     ~CMaterial();
 
-        void                        setAmbientColor (const core::Vector3D& color);
-        void                        setDiffuseColor (const core::Vector3D& color);
-        void                        setSpecularColor(const core::Vector3D& color);
-        void                        setEmissionColor(const core::Vector3D& color);
-        void                        setShininess(f32 value);
-        void                        setTransparency(f32 value);
+        void                        setAmbientColor (const core::Vector4D& color);
+        void                        setDiffuseColor (const core::Vector4D& color);
+        void                        setSpecularColor(const core::Vector4D& color);
+        void                        setEmissionColor(const core::Vector4D& color);
+        void                        setShininess(const f32 value);
+        void                        setTransparency(const f32 value);
 
-        const core::Vector3D&       getAmbientColor()  const;
-        const core::Vector3D&       getDiffuseColor()  const;
-        const core::Vector3D&       getSpecularColor() const;
-        const core::Vector3D&       getEmissionColor() const;
+        const core::Vector4D&       getAmbientColor()  const;
+        const core::Vector4D&       getDiffuseColor()  const;
+        const core::Vector4D&       getSpecularColor() const;
+        const core::Vector4D&       getEmissionColor() const;
         f32                         getShininess()     const;
         f32                         getTransparency()  const;
 
@@ -53,10 +53,10 @@ namespace renderer
 
         struct SMaterialData
         {
-            core::Vector3D          _ambient;
-            core::Vector3D          _diffuse;
-            core::Vector3D          _specular;
-            core::Vector3D          _emission;
+            core::Vector4D          _ambient;
+            core::Vector4D          _diffuse;
+            core::Vector4D          _specular;
+            core::Vector4D          _emission;
             f32                     _shininess;
             f32                     _transparency;
         };
