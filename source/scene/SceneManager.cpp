@@ -151,11 +151,11 @@ void CSceneManager::update(v3d::f64 time)
                         priority = node->getPosition().z;
                     }
                     node->m_priority = priority;
-                }
 
-                if (checkDistance(node, priority))
-                {
-                    m_drawObjects.push_back(node);
+                    if (checkDistance(node, priority))
+                    {
+                        m_drawObjects.push_back(node);
+                    }
                 }
             }
             break;
@@ -228,12 +228,12 @@ CNode* CSceneManager::getObjectByName(const std::string& name)
 
 void CSceneManager::setBackgroundColor(const core::Vector3D& color)
 {
-	v3d::CEngine::getInstance()->getRenderer()->setBackColor(color);
+    RENDERER->setBackColor(color);
 }
 
 const core::Vector3D& CSceneManager::getBackgroundColor() const
 {
-	return v3d::CEngine::getInstance()->getRenderer()->getBackColor();
+    return RENDERER->getBackColor();
 }
 
 bool CSceneManager::checkDistance(const CNode* node, const f32 distance)
@@ -241,7 +241,7 @@ bool CSceneManager::checkDistance(const CNode* node, const f32 distance)
     if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)
     {
         const RenderTechniquePtr& technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
-        for (int pass = 0; pass < technique->getRenderPassCount(); ++pass)
+        for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
         {
             const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();
             if (lod->getGeometryDistance() < distance && lod->getGeometryDistance() > 0)

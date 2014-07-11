@@ -25,7 +25,7 @@ namespace renderer
         CShaderData();
         virtual                         ~CShaderData();
 
-        void                            addUniformInt    (const std::string& name, const u32             value);
+        void                            addUniformInt    (const std::string& name, const s32             value);
         void                            addUniformFloat  (const std::string& name, const f32             value);
         void                            addUniformVector2(const std::string& name, const core::Vector2D& vector);
         void                            addUniformVector3(const std::string& name, const core::Vector3D& vector);

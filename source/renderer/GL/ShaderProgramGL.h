@@ -37,13 +37,15 @@ namespace renderer
 
         bool                setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) override;
 
-        s32                 setUniformInt(const u32 shader, const std::string& name, const u32 value)                               override;
-        s32                 setUniformFloat(const u32 shader, const std::string& name, const f32 value)                             override;
-        s32                 setUniformVector2(const u32 shader, const std::string& name, const core::Vector2D& vector)              override;
-        s32                 setUniformVector3(const u32 shader, const std::string& name, const core::Vector3D& vector)              override;
-        s32                 setUniformVector4(const u32 shader, const std::string& name, const core::Vector4D& vector)              override;
-        s32                 setUniformMatrix3(const u32 shader, const std::string& name, const core::Matrix3D& matrix)              override;
-        s32                 setUniformMatrix4(const u32 shader, const std::string& name, const core::Matrix4D& matrix)              override;
+        void                setUniformInt    (const s32 location, const s32 value)              override;
+        void                setUniformFloat  (const s32 location, const f32 value)              override;
+        void                setUniformVector2(const s32 location, const core::Vector2D& vector) override;
+        void                setUniformVector3(const s32 location, const core::Vector3D& vector) override;
+        void                setUniformVector4(const s32 location, const core::Vector4D& vector) override;
+        void                setUniformMatrix3(const s32 location, const core::Matrix3D& matrix) override;
+        void                setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) override;
+
+        s32                 getUniformID(const u32 shader, const std::string& name)             override;
 
     };
 

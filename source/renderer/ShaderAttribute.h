@@ -13,8 +13,6 @@ namespace renderer
     {
     public:
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
         enum EShaderAttribute
         {
             eAttributeNone = -1,
@@ -30,8 +28,6 @@ namespace renderer
 
             eAttributeCount,
         };
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         CShaderAttribute();
         virtual                         ~CShaderAttribute();

@@ -60,6 +60,7 @@ CShaderUniform::CShaderUniform()
     , m_uniformValue (nullptr)
     , m_attribute ("")
     , m_uniformData(EUniformData::eUniformUser)
+    , m_id(-1)
 {
 }
 
@@ -192,4 +193,19 @@ void* CShaderUniform::getUniforValue() const
 EUniformData CShaderUniform::getUniformData() const
 {
     return m_uniformData;
+}
+
+s32 CShaderUniform::getUniformID(const s32 index) const
+{
+    return m_id;
+}
+
+const std::string& CShaderUniform::getUniformName() const
+{
+    return m_attribute;
+}
+
+void CShaderUniform::setUniforID(s32 id)
+{
+    m_id = id;
 }

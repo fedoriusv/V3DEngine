@@ -62,14 +62,19 @@ namespace renderer
             eTypeCount,
         };
 
-       CShaderUniform();
+        CShaderUniform();
         virtual                             ~CShaderUniform();
 
         void                                setUniform(EDataType type, const std::string& attribute, void* value);
+        void                                setUniforID(s32 id);
 
         EDataType                           getUniformType() const;
         void*                               getUniforValue() const;
+        const std::string&                  getUniformName() const;
+
         EUniformData                        getUniformData() const;
+        s32                                 getUniformID(const s32 index = -1)   const;
+
 
         static const std::string&           getNameByValue(EUniformData type);
         static const EUniformData           getValueByName(const std::string& name);
@@ -84,6 +89,7 @@ namespace renderer
         void*                               m_uniformValue;
         std::string                         m_attribute;
         EUniformData                        m_uniformData;
+        s32                                 m_id;
 
         void                                allocMemory(EDataType type, void* value);
         void                                deallocMemory();

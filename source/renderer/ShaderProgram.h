@@ -46,17 +46,20 @@ namespace renderer
 
         void            getShaderIDArray(std::vector<u32>& shaders);
 
+
         virtual bool    create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...)                        = 0;
 
         virtual bool    setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
 
-        virtual s32     setUniformInt(const u32 shader, const std::string& name, const u32 value)                               = 0;
-        virtual s32     setUniformFloat(const u32 shader, const std::string& name, const f32 value)                             = 0;
-        virtual s32     setUniformVector2(const u32 shader, const std::string& name, const core::Vector2D& vector)              = 0;
-        virtual s32     setUniformVector3(const u32 shader, const std::string& name, const core::Vector3D& vector)              = 0;
-        virtual s32     setUniformVector4(const u32 shader, const std::string& name, const core::Vector4D& vector)              = 0;
-        virtual s32     setUniformMatrix3(const u32 shader, const std::string& name, const core::Matrix3D& matrix)              = 0;
-        virtual s32     setUniformMatrix4(const u32 shader, const std::string& name, const core::Matrix4D& matrix)              = 0;
+        virtual void    setUniformInt    (const s32 location, const s32 value)              = 0;
+        virtual void    setUniformFloat  (const s32 location, const f32 value)              = 0;
+        virtual void    setUniformVector2(const s32 location, const core::Vector2D& vector) = 0;
+        virtual void    setUniformVector3(const s32 location, const core::Vector3D& vector) = 0;
+        virtual void    setUniformVector4(const s32 location, const core::Vector4D& vector) = 0;
+        virtual void    setUniformMatrix3(const s32 location, const core::Matrix3D& matrix) = 0;
+        virtual void    setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) = 0;
+
+        virtual s32     getUniformID(const u32 shader, const std::string& name)             = 0;
 
         u32             m_shaderProgID;
 

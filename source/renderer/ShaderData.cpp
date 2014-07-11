@@ -80,7 +80,7 @@ bool CShaderData::isExistAttribute(const std::string& name)
 
 }
 
-void CShaderData::addUniformInt(const std::string& name, const u32 value)
+void CShaderData::addUniformInt(const std::string& name, const s32 value)
 {
     if (isExistUniform(name))
     {
