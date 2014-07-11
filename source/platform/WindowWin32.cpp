@@ -7,6 +7,7 @@
 
 using namespace v3d;
 using namespace v3d::platform;
+using namespace v3d::event;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -334,6 +335,10 @@ void CWindowWin32::close()
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifndef WHEEL_DELTA
+#   define WHEEL_DELTA 120
+#endif
+
 	switch (message)
 	{
 		case WM_CREATE:
@@ -349,12 +354,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			const int scancode = (lParam >> 16) & 0xff;
 		
-			v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
-			event->_event = v3d::event::eKeyboardPressDown;
+            v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
+            event->_event = v3d::event::eKeyboardPressDown;
             event->_key = (EKeyCode)wParam;
             event->_character = (c8)wParam;
 
-			INPUT_EVENTS->pushEvent(event);
+            INPUT_EVENTS->pushEvent(event);
 
 			return 0;
 		}
@@ -375,39 +380,53 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONUP:
+        case WM_MOUSEMOVE:
+        case WM_MOUSEWHEEL:
 		{
-			/*v3d::event::SMouseInputEvent event;
-			event.m_event = v3d::event::eLeftMousePressedDown;
-
-			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
+            v3d::event::SMouseInputEventPtr event = std::make_shared<v3d::event::SMouseInputEvent>();
+            event->_position.width = (s16)LOWORD(lParam);
+            event->_position.height = (s16)HIWORD(lParam);
+            event->_wheel = ((f32)((s16)HIWORD(wParam))) / (f32)WHEEL_DELTA;
+            event->_event = eMouseUnknown;
+            switch (message)
+            {
+            case WM_LBUTTONDOWN:
+                event->_event = eLeftMousePressedDown;
+                break;
+            case WM_RBUTTONDOWN:
+                event->_event = eRightMousePressedDown;
+                break;
+            case WM_MBUTTONDOWN:
+                event->_event = eMiddleMousePressedDown;
+                break;
+            case WM_LBUTTONUP:
+                event->_event = eLeftMousePressedUp;
+                break;
+            case WM_RBUTTONUP:
+                event->_event = eRightMousePressedUp;
+                break;
+            case WM_MBUTTONUP:
+                event->_event = eMiddleMousePressedUp;
+                break;
+            case WM_MOUSEMOVE:
+                event->_event = eMouseMoved;
+                break;
+            case WM_MOUSEWHEEL:
+                event->_event = eMouseWheel;
+                break;
+            default:
+                event->_event = eMouseUnknown;
+                break;
+            };
+            
+            INPUT_EVENTS->pushEvent(event);
 
 			return 0;
 		}
 
-		case WM_LBUTTONUP:
-		case WM_RBUTTONUP:
-		case WM_MBUTTONUP:
-		{
-			/*v3d::event::SMouseInputEvent event;
-			event.m_event = v3d::event::eLeftMousePressedUp;
-
-			v3d::CEngine::getInstance()->getInputEventHandler()->pushEvent(event);*/
-
-			return 0;
-		}
-
-		case WM_MOUSEMOVE:
-		{
-			//
-			return 0;
-		}
-
-		case WM_MOUSEWHEEL:
-		{
-			//
-			return 0;
-		}
-		
 		case WM_SIZE:
 			{
 				//
@@ -436,10 +455,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		
 		case WM_DESTROY:
-			{
-				PostQuitMessage(0);
-				return 0;
-			}
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
 
 	}
 

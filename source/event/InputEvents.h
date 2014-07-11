@@ -55,8 +55,7 @@ namespace event
 		eMiddleMousePressedUp,
 		eMiddleMouseDoubleClick,
 		eMouseMoved,
-		eMouseWheelUp,
-		eMouseWheelDown,
+		eMouseWheel,
 
 		eMouseCount
 	};
