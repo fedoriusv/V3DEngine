@@ -10,7 +10,7 @@
 
  *>   Copyright (c) 2002, All Rights Reserved.
  **********************************************************************/
-#include "ExporterF3D.h"
+#include "IGameExporter.h"
 
 extern ClassDesc2* GetIGameExporterDesc();
 

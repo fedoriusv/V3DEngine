@@ -11,7 +11,7 @@
  *>	Copyright (c) 2002, All Rights Reserved.
  **********************************************************************/
 
-#include "ExporterF3D.h"
+#include "IGameExporter.h"
 #include "atlbase.h"
 #include "msxml2.h"
 #include "strbasic.h"

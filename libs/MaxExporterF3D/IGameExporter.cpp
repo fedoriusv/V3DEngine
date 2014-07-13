@@ -16,7 +16,7 @@
  **********************************************************************/
 
 #include "msxml2.h"
-#include "ExporterF3D.h"
+#include "IGameExporter.h"
 #include "XMLUtility.h"
 #include "decomp.h"
 
