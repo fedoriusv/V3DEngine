@@ -161,7 +161,7 @@ include_directories(
 	${SOURCE_DIR}
 	libs/glew/include
 	libs/tinyxml2
-	libs/freetype2
+	libs/freetype2/include
 	libs/DevIL/include
 	)
 

@@ -1,7 +1,7 @@
 #include "Shape.h"
 #include "Engine.h"
 #include "utils/Logger.h"
-#include "renderer/GL/GeomertyGL.h"
+#include "renderer/Geometry.h"
 
 
 using namespace v3d;
@@ -11,6 +11,7 @@ using namespace v3d::renderer;
 CShape::CShape()
     : m_geometry(nullptr)
     , m_material(nullptr)
+    , m_renderJob(nullptr)
 #ifdef _DEBUG
     , m_debug(nullptr)
 #endif
