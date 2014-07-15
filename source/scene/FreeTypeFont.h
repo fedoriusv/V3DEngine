@@ -17,11 +17,17 @@ namespace scene
         CFreeTypeFont(const std::string& font);
         virtual                         ~CFreeTypeFont();
 
+        virtual void                    setText(const std::string& text);
+        virtual void                    setSize(const u32 size);
+
         void                            init()                          override;
         void                            update(f64 time)                override;
         void                            render()                        override;
 
     private:
+
+        void                            refresh()                       override;
+        void                            build();
 
         std::string                     m_font;
         renderer::FreeTypeDataPtr       m_data;

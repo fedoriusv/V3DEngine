@@ -1,4 +1,5 @@
 #include "FontManager.h"
+#include "stream/FileStream.h"
 #include "utils/Logger.h"
 
 using namespace v3d;
@@ -38,15 +39,40 @@ const renderer::FreeTypeDataPtr CFontManager::load(const std::string& name)
     }
     else
     {
-        renderer::FreeTypeDataPtr font = std::make_shared<renderer::CFreeTypeData>(nameStr);
-        if (font->load())
+        std::string fileExtension;
+
+        const size_t pos = nameStr.find('.');
+        if (pos != std::string::npos)
         {
-            LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
-            return nullptr;
+            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
         }
 
-        m_fontsData.insert(std::map<std::string, renderer::FreeTypeDataPtr>::value_type(nameStr, font));
-        return font;
+        for (std::string& path : m_pathes)
+        {
+            const std::string fullName = path + nameStr;
+            const bool isFileExist = stream::FileStream::isFileExist(fullName);
+            if (isFileExist)
+            {
+                stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
+
+                if (stream->isOpen())
+                {
+                    renderer::FreeTypeDataPtr font = std::make_shared<renderer::CFreeTypeData>(nameStr);
+
+                    font->init(stream);
+                    font->setResourseName(fullName);
+
+                    if (font->load())
+                    {
+                        LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+
+                    m_fontsData.insert(std::map<std::string, renderer::FreeTypeDataPtr>::value_type(nameStr, font));
+                    return font;
+                }
+            }
+        }
     }
 
     return nullptr;

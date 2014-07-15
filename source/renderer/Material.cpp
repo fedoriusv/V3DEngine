@@ -197,7 +197,7 @@ bool CMaterial::setRenderTechnique(stream::IStream* stream)
     technique->init(stream);
     if (technique->load())
     {
-        LOG_ERROR("Streaming error read file [%s]", stream->getName().c_str());
+        LOG_ERROR("Streaming error read file [%s]", static_cast<stream::FileStream*>(stream)->getName().c_str());
         return false;
     }
 

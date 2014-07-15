@@ -449,11 +449,6 @@ void MempryStream::unmap()
     //TODO
 }
 
-const std::string& MempryStream::getName() const
-{
-    return "";
-}
-
 void MempryStream::clear()
 {
     MempryStream::seekBeg(0);

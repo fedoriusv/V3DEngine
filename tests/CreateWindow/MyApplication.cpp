@@ -28,17 +28,20 @@ void MyApplication::init()
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");v
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
 
-    for (u32 j = 0; j < 50; ++j)
+    for (u32 j = 0; j < 5; ++j)
     {
-        for (u32 i = 0; i < 50; ++i)
+        for (u32 i = 0; i < 5; ++i)
         {
             scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
-            //cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-            cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
-            cube1->getMaterial()->setDiffuseColor(Vector4D(0, 0, 1, 1));
-            //cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+            cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+            //cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
+            //cube1->getMaterial()->setDiffuseColor(Vector4D(0, 0, 1, 1));
+            cube1->getMaterial()->setTexture(0, "textures/box.jpg");
         }
     }
+
+    //scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFreeTypeFont(0, "text", "fonts/arial.ttf"));
+    //font->getMaterial()->setRenderTechnique("shaders/font.xml");
   
     BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 

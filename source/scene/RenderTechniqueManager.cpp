@@ -61,6 +61,7 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
                     renderer::RenderTechniquePtr technique = std::make_shared<renderer::CRenderTechnique>();
 
                     technique->init(stream);
+                    technique->setResourseName(fullName);
                     if (!technique->load())
                     {
                         LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());

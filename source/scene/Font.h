@@ -20,10 +20,10 @@ namespace scene
         CFont();
         virtual                         ~CFont();
 
-        void                            setText(const std::string& text);
+        virtual void                    setText(const std::string& text);
         const std::string&              getText() const;
 
-        void                            setSize(const u32 size);
+        virtual void                    setSize(const u32 size);
         u32                             getSize() const;
 
         void                            setMaterial(const renderer::MaterialPtr& material);
@@ -34,6 +34,8 @@ namespace scene
         void                            render()                        override;
 
     protected:
+
+        virtual void                    refresh() = 0;
 
         std::string                     m_text;
         u32                             m_size;

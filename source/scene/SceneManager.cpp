@@ -387,7 +387,7 @@ CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4
     return node;
 }
 
-CNode* CSceneManager::addFreeTypeFont(CNode* parent, const std::string& text, const Vector3D& pos, const u32 size, const std::string& font)
+CNode* CSceneManager::addFreeTypeFont(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, const u32 size)
 {
     CFont*  node = new CFreeTypeFont(font);
     node->setParent(parent);

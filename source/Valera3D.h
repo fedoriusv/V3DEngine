@@ -8,6 +8,7 @@
 #include "Object.h"
 #include "Engine.h"
 #include "scene/Node.h"
+#include "scene/Font.h"
 #include "utils/Logger.h"
 #include "scene/Shape.h"
 #include "scene/CubeShape.h"

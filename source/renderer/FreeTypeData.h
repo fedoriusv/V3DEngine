@@ -30,6 +30,11 @@ namespace renderer
         void                        init(stream::IStream* stream)   override;
         bool                        load()                          override;
 
+        void                        refresh();
+
+        bool                        findCharsOnMap(const std::string& text);
+        bool                        addCharsToMap(const std::string& text);
+
     private:
 
         friend class                CFontManager;
@@ -45,12 +50,16 @@ namespace renderer
             u32     _page;
         };
 
-        void                        copyToTexture(u32 width, u32 height, u8* data, SCharDesc* charDesc);
-        void                        createChar(const FT_Face& ftFace, FT_UInt glyphIndex);
+        bool                        loadFreeType(const std::string& font);
+        bool                        loadCharList();
+
         bool                        loadCharToMap(u32 charId);
 
-        bool                        findeCharsOnMap(const std::string& text);
-        void                        addedCharsToMap(const std::string& text);
+        void                        copyToTexture(u32 width, u32 height, u8* data, SCharDesc* charDesc);
+        void                        createChar(const FT_Face& ftFace, FT_UInt glyphIndex);
+
+
+
 
         std::string                 m_font;
 
@@ -60,9 +69,15 @@ namespace renderer
         FT_Face                     m_Face;
 
         std::map<s32, SCharDesc>    m_charInfo;
-        renderer::TexturePtr        m_charTextures[k_mapSize];
 
+        renderer::TexturePtr        m_charTextures[k_mapSize];
         bool                        m_charList[k_mapSize];
+
+        const u32                   k_texWidth = 128U;
+        const u32                   k_texHight = 128U;
+        u32                         m_xOffTextures;
+        u32                         m_yOffTextures;
+        u32                         m_currentTextureIndex;
 
         u32                         m_loadedPixelSize;
 

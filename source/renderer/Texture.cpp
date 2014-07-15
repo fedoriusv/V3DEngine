@@ -92,7 +92,7 @@ bool CTexture::loadDevIL()
         return wa;
     };
 
-    std::string file = CResource::getStreamName();
+    std::string file = CResource::getResourseName();
     
     ilInit();
     ILboolean success = ilLoadImage(charToWChar(file.c_str()));
