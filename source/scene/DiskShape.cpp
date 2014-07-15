@@ -29,6 +29,41 @@ void CDiskShape::init()
 {
     CShape::init();
     
+    CDiskShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+
+    m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CDiskShape::setMinorRadius(const f32 radius)
+{
+    m_minorRadius = radius;
+    CDiskShape::refresh();
+}
+
+void CDiskShape::setMajorRadius(const f32 radius)
+{
+    m_majorRadius = radius;
+    CDiskShape::refresh();
+}
+
+f32 CDiskShape::getMinorRadius() const
+{
+    return m_minorRadius;
+}
+
+f32 CDiskShape::getMajorRadius() const
+{
+    return m_majorRadius;
+}
+
+void CDiskShape::build()
+{
     const u32 slices = 20U;
     const u32 stacks = 3U;
 
@@ -53,14 +88,18 @@ void CDiskShape::init()
         f32 theytaNext;
         for (u32 j = 0; j < slices; ++j) // Slices
         {
-            float inner = m_minorRadius + (f32(i)) * stepSizeRadial;
-            float outer = m_minorRadius + (f32(i + 1)) * stepSizeRadial;
+            f32 inner = m_minorRadius + (f32(i)) * stepSizeRadial;
+            f32 outer = m_minorRadius + (f32(i + 1)) * stepSizeRadial;
 
             theyta = stepSizeSlice * f32(j);
             if (j == (slices - 1))
+            {
                 theytaNext = 0.0f;
+            }
             else
+            {
                 theytaNext = stepSizeSlice * (f32(j + 1));
+            }
 
             // Inner First
             ++index;
@@ -109,45 +148,14 @@ void CDiskShape::init()
             data._texCoords.at(0)[index].y = (((sin(theytaNext) * outer) * radialScale) + 1.0f) * 0.5f;
         }
     }
+}
 
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+void CDiskShape::refresh()
+{
+    CDiskShape::build();
 
-    if (data._verticesId == 0)
-    {
-        m_geometry->init();
+    m_geometry->refresh();
 #ifdef _DEBUG
-        m_debug->init();
+    m_debug->refresh();
 #endif
-    }
-    else
-    {
-        m_geometry->refresh();
-#ifdef _DEBUG
-        m_debug->refresh();
-#endif
-    }
-
-    m_initialiazed = true;
-}
-
-void CDiskShape::setMinorRadius(const f32 radius)
-{
-    m_minorRadius = radius;
-    CDiskShape::init();
-}
-
-void CDiskShape::setMajorRadius(const f32 radius)
-{
-    m_majorRadius = radius;
-    CDiskShape::init();
-}
-
-f32 CDiskShape::getMinorRadius() const
-{
-    return m_minorRadius;
-}
-
-f32 CDiskShape::getMajorRadius() const
-{
-    return m_majorRadius;
 }

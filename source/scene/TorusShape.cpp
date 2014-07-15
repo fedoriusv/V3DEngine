@@ -29,6 +29,41 @@ void CTorusShape::init()
 {
     CShape::init();
 
+    CTorusShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+
+    m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CTorusShape::setMinorRadius(const f32 radius)
+{
+    m_minorRadius = radius;
+    CTorusShape::refresh();
+}
+
+void CTorusShape::setMajorRadius(const f32 radius)
+{
+    m_majorRadius = radius;
+    CTorusShape::refresh();
+}
+
+f32 CTorusShape::getMinorRadius() const
+{
+    return m_minorRadius;
+}
+
+f32 CTorusShape::getMajorRadius() const
+{
+    return m_majorRadius;
+}
+
+void CTorusShape::build()
+{
     const u32 numMajor = 50U;
     const u32 numMinor = 20U;
 
@@ -82,45 +117,14 @@ void CTorusShape::init()
             data._vertices[index].z = z;
         }
     }
+}
 
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+void CTorusShape::refresh()
+{
+    CTorusShape::build();
 
-    if (data._verticesId == 0)
-    {
-        m_geometry->init();
+    m_geometry->refresh();
 #ifdef _DEBUG
-        m_debug->init();
+    m_debug->refresh();
 #endif
-    }
-    else
-    {
-        m_geometry->refresh();
-#ifdef _DEBUG
-        m_debug->refresh();
-#endif
-    }
-
-    m_initialiazed = true;
-}
-
-void CTorusShape::setMinorRadius(const f32 radius)
-{
-    m_minorRadius = radius;
-    CTorusShape::init();
-}
-
-void CTorusShape::setMajorRadius(const f32 radius)
-{
-    m_majorRadius = radius;
-    CTorusShape::init();
-}
-
-f32 CTorusShape::getMinorRadius() const
-{
-    return m_minorRadius;
-}
-
-f32 CTorusShape::getMajorRadius() const
-{
-    return m_majorRadius;
 }

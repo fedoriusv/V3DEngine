@@ -29,6 +29,9 @@ namespace v3d
         
         private:
 
+            void        refresh()        override;
+            void        build();
+
             f32         m_majorRadius;
             f32         m_minorRadius;
         };

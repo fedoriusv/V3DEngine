@@ -48,6 +48,8 @@ namespace scene
 
     protected:
 
+        virtual void                    refresh() = 0;
+
         EShapeType                      m_shapeType;
                                         
         renderer::MaterialPtr           m_material;

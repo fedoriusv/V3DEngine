@@ -29,6 +29,30 @@ void CPlaneShape::init()
 {
     CShape::init();
 
+    CPlaneShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+
+    m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CPlaneShape::setExtent(const f32 extent)
+{
+    m_extent = extent;
+    CPlaneShape::refresh();
+}
+
+f32 CPlaneShape::getExtent() const
+{
+    return m_extent;
+}
+
+void CPlaneShape::build()
+{
     f32 step = 1.0f;
     f32 y = 0.0f;
 
@@ -57,7 +81,7 @@ void CPlaneShape::init()
             data._vertices[index].z = run;
 
             ++index;
-            
+
             data._texCoords.at(0)[index].x = s + texStep;
             data._texCoords.at(0)[index].y = t;
             data._normals[index].x = 0.0f;
@@ -71,34 +95,14 @@ void CPlaneShape::init()
         }
         s += texStep;
     }
-
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
-
-    if (data._verticesId == 0)
-    {
-        m_geometry->init();
-#ifdef _DEBUG
-        m_debug->init();
-#endif
-    }
-    else
-    {
-        m_geometry->refresh();
-#ifdef _DEBUG
-        m_debug->refresh();
-#endif
-    }
-
-    m_initialiazed = true;
 }
 
-void CPlaneShape::setExtent(const f32 extent)
+void CPlaneShape::refresh()
 {
-    m_extent = extent;
-    CPlaneShape::init();
-}
+    CPlaneShape::build();
 
-f32 CPlaneShape::getExtent() const
-{
-    return m_extent;
+    m_geometry->refresh();
+#ifdef _DEBUG
+    m_debug->refresh();
+#endif
 }

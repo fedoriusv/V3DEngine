@@ -29,11 +29,24 @@ void CSampleShape::init()
 {
     CShape::init();
 
+    CSampleShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangles);
+
+    m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CSampleShape::build()
+{
     const f32 vertex[][3] =
     {
-         -1.0f, -1.0f, 0.0f,
-          0.0f,  1.0f, 0.0f, 
-          1.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
     };
 
     const f32 normal[][3] =
@@ -57,12 +70,14 @@ void CSampleShape::init()
     m_geometry->copyToVertices(vertex, 3);
     m_geometry->copyToNormals(normal, 3);
     m_geometry->copyToTexCoords(texCoord, 0, 3);
-    CShape::setGeometryDrawMode(CGeometry::eTriangles);
+}
 
-    m_geometry->init();
+void CSampleShape::refresh()
+{
+    CSampleShape::build();
+
+    m_geometry->refresh();
 #ifdef _DEBUG
-    m_debug->init();
+    m_debug->refresh();
 #endif
-
-    m_initialiazed = true;
 }

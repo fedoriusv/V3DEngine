@@ -20,6 +20,11 @@ namespace v3d
             void        update(f64 time) override;
 
             void        init()           override;
+
+        private:
+
+            void        refresh()        override;
+            void        build();
         };
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////

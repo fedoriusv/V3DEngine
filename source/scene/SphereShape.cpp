@@ -30,6 +30,30 @@ void CSphereShape::init()
 {
     CShape::init();
 
+    CSphereShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+
+    m_geometry->init();
+#ifdef _DEBUG
+    m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CSphereShape::setRadius(const f32 radius)
+{
+    m_radius = radius;
+    CSphereShape::refresh();
+}
+
+f32 CSphereShape::getRadius() const
+{
+    return m_radius;
+}
+
+void CSphereShape::build()
+{
     const u32 slices = 30U;
     const u32 stacks = 30U;
 
@@ -67,7 +91,7 @@ void CSphereShape::init()
             data._texCoords.at(0)[index].x = s;
             data._texCoords.at(0)[index].y = t;
             data._normals[index].x = x;
-            data._normals[index].y = y ;
+            data._normals[index].y = y;
             data._normals[index].z = z;
             data._vertices[index].x = x * m_radius;
             data._vertices[index].y = y * m_radius;
@@ -102,8 +126,8 @@ void CSphereShape::init()
             data._normals[index].x = x;
             data._normals[index].y = y;
             data._normals[index].z = z;
-            data._vertices[index].x =  x * m_radius;
-            data._vertices[index].y  = y * m_radius;
+            data._vertices[index].x = x * m_radius;
+            data._vertices[index].y = y * m_radius;
             data._vertices[index].z = z * m_radius;
 
             x = stheta * srhodrho;
@@ -122,34 +146,14 @@ void CSphereShape::init()
         }
         t -= dt;
     }
-
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
-
-    if (data._verticesId == 0)
-    {
-        m_geometry->init();
-#ifdef _DEBUG
-        m_debug->init();
-#endif
-    }
-    else
-    {
-        m_geometry->refresh();
-#ifdef _DEBUG
-        m_debug->refresh();
-#endif
-    }
-
-    m_initialiazed = true;
 }
 
-void CSphereShape::setRadius(const f32 radius)
+void CSphereShape::refresh()
 {
-    m_radius = radius;
-    CSphereShape::init();
-}
+    CSphereShape::build();
 
-f32 CSphereShape::getRadius() const
-{
-    return m_radius;
+    m_geometry->refresh();
+#ifdef _DEBUG
+    m_debug->refresh();
+#endif
 }

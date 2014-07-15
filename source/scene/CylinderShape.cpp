@@ -29,6 +29,51 @@ void CCylinderShape::init()
 {
     CShape::init();
 
+    CCylinderShape::build();
+    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+
+    m_geometry->init();
+#ifdef _DEBUG
+   m_debug->init();
+#endif
+
+    m_initialiazed = true;
+}
+
+void CCylinderShape::setRadius(const f32 radius)
+{
+    m_radius = radius;
+    CCylinderShape::refresh();
+}
+
+void CCylinderShape::setHeight(const f32 height)
+{
+    m_height = height;
+    CCylinderShape::refresh();
+}
+
+f32 CCylinderShape::getRadius() const
+{
+    return m_radius;
+}
+
+f32 CCylinderShape::getHeight() const
+{
+    return m_height;
+}
+
+void CCylinderShape::refresh()
+{
+    CCylinderShape::build();
+
+    m_geometry->refresh();
+#ifdef _DEBUG
+    m_debug->refresh();
+#endif
+}
+
+void CCylinderShape::build()
+{
     const u32 major = 20U;
     const u32 minor = 20U;
 
@@ -71,45 +116,4 @@ void CCylinderShape::init()
             data._vertices[index].z = z1;
         }
     }
-
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
-
-    if (data._verticesId == 0)
-    {
-        m_geometry->init();
-#ifdef _DEBUG
-        m_debug->init();
-#endif
-    }
-    else
-    {
-        m_geometry->refresh();
-#ifdef _DEBUG
-        m_debug->refresh();
-#endif
-    }
-
-    m_initialiazed = true;
-}
-
-void CCylinderShape::setRadius(const f32 radius)
-{
-    m_radius = radius;
-    CCylinderShape::init();
-}
-
-void CCylinderShape::setHeight(const f32 height)
-{
-    m_height = height;
-    CCylinderShape::init();
-}
-
-f32 CCylinderShape::getRadius() const
-{
-    return m_radius;
-}
-
-f32 CCylinderShape::getHeight() const
-{
-    return m_height;
 }
