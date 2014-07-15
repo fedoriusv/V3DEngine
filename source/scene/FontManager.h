@@ -20,7 +20,7 @@ namespace scene
 
         void                                add(const renderer::FreeTypeDataPtr& font);
         const renderer::FreeTypeDataPtr&    get(const std::string& name);
-        const renderer::FreeTypeDataPtr&    load(const std::string& name);
+        const renderer::FreeTypeDataPtr     load(const std::string& name);
 
         void                                unload(const std::string& name);
         void                                unload(const renderer::FreeTypeDataPtr& font);

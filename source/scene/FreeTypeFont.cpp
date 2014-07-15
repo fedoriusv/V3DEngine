@@ -1,4 +1,6 @@
 #include "FreeTypeFont.h"
+#include "FontManager.h"
+#include "utils/Logger.h"
 
 using namespace v3d;
 using namespace v3d::scene;
@@ -14,18 +16,19 @@ CFreeTypeFont::~CFreeTypeFont()
 {
 }
 
-bool CFreeTypeFont::load(const std::string& font)
-{
-    //TODO:
-
-    return false;
-}
-
 void CFreeTypeFont::init()
 {
     CFont::init();
 
-    //
+    if (m_font.empty())
+    {
+        LOG_WARRNING("Font name Empty");
+        return;
+    }
+
+    m_data = CFontManager::getInstance()->load(m_font);
+
+    m_initialiazed = true;
 }
 
 void CFreeTypeFont::update(f64 time)

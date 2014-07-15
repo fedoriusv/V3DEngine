@@ -26,8 +26,6 @@ namespace scene
         std::string                     m_font;
         renderer::FreeTypeDataPtr       m_data;
 
-        bool                            load(const std::string& font)   override;
-
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -30,7 +30,7 @@ namespace stream
 
 		FileStream();
 		FileStream(const std::string& file, EOpenMode openMode = e_in);
-        ~FileStream();
+        virtual ~FileStream();
 
 		bool    open(const std::string& file, EOpenMode openMode = e_in);
 		void    close()                                                 override;

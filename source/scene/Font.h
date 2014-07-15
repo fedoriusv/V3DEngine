@@ -35,8 +35,6 @@ namespace scene
 
     protected:
 
-        virtual bool                    load(const std::string& font) = 0;
-
         std::string                     m_text;
         u32                             m_size;
 

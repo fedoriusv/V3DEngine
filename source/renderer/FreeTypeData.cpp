@@ -17,10 +17,17 @@ inline int next_p2(int n)
 }
 
 
-CFreeTypeData::CFreeTypeData()
+CFreeTypeData::CFreeTypeData(const std::string& font)
     : m_loaded(false)
-    , m_font("")
+    , m_font(font)
+    , m_regenerateMap(false)
 {
+    for (u32 i = 0; i < k_mapSize; ++i)
+    {
+        m_charList[i] = false;
+        m_charTextures[i] = nullptr;
+    }
+    
 }
 
 CFreeTypeData::~CFreeTypeData()
@@ -32,36 +39,63 @@ const std::string& CFreeTypeData::getFontName() const
     return m_font;
 }
 
+void CFreeTypeData::addedCharsToMap(const std::string& text)
+{
+    for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)\
+    {
+        m_charList[(*chr)] = true;
+    }
+
+    m_regenerateMap = true;
+}
+
+bool CFreeTypeData::findeCharsOnMap(const std::string& text)
+{
+    for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)\
+    {
+        if (!m_charList[(*chr)])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void CFreeTypeData::init(stream::IStream* stream)
 {
 }
 
 bool CFreeTypeData::load()
 {
-    m_font = "";
+    if (m_font.empty())
+    {
+        ASSERT(false && "FreeTypeFont: empty name");
+        return false;
+    }
 
     if (m_loaded)
     {
-        ASSERT(false && "Already loaded");
+        ASSERT(false && "FreeTypeFont: Already loaded");
         return false;
     }
 
     FT_Error error = FT_Init_FreeType(&m_Library);
     if (error)
     {
-        ASSERT(false && "Error Init Free Type");
+        ASSERT(false && "FreeTypeFont: Error Init Free Type");
         return false;
     }
 
     error = FT_New_Face(m_Library, m_font.c_str(), 0, &m_Face);
     if (error == FT_Err_Unknown_File_Format)
     {
-        ASSERT(false && "Unknown Font File Format");
+        ASSERT(false && "FreeTypeFont:: Unknown Font File Format");
         return false;
     }
     else if (error)
     {
-        ASSERT(false && "Font Error");
+        ASSERT(false && "FreeTypeFont: Font Error");
         return false;
     }
 
@@ -69,6 +103,14 @@ bool CFreeTypeData::load()
     m_loadedPixelSize = iPXSize;
     FT_Set_Pixel_Sizes(m_Face, iPXSize, iPXSize);
 
+    for (u32 i = 0; i < k_mapSize; ++i)
+    {
+        if (m_charList[i])
+        {
+            CFreeTypeData::loadCharToMap(i);
+        }
+        
+    }
     //loadCharToMap('A');
     //loadCharToMap('a');
     //loadCharToMap('b');
@@ -79,9 +121,9 @@ bool CFreeTypeData::load()
     //loadCharToMap('g');
     //loadCharToMap('h');
 
-    ////ftFace->style_flags = ftFace->style_flags | FT_STYLE_FLAG_ITALIC;
-    ////if(FT_Set_Char_Size(m_FontFace, size << 6, size << 6, 96, 96) != 0)
-    ////http://www.asciitable.com
+    //ftFace->style_flags = ftFace->style_flags | FT_STYLE_FLAG_ITALIC;
+    //if(FT_Set_Char_Size(m_FontFace, size << 6, size << 6, 96, 96) != 0)
+    //http://www.asciitable.com
 
     //FT_UInt num_chars = 128;
     //m_vertices.malloc(4 * num_chars);

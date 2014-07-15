@@ -26,7 +26,7 @@ const renderer::FreeTypeDataPtr& CFontManager::get(const std::string& name)
     return m_fontsData[name];
 }
 
-const renderer::FreeTypeDataPtr& CFontManager::load(const std::string& name)
+const renderer::FreeTypeDataPtr CFontManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -38,10 +38,13 @@ const renderer::FreeTypeDataPtr& CFontManager::load(const std::string& name)
     }
     else
     {
-        renderer::FreeTypeDataPtr font = std::make_shared<renderer::CFreeTypeData>();
-        font->load();
+        renderer::FreeTypeDataPtr font = std::make_shared<renderer::CFreeTypeData>(nameStr);
+        if (font->load())
+        {
+            LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
+            return nullptr;
+        }
 
-        ///TODO
         m_fontsData.insert(std::map<std::string, renderer::FreeTypeDataPtr>::value_type(nameStr, font));
         return font;
     }

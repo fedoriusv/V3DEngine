@@ -22,7 +22,7 @@ namespace renderer
     {
     public:
 
-        CFreeTypeData();
+        CFreeTypeData(const std::string& font);
         virtual                     ~CFreeTypeData();
 
         const std::string&          getFontName() const;
@@ -49,6 +49,9 @@ namespace renderer
         void                        createChar(const FT_Face& ftFace, FT_UInt glyphIndex);
         bool                        loadCharToMap(u32 charId);
 
+        bool                        findeCharsOnMap(const std::string& text);
+        void                        addedCharsToMap(const std::string& text);
+
         std::string                 m_font;
 
         const static u32            k_mapSize = 256U;
@@ -59,9 +62,12 @@ namespace renderer
         std::map<s32, SCharDesc>    m_charInfo;
         renderer::TexturePtr        m_charTextures[k_mapSize];
 
+        bool                        m_charList[k_mapSize];
+
         u32                         m_loadedPixelSize;
 
         bool                        m_loaded;
+        bool                        m_regenerateMap;
 
 
 
