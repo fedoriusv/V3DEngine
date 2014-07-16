@@ -99,6 +99,11 @@ void CPlaneShape::build()
 
 void CPlaneShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CPlaneShape::build();
 
     m_geometry->refresh();

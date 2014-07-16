@@ -152,6 +152,11 @@ void CDiskShape::build()
 
 void CDiskShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CDiskShape::build();
 
     m_geometry->refresh();

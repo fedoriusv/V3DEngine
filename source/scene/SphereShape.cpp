@@ -150,6 +150,11 @@ void CSphereShape::build()
 
 void CSphereShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CSphereShape::build();
 
     m_geometry->refresh();

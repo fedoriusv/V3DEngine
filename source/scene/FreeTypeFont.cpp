@@ -66,6 +66,11 @@ void CFreeTypeFont::setSize(const u32 size)
 
 void CFreeTypeFont::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     m_data->addCharsToMap(m_text);
     //m_data->setSize()
     CFreeTypeFont::build();

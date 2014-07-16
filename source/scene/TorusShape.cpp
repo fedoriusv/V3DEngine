@@ -121,6 +121,11 @@ void CTorusShape::build()
 
 void CTorusShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CTorusShape::build();
 
     m_geometry->refresh();

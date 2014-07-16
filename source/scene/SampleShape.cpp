@@ -74,6 +74,11 @@ void CSampleShape::build()
 
 void CSampleShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CSampleShape::build();
 
     m_geometry->refresh();

@@ -64,6 +64,11 @@ f32 CCylinderShape::getHeight() const
 
 void CCylinderShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CCylinderShape::build();
 
     m_geometry->refresh();

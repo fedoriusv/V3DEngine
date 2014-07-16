@@ -42,6 +42,11 @@ void CCubeShape::init()
 
 void CCubeShape::refresh()
 {
+    if (!m_initialiazed)
+    {
+        return;
+    }
+
     CCubeShape::build();
 
     m_geometry->refresh();
