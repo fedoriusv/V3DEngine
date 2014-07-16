@@ -6,6 +6,7 @@ set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
 set(FREETYPE2_PROJECT freetype2)
 set(TEST_PROJECT_0 CreateWindow)
+set(TEST_PROJECT_1 TestFont)
 
 if(COMPILER_MSVC)
 	message("-- Configuring MSVC Compiler")
@@ -52,6 +53,7 @@ set(LIB_DIR ..\\..\\libs)
 if(WIN32)
 	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\lib\\win32\\unicode\\DevIL)
 	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
+	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Debug)
 else(WIN32)
 	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\DevIL)
 endif(WIN32)
@@ -193,6 +195,7 @@ add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
 add_subdirectory(tests/${TEST_PROJECT_0})
+add_subdirectory(tests/${TEST_PROJECT_1})
 
 add_dependencies(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
