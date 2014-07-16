@@ -3,6 +3,7 @@
 #include "event/InputEventHandler.h"
 #include "scene/RenderTechniqueManager.h"
 #include "scene/TextureManager.h"
+#include "scene/FontManager.h"
 
 using namespace v3d;
 using namespace v3d::platform;
@@ -23,6 +24,7 @@ CEngine::~CEngine()
 {
     CRenderTechniqueManager::freeInstance();
     CTextureManager::freeInstance();
+    CFontManager::freeInstance();
 }
 
 bool CEngine::init()

@@ -62,12 +62,12 @@ void CCubeShape::build()
 
     const f32 vertex[][3] =
     {
-        { -s, -s, s }, { s, -s, s }, { s, s, s }, { -s, s, s },
-        { -s, -s, -s }, { -s, s, -s }, { s, s, -s }, { s, -s, -s },
-        { -s, s, -s }, { -s, s, s }, { s, s, s }, { s, s, -s },
-        { -s, -s, -s }, { s, -s, -s }, { s, -s, s }, { -s, -s, s },
-        { s, -s, -s }, { s, s, -s }, { s, s, s }, { s, -s, s },
-        { -s, -s, -s }, { -s, -s, s }, { -s, s, s }, { -s, s, -s }
+        { -s, -s,  s }, {  s, -s,  s }, {  s,  s,  s }, { -s,  s,  s },
+        { -s, -s, -s }, { -s,  s, -s }, {  s,  s, -s }, {  s, -s, -s },
+        { -s,  s, -s }, { -s,  s,  s }, {  s,  s,  s }, {  s,  s, -s },
+        { -s, -s, -s }, {  s, -s, -s }, {  s, -s,  s }, { -s, -s,  s },
+        {  s, -s, -s }, {  s,  s, -s }, {  s,  s,  s }, {  s, -s,  s },
+        { -s, -s, -s }, { -s, -s,  s }, { -s,  s,  s }, { -s,  s, -s }
     };
 
     const f32 normals[][3] =

@@ -16,7 +16,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-   // scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
+    //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     //cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
@@ -40,9 +40,6 @@ void MyApplication::init()
         }
     }
 
-    scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFreeTypeFont(0, "text", "fonts/arial.ttf"));
-    font->getMaterial()->setRenderTechnique("shaders/font.xml");
-  
     BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 
     //cube->setRotation(Vector3D(10, 120, 0));

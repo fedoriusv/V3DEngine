@@ -179,6 +179,14 @@ void CSceneManager::update(v3d::f64 time)
             }
             break;
 
+            case ENodeType::eFont:
+            {
+                node->m_priority = 0.0f;
+
+                m_drawObjects.push_back(node);
+            }
+            break;
+
             default:
             break;
         }

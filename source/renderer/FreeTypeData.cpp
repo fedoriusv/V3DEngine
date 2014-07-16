@@ -1,5 +1,6 @@
 #include "FreeTypeData.h"
 #include "utils/Logger.h"
+#include "scene/TextureManager.h"
 
 using namespace v3d;
 using namespace v3d::scene;
@@ -74,6 +75,11 @@ bool CFreeTypeData::addCharsToMap(const std::string& text)
     m_regenerateMap = haveNew;
 
     return haveNew;
+}
+
+const CFreeTypeData::SCharDesc& CFreeTypeData::getCharInfo(const s32 charCode) const
+{
+    return m_charInfo.find(charCode)->second;
 }
 
 void CFreeTypeData::init(stream::IStream* stream)
@@ -188,9 +194,6 @@ bool CFreeTypeData::loadCharList()
     //    CFreeTypeData::createChar(m_Face, glyphIndex);
     //}
     m_loaded = true;
-
-    //RENDERER->initBufferObjects(m_vertices);
-    ////m_vertices.clear();
 
     return true;
 }
@@ -447,17 +450,21 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
 
     if (m_currentTextureIndex >= m_charMaterial.size())
     {
-        unsigned char* textureData = new GLubyte[2 * m_iTexWidth * m_iTexHight];
-        memset(textureData, 0, 2 * m_iTexWidth * m_iTexHight);
+        u8* textureData = new u8[2 * k_texWidth * k_texHight];
+        memset(textureData, 0, 2 * k_texWidth * k_texHight);
 
-        CTexture* texture = TEXTURE_MGR->createTexture2DFromData(m_iTexWidth, m_iTexHight, IF_DEPTH_COMPONENT, IT_UNSIGNED_BYTE, textureData);
-        texture->getSampler()->setFilterType(FT_LINEAR, FT_LINEAR);
-        texture->getSampler()->setWrapType(WT_CLAMP_TO_EDGE);
+        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texWidth), EImageFormat::eDepthComponent, EImageType::eUnsignedByte, textureData);
+        texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
+        texture->setWrap(EWrapType::eClampToEdge);
 
         m_charMaterial.push_back(texture);
 
         delete[] textureData;
+        textureData = nullptr;
     }
 
-    //RENDERER->copyToTexture2D(m_charMaterial[m_currentTextureIndx]->getTextureID(), m_xOffTextures, m_yOffTextures, _width, _height, _data);
+    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), expanded_data);
+
+    delete[] expanded_data;
+    expanded_data = nullptr;
 }

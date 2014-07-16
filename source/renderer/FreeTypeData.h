@@ -22,6 +22,17 @@ namespace renderer
     {
     public:
 
+        struct SCharDesc
+        {
+            u32     _width;
+            u32     _height;
+            s32     _advX;
+            s32     _advY;
+            s32     _bearingX;
+            s32     _bearingY;
+            u32     _page;
+        };
+
         CFreeTypeData(const std::string& font);
         virtual                     ~CFreeTypeData();
 
@@ -35,21 +46,14 @@ namespace renderer
         bool                        findCharsOnMap(const std::string& text);
         bool                        addCharsToMap(const std::string& text);
         bool                        loadCharList();
+        const SCharDesc&            getCharInfo(const s32 charCode) const;
+
+        //TMp
+        std::vector<renderer::TexturePtr>  m_charMaterial;
 
     private:
 
         friend class                CFontManager;
-
-        struct SCharDesc
-        {
-            u32     _width;
-            u32     _height;
-            s32     _advX;
-            s32     _advY;
-            s32     _bearingX;
-            s32     _bearingY;
-            u32     _page;
-        };
 
         bool                        loadFreeType(const std::string& font);
 
@@ -58,9 +62,6 @@ namespace renderer
 
         void                        copyToTexture(u32 width, u32 height, u8* data, SCharDesc* charDesc);
         void                        createChar(const FT_Face& ftFace, FT_UInt glyphIndex);
-
-
-
 
         std::string                 m_font;
 

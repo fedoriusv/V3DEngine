@@ -89,9 +89,9 @@ void CRenderer::draw(const RenderJobPtr& job)
 
         pass->bind();
 
-        updateTransform(transform, pass);
-        updateMaterial(material, pass);
-        updateLight(transform, pass);
+        CRenderer::updateTransform(transform, pass);
+        CRenderer::updateMaterial(material, pass);
+        CRenderer::updateLight(transform, pass);
 
         for (u32 layer = 0; layer < material->getTextureCount(); ++layer)
         {

@@ -70,10 +70,20 @@ void CFont::init()
 
 void CFont::update(f64 time)
 {
-    //
+    if (!m_visible || !m_initialiazed)
+    {
+        return;
+    }
+
+    m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
 void CFont::render()
 {
-    //
+    if (!m_visible || !m_initialiazed)
+    {
+        return;
+    }
+
+    RENDERER->draw(m_renderJob);
 }

@@ -152,6 +152,8 @@ renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D&
     renderer::TexturePtr texture = RENDERER->makeSharedTexture();
 
     texture->m_target = ETextureTarget::eTexture2D;
+
+    texture->m_data.resize(1);
     texture->m_data[0]._width = size.width;
     texture->m_data[0]._height = size.height;
     texture->m_data[0]._depth = 1;
