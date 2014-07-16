@@ -80,4 +80,7 @@ void CFreeTypeFont::refresh()
 
 void CFreeTypeFont::build()
 {
+    m_data->loadCharList();
+
+    //
 }

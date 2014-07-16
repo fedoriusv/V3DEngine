@@ -40,8 +40,8 @@ void MyApplication::init()
         }
     }
 
-    //scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFreeTypeFont(0, "text", "fonts/arial.ttf"));
-    //font->getMaterial()->setRenderTechnique("shaders/font.xml");
+    scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFreeTypeFont(0, "text", "fonts/arial.ttf"));
+    font->getMaterial()->setRenderTechnique("shaders/font.xml");
   
     BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 

@@ -25,7 +25,12 @@ namespace scene
         renderer::TexturePtr    load(const std::string& name);
         renderer::TexturePtr    load(const std::string* files[6]);
 
-        void                    unload( const std::string& name );
+
+        renderer::TexturePtr    createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+
+        void                    copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, void* data);
+
+        void                    unload(const std::string& name);
         void                    unload(const renderer::TexturePtr& texture);
 
         void                    unloadAll();

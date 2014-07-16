@@ -6,6 +6,7 @@
 
 using namespace v3d;
 using namespace v3d::scene;
+using namespace v3d::renderer;
 
 CTextureManager::CTextureManager()
 {
@@ -118,30 +119,63 @@ void CTextureManager::unloadAll()
 	m_textures.clear();
 }
 
-void CTextureManager::registerPath( const std::string& path )
+void CTextureManager::registerPath(const std::string& path)
 {
 	m_pathes.push_back( path );
 }
 
-void CTextureManager::registerDecoder( DecoderPtr decoder )
+void CTextureManager::registerDecoder(DecoderPtr decoder)
 {
 	m_decoders.push_back( decoder );
 }
 
-void CTextureManager::unregisterPath( const std::string& path )
+void CTextureManager::unregisterPath(const std::string& path)
 {
-	auto it = std::find( m_pathes.begin(), m_pathes.end(), path );
-	if( it != m_pathes.end() )
+	auto it = std::find(m_pathes.begin(), m_pathes.end(), path);
+	if(it != m_pathes.end())
 	{
-		m_pathes.erase( std::remove( m_pathes.begin(), m_pathes.end(), *it ), m_pathes.end() );
+		m_pathes.erase(std::remove( m_pathes.begin(), m_pathes.end(), *it ), m_pathes.end());
 	}
 }
 
-void CTextureManager::unregisterDecoder( DecoderPtr decoder )
+void CTextureManager::unregisterDecoder(DecoderPtr decoder)
 {
-	auto it = std::find( m_decoders.begin(), m_decoders.end(), decoder );
+	auto it = std::find(m_decoders.begin(), m_decoders.end(), decoder);
 	if( it != m_decoders.end() )
 	{
-		m_decoders.erase( std::remove( m_decoders.begin(), m_decoders.end(), *it ), m_decoders.end() );
+		m_decoders.erase( std::remove(m_decoders.begin(), m_decoders.end(), *it ), m_decoders.end());
 	}
+}
+
+renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data)
+{
+    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+
+    texture->m_target = ETextureTarget::eTexture2D;
+    texture->m_data[0]._width = size.width;
+    texture->m_data[0]._height = size.height;
+    texture->m_data[0]._depth = 1;
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+
+    texture->create();
+
+    return texture;
+}
+
+void CTextureManager::copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, void* data)
+{
+    if (!texture || texture->getTextureID() <= 0)
+    {
+        LOG_ERROR("TextureManager: Invalid Texture");
+        return;
+    }
+
+    if (texture->getTarget() != ETextureTarget::eTexture2D)
+    {
+        LOG_ERROR("TextureManager: Invalid Target Texture. Only Texture2D");
+        return;
+    }
+
+    texture->copyToTexture2D(offset, size, data);
 }

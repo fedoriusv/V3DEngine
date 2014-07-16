@@ -159,17 +159,22 @@ bool CFreeTypeData::loadCharList()
     m_loadedPixelSize = iPXSize;
     FT_Set_Pixel_Sizes(m_Face, iPXSize, iPXSize);
 
-    //loadCharToMap('A');
-    //for (u32 i = 0; i < k_mapSize; ++i)
-    //{
-    //    if (m_charList[i])
-    //    {
-    //        if (!loadCharToMap(i))
-    //        {
-    //            LOG_ERROR("FreeTypeData: Error create symbol %c", reinterpret_cast<c8*>(i));
-    //        }
-    //    }
-    //}
+    for (u32 i = 0; i < k_mapSize; ++i)
+    {
+        if (m_charList[i])
+        {
+            if (!loadCharToMap(i))
+            {
+                LOG_ERROR("FreeTypeData: Error create symbol %c", reinterpret_cast<c8*>(i));
+            }
+        }
+    }
+
+    if (m_charInfo.size() == 0)
+    {
+        LOG_WARRNING("FreeTypeData: Empty Char List");
+        return false;
+    }
 
     //ftFace->style_flags = ftFace->style_flags | FT_STYLE_FLAG_ITALIC;
     //if(FT_Set_Char_Size(m_FontFace, size << 6, size << 6, 96, 96) != 0)
@@ -178,14 +183,16 @@ bool CFreeTypeData::loadCharList()
     //FT_UInt num_chars = 128;
     //m_vertices.malloc(4 * num_chars);
 
-    for (u32 glyphIndex = 32/*' '*/; glyphIndex < 126/*~*/; ++glyphIndex)
-    {
-        CFreeTypeData::createChar(m_Face, glyphIndex);
-    }
+    //for (u32 glyphIndex = 32/*' '*/; glyphIndex < 126/*~*/; ++glyphIndex)
+    //{
+    //    CFreeTypeData::createChar(m_Face, glyphIndex);
+    //}
     m_loaded = true;
 
     //RENDERER->initBufferObjects(m_vertices);
     ////m_vertices.clear();
+
+    return true;
 }
 
 void CFreeTypeData::refresh()
@@ -218,6 +225,14 @@ void CFreeTypeData::copyToTexture(u32 width, u32 height, u8* data, SCharDesc* ch
         m_currentTextureIndex++;
     }
 
+    charDesc->_bearingX = m_xOffTextures;
+    charDesc->_bearingY = m_yOffTextures;
+    charDesc->_width = width;
+    charDesc->_height = height;
+    charDesc->_page = m_currentTextureIndex;
+
+    m_xOffTextures += width + 1;
+
     //if (m_currentTextureIndex >= m_charMaterial.size())
     //{
         // Create big texture
@@ -239,13 +254,6 @@ void CFreeTypeData::copyToTexture(u32 width, u32 height, u8* data, SCharDesc* ch
     //RENDERER->copyToTexture2D(m_charMaterial[m_currentTextureIndx]->getTextureID(), m_xOffTextures, m_yOffTextures, _width, _height, _data);
 
     //// Apply texture coord
-    //_charDesc->_iBearingX = m_xOffTextures;
-    //_charDesc->_iBearingY = m_yOffTextures;
-    //_charDesc->_iWidth = _width;
-    //_charDesc->_iHeight = _height;
-    //_charDesc->_page = m_currentTextureIndx;
-
-    //m_xOffTextures += _width + 1;
 }
 
 void CFreeTypeData::createChar(const FT_Face& face, FT_UInt glyphIndex)
@@ -383,35 +391,73 @@ bool CFreeTypeData::loadCharToMap(u32 charId)
     FT_BitmapGlyph ft_bitmap_glyph = (FT_BitmapGlyph)glyph;
     FT_Stroker_Done(stroker);
 
+    CFreeTypeData::fillCharInfo(m_charInfo[charId], ft_bitmap_glyph, glyphSlot, outline_thikness);
+    
+    FT_Done_Glyph(glyph);
+
+    return true;
+}
+
+void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed)
+{
     f32 scale = 1.0f;
     f32 fontHeight = 1.0f;
 
-    SCharDesc charDscr;
-    charDscr._advX = (s32)((glyphSlot->advance.x + outline_thikness) / 64.f * scale);
-    charDscr._bearingX = (s32)(ft_bitmap_glyph->left * scale);
-    charDscr._bearingY = (s32)(fontHeight / 1.2f - ft_bitmap_glyph->top * scale);
+    charDesc._advX = (s32)((glSlot->advance.x + fixed) / 64.f * scale);
+    charDesc._bearingX = (s32)(btGlyph->left * scale);
+    charDesc._bearingY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
 
-    u32 width = next_p2(ft_bitmap_glyph->bitmap.width);
-    u32 height = next_p2(ft_bitmap_glyph->bitmap.rows);
+    u32 width = next_p2(btGlyph->bitmap.width);
+    u32 height = next_p2(btGlyph->bitmap.rows);
     u8* expanded_data = new u8[2 * width * height];
     for (u32 j = 0; j < height; j++)
     {
         for (u32 i = 0; i < width; i++)
         {
             expanded_data[2 * (i + j * width)] = expanded_data[2 * (i + j * width) + 1] =
-                (i >= ft_bitmap_glyph->bitmap.width || j >= ft_bitmap_glyph->bitmap.rows) ?
-                0 : ft_bitmap_glyph->bitmap.buffer[i + ft_bitmap_glyph->bitmap.width * j];
+                (i >= btGlyph->bitmap.width || j >= btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j];
         }
     }
 
-    CFreeTypeData::copyToTexture(width, height, expanded_data, &charDscr);
+    static u32 lineHeight;
+    if (lineHeight < height)
+    {
+        lineHeight = height;
+    }
 
-    m_charInfo[charId] = charDscr;
+    if (m_xOffTextures + width >= k_texWidth)
+    {
+        m_xOffTextures = 0;
+        m_yOffTextures += lineHeight + 1;
+    }
 
-    delete[] expanded_data;
-    expanded_data = nullptr;
+    if (m_yOffTextures + lineHeight >= k_texHight)
+    {
+        m_yOffTextures = 0;
+        m_currentTextureIndex++;
+    }
 
-    FT_Done_Glyph(glyph);
+    charDesc._bearingX = m_xOffTextures;
+    charDesc._bearingY = m_yOffTextures;
+    charDesc._width = width;
+    charDesc._height = height;
+    charDesc._page = m_currentTextureIndex;
 
-    return true;
+    m_xOffTextures += width + 1;
+
+    if (m_currentTextureIndex >= m_charMaterial.size())
+    {
+        unsigned char* textureData = new GLubyte[2 * m_iTexWidth * m_iTexHight];
+        memset(textureData, 0, 2 * m_iTexWidth * m_iTexHight);
+
+        CTexture* texture = TEXTURE_MGR->createTexture2DFromData(m_iTexWidth, m_iTexHight, IF_DEPTH_COMPONENT, IT_UNSIGNED_BYTE, textureData);
+        texture->getSampler()->setFilterType(FT_LINEAR, FT_LINEAR);
+        texture->getSampler()->setWrapType(WT_CLAMP_TO_EDGE);
+
+        m_charMaterial.push_back(texture);
+
+        delete[] textureData;
+    }
+
+    //RENDERER->copyToTexture2D(m_charMaterial[m_currentTextureIndx]->getTextureID(), m_xOffTextures, m_yOffTextures, _width, _height, _data);
 }

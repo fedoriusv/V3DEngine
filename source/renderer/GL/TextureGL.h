@@ -23,11 +23,12 @@ namespace renderer
 
     private:
 
+        void            copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, void* data) override;
 
         void            initTexture2D(u32 texture);
         void            initTextureCubeMap(u32 texture);
 
-        void            copyToTexture2D();
+        void            copyToTexture2D(u32 texture, s32 offsetX, s32 offsetY, u32 width, u32 height, void* data);
 
         void            genTexture(u32& texture);
         void            deleteTexture(u32 texture);
