@@ -9,41 +9,64 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    enum EWinding
+    {
+        eWindingCW,
+        eWindingCCW
+    };
+
+    enum EPolygonMode
+    {
+        ePolyModeFill,
+        ePolyModeLine,
+        ePolyModePoint,
+
+        eModeCount
+    };
+
+    enum EBlendFactor
+    {
+        eBlendZero,
+        eBlendOne,
+        eBlendSrcColor,
+        eBlendInvSrcColor,
+        eBlendDstColor,
+        eBlendInvDstColor,
+        eBlendSrcAlpha,
+        eBlendInvSrcAlpha,
+        eBlendDstAlpha,
+        eBlendInvDstAlpha,
+        eBlendSrcAplhaSaturated,
+
+        eBlendCount
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     class CRenderState
     {
     public:
 
-        enum EWinding
-        {
-            eWindingCW,
-            eWindingCCW
-        };
-
-        enum EPolygonMode
-        {
-            ePolyModeFill,
-            ePolyModeLine,
-            ePolyModePoint,
-
-            eModeCount
-        };
-
-        //TODO:add blend
-
         CRenderState();
         virtual                   ~CRenderState();
 
-        bool                      getCullFace()    const;
-        EWinding                  getWinding()     const;
-        EPolygonMode              getPolygonMode() const;
+        bool                      getCullFace()       const;
+        bool                      getBlend()          const;
+        EWinding                  getWinding()        const;
+        EPolygonMode              getPolygonMode()    const;
+        EBlendFactor              getBlendFactorSrc() const;
+        EBlendFactor              getBlendFactorDst() const;
                                   
-        void                      setCullFace(bool type);
+        void                      setCullFace(bool use);
+        void                      setBlend(bool use);
         void                      setWinding(EWinding type);
         void                      setPolygonMode(EPolygonMode type);
+        void                      setBlendFactors(EBlendFactor dst, EBlendFactor src);
 
         virtual void              bind() = 0;
 
         static EPolygonMode       getPolygonModeByName(const std::string& name);
+        static EBlendFactor       getBlendFactorByName(const std::string& name);
 
     protected:
 
@@ -51,9 +74,14 @@ namespace renderer
         EWinding                  m_winding;
         EPolygonMode              m_polygonMode;
 
+        EBlendFactor              m_blendSrc;
+        EBlendFactor              m_blendDst;
+        bool                      m_blend;
+
     private:
 
         static const std::string  s_renderPolygonMode[EPolygonMode::eModeCount];
+        static const std::string  s_blendFactor[EBlendFactor::eBlendCount];
 
     };
 

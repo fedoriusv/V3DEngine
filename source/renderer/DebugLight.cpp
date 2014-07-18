@@ -85,7 +85,7 @@ void CDebugLight::initShader()
     data->addUniformVector4("color", Vector4D(0.0f));
 
     s_pass->getRenderState()->setCullFace(false);
-    s_pass->getRenderState()->setPolygonMode(CRenderState::ePolyModeLine);
+    s_pass->getRenderState()->setPolygonMode(EPolygonMode::ePolyModeLine);
 
     ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
     program->create(*m_vertex, *m_fragment);

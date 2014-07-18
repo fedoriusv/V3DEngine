@@ -405,22 +405,36 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
 
     if (root->Attribute("polygonmode"))
     {
-        const std::string polygonmodeStr = root->Attribute("polygonmode");
+        const std::string polygonModeStr = root->Attribute("polygonmode");
 
-        CRenderState::EPolygonMode polygonmode = CRenderState::getPolygonModeByName(polygonmodeStr);
-        m_renderState->setPolygonMode(polygonmode);
+        EPolygonMode polygonMode = CRenderState::getPolygonModeByName(polygonModeStr);
+        m_renderState->setPolygonMode(polygonMode);
     }
     
     if (root->Attribute("winding"))
     {
         const std::string windingStr = root->Attribute("winding");
 
-        CRenderState::EWinding  winding = (windingStr == "ccw") ? CRenderState::eWindingCCW : CRenderState::eWindingCW;
+        EWinding  winding = (windingStr == "ccw") ? EWinding::eWindingCCW : EWinding::eWindingCW;
         m_renderState->setWinding(winding);
     }
 
     bool cullface = root->BoolAttribute("cullface");
     m_renderState->setCullFace(cullface);
+
+    bool blend = root->BoolAttribute("blend");
+    m_renderState->setBlend(blend);
+
+    if (root->Attribute("blendfactordst") && root->Attribute("blendfactorsrc"))
+    {
+        const std::string blendFactorDstStr = root->Attribute("blendfactordst");
+        EBlendFactor blendFactorDst = CRenderState::getBlendFactorByName(blendFactorDstStr);
+
+        const std::string blendFactorSrcStr = root->Attribute("blendfactorsrc");
+        EBlendFactor blendFactorSrc = CRenderState::getBlendFactorByName(blendFactorSrcStr);
+        
+        m_renderState->setBlendFactors(blendFactorDst, blendFactorSrc);
+    }
 
     return true;
 }
