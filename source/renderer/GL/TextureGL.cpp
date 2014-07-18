@@ -77,6 +77,7 @@ CTextureGL::CTextureGL()
 
 CTextureGL::~CTextureGL()
 {
+    CTextureGL::destroy();
 }
 
 void CTextureGL::bind(u32 layer)
