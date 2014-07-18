@@ -23,6 +23,7 @@ CFreeTypeData::CFreeTypeData(const std::string& font)
     : m_loaded(false)
     , m_font(font)
     , m_regenerateMap(false)
+    , m_fontSize(32U)
 
     , m_xOffTextures(0U)
     , m_yOffTextures(0U)
@@ -161,9 +162,7 @@ bool CFreeTypeData::loadCharList()
 {
     m_loaded = false;
 
-    int iPXSize = 32;
-    m_loadedPixelSize = iPXSize;
-    FT_Set_Pixel_Sizes(m_Face, iPXSize, iPXSize);
+    FT_Set_Pixel_Sizes(m_Face, m_fontSize, m_fontSize);
 
     for (u32 i = 0; i < k_mapSize; ++i)
     {
@@ -182,17 +181,6 @@ bool CFreeTypeData::loadCharList()
         return false;
     }
 
-    //ftFace->style_flags = ftFace->style_flags | FT_STYLE_FLAG_ITALIC;
-    //if(FT_Set_Char_Size(m_FontFace, size << 6, size << 6, 96, 96) != 0)
-    //http://www.asciitable.com
-
-    //FT_UInt num_chars = 128;
-    //m_vertices.malloc(4 * num_chars);
-
-    //for (u32 glyphIndex = 32/*' '*/; glyphIndex < 126/*~*/; ++glyphIndex)
-    //{
-    //    CFreeTypeData::createChar(m_Face, glyphIndex);
-    //}
     m_loaded = true;
 
     return true;
@@ -356,19 +344,19 @@ bool CFreeTypeData::loadCharToMap(u32 charId)
 
     static FT_Fixed outline_thikness = 0 * 64;
     FT_Glyph        glyph;
-    FT_GlyphSlot    glyphSlot;
     FT_Stroker      stroker;
 
-    if (FT_Load_Glyph(m_Face, charId/*FT_Get_Char_Index(m_Face, _char)*/, FT_LOAD_DEFAULT))
+    if (FT_Load_Glyph(m_Face, charId/*FT_Get_Char_Index(m_Face, charId)*/, FT_LOAD_DEFAULT))
     {
         return false;
     }
-    glyphSlot = m_Face->glyph;
 
-    if (FT_Load_Char(m_Face, charId/*FT_Get_Char_Index(m_Face, _char)*/, FT_LOAD_RENDER))
+    if (FT_Load_Char(m_Face, charId/*FT_Get_Char_Index(m_Face, charId)*/, FT_LOAD_RENDER))
     {
         return false;
     }
+
+    FT_GlyphSlot glyphSlot = m_Face->glyph;
 
     if (FT_Stroker_New(m_Library, &stroker))
     {
@@ -383,7 +371,7 @@ bool CFreeTypeData::loadCharToMap(u32 charId)
 
     if (FT_Glyph_StrokeBorder(&glyph, stroker, 0, 1))//FT_Glyph_Stroke( &glyph, stroker, 1 ))
     {
-        //			return false;
+        //return false;
     }
 
     if (FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL/*FT_RENDER_MODE_LCD*/, 0, 1))
@@ -412,13 +400,49 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
 
     u32 width = next_p2(btGlyph->bitmap.width);
     u32 height = next_p2(btGlyph->bitmap.rows);
-    u8* expanded_data = new u8[2 * width * height];
+    u8* data = new u8[2 * width * height];
+    
+    u32 offset = m_fontSize - btGlyph->bitmap.rows;
+
+    u32 index = 0;
     for (u32 j = 0; j < height; j++)
     {
         for (u32 i = 0; i < width; i++)
         {
-            expanded_data[2 * (i + j * width)] = expanded_data[2 * (i + j * width) + 1] =
-                (i >= btGlyph->bitmap.width || j >= btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j];
+            {
+                if (j < offset)
+                {
+                    data[2 * (i + j * width)] = 0;
+                    ++index;
+                }
+            }
+        }
+    }
+
+    for (u32 j = 0; j < height - offset; j++)
+    {
+        for (u32 i = 0; i < width; i++)
+        {
+           /* if (j < offset)
+            {
+                data[2 * (i + j * width)] = 0;
+            }
+            else
+            {
+                if (i >= btGlyph->bitmap.width)
+                {
+                    data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] = 0;
+                }
+                else
+                {
+                    data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] = btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j - offset];
+                }
+            }*/
+
+            data[2 * (i + j * width) + index] = data[2 * (i + j * width) + 1 + index] =
+               (i >= btGlyph->bitmap.width) /*|| j  >= btGlyph->bitmap.rows)*/ ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j - offset];
+           
+            
         }
     }
 
@@ -446,14 +470,12 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
     charDesc._height = height;
     charDesc._page = m_currentTextureIndex;
 
-    m_xOffTextures += width + 1;
-
     if (m_currentTextureIndex >= m_charMaterial.size())
     {
         u8* textureData = new u8[2 * k_texWidth * k_texHight];
         memset(textureData, 0, 2 * k_texWidth * k_texHight);
 
-        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texWidth), EImageFormat::eDepthComponent, EImageType::eUnsignedByte, textureData);
+        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texHight), EImageFormat::eDepthComponent, EImageType::eUnsignedByte, NULL);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
 
@@ -463,8 +485,15 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
         textureData = nullptr;
     }
 
-    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), expanded_data);
+    int w = glSlot->bitmap.width;
+    int h = glSlot->bitmap.rows;
 
-    delete[] expanded_data;
-    expanded_data = nullptr;
+    void* d = glSlot->bitmap.buffer;
+
+    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), data);
+
+    m_xOffTextures += width + 1;
+
+    delete[] data;
+    data = nullptr;
 }

@@ -36,7 +36,7 @@ void CFreeTypeFont::init()
         return;
     }
 
-    m_text = "ABC";
+    m_text = "text";
     m_data->addCharsToMap(m_text);
     CFreeTypeFont::build();
 
@@ -55,12 +55,7 @@ void CFreeTypeFont::update(f64 time)
 
 void CFreeTypeFont::render()
 {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     CFont::render();
-
-    glDisable(GL_BLEND);
 }
 
 void CFreeTypeFont::setText(const std::string& text)

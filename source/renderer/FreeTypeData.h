@@ -69,19 +69,18 @@ namespace renderer
 
         FT_Library                  m_Library;
         FT_Face                     m_Face;
+        u32                         m_fontSize;
 
         std::map<s32, SCharDesc>    m_charInfo;
 
         renderer::TexturePtr        m_charTextures[k_mapSize];
         bool                        m_charList[k_mapSize];
 
-        const u32                   k_texWidth = 128U;
-        const u32                   k_texHight = 128U;
+        const u32                   k_texWidth = 256U;
+        const u32                   k_texHight = 256U;
         u32                         m_xOffTextures;
         u32                         m_yOffTextures;
         u32                         m_currentTextureIndex;
-
-        u32                         m_loadedPixelSize;
 
         bool                        m_loaded;
         bool                        m_regenerateMap;
