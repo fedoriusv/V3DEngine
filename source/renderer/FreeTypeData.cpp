@@ -78,6 +78,11 @@ bool CFreeTypeData::addCharsToMap(const std::string& text)
     return haveNew;
 }
 
+void CFreeTypeData::setFontSize(u32 size)
+{
+    m_fontSize = size;
+}
+
 const CFreeTypeData::SCharDesc& CFreeTypeData::getCharInfo(const s32 charCode) const
 {
     return m_charInfo.find(charCode)->second;
@@ -196,145 +201,6 @@ void CFreeTypeData::refresh()
     CFreeTypeData::loadCharList();
 }
 
-void CFreeTypeData::copyToTexture(u32 width, u32 height, u8* data, SCharDesc* charDesc)
-{
-    static u32 lineHeight;
-    if (lineHeight < height)
-    {
-        lineHeight = height;
-    }
-
-    if (m_xOffTextures + width >= k_texWidth)
-    {
-        m_xOffTextures = 0;
-        m_yOffTextures += lineHeight + 1;
-    }
-
-    if (m_yOffTextures + lineHeight >= k_texHight)
-    {
-        m_yOffTextures = 0;
-        m_currentTextureIndex++;
-    }
-
-    charDesc->_bearingX = m_xOffTextures;
-    charDesc->_bearingY = m_yOffTextures;
-    charDesc->_width = width;
-    charDesc->_height = height;
-    charDesc->_page = m_currentTextureIndex;
-
-    m_xOffTextures += width + 1;
-
-    //if (m_currentTextureIndex >= m_charMaterial.size())
-    //{
-        // Create big texture
-    //    //char textureId[64];
-    //    //sprintf(textureId, "textureFont%s%d", m_FontFileName.c_str(), m_currentTextureIndx);
-
-    //    unsigned char* textureData = new GLubyte[2 * m_iTexWidth * m_iTexHight];
-    //    memset(textureData, 0, 2 * m_iTexWidth * m_iTexHight);
-
-    //    CTexture* texture = TEXTURE_MGR->createTexture2DFromData(m_iTexWidth, m_iTexHight, IF_DEPTH_COMPONENT, IT_UNSIGNED_BYTE, textureData);
-    //    texture->getSampler()->setFilterType(FT_LINEAR, FT_LINEAR);
-    //    texture->getSampler()->setWrapType(WT_CLAMP_TO_EDGE);
-
-    //    m_charMaterial.push_back(texture);
-
-    //    delete[] textureData;
-    //}
-
-    //RENDERER->copyToTexture2D(m_charMaterial[m_currentTextureIndx]->getTextureID(), m_xOffTextures, m_yOffTextures, _width, _height, _data);
-
-    //// Apply texture coord
-}
-
-void CFreeTypeData::createChar(const FT_Face& face, FT_UInt glyphIndex)
-{
-    FT_Load_Glyph(face, FT_Get_Char_Index(m_Face, glyphIndex), FT_LOAD_DEFAULT);
-    FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-
-    FT_Stroker stroker;
-    FT_Stroker_New(m_Library, &stroker);
-
-    FT_Glyph glyph;
-    FT_Get_Glyph(face->glyph, &glyph);
-    FT_Glyph_StrokeBorder(&glyph, stroker, 0, 5);
-
-    FT_Bitmap* pBitmap = &face->glyph->bitmap;
-
-    u32 width = pBitmap->width;
-    u32 hight = pBitmap->rows;
-
-    u32 * bData = new u32[width*hight];
-    memset(bData, NULL, width * hight * sizeof(u32));
-    memcpy(bData, pBitmap->buffer, sizeof(u32)* width * hight);
-
-    //texture
-    if (m_charTextures[glyphIndex])
-    {
-        m_charTextures[glyphIndex] = nullptr;
-    }
-    
-    //m_charTextures[glyphIndex] = TEXTURE_MGR->createTexture2DFromData(width, hight, IF_DEPTH_COMPONENT, IT_UNSIGNED_BYTE, bData);
-    //m_pCharTextures[_glyphIndex]->getSampler()->setFilterType(FT_LINEAR, FT_LINEAR);
-    //m_pCharTextures[_glyphIndex]->getSampler()->setWrapType(WT_CLAMP_TO_EDGE);
-
-    //// Calculate glyph data
-    //m_iAdvX[_glyphIndex] = m_Face->glyph->advance.x >> 6;
-    //m_iBearingX[_glyphIndex] = m_Face->glyph->metrics.horiBearingX >> 6;
-    //m_iCharWidth[_glyphIndex] = m_Face->glyph->metrics.width >> 6;
-
-    //m_iAdvY[_glyphIndex] = (m_Face->glyph->metrics.height - m_Face->glyph->metrics.horiBearingY) >> 6;
-    //m_iBearingY[_glyphIndex] = m_Face->glyph->metrics.horiBearingY >> 6;
-    //m_iCharHeight[_glyphIndex] = m_Face->glyph->metrics.height >> 6;
-
-    //m_iNewLine = max(m_iNewLine, int(m_Face->glyph->metrics.height >> 6));
-
-    //delete[] bData;
-    //bData = nullptr;
-
-
-    //m_vertices.Vertex.vertices[_glyphIndex * 4].setX(0.0f);
-    //m_vertices.Vertex.vertices[_glyphIndex * 4].setY(float(-m_iAdvY[_glyphIndex] + hight));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4].setZ(0.0f);
-
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 1].setX(0.0f);
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 1].setY(float(-m_iAdvY[_glyphIndex]));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 1].setZ(0.0f);
-
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 2].setX(float(width));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 2].setY(float(-m_iAdvY[_glyphIndex] + hight));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 2].setZ(0.0f);
-
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 3].setX(float(width));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 3].setY(float(-m_iAdvY[_glyphIndex]));
-    //m_vertices.Vertex.vertices[_glyphIndex * 4 + 3].setZ(0.0f);
-
-
-    ///*m_vertices.TexCoord.at(0).vertices[_glyphIndex*4].setX(0.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4].setY(1.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+1].setX(0.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+1].setY(0.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+2].setX(1.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+2].setY(1.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+3].setX(1.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex*4+3].setY(0.0f);*/
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4].setX(0.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4].setY(0.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 1].setX(0.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 1].setY(1.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 2].setX(1.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 2].setY(0.0f);
-
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 3].setX(1.0f);
-    //m_vertices.TexCoord.at(0).vertices[_glyphIndex * 4 + 3].setY(1.0f);
-}
-
 bool CFreeTypeData::loadCharToMap(u32 charId)
 {
     if (m_charInfo.find(charId) != m_charInfo.end())
@@ -394,55 +260,29 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
     f32 scale = 1.0f;
     f32 fontHeight = 1.0f;
 
+    charDesc._advY = (s32)((glSlot->advance.y + fixed) / 64.f * scale);
     charDesc._advX = (s32)((glSlot->advance.x + fixed) / 64.f * scale);
     charDesc._bearingX = (s32)(btGlyph->left * scale);
     charDesc._bearingY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
 
+
+   /* f32 iAdvX = glSlot->advance.x >> 6;
+    f32 iBearingX = glSlot->metrics.horiBearingX >> 6;
+    f32 iCharWidth = glSlot->metrics.width >> 6;
+    f32 iAdvY = (glSlot->metrics.height - glSlot->metrics.horiBearingY) >> 6;
+    f32 iBearingY = glSlot->metrics.horiBearingY >> 6;
+    f32 iCharHeight = glSlot->metrics.height >> 6;*/
+
     u32 width = next_p2(btGlyph->bitmap.width);
     u32 height = next_p2(btGlyph->bitmap.rows);
     u8* data = new u8[2 * width * height];
-    
-    u32 offset = m_fontSize - btGlyph->bitmap.rows;
 
-    u32 index = 0;
     for (u32 j = 0; j < height; j++)
     {
         for (u32 i = 0; i < width; i++)
         {
-            {
-                if (j < offset)
-                {
-                    data[2 * (i + j * width)] = 0;
-                    ++index;
-                }
-            }
-        }
-    }
-
-    for (u32 j = 0; j < height - offset; j++)
-    {
-        for (u32 i = 0; i < width; i++)
-        {
-           /* if (j < offset)
-            {
-                data[2 * (i + j * width)] = 0;
-            }
-            else
-            {
-                if (i >= btGlyph->bitmap.width)
-                {
-                    data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] = 0;
-                }
-                else
-                {
-                    data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] = btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j - offset];
-                }
-            }*/
-
-            data[2 * (i + j * width) + index] = data[2 * (i + j * width) + 1 + index] =
-               (i >= btGlyph->bitmap.width) /*|| j  >= btGlyph->bitmap.rows)*/ ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j - offset];
-           
-            
+            data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] =
+               (i >= btGlyph->bitmap.width) || (j  >= btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j];
         }
     }
 
@@ -472,25 +312,14 @@ void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGly
 
     if (m_currentTextureIndex >= m_charMaterial.size())
     {
-        u8* textureData = new u8[2 * k_texWidth * k_texHight];
-        memset(textureData, 0, 2 * k_texWidth * k_texHight);
-
-        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texHight), EImageFormat::eDepthComponent, EImageType::eUnsignedByte, NULL);
+        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texHight), eDepthComponent, eUnsignedByte, NULL);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
 
         m_charMaterial.push_back(texture);
-
-        delete[] textureData;
-        textureData = nullptr;
     }
 
-    int w = glSlot->bitmap.width;
-    int h = glSlot->bitmap.rows;
-
-    void* d = glSlot->bitmap.buffer;
-
-    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), data);
+    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), eLuminanceAlpha, data);
 
     m_xOffTextures += width + 1;
 

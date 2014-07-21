@@ -165,7 +165,7 @@ namespace renderer
 
         void            clear();
 
-        virtual void    copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, void* data) = 0;
+        virtual void    copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data) = 0;
 
         u32             m_textureID;
 

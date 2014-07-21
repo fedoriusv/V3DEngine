@@ -45,6 +45,7 @@ namespace renderer
 
         bool                        findCharsOnMap(const std::string& text);
         bool                        addCharsToMap(const std::string& text);
+        void                        setFontSize(u32 size);
         bool                        loadCharList();
         const SCharDesc&            getCharInfo(const s32 charCode) const;
 
@@ -59,9 +60,6 @@ namespace renderer
 
         bool                        loadCharToMap(u32 charId);
         void                        fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed);
-
-        void                        copyToTexture(u32 width, u32 height, u8* data, SCharDesc* charDesc);
-        void                        createChar(const FT_Face& ftFace, FT_UInt glyphIndex);
 
         std::string                 m_font;
 

@@ -9,6 +9,7 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
     , m_backColor(core::Vector3D(0))
     , m_projectionMatrix(core::Matrix4D())
+    , m_orthoMatrix(core::Matrix4D())
     , m_viewMatrix(core::Matrix4D())
     , m_viewPosition(core::Vector3D(0.0f))
     , m_updateCamera(true)
@@ -55,6 +56,9 @@ void CRenderer::reshape(u32 width, u32 height)
 
     f32 aspectRatio = (f32)m_viewportSize.width / (f32)m_viewportSize.height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 10.0f);
+
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)m_viewportSize.width, 0.0f, (f32)m_viewportSize.height, -1.0f, 1.0f);
+    m_orthoMatrix.makeTransposed();
 
 }
 
@@ -140,6 +144,12 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
             case EUniformData::eTransformProjectionMatrix:
             {
                 program->setUniformMatrix4(id, m_projectionMatrix);
+            }
+            break;
+
+            case EUniformData::eTransformOrthoMatrix:
+            {
+                program->setUniformMatrix4(id, m_orthoMatrix);
             }
             break;
 

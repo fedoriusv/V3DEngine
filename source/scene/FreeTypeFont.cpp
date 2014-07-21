@@ -36,11 +36,12 @@ void CFreeTypeFont::init()
         return;
     }
 
-    m_text = "text";
+    m_text = "abcd";
     m_data->addCharsToMap(m_text);
+    m_data->setFontSize(m_size);
     CFreeTypeFont::build();
 
-    m_geometry->setDrawMode(CGeometry::eTriangles);
+    m_geometry->setDrawMode(CGeometry::eTriangleStrip);
     m_geometry->init();
 
     m_material->setTexture(0, m_data->m_charMaterial[0]);
@@ -77,11 +78,12 @@ void CFreeTypeFont::refresh()
         return;
     }
 
-    //m_data->addCharsToMap(m_text);
-    //m_data->setSize()
+    m_data->addCharsToMap(m_text);
+    m_data->setFontSize(m_size);
+
     CFreeTypeFont::build();
 
-    //m_geometry->refresh();
+    m_geometry->refresh();
 }
 
 void CFreeTypeFont::build()
@@ -89,36 +91,30 @@ void CFreeTypeFont::build()
     m_data->loadCharList();
 
     SVertexData& data = m_geometry->getData();
-    /*data.malloc(m_text.size() * 4);
-
-    for (std::string::const_iterator chr = m_text.begin(); chr < m_text.end(); ++chr)
-    {
-        const CFreeTypeData::SCharDesc& info = m_data->getCharInfo(*chr);
-
-        info.
-    }
+   /* data.malloc(m_text.size() * 4);
 
     u32 index = 0;
     for (std::string::const_iterator chr = m_text.begin(); chr < m_text.end(); ++chr)
     {
         const CFreeTypeData::SCharDesc& info = m_data->getCharInfo(*chr);
 
-        data._vertices[index].set(Vector3D(0.0f, 0.0f, 0.0f));
-        data._vertices[index * 1].set(Vector3D(0.0f, 0.0f, 0.0f));
-        data._vertices[index * 2].set(Vector3D(0.0f, 0.0f, 0.0f));
-        data._vertices[index * 3].set(Vector3D(0.0f, 0.0f, 0.0f));
+        data._vertices[index * 4 + 0].set(Vector3D(0.0f, (f32)(-info._advY + info._height)/20, 0.0f));
+        data._vertices[index * 4 + 1].set(Vector3D(0.0f, (f32)(-info._advY)/20, 0.0f));
+        data._vertices[index * 4 + 2].set(Vector3D((f32)info._width/20, (f32)(-info._advY + info._height)/20, 0.0f));
+        data._vertices[index * 4 + 3].set(Vector3D((f32)info._width/20, (f32)(-info._advY)/20, 0.0f));
 
-        data._texCoords.at(0)[index].set(Vector2D(0, 0));
-        data._texCoords.at(0)[index * 1].set(Vector2D(0, 0));
-        data._texCoords.at(0)[index * 2].set(Vector2D(0, 0));
-        data._texCoords.at(0)[index * 3].set(Vector2D(0, 0));
+        data._texCoords.at(0)[index * 4 + 0].set(Vector2D(0.0f, 0.0f));
+        data._texCoords.at(0)[index * 4 + 1].set(Vector2D(0.0f, 1.0f));
+        data._texCoords.at(0)[index * 4 + 2].set(Vector2D(1.0f, 0.0f));
+        data._texCoords.at(0)[index * 4 + 3].set(Vector2D(1.0f, 1.0f));
 
-        data._normals[index].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 1].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 2].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 3].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 4 + 0].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 4 + 1].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 4 + 2].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 4 + 3].set(Vector3D(0.0f, 0.0f, 1.0f));
 
-        ++index;*/
+        ++index;
+    }*/
 
     data.malloc(4,6);
 

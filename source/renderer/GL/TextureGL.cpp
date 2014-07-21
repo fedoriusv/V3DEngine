@@ -168,9 +168,9 @@ void CTextureGL::destroy()
     CTextureGL::deleteTexture(m_textureID);
 }
 
-void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, void* data)
+void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
-    CTextureGL::copyToTexture2D(m_textureID, offset.width, offset.height, size.width, size.height, data);
+    CTextureGL::copyToTexture2D(m_textureID, offset.width, offset.height, size.width, size.height, EImageFormatGL[format], data);
 
     RENDERER->checkForErrors("Copy Texture Error");
 }
@@ -305,11 +305,11 @@ void CTextureGL::initTextureCubeMap(u32 texture)
     }
 }
 
-void CTextureGL::copyToTexture2D(u32 texture, s32 offsetX, s32 offsetY, u32 width, u32 height, void* data)
+void CTextureGL::copyToTexture2D(u32 texture, s32 offsetX, s32 offsetY, u32 width, u32 height, u32 format, void* data)
 {
     CTextureGL::bindTexture(GL_TEXTURE_2D, texture);
 
-    glTexSubImage2D(GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, format, GL_UNSIGNED_BYTE, data);
 
     CTextureGL::bindTexture(GL_TEXTURE_2D, 0);
 }

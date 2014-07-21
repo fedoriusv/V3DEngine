@@ -78,6 +78,7 @@ namespace renderer
         core::Dimension2D           m_viewportSize;
 
         core::Matrix4D              m_projectionMatrix;
+        core::Matrix4D              m_orthoMatrix;
         core::Matrix4D              m_viewMatrix;
         core::Vector3D              m_viewPosition;
 

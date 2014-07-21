@@ -165,7 +165,7 @@ renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D&
     return texture;
 }
 
-void CTextureManager::copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, void* data)
+void CTextureManager::copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
     if (!texture || texture->getTextureID() <= 0)
     {
@@ -179,5 +179,5 @@ void CTextureManager::copyToTexture2D(const renderer::TexturePtr& texture, const
         return;
     }
 
-    texture->copyToTexture2D(offset, size, data);
+    texture->copyToTexture2D(offset, size, format, data);
 }
