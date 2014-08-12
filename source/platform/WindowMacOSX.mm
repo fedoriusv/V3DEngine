@@ -3,7 +3,7 @@
 using namespace v3d;
 using namespace v3d::platform;
 
-CWindowMacOSX::CWindowMacOSX( const WindowParam& param )
+CWindowMacOSX::CWindowMacOSX(const WindowParam& param)
     : CWindow(param)
 {
     m_platformType = EPlatformType::ePlatformMacOSX;
@@ -74,7 +74,7 @@ bool CWindowMacOSX::end()
 
 void CWindowMacOSX::create()
 {
-    m_autoreleasePool = [[NSAutoreleasePool alloc] init];
+//    m_autoreleasePool = [[NSAutoreleasePool alloc] init];
     
 //    if (NSApp)
 //    {
@@ -83,11 +83,11 @@ void CWindowMacOSX::create()
 //    
 //    [NSApplication sharedApplication];
     
-    NSLog(@"%@", [[[NSApplication sharedApplication]delegate] description]);
+//    NSLog(@"%@", [[[NSApplication sharedApplication]delegate] description]);
     int a = 0;
 }
 
 void CWindowMacOSX::close()
 {
-    [m_autoreleasePool release];
+//    [m_autoreleasePool release];
 }

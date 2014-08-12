@@ -2,7 +2,6 @@
 #define _V3D_PLATFORM_MAC_OSX_H_
 
 #include "Window.h"
-
 #import <Cocoa/Cocoa.h>
 
 namespace v3d
@@ -15,7 +14,7 @@ namespace platform
 	{
 	public:
         
-        CWindowMacOSX( const WindowParam& param );
+        CWindowMacOSX(const WindowParam& param);
 		virtual			~CWindowMacOSX();
 		
 		void                        minimize()                                override;
@@ -44,7 +43,7 @@ namespace platform
 		void                        create()                                 override;
 		void                        close()                                  override;
         
-        NSAutoreleasePool*          m_autoreleasePool;
+//        NSAutoreleasePool*          m_autoreleasePool;
 
 	};
 

@@ -14,8 +14,8 @@ namespace stream
 	public:
 		IStream(){};
 		virtual         ~IStream(){};
-
-		template <class T>
+        
+        template <class T>
 		u32             read(T& value);
 
 		virtual u32     read(void* buffer, const u32 size, const u32 count = 1) = 0;
@@ -34,10 +34,11 @@ namespace stream
 		virtual u32     read(f80& value)                = 0;
 		virtual u32     read(bool& value)               = 0;
 		virtual u32     read(std::string& value)        = 0;
-
-		template<class T>
-		u32             write(T& value);
-
+        
+        
+        template <class T>
+        u32             write(T& value);
+        
 		virtual u32     write(void* buffer, const u32 size, const u32 count = 1) = 0;
 
 		virtual u32     write(const u8 value)           = 0;
@@ -53,7 +54,7 @@ namespace stream
 		virtual u32     write(const f80 value)          = 0;
 		virtual u32     write(const bool value)         = 0;
 		virtual u32     write(const std::string& value) = 0;
-
+        
 		virtual void    seekBeg(const u32 offset)       = 0;
         virtual void    seekEnd(const u32 offset)       = 0;
 		virtual void    seekCur(const u32 offset)       = 0;
@@ -65,18 +66,19 @@ namespace stream
 		virtual void    unmap()                         = 0;
 
 	};
-
-	template <class T>
-	virtual u32 IStream::read(T& value)
+    
+    template <class T>
+	u32 IStream::read( T& value )
 	{
-		const u32 ret = read(&read, sizeof(T), 1);
+		const u32 ret = read( &value, sizeof( T ), 1 );
 		return ret;
+		
 	}
-
+    
 	template <class T>
-	virtual u32 IStream::write(T& value)
+	u32 IStream::write( T& value )
 	{
-		const u32 ret = write(&read, sizeof(T), 1);
+		const u32 ret = write( &value, sizeof( T ), 1 );
 		return ret;
 	}
 

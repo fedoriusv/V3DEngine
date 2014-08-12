@@ -110,10 +110,10 @@ void CFPSCamera::rotateByMouse()
         rotate(angle.y, vAxis);
     }
 
-    rotate(angle.x, Vector3D(0, 1, 0));
+    CFPSCamera::rotate(angle.x, Vector3D(0.0f, 1.0f, 0.0f));
 }
 
-void CFPSCamera::rotate(f32 angle, Vector3D& point)
+void CFPSCamera::rotate(f32 angle, const Vector3D& point)
 {
     Vector3D newView;
     Vector3D oldView;

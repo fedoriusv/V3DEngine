@@ -71,7 +71,7 @@ char* CShader::read(const std::string& file)
 
     if (!file.empty())
     {
-        fopen_s(&pFile, file.c_str(), "rt");
+        pFile = fopen(file.c_str(), "rt");
 
         if (pFile != nullptr)
         {
