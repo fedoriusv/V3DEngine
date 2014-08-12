@@ -17,6 +17,8 @@ if(WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
 elseif(UNIX AND NOT APPLE)
 	link_directories(${ENGINE_PROJECT_DIR}/project/linux-qt/)
+elseif(APPLE)
+    link_directories(${ENGINE_PROJECT_DIR}/project/xcode/)
 endif()
 
 add_executable(
@@ -48,7 +50,14 @@ elseif(UNIX AND NOT APPLE)
 	)
 	#find_library(X11 NAMES X11 x11 PATHS /usr/X11/include/X11/ /usr/X11/lib)
 elseif(APPLE)
-    find_library(COCOA_FRAMEWORK Cocoa)
+    include_directories(/System/Library/Frameworks)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OpenGL_LIBRARY OpenGL)
+    
+    set(EXTERNAL_LIBS
+        ${COCOA_LIBRARY}
+        ${OpenGL_LIBRARY}
+    )
 endif()
 
 target_link_libraries(

@@ -1,4 +1,5 @@
 #include "WindowMacOSX.h"
+#import <Cocoa/Cocoa.h>
 
 using namespace v3d;
 using namespace v3d::platform;
