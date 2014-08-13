@@ -1,7 +1,7 @@
 #ifndef _V3D_FONT_MANAGER_H_
 #define _V3D_FONT_MANAGER_H_
 
-#include "renderer/FreeTypeData.h"
+#include "renderer/FontData.h"
 #include "Singleton.h"
 #include "ResourceDecoder.h"
 
@@ -18,12 +18,12 @@ namespace scene
         CFontManager();
         virtual                             ~CFontManager();
 
-        void                                add(const renderer::FreeTypeDataPtr& font);
-        const renderer::FreeTypeDataPtr&    get(const std::string& name);
-        const renderer::FreeTypeDataPtr     load(const std::string& name);
+        void                                add(const renderer::FontDataPtr& font);
+        const renderer::FontDataPtr&        get(const std::string& name);
+        const renderer::FontDataPtr         load(const std::string& name);
 
         void                                unload(const std::string& name);
-        void                                unload(const renderer::FreeTypeDataPtr& font);
+        void                                unload(const renderer::FontDataPtr& font);
 
         void                                unloadAll();
 
@@ -32,7 +32,7 @@ namespace scene
 
     private:
 
-        renderer::FreeTypeDataList          m_fontsData;
+        renderer::FontDataList              m_fontsData;
         std::vector<std::string>            m_pathes;
     };
 

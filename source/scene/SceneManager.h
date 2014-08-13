@@ -36,7 +36,7 @@ namespace scene
         CNode*                  addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 1.0f, const f32 majorRadius = 2.0f);
         CNode*                  addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 extent = 2.0f);
 
-        CNode*                  addFreeTypeFont(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.0f), const u32 size = 24U);
+        CNode*                  addFont(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.0f), const u32 size = 24U);
 
         CNode*                  addLight(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 1.0f), const Vector4D& diffuse = Vector4D(1.0f), const f32 radius = 100.0f);
 

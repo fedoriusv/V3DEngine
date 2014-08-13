@@ -1,4 +1,4 @@
-#include "FreeTypeData.h"
+#include "VectorFontData.h"
 #include "utils/Logger.h"
 #include "scene/TextureManager.h"
 
@@ -19,9 +19,9 @@ inline int next_p2(int n)
 }
 
 
-CFreeTypeData::CFreeTypeData(const std::string& font)
-    : m_loaded(false)
-    , m_font(font)
+CVectorFontData::CVectorFontData(const std::string& font)
+    : CFontData(font)
+    , m_loaded(false)
     , m_regenerateMap(false)
     , m_fontSize(32U)
 
@@ -36,18 +36,13 @@ CFreeTypeData::CFreeTypeData(const std::string& font)
     }
 }
 
-CFreeTypeData::~CFreeTypeData()
+CVectorFontData::~CVectorFontData()
 {
     FT_Done_Face(m_Face);
     FT_Done_FreeType(m_Library);
 }
 
-const std::string& CFreeTypeData::getFontName() const
-{
-    return m_font;
-}
-
-bool CFreeTypeData::findCharsOnMap(const std::string& text)
+bool CVectorFontData::findCharsOnMap(const std::string& text)
 {
     for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)\
     {
@@ -60,7 +55,7 @@ bool CFreeTypeData::findCharsOnMap(const std::string& text)
     return true;
 }
 
-bool CFreeTypeData::addCharsToMap(const std::string& text)
+bool CVectorFontData::addCharsToMap(const std::string& text)
 {
     bool haveNew = false;
 
@@ -78,22 +73,17 @@ bool CFreeTypeData::addCharsToMap(const std::string& text)
     return haveNew;
 }
 
-void CFreeTypeData::setFontSize(u32 size)
+void CVectorFontData::setFontSize(u32 size)
 {
     m_fontSize = size;
 }
 
-const CFreeTypeData::SCharDesc& CFreeTypeData::getCharInfo(const s32 charCode) const
-{
-    return m_charInfo.find(charCode)->second;
-}
-
-void CFreeTypeData::init(stream::IStream* stream)
+void CVectorFontData::init(stream::IStream* stream)
 {
     CResource::setStream(stream);
 }
 
-bool CFreeTypeData::load()
+bool CVectorFontData::load()
 {
     stream::IStream* stream = CResource::getStream();
     if (!stream)
@@ -108,7 +98,7 @@ bool CFreeTypeData::load()
     return success;
 }
 
-bool CFreeTypeData::loadFreeType(const std::string& font)
+bool CVectorFontData::loadFreeType(const std::string& font)
 {
     if (font.empty())
     {
@@ -155,7 +145,7 @@ bool CFreeTypeData::loadFreeType(const std::string& font)
         return false;
     }
 
-    if (!CFreeTypeData::loadCharList())
+    if (!CVectorFontData::loadCharList())
     {
         return false;
     }
@@ -163,7 +153,7 @@ bool CFreeTypeData::loadFreeType(const std::string& font)
     return true;
 }
 
-bool CFreeTypeData::loadCharList()
+bool CVectorFontData::loadCharList()
 {
     m_loaded = false;
 
@@ -191,17 +181,17 @@ bool CFreeTypeData::loadCharList()
     return true;
 }
 
-void CFreeTypeData::refresh()
+void CVectorFontData::refresh()
 {
     if (!m_regenerateMap)
     {
         return;
     }
 
-    CFreeTypeData::loadCharList();
+    CVectorFontData::loadCharList();
 }
 
-bool CFreeTypeData::loadCharToMap(u32 charId)
+bool CVectorFontData::loadCharToMap(u32 charId)
 {
     if (m_charInfo.find(charId) != m_charInfo.end())
     {
@@ -248,14 +238,14 @@ bool CFreeTypeData::loadCharToMap(u32 charId)
     FT_BitmapGlyph ft_bitmap_glyph = (FT_BitmapGlyph)glyph;
     FT_Stroker_Done(stroker);
 
-    CFreeTypeData::fillCharInfo(m_charInfo[charId], ft_bitmap_glyph, glyphSlot, outline_thikness);
+    CVectorFontData::fillCharInfo(m_charInfo[charId], ft_bitmap_glyph, glyphSlot, outline_thikness);
     
     FT_Done_Glyph(glyph);
 
     return true;
 }
 
-void CFreeTypeData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed)
+void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed)
 {
     f32 scale = 1.0f;
     f32 fontHeight = 1.0f;

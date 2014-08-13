@@ -20,7 +20,7 @@ void MyApplication::init()
     //cube->setName("cube");
     //cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
-    scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFreeTypeFont(0, "text", "fonts/arial.ttf", core::Vector3D(0, 0, -4)));
+    scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFont(0, "text", "fonts/arial.ttf", core::Vector3D(0, 0, -4)));
     font->getMaterial()->setRenderTechnique("shaders/font.xml");
     //font->getMaterial()->setTexture(0, "textures/box.jpg");
   

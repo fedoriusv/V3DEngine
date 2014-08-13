@@ -6,6 +6,7 @@
 #include "renderer/Geometry.h"
 #include "renderer/Material.h"
 #include "renderer/RenderJob.h"
+#include "renderer/FontData.h"
 
 namespace v3d
 {
@@ -17,13 +18,13 @@ namespace scene
     {
     public:
 
-        CFont();
+        CFont(const std::string& font);
         virtual                         ~CFont();
 
-        virtual void                    setText(const std::string& text);
+        void                            setText(const std::string& text);
         const std::string&              getText() const;
 
-        virtual void                    setSize(const u32 size);
+        void                            setSize(const u32 size);
         u32                             getSize() const;
 
         void                            setMaterial(const renderer::MaterialPtr& material);
@@ -35,7 +36,8 @@ namespace scene
 
     protected:
 
-        virtual void                    refresh() = 0;
+        void                            refresh();
+        void                            build();
 
         std::string                     m_text;
         u32                             m_size;
@@ -43,6 +45,9 @@ namespace scene
         renderer::MaterialPtr           m_material;
         renderer::GeometryPtr           m_geometry;
         renderer::RenderJobPtr          m_renderJob;
+
+        std::string                     m_font;
+        renderer::FontDataPtr           m_data;
 
     };
 

@@ -1,8 +1,7 @@
-#ifndef _V3D_FREETYPE_DATA_H_
-#define _V3D_FREETYPE_DATA_H_
+#ifndef _V3D_VECTOR_FONT_DATA_H_
+#define _V3D_VECTOR_FONT_DATA_H_
 
-#include "stream/Resource.h"
-#include "renderer/Texture.h"
+#include "FontData.h"
 
 #include "ft2build.h" 
 #include FT_FREETYPE_H
@@ -10,33 +9,16 @@
 
 namespace v3d
 {
-namespace scene
-{
-    class CFontManager;
-}
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CFreeTypeData : public stream::CResource
+    class CVectorFontData : public CFontData
     {
     public:
 
-        struct SCharDesc
-        {
-            u32     _width;
-            u32     _height;
-            s32     _advX;
-            s32     _advY;
-            s32     _bearingX;
-            s32     _bearingY;
-            u32     _page;
-        };
-
-        CFreeTypeData(const std::string& font);
-        virtual                     ~CFreeTypeData();
-
-        const std::string&          getFontName() const;
+        CVectorFontData(const std::string& font);
+        virtual                     ~CVectorFontData();
 
         void                        init(stream::IStream* stream)   override;
         bool                        load()                          override;
@@ -47,21 +29,16 @@ namespace renderer
         bool                        addCharsToMap(const std::string& text);
         void                        setFontSize(u32 size);
         bool                        loadCharList();
-        const SCharDesc&            getCharInfo(const s32 charCode) const;
 
         //TMp
         std::vector<renderer::TexturePtr>  m_charMaterial;
 
     private:
 
-        friend class                CFontManager;
-
         bool                        loadFreeType(const std::string& font);
 
         bool                        loadCharToMap(u32 charId);
         void                        fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed);
-
-        std::string                 m_font;
 
         const static u32            k_mapSize = 256U;
 
@@ -86,11 +63,6 @@ namespace renderer
 
 
     };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<CFreeTypeData>         FreeTypeDataPtr;
-    typedef std::map<std::string, FreeTypeDataPtr> FreeTypeDataList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

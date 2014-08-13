@@ -8,7 +8,7 @@
 #include "PlaneShape.h"
 #include "Camera.h"
 #include "Light.h"
-#include "FreeTypeFont.h"
+#include "Font.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -395,9 +395,9 @@ CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4
     return node;
 }
 
-CNode* CSceneManager::addFreeTypeFont(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, const u32 size)
+CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, const u32 size)
 {
-    CFont*  node = new CFreeTypeFont(font);
+    CFont*  node = new CFont(font);
     node->setParent(parent);
     node->setPosition(pos);
     node->setText(text);

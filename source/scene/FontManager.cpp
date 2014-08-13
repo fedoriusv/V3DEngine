@@ -1,6 +1,8 @@
 #include "FontManager.h"
 #include "stream/FileStream.h"
 #include "utils/Logger.h"
+#include "renderer/BitmapFontData.h"
+#include "renderer/VectorFontData.h"
 
 using namespace v3d;
 using namespace v3d::scene;
@@ -16,18 +18,18 @@ CFontManager::~CFontManager()
     CFontManager::unloadAll();
 }
 
-void CFontManager::add(const renderer::FreeTypeDataPtr& font)
+void CFontManager::add(const renderer::FontDataPtr& font)
 {
     std::string name = font->getResourseName();
-    m_fontsData.insert(std::map<std::string, renderer::FreeTypeDataPtr>::value_type(name, font));
+    m_fontsData.insert(std::map<std::string, renderer::FontDataPtr>::value_type(name, font));
 }
 
-const renderer::FreeTypeDataPtr& CFontManager::get(const std::string& name)
+const renderer::FontDataPtr& CFontManager::get(const std::string& name)
 {
     return m_fontsData[name];
 }
 
-const renderer::FreeTypeDataPtr CFontManager::load(const std::string& name)
+const renderer::FontDataPtr CFontManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -57,18 +59,35 @@ const renderer::FreeTypeDataPtr CFontManager::load(const std::string& name)
 
                 if (stream->isOpen())
                 {
-                    renderer::FreeTypeDataPtr font = std::make_shared<renderer::CFreeTypeData>(nameStr);
+                    renderer::FontDataPtr font = nullptr;
 
-                    font->init(stream);
-                    font->setResourseName(fullName);
+                    if (fileExtension == ".fnt")
+                    {
+                        font = std::make_shared<renderer::CBitmapFontData>(nameStr);
+                        font->setFontType(renderer::CFontData::EFontType::eBitmapFont);
+                    }
+                    else if (fileExtension == ".ttf")
+                    {
+                        font = std::make_shared<renderer::CVectorFontData>(nameStr);
+                        font->setFontType(renderer::CFontData::EFontType::eVectorFont);
+                    }
 
-                    if (font->load())
+                    if (!font)
                     {
                         LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
-                    m_fontsData.insert(std::map<std::string, renderer::FreeTypeDataPtr>::value_type(nameStr, font));
+                    font->init(stream);
+                    font->setResourseName(fullName);
+
+                    if (!font->load())
+                    {
+                        LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+
+                    m_fontsData.insert(std::map<std::string, renderer::FontDataPtr>::value_type(nameStr, font));
                     return font;
                 }
             }
@@ -88,9 +107,9 @@ void CFontManager::unload(const std::string& name)
     }
 }
 
-void CFontManager::unload(const renderer::FreeTypeDataPtr& font)
+void CFontManager::unload(const renderer::FontDataPtr& font)
 {
-    auto predDelete = [font](const std::pair<std::string, renderer::FreeTypeDataPtr>& pair) -> bool
+    auto predDelete = [font](const std::pair<std::string, renderer::FontDataPtr>& pair) -> bool
     {
         return pair.second == font;
     };
