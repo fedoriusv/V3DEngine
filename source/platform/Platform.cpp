@@ -31,7 +31,7 @@ CPlatform::~CPlatform()
 {
 }
 
-WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, const core::Dimension2D& pos,
+platform::WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, const core::Dimension2D& pos,
 	bool isFullscreen, bool isResizeble, EDriverType driverType )
 {
 	WindowPtr window = nullptr;
@@ -161,7 +161,7 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
 	return renderer;
 }
 
-WindowPtr CPlatform::getWindow() const
+platform::WindowPtr CPlatform::getWindow() const
 {
 	return m_window;
 }
