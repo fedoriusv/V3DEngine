@@ -98,6 +98,11 @@ bool CVectorFontData::load()
     return success;
 }
 
+bool CVectorFontData::loadFont(const std::string& resource)
+{
+    return false;
+}
+
 bool CVectorFontData::loadFreeType(const std::string& font)
 {
     if (font.empty())

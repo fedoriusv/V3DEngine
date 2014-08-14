@@ -35,6 +35,7 @@ namespace renderer
 
     private:
 
+        bool                        loadFont(const std::string& resource) override;
         bool                        loadFreeType(const std::string& font);
 
         bool                        loadCharToMap(u32 charId);
