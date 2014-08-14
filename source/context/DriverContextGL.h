@@ -29,6 +29,8 @@ namespace renderer
         bool    createWin32Context();
 #elif defined(_PLATFORM_LINUX_)
         bool    createLinuxContext();
+#elif defined(_PLATFORM_MACOSX_)
+        bool    createMacOSXContext();
 #endif
     };
 

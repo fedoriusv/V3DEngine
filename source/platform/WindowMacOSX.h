@@ -39,6 +39,7 @@ namespace platform
 		void                close()                                   override;
         
         NSAutoreleasePool*  m_autoreleasePool;
+        id                  m_window;
 
 	};
 

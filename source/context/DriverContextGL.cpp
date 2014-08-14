@@ -36,6 +36,9 @@ bool CDriverContextGL::createContext()
 
 #elif defined(_PLATFORM_LINUX_)
 	return createLinuxContext();
+    
+#elif defined(_PLATFORM_MACOSX_)
+    return createMacOSXContext();
 
 #endif
     return false;
@@ -327,6 +330,13 @@ bool CDriverContextGL::createLinuxContext()
 	driverInfo();
 
 	return true;
+}
+
+#elif defined(_PLATFORM_MACOSX_)
+
+bool CDriverContextGL::createMacOSXContext()
+{
+    return false;
 }
 
 #endif
