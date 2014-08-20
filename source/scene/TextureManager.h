@@ -35,11 +35,11 @@ namespace scene
 
         void                    unloadAll();
 
-        void                    registerPath( const std::string& path );
-        void                    registerDecoder( DecoderPtr decoder );
+        void                    registerPath(const std::string& path);
+        void                    registerDecoder(DecoderPtr decoder);
 
-        void                    unregisterPath( const std::string& path );
-        void                    unregisterDecoder( DecoderPtr decoder );
+        void                    unregisterPath(const std::string& path);
+        void                    unregisterDecoder(DecoderPtr decoder);
 
     private:
 

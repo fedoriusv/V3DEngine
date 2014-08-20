@@ -62,6 +62,9 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
 
                     technique->init(stream);
                     technique->setResourseName(fullName);
+                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                    technique->setResourseFolder(fullPath);
+
                     if (!technique->load())
                     {
                         LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());

@@ -66,6 +66,9 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
                     texture->init(stream);
                     texture->m_target = renderer::ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
+                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                    texture->setResourseFolder(fullPath);
+
                     if (!texture->load())
                     {
                         LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());

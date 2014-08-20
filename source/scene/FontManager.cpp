@@ -72,6 +72,9 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
                         font->setFontType(renderer::CFontData::EFontType::eVectorFont);
                     }
 
+                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                    font->setResourseFolder(fullPath);
+
                     if (!font)
                     {
                         LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());

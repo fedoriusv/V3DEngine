@@ -73,17 +73,17 @@ void CFont::init()
     m_geometry = RENDERER->makeSharedGeometry(technique);
     m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_transform);
 
-   /* if (m_font.empty())
+    if (m_font.empty())
     {
         LOG_WARRNING("Font name Empty");
         return;
-    }*/
+    }
 
     m_data = CFontManager::getInstance()->load(m_font);
     if (!m_data)
     {
-        LOG_ERROR("FreeTypeFont: Can not load font: %s", m_font.c_str());
-        ASSERT(false && "FreeTypeFont: Can not load font");
+        LOG_ERROR("Font: Can not load font: %s", m_font.c_str());
+        ASSERT(false && "Font: Can not load font");
         return;
     }
 

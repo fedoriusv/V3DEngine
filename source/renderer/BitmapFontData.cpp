@@ -156,19 +156,29 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
         return false;
     }
 
-    const s32 pageId = root->IntAttribute("id");
+    tinyxml2::XMLElement* pageElement = root->FirstChildElement("page");
+    if (!pageElement)
+    {
+        LOG_ERROR("BitmapFontData Error parse. Have no page section");
+        return false;
+    }
+
+    const s32 pageId = pageElement->IntAttribute("id");
     if (pageId < 0)
     {
         LOG_ERROR("BitmapFontData Error parse. Invalid Page id");
         return false;
     }
 
-    const std::string file = root->Attribute("file");
-    if (file.empty())
+    if (!pageElement->Attribute("file"))
     {
         LOG_ERROR("BitmapFontData Error parse. Invalid File Page Name");
         return false;
     }
+    const std::string file = pageElement->Attribute("file");
+
+    const std::string& folder = getResourseFolder();
+    scene::CTextureManager::getInstance()->registerPath(folder);
 
     TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
     if (!texture)
@@ -177,12 +187,52 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
         return false;
     }
 
+    if (m_charTexture.size() < pageId + 1)
+    {
+        m_charTexture.resize(pageId + 1);
+    }
 
+    m_charTexture[pageId] = texture;
 
     return true;
 }
 
 bool CBitmapFontData::parseChars(tinyxml2::XMLElement* root)
 {
+    if (!root)
+    {
+        LOG_ERROR("Bitmap Font Error parse. Cannot read chars element");
+        return false;
+    }
 
+    tinyxml2::XMLElement* varElement = root->FirstChildElement("char");
+    while (varElement)
+    {
+        const s32 id = varElement->IntAttribute("id");
+       
+        const s32 x = varElement->IntAttribute("x");
+        const s32 y = varElement->IntAttribute("y");
+        const s32 width = varElement->IntAttribute("width");
+        const s32 height = varElement->IntAttribute("height");
+        const s32 xoffset = varElement->IntAttribute("xoffset");
+        const s32 yoffset = varElement->IntAttribute("yoffset");
+        const s32 xadvance = varElement->IntAttribute("xadvance");
+        const s32 page = varElement->IntAttribute("page");
+
+        SCharDesc charDecs;
+
+        charDecs._advX = x;
+        charDecs._advY = y;
+        charDecs._height = height;
+        charDecs._width = width;
+        charDecs._bearingX = xoffset;
+        charDecs._bearingY = yoffset;
+        charDecs._page = page;
+
+        m_charInfo.insert(std::map<s32, SCharDesc>::value_type(id, charDecs));
+
+        varElement = varElement->NextSiblingElement("char");
+    }
+
+    return true;
 }
