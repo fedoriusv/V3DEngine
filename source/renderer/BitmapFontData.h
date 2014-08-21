@@ -32,6 +32,7 @@ namespace renderer
         bool    parseInfo(tinyxml2::XMLElement* root);
         bool    parsePages(tinyxml2::XMLElement* root);
         bool    parseChars(tinyxml2::XMLElement* root);
+        bool    parseKernings(tinyxml2::XMLElement* root);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

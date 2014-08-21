@@ -114,6 +114,17 @@ bool CBitmapFontData::parse(tinyxml2::XMLElement* root)
         return false;
     }
 
+    tinyxml2::XMLElement* kerningsElement = root->FirstChildElement("kernings");
+    if (!kerningsElement)
+    {
+        LOG_ERROR("BitmapFontData Error parse. Have no chars section");
+        return false;
+    }
+    if (!parseKernings(kerningsElement))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -221,17 +232,46 @@ bool CBitmapFontData::parseChars(tinyxml2::XMLElement* root)
 
         SCharDesc charDecs;
 
-        charDecs._advX = x;
-        charDecs._advY = y;
+        charDecs._srcX = x;
+        charDecs._srcY = y;
         charDecs._height = height;
         charDecs._width = width;
-        charDecs._bearingX = xoffset;
-        charDecs._bearingY = yoffset;
+        charDecs._offX = xoffset;
+        charDecs._offY = yoffset;
+        charDecs._advX = xadvance;
+        charDecs._advY = 0;
         charDecs._page = page;
 
         m_charInfo.insert(std::map<s32, SCharDesc>::value_type(id, charDecs));
 
         varElement = varElement->NextSiblingElement("char");
+    }
+
+    return true;
+}
+
+bool CBitmapFontData::parseKernings(tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("Bitmap Font Error parse. Cannot read kernings element");
+        return false;
+    }
+
+    tinyxml2::XMLElement* varElement = root->FirstChildElement("kerning");
+    while (varElement)
+    {
+        const s32 first = varElement->IntAttribute("first");
+        const s32 second = varElement->IntAttribute("second");
+        const s32 amount = varElement->IntAttribute("amount");
+
+        if (first >= 0 && first < 256 && getCharInfo(first))
+        {
+            m_charInfo[first]._kerningPairs.push_back(second);
+            m_charInfo[first]._kerningPairs.push_back(amount);
+        }
+
+        varElement = varElement->NextSiblingElement("kerning");
     }
 
     return true;

@@ -27,13 +27,29 @@ namespace renderer
 
         struct SCharDesc
         {
-            u32     _width;
-            u32     _height;
-            s32     _advX;
-            s32     _advY;
-            s32     _bearingX;
-            s32     _bearingY;
-            u32     _page;
+            u32                 _srcX;
+            u32                 _srcY;
+            u32                 _width;
+            u32                 _height;
+            s32                 _advX;
+            s32                 _advY;
+            s32                 _offX;
+            s32                 _offY;
+            u32                 _page;
+
+            std::vector<s32>    _kerningPairs;
+
+            SCharDesc()
+                : _srcX(0)
+                , _srcY(0)
+                , _width(0)
+                , _height(0)
+                , _advX(0)
+                , _advY(0)
+                , _offX(0)
+                , _offY(0)
+                , _page(0)
+            {}
         };
 
         CFontData(const std::string& font);

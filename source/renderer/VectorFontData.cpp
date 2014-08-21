@@ -257,8 +257,8 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
 
     charDesc._advY = (s32)((glSlot->advance.y + fixed) / 64.f * scale);
     charDesc._advX = (s32)((glSlot->advance.x + fixed) / 64.f * scale);
-    charDesc._bearingX = (s32)(btGlyph->left * scale);
-    charDesc._bearingY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
+    charDesc._offX = (s32)(btGlyph->left * scale);
+    charDesc._offY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
 
 
    /* f32 iAdvX = glSlot->advance.x >> 6;
@@ -299,8 +299,8 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
         m_currentTextureIndex++;
     }
 
-    charDesc._bearingX = m_xOffTextures;
-    charDesc._bearingY = m_yOffTextures;
+    charDesc._offX = m_xOffTextures;
+    charDesc._offY = m_yOffTextures;
     charDesc._width = width;
     charDesc._height = height;
     charDesc._page = m_currentTextureIndex;
