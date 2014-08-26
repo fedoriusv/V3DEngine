@@ -11,6 +11,7 @@ CFont::CFont(const std::string& font)
     : m_text("")
     , m_size(24U)
     , m_align(EAlignMode::eFontAlignLeft)
+    , m_textScale(0.10f)
 
     , m_geometry(nullptr)
     , m_material(nullptr)
@@ -98,15 +99,15 @@ void CFont::init()
         return;
     }
 
-    m_text = "abcd";
+    m_text = "abc defg";
   /*  m_data->addCharsToMap(m_text);
     m_data->setFontSize(m_size);*/
     CFont::build();
 
-    m_geometry->setDrawMode(CGeometry::eTriangleStrip);
+    m_geometry->setDrawMode(CGeometry::eTriangles);
     m_geometry->init();
 
-    //m_material->setTexture(0, m_data->m_charMaterial[0]);
+    m_material->setTexture(0, m_data->m_charTexture[0]);
 
     m_initialiazed = true;
 }
@@ -149,13 +150,12 @@ void CFont::refresh()
 f32 CFont::getTextWidth()
 {
     f32 width = 0.0f;
-    const f32 scale = 1.0f;
 
     for (std::string::const_iterator chr = m_text.begin(); chr < m_text.end(); ++chr)
     {
         const CFontData::SCharDesc* info = m_data->getCharInfo(*chr);
 
-        width += (scale * info->_advX) + adjustForKerningPairs(info, *chr);
+        width += (m_textScale * info->_advX) + adjustForKerningPairs(info, *chr);
     }
 
     return width;
@@ -163,8 +163,6 @@ f32 CFont::getTextWidth()
 
 f32 CFont::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 charId)
 {
-    const f32 scale = 1.0f;
-
     if (charId == 0)
     {
         return 0;
@@ -174,7 +172,7 @@ f32 CFont::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 cha
     {
         if (info->_kerningPairs[i] == charId)
         {
-            return info->_kerningPairs[i + 1] * scale;
+            return info->_kerningPairs[i + 1] * m_textScale;
         }
     }
 
@@ -183,16 +181,13 @@ f32 CFont::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 cha
 
 void CFont::build()
 {
-    //m_data->loadCharList();
-
-    const f32 scale = 1.0f;
-    f32 scaleW = 1.0f;
-    f32 scaleH = 1.0f;
-    f32 spacing = 3.f;
+    f32 scaleW = 256.0f;
+    f32 scaleH = 256.0f;
+    f32 spacing = 0.5f;
 
     f32 x = 0.f;
     f32 y = 0.f;
-    f32 z = -100.f;
+    f32 z = -10.f;
 
     f32 textwidth = CFont::getTextWidth();
     if (m_align == EAlignMode::eFontAlignCenter)
@@ -215,41 +210,48 @@ void CFont::build()
         if (*chr == 10)
         {
             x = 0;
-            y += scale * m_size;
+            y += m_textScale * m_size;
             continue;
         }
 
-        f32 a = scale * static_cast<f32>(info->_advX);
-        f32 w = scale * static_cast<f32>(info->_width);
-        f32 h = scale * static_cast<f32>(info->_height);
-        f32 ox = scale * static_cast<f32>(info->_offX);
-        f32 oy = scale * static_cast<f32>(info->_offY);
+        f32 a = m_textScale * static_cast<f32>(info->_advX);
+        f32 w = m_textScale * static_cast<f32>(info->_width);
+        f32 h = m_textScale * static_cast<f32>(info->_height);
+        f32 ox = m_textScale * static_cast<f32>(info->_offX);
+        f32 oy = m_textScale * static_cast<f32>(info->_offY);
 
-        data._vertices[index * 4 + 0].set(Vector3D(x + ox, y + oy, z));
-        data._vertices[index * 4 + 1].set(Vector3D(x + ox, y + oy + h, z));
-        data._vertices[index * 4 + 2].set(Vector3D(x + w + ox, y + oy, z));
-        data._vertices[index * 4 + 3].set(Vector3D(x + w + ox, y + oy, z));
-        data._vertices[index * 4 + 4].set(Vector3D(x + ox, y + oy + h, z));
-        data._vertices[index * 4 + 5].set(Vector3D(x + w + ox, y + oy + h, z));
+        data._vertices[index * 6 + 0].set(Vector3D(x + ox, y + oy, z));
+        data._vertices[index * 6 + 1].set(Vector3D(x + ox, y + oy + h, z));
+        data._vertices[index * 6 + 2].set(Vector3D(x + w + ox, y + oy, z));
+        data._vertices[index * 6 + 3].set(Vector3D(x + w + ox, y + oy, z));
+        data._vertices[index * 6 + 4].set(Vector3D(x + ox, y + oy + h, z));
+        data._vertices[index * 6 + 5].set(Vector3D(x + w + ox, y + oy + h, z));
 
         f32 u = (static_cast<f32>(info->_srcX)) / scaleW;
         f32 v = (static_cast<f32>(info->_srcY)) / scaleH;
         f32 u2 = u + (static_cast<f32>(info->_width)) / scaleW;
         f32 v2 = v + (static_cast<f32>(info->_height)) / scaleH;
 
-        data._texCoords.at(0)[index * 4 + 0].set(Vector2D(u, -v));
-        data._texCoords.at(0)[index * 4 + 1].set(Vector2D(u, -v2));
-        data._texCoords.at(0)[index * 4 + 2].set(Vector2D(u2, -v));
-        data._texCoords.at(0)[index * 4 + 3].set(Vector2D(u2, -v));
-        data._texCoords.at(0)[index * 4 + 4].set(Vector2D(u, -v2));
-        data._texCoords.at(0)[index * 4 + 5].set(Vector2D(u2, -v2));
+        data._texCoords.at(0)[index * 6 + 0].set(Vector2D(u, -v));
+        data._texCoords.at(0)[index * 6 + 1].set(Vector2D(u, -v2));
+        data._texCoords.at(0)[index * 6 + 2].set(Vector2D(u2, -v));
+        data._texCoords.at(0)[index * 6 + 3].set(Vector2D(u2, -v));
+        data._texCoords.at(0)[index * 6 + 4].set(Vector2D(u, -v2));
+        data._texCoords.at(0)[index * 6 + 5].set(Vector2D(u2, -v2));
 
-        data._normals[index * 4 + 0].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 4 + 1].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 4 + 2].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 4 + 3].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 4 + 4].set(Vector3D(0.0f, 0.0f, 1.0f));
-        data._normals[index * 4 + 5].set(Vector3D(0.0f, 0.0f, 1.0f));
+       /* data._texCoords.at(0)[index * 6 + 0].set(Vector2D(0, 0));
+        data._texCoords.at(0)[index * 6 + 1].set(Vector2D(0, 1));
+        data._texCoords.at(0)[index * 6 + 2].set(Vector2D(1, 0));
+        data._texCoords.at(0)[index * 6 + 3].set(Vector2D(1, 0));
+        data._texCoords.at(0)[index * 6 + 4].set(Vector2D(0, 1));
+        data._texCoords.at(0)[index * 6 + 5].set(Vector2D(1, 1));*/
+
+        data._normals[index * 6 + 0].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 6 + 1].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 6 + 2].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 6 + 3].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 6 + 4].set(Vector3D(0.0f, 0.0f, 1.0f));
+        data._normals[index * 6 + 5].set(Vector3D(0.0f, 0.0f, 1.0f));
 
         ++index;
 
@@ -262,25 +264,7 @@ void CFont::build()
         x += adjustForKerningPairs(info, *chr);
     }
 
-    /*data.malloc(4, 6);
-
-    f32 s = 2.0f;
-    data._vertices[0].set(Vector3D(-s, -s, 0.0f));
-    data._vertices[1].set(Vector3D(-s, s, 0.0f));
-    data._vertices[2].set(Vector3D(s, s, 0.0f));
-    data._vertices[3].set(Vector3D(s, -s, 0.0f));
-
-    data._texCoords.at(0)[0].set(Vector2D(0, 1));
-    data._texCoords.at(0)[1].set(Vector2D(0, 0));
-    data._texCoords.at(0)[2].set(Vector2D(1, 0));
-    data._texCoords.at(0)[3].set(Vector2D(1, 1));
-
-    data._normals[0].set(Vector3D(0.0f, 0.0f, 1.0f));
-    data._normals[1].set(Vector3D(0.0f, 0.0f, 1.0f));
-    data._normals[2].set(Vector3D(0.0f, 0.0f, 1.0f));
-    data._normals[3].set(Vector3D(0.0f, 0.0f, 1.0f));
-
-    data._indices[0] = 0;
+    /*data._indices[0] = 0;
     data._indices[1] = 1;
     data._indices[2] = 2;
     data._indices[3] = 2;

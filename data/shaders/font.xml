@@ -12,7 +12,7 @@
 		<samplers> 
 			<var name="sampler0"/>
 		</samplers>
-		<renderstate polygonmode="line" winding="cw" cullface="false" blend="true" blendfactordst="srcAlpha" blendfactorsrc="invSrcAlpha"/>
+		<renderstate polygonmode="fill" winding="cw" cullface="false" blend="true" blendfactordst="srcAlpha" blendfactorsrc="invSrcAlpha"/>
 		<rendertarget val="default"/>
 		<shaders>
 			<var type="vertex" name="vfont">

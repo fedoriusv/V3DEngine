@@ -57,6 +57,7 @@ namespace scene
         std::string                     m_text;
         u32                             m_size;
         EAlignMode                      m_align;
+        f32                             m_textScale;
 
         renderer::MaterialPtr           m_material;
         renderer::GeometryPtr           m_geometry;
