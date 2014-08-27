@@ -26,10 +26,12 @@ namespace renderer
 
     private:
 
+        bool    addCharsToMap(const std::string& text)  override;
         bool    loadFont(const std::string& resource)   override;
 
         bool    parse(tinyxml2::XMLElement* root);
         bool    parseInfo(tinyxml2::XMLElement* root);
+        bool    parseCommon(tinyxml2::XMLElement* root);
         bool    parsePages(tinyxml2::XMLElement* root);
         bool    parseChars(tinyxml2::XMLElement* root);
         bool    parseKernings(tinyxml2::XMLElement* root);

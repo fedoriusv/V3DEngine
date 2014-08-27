@@ -61,6 +61,9 @@ namespace renderer
 
         const SCharDesc*            getCharInfo(const s32 charCode) const;
 
+        void                        setFontSize(const u32 size);
+        const u32                   getFontSize() const;
+
     protected:
 
         friend                      scene::CFontManager;
@@ -68,12 +71,14 @@ namespace renderer
 
         void                        setFontType(EFontType type);
 
-        virtual bool                loadFont(const std::string& resource) = 0;
+        virtual bool                addCharsToMap(const std::string& text) = 0;
+        virtual bool                loadFont(const std::string& resource)  = 0;
 
         EFontType                   m_fontType;
 
         std::map<s32, SCharDesc>    m_charInfo;
         std::vector<TexturePtr>     m_charTexture;
+        Dimension2D                 m_mapSize;
 
         std::string                 m_font;
         u32                         m_fontSize;

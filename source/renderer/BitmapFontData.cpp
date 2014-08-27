@@ -92,6 +92,17 @@ bool CBitmapFontData::parse(tinyxml2::XMLElement* root)
         return false;
     }
 
+    tinyxml2::XMLElement* commonElement = root->FirstChildElement("common");
+    if (!commonElement)
+    {
+        LOG_ERROR("BitmapFontData Error parse. Have no common section");
+        return false;
+    }
+    if (!parseCommon(commonElement))
+    {
+        return false;
+    }
+
     tinyxml2::XMLElement* pagesElement = root->FirstChildElement("pages");
     if (!pagesElement)
     {
@@ -159,6 +170,37 @@ bool CBitmapFontData::parseInfo(tinyxml2::XMLElement* root)
     return true;
 }
 
+bool CBitmapFontData::parseCommon(tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("Bitmap Font Error parse. Cannot read common element");
+        return false;
+    }
+
+    const s32 width = root->IntAttribute("scaleW");
+    const s32 height = root->IntAttribute("scaleH");
+    if (width <= 0 || height <= 0)
+    {
+        LOG_ERROR("BitmapFontData Error parse. Invaild Size Width or Height");
+        return false;
+    }
+
+    const s32 pages = root->IntAttribute("pages");
+    if (pages <= 0)
+    {
+        LOG_ERROR("BitmapFontData Error parse. Invalid Pages count");
+        return false;
+    }
+
+    m_mapSize.width = width;
+    m_mapSize.height = height;
+
+    m_charTexture.resize(pages);
+
+    return true;
+}
+
 bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
 {
     if (!root)
@@ -198,9 +240,10 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
         return false;
     }
 
-    if (m_charTexture.size() < pageId + 1)
+    if (m_charTexture.size() < static_cast<u32>(pageId) + 1)
     {
-        m_charTexture.resize(pageId + 1);
+        LOG_ERROR("BitmapFontData Error parse. Invalid Page id");
+        return false;
     }
 
     m_charTexture[pageId] = texture;
@@ -274,5 +317,10 @@ bool CBitmapFontData::parseKernings(tinyxml2::XMLElement* root)
         varElement = varElement->NextSiblingElement("kerning");
     }
 
+    return true;
+}
+
+bool CBitmapFontData::addCharsToMap(const std::string& text)
+{
     return true;
 }

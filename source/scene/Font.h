@@ -23,8 +23,6 @@ namespace scene
             eFontAlignLeft          = 0,
             eFontAlignCenter        = 1,
             eFontAlignRight         = 2,
-            eFontAlignJustify       = 3,
-            eFontAlignCenterCenter  = 4
         };
 
         CFont(const std::string& font);
@@ -57,7 +55,9 @@ namespace scene
         std::string                     m_text;
         u32                             m_size;
         EAlignMode                      m_align;
-        f32                             m_textScale;
+
+        const f32                       k_textScale;
+        const f32                       k_spacing;
 
         renderer::MaterialPtr           m_material;
         renderer::GeometryPtr           m_geometry;

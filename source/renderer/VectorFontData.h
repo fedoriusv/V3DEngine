@@ -26,7 +26,7 @@ namespace renderer
         void                        refresh();
 
         bool                        findCharsOnMap(const std::string& text);
-        bool                        addCharsToMap(const std::string& text);
+       
         void                        setFontSize(u32 size);
         bool                        loadCharList();
 
@@ -35,7 +35,8 @@ namespace renderer
 
     private:
 
-        bool                        loadFont(const std::string& resource) override;
+        bool                        addCharsToMap(const std::string& text) override;
+        bool                        loadFont(const std::string& resource)  override;
         bool                        loadFreeType(const std::string& font);
 
         bool                        loadCharToMap(u32 charId);

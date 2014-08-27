@@ -44,16 +44,10 @@
 
 					void main()
 					{
-						//fragVertex.texCoord0 = texture0;
-						//gl_Position = vec4(texture0.xy, 0, 1);
-						
 						vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
 						fragVertex.texCoord0 = texture0;
 						
 						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
-						
-						//vec4 vertex   = transform.modelMatrix * vec4(positions.xy, 0.0, 1.0);
-						//gl_Position = transform.orthoMatrix * vertex;
 					}
 				]]>
 			</var>
@@ -73,10 +67,6 @@
 
 					void main()
 					{
-						//vec4 color = vec4(1.0, 1.0, 1.0, 1.0);
-						//vec4 texColor = texture(sampler0, fragVertex.texCoord0);
-						//fragColor = texColor.rrrr * color;
-						
 						fragColor = texture(sampler0, fragVertex.texCoord0);
 					}
 				]]>
