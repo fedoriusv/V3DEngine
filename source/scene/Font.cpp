@@ -12,7 +12,7 @@ CFont::CFont(const std::string& font)
     , m_size(24U)
     , m_align(EAlignMode::eFontAlignLeft)
 
-    , k_textScale(0.03f)
+    , k_textScale(0.02f)
     , k_spacing(0.1f)
 
     , m_geometry(nullptr)
@@ -157,6 +157,10 @@ f32 CFont::getTextWidth()
     for (std::string::const_iterator chr = m_text.begin(); chr < m_text.end(); ++chr)
     {
         const CFontData::SCharDesc* info = m_data->getCharInfo(*chr);
+        if (!info)
+        {
+            continue;
+        }
 
         width += (k_textScale * info->_advX) + adjustForKerningPairs(info, *chr);
     }
@@ -206,7 +210,7 @@ void CFont::build()
     {
         const CFontData::SCharDesc* info = m_data->getCharInfo(*chr);
 
-        if (*chr == 10)
+        if (*chr == '\n')
         {
             x = 0;
             y += k_textScale * m_size;

@@ -22,16 +22,13 @@ inline int next_p2(int n)
 CVectorFontData::CVectorFontData(const std::string& font)
     : CFontData(font)
     , m_loaded(false)
-    , m_regenerateMap(false)
-    , m_fontSize(32U)
 
     , m_xOffTextures(0U)
     , m_yOffTextures(0U)
     , m_currentTextureIndex(0U)
 {
-    for (u32 i = 0; i < k_mapSize; ++i)
+    for (u32 i = 0; i < k_fontMapSize; ++i)
     {
-        m_charTextures[i] = nullptr;
         m_charList[i] = false;
     }
 }
@@ -40,19 +37,6 @@ CVectorFontData::~CVectorFontData()
 {
     FT_Done_Face(m_Face);
     FT_Done_FreeType(m_Library);
-}
-
-bool CVectorFontData::findCharsOnMap(const std::string& text)
-{
-    for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)\
-    {
-        if (!m_charList[(*chr)])
-        {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 bool CVectorFontData::addCharsToMap(const std::string& text)
@@ -68,14 +52,15 @@ bool CVectorFontData::addCharsToMap(const std::string& text)
         m_charList[(*chr)] = true;
     }
 
-    m_regenerateMap = haveNew;
+    if (haveNew)
+    {
+        if (!CVectorFontData::loadCharList())
+        {
+            return false;
+        }
+    }
 
     return haveNew;
-}
-
-void CVectorFontData::setFontSize(u32 size)
-{
-    m_fontSize = size;
 }
 
 void CVectorFontData::init(stream::IStream* stream)
@@ -92,7 +77,7 @@ bool CVectorFontData::load()
         return false;
     }
 
-    bool success = loadFreeType(CResource::getResourseName());
+    bool success = loadFont(CResource::getResourseName());
     stream->close();
 
     return success;
@@ -100,12 +85,8 @@ bool CVectorFontData::load()
 
 bool CVectorFontData::loadFont(const std::string& resource)
 {
-    return false;
-}
 
-bool CVectorFontData::loadFreeType(const std::string& font)
-{
-    if (font.empty())
+    if (resource.empty())
     {
         ASSERT(false && "FreeTypeFont: empty name");
         return false;
@@ -124,7 +105,7 @@ bool CVectorFontData::loadFreeType(const std::string& font)
         return false;
     }
 
-    error = FT_New_Face(m_Library, font.c_str(), 0, &m_Face);
+    error = FT_New_Face(m_Library, resource.c_str(), 0, &m_Face);
     if (error)
     {
 
@@ -150,10 +131,10 @@ bool CVectorFontData::loadFreeType(const std::string& font)
         return false;
     }
 
-    if (!CVectorFontData::loadCharList())
+    /*if (!CVectorFontData::loadCharList())
     {
         return false;
-    }
+    }*/
 
     return true;
 }
@@ -164,7 +145,7 @@ bool CVectorFontData::loadCharList()
 
     FT_Set_Pixel_Sizes(m_Face, m_fontSize, m_fontSize);
 
-    for (u32 i = 0; i < k_mapSize; ++i)
+    for (u32 i = 0; i < k_fontMapSize; ++i)
     {
         if (m_charList[i])
         {
@@ -178,22 +159,11 @@ bool CVectorFontData::loadCharList()
     if (m_charInfo.size() == 0)
     {
         LOG_WARRNING("FreeTypeData: Empty Char List");
-        return false;
     }
 
     m_loaded = true;
 
     return true;
-}
-
-void CVectorFontData::refresh()
-{
-    if (!m_regenerateMap)
-    {
-        return;
-    }
-
-    CVectorFontData::loadCharList();
 }
 
 bool CVectorFontData::loadCharToMap(u32 charId)
@@ -287,13 +257,13 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
         lineHeight = height;
     }
 
-    if (m_xOffTextures + width >= k_texWidth)
+    if (m_xOffTextures + width >= k_fontMapSize)
     {
         m_xOffTextures = 0;
         m_yOffTextures += lineHeight + 1;
     }
 
-    if (m_yOffTextures + lineHeight >= k_texHight)
+    if (m_yOffTextures + lineHeight >= k_fontMapSize)
     {
         m_yOffTextures = 0;
         m_currentTextureIndex++;
@@ -305,16 +275,16 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
     charDesc._height = height;
     charDesc._page = m_currentTextureIndex;
 
-    if (m_currentTextureIndex >= m_charMaterial.size())
+    if (m_currentTextureIndex >= m_charTexture.size())
     {
-        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_texWidth, k_texHight), eDepthComponent, eUnsignedByte, NULL);
+        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), eDepthComponent, eUnsignedByte, NULL);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
 
-        m_charMaterial.push_back(texture);
+        m_charTexture.push_back(texture);
     }
 
-    CTextureManager::getInstance()->copyToTexture2D(m_charMaterial[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), eLuminanceAlpha, data);
+    CTextureManager::getInstance()->copyToTexture2D(m_charTexture[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), eLuminanceAlpha, data);
 
     m_xOffTextures += width + 1;
 

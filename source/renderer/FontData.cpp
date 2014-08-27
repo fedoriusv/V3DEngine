@@ -7,7 +7,7 @@ CFontData::CFontData(const std::string& font)
     : m_fontType(EFontType::eUnknownFont)
     , m_font(font)
     , m_fontSize(32U)
-    , m_mapSize(256U, 256U)
+    , m_mapSize(k_fontMapSize, k_fontMapSize)
 {
 }
 
