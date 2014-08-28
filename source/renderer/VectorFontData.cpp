@@ -222,24 +222,18 @@ bool CVectorFontData::loadCharToMap(u32 charId)
 
 void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed)
 {
-    f32 scale = 1.0f;
-    f32 fontHeight = 1.0f;
+    const f32 scale = 1.0f;
+    const f32 fontHeight = 1.0f;
 
-    charDesc._advY = (s32)((glSlot->advance.y + fixed) / 64.f * scale);
-    charDesc._advX = (s32)((glSlot->advance.x + fixed) / 64.f * scale);
-    charDesc._offX = (s32)(btGlyph->left * scale);
-    charDesc._offY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
+    charDesc._advY = static_cast<s32>((glSlot->advance.y + fixed) / 64.f * scale);
+    charDesc._advX = static_cast<s32>((glSlot->advance.x + fixed) / 64.f * scale);
+    charDesc._offX = static_cast<s32>(btGlyph->left * scale);
+    charDesc._offY = static_cast<s32>(fontHeight / 1.2f - btGlyph->top * scale);
 
-
-   /* f32 iAdvX = glSlot->advance.x >> 6;
-    f32 iBearingX = glSlot->metrics.horiBearingX >> 6;
-    f32 iCharWidth = glSlot->metrics.width >> 6;
-    f32 iAdvY = (glSlot->metrics.height - glSlot->metrics.horiBearingY) >> 6;
-    f32 iBearingY = glSlot->metrics.horiBearingY >> 6;
-    f32 iCharHeight = glSlot->metrics.height >> 6;*/
-
-    u32 width = next_p2(btGlyph->bitmap.width);
-    u32 height = next_p2(btGlyph->bitmap.rows);
+    /*u32 width = next_p2(btGlyph->bitmap.width);
+    u32 height = next_p2(btGlyph->bitmap.rows);*/
+    u32 width = btGlyph->bitmap.width;
+    u32 height = btGlyph->bitmap.rows;
     u8* data = new u8[2 * width * height];
 
     for (u32 j = 0; j < height; j++)
@@ -247,7 +241,7 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
         for (u32 i = 0; i < width; i++)
         {
             data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] =
-               (i >= btGlyph->bitmap.width) || (j  >= btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + btGlyph->bitmap.width * j];
+               (i >= (u32)btGlyph->bitmap.width) || (j  >= (u32)btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + (u32)btGlyph->bitmap.width * j];
         }
     }
 
@@ -269,8 +263,8 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
         m_currentTextureIndex++;
     }
 
-    charDesc._offX = m_xOffTextures;
-    charDesc._offY = m_yOffTextures;
+    charDesc._srcX = m_xOffTextures;
+    charDesc._srcY = m_yOffTextures;
     charDesc._width = width;
     charDesc._height = height;
     charDesc._page = m_currentTextureIndex;
