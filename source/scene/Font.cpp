@@ -110,6 +110,7 @@ void CFont::init()
     m_geometry->setDrawMode(CGeometry::eTriangles);
     m_geometry->init();
 
+    //TODO: Need more texture maps
     m_material->setTexture(0, m_data->m_charTexture[0]);
 
     m_initialiazed = true;

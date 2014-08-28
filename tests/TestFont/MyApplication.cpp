@@ -16,18 +16,13 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
-    //cube->setName("cube");
-    //cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
-
     scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFont(0, "Hello world!", "fonts/arial.ttf", core::Vector3D(0, 0, -10)));
-    font->getMaterial()->setRenderTechnique("shaders/font.xml");
-    //font->getMaterial()->setTexture(0, "textures/box.jpg");
+    font->getMaterial()->setRenderTechnique("shaders/freetypefont.xml");
   
     scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -1.0f));
     camera->setName("camera");
 
-    BaseApplication::getSceneManager()->setBackgroundColor(Vector3D(0.1,0.1,0.1));
+    BaseApplication::getSceneManager()->setBackgroundColor(Vector3D(0.1f,0.1f,0.1f));
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
