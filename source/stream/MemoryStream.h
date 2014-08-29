@@ -14,6 +14,7 @@ namespace stream
     {
     public:
 
+        MempryStream();
         MempryStream(const void* data, const u32 size);
         virtual ~MempryStream();
 
@@ -63,7 +64,7 @@ namespace stream
 
     private:
 
-        bool    checkSize(int size);
+        bool    checkSize(u32 size);
 
         c8*     m_stream;
         u32     m_length;

@@ -3,6 +3,14 @@
 using namespace v3d;
 using namespace v3d::stream;
 
+MempryStream::MempryStream()
+    : m_stream(nullptr)
+    , m_length(0)
+    , m_allocated(0)
+    , m_pos(0)
+{
+}
+
 MempryStream::MempryStream(const void* data, const u32 size)
     : m_stream((c8*)data)
     , m_length(0)
@@ -86,7 +94,7 @@ u32 MempryStream::read(u32& value)
 
 u32 MempryStream::read(s32& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(u32));
+    ASSERT(m_length - m_pos >= sizeof(s32));
 
     value = (m_stream[m_pos++] & 0xFF) << 24;
     value |= (m_stream[m_pos++] & 0xFF) << 16;
@@ -464,18 +472,18 @@ void MempryStream::allocate(u32 size)
     }
 
     m_allocated = size;
-    m_stream = new char[m_allocated];
+    m_stream = new c8[m_allocated];
 
     MempryStream::seekBeg(0);
 }
 
-bool MempryStream::checkSize(int size)
+bool MempryStream::checkSize(u32 size)
 {
-    ASSERT(m_stream);
+   /* ASSERT(m_stream);
     if (m_allocated == 0)
     {
         return false;
-    }
+    }*/
 
     if (m_pos + size > m_allocated)
     {
