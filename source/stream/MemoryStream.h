@@ -10,13 +10,13 @@ namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class MempryStream : public IStream
+    class MemoryStream : public IStream
     {
     public:
 
-        MempryStream();
-        MempryStream(const void* data, const u32 size);
-        virtual ~MempryStream();
+        MemoryStream();
+        MemoryStream(const void* data, const u32 size);
+        virtual ~MemoryStream();
 
         void	clear();
         void	allocate(u32 size);

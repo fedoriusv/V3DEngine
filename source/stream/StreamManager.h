@@ -11,6 +11,7 @@ namespace stream
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class FileStream;
+    class MemoryStream;
 
     class CStreamManager : public Singleton<CStreamManager>
     {
@@ -20,6 +21,7 @@ namespace stream
         virtual         ~CStreamManager();
 
         FileStream*    createFileStream(const std::string& file);
+        MemoryStream*  createMemoryStream(const void* data, const u32 size);
 
     };
 
