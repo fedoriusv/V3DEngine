@@ -19,20 +19,6 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
 
-    v3d::stream::MempryStream* ms = new v3d::stream::MempryStream();
-    
-    s32 aa = -6;
-    u32 bb = 7;
-
-    ms->write(aa);
-    ms->write(bb);
-    ms->seekBeg(0);
-
-    s32 a = 0;
-    u32 b = 0;
-    ms->read(a);
-    ms->read(b);
-
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     //cube->setName("cube");

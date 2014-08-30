@@ -108,7 +108,12 @@ u32 MempryStream::read(u64& value)
 {
     ASSERT(m_length - m_pos >= sizeof(u64));
 
-    value = (m_stream[m_pos++] & 0xFF) << 24;
+    //value = (m_stream[m_pos++] & 0xFF) << 56;
+    //value |= (m_stream[m_pos++] & 0xFF) << 48;
+    //value |= (m_stream[m_pos++] & 0xFF) << 40;
+    //value |= (m_stream[m_pos++] & 0xFF) << 32;
+
+    value |= (m_stream[m_pos++] & 0xFF) << 24;
     value |= (m_stream[m_pos++] & 0xFF) << 16;
     value |= (m_stream[m_pos++] & 0xFF) << 8;
     value |= (m_stream[m_pos++] & 0xFF);
@@ -120,7 +125,12 @@ u32 MempryStream::read(s64& value)
 {
     ASSERT(m_length - m_pos >= sizeof(s64));
 
-    value = (m_stream[m_pos++] & 0xFF) << 24;
+    //value = (m_stream[m_pos++] & 0xFF) << 56;
+    //value |= (m_stream[m_pos++] & 0xFF) << 48;
+    //value |= (m_stream[m_pos++] & 0xFF) << 40;
+    //value |= (m_stream[m_pos++] & 0xFF) << 32;
+
+    value |= (m_stream[m_pos++] & 0xFF) << 24;
     value |= (m_stream[m_pos++] & 0xFF) << 16;
     value |= (m_stream[m_pos++] & 0xFF) << 8;
     value |= (m_stream[m_pos++] & 0xFF);
@@ -180,7 +190,13 @@ u32 MempryStream::read(bool& value)
 
 u32 MempryStream::read(std::string& value)
 {
-   //TODO:
+    u32 size = 0;
+
+    read(size);
+    ASSERT(m_length - m_pos >= size);
+
+    value.resize(size);
+    memcpy(&value[0], &m_stream[m_pos++], size);
 
     return m_pos;
 }
@@ -303,6 +319,11 @@ u32 MempryStream::write(const u64 value)
 {
     if (checkSize(sizeof(u64)))
     {
+        //m_stream[m_pos++] = (value >> 56) & 0xFF;
+        //m_stream[m_pos++] = (value >> 48) & 0xFF;
+        //m_stream[m_pos++] = (value >> 40) & 0xFF;
+        //m_stream[m_pos++] = (value >> 32) & 0xFF;
+
         m_stream[m_pos++] = (value >> 24) & 0xFF;
         m_stream[m_pos++] = (value >> 16) & 0xFF;
         m_stream[m_pos++] = (value >> 8) & 0xFF;
@@ -321,6 +342,11 @@ u32 MempryStream::write(const s64 value)
 {
     if (checkSize(sizeof(s64)))
     {
+        //m_stream[m_pos++] = (value >> 56) & 0xFF;
+        //m_stream[m_pos++] = (value >> 48) & 0xFF;
+        //m_stream[m_pos++] = (value >> 40) & 0xFF;
+        //m_stream[m_pos++] = (value >> 32) & 0xFF;
+
         m_stream[m_pos++] = (value >> 24) & 0xFF;
         m_stream[m_pos++] = (value >> 16) & 0xFF;
         m_stream[m_pos++] = (value >> 8) & 0xFF;
@@ -339,7 +365,7 @@ u32 MempryStream::write(const f32 value)
 {
     if (checkSize(sizeof(f32)))
     {
-        int& ival = *((int*)&value);
+        s32& ival = *((s32*)&value);
 
         m_stream[m_pos++] = (ival >> 24) & 0xFF;
         m_stream[m_pos++] = (ival >> 16) & 0xFF;
@@ -359,7 +385,7 @@ u32 MempryStream::write(const f64 value)
 {
     if (checkSize(sizeof(f64)))
     {
-        int& ival = *((int*)&value);
+        s32& ival = *((s32*)&value);
 
         m_stream[m_pos++] = (ival >> 24) & 0xFF;
         m_stream[m_pos++] = (ival >> 16) & 0xFF;
@@ -379,7 +405,7 @@ u32 MempryStream::write(const f80 value)
 {
     if (checkSize(sizeof(f80)))
     {
-        int& ival = *((int*)&value);
+        s32& ival = *((s32*)&value);
 
         m_stream[m_pos++] = (ival >> 24) & 0xFF;
         m_stream[m_pos++] = (ival >> 16) & 0xFF;
@@ -412,7 +438,26 @@ u32 MempryStream::write(const bool value)
 
 u32 MempryStream::write(const std::string& value)
 {
-    //TODO:
+    if (value.empty())
+    {
+        return m_pos;
+    }
+
+    if (checkSize(sizeof(u32)))
+    {
+        write(value.size());
+    }
+
+    if (checkSize(value.size()))
+    {
+        memcpy(m_stream + m_pos, &value[0], value.size());
+        m_pos += value.size();
+
+        if (m_pos > m_length)
+        {
+            m_length = m_pos;
+        }
+    }
 
     return m_pos;
 }
@@ -489,7 +534,7 @@ bool MempryStream::checkSize(u32 size)
     {
         c8* oldStream = m_stream;
 
-        int newAllocated = 2 * (m_pos + size);
+        s32 newAllocated = 2 * (m_pos + size);
         m_stream = new c8[newAllocated];
         memcpy(m_stream, oldStream, m_allocated);
 
