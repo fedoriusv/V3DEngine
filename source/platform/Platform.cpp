@@ -11,7 +11,7 @@
 #endif
 
 #ifdef _PLATFORM_LINUX_
-#	include "platform/PlatformLinux.h"
+#	include "platform/WindowLinux.h"
 #endif
 
 #ifdef _OPENGL_DRIVER_
@@ -52,7 +52,7 @@ platform::WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& 
 #endif
 
 #ifdef _PLATFORM_LINUX_
-	window = new CPlatformLinux(param);
+    window = std::make_shared<CWindowLinux>(CWindowLinux(param));
 #endif
 
 	window->create();

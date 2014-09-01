@@ -87,14 +87,14 @@ if(WIN32)
 elseif(UNIX AND NOT APPLE)
 	set(PLATFORM_HEADERS
 		${SOURCE_DIR}/platform/Platform.h
-		${SOURCE_DIR}/platform/PlatformManager.h
-		${SOURCE_DIR}/platform/PlatformLinux.h
+		${SOURCE_DIR}/platform/Window.h
+		${SOURCE_DIR}/platform/WindowLinux.h
 	)
 	
 	set(PLATFORM_SOURCES
 		${SOURCE_DIR}/platform/Platform.cpp
-		${SOURCE_DIR}/platform/PlatformManager.cpp
-		${SOURCE_DIR}/platform/PlatformLinux.cpp
+		${SOURCE_DIR}/platform/Window.cpp
+		${SOURCE_DIR}/platform/WindowLinux.cpp
 	)
 
 elseif(APPLE)
@@ -188,7 +188,7 @@ target_link_libraries(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-	${DEVIL_LIB}
+        ${DEVIL_LIB}
 	)
 
 ################################

@@ -11,7 +11,7 @@
 #elif defined(_PLATFORM_LINUX_)
 #	include "GL/glxew.h"
 #	include <GL/glx.h>
-#	include "platform/PlatformLinux.h"
+#	include "platform/WindowLinux.h"
 #endif
 
 #include <iostream>
@@ -49,7 +49,7 @@ bool CDriverContextGL::createContext()
 bool CDriverContextGL::createWin32Context()
 {
 
-	LOG_INFO("Create Win32 GL Context")
+    LOG_INFO("Create Win32 GL Context");
 
 	// Create a window to test antialiasing support
 	HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -159,7 +159,8 @@ bool CDriverContextGL::createWin32Context()
 	if (error !=  GLEW_OK )
 	{
 		const GLubyte* errorStr = glewGetErrorString(error);
-		LOG_ERROR("Couldn't initialize GLEW: %s", errorStr)
+        LOG_ERROR("Couldn't initialize GLEW: %s", errorStr);
+
 		return false;
 	}
 
@@ -272,64 +273,67 @@ typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXC
 
 bool CDriverContextGL::createLinuxContext()
 {
-	// Get the default screen's GLX extension list
-	Display* display = static_cast< const platform::CPlatformLinux*>(m_platform)->getDisplay();
-	const char *glxExtensions = glXQueryExtensionsString( display, DefaultScreen( display ) );
-	std::cout << glxExtensions << std::endl;
+    LOG_INFO("Create Linux GL Context");
 
-	if (!gluCheckExtension((const GLubyte*)"GLX_ARB_create_context" , (const GLubyte*)glxExtensions))
-	{
-		// "glXCreateContextAttribsARB() not found".
-		return false;
-	}
+    // Get the default screen's GLX extension list
+    Display* display = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getDisplay();
+    const char *glxExtensions = glXQueryExtensionsString(display, DefaultScreen(display));
+    //std::cout << glxExtensions << std::endl;
 
-	int attribs[] =
-	{
-		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
-		//GLX_CONTEXT_FLAGS_ARB,       GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-		None
-	};
+    if (!gluCheckExtension((const GLubyte*)"GLX_ARB_create_context" , (const GLubyte*)glxExtensions))
+    {
+        LOG_ERROR("glXCreateContextAttribsARB() not found");
+        return false;
+    }
 
-	glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
-	glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
+    int attribs[] =
+    {
+        GLX_CONTEXT_MAJOR_VERSION_ARB, OPENGL_VERSION_MAJOR,
+        GLX_CONTEXT_MINOR_VERSION_ARB, OPENGL_VERSION_MINOR,
+        //GLX_CONTEXT_FLAGS_ARB,       GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+        None
+    };
 
-	GLXContext context = nullptr;
-	GLXFBConfig fbConfigs = static_cast< const platform::CPlatformLinux*>(m_platform)->getFBConfig();
-	//XVisualInfo* visualInfo = static_cast< const platform::CPlatformLinux*>(m_platform)->getVisualInfo();
-	//context = glXCreateContext(display, visualInfo, NULL, GL_TRUE);
-	context = glXCreateContextAttribsARB( display, fbConfigs, 0, True, attribs );
-	if (!context)
-	{
-		//Error to create exContext OpenGL 3.3
-		return false;
-	}
+    glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
+    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
 
-	Window window = static_cast< const platform::CPlatformLinux*>(m_platform)->getWidow();
-	if (!glXMakeCurrent( display, window, context ))
-	{
-		//Can not set current context;
-		return false;
-	}
+    GLXContext context = nullptr;
+    GLXFBConfig fbConfigs = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getFBConfig();
+    //XVisualInfo* visualInfo = static_cast< const platform::CPlatformLinux*>(m_platform)->getVisualInfo();
+    //context = glXCreateContext(display, visualInfo, NULL, GL_TRUE);
+    context = glXCreateContextAttribsARB(display, fbConfigs, 0, True, attribs);
+    if (!context)
+    {
+        LOG_ERROR("Error to create exContext OpenGL");
+        return false;
+    }
 
-	//XSync( display, False );
+    Window window = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getWidow();
+    if (!glXMakeCurrent(display, window, context))
+    {
+        LOG_ERROR("Can not set current context");
+        return false;
+    }
 
-	GLenum error = glewInit();
-	if (error !=  GLEW_OK )
-	{
-		const GLubyte* errorStr = glewGetErrorString(error);
-		std::cout << errorStr << std::endl;
-		//"Couldn't initialize GLEW! error errorStr
+    //XSync( display, False );
 
-		glXMakeCurrent( display, 0, 0 );
-		glXDestroyContext( display, context );
+    GLenum error = glewInit();
+    if (error !=  GLEW_OK)
+    {
+        const GLubyte* errorStr = glewGetErrorString(error);
+        LOG_ERROR("Couldn't initialize GLEW: %s", errorStr);
 
-		return false;
-	}
+        glXMakeCurrent(display, 0, 0);
+        glXDestroyContext(display, context);
 
-	driverInfo();
+        return false;
+    }
 
-	return true;
+    CDriverContextGL::checkForErrors("Create Context");
+
+    LOG_INFO("Linux Context GL successful created");
+
+    return true;
 }
 
 #elif defined(_PLATFORM_MACOSX_)

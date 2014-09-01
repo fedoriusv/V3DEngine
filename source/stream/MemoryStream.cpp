@@ -445,7 +445,7 @@ u32 MemoryStream::write(const std::string& value)
 
     if (checkSize(sizeof(u32)))
     {
-        write(value.size());
+        MemoryStream::write(static_cast<u32>(value.size()));
     }
 
     if (checkSize(value.size()))
@@ -499,7 +499,7 @@ void* MemoryStream::map(const u32 size)
 
 void MemoryStream::unmap()
 {
-    //TODO
+    //TODO:
 }
 
 void MemoryStream::clear()

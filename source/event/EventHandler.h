@@ -23,7 +23,7 @@ namespace event
 
 		virtual bool			onEvent(const SInputEventPtr event) = 0;
 
-		std::queue<const SInputEventPtr> m_events;
+        std::queue<SInputEventPtr> m_events;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
