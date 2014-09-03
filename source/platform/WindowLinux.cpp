@@ -1,5 +1,6 @@
 #include "WindowLinux.h"
-#include "context/DriverContextGL.h"
+
+#include "Engine.h"
 #include "utils/Logger.h"
 
 #include <X11/Xatom.h>
@@ -204,7 +205,7 @@ void CWindowLinux::create()
 	winAttribs.colormap          = colorMap;
 	winAttribs.background_pixmap = None ;
 	winAttribs.border_pixel      = 0;
-	winAttribs.event_mask        = StructureNotifyMask;
+    winAttribs.event_mask        = StructureNotifyMask | KeyPressMask | KeyReleaseMask;
 	//winAttribs.bit_gravity       = StaticGravity;
 	//winAttribs.background_pixel  = WhitePixel(m_display, m_screen);
 	//winAttribs.override_redirect = m_param.isFullscreen;
@@ -275,12 +276,74 @@ void CWindowLinux::close()
 
 bool CWindowLinux::begin()
 {
-	return true;
+    while (XPending(m_display) > 0)
+    {
+        XEvent xevent;
+        XNextEvent(m_display, &xevent);
+
+        switch (xevent.type)
+        {
+
+        case ConfigureNotify:
+        {
+            int a = 0;
+            break;
+        }
+
+        case MapNotify:
+            //WindowMinimized=false;
+            break;
+
+        case UnmapNotify:
+            //WindowMinimized=true;
+            break;
+
+        case FocusIn:
+            //WindowHasFocus=true;
+            break;
+
+        case FocusOut:
+            //WindowHasFocus=false;
+            break;
+
+        case KeyPress:
+        {
+            KeySym mp;
+            c8 buf[8]={0};
+            XLookupString(&xevent.xkey, buf, sizeof(buf), &mp, NULL);
+
+            v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
+            event->_event = v3d::event::eKeyboardPressDown;
+            event->_key = (EKeyCode)mp;
+            event->_character = (c8)mp;
+
+            INPUT_EVENTS->pushEvent(event);
+
+            return true;
+        }
+
+        case KeyRelease:
+        {
+            int a4 = 0;
+            break;
+        }
+
+            default:
+                break;
+        }
+    }
+
+    return true;
 }
 
 bool CWindowLinux::end()
 {
     glXSwapBuffers (m_display, m_window);
 
-	return true;
+    return true;
+}
+
+void CWindowLinux::addKeyCodes()
+{
+    m_keys.add(eKeyUknown, 0x00);
 }

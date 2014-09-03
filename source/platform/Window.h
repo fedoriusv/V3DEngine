@@ -2,6 +2,7 @@
 #define _V3D_WINDOW_H_
 
 #include "common.h"
+#include "event/InputEvents.h"
 
 namespace v3d
 {
@@ -87,8 +88,12 @@ namespace platform
 		virtual void				create()                                 = 0;
 		virtual void				close()                                  = 0;
 
+        virtual void                addKeyCodes()                            = 0;
+
 		WindowParam					m_param;
 		EPlatformType				m_platformType;
+
+        v3d::event::SKeyCodes       m_keys;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -114,6 +114,14 @@ namespace event
 	typedef std::shared_ptr<SMouseInputEvent> SMouseInputEventPtr;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    struct SKeyCodes
+    {
+        std::map<EKeyCode, u32> _key;
+
+        void add(EKeyCode code, u32 systemCode);
+        u32 get(EKeyCode code);
+    };
 }
 }
 

@@ -23,7 +23,7 @@ if(WIN32)
 	add_definitions(-D_WIN32 -D_CONSOLE -DUNICODE -D_UNICODE)
 elseif(UNIX AND NOT APPLE)
 	message("-- Platrorm Linux")
-	add_definitions(-D_LINUX)
+        add_definitions(-D_LINUX -DUNICODE -D_UNICODE)
 elseif(APPLE)
 	message("-- Platrorm MacOSX")
 	add_definitions(-DMACOSX -DUNICODE -D_UNICODE)
@@ -188,7 +188,7 @@ target_link_libraries(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-        ${DEVIL_LIB}
+#        ${DEVIL_LIB}
 	)
 
 ################################

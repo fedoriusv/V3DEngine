@@ -44,3 +44,14 @@ SMouseInputEvent::SMouseInputEvent()
 SMouseInputEvent::~SMouseInputEvent()
 {
 }
+
+
+void SKeyCodes::add(EKeyCode code, u32 systemCode)
+{
+    _key.insert(std::map<EKeyCode, u32>::value_type(code, systemCode));
+}
+
+u32 SKeyCodes::get(EKeyCode code)
+{
+    return _key[code];
+}

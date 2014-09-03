@@ -42,6 +42,8 @@ namespace platform
         void            create()                                    override;
         void            close()                                     override;
 
+        void            addKeyCodes()                               override;
+
         Display*        m_display;
         Window          m_window;
         int             m_screen;
@@ -50,7 +52,6 @@ namespace platform
         GLXWindow       m_glxWindow;
         GLXContext      m_glxContext;
         XVisualInfo*    m_visualInfo;
-
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
