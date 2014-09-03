@@ -188,7 +188,7 @@ target_link_libraries(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-#        ${DEVIL_LIB}
+    ${DEVIL_LIB}
 	)
 
 ################################

@@ -40,6 +40,7 @@ namespace v3d
 
 #define RENDERER CEngine::getInstance()->getRenderer()
 #define INPUT_EVENTS  CEngine::getInstance()->getInputEventHandler()
+#define WINDOW CEngine::getInstance()->getWindow()
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

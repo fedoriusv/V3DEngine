@@ -319,6 +319,8 @@ void CWindowWin32::create()
 	m_context = hDc;
 
     LOG_INFO("Window Size (%d, %d)", m_param.size.width, m_param.size.height);
+
+    CWindowWin32::addKeyCodes();
 }
 
 void CWindowWin32::close()
@@ -331,6 +333,154 @@ void CWindowWin32::close()
 	DestroyWindow(m_window);
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 	UnregisterClass(__TEXT("V3DWin32"), hInstance);
+}
+
+void CWindowWin32::addKeyCodes()
+{
+    m_keys.add(eKeyUknown,    0x00);
+    m_keys.add(eKeyLButton,   0x01);
+    m_keys.add(eKeyRButton,   0x02);
+    m_keys.add(eKeyCancel,    0x03);
+    m_keys.add(eKeyMButton,   0x04);
+    m_keys.add(eKeyXButton1,  0x05);
+    m_keys.add(eKeyXButton2,  0x06);
+    m_keys.add(eKeyBack,      0x08);
+    m_keys.add(eKeyTab,       0x09);
+    m_keys.add(eKeyClear,     0x0C);
+    m_keys.add(eKeyReturn,    0x0D);
+    m_keys.add(eKeyShift,     0x10);
+    m_keys.add(eKeyControl,   0x11);
+    m_keys.add(eKeyMenu,      0x12);
+    m_keys.add(eKeyPause,     0x13);
+    m_keys.add(eKeyCapital,   0x14);
+    m_keys.add(eKeyKana,      0x15);
+    m_keys.add(eKeyHanguel,   0x15);
+    m_keys.add(eKeyHangul,    0x15);
+    m_keys.add(eKeyJunja,     0x17);
+    m_keys.add(eKeyFinal,     0x18);
+    m_keys.add(eKeyHanja,     0x19);
+    m_keys.add(eKeyKanji,     0x19);
+    m_keys.add(eKeyEscape,    0x1B);
+    m_keys.add(eKeyConvert,   0x1C);
+    m_keys.add(eKeyNonconvert,0x1D);
+    m_keys.add(eKeyAccept,    0x1E);
+    m_keys.add(eKeyModechange,0x1F);
+    m_keys.add(eKeySpace,     0x20);
+    m_keys.add(eKeyPrior,     0x21);
+    m_keys.add(eKeyNext,      0x22);
+    m_keys.add(eKeyEnd,       0x23);
+    m_keys.add(eKeyHome,      0x24);
+    m_keys.add(eKeyLeft,      0x25);
+    m_keys.add(eKeyUp,        0x26);
+    m_keys.add(eKeyRight,     0x27);
+    m_keys.add(eKeyDown,      0x28);
+    m_keys.add(eKeySelect,    0x29);
+    m_keys.add(eKeyPrint,     0x2A);
+    m_keys.add(eKeyExecut,    0x2B);
+    m_keys.add(eKeySnapshot,  0x2C);
+    m_keys.add(eKeyInsert,    0x2D);
+    m_keys.add(eKeyDelete,    0x2E);
+    m_keys.add(eKeyHelp,      0x2F);
+    m_keys.add(eKeyKey_0,     0x30);
+    m_keys.add(eKeyKey_1,     0x31);
+    m_keys.add(eKeyKey_2,     0x32);
+    m_keys.add(eKeyKey_3,     0x33);
+    m_keys.add(eKeyKey_4,     0x34);
+    m_keys.add(eKeyKey_5,     0x35);
+    m_keys.add(eKeyKey_6,     0x36);
+    m_keys.add(eKeyKey_7,     0x37);
+    m_keys.add(eKeyKey_8,     0x38);
+    m_keys.add(eKeyKey_9,     0x39);
+    m_keys.add(eKeyKey_A,     0x41);
+    m_keys.add(eKeyKey_B,     0x42);
+    m_keys.add(eKeyKey_C,     0x43);
+    m_keys.add(eKeyKey_D,     0x44);
+    m_keys.add(eKeyKey_E,     0x45);
+    m_keys.add(eKeyKey_F,     0x46);
+    m_keys.add(eKeyKey_G,     0x47);
+    m_keys.add(eKeyKey_H,     0x48);
+    m_keys.add(eKeyKey_I,     0x49);
+    m_keys.add(eKeyKey_J,     0x4A);
+    m_keys.add(eKeyKey_K,     0x4B);
+    m_keys.add(eKeyKey_L,     0x4C);
+    m_keys.add(eKeyKey_M,     0x4D);
+    m_keys.add(eKeyKey_N,     0x4E);
+    m_keys.add(eKeyKey_O,     0x4F);
+    m_keys.add(eKeyKey_P,     0x50);
+    m_keys.add(eKeyKey_Q,     0x51);
+    m_keys.add(eKeyKey_R,     0x52);
+    m_keys.add(eKeyKey_S,     0x53);
+    m_keys.add(eKeyKey_T,     0x54);
+    m_keys.add(eKeyKey_U,     0x55);
+    m_keys.add(eKeyKey_V,     0x56);
+    m_keys.add(eKeyKey_W,     0x57);
+    m_keys.add(eKeyKey_X,     0x58);
+    m_keys.add(eKeyKey_Y,     0x59);
+    m_keys.add(eKeyKey_Z,     0x5A);
+    m_keys.add(eKeyLWin,      0x5B);
+    m_keys.add(eKeyRWin,      0x5C);
+    m_keys.add(eKeyApps,      0x5D);
+    m_keys.add(eKeySleep,     0x5F);
+    m_keys.add(eKeyNumpad0,   0x60);
+    m_keys.add(eKeyNumpad1,   0x61);
+    m_keys.add(eKeyNumpad2,   0x62);
+    m_keys.add(eKeyNumpad3,   0x63);
+    m_keys.add(eKeyNumpad4,   0x64);
+    m_keys.add(eKeyNumpad5,   0x65);
+    m_keys.add(eKeyNumpad6,   0x66);
+    m_keys.add(eKeyNumpad7,   0x67);
+    m_keys.add(eKeyNumpad8,   0x68);
+    m_keys.add(eKeyNumpad9,   0x69);
+    m_keys.add(eKeyMultiply,  0x6A);
+    m_keys.add(eKeyAdd,       0x6B);
+    m_keys.add(eKeySeparator, 0x6C);
+    m_keys.add(eKeySubtract,  0x6D);
+    m_keys.add(eKeyDecimal,   0x6E);
+    m_keys.add(eKeyDivide,    0x6F);
+    m_keys.add(eKeyF1,        0x70);
+    m_keys.add(eKeyF2,        0x71);
+    m_keys.add(eKeyF3,        0x72);
+    m_keys.add(eKeyF4,        0x73);
+    m_keys.add(eKeyF5,        0x74);
+    m_keys.add(eKeyF6,        0x75);
+    m_keys.add(eKeyF7,        0x76);
+    m_keys.add(eKeyF8,        0x77);
+    m_keys.add(eKeyF9,        0x78);
+    m_keys.add(eKeyF10,       0x79);
+    m_keys.add(eKeyF11,       0x7A);
+    m_keys.add(eKeyF12,       0x7B);
+    m_keys.add(eKeyF13,       0x7C);
+    m_keys.add(eKeyF14,       0x7D);
+    m_keys.add(eKeyF15,       0x7E);
+    m_keys.add(eKeyF16,       0x7F);
+    m_keys.add(eKeyF17,       0x80);
+    m_keys.add(eKeyF18,       0x81);
+    m_keys.add(eKeyF19,       0x82);
+    m_keys.add(eKeyF20,       0x83);
+    m_keys.add(eKeyF21,       0x84);
+    m_keys.add(eKeyF22,       0x85);
+    m_keys.add(eKeyF23,       0x86);
+    m_keys.add(eKeyF24,       0x87);
+    m_keys.add(eKeyNumlock,   0x90);
+    m_keys.add(eKeyScroll,    0x91);
+    m_keys.add(eKeyLShift,    0xA0);
+    m_keys.add(eKeyRShift,    0xA1);
+    m_keys.add(eKeyLControl,  0xA2);
+    m_keys.add(eKeyRControl,  0xA3);
+    m_keys.add(eKeyLMenu,     0xA4);
+    m_keys.add(eKeyRMenu,     0xA5);
+    m_keys.add(eKeyPlus,      0xBB);
+    m_keys.add(eKeyComma,     0xBC);
+    m_keys.add(eKeyMinus,     0xBD);
+    m_keys.add(eKeyPeriod,    0xBE);
+    m_keys.add(eKeyAttn,      0xF6);
+    m_keys.add(eKeyCrSel,     0xF7);
+    m_keys.add(eKeyExSel,     0xF8);
+    m_keys.add(eKeyErEof,     0xF9);
+    m_keys.add(eKeyPlay,      0xFA);
+    m_keys.add(eKeyZoom,      0xFB);
+    m_keys.add(eKeyPA1,       0xFD);
+    m_keys.add(eKeyOem_Clear, 0xFE);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -352,11 +502,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			const int scancode = (lParam >> 16) & 0xff;
-		
+            SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
+
             v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
             event->_event = v3d::event::eKeyboardPressDown;
-            event->_key = (EKeyCode)wParam;
+            event->_key = keys.get(wParam);
             event->_character = (c8)wParam;
 
             INPUT_EVENTS->pushEvent(event);
@@ -367,9 +517,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SYSKEYUP:
 		case WM_KEYUP:
 		{
+            SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
+
             v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
             event->_event = v3d::event::eKeyboardPressUp;
-            event->_key = (EKeyCode)wParam;
+            event->_key = keys.get(wParam);;
             event->_character = (c8)wParam;
 
             INPUT_EVENTS->pushEvent(event);

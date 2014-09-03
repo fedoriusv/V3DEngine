@@ -117,10 +117,14 @@ namespace event
 
     struct SKeyCodes
     {
-        std::map<EKeyCode, u32> _key;
+    public:
 
-        void add(EKeyCode code, u32 systemCode);
-        u32 get(EKeyCode code);
+        void                    add(EKeyCode code, u32 systemCode);
+        EKeyCode                get(u32 code);
+
+    private:
+
+        std::map<u32, EKeyCode> _key;
     };
 }
 }

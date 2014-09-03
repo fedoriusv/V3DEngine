@@ -40,6 +40,8 @@ namespace platform
 		void	create()                                    override;
 		void	close()                                     override;
 
+        void    addKeyCodes()                               override;
+
 		HWND	m_window;
 		HDC		m_context;
 

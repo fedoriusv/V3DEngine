@@ -64,7 +64,7 @@ add_definitions(-DFT2_BUILD_LIBRARY)
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # Create the configuration file
-message(STATUS "Creating directory, ${PROJECT_BINARY_DIR}/include/freetype2.")
+#message(STATUS "Creating directory, ${PROJECT_BINARY_DIR}/include/freetype2.")
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/freetype2)
 
 # For the auto-generated ftconfig.h file

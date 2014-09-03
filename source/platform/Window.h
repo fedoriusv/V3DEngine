@@ -81,6 +81,8 @@ namespace platform
 		virtual bool				begin()                                  = 0;
 		virtual bool				end()                                    = 0;
 
+        const event::SKeyCodes&     getKeyCodes();
+
 	protected:
 
 		friend						CPlatform;
@@ -93,7 +95,7 @@ namespace platform
 		WindowParam					m_param;
 		EPlatformType				m_platformType;
 
-        v3d::event::SKeyCodes       m_keys;
+        event::SKeyCodes            m_keys;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

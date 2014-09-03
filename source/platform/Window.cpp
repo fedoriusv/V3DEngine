@@ -42,3 +42,8 @@ const EDriverType CWindow::getDriverType() const
 {
 	return m_param.driverType;
 }
+
+const event::SKeyCodes& CWindow::getKeyCodes()
+{
+    return m_keys;
+}

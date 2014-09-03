@@ -392,7 +392,7 @@ bool CDriverContextGL::setVSync(bool use)
 #if defined(_PLATFORM_WIN_)
     if (WGLEW_EXT_swap_control)
     {
-        succeed = wglSwapIntervalEXT(use ? 1 : 0);
+        succeed = (wglSwapIntervalEXT(use ? 1 : 0) == TRUE) ? true : false;
     }
 #endif
     return succeed;
