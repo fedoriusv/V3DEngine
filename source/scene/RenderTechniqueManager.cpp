@@ -77,6 +77,10 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
                     
                 }
             }
+            else
+            {
+                LOG_WARRNING("CRenderTechniqueManager file [%s] not found", fullName.c_str());
+            }
         }
     }
 

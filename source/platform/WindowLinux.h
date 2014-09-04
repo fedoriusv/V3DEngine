@@ -52,6 +52,11 @@ namespace platform
         GLXWindow       m_glxWindow;
         GLXContext      m_glxContext;
         XVisualInfo*    m_visualInfo;
+
+        bool            m_hasFocus;
+        bool            m_isMinimized;
+
+        bool            m_close;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

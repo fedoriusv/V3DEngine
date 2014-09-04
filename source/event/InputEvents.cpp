@@ -53,5 +53,10 @@ void SKeyCodes::add(EKeyCode code, u32 systemCode)
 
 EKeyCode SKeyCodes::get(u32 code)
 {
-    return _key[code];
+    if (_key.find(code) != _key.end())
+    {
+        return _key[code];
+    }
+
+    return eKeyUknown;
 }

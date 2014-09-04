@@ -17,6 +17,7 @@ public:
 protected:
 
 	virtual v3d::platform::PlatformPtr			getPlatform()          const final;
+    virtual v3d::platform::WindowPtr			getWindow()            const final;
 	virtual v3d::event::InputEventHandlerPtr	getInputEventHandler() const final;
 	virtual v3d::scene::SceneManagerPtr		    getSceneManager()      const final;
 

@@ -44,6 +44,11 @@ platform::PlatformPtr BaseApplication::getPlatform() const
 	return m_engine->getPlatform();
 }
 
+platform::WindowPtr BaseApplication::getWindow() const
+{
+    return m_engine->getPlatform()->getWindow();
+}
+
 event::InputEventHandlerPtr BaseApplication::getInputEventHandler() const
 {
 	return m_engine->getInputEventHandler();
