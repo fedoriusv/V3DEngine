@@ -8,48 +8,48 @@ namespace v3d
 {
 namespace platform
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CPlatform
-	{
-	public:
+    class CPlatform
+    {
+    public:
 
-									CPlatform();
-		virtual						~CPlatform();
+        CPlatform();
+        virtual                     ~CPlatform();
 
-		WindowPtr					createWindowWithContext(
-										const core::Dimension2D& size = core::Dimension2D(800U, 600),
-										const core::Dimension2D& pos  = core::Dimension2D(0U, 0U),
-										bool isFullscreen             = false,
-										bool isResizeble              = false,
-										EDriverType driverType        = EDriverType::eDriverOpenGL);
+        WindowPtr                   createWindowWithContext(
+                                        const core::Dimension2D& size = core::Dimension2D(800U, 600),
+                                        const core::Dimension2D& pos = core::Dimension2D(0U, 0U),
+                                        bool isFullscreen = false,
+                                        bool isResizeble = false,
+                                        EDriverType driverType = EDriverType::eDriverOpenGL);
 
-		bool						hasError()    const;
-		void						closeWindow() const;
+        bool                        hasError()      const;
+        void                        closeWindow()   const;
 
-		WindowPtr					getWindow()   const;
-		renderer::RendererPtr		getRenderer() const;
+        WindowPtr                   getWindow()     const;
+        renderer::RendererPtr       getRenderer()   const;
 
-		const platform::EDriverType	getDriverType() const;
-	
-		bool						init();
-		bool						begin();
-		bool						end();
+        const platform::EDriverType getDriverType() const;
 
-	private:
+        bool                        init();
+        bool                        begin();
+        bool                        end();
 
-		renderer::RendererPtr		createRenderer(const renderer::DriverContextPtr& driver, const WindowParam& param);
+    private:
 
-		WindowPtr					m_window;
-		renderer::RendererPtr		m_renderer;
-		
-	};
+        renderer::RendererPtr       createRenderer(const renderer::DriverContextPtr& driver, const WindowParam& param);
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+        WindowPtr                   m_window;
+        renderer::RendererPtr       m_renderer;
 
-	typedef std::shared_ptr<CPlatform>	PlatformPtr;
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<CPlatform>  PlatformPtr;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 #endif //_V3D_PLATFORM_H_

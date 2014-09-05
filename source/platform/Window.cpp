@@ -4,8 +4,8 @@ using namespace v3d;
 using namespace v3d::platform;
 
 CWindow::CWindow(const WindowParam& param)
-	: m_param(param)
-	, m_platformType(EPlatformType::ePlatformNull)
+    : m_param(param)
+    , m_platformType(EPlatformType::ePlatformNull)
 {
 }
 
@@ -15,32 +15,32 @@ CWindow::~CWindow()
 
 bool CWindow::isFullscreen() const
 {
-	return m_param.isFullscreen;
+    return m_param._isFullscreen;
 }
 
 bool CWindow::isResizeble() const
 {
-	return m_param.isResizeble;
+    return m_param._isResizeble;
 }
 
 const core::Dimension2D& CWindow::getSize() const
 {
-	return m_param.size;
+    return m_param._size;
 }
 
 const core::Dimension2D& CWindow::getPosition() const
 {
-	return m_param.position;
+    return m_param._position;
 }
 
 const EPlatformType CWindow::getPlatformType() const
 {
-	return m_platformType;
+    return m_platformType;
 }
 
 const EDriverType CWindow::getDriverType() const
 {
-	return m_param.driverType;
+    return m_param._driverType;
 }
 
 const event::SKeyCodes& CWindow::getKeyCodes()
