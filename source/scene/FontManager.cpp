@@ -94,7 +94,12 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
                     return font;
                 }
             }
+            else
+            {
+                LOG_WARRNING("CFontManager file [%s] not found", fullName.c_str());
+            }
         }
+
     }
 
     return nullptr;

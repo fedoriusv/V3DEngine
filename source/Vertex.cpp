@@ -12,45 +12,45 @@ SVertexData::SVertexData()
 
 void SVertexData::clear()
 {
-	if (!_vertices.empty())
-	{
-		_vertices.clear();
-	}
-
-	if (!_normals.empty())
-	{
-		_normals.clear();
-	}
-
+    if (!_vertices.empty())
+    {
+        _vertices.clear();
+    }
+    
+    if (!_normals.empty())
+    {
+        _normals.clear();
+    }
+    
     if (!_colors.empty())
     {
         _colors.clear();
     }
-
+    
     if (!_tangents.empty())
     {
         _tangents.clear();
     }
-
-	if (!_texCoords.empty())
-	{
-		for (auto layer : _texCoords)
-		{
-			if (!layer.empty())
-			{
-				layer.clear();
-			}
-		}
-		_texCoords.clear();
-	}
-
-	if (!_indices.empty())
-	{
-		_indices.clear();
-	}
-
-	_countVertices = 0;
-	_countIndices = 0;
+    
+    if (!_texCoords.empty())
+    {
+        for (auto layer : _texCoords)
+        {
+            if (!layer.empty())
+            {
+                layer.clear();
+            }
+        }
+        _texCoords.clear();
+    }
+    
+    if (!_indices.empty())
+    {
+        _indices.clear();
+    }
+    
+    _countVertices = 0;
+    _countIndices = 0;
 }
 
 void SVertexData::malloc(v3d::u32 count, v3d::u32 index, v3d::u32 layer, bool color, bool tangent)

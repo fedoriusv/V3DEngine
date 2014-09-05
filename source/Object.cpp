@@ -15,25 +15,25 @@ CObject::~CObject()
 
 const std::string& CObject::getName() const
 {
-	return m_name;
+    return m_name;
 }
 
 void CObject::setName(const std::string& name)
 {
-	m_name = name;
+    m_name = name;
 }
 
 const EObjectType CObject::getObjectType() const
 {
-	return m_type;
+    return m_type;
 }
 
 const s32 CObject::getID() const
 {
-	return m_id;
+    return m_id;
 }
 
 void CObject::setID(const s32 id)
 {
-	m_id = id;
+    m_id = id;
 }
