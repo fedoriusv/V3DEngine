@@ -8,66 +8,69 @@ namespace v3d
 {
 namespace utils
 {
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum ELoggerType
-	{
-		eLoggerDebug,
-		eLoggerInfo,
-		eLoggerWarning,
-		eLoggerError,
+    enum ELoggerType
+    {
+        eLoggerNone,
+        eLoggerDebug,
+        eLoggerInfo,
+        eLoggerWarning,
+        eLoggerError,
 
-		eLoggerCount
-	};
+        eLoggerCount
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	enum class ELogOut
-	{
-		eConsoleLog,
-		eFileLog,
-		eBothLog
-	};
+    enum class ELogOut
+    {
+        eConsoleLog,
+        eFileLog,
+        eBothLog
+    };
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	class CLogger : public Singleton<CLogger>
-	{
-	public:
-							CLogger();
-		virtual				~CLogger();
+    class CLogger : public Singleton<CLogger>
+    {
+    public:
+        CLogger();
+        virtual         ~CLogger();
 
-		void				createLogFile (const std::string& filename);
-		
-		void				log(const std::string& message, ELoggerType type = ELoggerType::eLoggerInfo, ELogOut out = ELogOut::eConsoleLog);
-		void				log(ELoggerType type, ELogOut out, const char* format, ...);
+        void            createLogFile(const std::string& filename);
 
-		void				destroyLogFile();
-		
-	protected:
+        void            log(const std::string& message, ELoggerType type = ELoggerType::eLoggerInfo, ELogOut out = ELogOut::eConsoleLog);
+        void            log(ELoggerType type, ELogOut out, const char* format, ...);
 
-		void				logToConsole(const std::string& message, ELoggerType type);
-		void				logToFile(const std::string& message, ELoggerType type);
+        void            destroyLogFile();
 
-		std::string			m_logFilename;
-		std::ofstream		m_file;
-	};
+    protected:
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+        void            logToConsole(const std::string& message, ELoggerType type);
+        void            logToFile(const std::string& message, ELoggerType type);
+
+        std::string     m_logFilename;
+        std::ofstream   m_file;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if USE_LOGGER
-#	define LOG_GEBUG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerDebug, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
-#	define LOG_INFO(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerInfo, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
-#	define LOG_WARRNING(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerWarning, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
-#	define LOG_ERROR(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerError, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerNone, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG_GEBUG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerDebug, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG_INFO(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerInfo, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG_WARRNING(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerWarning, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG_ERROR(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerError, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
 #else
-#	define LOG_GEBUG(messages, ...)
-#	define LOG_INFO(messages, ...)
-#	define LOG_WARRNING(messages, ...)
-#	define LOG_ERROR(messages, ...)
+#   define LOG(messages, ...)
+#   define LOG_GEBUG(messages, ...)
+#   define LOG_INFO(messages, ...)
+#   define LOG_WARRNING(messages, ...)
+#   define LOG_ERROR(messages, ...)
 #endif
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 #endif //_V3D_LOGGER_H_

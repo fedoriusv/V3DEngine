@@ -34,6 +34,9 @@ namespace v3d
 #include <time.h>
 #include <cstdarg>
 #include <cstring>
+#include <stdio.h>
+
+#include <iostream>
 
 #ifdef _DEBUG
 #   define ASSERT(x) assert(x)

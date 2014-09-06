@@ -1,7 +1,6 @@
 #include "FileStream.h"
 #include "utils/Logger.h"
 #include <sstream>
-#include <iostream>
 #include <fstream>
 #include <ostream>
 #include <istream>
