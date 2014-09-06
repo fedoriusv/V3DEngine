@@ -56,7 +56,7 @@ const EUniformData CShaderUniform::getValueByName(const std::string& name)
 
 
 CShaderUniform::CShaderUniform()
-: m_uniformType(EDataType::eTypeNone)
+    : m_uniformType(EDataType::eTypeNone)
     , m_uniformValue (nullptr)
     , m_attribute ("")
     , m_uniformData(EUniformData::eUniformUser)
@@ -66,7 +66,7 @@ CShaderUniform::CShaderUniform()
 
 CShaderUniform::~CShaderUniform()
 {
-	deallocMemory();
+    deallocMemory();
 }
 
 void CShaderUniform::setUniform(EDataType type, const std::string& attribute, void* value)
@@ -173,11 +173,11 @@ void CShaderUniform::allocMemory(EDataType type, void* value)
 
 void CShaderUniform::deallocMemory()
 {
-	if (m_uniformValue != nullptr)
-	{
-		delete m_uniformValue;
-		m_uniformValue = nullptr;
-	}
+    if (m_uniformValue != nullptr)
+    {
+        free(m_uniformValue);
+        m_uniformValue = nullptr;
+    }
 }
 
 CShaderUniform::EDataType CShaderUniform::getUniformType() const

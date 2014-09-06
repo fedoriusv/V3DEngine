@@ -25,6 +25,8 @@ namespace renderer
 
     protected:
 
+        void    printExtensionList() const;
+
 #if defined(_PLATFORM_WIN_)
         bool    createWin32Context();
 #elif defined(_PLATFORM_LINUX_)

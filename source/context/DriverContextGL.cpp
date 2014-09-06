@@ -14,9 +14,6 @@
 #	include "platform/WindowLinux.h"
 #endif
 
-#include <iostream>
-#include <cstring>
-
 using namespace v3d;
 using namespace v3d::renderer;
 
@@ -278,7 +275,10 @@ bool CDriverContextGL::createLinuxContext()
     // Get the default screen's GLX extension list
     Display* display = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getDisplay();
     const char *glxExtensions = glXQueryExtensionsString(display, DefaultScreen(display));
-    //std::cout << glxExtensions << std::endl;
+
+#ifdef _DEBUG
+    CDriverContextGL::printExtensionList();
+#endif
 
     if (!gluCheckExtension((const GLubyte*)"GLX_ARB_create_context" , (const GLubyte*)glxExtensions))
     {
@@ -396,4 +396,20 @@ bool CDriverContextGL::setVSync(bool use)
     }
 #endif
     return succeed;
+}
+
+void CDriverContextGL::printExtensionList() const
+{
+    LOG_INFO("OpenGL Extentions List");
+
+//     GLint num;
+//     glGetIntegerv(GL_NUM_EXTENSIONS, &num);
+//     const u8* ext = static_cast<const u8*>(glGetString(GL_EXTENSIONS));
+//     int a = 0;
+//     for (u32 i = 0; i < num; i++) 
+//     {
+//         const GLubyte* ext = glGetStringi(GL_EXTENSIONS, i);
+//         LOG_INFO("%s\n", ext);
+//     }
+
 }

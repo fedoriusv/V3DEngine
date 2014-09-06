@@ -26,86 +26,86 @@ CWindowLinux::~CWindowLinux()
 
 Window CWindowLinux::getWidow() const
 {
-	return m_window;
+    return m_window;
 }
 GLXFBConfig CWindowLinux::getFBConfig() const
 {
-	return m_glxFBConfigs;
+    return m_glxFBConfigs;
 }
 
 Display* CWindowLinux::getDisplay() const
 {
-	return m_display;
+    return m_display;
 }
 
 XVisualInfo* CWindowLinux::getVisualInfo() const
 {
-	return m_visualInfo;
+    return m_visualInfo;
 }
 
 void CWindowLinux::minimize()
 {
-	XIconifyWindow(m_display, m_window, m_screen);
+    XIconifyWindow(m_display, m_window, m_screen);
 }
 
 void CWindowLinux::maximize()
 {
-	XMapWindow(m_display, m_window);
+    XMapWindow(m_display, m_window);
 }
 
 void CWindowLinux::restore()
 {
-	XMapWindow(m_display, m_window);
+    XMapWindow(m_display, m_window);
 }
 
 void CWindowLinux::setFullScreen(bool value)
 {
-    if (m_param.isFullscreen == value)
+    if (m_param._isFullscreen == value)
     {
         return;
     }
 
     //TODO: fullsreen
 
-    m_param.isFullscreen = value;
+    m_param._isFullscreen = value;
 }
 
 
 void CWindowLinux::setResizeble (bool value)
 {
-    if (m_param.isFullscreen || m_param.isResizeble == value)
+    if (m_param._isFullscreen || m_param._isResizeble == value)
     {
         return;
     }
 
     //TODO: resize window
 
-    m_param.isResizeble = value;
+    m_param._isResizeble = value;
 }
 
 void CWindowLinux::setCaption(const std::string& text)
 {
-	XTextProperty txt;
+    XTextProperty txt;
 
     c8* temp = const_cast<c8*>(text.c_str());
-	if (Success == XmbTextListToTextProperty(m_display, &temp, 1, XStdICCTextStyle, &txt))
-	{
-		XSetWMName(m_display, m_window, &txt);
-		XSetWMIconName(m_display, m_window, &txt);
-		XFree(txt.value);
-	}
+    if (Success == XmbTextListToTextProperty(m_display, &temp, 1, XStdICCTextStyle, &txt))
+    {
+        XSetWMName(m_display, m_window, &txt);
+        XSetWMIconName(m_display, m_window, &txt);
+        XFree(txt.value);
+    }
 }
 
 void CWindowLinux::setPosition(const Dimension2D& pos)
 {
-    if (m_param.isFullscreen)
+    if (m_param._isFullscreen)
     {
         return;
     }
 
     XMoveWindow(m_display, m_window, pos.width,pos.height);
 
-    m_param.position = pos;
+    m_param._position = pos;
 }
 
 bool CWindowLinux::isMaximized() const
@@ -232,7 +232,7 @@ void CWindowLinux::create()
     //winAttribs.override_redirect = m_param.isFullscreen;
 
     m_window = XCreateWindow(m_display, RootWindow(m_display, visualInfo->screen),
-                            0, 0, m_param.size.width, m_param.size.height, 0, visualInfo->depth, InputOutput,
+                            0, 0, m_param._size.width, m_param._size.height, 0, visualInfo->depth, InputOutput,
                             visualInfo->visual, CWBorderPixel|CWColormap|CWEventMask, &winAttribs);
     if ( !m_window )
     {
@@ -242,7 +242,7 @@ void CWindowLinux::create()
 
     XStoreName(m_display, m_window, "V3DLinux");
 
-    LOG_INFO("Window Size (%d, %d)", m_param.size.width, m_param.size.height);
+    LOG_INFO("Window Size (%d, %d)", m_param._size.width, m_param._size.height);
 
     XMapWindow(m_display, m_window);
     XFlush(m_display);

@@ -15,6 +15,7 @@ fi
 cd ./${CODE_DIR}
 
 cmake -DCOMPILER_GCC=ON  ../.. $@   || exit $?
+#use -DCMAKE_BUILD_TYPE=Debug if need used gdb
 make
 
 cd ../..

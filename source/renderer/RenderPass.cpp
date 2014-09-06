@@ -393,6 +393,8 @@ bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
         LOG_ERROR("Error parse. Not exist xml element");
         return false;
     }
+
+    return true;
 }
 
 bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
@@ -410,7 +412,7 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
         EPolygonMode polygonMode = CRenderState::getPolygonModeByName(polygonModeStr);
         m_renderState->setPolygonMode(polygonMode);
     }
-    
+
     if (root->Attribute("winding"))
     {
         const std::string windingStr = root->Attribute("winding");
