@@ -303,6 +303,8 @@ bool CDriverContextGL::createLinuxContext()
         LOG_ERROR("Error to create exContext OpenGL");
         return false;
     }
+    
+    XSync(display, False);
 
     Window window = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getWidow();
     if (!glXMakeCurrent(display, window, context))
@@ -311,8 +313,8 @@ bool CDriverContextGL::createLinuxContext()
         return false;
     }
 
-    //XSync( display, False );
-
+    glewExperimental = GL_TRUE;
+    
     GLenum error = glewInit();
     if (error !=  GLEW_OK)
     {

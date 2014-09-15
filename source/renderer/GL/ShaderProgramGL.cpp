@@ -119,7 +119,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
         s32 id = CShaderProgramGL::getAttrib(shaderProgram, name);
         if ((CShaderAttribute::EShaderAttribute)id != type)
         {
-            LOG_ERROR("InitShaderProgram: Invalid attribute Index for: %s", name.c_str());
+            LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
         }
     }
 
@@ -128,7 +128,11 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
     {
         const std::string& name = uniform.second->getUniformName();
         s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name);
-
+        
+        if (id < 0)
+        {
+            LOG_WARRNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
+        }
         uniform.second->setUniforID(id);
     }
 
@@ -136,7 +140,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("InitShaderProgram: shader program not compiled id: %d", shaderProgram);
+        LOG_ERROR("CShaderProgramGL: Shader program not compiled id: %d", shaderProgram);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;
@@ -146,7 +150,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
         glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
         if (strlen(buffer) > 0)
         {
-            LOG_ERROR("Shader Program Error: %s", buffer);
+            LOG_ERROR("CShaderProgramGL: Shader Program Error: %s", buffer);
         }
 #endif
     }
@@ -281,7 +285,7 @@ bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shad
 
     if (location == -1)
     {
-        LOG_ERROR(" Error Uniform Location: %s . Shader ID : %d", attribute.data(), shader);
+        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", attribute.data(), shader);
     }
 
     RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + attribute);

@@ -34,13 +34,13 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShader::CShader()
-	: CObject()
-	, m_shaderID(0)
+    : CObject()
+    , m_shaderID(0)
     , m_shaderType(EShaderType::eShaderUnknown)
-	, m_compileStatus(false)
-	, m_data(nullptr)
+    , m_compileStatus(false)
+    , m_data(nullptr)
 {
-	m_type = EObjectType::eTypeShader;
+    m_type = EObjectType::eTypeShader;
 }
 
 CShader::~CShader()
@@ -49,17 +49,17 @@ CShader::~CShader()
 
 u32 CShader::getShaderID() const
 {
-	return m_shaderID;
+    return m_shaderID;
 }
 
 CShader::EShaderType CShader::getShaderType() const
 {
-	return m_shaderType;
+    return m_shaderType;
 }
 
 bool CShader::getCompileStatus() const
 {
-	return m_compileStatus;
+    return m_compileStatus;
 }
 
 char* CShader::read(const std::string& file)

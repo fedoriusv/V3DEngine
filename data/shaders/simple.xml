@@ -12,6 +12,7 @@
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
 		<rendertarget val="default"/>
+                <lod geometry="10.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[
@@ -31,8 +32,8 @@
 
 					void main()
 					{
-						vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
-						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
+                                                vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+                                                gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
 					}
 				]]>
 			</var>

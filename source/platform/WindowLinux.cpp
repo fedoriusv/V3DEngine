@@ -239,7 +239,8 @@ void CWindowLinux::create()
         LOG_ERROR("Failed to create window");
         return;
     }
-
+    XFree(visualInfo);
+    
     XStoreName(m_display, m_window, "V3DLinux");
 
     LOG_INFO("Window Size (%d, %d)", m_param._size.width, m_param._size.height);

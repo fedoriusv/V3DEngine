@@ -50,17 +50,17 @@ CShape::~CShape()
 
 EShapeType CShape::getShapeType() const
 {
-	return m_shapeType;
+    return m_shapeType;
 }
 
 void CShape::setMaterial(const renderer::MaterialPtr& material)
 {
-	m_material = material;
+    m_material = material;
 }
 
 const renderer::MaterialPtr& CShape::getMaterial() const
 {
-	return m_material;
+    return m_material;
 }
 
 SVertexData& CShape::getGeometryData()
@@ -70,12 +70,12 @@ SVertexData& CShape::getGeometryData()
 
 CGeometry::EDrawMode CShape::getGeometryDrawMode() const
 {
-	return m_geometry->getDrawMode();
+    return m_geometry->getDrawMode();
 }
 
 void CShape::setGeometryDrawMode(CGeometry::EDrawMode mode)
 {
-	m_geometry->setDrawMode(mode);
+    m_geometry->setDrawMode(mode);
 }
 
 void CShape::update(f64 time)
