@@ -57,7 +57,7 @@ if(WIN32)
 	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
 	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Debug)
 else(WIN32)
-	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\DevIL)
+	set(DEVIL_LIB ${LIB_DIR}\\DevIL)
 endif(WIN32)
 
 ################################
@@ -188,7 +188,7 @@ target_link_libraries(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-    ${DEVIL_LIB}
+        ${DEVIL_LIB}
 	)
 
 ################################
@@ -196,6 +196,7 @@ target_link_libraries(${ENGINE_NAME}
 add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
+add_subdirectory(libs/DevIL)
 add_subdirectory(tests/${TEST_PROJECT_0})
 add_subdirectory(tests/${TEST_PROJECT_1})
 
@@ -203,6 +204,7 @@ add_dependencies(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
+        ${DEVIL_LIB}
 	)
 
 
