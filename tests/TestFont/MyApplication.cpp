@@ -1,4 +1,5 @@
 #include "MyApplication.h"
+#include "Valera3D.h"
 
 using namespace v3d;
 using namespace v3d::core;

@@ -148,6 +148,8 @@ file(GLOB EVENT_SOURCES ${SOURCE_DIR}/event/*.cpp)
 file(GLOB MAIN_HEADERS ${SOURCE_DIR}/*.h)
 file(GLOB MAIN_SOURCES ${SOURCE_DIR}/*.cpp)
 
+################################
+#Filters
 source_group(platform         FILES ${PLATFORM_HEADERS}    ${PLATFORM_SOURCES})
 source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES})
 source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
@@ -170,8 +172,7 @@ include_directories(
 	)
 
 add_library(
-	${ENGINE_NAME}
-	STATIC
+	${ENGINE_NAME} STATIC
 	${PLATFORM_HEADERS}    ${PLATFORM_SOURCES}
 	${CORE_HEADERS}        ${CORE_SOURCES}
 	${RENDERER_HEADERS}    ${RENDERER_SOURCES}
@@ -188,7 +189,7 @@ target_link_libraries(${ENGINE_NAME}
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-        ${DEVIL_LIB}
+    ${DEVIL_LIB}
 	)
 
 ################################
@@ -196,16 +197,29 @@ target_link_libraries(${ENGINE_NAME}
 add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
-add_subdirectory(libs/DevIL)
 add_subdirectory(tests/${TEST_PROJECT_0})
 add_subdirectory(tests/${TEST_PROJECT_1})
+if(NOT WIN32)
+	add_subdirectory(libs/DevIL)
+endif(NOT WIN32)
 
-add_dependencies(${ENGINE_NAME} 
-	${GLEW_PLOJECT}
-	${TINYXML_PLOJECT}
-	${FREETYPE2_PROJECT}
-        ${DEVIL_LIB}
-	)
+################################
+#Dependencies
+if(NOT WIN32)
+	add_dependencies(${ENGINE_NAME} 
+		${GLEW_PLOJECT}
+		${TINYXML_PLOJECT}
+		${FREETYPE2_PROJECT}
+		${DEVIL_LIB}
+		)
+else(NOT WIN32)
+	add_dependencies(${ENGINE_NAME} 
+		${GLEW_PLOJECT}
+		${TINYXML_PLOJECT}
+		${FREETYPE2_PROJECT}
+		)
+endif(NOT WIN32)
+
 
 
 

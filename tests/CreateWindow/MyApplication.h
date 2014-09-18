@@ -3,7 +3,7 @@
 
 #include "BaseApplication.h"
 
-class MyApplication : public BaseApplication
+class MyApplication : public v3d::BaseApplication
 {
 public:
 			MyApplication(int& argc, char** argv);

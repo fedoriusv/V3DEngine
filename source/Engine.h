@@ -9,34 +9,34 @@
 
 namespace v3d
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    class CEngine : public Singleton<CEngine>
-    {
-    public:
-    
-        CEngine();
-        virtual                         ~CEngine();
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        platform::PlatformPtr           getPlatform()          const;
-        event::InputEventHandlerPtr     getInputEventHandler() const;
-        scene::SceneManagerPtr          getSceneManager()      const;
-        platform::WindowPtr             getWindow()            const;
-        renderer::RendererPtr           getRenderer()          const;
+class CEngine : public Singleton<CEngine>
+{
+public:
 
-        bool                            init();
-        bool                            begin();
-        bool                            end();
+    CEngine();
+    virtual                         ~CEngine();
 
-    private:
+    platform::PlatformPtr           getPlatform()          const;
+    event::InputEventHandlerPtr     getInputEventHandler() const;
+    scene::SceneManagerPtr          getSceneManager()      const;
+    platform::WindowPtr             getWindow()            const;
+    renderer::RendererPtr           getRenderer()          const;
 
-        platform::PlatformPtr           m_platform;
-        event::InputEventHandlerPtr     m_inputEventHandler;
-        scene::SceneManagerPtr          m_scene;
+    bool                            init();
+    bool                            begin();
+    bool                            end();
 
-    };
+private:
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    platform::PlatformPtr           m_platform;
+    event::InputEventHandlerPtr     m_inputEventHandler;
+    scene::SceneManagerPtr          m_scene;
+
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define RENDERER CEngine::getInstance()->getRenderer()
 #define INPUT_EVENTS  CEngine::getInstance()->getInputEventHandler()
