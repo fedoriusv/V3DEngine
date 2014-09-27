@@ -1,5 +1,5 @@
-#ifndef F3D_FPSCAMERA_H_
-#define F3D_FPSCAMERA_H_
+#ifndef _V3D_FPSCAMERA_H_
+#define _V3D_FPSCAMERA_H_
 
 #include "Camera.h"
 #include "event/KeyCodes.h"
@@ -52,4 +52,4 @@ namespace scene
 }
 }
 
-#endif //F3D_FPSCAMERA_H_
+#endif //_V3D_FPSCAMERA_H_

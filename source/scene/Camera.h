@@ -1,5 +1,5 @@
-#ifndef F3D_CAMERA_H_
-#define F3D_CAMERA_H_
+#ifndef _V3D_CAMERA_H_
+#define _V3D_CAMERA_H_
 
 #include "Node.h"
 
@@ -47,4 +47,4 @@ namespace scene
 }
 }
 
-#endif //F3D_CAMERA_H_
+#endif //_V3D_CAMERA_H_

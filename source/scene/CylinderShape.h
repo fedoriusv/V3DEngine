@@ -5,40 +5,40 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CCylinderShape : public CShape
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CCylinderShape : public CShape
-        {
-        public:
+        CCylinderShape(const float radius = 0.5f, const float height = 1.0f);
+        virtual     ~CCylinderShape();
 
-            CCylinderShape(const float radius = 0.5f, const float height = 1.0f);
-            virtual     ~CCylinderShape();
+        void        render()         override;
+        void        update(f64 time) override;
 
-            void        render()         override;
-            void        update(f64 time) override;
+        void        init()           override;
 
-            void        init()           override;
+        void        setRadius(const f32 radius);
+        void        setHeight(const f32 height);
 
-            void        setRadius(const f32 radius);
-            void        setHeight(const f32 height);
+        f32         getRadius() const;
+        f32         getHeight() const;
 
-            f32         getRadius() const;
-            f32         getHeight() const;
+    private:
 
-        private:
+        void        refresh()        override;
+        void        build();
 
-            void        refresh()        override;
-            void        build();
+        f32         m_radius;
+        f32         m_height;
 
-            f32         m_radius;
-            f32         m_height;
+    };
 
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_CYLINDER_SHAPE_H_

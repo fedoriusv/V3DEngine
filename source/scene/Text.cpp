@@ -1,4 +1,4 @@
-#include "Font.h"
+#include "Text.h"
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "scene/FontManager.h"
@@ -7,7 +7,7 @@ using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::renderer;
 
-CFont::CFont(const std::string& font)
+CText::CText(const std::string& font)
     : m_text("")
     , m_size(24U)
     , m_align(EAlignMode::eFontAlignLeft)
@@ -28,54 +28,54 @@ CFont::CFont(const std::string& font)
     m_material = std::make_shared<CMaterial>();
 }
 
-CFont::~CFont()
+CText::~CText()
 {
 }
 
-void CFont::setText(const std::string& text)
+void CText::setText(const std::string& text)
 {
     m_text = text;
-    CFont::refresh();
+    CText::refresh();
 }
 
-const std::string& CFont::getText() const
+const std::string& CText::getText() const
 {
     return m_text;
 }
 
-void CFont::setSize(const u32 size)
+void CText::setSize(const u32 size)
 {
     m_size = size;
-    CFont::refresh();
+    CText::refresh();
 }
 
-u32 CFont::getSize() const
+u32 CText::getSize() const
 {
     return m_size;
 }
 
-void CFont::setMaterial(const MaterialPtr& material)
+void CText::setMaterial(const MaterialPtr& material)
 {
     m_material = material;
 }
 
-const renderer::MaterialPtr& CFont::getMaterial() const
+const renderer::MaterialPtr& CText::getMaterial() const
 {
     return m_material;
 }
 
-void CFont::setAlignMode(EAlignMode mode)
+void CText::setAlignMode(EAlignMode mode)
 {
     m_align = mode;
-    CFont::refresh();
+    CText::refresh();
 }
 
-CFont::EAlignMode CFont::getAlignMode() const
+CText::EAlignMode CText::getAlignMode() const
 {
     return m_align;
 }
 
-void CFont::init()
+void CText::init()
 {
     RenderTechniquePtr technique = m_material->getRenderTechique();
     if (!technique)
@@ -105,7 +105,7 @@ void CFont::init()
     m_data->addCharsToMap(m_text);
     m_data->setFontSize(m_size);
 
-    CFont::build();
+    CText::build();
 
     m_geometry->setDrawMode(CGeometry::eTriangles);
     m_geometry->init();
@@ -116,7 +116,7 @@ void CFont::init()
     m_initialiazed = true;
 }
 
-void CFont::update(f64 time)
+void CText::update(f64 time)
 {
     if (!m_visible || !m_initialiazed)
     {
@@ -126,7 +126,7 @@ void CFont::update(f64 time)
     m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
-void CFont::render()
+void CText::render()
 {
     if (!m_visible || !m_initialiazed)
     {
@@ -136,7 +136,7 @@ void CFont::render()
     RENDERER->draw(m_renderJob);
 }
 
-void CFont::refresh()
+void CText::refresh()
 {
     if (!m_initialiazed)
     {
@@ -146,12 +146,12 @@ void CFont::refresh()
     m_data->addCharsToMap(m_text);
     m_data->setFontSize(m_size);
 
-    CFont::build();
+    CText::build();
 
     m_geometry->refresh();
 }
 
-f32 CFont::getTextWidth()
+f32 CText::getTextWidth()
 {
     f32 width = 0.0f;
 
@@ -169,7 +169,7 @@ f32 CFont::getTextWidth()
     return width;
 }
 
-f32 CFont::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 charId)
+f32 CText::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 charId)
 {
     if (charId == 0)
     {
@@ -187,7 +187,7 @@ f32 CFont::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 cha
     return 0;
 }
 
-void CFont::build()
+void CText::build()
 {
     f32 x = 0.f;
     f32 y = 0.f;

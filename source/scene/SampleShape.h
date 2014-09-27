@@ -5,30 +5,30 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CSampleShape : public CShape
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CSampleShape : public CShape
-        {
-        public:
+        CSampleShape();
+        virtual     ~CSampleShape();
 
-            CSampleShape();
-            virtual     ~CSampleShape();
+        void        render()         override;
+        void        update(f64 time) override;
 
-            void        render()         override;
-            void        update(f64 time) override;
+        void        init()           override;
 
-            void        init()           override;
+    private:
 
-        private:
+        void        refresh()        override;
+        void        build();
+    };
 
-            void        refresh()        override;
-            void        build();
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_SAMPLE_SHAPE_H_

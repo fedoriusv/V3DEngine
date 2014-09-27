@@ -5,39 +5,39 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CDiskShape : public CShape
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CDiskShape : public CShape
-        {
-        public:
+        CDiskShape(const f32 minorRadius, const f32 majorRadius);
+        virtual     ~CDiskShape();
 
-            CDiskShape(const f32 minorRadius, const f32 majorRadius);
-            virtual     ~CDiskShape();
+        void        render()         override;
+        void        update(f64 time) override;
 
-            void        render()         override;
-            void        update(f64 time) override;
+        void        init()           override;
 
-            void        init()           override;
+        void        setMinorRadius(const f32 radius);
+        void        setMajorRadius(const f32 radius);
+        f32         getMinorRadius() const;
+        f32         getMajorRadius() const;
 
-            void        setMinorRadius(const f32 radius);
-            void        setMajorRadius(const f32 radius);
-            f32         getMinorRadius() const;
-            f32         getMajorRadius() const;
+    private:
 
-        private:
+        void        refresh()       override;
+        void        build();
 
-            void        refresh()       override;
-            void        build();
+        f32         m_majorRadius;
+        f32         m_minorRadius;
 
-            f32         m_majorRadius;
-            f32         m_minorRadius;
+    };
 
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_DISK_SHAPE_H_

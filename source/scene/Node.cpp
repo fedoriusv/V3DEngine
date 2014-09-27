@@ -32,22 +32,22 @@ CNode::CNode()
     , m_scale(core::Vector3D(1.0f))
     , m_initialiazed(false)
 {
-	m_type = EObjectType::eTypeNode;
+    m_type = EObjectType::eTypeNode;
 }
 
 CNode::~CNode()
 {
-	if (m_parentNode)
-	{
-		m_parentNode->dettachChild(this);
-	}
+    if (m_parentNode)
+    {
+        m_parentNode->dettachChild(this);
+    }
 
-	for (CNode* node : m_childNodes)
-	{
-		node->setParent(nullptr);
-	}
+    for (CNode* node : m_childNodes)
+    {
+        node->setParent(nullptr);
+    }
 
-	m_childNodes.clear();
+    m_childNodes.clear();
 }
 
 void CNode::setPosition(const core::Vector3D& position)
@@ -79,7 +79,7 @@ void CNode::setScale(const core::Vector3D& scale)
 
 void CNode::setTransform(const core::Matrix4D& transform)
 {
-	m_transform = transform;
+    m_transform = transform;
     CNode::updateTransform(ENodeTransform::eTransform);
 
     m_needUpdate = true;
@@ -92,63 +92,63 @@ void CNode::setParent(CNode* parent)
         return;
     }
 
-	if (m_parentNode)
-	{
-		m_parentNode->dettachChild(this);
-	}
-	m_parentNode = parent;
+    if (m_parentNode)
+    {
+        m_parentNode->dettachChild(this);
+    }
+    m_parentNode = parent;
 }
 
 void CNode::attachChild(CNode* child)
 {
-	child->setParent(this);
-	m_childNodes.push_back(child);
+    child->setParent(this);
+    m_childNodes.push_back(child);
     m_needUpdate = true;
 }
 
 void CNode::dettachChild(CNode* child)
 {
-	if (!m_childNodes.empty())
-	{
-		m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
-		child->setParent(nullptr);
+    if (!m_childNodes.empty())
+    {
+        m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
+        child->setParent(nullptr);
         m_needUpdate = true;
-	}
+    }
 }
 
 const core::Vector3D& CNode::getPosition() const
 {
-	return m_position;
+    return m_position;
 }
 
 const core::Vector3D& CNode::getRotation() const
 {
-	return m_rotation;
+    return m_rotation;
 }
 
 const core::Vector3D& CNode::getScale() const
 {
-	return m_scale;
+    return m_scale;
 }
 
 core::Matrix4D CNode::getTransform() const
 {
-	return m_transform;
+    return m_transform;
 }
 
 core::Matrix4D CNode::getAbsTransform() const
 {
-	if (m_parentNode)
-	{
-		const core::Matrix4D absTransform = m_parentNode->getAbsTransform() * m_transform;
-		return absTransform;
-	}
-	return m_transform;
+    if (m_parentNode)
+    {
+        const core::Matrix4D absTransform = m_parentNode->getAbsTransform() * m_transform;
+        return absTransform;
+    }
+    return m_transform;
 }
 
 CNode* CNode::getParent() const
 {
-	return m_parentNode;
+    return m_parentNode;
 }
 
 f32 CNode::getPriority() const
@@ -158,20 +158,20 @@ f32 CNode::getPriority() const
 
 CNode* CNode::getChildNodeByID(u32 id) const
 {
-	return m_childNodes[id];
+    return m_childNodes[id];
 }
 
 CNode* CNode::getChildNodeByName(const std::string& name) const
 {
-	for (CNode* node : m_childNodes)
-	{
-		const std::string& nodeName = node->getName();
-		if (nodeName == name)
-		{
-			return node;
-		}
-	}
-	return nullptr;
+    for (CNode* node : m_childNodes)
+    {
+        const std::string& nodeName = node->getName();
+        if (nodeName == name)
+        {
+            return node;
+        }
+    }
+    return nullptr;
 }
 
 ENodeType CNode::getNodeType() const

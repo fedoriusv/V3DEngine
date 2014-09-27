@@ -5,36 +5,36 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CPlaneShape : public CShape
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CPlaneShape : public CShape
-        {
-        public:
+        CPlaneShape(const f32 extent);
+        virtual     ~CPlaneShape();
 
-            CPlaneShape(const f32 extent);
-            virtual     ~CPlaneShape();
+        void        render()         override;
+        void        update(f64 time) override;
 
-            void        render()         override;
-            void        update(f64 time) override;
+        void        init()           override;
 
-            void        init()           override;
+        void        setExtent(const f32 extent);
+        f32         getExtent() const;
 
-            void        setExtent(const f32 extent);
-            f32         getExtent() const;
+    private:
 
-        private:
+        void        refresh()        override;
+        void        build();
 
-            void        refresh()        override;
-            void        build();
+        f32         m_extent;
 
-            f32         m_extent;
+    };
 
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_PLANE_SHAPE_H_

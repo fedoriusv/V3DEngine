@@ -5,36 +5,36 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CSphereShape : public CShape
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CSphereShape : public CShape
-        {
-        public:
+        CSphereShape(const f32 radius = 1.0f);
+        virtual     ~CSphereShape();
 
-            CSphereShape(const f32 radius = 1.0f);
-            virtual     ~CSphereShape();
+        void        render()         override;
+        void        update(f64 time) override;
 
-            void        render()         override;
-            void        update(f64 time) override;
+        void        init()           override;
 
-            void        init()           override;
+        void        setRadius(const f32 radius);
+        f32         getRadius() const;
 
-            void        setRadius(const f32 radius);
-            f32         getRadius() const;
+    private:
 
-        private:
+        void        refresh()        override;
+        void        build();
 
-            void        refresh()        override;
-            void        build();
+        f32         m_radius;
 
-            f32         m_radius;
+    };
 
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_SPHERE_SHAPE_H_

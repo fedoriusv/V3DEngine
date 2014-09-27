@@ -1,5 +1,5 @@
-#ifndef _V3D_FONT_H_
-#define _V3D_FONT_H_
+#ifndef _V3D_TEXT_H_
+#define _V3D_TEXT_H_
 
 #include "Node.h"
 
@@ -14,7 +14,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CFont : public CNode
+    class CText : public CNode
     {
     public:
 
@@ -25,8 +25,8 @@ namespace scene
             eFontAlignRight         = 2,
         };
 
-        CFont(const std::string& font);
-        virtual                         ~CFont();
+        CText(const std::string& font);
+        virtual                         ~CText();
 
         void                            setText(const std::string& text);
         const std::string&              getText() const;
@@ -77,4 +77,4 @@ namespace scene
 }
 }
 
-#endif //_V3D_FONT_H_
+#endif //_V3D_TEXT_H_
