@@ -1,9 +1,8 @@
 #ifndef _V3D_FONT_MANAGER_H_
 #define _V3D_FONT_MANAGER_H_
 
-#include "renderer/FontData.h"
+#include "resources/FontData.h"
 #include "Singleton.h"
-#include "ResourceDecoder.h"
 
 namespace v3d
 {

@@ -193,7 +193,7 @@ void CText::build()
     f32 y = 0.f;
     f32 z = 0.f;
 
-    f32 textwidth = CFont::getTextWidth();
+    f32 textwidth = CText::getTextWidth();
     if (m_align == EAlignMode::eFontAlignCenter)
     {
         x -= textwidth / 2;

@@ -83,14 +83,14 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
 }
 
-void CRenderTechnique::init(stream::IStream* stream)
+void CRenderTechnique::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
 }
 
 bool CRenderTechnique::load()
 {
-    stream::IStream* stream = CResource::getStream();
+    const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
         LOG_ERROR("Empty Stream with name [%s] form RenderTechique", CResource::getResourseName().c_str());

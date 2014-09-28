@@ -5,20 +5,12 @@
 using namespace v3d;
 using namespace v3d::stream;
 
-CStreamManager::CStreamManager()
+FileStreamPtr CStreamManager::createFileStream(const std::string& file, FileStream::EOpenMode mode)
 {
+    return std::make_shared<FileStream>(file, mode);
 }
 
-CStreamManager::~CStreamManager()
+MemoryStreamPtr CStreamManager::createMemoryStream(const void* data, const u32 size)
 {
-}
-
-FileStream* CStreamManager::createFileStream(const std::string& file)
-{
-    return new FileStream(file);
-}
-
-MemoryStream* CStreamManager::createMemoryStream(const void* data, const u32 size)
-{
-    return new MemoryStream(data, size);
+    return std::make_shared<MemoryStream>(data, size);
 }

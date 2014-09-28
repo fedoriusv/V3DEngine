@@ -8,7 +8,7 @@
 #include "PlaneShape.h"
 #include "Camera.h"
 #include "Light.h"
-#include "Font.h"
+#include "Text.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -397,7 +397,7 @@ CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4
 
 CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, const u32 size)
 {
-    CFont*  node = new CFont(font);
+    CText*  node = new CText(font);
     node->setParent(parent);
     node->setPosition(pos);
     node->setText(text);

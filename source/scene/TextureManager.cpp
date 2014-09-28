@@ -1,16 +1,20 @@
 #include "TextureManager.h"
-#include "stream/FileStream.h"
-#include "renderer/Renderer.h"
 #include "utils/Logger.h"
+#include "stream/StreamManager.h"
 #include "Engine.h"
+#include "resources/TextureResILDecoder.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::renderer;
+using namespace v3d::resources;
 
 CTextureManager::CTextureManager()
 {
     CTextureManager::registerPath("../../../../data/");
+
+    std::initializer_list<std::string> ext = { ".png", ".bmp", ".tga", ".jpg" };
+    CTextureManager::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
 }
 
 CTextureManager::~CTextureManager()
@@ -18,19 +22,19 @@ CTextureManager::~CTextureManager()
     unloadAll();
 }
 
-renderer::TexturePtr CTextureManager::get(const std::string& name)
+const TexturePtr& CTextureManager::get(const std::string& name)
 {
     return m_textures[name];
 }
 
-renderer::TexturePtr CTextureManager::load(const std::string* files[6])
+const TexturePtr CTextureManager::load(const std::string* files[6])
 {
     //TODO: load cubemap
 
     return nullptr;
 }
 
-renderer::TexturePtr CTextureManager::load(const std::string& name)
+const TexturePtr CTextureManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -57,13 +61,30 @@ renderer::TexturePtr CTextureManager::load(const std::string& name)
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
-
+                const stream::FileStreamPtr& stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
-                    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+                    auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
+                    {
+                        return decoder->isExtensionSupported(fileExtension);
+                    };
+                    
+                    auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
+                    if (iter == m_decoders.end())
+                    {
+                        LOG_ERROR("CTextureManager: Format not supported file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
 
-                    texture->init(stream);
+                    const DecoderPtr& decoder = (*iter);
+                    stream::ResourcePtr resource = decoder->decode(stream);
+                    if (!resource)
+                    {
+                        LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+
+                    renderer::TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
                     texture->m_target = renderer::ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
@@ -131,11 +152,6 @@ void CTextureManager::registerPath(const std::string& path)
     m_pathes.push_back(path);
 }
 
-void CTextureManager::registerDecoder(DecoderPtr decoder)
-{
-    m_decoders.push_back(decoder);
-}
-
 void CTextureManager::unregisterPath(const std::string& path)
 {
     auto it = std::find(m_pathes.begin(), m_pathes.end(), path);
@@ -145,7 +161,12 @@ void CTextureManager::unregisterPath(const std::string& path)
     }
 }
 
-void CTextureManager::unregisterDecoder(DecoderPtr decoder)
+void CTextureManager::registerDecoder(DecoderPtr decoder)
+{
+    m_decoders.push_back(decoder);
+}
+
+void CTextureManager::unregisterDecoder(DecoderPtr& decoder)
 {
     auto it = std::find(m_decoders.begin(), m_decoders.end(), decoder);
     if (it != m_decoders.end())

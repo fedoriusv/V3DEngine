@@ -63,14 +63,14 @@ bool CVectorFontData::addCharsToMap(const std::string& text)
     return haveNew;
 }
 
-void CVectorFontData::init(stream::IStream* stream)
+void CVectorFontData::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
 }
 
 bool CVectorFontData::load()
 {
-    stream::IStream* stream = CResource::getStream();
+    const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
         LOG_ERROR("Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());

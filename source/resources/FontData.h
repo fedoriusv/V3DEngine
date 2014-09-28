@@ -9,7 +9,7 @@ namespace v3d
 namespace scene
 {
     class CFontManager;
-    class CFont;
+    class CText;
 }
 namespace renderer
 {
@@ -71,7 +71,7 @@ namespace renderer
     protected:
 
         friend                      scene::CFontManager;
-        friend                      scene::CFont;
+        friend                      scene::CText;
 
         void                        setFontType(EFontType type);
 

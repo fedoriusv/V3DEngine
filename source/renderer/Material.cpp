@@ -191,13 +191,13 @@ bool CMaterial::setRenderTechnique(const std::string& file)
     return true;
 }
 
-bool CMaterial::setRenderTechnique(stream::IStream* stream)
+bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
 {
     RenderTechniquePtr technique = std::make_shared<CRenderTechnique>();
     technique->init(stream);
     if (technique->load())
     {
-        LOG_ERROR("Streaming error read file [%s]", static_cast<stream::FileStream*>(stream)->getName().c_str());
+        LOG_ERROR("Material: Streaming error read");
         return false;
     }
 

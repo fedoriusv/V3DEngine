@@ -26,8 +26,8 @@ namespace renderer
         const RenderPassList& getRenderPassList() const;
 
 
-        void                 init(stream::IStream* stream)   override;
-        bool                 load()                          override;
+        void                 init(const stream::IStreamPtr& stream) override;
+        bool                 load()                                 override;
 
         void                 refresh();
 

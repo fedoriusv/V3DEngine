@@ -1,8 +1,8 @@
 #include "FontManager.h"
-#include "stream/FileStream.h"
 #include "utils/Logger.h"
-#include "renderer/BitmapFontData.h"
-#include "renderer/VectorFontData.h"
+#include "resources/BitmapFontData.h"
+#include "resources/VectorFontData.h"
+#include "stream/StreamManager.h"
 
 using namespace v3d;
 using namespace v3d::scene;
@@ -55,7 +55,7 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
+                stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
 
                 if (stream->isOpen())
                 {

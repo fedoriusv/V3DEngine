@@ -44,7 +44,7 @@ namespace renderer
         void                        destroyTexture(u32 layer);
         
         bool                        setRenderTechnique(const std::string& file);
-        bool                        setRenderTechnique(stream::IStream* stream);
+        bool                        setRenderTechnique(const stream::IStreamPtr& stream);
 
         void                        setRenderTechnique(const RenderTechniquePtr& technique);
         const RenderTechniquePtr&   getRenderTechique() const;

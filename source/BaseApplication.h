@@ -1,35 +1,36 @@
-#ifndef _BASE_APPLICATION_H_
-#define _BASE_APPLICATION_H_
+#ifndef _V3D_BASE_APPLICATION_H_
+#define _V3D_BASE_APPLICATION_H_
 
 #include "Engine.h"
 
 namespace v3d
 {
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class BaseApplication
-{
-public:
-    BaseApplication(int& argc, char** argv);
-    virtual                                     ~BaseApplication();
+    class BaseApplication
+    {
+    public:
 
-    virtual void                                init() = 0;
-    virtual void                                run() = 0;
+        BaseApplication(int& argc, char** argv);
+        virtual                                         ~BaseApplication();
 
-    int                                         exec();
+        virtual void                                    init() = 0;
+        virtual void                                    run() = 0;
 
-protected:
+        int                                             exec();
 
-    virtual v3d::platform::PlatformPtr          getPlatform()          const final;
-    virtual v3d::platform::WindowPtr            getWindow()            const final;
-    virtual v3d::event::InputEventHandlerPtr    getInputEventHandler() const final;
-    virtual v3d::scene::SceneManagerPtr         getSceneManager()      const final;
+    protected:
 
-private:
+        virtual const v3d::platform::PlatformPtr&       getPlatform()          const final;
+        virtual const v3d::platform::WindowPtr          getWindow()            const final;
+        virtual const v3d::event::InputEventHandlerPtr& getInputEventHandler() const final;
+        virtual const v3d::scene::SceneManagerPtr&      getSceneManager()      const final;
 
-    v3d::CEngine*                               m_engine;
-};
+    private:
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+        CEngine*                                        m_engine;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
-#endif //_BASE_APPLICATION_H_
+#endif //_V3D_BASE_APPLICATION_H_

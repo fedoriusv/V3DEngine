@@ -21,7 +21,7 @@ namespace renderer
         CBitmapFontData(const std::string& font);
         virtual ~CBitmapFontData();
 
-        void    init(stream::IStream* stream)           override;
+        void    init(const stream::IStreamPtr& stream)  override;
         bool    load()                                  override;
 
     private:

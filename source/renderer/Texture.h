@@ -123,8 +123,8 @@ namespace renderer
         virtual bool    create()                            = 0;
         virtual void    destroy()                           = 0;
 
-        void            init(stream::IStream* stream) override;
-        bool            load()                        override;
+        void            init(const stream::IStreamPtr& stream)  override;
+        bool            load()                                  override;
 
         bool            isEnable()      const;
 
@@ -156,12 +156,6 @@ namespace renderer
     protected:
 
         friend          v3d::scene::CTextureManager;
-
-#ifdef USE_DEVIL
-        bool            loadDevIL();
-        EImageFormat    convertILFormat(u32 format);
-        EImageType      convertILType(u32 format);
-#endif //USE_DEVIL
 
         void            clear();
 

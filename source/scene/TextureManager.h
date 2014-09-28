@@ -5,7 +5,7 @@
 #include "Singleton.h"
 #include "renderer/Texture.h"
 #include "stream/IStream.h"
-#include "ResourceDecoder.h"
+#include "resources/ResourceDecoder.h"
 #include "Singleton.h"
 
 namespace v3d
@@ -19,33 +19,33 @@ namespace scene
     public:
 
         CTextureManager();
-        virtual                 ~CTextureManager();
+        virtual                     ~CTextureManager();
 
-        renderer::TexturePtr    get(const std::string& name);
-        renderer::TexturePtr    load(const std::string& name);
-        renderer::TexturePtr    load(const std::string* files[6]);
+        const renderer::TexturePtr& get(const std::string& name);
+        const renderer::TexturePtr  load(const std::string& name);
+        const renderer::TexturePtr  load(const std::string* files[6]);
 
 
-        renderer::TexturePtr    createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::TexturePtr        createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
 
-        void                    copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
+        void                        copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
 
-        void                    unload(const std::string& name);
-        void                    unload(const renderer::TexturePtr& texture);
+        void                        unload(const std::string& name);
+        void                        unload(const renderer::TexturePtr& texture);
 
-        void                    unloadAll();
+        void                        unloadAll();
 
-        void                    registerPath(const std::string& path);
-        void                    registerDecoder(DecoderPtr decoder);
+        void                        registerPath(const std::string& path);
+        void                        unregisterPath(const std::string& path);
 
-        void                    unregisterPath(const std::string& path);
-        void                    unregisterDecoder(DecoderPtr decoder);
+        void                        registerDecoder(resources::DecoderPtr decoder);
+        void                        unregisterDecoder(resources::DecoderPtr& decoder);
 
     private:
 
-        renderer::TextureMap    m_textures;
-        std::vector<DecoderPtr> m_decoders;
-        std::vector<std::string>m_pathes;
+        renderer::TextureMap        m_textures;
+        resources::DecoderList      m_decoders;
+        std::vector<std::string>    m_pathes;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

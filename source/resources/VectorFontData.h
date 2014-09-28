@@ -20,13 +20,13 @@ namespace renderer
         CVectorFontData(const std::string& font);
         virtual                     ~CVectorFontData();
 
-        void                        init(stream::IStream* stream)   override;
-        bool                        load()                          override;
+        void                        init(const stream::IStreamPtr& stream)  override;
+        bool                        load()                                  override;
 
     private:
 
-        bool                        addCharsToMap(const std::string& text) override;
-        bool                        loadFont(const std::string& resource)  override;
+        bool                        addCharsToMap(const std::string& text)  override;
+        bool                        loadFont(const std::string& resource)   override;
 
         bool                        loadCharToMap(u32 charId);
         bool                        loadCharList();

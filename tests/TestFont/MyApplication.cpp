@@ -17,7 +17,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    scene::CFont* font = static_cast<scene::CFont*>(BaseApplication::getSceneManager()->addFont(0, "Hello world!", "fonts/arial.ttf", core::Vector3D(0, 0, -10)));
+    scene::CText* font = static_cast<scene::CText*>(BaseApplication::getSceneManager()->addFont(0, "Hello world!", "fonts/arial.ttf", core::Vector3D(0, 0, -10)));
     font->getMaterial()->setRenderTechnique("shaders/freetypefont.xml");
   
     scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -1.0f));

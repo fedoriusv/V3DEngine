@@ -1,7 +1,6 @@
-#ifndef F3D_MEMORY_STREAM_H_
-#define F3D_MEMORY_STREAM_H_
+#ifndef _V3D_MEMORY_STREAM_H_
+#define _V3D_MEMORY_STREAM_H_
 
-#include "common.h"
 #include "IStream.h"
 
 namespace v3d
@@ -73,7 +72,11 @@ namespace stream
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<MemoryStream> MemoryStreamPtr;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 
-#endif //F3D_MEMORY_STREAM_H_
+#endif //_V3D_MEMORY_STREAM_H_

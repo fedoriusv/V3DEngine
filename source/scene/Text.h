@@ -6,7 +6,7 @@
 #include "renderer/Geometry.h"
 #include "renderer/Material.h"
 #include "renderer/RenderJob.h"
-#include "renderer/FontData.h"
+#include "resources/FontData.h"
 
 namespace v3d
 {
@@ -70,7 +70,7 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CFont>          FontPtr;
+    typedef std::shared_ptr<CText>          FontPtr;
     typedef std::map<std::string, FontPtr>  FontList;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

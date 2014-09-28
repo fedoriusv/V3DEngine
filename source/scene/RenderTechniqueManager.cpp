@@ -1,9 +1,11 @@
 #include "RenderTechniqueManager.h"
-#include "stream/FileStream.h"
 #include "utils/Logger.h"
+#include "stream/StreamManager.h"
 
 using namespace v3d;
 using namespace v3d::scene;
+using namespace v3d::stream;
+using namespace v3d::renderer;
 
 CRenderTechniqueManager::CRenderTechniqueManager()
 {
@@ -22,12 +24,12 @@ void CRenderTechniqueManager::add(const renderer::RenderTechniquePtr& technique)
     m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(name, technique));
 }
 
-renderer::RenderTechniquePtr CRenderTechniqueManager::get(const std::string& name)
+const RenderTechniquePtr& CRenderTechniqueManager::get(const std::string& name)
 {
     return m_renderTechniques[name];
 }
 
-renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
+const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -54,7 +56,7 @@ renderer::RenderTechniquePtr CRenderTechniqueManager::load(const std::string& na
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                stream::FileStream* stream = new stream::FileStream(fullName, stream::FileStream::e_in);
+                FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
 
                 if (stream->isOpen())
                 {

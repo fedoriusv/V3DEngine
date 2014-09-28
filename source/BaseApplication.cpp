@@ -2,7 +2,10 @@
 #include "utils/Logger.h"
 
 using namespace v3d;
+using namespace v3d::event;
+using namespace v3d::scene;
 using namespace v3d::platform;
+using namespace v3d::renderer;
 
 BaseApplication::BaseApplication(int& argc, char** argv)
 {
@@ -40,22 +43,22 @@ int BaseApplication::exec()
     return 0;
 }
 
-platform::PlatformPtr BaseApplication::getPlatform() const
+const PlatformPtr& BaseApplication::getPlatform() const
 {
     return m_engine->getPlatform();
 }
 
-platform::WindowPtr BaseApplication::getWindow() const
+const WindowPtr BaseApplication::getWindow() const
 {
     return m_engine->getPlatform()->getWindow();
 }
 
-event::InputEventHandlerPtr BaseApplication::getInputEventHandler() const
+const InputEventHandlerPtr& BaseApplication::getInputEventHandler() const
 {
     return m_engine->getInputEventHandler();
 }
 
-scene::SceneManagerPtr BaseApplication::getSceneManager() const
+const SceneManagerPtr& BaseApplication::getSceneManager() const
 {
     return m_engine->getSceneManager();
 }

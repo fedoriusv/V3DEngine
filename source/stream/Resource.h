@@ -17,10 +17,10 @@ namespace stream
         CResource();
         virtual             ~CResource();
 
-        virtual void        init(IStream* stream) = 0;
-        virtual bool        load()                = 0;
+        virtual void        init(const IStreamPtr& stream) = 0;
+        virtual bool        load()                         = 0;
 
-        IStream*            getStream() const;
+        const IStreamPtr&   getStream() const;
         bool                isLoaded()  const;
 
         const std::string&  getResourseName() const;
@@ -34,13 +34,13 @@ namespace stream
         CResource(const CResource& other);
         CResource&          operator=(const CResource& other);
 
-        void                setStream(stream::IStream* stream);
-        void                swapContent(CResource* other);
+        void                setStream(const IStreamPtr& stream);
+        void                swapContent(CResource& other);
         void                setLoaded(bool loaded);
 
     private:
 
-        IStream*            m_stream;
+        IStreamPtr          m_stream;
         std::string         m_resourceName;
         std::string         m_resourceFolder;
         bool                m_isLoaded;

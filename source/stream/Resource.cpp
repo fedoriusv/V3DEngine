@@ -39,7 +39,7 @@ CResource& CResource::operator=(const CResource& other)
     return *this;
 }
 
-IStream* CResource::getStream() const
+const IStreamPtr& CResource::getStream() const
 {
     return m_stream;
 }
@@ -69,17 +69,17 @@ void CResource::setResourseFolder(const std::string& folder)
     m_resourceFolder = folder;
 }
 
-void CResource::setStream(stream::IStream* stream)
+void CResource::setStream(const stream::IStreamPtr& stream)
 {
     m_stream = stream;
 }
 
-void CResource::swapContent(CResource* other)
+void CResource::swapContent(CResource& other)
 {
-    std::swap(m_resourceName, other->m_resourceName);
-    std::swap(m_resourceFolder, other->m_resourceFolder);
-    std::swap(m_stream, other->m_stream);
-    std::swap(m_isLoaded, other->m_isLoaded);
+    std::swap(m_resourceName, other.m_resourceName);
+    std::swap(m_resourceFolder, other.m_resourceFolder);
+    std::swap(m_stream, other.m_stream);
+    std::swap(m_isLoaded, other.m_isLoaded);
 }
 
 void CResource::setLoaded(bool loaded)

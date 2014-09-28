@@ -16,14 +16,14 @@ CBitmapFontData::~CBitmapFontData()
 {
 }
 
-void CBitmapFontData::init(stream::IStream* stream)
+void CBitmapFontData::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
 }
 
 bool CBitmapFontData::load()
 {
-    stream::IStream* stream = CResource::getStream();
+    const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
         LOG_ERROR("Empty Stream with name [%s] form Bitmap Font", CResource::getResourseName().c_str());
