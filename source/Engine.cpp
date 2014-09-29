@@ -17,9 +17,9 @@ CEngine::CEngine()
     , m_inputEventHandler(nullptr)
     , m_scene(nullptr)
 {
-    m_platform = std::make_shared<CPlatform>(CPlatform());
-    m_inputEventHandler = std::make_shared<CInputEventHandler>(CInputEventHandler());
-    m_scene = std::make_shared<CSceneManager>(CSceneManager());
+    m_platform = std::make_shared<CPlatform>();
+    m_inputEventHandler = std::make_shared<CInputEventHandler>();
+    m_scene = std::make_shared<CSceneManager>();
 }
 
 CEngine::~CEngine()

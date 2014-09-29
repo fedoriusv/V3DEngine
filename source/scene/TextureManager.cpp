@@ -85,8 +85,10 @@ const TexturePtr CTextureManager::load(const std::string& name)
                     }
 
                     renderer::TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
+
                     texture->m_target = renderer::ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
+
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
                     texture->setResourseFolder(fullPath);
 

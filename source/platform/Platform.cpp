@@ -44,15 +44,15 @@ platform::WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& 
     param._driverType = driverType;
 
 #ifdef _PLATFORM_WIN_
-    window = std::make_shared<CWindowWin32>(CWindowWin32(param));
+    window = std::make_shared<CWindowWin32>(param);
 #endif
 
 #ifdef _PLATFORM_MACOSX_
-    window = std::make_shared<CWindowMacOSX>(CWindowMacOSX(param));
+    window = std::make_shared<CWindowMacOSX>(param);
 #endif
 
 #ifdef _PLATFORM_LINUX_
-    window = std::make_shared<CWindowLinux>(CWindowLinux(param));
+    window = std::make_shared<CWindowLinux>(param);
 #endif
 
     window->create();
@@ -66,7 +66,7 @@ platform::WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& 
     {
         case EDriverType::eDriverOpenGL:
         {
-            driver = std::make_shared<CDriverContextGL>(CDriverContextGL(window));
+            driver = std::make_shared<CDriverContextGL>(window);
             break;
         }
 
@@ -141,7 +141,7 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
     {
         case EDriverType::eDriverOpenGL:
         {
-            renderer = std::make_shared<CRendererGL>(CRendererGL(context));
+            renderer = std::make_shared<CRendererGL>(context);
             break;
         }
 
