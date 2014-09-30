@@ -3,7 +3,7 @@
 
 #include "Model.h"
 #include "Singleton.h"
-#include "resources/ResourceDecoder.h"
+#include "decoders/ResourceDecoder.h"
 
 namespace v3d
 {
@@ -27,8 +27,8 @@ namespace scene
 
         void                                unloadAll();
 
-        void                                registerDecoder(resources::DecoderPtr decoder);
-        void                                unregisterDecoder(resources::DecoderPtr& decoder);
+        void                                registerDecoder(decoders::DecoderPtr decoder);
+        void                                unregisterDecoder(decoders::DecoderPtr& decoder);
 
         void                                registerPath(const std::string& path);
         void                                unregisterPath(const std::string& path);
@@ -36,7 +36,7 @@ namespace scene
     private:
 
         ModelMap                            m_modelList;
-        std::vector<resources::DecoderPtr>  m_decoders;
+        std::vector<decoders::DecoderPtr>   m_decoders;
         std::vector<std::string>            m_pathes;
     };
 

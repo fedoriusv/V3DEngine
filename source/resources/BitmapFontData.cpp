@@ -4,6 +4,7 @@
 #include "tinyxml2.h"
 
 using namespace v3d;
+using namespace v3d::resources;
 using namespace v3d::renderer;
 
 CBitmapFontData::CBitmapFontData(const std::string& font)

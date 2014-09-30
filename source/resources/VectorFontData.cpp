@@ -4,8 +4,8 @@
 
 using namespace v3d;
 using namespace v3d::scene;
+using namespace v3d::resources;
 using namespace v3d::renderer;
-
 
 inline int next_p2(int n)
 {

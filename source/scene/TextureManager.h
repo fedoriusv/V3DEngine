@@ -5,7 +5,7 @@
 #include "Singleton.h"
 #include "renderer/Texture.h"
 #include "stream/IStream.h"
-#include "resources/ResourceDecoder.h"
+#include "decoders/ResourceDecoder.h"
 #include "Singleton.h"
 
 namespace v3d
@@ -38,13 +38,13 @@ namespace scene
         void                        registerPath(const std::string& path);
         void                        unregisterPath(const std::string& path);
 
-        void                        registerDecoder(resources::DecoderPtr decoder);
-        void                        unregisterDecoder(resources::DecoderPtr& decoder);
+        void                        registerDecoder(decoders::DecoderPtr decoder);
+        void                        unregisterDecoder(decoders::DecoderPtr& decoder);
 
     private:
 
         renderer::TextureMap        m_textures;
-        resources::DecoderList      m_decoders;
+        decoders::DecoderList       m_decoders;
         std::vector<std::string>    m_pathes;
     };
 

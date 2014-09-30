@@ -50,7 +50,7 @@ namespace scene
         void                            build();
 
         f32                             getTextWidth();
-        f32                             adjustForKerningPairs(const renderer::CFontData::SCharDesc* info, const s32 charId);
+        f32                             adjustForKerningPairs(const resources::CFontData::SCharDesc* info, const s32 charId);
 
         std::string                     m_text;
         u32                             m_size;
@@ -64,7 +64,7 @@ namespace scene
         renderer::RenderJobPtr          m_renderJob;
 
         std::string                     m_font;
-        renderer::FontDataPtr           m_data;
+        resources::FontDataPtr          m_data;
 
     };
 

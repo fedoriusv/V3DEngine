@@ -2,12 +2,12 @@
 #include "utils/Logger.h"
 #include "stream/StreamManager.h"
 #include "Engine.h"
-#include "resources/TextureResILDecoder.h"
+#include "decoders/TextureResILDecoder.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::renderer;
-using namespace v3d::resources;
+using namespace v3d::decoders;
 
 CTextureManager::CTextureManager()
 {

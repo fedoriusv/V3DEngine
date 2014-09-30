@@ -6,6 +6,7 @@
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::renderer;
+using namespace v3d::resources;
 
 CText::CText(const std::string& font)
     : m_text("")

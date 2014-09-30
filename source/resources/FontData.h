@@ -11,7 +11,7 @@ namespace scene
     class CFontManager;
     class CText;
 }
-namespace renderer
+namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,34 +58,34 @@ namespace renderer
         };
 
         CFontData(const std::string& font);
-        virtual                     ~CFontData();
+        virtual                             ~CFontData();
 
-        EFontType                   getFontType() const;
-        const std::string&          getFontName() const;
+        EFontType                           getFontType() const;
+        const std::string&                  getFontName() const;
 
-        const SCharDesc*            getCharInfo(const s32 charCode) const;
+        const SCharDesc*                    getCharInfo(const s32 charCode) const;
 
-        void                        setFontSize(const u32 size);
-        const u32                   getFontSize() const;
+        void                                setFontSize(const u32 size);
+        const u32                           getFontSize() const;
 
     protected:
 
-        friend                      scene::CFontManager;
-        friend                      scene::CText;
+        friend                              scene::CFontManager;
+        friend                              scene::CText;
 
-        void                        setFontType(EFontType type);
+        void                                setFontType(EFontType type);
 
-        virtual bool                addCharsToMap(const std::string& text) = 0;
-        virtual bool                loadFont(const std::string& resource)  = 0;
+        virtual bool                        addCharsToMap(const std::string& text) = 0;
+        virtual bool                        loadFont(const std::string& resource)  = 0;
 
-        EFontType                   m_fontType;
+        EFontType                           m_fontType;
 
-        std::map<s32, SCharDesc>    m_charInfo;
-        std::vector<TexturePtr>     m_charTexture;
-        Dimension2D                 m_mapSize;
+        std::map<s32, SCharDesc>            m_charInfo;
+        std::vector<renderer::TexturePtr>   m_charTexture;
+        Dimension2D                         m_mapSize;
 
-        std::string                 m_font;
-        u32                         m_fontSize;
+        std::string                         m_font;
+        u32                                 m_fontSize;
 
     };
 

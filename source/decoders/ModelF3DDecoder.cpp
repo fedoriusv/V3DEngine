@@ -1,7 +1,7 @@
 #include "ModelF3DDecoder.h"
 
 using namespace v3d;
-using namespace v3d::resources;
+using namespace v3d::decoders;
 
 CModelF3DDecoder::CModelF3DDecoder()
     : CResourceDecoder()

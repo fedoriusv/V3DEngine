@@ -6,6 +6,7 @@
 
 using namespace v3d;
 using namespace v3d::scene;
+using namespace v3d::resources;
 
 CFontManager::CFontManager()
 {
@@ -18,18 +19,18 @@ CFontManager::~CFontManager()
     CFontManager::unloadAll();
 }
 
-void CFontManager::add(const renderer::FontDataPtr& font)
+void CFontManager::add(const FontDataPtr& font)
 {
     std::string name = font->getResourseName();
-    m_fontsData.insert(std::map<std::string, renderer::FontDataPtr>::value_type(name, font));
+    m_fontsData.insert(std::map<std::string, FontDataPtr>::value_type(name, font));
 }
 
-const renderer::FontDataPtr& CFontManager::get(const std::string& name)
+const FontDataPtr& CFontManager::get(const std::string& name)
 {
     return m_fontsData[name];
 }
 
-const renderer::FontDataPtr CFontManager::load(const std::string& name)
+const FontDataPtr CFontManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -59,17 +60,17 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
 
                 if (stream->isOpen())
                 {
-                    renderer::FontDataPtr font = nullptr;
+                    FontDataPtr font = nullptr;
 
                     if (fileExtension == ".fnt")
                     {
-                        font = std::make_shared<renderer::CBitmapFontData>(nameStr);
-                        font->setFontType(renderer::CFontData::EFontType::eBitmapFont);
+                        font = std::make_shared<CBitmapFontData>(nameStr);
+                        font->setFontType(CFontData::EFontType::eBitmapFont);
                     }
                     else if (fileExtension == ".ttf")
                     {
-                        font = std::make_shared<renderer::CVectorFontData>(nameStr);
-                        font->setFontType(renderer::CFontData::EFontType::eVectorFont);
+                        font = std::make_shared<CVectorFontData>(nameStr);
+                        font->setFontType(CFontData::EFontType::eVectorFont);
                     }
 
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
@@ -90,7 +91,7 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
                         return nullptr;
                     }
 
-                    m_fontsData.insert(std::map<std::string, renderer::FontDataPtr>::value_type(nameStr, font));
+                    m_fontsData.insert(std::map<std::string, FontDataPtr>::value_type(nameStr, font));
                     return font;
                 }
             }
@@ -115,9 +116,9 @@ void CFontManager::unload(const std::string& name)
     }
 }
 
-void CFontManager::unload(const renderer::FontDataPtr& font)
+void CFontManager::unload(const FontDataPtr& font)
 {
-    auto predDelete = [font](const std::pair<std::string, renderer::FontDataPtr>& pair) -> bool
+    auto predDelete = [&font](const std::pair<std::string, FontDataPtr>& pair) -> bool
     {
         return pair.second == font;
     };

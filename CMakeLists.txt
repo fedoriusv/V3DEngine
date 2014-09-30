@@ -124,6 +124,10 @@ file(GLOB RENDERER_SOURCES ${SOURCE_DIR}/renderer/*.cpp)
 file(GLOB RESOURCES_HEADERS ${SOURCE_DIR}/resources/*.h)
 file(GLOB RESOURCES_SOURCES ${SOURCE_DIR}/resources/*.cpp)
 
+#Decoders Source
+file(GLOB DECODERS_HEADERS ${SOURCE_DIR}/decoders/*.h)
+file(GLOB DECODERS_SOURCES ${SOURCE_DIR}/decoders/*.cpp)
+
 #GL Source
 file(GLOB GL_HEADERS ${SOURCE_DIR}/*/GL/*.h)
 file(GLOB GL_SOURCES ${SOURCE_DIR}/*/GL/*.cpp)
@@ -158,6 +162,7 @@ source_group(platform         FILES ${PLATFORM_HEADERS}    ${PLATFORM_SOURCES})
 source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES})
 source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
 source_group(resources        FILES ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES})
+source_group(decoders         FILES ${DECODERS_HEADERS}    ${DECODERS_SOURCES})
 source_group(gl               FILES ${GL_HEADERS}          ${GL_SOURCES})
 source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
 source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES})
@@ -181,6 +186,7 @@ add_library(
 	${PLATFORM_HEADERS}    ${PLATFORM_SOURCES}
 	${CORE_HEADERS}        ${CORE_SOURCES}
 	${RENDERER_HEADERS}    ${RENDERER_SOURCES}
+	${DECODERS_HEADERS}	   ${DECODERS_SOURCES}
 	${RESOURCES_HEADERS}   ${RESOURCES_SOURCES}
 	${GL_HEADERS}          ${GL_SOURCES}
 	${CONTEXT_HEADERS}     ${CONTEXT_SOURCES}

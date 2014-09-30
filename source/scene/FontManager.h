@@ -17,12 +17,12 @@ namespace scene
         CFontManager();
         virtual                             ~CFontManager();
 
-        void                                add(const renderer::FontDataPtr& font);
-        const renderer::FontDataPtr&        get(const std::string& name);
-        const renderer::FontDataPtr         load(const std::string& name);
+        void                                add(const resources::FontDataPtr& font);
+        const resources::FontDataPtr&       get(const std::string& name);
+        const resources::FontDataPtr        load(const std::string& name);
 
         void                                unload(const std::string& name);
-        void                                unload(const renderer::FontDataPtr& font);
+        void                                unload(const resources::FontDataPtr& font);
 
         void                                unloadAll();
 
@@ -31,7 +31,7 @@ namespace scene
 
     private:
 
-        renderer::FontDataList              m_fontsData;
+        resources::FontDataList             m_fontsData;
         std::vector<std::string>            m_pathes;
     };
 

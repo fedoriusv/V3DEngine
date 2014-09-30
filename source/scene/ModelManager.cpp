@@ -1,12 +1,12 @@
 #include "ModelManager.h"
 #include "utils/Logger.h"
-#include "resources/ModelF3DDecoder.h"
+#include "decoders/ModelF3DDecoder.h"
 #include "stream/StreamManager.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::stream;
-using namespace v3d::resources;
+using namespace v3d::decoders;
 
 CModelManager::CModelManager()
 {
