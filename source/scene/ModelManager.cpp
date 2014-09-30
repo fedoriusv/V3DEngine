@@ -7,6 +7,7 @@ using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::stream;
 using namespace v3d::decoders;
+using namespace v3d::resources;
 
 CModelManager::CModelManager()
 {
@@ -25,18 +26,18 @@ CModelManager::~CModelManager()
     CModelManager::unloadAll();
 }
 
-void CModelManager::add(const ModelPtr& model)
+void CModelManager::add(const ModelDataPtr& model)
 {
-    /*std::string name = technique->getResourseName();
-    m_modelList.insert(std::map<std::string, ModelPtr>::value_type(name, model));*/
+    std::string name = model->getResourseName();
+    m_modelList.insert(std::map<std::string, ModelDataPtr>::value_type(name, model));
 }
 
-ModelPtr CModelManager::get(const std::string& name)
+const ModelDataPtr& CModelManager::get(const std::string& name)
 {
     return m_modelList[name];
 }
 
-ModelPtr CModelManager::load(const std::string& name)
+ModelDataPtr CModelManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -86,34 +87,26 @@ ModelPtr CModelManager::load(const std::string& name)
                         return nullptr;
                     }
 
-                   /* renderer::TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
-
-                    texture->m_target = renderer::ETextureTarget::eTexture2D;
-                    texture->setResourseName(fullName);
-
+                    resource->setResourseName(fullName);
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
-                    texture->setResourseFolder(fullPath);*/
+                    resource->setResourseFolder(fullPath);
 
-                   /* if (!texture->load())
+                    ModelDataPtr model = std::static_pointer_cast<CModelData>(resource);
+
+                    if (!model->load())
                     {
                         LOG_ERROR("CModelManager: Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
-                    if (!texture->create())
-                    {
-                        LOG_ERROR("CModelManager: Error to Create Texture file [%s]", nameStr.c_str());
-                        return nullptr;
-                    }
+                    m_modelList.insert(std::map<std::string, ModelDataPtr>::value_type(nameStr, model));
 
-                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(nameStr, texture));
-
-                    return texture;*/
+                    return model;
                 }
             }
             else
             {
-                LOG_WARRNING("CTextureManager file [%s] not found", fullName.c_str());
+                LOG_WARRNING("CModelManager File [%s] not found", fullName.c_str());
             }
         }
     }
@@ -131,9 +124,9 @@ void CModelManager::unload(const std::string& name)
     }
 }
 
-void CModelManager::unload(const ModelPtr& model)
+void CModelManager::unload(const ModelDataPtr& model)
 {
-    auto predDelete = [model](const std::pair<std::string, scene::ModelPtr>& pair) -> bool
+    auto predDelete = [&model](const std::pair<std::string, ModelDataPtr>& pair) -> bool
     {
         return pair.second == model;
     };

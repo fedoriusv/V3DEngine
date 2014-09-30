@@ -2,6 +2,7 @@
 #define _V3D_MODEL_H_
 
 #include "Node.h"
+#include "renderer/Mesh.h"
 
 namespace v3d
 {
@@ -14,21 +15,24 @@ namespace scene
     public:
 
         CModel();
-        virtual                   ~CModel();
+        virtual                         ~CModel();
 
-        void                      render()         override;
-        void                      update(f64 time) override;
-        void                      init()           override;
+        void                            render()         override;
+        void                            update(f64 time) override;
+        void                            init()           override;
+
+        void                            addMesh(const renderer::MeshPtr& mesh);
+        const renderer::MeshPtr&        getMesh(u32 id) const;
+        u32                             getMeshCount() const;
 
     private:
 
-        //MeshList
+        std::vector<renderer::MeshPtr>  m_meshes;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CModel>         ModelPtr;
-    typedef std::map<std::string, ModelPtr> ModelMap;
+    typedef std::shared_ptr<CModel> ModelPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
