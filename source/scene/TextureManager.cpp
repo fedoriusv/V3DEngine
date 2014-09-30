@@ -12,6 +12,7 @@ using namespace v3d::resources;
 CTextureManager::CTextureManager()
 {
     CTextureManager::registerPath("../../../../data/");
+    CTextureManager::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".png", ".bmp", ".tga", ".jpg" };
     CTextureManager::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
@@ -94,13 +95,13 @@ const TexturePtr CTextureManager::load(const std::string& name)
 
                     if (!texture->load())
                     {
-                        LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());
+                        LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
                     if (!texture->create())
                     {
-                        LOG_ERROR("Error to Create Texture file [%s]", nameStr.c_str());
+                        LOG_ERROR("CTextureManager: Error to Create Texture file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
@@ -111,7 +112,7 @@ const TexturePtr CTextureManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CTextureManager file [%s] not found", fullName.c_str());
+                LOG_WARRNING("CTextureManager: File [%s] not found", fullName.c_str());
             }
         }
     }

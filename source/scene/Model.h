@@ -19,6 +19,10 @@ namespace scene
         void                      render()         override;
         void                      update(f64 time) override;
         void                      init()           override;
+
+    private:
+
+        //MeshList
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

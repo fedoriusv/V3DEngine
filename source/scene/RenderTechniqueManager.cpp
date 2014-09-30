@@ -69,7 +69,7 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
 
                     if (!technique->load())
                     {
-                        LOG_ERROR("Streaming error read file [%s]", nameStr.c_str());
+                        LOG_ERROR("CRenderTechniqueManager: Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
@@ -81,7 +81,7 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CRenderTechniqueManager file [%s] not found", fullName.c_str());
+                LOG_WARRNING("CRenderTechniqueManager: File [%s] not found", fullName.c_str());
             }
         }
     }

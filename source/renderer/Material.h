@@ -38,7 +38,7 @@ namespace renderer
         bool                        setTexture(const u32 layer, const std::string* files[6]);
         void                        setTexture(const u32 layer, TexturePtr texture);
         
-        const TexturePtr            getTexture(const u32 layer) const;
+        const TexturePtr&           getTexture(const u32 layer) const;
         u32                         getTextureCount()           const;
 
         void                        destroyTexture(u32 layer);

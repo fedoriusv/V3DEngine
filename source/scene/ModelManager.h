@@ -27,7 +27,7 @@ namespace scene
 
         void                                unloadAll();
 
-        void                                registerDecoder(resources::DecoderPtr& decoder);
+        void                                registerDecoder(resources::DecoderPtr decoder);
         void                                unregisterDecoder(resources::DecoderPtr& decoder);
 
         void                                registerPath(const std::string& path);

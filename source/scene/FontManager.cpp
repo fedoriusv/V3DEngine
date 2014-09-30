@@ -77,7 +77,7 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
 
                     if (!font)
                     {
-                        LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
+                        LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
@@ -86,7 +86,7 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
 
                     if (!font->load())
                     {
-                        LOG_ERROR("FreeTypeFont Load error [%s]", nameStr.c_str());
+                        LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
@@ -96,7 +96,7 @@ const renderer::FontDataPtr CFontManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CFontManager file [%s] not found", fullName.c_str());
+                LOG_WARRNING("CFontManager: File [%s] not found", fullName.c_str());
             }
         }
 

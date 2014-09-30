@@ -82,12 +82,11 @@ f32 CMaterial::getShininess() const
 	return m_materialData._shininess;
 }
 	
-const TexturePtr CMaterial::getTexture(const u32 layer) const
+const TexturePtr& CMaterial::getTexture(const u32 layer) const
 {
 	if (layer >= ETextureLayer::eLayerMax)
 	{
 		ASSERT(false && "invalid texture layer") ;
-		return nullptr;
 	}
 
 	return m_texture.at(layer);

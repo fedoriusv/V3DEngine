@@ -135,7 +135,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getDefaultUniformList();
-    for (auto uniform : list)
+    for (auto& uniform : list)
     {
         const EUniformData type = uniform.second->getUniformData();
         const s32 id = uniform.second->getUniformID();
@@ -209,7 +209,7 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getDefaultUniformList();
-    for (auto uniform : list)
+    for (auto& uniform : list)
     {
         const EUniformData type = uniform.second->getUniformData();
         const s32 id = uniform.second->getUniformID();
@@ -258,7 +258,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     std::vector<scene::CLight*> lights = m_lightList;
     const Vector3D& pos = transform.getTranslation();
 
-    std::remove_if(lights.begin(), lights.end(), [pos](scene::CLight* light) -> bool
+    std::remove_if(lights.begin(), lights.end(), [&pos](scene::CLight* light) -> bool
     {
         if (!light->isVisible())
         {
@@ -285,7 +285,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
     {
         const UniformList& list = data->getDefaultUniformList();
-        for (auto uniform : list)
+        for (auto& uniform : list)
         {
             const EUniformData type = uniform.second->getUniformData();
             const s32 id = uniform.second->getUniformID();

@@ -21,7 +21,7 @@ CRenderPass::~CRenderPass()
 {
 }
 
-ShaderProgramPtr CRenderPass::getShaderProgram() const
+const ShaderProgramPtr& CRenderPass::getShaderProgram() const
 {
     return m_program;
 }
