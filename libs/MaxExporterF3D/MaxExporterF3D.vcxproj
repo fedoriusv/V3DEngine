@@ -41,7 +41,7 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir>C:\Program Files\Autodesk\3ds Max 2015\plugins\</OutDir>
-    <TargetName>IGameExporter</TargetName>
+    <TargetName>ExporterF3D</TargetName>
     <TargetExt>.dle</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -56,7 +56,7 @@
     <Link>
       <AdditionalDependencies>comctl32.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;paramblk2.lib;msxml2.lib;igame.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MaxSdkLib);$(MaxLib);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>.\IGameExporter.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>.\ExporterF3D.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Hybrid|Win32'">
@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;_CRT_NON_CONFORMING_SWPRINTFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ADESK_3DSMAX_WINDOWS_;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;ISOLATION_AWARE_ENABLED=1;MODULE_NAME=$(TargetFileName);_DEBUG;WIN32;WIN64;_WINDLL;_UNICODE;UNICODE</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,19 +91,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DllEntry.cpp" />
-    <ClCompile Include="IGameExporter.cpp" />
-    <ClCompile Include="XMLUtility.cpp" />
+    <ClCompile Include="ExporterF3D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="IGameExporter.def" />
+    <None Include="ExporterF3D.def" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="IGameExporter.rc" />
+    <ResourceCompile Include="ExporterF3D.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IGameExporter.h" />
+    <ClInclude Include="ClassDesc.h" />
+    <ClInclude Include="ExporterF3D.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="XMLUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

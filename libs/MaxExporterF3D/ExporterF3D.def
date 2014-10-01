@@ -1,4 +1,4 @@
-LIBRARY IGameExporter.dle
+LIBRARY ExporterF3D.dle
 EXPORTS
    LibDescription       @1       PRIVATE
    LibNumberClasses     @2       PRIVATE
