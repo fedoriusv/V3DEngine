@@ -33,6 +33,9 @@
     <ProjectName>MaxExporterF3D</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(MaxSDK)\ProjectSettings\PropertySheets\3dsmax.general.project.settings.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="PropertySheets">
@@ -92,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="DllEntry.cpp" />
     <ClCompile Include="ExporterF3D.cpp" />
+    <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ExporterF3D.def" />
@@ -101,8 +105,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassDesc.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="ExporterF3D.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Singleton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -20,6 +20,7 @@ TCHAR *GetString(int id)
 
 #define IGAMEEXPORTER_CLASS_ID  Class_ID(0x79d613a4, 0x4f21c3ad)
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class ExporterClassDesc :public ClassDesc2 
 {

@@ -1,5 +1,5 @@
 #include "ExporterF3D.h"
-
+#include "Logger.h"
 
 #include "IGame.h"
 #include "IGameObject.h"
@@ -7,7 +7,6 @@
 #include "IGameControl.h"
 #include "IGameModifier.h"
 #include "IConversionManager.h"
-#include "IGameError.h"
 #include "3dsmaxport.h"
 
 #define BEZIER	0
@@ -15,7 +14,91 @@
 #define LINEAR	2
 #define SAMPLE	3
 
+using namespace v3d;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+INT_PTR CALLBACK ExporterF3DOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    ExporterF3D* pExporter = (ExporterF3D*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+    //switch (message)
+    //{
+    //case WM_INITDIALOG:
+    //    hWnd_ExporterDialog = hWnd;
+    //    pExporter = (RKMaxExporter*)lParam;
+    //    SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
+    //    CenterWindow(hWnd, GetParent(hWnd));
+
+    //    // set check box to default values
+    //    CheckDlgButton(hWnd, IDC_EXPORT_GEOMETRY, pExporter->m_ExportAsGeometry);
+    //    CheckDlgButton(hWnd, IDC_EXPORT_IN_OBJECT_SPACE, pExporter->m_ExportObjectSpace);
+    //    CheckDlgButton(hWnd, IDC_EXPORT_SELECTED_ONLY, pExporter->m_ExportSelected);
+    //    CheckDlgButton(hWnd, IDC_GENERATE_MATERIALS, pExporter->m_GenerateMaterials);
+    //    CheckDlgButton(hWnd, IDC_EXPORT_SKYBOX, pExporter->m_ExportAsSkybox);
+    //    {
+    //        TCHAR strWindowTitle[256];
+    //        int verMajor = RKMODEL_VERSION_MAJOR;
+    //        int verMinor = RKMODEL_VERSION_MINOR;
+
+    //        sprintf_s(strWindowTitle, "RKMaxExporter version %d.%d (c) 2006+ Daniel Stephens", verMajor, verMinor);
+    //        SetWindowText(hWnd, strWindowTitle);
+    //    }
+    //    return TRUE;
+
+    //case WM_COMMAND:
+    //    switch (LOWORD(wParam))
+    //    {
+    //    case IDC_EXPORT_GEOMETRY:
+    //        break;
+    //    case IDC_EXPORT_IN_OBJECT_SPACE:
+    //        break;
+    //    case IDC_EXPORT_SELECTED_ONLY:
+    //        break;
+    //    case IDC_GENERATE_MATERIALS:
+    //        break;
+
+    //    case IDOK:
+    //        pExporter->m_ExportAsGeometry = IsDlgButtonChecked(hWnd, IDC_EXPORT_GEOMETRY) ? true : false;
+    //        pExporter->m_ExportObjectSpace = IsDlgButtonChecked(hWnd, IDC_EXPORT_IN_OBJECT_SPACE) ? true : false;
+    //        pExporter->m_ExportSelected = IsDlgButtonChecked(hWnd, IDC_EXPORT_SELECTED_ONLY) ? true : false;
+    //        pExporter->m_GenerateMaterials = IsDlgButtonChecked(hWnd, IDC_GENERATE_MATERIALS) ? true : false;
+    //        pExporter->m_ExportAsSkybox = IsDlgButtonChecked(hWnd, IDC_EXPORT_SKYBOX) ? true : false;
+    //        EndDialog(hWnd, 1);
+    //        break;
+
+    //    case IDCANCEL:
+    //        EndDialog(hWnd, 0);
+    //        break;
+
+    //    default:
+    //        return FALSE;
+    //    }
+
+    //default:
+    //    return FALSE;
+    //}
+
+    return TRUE;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ExporterF3DErrorCallback errorCallback;
+
+void ExporterF3DErrorCallback::ErrorProc(IGameError error)
+{
+    const TCHAR * buf = GetLastIGameErrorText();
+    printf("ErrorCode = %d ErrorText = %s\n", error, buf);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ExporterF3D::ExporterF3D()
+    : m_iGameVersion(0.0f)
+    , m_iGameScene(nullptr)
+
+    , m_exportSelected(false)
 {
 }
 
@@ -84,17 +167,80 @@ void ExporterF3D::ShowAbout(HWND hWnd)
 
 BOOL ExporterF3D::SupportsOptions(int ext, DWORD options)
 {
-	// TODO Decide which options to support.  Simply return
-	// true for each option supported by each Extension 
-	// the exporter supports.
+    // TODO Decide which options to support.  Simply return
+    // true for each option supported by each Extension 
+    // the exporter supports.
 
-	return TRUE;
+    return TRUE;
 }
 
 int ExporterF3D::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
-    return 0;
+#if USE_CONSOLE
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+#endif
+
+    char mbstr[128];
+    std::wcstombs(mbstr, name, 128);
+    
+    LOG_INFO("Start Export file %s", mbstr);
+
+    Interface* ip = GetCOREInterface();
+    SetErrorCallBack(&errorCallback);
+
+    m_iGameVersion = GetIGameVersion();
+    LOG_INFO("IGameVersion %f", m_iGameVersion);
+
+    if (!DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), i->GetMAXHWnd(), ExporterF3DOptionsDlgProc, (LPARAM)this))
+    {
+        return 1;
+    }
+
+    m_iGameScene = GetIGameInterface();
+    m_iGameScene->InitialiseIGame(m_exportSelected);
+
+    IGameConversionManager* cm = GetConversionManager();
+    cm->SetCoordSystem(IGameConversionManager::IGAME_USER); // IGAME_OGL); // IGAME_D3D);
+
+    UserCoord userCoordSystem;
+    userCoordSystem.rotation = 1;
+    userCoordSystem.xAxis = 0; // 1
+    userCoordSystem.yAxis = 3; // 2
+    userCoordSystem.zAxis = 4; // 4
+    userCoordSystem.uAxis = 1;
+    userCoordSystem.vAxis = 0;
+    cm->SetUserCoordSystem(userCoordSystem);
+    cm->SetCoordSystem(IGameConversionManager::IGAME_USER);
+
+    m_iGameScene->SetStaticFrame(0);
+
+    bool success = ExporterF3D::CreateModel();
+
+    m_iGameScene->ReleaseIGame();
+    ip->ProgressEnd();
+
+    if (success)
+    {
+        MessageBox(NULL, _T("Finished Success"), _T("OK"), MB_OK);
+    }
+
+#if USE_CONSOLE
+    fclose(stdout);
+    FreeConsole();
+#endif
+
+    return success ? 1 : 0;
 }
+
+bool ExporterF3D::CreateModel()
+{
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 ////corresponds to XML schema
 //TCHAR* mapSlotNames[] = {
