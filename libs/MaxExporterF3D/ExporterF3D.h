@@ -9,6 +9,7 @@
 #include "IGameError.h"
 
 class IGameScene;
+class IGameNode;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,10 @@ public:
     enum EExportError
     {
         eNoError = 0,
+        eSceneEmptyError,
+        eNodeMeshError,
+        eNodeLightError,
+        eNodeCameraError,
         eGeometryError,
     };
 
@@ -49,11 +54,20 @@ public:
 
     BOOL                    SupportsOptions(int ext, DWORD options);
     int                     DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts = FALSE, DWORD options = 0);
+
     static INT_PTR CALLBACK ExporterF3DOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK TestOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
 
     EExportError            CreateModel();
+    EExportError            ExportNode(IGameNode* node, int index);
+
+    bool                    ExportMesh(IGameNode* node);
+    bool                    ExportLight(IGameNode* node);
+    bool                    ExportCamera(IGameNode* node);
+
+    void                    ReIndexingVerts();
 
 private:
 
@@ -67,6 +81,7 @@ private:
     bool                    m_exportObjectSpace;
     bool                    m_exportMaterials;
     bool                    m_exportLights;
+    bool                    m_exportCamera;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

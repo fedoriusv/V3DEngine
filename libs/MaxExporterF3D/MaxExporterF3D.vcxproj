@@ -115,7 +115,6 @@
     <ClInclude Include="Singleton.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="bitmap1.bmp" />
     <Image Include="v3dlogo.bmp" />
   </ItemGroup>
   <ItemGroup>

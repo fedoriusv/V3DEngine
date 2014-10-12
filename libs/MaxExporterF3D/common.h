@@ -1,21 +1,5 @@
 #pragma once
 
-namespace v3d
-{
-    typedef unsigned char       u8;
-    typedef signed char         s8;
-    typedef char                c8;
-    typedef unsigned short      u16;
-    typedef signed short        s16;
-    typedef unsigned int        u32;
-    typedef signed int          s32;
-    typedef unsigned long long  u64;
-    typedef signed long long    s64;
-    typedef float               f32;
-    typedef double              f64;
-    typedef long double         f80;
-}
-
 #include <string>
 #include <vector>
 #include <list>
@@ -42,5 +26,7 @@ namespace v3d
 #   define ASSERT(x)
 #endif
 
-#define USE_LOGGER 1
-#define USE_CONSOLE 1
+#ifdef _DEBUG
+#   define USE_LOGGER 1
+#   define USE_CONSOLE 1
+#endif

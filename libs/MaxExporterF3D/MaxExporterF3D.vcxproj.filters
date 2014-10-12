@@ -51,7 +51,6 @@
     <Image Include="v3dlogo.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExporterF3D.rc">
