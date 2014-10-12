@@ -1,10 +1,10 @@
 // The to be #defined in a .h file included by a .rc file before maxversion.r
 
 
-#define MAXVER_INTERNALNAME "IGameExport\0"//should  be overidden on a per-dll level
-#define MAXVER_ORIGINALFILENAME "IGameExport.dle\0"//should  be overidden on a per-dll level
+#define MAXVER_INTERNALNAME "ExporterF3D\0"//should  be overidden on a per-dll level
+#define MAXVER_ORIGINALFILENAME "ExporterF3D.dle\0"//should  be overidden on a per-dll level
 #define MAXVER_FILEDESCRIPTION "Exporter built with IGame\0"//should  be overidden on a per-dll level
-#define MAXVER_COMMENTS "\0"//should  be overidden on a per-dll level
+#define MAXVER_COMMENTS "TECH: fred.nkrasov\0"//should  be overidden on a per-dll level
 
 // #define MAXVER_PRODUCTNAME //generally not overridden at the maxversion.r level
 // #define MAXVER_COPYRIGHT //only in exceptions should this be overridden

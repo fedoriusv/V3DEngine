@@ -27,35 +27,46 @@ class ExporterF3D : public SceneExport
 {
 public:
 
+    enum EExportError
+    {
+        eNoError = 0,
+        eGeometryError,
+    };
+
     ExporterF3D();
-    virtual ~ExporterF3D();
+    virtual                 ~ExporterF3D();
 
-    int             ExtCount();                 // Number of extensions supported
-    const TCHAR*    Ext(int n);                 // Extension #n (i.e. "3DS")
-    const TCHAR*    LongDesc();                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
-    const TCHAR*    ShortDesc();                // Short ASCII description (i.e. "3D Studio")
-    const TCHAR*    AuthorName();               // ASCII Author name
-    const TCHAR*    CopyrightMessage();         // ASCII Copyright message
-    const TCHAR*    OtherMessage1();            // Other message #1
-    const TCHAR*    OtherMessage2();            // Other message #2
-    unsigned int    Version();                  // Version number * 100 (i.e. v3.01 = 301)
-    void            ShowAbout(HWND hWnd);       // Show DLL's "About..." box
+    int                     ExtCount();                 // Number of extensions supported
+    const TCHAR*            Ext(int n);                 // Extension #n (i.e. "3DS")
+    const TCHAR*            LongDesc();                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
+    const TCHAR*            ShortDesc();                // Short ASCII description (i.e. "3D Studio")
+    const TCHAR*            AuthorName();               // ASCII Author name
+    const TCHAR*            CopyrightMessage();         // ASCII Copyright message
+    const TCHAR*            OtherMessage1();            // Other message #1
+    const TCHAR*            OtherMessage2();            // Other message #2
+    unsigned int            Version();                  // Version number * 100 (i.e. v3.01 = 301)
+    void                    ShowAbout(HWND hWnd);       // Show DLL's "About..." box
 
-    BOOL            SupportsOptions(int ext, DWORD options);
-    int             DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts = FALSE, DWORD options = 0);
-
-private:
-
-    bool            CreateModel();
+    BOOL                    SupportsOptions(int ext, DWORD options);
+    int                     DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts = FALSE, DWORD options = 0);
+    static INT_PTR CALLBACK ExporterF3DOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
 
-    const float     m_exporterVersion = 1.01f;
+    EExportError            CreateModel();
 
-    IGameScene*     m_iGameScene;
-    float           m_iGameVersion;
+private:
 
-    bool            m_exportSelected;
+    const float             m_exporterVersion = 1.01f;
+
+    IGameScene*             m_iGameScene;
+    float                   m_iGameVersion;
+
+    bool                    m_exportSelected;
+    bool                    m_exportAsGeometry;
+    bool                    m_exportObjectSpace;
+    bool                    m_exportMaterials;
+    bool                    m_exportLights;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

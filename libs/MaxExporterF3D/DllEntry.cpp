@@ -5,13 +5,13 @@
 
 #include "ClassDesc.h"
 
+extern ClassDesc2* GetExporterDesc();
 HINSTANCE hInstance;
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
    if(fdwReason == DLL_PROCESS_ATTACH)
    {
-      MaxSDK::Util::UseLanguagePackLocale();
       hInstance = hinstDLL;
       DisableThreadLibraryCalls(hInstance);
    }
@@ -21,7 +21,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 
 __declspec(dllexport) const TCHAR* LibDescription()
 {
-   return GetString(IDS_LIBDESCRIPTION);
+    return GetString(IDS_LIBDESCRIPTION);
 }
 
 //TODO: Must change this number when adding a new class
@@ -51,4 +51,15 @@ __declspec(dllexport) ULONG LibVersion()
 __declspec(dllexport) ULONG CanAutoDefer()
 {
    return 1;
+}
+
+TCHAR *GetString(int id)
+{
+    static TCHAR buf[256];
+
+    if (hInstance)
+    {
+        return LoadString(hInstance, id, buf, _countof(buf)) ? buf : NULL;
+    }
+    return NULL;
 }
