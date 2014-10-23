@@ -149,7 +149,7 @@ void CMaterial::destroyTexture(u32 layer)
 
 }
 
-void CMaterial::setTexture( const u32 layer, TexturePtr texture )
+void CMaterial::setTexture( const u32 layer, TexturePtr& texture )
 {
     if (layer >= ETextureLayer::eLayerMax)
 	{

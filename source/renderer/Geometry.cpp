@@ -59,3 +59,8 @@ void CGeometry::copyToIndices(const u32* indices, u32 size)
     std::copy(indices, indices + size, m_data._indices.begin());
 }
 
+void CGeometry::setInterval(u32 begin, u32 count)
+{
+    m_interval._begin = begin;
+    m_interval._count = count;
+}

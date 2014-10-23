@@ -17,6 +17,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
+
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     //cube->setName("cube");
@@ -41,14 +42,18 @@ void MyApplication::init()
         }
     }
 
-    BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
+    //BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
+
+    scene::CSkybox* skybox = static_cast<scene::CSkybox*>(BaseApplication::getSceneManager()->addSkyBox("textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
+        "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg"));
+    skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");
 
     //cube->setRotation(Vector3D(10, 120, 0));
     //Vector3D test = cube->getRotation();
 
     scene::CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
-    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -1.0f));
     camera->setName("camera");
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));

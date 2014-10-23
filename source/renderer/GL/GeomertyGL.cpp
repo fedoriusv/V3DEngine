@@ -39,6 +39,9 @@ void CGeometryGL::init()
     CGeometryGL::genVertexArray(m_arrayId);
     CGeometryGL::bindVertexArray(m_arrayId);
 
+    m_interval._begin = 0;
+    m_interval._count = m_data._countVertices;
+
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr& pass = m_technique->getRenderPass(idx);
@@ -116,7 +119,7 @@ void CGeometryGL::draw()
     }
     else
     {
-        CGeometryGL::drawArrays(EDrawModeGL[m_drawMode], 0, m_data._countVertices);
+        CGeometryGL::drawArrays(EDrawModeGL[m_drawMode], m_interval._begin, m_interval._count);
     }
 
     CGeometryGL::bindVertexArray(0);

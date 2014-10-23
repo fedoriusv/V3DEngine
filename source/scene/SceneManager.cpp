@@ -7,6 +7,7 @@
 #include "DiskShape.h"
 #include "PlaneShape.h"
 #include "Camera.h"
+#include "Skybox.h"
 #include "Light.h"
 #include "Text.h"
 #include "FPSCamera.h"
@@ -171,6 +172,14 @@ void CSceneManager::update(v3d::f64 time)
                 }
             }
             break;
+
+            case ENodeType::eSkyBox:
+            {
+                node->m_priority = 1000000.0f;
+
+                m_drawObjects.push_back(node);
+            }
+                break;
 
             case ENodeType::eLight:
             case ENodeType::eFog:
@@ -339,6 +348,17 @@ CNode* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, const f32 ext
     CSceneManager::addNode(node);
 
     return node;
+}
+
+CNode* CSceneManager::addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down)
+{
+    CSkybox* node = new CSkybox();
+    node->load(front, back, left, right, up, down);
+
+    CSceneManager::addNode(node);
+
+    return node;
+
 }
 
 CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)

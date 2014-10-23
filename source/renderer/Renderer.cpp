@@ -55,7 +55,7 @@ void CRenderer::reshape(u32 width, u32 height)
     m_viewportSize.height = height;
 
     f32 aspectRatio = (f32)m_viewportSize.width / (f32)m_viewportSize.height;
-    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 10.0f);
+    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
     m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)m_viewportSize.width, 0.0f, (f32)m_viewportSize.height, -1.0f, 1.0f);
     m_orthoMatrix.makeTransposed();
