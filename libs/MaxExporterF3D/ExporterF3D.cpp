@@ -1,16 +1,15 @@
 #include "ExporterF3D.h"
 #include "ClassDesc.h"
-#include "Logger.h"
 
 #include "IGame.h"
-#include "IGameObject.h"
 #include "IGameProperty.h"
 #include "IGameControl.h"
 #include "IGameModifier.h"
 #include "IConversionManager.h"
 #include "3dsmaxport.h"
 
-using namespace v3d;
+//#include "stream/MemoryStream.h"
+#include "utils/Logger.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,11 +54,25 @@ ExporterF3D::ExporterF3D()
     , m_exportMaterials(false)
     , m_exportLights(false)
     , m_exportCamera(false)
+
+    , m_stream(nullptr)
+    , m_scene(nullptr)
 {
 }
 
 ExporterF3D::~ExporterF3D()
 {
+    if (m_scene)
+    {
+        delete m_scene;
+        m_scene = nullptr;
+    }
+
+    if (m_stream)
+    {
+        delete m_stream;
+        m_stream = nullptr;
+    }
 }
 
 int ExporterF3D::ExtCount()
@@ -208,6 +221,8 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 ExporterF3D::EExportError ExporterF3D::CreateModel()
 {
+    m_scene = new CModelMetadata();
+
     int nodeCount = m_iGameScene->GetTopLevelNodeCount();
     LOG_INFO("In Game Scene found [%d] Nodes\n", nodeCount);
 
@@ -240,39 +255,60 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
 
     INode* maxNode = node->GetMaxNode();
     IGameObject::ObjectTypes objectType = gameObject->GetIGameType();
-    
+
+    ObjectPtr object = m_scene->createObject(objectType);
+    if (!object)
+    {
+        LOG_WARRNING("Export unknown type: %d", objectType);
+        return eUnknownError;
+    }
+
+    object->setName(TCHARToString(node->GetName()));
+    object->setID(node->GetNodeID());
+
     switch (objectType)
     {
-    case IGameObject::IGAME_MESH:
-
-        LOG_INFO("Export IGAME_MESH: %s", TCHARToString(node->GetName()).c_str());
-        if (!ExportMesh(node))
+        case IGameObject::IGAME_MESH:
         {
-            return eNodeMeshError;
+            LOG_INFO("Export IGAME_MESH: %s", TCHARToString(node->GetName()).c_str());
+            renderer::MeshPtr mesh = std::static_pointer_cast<renderer::CMesh>(object);
+            if (!ExportMesh(node, mesh))
+            {
+                return eNodeMeshError;
+            }
         }
         break;
 
-    case IGameObject::IGAME_LIGHT:
-
-        LOG_INFO("Export IGAME_LIGHT: %s", TCHARToString(node->GetName()).c_str());
-        if (!ExportLight(node))
+        case IGameObject::IGAME_LIGHT:
         {
-            return eNodeLightError;
+            LOG_INFO("Export IGAME_LIGHT: %s", TCHARToString(node->GetName()).c_str());
+            scene::LightPtr light = std::static_pointer_cast<scene::CLight>(object);
+            if (!ExportLight(node, light))
+            {
+                return eNodeLightError;
+            }
         }
         break;
 
-    case IGameObject::IGAME_CAMERA:
-
-        LOG_INFO("Export IGAME_CAMERA: %s", TCHARToString(node->GetName()).c_str());
-        if (!ExportCamera(node))
+        case IGameObject::IGAME_CAMERA:
         {
-            return eNodeCameraError;
+            LOG_INFO("Export IGAME_CAMERA: %s", TCHARToString(node->GetName()).c_str());
+            scene::CameraPtr camera = std::static_pointer_cast<scene::CCamera>(object);
+            if (!ExportCamera(node, camera))
+            {
+                return eNodeCameraError;
+            }
         }
         break;
 
-    default:
-        break;
+        default:
+        {
+            LOG_WARRNING("Export unknown type: %d", objectType);
+            return eUnknownError;
+        }
     }
+
+    m_scene->addObject(std::make_pair(objectType, object));
 
     for (int i = 0; i < numChildren; ++i)
     {
@@ -291,18 +327,19 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
     return eNoError;
 }
 
-bool ExporterF3D::ExportMesh(IGameNode* node)
+bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
 {
-    /*IGameMesh* gameMesh = (IGameMesh*)node;
+    IGameMesh* gameMesh = (IGameMesh*)node;
     if (!gameMesh->InitializeData() || !gameMesh->IsRenderable())
     {
-        LOG_WARRNING("Skipping %s - The object is not renderable", TCHARToString(node->GetName()).c_str());
+        LOG_WARRNING("Skipping %s - The object is not renderable", TCHARToString((node->GetName())).c_str());
         return true;
-    }*/
+    }
 
     //gameMesh->SetCreateOptimizedNormalList();
     //gameMesh->InitializeBinormalData();
 
+    //gameMesh->
     //Box3 bbox; 
     //gameMesh->GetBoundingBox(bbox);
 
@@ -325,13 +362,13 @@ bool ExporterF3D::ExportMesh(IGameNode* node)
     return true;
 }
 
-bool ExporterF3D::ExportLight(IGameNode* node)
+bool ExporterF3D::ExportLight(IGameNode* node, scene::LightPtr& light)
 {
     //TODO:
     return false;
 }
 
-bool ExporterF3D::ExportCamera(IGameNode* node)
+bool ExporterF3D::ExportCamera(IGameNode* node, scene::CameraPtr& camera)
 {
     //TODO:
     return false;
