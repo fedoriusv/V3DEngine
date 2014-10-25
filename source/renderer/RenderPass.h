@@ -1,14 +1,16 @@
 #ifndef _V3D_RENDER_PASS_H_
 #define _V3D_RENDER_PASS_H_
 
-#include "tinyxml2.h"
-
 #include "Object.h"
 #include "ShaderProgram.h"
 #include "ShaderData.h"
 #include "RenderState.h"
 #include "RenderLOD.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 namespace v3d
 {

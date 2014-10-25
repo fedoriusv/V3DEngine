@@ -3,8 +3,11 @@
 
 #include "stream/Resource.h"
 #include "RenderPass.h"
-#include "tinyxml2.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 namespace v3d
 {

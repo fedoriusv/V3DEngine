@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 
+#include "tinyxml2.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
