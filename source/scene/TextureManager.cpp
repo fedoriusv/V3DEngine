@@ -112,7 +112,7 @@ const TexturePtr CTextureManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CTextureManager: File [%s] not found", fullName.c_str());
+                LOG_WARNING("CTextureManager: File [%s] not found", fullName.c_str());
             }
         }
     }

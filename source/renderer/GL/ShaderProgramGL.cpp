@@ -131,7 +131,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
         
         if (id < 0)
         {
-            LOG_WARRNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
+            LOG_WARNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
         }
         uniform.second->setUniforID(id);
     }

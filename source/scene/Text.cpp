@@ -91,7 +91,7 @@ void CText::init()
 
     if (m_font.empty())
     {
-        LOG_WARRNING("Font name Empty");
+        LOG_WARNING("Font name Empty");
         return;
     }
 

@@ -61,6 +61,11 @@ namespace renderer
 
         void                    setInterval(u32 begin, u32 count);
 
+        void                    addVertex(const core::Vector3D& vertex);
+        void                    addNormal(const core::Vector3D& normal);
+        void                    addTexCoord(u32 layer, const core::Vector2D& texCoord);
+        void                    addIndex(u32 index);
+
     protected:
 
         EDrawMode               m_drawMode;

@@ -60,13 +60,13 @@ namespace utils
 #   define LOG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerNone, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
 #   define LOG_GEBUG(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerDebug, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
 #   define LOG_INFO(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerInfo, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
-#   define LOG_WARRNING(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerWarning, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
+#   define LOG_WARNING(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerWarning, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
 #   define LOG_ERROR(messages, ...) v3d::utils::CLogger::getInstance()->log(v3d::utils::ELoggerType::eLoggerError, v3d::utils::ELogOut::eConsoleLog, messages, ##__VA_ARGS__);
 #else
 #   define LOG(messages, ...)
 #   define LOG_GEBUG(messages, ...)
 #   define LOG_INFO(messages, ...)
-#   define LOG_WARRNING(messages, ...)
+#   define LOG_WARNING(messages, ...)
 #   define LOG_ERROR(messages, ...)
 #endif
 

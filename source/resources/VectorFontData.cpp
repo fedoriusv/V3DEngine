@@ -158,7 +158,7 @@ bool CVectorFontData::loadCharList()
 
     if (m_charInfo.size() == 0)
     {
-        LOG_WARRNING("FreeTypeData: Empty Char List");
+        LOG_WARNING("FreeTypeData: Empty Char List");
     }
 
     m_loaded = true;

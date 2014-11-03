@@ -326,7 +326,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         }
         else
         {
-            LOG_WARRNING("Warrning parse. empty vshader name");
+            LOG_WARNING("Warrning parse. empty vshader name");
         }
 
         CShader::EShaderType type = CShader::eVertex;
@@ -334,7 +334,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         if (shaderType.empty())
         {
             type = CShader::eVertex;
-            LOG_WARRNING("Warrning parse. Shader have not type. Set Vertex type");
+            LOG_WARNING("Warrning parse. Shader have not type. Set Vertex type");
         }
         else
         {
@@ -346,7 +346,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             const std::string shaderBody = shaderElement->GetText();
             if (shaderBody.empty())
             {
-                LOG_WARRNING("Warrning parse. Empty shader body");
+                LOG_WARNING("Warrning parse. Empty shader body");
             }
 
             LOG_INFO("Info parse. Create shader [%s] from data", shaderName.c_str());

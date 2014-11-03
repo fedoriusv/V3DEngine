@@ -81,7 +81,7 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CRenderTechniqueManager: File [%s] not found", fullName.c_str());
+                LOG_WARNING("CRenderTechniqueManager: File [%s] not found", fullName.c_str());
             }
         }
     }

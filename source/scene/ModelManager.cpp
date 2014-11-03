@@ -106,7 +106,7 @@ ModelDataPtr CModelManager::load(const std::string& name)
             }
             else
             {
-                LOG_WARRNING("CModelManager File [%s] not found", fullName.c_str());
+                LOG_WARNING("CModelManager File [%s] not found", fullName.c_str());
             }
         }
     }

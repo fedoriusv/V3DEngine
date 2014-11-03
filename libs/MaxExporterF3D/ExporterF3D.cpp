@@ -259,7 +259,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
     ObjectPtr object = m_scene->createObject(objectType);
     if (!object)
     {
-        LOG_WARRNING("Export unknown type: %d", objectType);
+        LOG_WARNING("Export unknown type: %d", objectType);
         return eUnknownError;
     }
 
@@ -303,7 +303,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
 
         default:
         {
-            LOG_WARRNING("Export unknown type: %d", objectType);
+            LOG_WARNING("Export unknown type: %d", objectType);
             return eUnknownError;
         }
     }
@@ -329,21 +329,20 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
 
 bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
 {
-    IGameMesh* gameMesh = (IGameMesh*)node;
+    IGameMesh* gameMesh = (IGameMesh*)node->GetIGameObject();
     if (!gameMesh->InitializeData() || !gameMesh->IsRenderable())
     {
-        LOG_WARRNING("Skipping %s - The object is not renderable", TCHARToString((node->GetName())).c_str());
+        LOG_WARNING("Skipping %s - The object is not renderable", TCHARToString((node->GetName())).c_str());
         return true;
     }
 
-    //gameMesh->SetCreateOptimizedNormalList();
-    //gameMesh->InitializeBinormalData();
+    /*gameMesh->SetCreateOptimizedNormalList();
+    gameMesh->InitializeBinormalData();*/
 
-    //gameMesh->
-    //Box3 bbox; 
-    //gameMesh->GetBoundingBox(bbox);
+    Box3 bbox; 
+    gameMesh->GetBoundingBox(bbox);
 
-    /*int numVerts = gameMesh->GetNumberOfVerts();
+    int numVerts = gameMesh->GetNumberOfVerts();
     int numNormals = gameMesh->GetNumberOfNormals();
     int numBinormals = gameMesh->GetNumberOfBinormals();
     int numTangents = gameMesh->GetNumberOfTangents();
@@ -357,7 +356,46 @@ bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
     LOG_INFO("Tangents : %d", numTangents);
     LOG_INFO("TexVerts : %d", numTexVerts);
     LOG_INFO("ColorVerts : %d", numColorVerts);
-    LOG_INFO("AlphaVerts : %d", numAlphaVerts);*/
+    LOG_INFO("AlphaVerts : %d", numAlphaVerts);
+
+    Tab<int> materialList = gameMesh->GetActiveMatIDs();
+    int materialCount = materialList.Count(); //TODO: need to be 1 ?
+    LOG_INFO("materialCount : %d", materialCount);
+
+    renderer::MaterialPtr& material = const_cast<renderer::MaterialPtr&>(mesh->getMaterial());
+    renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeomerty());
+
+    for (int i = 0; i < materialCount; ++i)
+    {
+        int matID = materialList[i];
+        Tab<FaceEx*> faceList = gameMesh->GetFacesFromMatID(matID);
+        int numFaces = faceList.Count();
+        LOG_INFO("numFaces : %d", numFaces);
+
+        IGameMaterial* sourceMaterial = gameMesh->GetMaterialFromFace(faceList[0]);
+        if (ExporterF3D::ExportMaterial(sourceMaterial, material))
+        {
+            for (int j = 0; j < numFaces; ++j)
+            {
+                FaceEx* sourceFace = faceList[j];
+
+                for (int k = 0; k < 3; ++k)
+                {
+                    geomerty->addIndex(sourceFace->vert[k]);
+
+                    Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_exportObjectSpace);
+                    Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_exportObjectSpace).Normalize();
+                    Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
+                    Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
+
+                    geomerty->addVertex(convertPointToVector3(vertex));
+                    geomerty->addNormal(convertPointToVector3(normal));
+                    geomerty->addTexCoord(i, convertPointToVector2(texCoord));
+                }
+            }
+        }
+
+    }
 
     return true;
 }
@@ -374,9 +412,22 @@ bool ExporterF3D::ExportCamera(IGameNode* node, scene::CameraPtr& camera)
     return false;
 }
 
-void ExporterF3D::ReIndexingVerts()
+bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material)
 {
+    return false;
 }
+
+core::Vector3D ExporterF3D::convertPointToVector3(Point3& point)
+{
+    return core::Vector3D(point.x, point.y, point.x);
+}
+
+core::Vector2D ExporterF3D::convertPointToVector2(Point2& point)
+{
+    return core::Vector2D(point.x, point.y);
+}
+
+
 
 INT_PTR CALLBACK ExporterF3D::TestOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

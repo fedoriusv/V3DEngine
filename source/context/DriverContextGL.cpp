@@ -229,7 +229,7 @@ bool CDriverContextGL::createWin32Context()
 
     if (newPixelFormat == 0 || !SetPixelFormat(hDC, newPixelFormat, &pfd))
     {
-        LOG_WARRNING("Cannot create ExPixelFormat. Set default pixel format");
+        LOG_WARNING("Cannot create ExPixelFormat. Set default pixel format");
         newPixelFormat = ChoosePixelFormat(hDC, &pfd);
         hRc = wglCreateContext(hDC);
     }

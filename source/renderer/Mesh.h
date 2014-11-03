@@ -25,6 +25,8 @@ namespace renderer
         void                setMaterial(const MaterialPtr& material);
         const MaterialPtr&  getMaterial() const;
 
+        const GeometryPtr&  getGeomerty() const;
+
         void                update(f64 time);
         void                render();
 

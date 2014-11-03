@@ -31,13 +31,13 @@ v3d::ObjectPtr CModelMetadata::createObject(IGameObject::ObjectTypes type)
     switch (type)
     {
     case IGameObject::IGAME_MESH:
-        return std::shared_ptr<renderer::CMesh>();
+        return std::make_shared<renderer::CMesh>();
 
-    case IGameObject::IGAME_LIGHT:
-        return std::shared_ptr<scene::CLight>();
+    /*case IGameObject::IGAME_LIGHT:
+        return std::make_shared<scene::CLight>();*/
 
-    case IGameObject::IGAME_CAMERA:
-        return std::shared_ptr<scene::CCamera>();
+   /* case IGameObject::IGAME_CAMERA:
+        return std::make_shared<scene::CCamera>();*/
 
     default:
         return nullptr;

@@ -86,7 +86,10 @@ private:
     bool                        ExportLight(IGameNode* node, scene::LightPtr& light);
     bool                        ExportCamera(IGameNode* node, scene::CameraPtr& camera);
 
-    void                        ReIndexingVerts();
+    bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material);
+
+    core::Vector3D              convertPointToVector3(Point3& point);
+    core::Vector2D              convertPointToVector2(Point2& point);
 
 private:
 

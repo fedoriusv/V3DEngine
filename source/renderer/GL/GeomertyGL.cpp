@@ -32,7 +32,7 @@ void CGeometryGL::init()
 {
     if (m_data.empty())
     {
-        LOG_WARRNING("Data empty");
+        LOG_WARNING("Data empty");
         return;
     }
 
@@ -208,7 +208,7 @@ void CGeometryGL::refresh()
 {
     if (m_data.empty())
     {
-        LOG_WARRNING("Data empty");
+        LOG_WARNING("Data empty");
         return;
     }
 
