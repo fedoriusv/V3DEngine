@@ -1,5 +1,5 @@
 #include "DebugGeometryGL.h"
-#include "GeomertyGL.h"
+#include "GeometryGL.h"
 #include "Engine.h"
 #include "GL/glew.h"
 

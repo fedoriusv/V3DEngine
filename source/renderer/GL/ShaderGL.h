@@ -14,7 +14,7 @@ namespace renderer
     public:
 
         CShaderGL();
-        virtual ~CShaderGL();
+        ~CShaderGL();
 
         bool    create(const std::string& body, EShaderType type)    override;
         bool    load  (const std::string& file, EShaderType type)    override;

@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CCubeShape();
-        virtual     ~CCubeShape();
+        ~CCubeShape();
 
         void        render()         override;
         void        update(f64 time) override;

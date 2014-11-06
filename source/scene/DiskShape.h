@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CDiskShape(const f32 minorRadius, const f32 majorRadius);
-        virtual     ~CDiskShape();
+        ~CDiskShape();
 
         void        render()         override;
         void        update(f64 time) override;

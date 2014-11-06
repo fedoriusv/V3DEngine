@@ -15,7 +15,7 @@ namespace stream
 
         MemoryStream();
         MemoryStream(const void* data, const u32 size);
-        virtual ~MemoryStream();
+        ~MemoryStream();
 
         void	clear();
         void	allocate(u32 size);

@@ -1,4 +1,4 @@
-#include "GeomertyGL.h"
+#include "GeometryGL.h"
 
 #include "renderer/ShaderAttribute.h"
 #include "renderer/ShaderData.h"

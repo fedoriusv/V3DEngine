@@ -14,7 +14,7 @@ namespace renderer
     public:
 
         CTextureGL();
-        virtual         ~CTextureGL();
+        ~CTextureGL();
 
         void            bind(u32 layer)   override;
         void            unbind(u32 layer) override;

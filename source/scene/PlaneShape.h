@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CPlaneShape(const f32 extent);
-        virtual     ~CPlaneShape();
+        ~CPlaneShape();
 
         void        render()         override;
         void        update(f64 time) override;

@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CSampleShape();
-        virtual     ~CSampleShape();
+        ~CSampleShape();
 
         void        render()         override;
         void        update(f64 time) override;

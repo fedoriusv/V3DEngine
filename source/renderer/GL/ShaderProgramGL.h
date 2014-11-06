@@ -14,7 +14,7 @@ namespace renderer
     public:
 
         CShaderProgramGL(const ShaderDataPtr& data);
-        virtual             ~CShaderProgramGL();
+        ~CShaderProgramGL();
 
         bool                create()    override;
         void                destroy()   override;

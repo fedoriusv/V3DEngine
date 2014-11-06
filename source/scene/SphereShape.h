@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CSphereShape(const f32 radius = 1.0f);
-        virtual     ~CSphereShape();
+        ~CSphereShape();
 
         void        render()         override;
         void        update(f64 time) override;

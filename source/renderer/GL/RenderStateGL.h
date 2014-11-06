@@ -14,7 +14,7 @@ namespace renderer
     public:
 
         CRenderStateGL();
-        virtual ~CRenderStateGL();
+        ~CRenderStateGL();
 
         void    bind() override;
     };

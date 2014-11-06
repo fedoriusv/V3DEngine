@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CCylinderShape(const float radius = 0.5f, const float height = 1.0f);
-        virtual     ~CCylinderShape();
+        ~CCylinderShape();
 
         void        render()         override;
         void        update(f64 time) override;

@@ -14,7 +14,7 @@ namespace scene
     public:
 
         CTorusShape(const f32 minorRadius = 0.5f, const f32 majorRadius = 1.0f);
-        virtual     ~CTorusShape();
+        ~CTorusShape();
 
         void        render()         override;
         void        update(f64 time) override;

@@ -26,7 +26,7 @@ namespace v3d
     public:
 
         CObject();
-        ~CObject();
+        virtual             ~CObject();
 
         const s32           getID() const;
         const std::string&  getName() const;

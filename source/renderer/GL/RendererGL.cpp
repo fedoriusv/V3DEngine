@@ -1,7 +1,7 @@
 #include "RendererGL.h"
 #include "ShaderGL.h"
 #include "ShaderProgramGL.h"
-#include "GeomertyGL.h"
+#include "GeometryGL.h"
 #include "TextureGL.h"
 #include "RenderStateGL.h"
 #include "DebugGeometryGL.h"

@@ -14,7 +14,7 @@ namespace renderer
     public:
     
         CRendererGL(const DriverContextPtr& context);
-        virtual             ~CRendererGL();
+        ~CRendererGL();
     
         void                init()                                                      override;
     

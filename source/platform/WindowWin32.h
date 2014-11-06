@@ -15,7 +15,7 @@ namespace platform
     public:
 
         CWindowWin32(const WindowParam& param);
-        virtual ~CWindowWin32();
+        ~CWindowWin32();
 
         void    minimize()                                  override;
         void    maximize()                                  override;
