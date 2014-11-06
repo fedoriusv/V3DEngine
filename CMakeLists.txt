@@ -52,13 +52,22 @@ endif()
 set(SOURCE_DIR source)
 set(LIB_DIR ..\\..\\libs)
 
+	
+
+
 if(WIN32)
-	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\lib\\win32\\unicode\\DevIL)
-	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
-    file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Release)
+	if (CMAKE_CL_64)
+		set(ARCH_DIR "x64")
+	else(CMAKE_CL_64)
+		set(ARCH_DIR "win32")
+	endif(CMAKE_CL_64)
+	
+	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL)
+	file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
+    file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Release)
     
-	file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Debug)
-    file(COPY libs\\DevIL\\lib\\win32\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Release)
+	file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Debug)
+    file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Release)
 else(WIN32)
 	set(DEVIL_LIB ${LIB_DIR}\\DevIL)
 endif(WIN32)
