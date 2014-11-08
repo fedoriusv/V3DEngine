@@ -1,5 +1,5 @@
-#ifndef _V3D_MODEL_METADATA_H_
-#define _V3D_MODEL_METADATA_H_
+#ifndef _V3D_SCENE_DATA_H_
+#define _V3D_SCENE_DATA_H_
 
 #include "../source/Object.h"
 #include "scene/Model.h"
@@ -16,12 +16,12 @@ namespace v3d
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelMetadata
+    class CSceneData
     {
     public:
 
-        CModelMetadata();
-        ~CModelMetadata();
+        CSceneData();
+        ~CSceneData();
 
         const v3d::scene::ModelPtr& getModel() const;
         const std::vector<Obj>&     getObjectList() const;

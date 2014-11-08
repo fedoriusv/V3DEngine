@@ -2,7 +2,7 @@
 #define _EXPORTER_F3D_H_
 
 #include "common.h"
-#include "ModelMetadata.h"
+#include "SceneData.h"
 
 #include "Max.h"
 #include "resource.h"
@@ -88,8 +88,8 @@ private:
 
     bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material);
 
-    core::Vector3D              convertPointToVector3(Point3& point);
-    core::Vector2D              convertPointToVector2(Point2& point);
+    core::Vector3D              convertPointToVector3(const Point3& point);
+    core::Vector2D              convertPointToVector2(const Point2& point);
 
 private:
 
@@ -105,9 +105,7 @@ private:
     bool                        m_exportLights;
     bool                        m_exportCamera;
 
-    v3d::stream::MemoryStream*  m_stream;
-
-    v3d::CModelMetadata*        m_scene;
+    v3d::CSceneData*            m_scene;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

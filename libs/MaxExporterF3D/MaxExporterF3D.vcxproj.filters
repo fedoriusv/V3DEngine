@@ -7,7 +7,7 @@
     <ClCompile Include="ExporterF3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ModelMetadata.cpp">
+    <ClCompile Include="SceneData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -21,7 +21,7 @@
     <ClInclude Include="resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelMetadata.h">
+    <ClInclude Include="SceneData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

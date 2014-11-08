@@ -10,6 +10,9 @@
 
 //#include "stream/MemoryStream.h"
 #include "utils/Logger.h"
+#include "renderer/GL/GeometryGL.h"
+
+using namespace v3d;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +42,7 @@ ExporterF3DErrorCallback errorCallback;
 void ExporterF3DErrorCallback::ErrorProc(IGameError error)
 {
     const TCHAR* buf = GetLastIGameErrorText();
-    LOG_INFO("ErrorCode = %d ErrorText = %s", error, TCHARToString(buf).c_str());
+    LOG_ERROR("ErrorCode = %d ErrorText = %s\n", error, TCHARToString(buf).c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +58,6 @@ ExporterF3D::ExporterF3D()
     , m_exportLights(false)
     , m_exportCamera(false)
 
-    , m_stream(nullptr)
     , m_scene(nullptr)
 {
 }
@@ -66,12 +68,6 @@ ExporterF3D::~ExporterF3D()
     {
         delete m_scene;
         m_scene = nullptr;
-    }
-
-    if (m_stream)
-    {
-        delete m_stream;
-        m_stream = nullptr;
     }
 }
 
@@ -221,7 +217,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
 ExporterF3D::EExportError ExporterF3D::CreateModel()
 {
-    m_scene = new CModelMetadata();
+    m_scene = new CSceneData();
 
     int nodeCount = m_iGameScene->GetTopLevelNodeCount();
     LOG_INFO("In Game Scene found [%d] Nodes\n", nodeCount);
@@ -359,11 +355,12 @@ bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
     LOG_INFO("AlphaVerts : %d", numAlphaVerts);
 
     Tab<int> materialList = gameMesh->GetActiveMatIDs();
-    int materialCount = materialList.Count(); //TODO: need to be 1 ?
+    int materialCount = materialList.Count();
     LOG_INFO("materialCount : %d", materialCount);
 
     renderer::MaterialPtr& material = const_cast<renderer::MaterialPtr&>(mesh->getMaterial());
     renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeomerty());
+    geomerty = std::make_shared<renderer::CGeometryGL>(nullptr);
 
     for (int i = 0; i < materialCount; ++i)
     {
@@ -381,16 +378,22 @@ bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
 
                 for (int k = 0; k < 3; ++k)
                 {
+                    //LOG_INFO("addIndex : %d", sourceFace->vert[k]);
                     geomerty->addIndex(sourceFace->vert[k]);
 
                     Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_exportObjectSpace);
-                    Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_exportObjectSpace).Normalize();
-                    Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
-                    Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
-
+                    //LOG_INFO("addVertex : x = %f, y = %f, z = %f", vertex.x, vertex.y, vertex.z);
                     geomerty->addVertex(convertPointToVector3(vertex));
+
+                    Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_exportObjectSpace).Normalize();
+                    //LOG_INFO("addNormal : x = %f, y = %f, z = %f", normal.x, normal.y, normal.z);
                     geomerty->addNormal(convertPointToVector3(normal));
-                    geomerty->addTexCoord(i, convertPointToVector2(texCoord));
+
+                    Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
+
+                    Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
+                    //LOG_INFO("addTexCoord : x = %f, y = %f\n", texCoord.x, texCoord.y);
+                    geomerty->addTexCoord(0, convertPointToVector2(texCoord));
                 }
             }
         }
@@ -414,15 +417,16 @@ bool ExporterF3D::ExportCamera(IGameNode* node, scene::CameraPtr& camera)
 
 bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material)
 {
-    return false;
+    //TODO:
+    return true;
 }
 
-core::Vector3D ExporterF3D::convertPointToVector3(Point3& point)
+core::Vector3D ExporterF3D::convertPointToVector3(const Point3& point)
 {
     return core::Vector3D(point.x, point.y, point.x);
 }
 
-core::Vector2D ExporterF3D::convertPointToVector2(Point2& point)
+core::Vector2D ExporterF3D::convertPointToVector2(const Point2& point)
 {
     return core::Vector2D(point.x, point.y);
 }
