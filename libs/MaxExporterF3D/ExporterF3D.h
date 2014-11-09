@@ -50,6 +50,7 @@ public:
     {
         eNoError = 0,
         eUnknownError,
+        eSaveError,
         eSceneEmptyError,
         eNodeMeshError,
         eNodeLightError,

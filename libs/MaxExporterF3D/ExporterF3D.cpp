@@ -193,6 +193,14 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
     m_iGameScene->ReleaseIGame();
     ip->ProgressEnd();
 
+    if (success == eNoError && m_scene)
+    {
+        if (!m_scene->save(TCHARToString(name).c_str()))
+        {
+            success = eSaveError;
+        }
+    }
+
     if (success == eNoError)
     {
         LOG_INFO("Export Finished Success");

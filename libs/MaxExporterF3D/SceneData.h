@@ -30,6 +30,8 @@ namespace v3d
 
         v3d::ObjectPtr              createObject(IGameObject::ObjectTypes type);
 
+        bool                        save(const std::string& file);
+
     private:
 
         v3d::scene::ModelPtr        m_model;

@@ -45,3 +45,8 @@ v3d::ObjectPtr CSceneData::createObject(IGameObject::ObjectTypes type)
 
     return nullptr;
 }
+
+bool CSceneData::save(const std::string& file)
+{
+    //TODO
+}
