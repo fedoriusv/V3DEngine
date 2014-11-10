@@ -2,12 +2,15 @@
 #include "utils/Logger.h"
 #include "decoders/ModelF3DDecoder.h"
 #include "stream/StreamManager.h"
+#include "resources/ModelData.h"
+#include "renderer/Mesh.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::stream;
 using namespace v3d::decoders;
 using namespace v3d::resources;
+using namespace v3d::renderer;
 
 CModelManager::CModelManager()
 {
@@ -22,126 +25,95 @@ CModelManager::~CModelManager()
 {
     m_pathes.clear();
     m_decoders.clear();
-
-    CModelManager::unloadAll();
 }
 
-void CModelManager::add(const ModelDataPtr& model)
-{
-    std::string name = model->getResourseName();
-    m_modelList.insert(std::map<std::string, ModelDataPtr>::value_type(name, model));
-}
-
-const ModelDataPtr& CModelManager::get(const std::string& name)
-{
-    return m_modelList[name];
-}
-
-ModelDataPtr CModelManager::load(const std::string& name)
+ModelPtr CModelManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    auto it = m_modelList.find(nameStr);
+    std::string fileExtension;
 
-    if (it != m_modelList.end())
+    const size_t pos = nameStr.find('.');
+    if (pos != std::string::npos)
     {
-        return it->second;
+        fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
     }
-    else
+
+    for (std::string& path : m_pathes)
     {
-        std::string fileExtension;
-
-        const size_t pos = nameStr.find('.');
-        if (pos != std::string::npos)
+        const std::string fullName = path + nameStr;
+        const bool isFileExist = stream::FileStream::isFileExist(fullName);
+        if (isFileExist)
         {
-            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
-        }
-
-        for (std::string& path : m_pathes)
-        {
-            const std::string fullName = path + nameStr;
-            const bool isFileExist = stream::FileStream::isFileExist(fullName);
-            if (isFileExist)
+            const stream::FileStreamPtr& stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+            if (stream->isOpen())
             {
-                const stream::FileStreamPtr& stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
-                if (stream->isOpen())
+                auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
                 {
-                    auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
-                    {
-                        return decoder->isExtensionSupported(fileExtension);
-                    };
+                    return decoder->isExtensionSupported(fileExtension);
+                };
 
-                    auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
-                    if (iter == m_decoders.end())
-                    {
-                        LOG_ERROR("CModelManager: Format not supported file [%s]", nameStr.c_str());
-                        return nullptr;
-                    }
-
-                    const DecoderPtr& decoder = (*iter);
-                    stream::ResourcePtr resource = decoder->decode(stream);
-                    if (!resource)
-                    {
-                        LOG_ERROR("CModelManager: Streaming error read file [%s]", nameStr.c_str());
-                        return nullptr;
-                    }
-
-                    resource->setResourseName(fullName);
-                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
-                    resource->setResourseFolder(fullPath);
-
-                    ModelDataPtr model = std::static_pointer_cast<CModelData>(resource);
-
-                    if (!model->load())
-                    {
-                        LOG_ERROR("CModelManager: Streaming error read file [%s]", nameStr.c_str());
-                        return nullptr;
-                    }
-
-                    m_modelList.insert(std::map<std::string, ModelDataPtr>::value_type(nameStr, model));
-
-                    return model;
+                auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
+                if (iter == m_decoders.end())
+                {
+                    LOG_ERROR("CModelManager::load: Format not supported file [%s]", nameStr.c_str());
+                    return nullptr;
                 }
+
+                const DecoderPtr& decoder = (*iter);
+                stream::ResourcePtr resource = decoder->decode(stream);
+                if (!resource)
+                {
+                    LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                    return nullptr;
+                }
+
+                resource->setResourseName(fullName);
+                const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                resource->setResourseFolder(fullPath);
+
+                ModelDataPtr data = std::static_pointer_cast<CModelData>(resource);
+ 
+                if (!data->load())
+                {
+                    LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                    return nullptr;
+                }
+
+                ModelPtr model = std::make_shared<CModel>();
+                model->setModelData(data);
+
+                for (u32 i = 0; i < data->getCountMeshes(); ++i)
+                {
+                    stream::ResourcePtr resourceMesh = data->getMeshResource(i);
+                    if (!resourceMesh)
+                    {
+                        LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error read file [%s]", i, nameStr.c_str());
+                        continue;
+                    }
+
+                    MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
+                    if (!mesh->load())
+                    {
+                        LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error load [%s]", i, nameStr.c_str());
+                        continue;
+                    }
+
+                    model->addMesh(mesh);
+                }
+
+                LOG_INFO("CModelManager::load: Model [%s] loaded", nameStr.c_str());
+                return model;
             }
-            else
-            {
-                LOG_WARNING("CModelManager File [%s] not found", fullName.c_str());
-            }
+        }
+        else
+        {
+            LOG_WARNING("CModelManager::load: File [%s] not found", fullName.c_str());
         }
     }
 
     return nullptr;
-}
-
-void CModelManager::unload(const std::string& name)
-{
-    auto it = m_modelList.find(name);
-
-    if (it != m_modelList.end())
-    {
-        m_modelList.erase(it);
-    }
-}
-
-void CModelManager::unload(const ModelDataPtr& model)
-{
-    auto predDelete = [&model](const std::pair<std::string, ModelDataPtr>& pair) -> bool
-    {
-        return pair.second == model;
-    };
-
-    auto it = std::find_if(m_modelList.begin(), m_modelList.end(), predDelete);
-
-    if (it != m_modelList.end())
-    {
-        m_modelList.erase(it);
-    }
-}
-
-void CModelManager::unloadAll()
-{
-    m_modelList.clear();
 }
 
 void CModelManager::registerPath(const std::string& path)

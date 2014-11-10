@@ -7,6 +7,7 @@ using namespace v3d::scene;
 using namespace v3d::renderer;
 
 CModel::CModel()
+: m_data(nullptr)
 {
     m_nodeType = ENodeType::eModel;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
@@ -36,6 +37,16 @@ u32 CModel::getMeshCount() const
     return m_meshes.size();
 }
 
+void CModel::setModelData(const resources::ModelDataPtr& data)
+{
+    m_data = data;
+}
+
+const resources::ModelDataPtr& CModel::getModelData() const
+{
+    return m_data;
+}
+
 void CModel::render()
 {
     if (!m_visible || !m_initialiazed)
@@ -58,4 +69,11 @@ void CModel::update(f64 time)
 
 void CModel::init()
 {
+    if (!m_data)
+    {
+        LOG_ERROR("CModel::init: Empty model data");
+        return;
+    }
+
+    //TODO:
 }

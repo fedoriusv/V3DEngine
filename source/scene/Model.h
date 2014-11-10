@@ -3,12 +3,15 @@
 
 #include "Node.h"
 #include "renderer/Mesh.h"
+#include "resources/ModelData.h"
 
 namespace v3d
 {
 namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CModelManager;
 
     class CModel : public CNode
     {
@@ -27,7 +30,13 @@ namespace scene
 
     private:
 
+        friend                          CModelManager;
+
+        void                            setModelData(const resources::ModelDataPtr& data);
+        const resources::ModelDataPtr&  getModelData() const;
+
         std::vector<renderer::MeshPtr>  m_meshes;
+        resources::ModelDataPtr         m_data;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

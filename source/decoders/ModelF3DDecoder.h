@@ -19,11 +19,6 @@ namespace decoders
         virtual                 ~CModelF3DDecoder();
 
         stream::ResourcePtr     decode(const stream::IStreamPtr& stream) override;
-
-        //int meshCount();
-        //stream::ResourcePtr     decodeMesh(const stream::IStreamPtr& stream, int index);
-
-        //stream::ResourcePtr list
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

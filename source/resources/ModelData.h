@@ -15,10 +15,17 @@ namespace resources
     public:
 
         CModelData();
-        virtual     ~CModelData();
+        virtual             ~CModelData();
 
-        void       init(const stream::IStreamPtr& stream)  override;
-        bool       load()                                  override;
+        void                init(const stream::IStreamPtr& stream)  override;
+        bool                load()                                  override;
+
+        u32                 getCountMeshes() const;
+        stream::ResourcePtr getMeshResource(u32 index) const;
+
+    private:
+
+        u32                 m_countMeshes;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
