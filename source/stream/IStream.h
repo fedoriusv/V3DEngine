@@ -35,7 +35,6 @@ namespace stream
         virtual u32     read(bool& value)                   = 0;
         virtual u32     read(std::string& value)            = 0;
 
-
         template <class T>
         u32             write(T& value);
 
@@ -53,7 +52,7 @@ namespace stream
         virtual u32     write(const f64 value)              = 0;
         virtual u32     write(const f80 value)              = 0;
         virtual u32     write(const bool value)             = 0;
-        virtual u32     write(const std::string& value)     = 0;
+        virtual u32     write(const std::string value)      = 0;
 
         virtual void    seekBeg(const u32 offset)           = 0;
         virtual void    seekEnd(const u32 offset)           = 0;

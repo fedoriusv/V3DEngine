@@ -89,11 +89,9 @@ ModelDataPtr CModelManager::load(const std::string& name)
                 return data;
             }
         }
-        else
-        {
-            LOG_WARNING("CModelManager::load: File [%s] not found", fullName.c_str());
-        }
     }
+
+    LOG_WARNING("CModelManager::load: File [%s] not found", name.c_str());
 
     return nullptr;
 }

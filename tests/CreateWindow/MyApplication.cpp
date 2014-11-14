@@ -1,9 +1,12 @@
 #include "MyApplication.h"
 #include "Valera3D.h"
 
+#include "stream/StreamManager.h"
+
 using namespace v3d;
 using namespace v3d::core;
 using namespace v3d::scene;
+using namespace v3d::stream;
 
 MyApplication::MyApplication(int& argc, char** argv)
 	: BaseApplication(argc, argv)

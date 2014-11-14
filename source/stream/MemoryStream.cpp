@@ -13,7 +13,7 @@ MemoryStream::MemoryStream()
 
 MemoryStream::MemoryStream(const void* data, const u32 size)
     : m_stream((u8*)data)
-    , m_length(0)
+    , m_length(size)
     , m_allocated(size)
     , m_pos(0)
 {
@@ -196,7 +196,9 @@ u32 MemoryStream::read(std::string& value)
     ASSERT(m_length - m_pos >= size);
 
     value.resize(size);
-    memcpy(&value[0], &m_stream[m_pos++], size);
+    memcpy(&value[0], &m_stream[m_pos], size);
+
+    m_pos += size;
 
     return m_pos;
 }
@@ -436,7 +438,7 @@ u32 MemoryStream::write(const bool value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const std::string& value)
+u32 MemoryStream::write(const std::string value)
 {
     if (value.empty())
     {

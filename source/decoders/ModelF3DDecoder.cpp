@@ -1,10 +1,12 @@
 #include "ModelF3DDecoder.h"
 #include "resources/ModelData.h"
+#include "stream/StreamManager.h"
 #include "utils/Logger.h"
 
 using namespace v3d;
 using namespace v3d::decoders;
 using namespace v3d::resources;
+using namespace v3d::stream;
 
 CModelF3DDecoder::CModelF3DDecoder()
     : CResourceDecoder()
@@ -28,9 +30,14 @@ stream::ResourcePtr CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
         return nullptr;
     }
 
-    ModelDataPtr data = std::make_shared<CModelData>();
+    u32 size = stream->size();
+    u8* data = new u8[size];
+    stream->read(data, sizeof(u8), size);
 
-    data->init(stream);
+    ModelDataPtr model = std::make_shared<CModelData>();
 
-    return data;
+    stream::IStreamPtr mem = CStreamManager::createMemoryStream(data, size);
+    model->init(mem);
+
+    return model;
 }

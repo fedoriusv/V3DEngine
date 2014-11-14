@@ -204,6 +204,8 @@ u32 FileStream::read(std::string& value)
 
 u32 FileStream::write(void* buffer, const u32 size, const u32 count)
 {
+    ASSERT(m_fileHandler && "File Handler nullptr");
+
     const u32 ret = fwrite(buffer, size, count, m_fileHandler);
     return ret;
 }
@@ -280,7 +282,7 @@ u32 FileStream::write(const bool value)
     return ret;
 }
 
-u32 FileStream::write(const std::string& value)
+u32 FileStream::write(const std::string value)
 {
     const u32 strLen = value.length();
     u32 ret = fwrite(&strLen, sizeof(u32), 1, m_fileHandler);

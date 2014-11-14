@@ -140,7 +140,6 @@ void CSceneManager::update(v3d::f64 time)
         switch (node->getNodeType())
         {
             case ENodeType::eShape:
-            case ENodeType::eModel:
             {
                 f32 priority = 0.0f;
                 if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
@@ -162,6 +161,9 @@ void CSceneManager::update(v3d::f64 time)
                 }
             }
             break;
+
+            case ENodeType::eModel:
+                break;
 
             case ENodeType::eCamera:
             {
