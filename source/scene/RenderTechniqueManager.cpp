@@ -70,8 +70,11 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
                     if (!technique->load())
                     {
                         LOG_ERROR("CRenderTechniqueManager: Streaming error read file [%s]", nameStr.c_str());
+                        stream->close();
+
                         return nullptr;
                     }
+                    stream->close();
 
                     m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
 

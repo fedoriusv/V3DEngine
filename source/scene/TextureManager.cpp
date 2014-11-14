@@ -62,7 +62,7 @@ const TexturePtr CTextureManager::load(const std::string& name)
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                const stream::FileStreamPtr& stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
                     auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
@@ -74,11 +74,15 @@ const TexturePtr CTextureManager::load(const std::string& name)
                     if (iter == m_decoders.end())
                     {
                         LOG_ERROR("CTextureManager: Format not supported file [%s]", nameStr.c_str());
+                        stream->close();
+
                         return nullptr;
                     }
 
                     const DecoderPtr& decoder = (*iter);
                     stream::ResourcePtr resource = decoder->decode(stream);
+                    stream->close();
+
                     if (!resource)
                     {
                         LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameStr.c_str());

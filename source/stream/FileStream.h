@@ -71,9 +71,6 @@ namespace stream
         void    seekCur(const u32 offset)                                override;
         u32     tell()                                                   override;
         u32     size()                                                   override;
-
-        void*   map(const u32 size)                                      override;
-        void    unmap()                                                  override;
         
         const std::string& getName() const;
 

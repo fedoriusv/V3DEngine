@@ -326,15 +326,6 @@ u32 FileStream::size()
     return m_fileSize;
 }
 
-void* FileStream::map(const u32 size)
-{
-    return nullptr;
-}
-
-void FileStream::unmap()
-{
-
-}
 const std::string& FileStream::getName() const
 {
     return m_fileName;

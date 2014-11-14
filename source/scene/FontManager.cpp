@@ -79,6 +79,8 @@ const FontDataPtr CFontManager::load(const std::string& name)
                     if (!font)
                     {
                         LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
+                        stream->close();
+
                         return nullptr;
                     }
 
@@ -88,10 +90,14 @@ const FontDataPtr CFontManager::load(const std::string& name)
                     if (!font->load())
                     {
                         LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
+                        stream->close();
+
                         return nullptr;
                     }
+                    stream->close();
 
                     m_fontsData.insert(std::map<std::string, FontDataPtr>::value_type(nameStr, font));
+
                     return font;
                 }
             }

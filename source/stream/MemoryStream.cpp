@@ -12,7 +12,7 @@ MemoryStream::MemoryStream()
 }
 
 MemoryStream::MemoryStream(const void* data, const u32 size)
-    : m_stream((c8*)data)
+    : m_stream((u8*)data)
     , m_length(0)
     , m_allocated(size)
     , m_pos(0)
@@ -490,20 +490,19 @@ u32 MemoryStream::size()
     return m_length;
 }
 
-void* MemoryStream::map(const u32 size)
+u8* MemoryStream::getData() const
 {
-    //TODO: 
-
     return m_stream;
-}
-
-void MemoryStream::unmap()
-{
-    //TODO:
 }
 
 void MemoryStream::clear()
 {
+    if (m_stream)
+    {
+        delete[] m_stream;
+        m_stream = nullptr;
+    }
+
     MemoryStream::seekBeg(0);
     m_length = 0;
 }
@@ -517,7 +516,7 @@ void MemoryStream::allocate(u32 size)
     }
 
     m_allocated = size;
-    m_stream = new c8[m_allocated];
+    m_stream = new u8[m_allocated];
 
     MemoryStream::seekBeg(0);
 }
@@ -532,10 +531,10 @@ bool MemoryStream::checkSize(u32 size)
 
     if (m_pos + size > m_allocated)
     {
-        c8* oldStream = m_stream;
+        u8* oldStream = m_stream;
 
         s32 newAllocated = 2 * (m_pos + size);
-        m_stream = new c8[newAllocated];
+        m_stream = new u8[newAllocated];
         memcpy(m_stream, oldStream, m_allocated);
 
         m_allocated = newAllocated;

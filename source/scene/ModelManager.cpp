@@ -46,7 +46,7 @@ ModelPtr CModelManager::load(const std::string& name)
         const bool isFileExist = stream::FileStream::isFileExist(fullName);
         if (isFileExist)
         {
-            const stream::FileStreamPtr& stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+            const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
             if (stream->isOpen())
             {
                 auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
@@ -66,8 +66,11 @@ ModelPtr CModelManager::load(const std::string& name)
                 if (!resource)
                 {
                     LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                    stream->close();
+
                     return nullptr;
                 }
+                stream->close();
 
                 resource->setResourseName(fullName);
                 const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);

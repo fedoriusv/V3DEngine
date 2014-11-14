@@ -58,17 +58,17 @@ namespace stream
         u32     tell()                                                   override;
         u32     size()                                                   override;
 
-        void*   map(const u32 size)                                      override;
-        void    unmap()                                                  override;
+        u8*     getData() const;
 
     private:
 
         bool    checkSize(u32 size);
 
-        c8*     m_stream;
+        u8*     m_stream;
         u32     m_length;
         u32     m_allocated;
         u32     m_pos;
+         
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
