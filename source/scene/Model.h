@@ -32,11 +32,6 @@ namespace scene
 
     private:
 
-        friend                          CModelManager;
-
-        void                            setModelData(const resources::ModelDataPtr& data);
-        const resources::ModelDataPtr&  getModelData() const;
-
         std::vector<renderer::MeshPtr>  m_meshes;
         resources::ModelDataPtr         m_data;
 

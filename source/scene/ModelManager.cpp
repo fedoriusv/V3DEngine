@@ -27,7 +27,7 @@ CModelManager::~CModelManager()
     m_decoders.clear();
 }
 
-ModelPtr CModelManager::load(const std::string& name)
+ModelDataPtr CModelManager::load(const std::string& name)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -70,7 +70,6 @@ ModelPtr CModelManager::load(const std::string& name)
 
                     return nullptr;
                 }
-                stream->close();
 
                 resource->setResourseName(fullName);
                 const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
@@ -81,33 +80,13 @@ ModelPtr CModelManager::load(const std::string& name)
                 if (!data->load())
                 {
                     LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                    stream->close();
+
                     return nullptr;
                 }
+                stream->close();
 
-                ModelPtr model = std::make_shared<CModel>();
-                model->setModelData(data);
-
-                for (u32 i = 0; i < data->getCountMeshes(); ++i)
-                {
-                    stream::ResourcePtr resourceMesh = data->getMeshResource(i);
-                    if (!resourceMesh)
-                    {
-                        LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error read file [%s]", i, nameStr.c_str());
-                        continue;
-                    }
-
-                    MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
-                    if (!mesh->load())
-                    {
-                        LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error load [%s]", i, nameStr.c_str());
-                        continue;
-                    }
-
-                    model->addMesh(mesh);
-                }
-
-                LOG_INFO("CModelManager::load: Model [%s] loaded", nameStr.c_str());
-                return model;
+                return data;
             }
         }
         else

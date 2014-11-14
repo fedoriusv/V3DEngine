@@ -2,7 +2,7 @@
 #define _V3D_MODEL_MANAGER_H_
 
 #include "Singleton.h"
-#include "scene/Model.h"
+#include "resources/ModelData.h"
 #include "decoders/ResourceDecoder.h"
 
 namespace v3d
@@ -18,13 +18,13 @@ namespace scene
         CModelManager();
         virtual             ~CModelManager();
 
-        ModelPtr            load(const std::string& name);
+        resources::ModelDataPtr load(const std::string& name);
 
-        void                registerDecoder(decoders::DecoderPtr decoder);
-        void                unregisterDecoder(decoders::DecoderPtr& decoder);
+        void                    registerDecoder(decoders::DecoderPtr decoder);
+        void                    unregisterDecoder(decoders::DecoderPtr& decoder);
 
-        void                registerPath(const std::string& path);
-        void                unregisterPath(const std::string& path);
+        void                    registerPath(const std::string& path);
+        void                    unregisterPath(const std::string& path);
 
     private:
 

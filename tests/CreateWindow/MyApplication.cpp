@@ -17,7 +17,6 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-
     //scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     //cube->setName("cube");
@@ -29,6 +28,8 @@ void MyApplication::init()
     /*scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");v
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
+
+    BaseApplication::getSceneManager()->addModel("models/first.f3d");
 
     for (u32 j = 0; j < 5; ++j)
     {

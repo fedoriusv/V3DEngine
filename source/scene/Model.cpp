@@ -39,16 +39,6 @@ u32 CModel::getMeshCount() const
     return m_meshes.size();
 }
 
-void CModel::setModelData(const resources::ModelDataPtr& data)
-{
-    m_data = data;
-}
-
-const resources::ModelDataPtr& CModel::getModelData() const
-{
-    return m_data;
-}
-
 void CModel::setFile(const std::string& file)
 {
     m_file = file;
@@ -82,14 +72,34 @@ void CModel::init()
         return;
     }
 
-    CModelManager::getInstance()->load(m_file);
-
+    m_data = CModelManager::getInstance()->load(m_file);
     if (!m_data)
     {
         LOG_ERROR("CModel::init: Empty model data");
         return;
     }
 
+    m_id = m_data->getID();
+    m_name = m_data->getName();
 
-    //TODO:
+    for (u32 i = 0; i < m_data->getCountMeshes(); ++i)
+    {
+        stream::ResourcePtr resourceMesh = m_data->getMeshResource(i);
+        if (!resourceMesh)
+        {
+            LOG_WARNING("CModel::init: Streaming mesh N [%d] error read file [%s]", i, m_data->getResourseName().c_str());
+            continue;
+        }
+
+        MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
+        if (!mesh->load())
+        {
+            LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error load [%s]", i, m_data->getResourseName().c_str());
+            continue;
+        }
+
+        CModel::addMesh(mesh);
+    }
+
+    m_initialiazed = true;
 }
