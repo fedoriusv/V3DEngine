@@ -195,11 +195,12 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
     if (success == eNoError && m_scene)
     {
-        if (!m_scene->save(TCHARToString(name).c_str()))
+        if (!m_scene->save(TCHARToString(name)))
         {
             success = eSaveError;
         }
     }
+    LOG_INFO("Save Completed\n");
 
     if (success == eNoError)
     {

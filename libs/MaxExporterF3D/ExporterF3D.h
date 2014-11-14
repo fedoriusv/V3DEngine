@@ -21,14 +21,6 @@
 class IGameScene;
 class IGameNode;
 
-namespace v3d
-{
-namespace stream
-{
-    class MemoryStream;
-}
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class ExporterF3DErrorCallback : public IGameErrorCallBack

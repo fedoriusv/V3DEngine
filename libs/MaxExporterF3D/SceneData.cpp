@@ -1,6 +1,9 @@
 #include "SceneData.h"
+#include "stream/StreamManager.h"
+#include "utils/Logger.h"
 
 using namespace v3d;
+using namespace stream;
 
 CSceneData::CSceneData()
 {
@@ -48,5 +51,35 @@ v3d::ObjectPtr CSceneData::createObject(IGameObject::ObjectTypes type)
 
 bool CSceneData::save(const std::string& file)
 {
-    //TODO
+    if (!m_model)
+    {
+        return false;
+    }
+
+    LOG_INFO("CSceneData::save: Serialize model to memory stream");
+
+    MemoryStreamPtr stream = CStreamManager::createMemoryStream();
+    stream->seekBeg(0);
+
+    s32 id = m_model->getID();
+    stream->write(id);
+
+    std::string name = m_model->getName();
+    stream->write(name);
+
+    u32 meshes = m_model->getMeshCount();
+    stream->write(meshes);
+
+    for (u32 i = 0; i < meshes; ++i)
+    {
+        //TODO:
+    }
+    
+    LOG_INFO("CSceneData::save: Save memory stream to file stream [%s]", file.c_str());
+
+    FileStreamPtr fileStream = CStreamManager::createFileStream(file, FileStream::e_out);
+    fileStream->write(stream->getData(), stream->size());
+    fileStream->close();
+
+    return true;
 }
