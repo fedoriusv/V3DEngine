@@ -10,6 +10,7 @@
 #include "Skybox.h"
 #include "Light.h"
 #include "Text.h"
+#include "Model.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -422,6 +423,18 @@ CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std:
     node->setPosition(pos);
     node->setText(text);
     node->setSize(size);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CNode* CSceneManager::addModel(const std::string& file, CNode* parent = nullptr, const Vector3D& pos)
+{
+    CModel* node = new CModel();
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setFile(file);
 
     CSceneManager::addNode(node);
 

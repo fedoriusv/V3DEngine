@@ -28,6 +28,8 @@ namespace scene
         const renderer::MeshPtr&        getMesh(u32 id) const;
         u32                             getMeshCount() const;
 
+        void                            setFile(const std::string& file);
+
     private:
 
         friend                          CModelManager;
@@ -37,6 +39,8 @@ namespace scene
 
         std::vector<renderer::MeshPtr>  m_meshes;
         resources::ModelDataPtr         m_data;
+
+        std::string                     m_file;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

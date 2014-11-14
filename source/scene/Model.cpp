@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "utils/Logger.h"
+#include "ModelManager.h"
 #include "Engine.h"
 
 using namespace v3d;
@@ -8,6 +9,7 @@ using namespace v3d::renderer;
 
 CModel::CModel()
 : m_data(nullptr)
+, m_file("")
 {
     m_nodeType = ENodeType::eModel;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
@@ -47,6 +49,11 @@ const resources::ModelDataPtr& CModel::getModelData() const
     return m_data;
 }
 
+void CModel::setFile(const std::string& file)
+{
+    m_file = file;
+}
+
 void CModel::render()
 {
     if (!m_visible || !m_initialiazed)
@@ -69,11 +76,20 @@ void CModel::update(f64 time)
 
 void CModel::init()
 {
+    if (m_file.empty())
+    {
+        LOG_ERROR("CModel::init: Empty file name");
+        return;
+    }
+
+    CModelManager::getInstance()->load(m_file);
+
     if (!m_data)
     {
         LOG_ERROR("CModel::init: Empty model data");
         return;
     }
+
 
     //TODO:
 }

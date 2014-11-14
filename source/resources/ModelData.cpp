@@ -32,7 +32,20 @@ bool CModelData::load()
         return false;
     }
 
-    //TODO:
+    if (stream->size() > 0)
+    {
+
+        stream->seekBeg(0);
+
+        stream->read(m_id);
+        stream->read(m_name);
+
+        stream->read(m_countMeshes);
+
+        return true;
+    }
+
+    return false;
 }
 
 stream::ResourcePtr CModelData::getMeshResource(u32 index) const
