@@ -38,7 +38,7 @@ namespace stream
         template <class T>
         u32             write(T& value);
 
-        virtual u32     write(void* buffer, const u32 size, const u32 count = 1) = 0;
+        virtual u32     write(const void* buffer, const u32 size, const u32 count = 1) = 0;
 
         virtual u32     write(const u8 value)               = 0;
         virtual u32     write(const s8 value)               = 0;

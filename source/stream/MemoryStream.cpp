@@ -21,11 +21,7 @@ MemoryStream::MemoryStream(const void* data, const u32 size)
 
 MemoryStream::~MemoryStream()
 {
-    if (m_allocated)
-    {
-        delete[] m_stream;
-        m_stream = nullptr;
-    }
+    clear();
 }
 
 void MemoryStream::close()
@@ -191,8 +187,12 @@ u32 MemoryStream::read(bool& value)
 u32 MemoryStream::read(std::string& value)
 {
     u32 size = 0;
-
     read(size);
+
+    if (size == 0)
+    {
+        return m_pos;
+    }
     ASSERT(m_length - m_pos >= size);
 
     value.resize(size);
@@ -203,9 +203,9 @@ u32 MemoryStream::read(std::string& value)
     return m_pos;
 }
 
-u32 MemoryStream::write(void* buffer, const u32 size, const u32 count)
+u32 MemoryStream::write(const void* buffer, const u32 size, const u32 count)
 {
-    if (checkSize(size))
+    if (checkSize(size * count))
     {
         memcpy(m_stream + m_pos, buffer, size * count);
         m_pos += size * count;
@@ -440,14 +440,14 @@ u32 MemoryStream::write(const bool value)
 
 u32 MemoryStream::write(const std::string value)
 {
-    if (value.empty())
-    {
-        return m_pos;
-    }
-
     if (checkSize(sizeof(u32)))
     {
         MemoryStream::write(static_cast<u32>(value.size()));
+    }
+
+    if (value.empty())
+    {
+        return m_pos;
     }
 
     if (checkSize(value.size()))
@@ -505,8 +505,9 @@ void MemoryStream::clear()
         m_stream = nullptr;
     }
 
-    MemoryStream::seekBeg(0);
     m_length = 0;
+    m_allocated = 0;
+    m_pos = 0;
 }
 
 void MemoryStream::allocate(u32 size)
