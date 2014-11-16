@@ -27,8 +27,9 @@ ClassDesc2* GetExporterDesc()
 std::string TCHARToString(const TCHAR* str)
 {
 #ifdef _UNICODE
-    std::string mbstr("", 265);
-    std::wcstombs(&mbstr[0], str, 265);
+    size_t size = wcslen(str);
+    std::string mbstr("", size);
+    std::wcstombs(&mbstr[0], str, size);
 #else
     std::string mbstr(str);
 #endif //_UNICODE
@@ -327,7 +328,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
         }
     }
 
-    LOG_INFO("Export Node %s completed", TCHARToString(node->GetName()).c_str());
+    LOG_INFO("Export Node %s completed\n", TCHARToString(node->GetName()).c_str());
 
     return eNoError;
 }

@@ -21,7 +21,7 @@ namespace resources
         bool                load()                                  override;
 
         u32                 getCountMeshes() const;
-        stream::ResourcePtr getMeshResource(u32 index) const;
+        stream::ResourcePtr readMeshResource() const;
 
     private:
 

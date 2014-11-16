@@ -84,7 +84,7 @@ void CModel::init()
 
     for (u32 i = 0; i < m_data->getCountMeshes(); ++i)
     {
-        stream::ResourcePtr resourceMesh = m_data->getMeshResource(i);
+        stream::ResourcePtr resourceMesh = m_data->readMeshResource();
         if (!resourceMesh)
         {
             LOG_WARNING("CModel::init: Streaming mesh N [%d] error read file [%s]", i, m_data->getResourseName().c_str());

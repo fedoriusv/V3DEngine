@@ -28,9 +28,12 @@ namespace v3d
 
         void                        addObject(Obj& object);
 
+        void                        setName(const std::string& name);
+
         v3d::ObjectPtr              createObject(IGameObject::ObjectTypes type);
 
         bool                        save(const std::string& file);
+        bool                        convert();
 
     private:
 

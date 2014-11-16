@@ -41,7 +41,20 @@ bool CMesh::load()
         return false;
     }
 
-    //TODO:
+    if (stream->size() > 0)
+    {
+
+        stream->seekBeg(0);
+
+        stream->read(m_id);
+        stream->read(m_name);
+
+        //TODO:
+
+        return true;
+    }
+
+    return false;
 }
 
 void CMesh::update(f64 time)

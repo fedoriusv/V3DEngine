@@ -16,7 +16,7 @@ namespace scene
     public:
 
         CModelManager();
-        virtual             ~CModelManager();
+        virtual                 ~CModelManager();
 
         resources::ModelDataPtr load(const std::string& name);
 
