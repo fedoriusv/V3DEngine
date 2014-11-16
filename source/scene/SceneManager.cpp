@@ -431,12 +431,11 @@ CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std:
     return node;
 }
 
-CNode* CSceneManager::addModel(const std::string& file, CNode* parent, const Vector3D& pos)
+CNode* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
 {
-    CModel* node = new CModel();
+    CModel* node = new CModel(file, techniqe);
     node->setParent(parent);
     node->setPosition(pos);
-    node->setFile(file);
 
     CSceneManager::addNode(node);
 

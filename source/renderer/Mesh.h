@@ -4,6 +4,7 @@
 #include "stream/Resource.h"
 #include "Material.h"
 #include "Geometry.h"
+#include "RenderTechnique.h"
 
 namespace v3d
 {
@@ -19,7 +20,7 @@ namespace renderer
     {
     public:
 
-        CMesh();
+        CMesh(const RenderTechniquePtr& technique);
         virtual             ~CMesh();
 
         void                init(const stream::IStreamPtr& stream)  override;

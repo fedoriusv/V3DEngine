@@ -17,7 +17,7 @@ namespace scene
     {
     public:
 
-        CModel();
+        CModel(const std::string& file, const std::string& techique);
         virtual                         ~CModel();
 
         void                            render()         override;
@@ -28,14 +28,13 @@ namespace scene
         const renderer::MeshPtr&        getMesh(u32 id) const;
         u32                             getMeshCount() const;
 
-        void                            setFile(const std::string& file);
-
     private:
 
         std::vector<renderer::MeshPtr>  m_meshes;
         resources::ModelDataPtr         m_data;
 
         std::string                     m_file;
+        std::string                     m_techique;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

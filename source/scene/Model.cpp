@@ -1,15 +1,17 @@
 #include "Model.h"
 #include "utils/Logger.h"
 #include "ModelManager.h"
+#include "scene/RenderTechniqueManager.h"
 #include "Engine.h"
 
 using namespace v3d;
 using namespace v3d::scene;
 using namespace v3d::renderer;
 
-CModel::CModel()
+CModel::CModel(const std::string& file, const std::string& techique)
 : m_data(nullptr)
-, m_file("")
+, m_file(file)
+, m_techique(techique)
 {
     m_nodeType = ENodeType::eModel;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
@@ -37,11 +39,6 @@ const renderer::MeshPtr& CModel::getMesh(u32 id) const
 u32 CModel::getMeshCount() const
 {
     return m_meshes.size();
-}
-
-void CModel::setFile(const std::string& file)
-{
-    m_file = file;
 }
 
 void CModel::render()
@@ -72,6 +69,13 @@ void CModel::init()
         return;
     }
 
+    RenderTechniquePtr technique = scene::CRenderTechniqueManager::getInstance()->load(m_techique);
+    if (!technique)
+    {
+        LOG_ERROR("CModel::init: Error read file [%s]", m_techique.c_str());
+        return;
+    }
+
     m_data = CModelManager::getInstance()->load(m_file);
     if (!m_data)
     {
@@ -84,20 +88,20 @@ void CModel::init()
 
     for (u32 i = 0; i < m_data->getCountMeshes(); ++i)
     {
-        stream::ResourcePtr resourceMesh = m_data->readMeshResource();
+        stream::ResourcePtr resourceMesh = m_data->readMeshResource(technique);
         if (!resourceMesh)
         {
             LOG_WARNING("CModel::init: Streaming mesh N [%d] error read file [%s]", i, m_data->getResourseName().c_str());
             continue;
         }
 
-        MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
-        if (!mesh->load())
+        if (!resourceMesh->load())
         {
             LOG_WARNING("CModelManager::load: Streaming mesh N [%d] error load [%s]", i, m_data->getResourseName().c_str());
             continue;
         }
 
+        MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
         CModel::addMesh(mesh);
     }
 

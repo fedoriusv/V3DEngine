@@ -1,15 +1,20 @@
 #include "Mesh.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 using namespace v3d;
 using namespace v3d::renderer;
 
-CMesh::CMesh()
+CMesh::CMesh(const RenderTechniquePtr& technique)
 {
+    m_material = std::make_shared<CMaterial>();
+
+    m_material->setRenderTechnique(technique);
 }
 
 CMesh::~CMesh()
 {
+    m_geometry->free();
 }
 
 void CMesh::setMaterial(const MaterialPtr& material)
@@ -30,6 +35,16 @@ const GeometryPtr& CMesh::getGeomerty() const
 void CMesh::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
+
+    RenderTechniquePtr technique = m_material->getRenderTechique();
+    if (!technique)
+    {
+        LOG_ERROR("CMesh::init: Do not exist RenderTechique");
+        ASSERT(false && "CMesh: Do not exist RenderTechique");
+        return;
+    }
+
+    m_geometry = RENDERER->makeSharedGeometry(technique);
 }
 
 bool CMesh::load()
@@ -49,7 +64,7 @@ bool CMesh::load()
         stream->read(m_id);
         stream->read(m_name);
 
-        //TODO:
+        //TODO: geomerty
 
         return true;
     }

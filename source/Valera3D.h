@@ -11,6 +11,7 @@
 #include "scene/Node.h"
 #include "scene/Text.h"
 #include "scene/Shape.h"
+#include "scene/Model.h"
 #include "scene/CubeShape.h"
 #include "scene/Camera.h"
 #include "scene/Skybox.h"

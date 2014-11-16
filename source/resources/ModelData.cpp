@@ -51,7 +51,7 @@ bool CModelData::load()
     return false;
 }
 
-stream::ResourcePtr CModelData::readMeshResource() const
+stream::ResourcePtr CModelData::readMeshResource(const renderer::RenderTechniquePtr& technique) const
 {
     const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
@@ -67,7 +67,7 @@ stream::ResourcePtr CModelData::readMeshResource() const
         u8* data = new u8[size];
         stream->read(data, sizeof(u8), size);
 
-        MeshPtr mesh = std::make_shared<CMesh>();
+        MeshPtr mesh = std::make_shared<CMesh>(technique);
 
         stream::IStreamPtr mem = stream::CStreamManager::createMemoryStream(data, size);
         mesh->init(mem);

@@ -2,6 +2,7 @@
 #define _V3D_MODEL_DATA_H_
 
 #include "stream/Resource.h"
+#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
@@ -21,7 +22,7 @@ namespace resources
         bool                load()                                  override;
 
         u32                 getCountMeshes() const;
-        stream::ResourcePtr readMeshResource() const;
+        stream::ResourcePtr readMeshResource(const renderer::RenderTechniquePtr& technique) const;
 
     private:
 
