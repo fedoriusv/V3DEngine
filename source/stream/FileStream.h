@@ -71,6 +71,9 @@ namespace stream
         void    seekCur(const u32 offset)                                       override;
         u32     tell()                                                          override;
         u32     size()                                                          override;
+
+        u8*     map(const u32 size)                                             override;
+        void    unmap()                                                         override;
         
         const std::string& getName() const;
 
@@ -81,6 +84,9 @@ namespace stream
         EOpenMode   m_openMode;
         u32         m_fileSize;
         bool        m_isOpen;
+
+        u8*         m_mappedMemory;
+        bool        m_mapped;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

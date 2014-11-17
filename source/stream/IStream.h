@@ -61,6 +61,9 @@ namespace stream
         virtual u32     tell()                              = 0;
         virtual u32     size()                              = 0;
 
+        virtual u8*     map(const u32 size)                 = 0;
+        virtual void    unmap()                             = 0;
+
     };
 
     template <class T>

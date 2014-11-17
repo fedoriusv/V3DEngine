@@ -58,6 +58,9 @@ namespace stream
         u32     tell()                                                          override;
         u32     size()                                                          override;
 
+        u8*     map(const u32 size)                                             override;
+        void    unmap()                                                         override;
+
         u8*     getData() const;
 
     private:
@@ -68,6 +71,7 @@ namespace stream
         u32     m_length;
         u32     m_allocated;
         u32     m_pos;
+        bool    m_mapped;
          
     };
 

@@ -8,6 +8,7 @@ MemoryStream::MemoryStream()
     , m_length(0)
     , m_allocated(0)
     , m_pos(0)
+    , m_mapped(false)
 {
 }
 
@@ -16,6 +17,7 @@ MemoryStream::MemoryStream(const void* data, const u32 size)
     , m_length(size)
     , m_allocated(size)
     , m_pos(0)
+    , m_mapped(false)
 {
 }
 
@@ -104,15 +106,15 @@ u32 MemoryStream::read(u64& value)
 {
     ASSERT(m_length - m_pos >= sizeof(u64));
 
-    //value = (m_stream[m_pos++] & 0xFF) << 56;
-    //value |= (m_stream[m_pos++] & 0xFF) << 48;
-    //value |= (m_stream[m_pos++] & 0xFF) << 40;
-    //value |= (m_stream[m_pos++] & 0xFF) << 32;
+    value = (m_stream[m_pos++] & 0xFFLL) << 56;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 48;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 40;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 32;
 
-    value |= (m_stream[m_pos++] & 0xFF) << 24;
-    value |= (m_stream[m_pos++] & 0xFF) << 16;
-    value |= (m_stream[m_pos++] & 0xFF) << 8;
-    value |= (m_stream[m_pos++] & 0xFF);
+    value |= (m_stream[m_pos++] & 0xFFLL) << 24;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 16;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 8;
+    value |= (m_stream[m_pos++] & 0xFFLL);
 
     return m_pos;
 }
@@ -121,15 +123,15 @@ u32 MemoryStream::read(s64& value)
 {
     ASSERT(m_length - m_pos >= sizeof(s64));
 
-    //value = (m_stream[m_pos++] & 0xFF) << 56;
-    //value |= (m_stream[m_pos++] & 0xFF) << 48;
-    //value |= (m_stream[m_pos++] & 0xFF) << 40;
-    //value |= (m_stream[m_pos++] & 0xFF) << 32;
+    value = (m_stream[m_pos++] & 0xFFLL) << 56;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 48;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 40;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 32;
 
-    value |= (m_stream[m_pos++] & 0xFF) << 24;
-    value |= (m_stream[m_pos++] & 0xFF) << 16;
-    value |= (m_stream[m_pos++] & 0xFF) << 8;
-    value |= (m_stream[m_pos++] & 0xFF);
+    value |= (m_stream[m_pos++] & 0xFFLL) << 24;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 16;
+    value |= (m_stream[m_pos++] & 0xFFLL) << 8;
+    value |= (m_stream[m_pos++] & 0xFFLL);
 
     return m_pos;
 }
@@ -152,12 +154,17 @@ u32 MemoryStream::read(f64& value)
 {
     ASSERT(m_length - m_pos >= sizeof(f64));
 
-    s32& ival = *((s32*)&value);
+    s64& ival = *((s64*)&value);
 
-    ival = (m_stream[m_pos++] & 0xFF) << 24;
-    ival |= (m_stream[m_pos++] & 0xFF) << 16;
-    ival |= (m_stream[m_pos++] & 0xFF) << 8;
-    ival |= (m_stream[m_pos++] & 0xFF);
+    ival = (m_stream[m_pos++] & 0xFFLL) << 56;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 48;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 40;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 32;
+
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 24;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 16;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 8;
+    ival |= (m_stream[m_pos++] & 0xFFLL);
 
     return m_pos;
 }
@@ -166,12 +173,17 @@ u32 MemoryStream::read(f80& value)
 {
     ASSERT(m_length - m_pos >= sizeof(f80));
 
-    s32& ival = *((s32*)&value);
+    s64& ival = *((s64*)&value);
 
-    ival = (m_stream[m_pos++] & 0xFF) << 24;
-    ival |= (m_stream[m_pos++] & 0xFF) << 16;
-    ival |= (m_stream[m_pos++] & 0xFF) << 8;
-    ival |= (m_stream[m_pos++] & 0xFF);
+    ival = (m_stream[m_pos++] & 0xFFLL) << 56;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 48;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 40;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 32;
+
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 24;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 16;
+    ival |= (m_stream[m_pos++] & 0xFFLL) << 8;
+    ival |= (m_stream[m_pos++] & 0xFFLL);
 
     return m_pos;
 }
@@ -321,15 +333,15 @@ u32 MemoryStream::write(const u64 value)
 {
     if (checkSize(sizeof(u64)))
     {
-        //m_stream[m_pos++] = (value >> 56) & 0xFF;
-        //m_stream[m_pos++] = (value >> 48) & 0xFF;
-        //m_stream[m_pos++] = (value >> 40) & 0xFF;
-        //m_stream[m_pos++] = (value >> 32) & 0xFF;
+        m_stream[m_pos++] = (value >> 56) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 48) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 40) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 32) & 0xFFLL;
 
-        m_stream[m_pos++] = (value >> 24) & 0xFF;
-        m_stream[m_pos++] = (value >> 16) & 0xFF;
-        m_stream[m_pos++] = (value >> 8) & 0xFF;
-        m_stream[m_pos++] = value & 0xFF;
+        m_stream[m_pos++] = (value >> 24) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 16) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 8) & 0xFFLL;
+        m_stream[m_pos++] = value & 0xFFLL;
 
         if (m_pos > m_length)
         {
@@ -344,15 +356,15 @@ u32 MemoryStream::write(const s64 value)
 {
     if (checkSize(sizeof(s64)))
     {
-        //m_stream[m_pos++] = (value >> 56) & 0xFF;
-        //m_stream[m_pos++] = (value >> 48) & 0xFF;
-        //m_stream[m_pos++] = (value >> 40) & 0xFF;
-        //m_stream[m_pos++] = (value >> 32) & 0xFF;
+        m_stream[m_pos++] = (value >> 56) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 48) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 40) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 32) & 0xFFLL;
 
-        m_stream[m_pos++] = (value >> 24) & 0xFF;
-        m_stream[m_pos++] = (value >> 16) & 0xFF;
-        m_stream[m_pos++] = (value >> 8) & 0xFF;
-        m_stream[m_pos++] = value & 0xFF;
+        m_stream[m_pos++] = (value >> 24) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 16) & 0xFFLL;
+        m_stream[m_pos++] = (value >> 8) & 0xFFLL;
+        m_stream[m_pos++] = value & 0xFFLL;
 
         if (m_pos > m_length)
         {
@@ -387,12 +399,17 @@ u32 MemoryStream::write(const f64 value)
 {
     if (checkSize(sizeof(f64)))
     {
-        s32& ival = *((s32*)&value);
+        s64& ival = *((s64*)&value);
 
-        m_stream[m_pos++] = (ival >> 24) & 0xFF;
-        m_stream[m_pos++] = (ival >> 16) & 0xFF;
-        m_stream[m_pos++] = (ival >> 8) & 0xFF;
-        m_stream[m_pos++] = ival & 0xFF;
+        m_stream[m_pos++] = (ival >> 56) & 0xFFLL;
+        m_stream[m_pos++] = (ival >> 48) & 0xFFLL;
+        m_stream[m_pos++] = (ival >> 40) & 0xFFLL;
+        m_stream[m_pos++] = (ival >> 32) & 0xFFLL;
+
+        m_stream[m_pos++] = (ival >> 24) & 0xFFLL;
+        m_stream[m_pos++] = (ival >> 16) & 0xFFLL;
+        m_stream[m_pos++] = (ival >> 8) & 0xFFLL;
+        m_stream[m_pos++] = ival & 0xFFLL;
 
         if (m_pos > m_length)
         {
@@ -492,8 +509,32 @@ u32 MemoryStream::size()
     return m_length;
 }
 
+u8* MemoryStream::map(const u32 size)
+{
+    u8* res = 0;
+
+    ASSERT(size > 0 && m_pos + size <= m_length);
+
+    if (m_stream)
+    {
+        res = &m_stream[m_pos];
+    }
+
+    ASSERT(!m_mapped);
+    m_mapped = true;
+
+    return res;
+}
+
+void MemoryStream::unmap()
+{
+    ASSERT(m_mapped);
+    m_mapped = false;
+}
+
 u8* MemoryStream::getData() const
 {
+    ASSERT(!m_mapped);
     return m_stream;
 }
 

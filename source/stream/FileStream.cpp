@@ -14,6 +14,8 @@ FileStream::FileStream()
     : m_fileHandler(nullptr)
     , m_fileSize(0)
     , m_isOpen(false)
+    , m_mappedMemory(nullptr)
+    , m_mapped(false)
 {
 }
 
@@ -21,6 +23,8 @@ FileStream::FileStream(const std::string& file, EOpenMode openMode)
     : m_fileHandler(nullptr)
     , m_fileSize(0)
     , m_isOpen(false)
+    , m_mappedMemory(nullptr)
+    , m_mapped(false)
 {
     open(file, openMode);
 
@@ -326,6 +330,33 @@ u32 FileStream::size()
         fseek(m_fileHandler, currentPos, SEEK_SET);
     }
     return m_fileSize;
+}
+
+u8* FileStream::map(const u32 size)
+{
+    ASSERT(size > 0 && tell() + size <= FileStream::size());
+    u8* address = 0;
+
+     m_mappedMemory = new u8[size];
+     address = m_mappedMemory;
+
+    read(address, size);
+
+    ASSERT(!m_mapped);
+    m_mapped = true;
+
+    return address;
+}
+
+void FileStream::unmap()
+{
+    if (m_mappedMemory)
+    {
+        delete[] m_mappedMemory;
+        m_mappedMemory = nullptr;
+    }
+    ASSERT(m_mapped);
+    m_mapped = false;
 }
 
 const std::string& FileStream::getName() const

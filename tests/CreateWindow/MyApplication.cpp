@@ -32,6 +32,7 @@ void MyApplication::init()
     torus->getMaterial()->setTexture(0, "textures/wall.bmp");v
     torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
 
+
     scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/texture.xml"));
 
     for (u32 j = 0; j < 5; ++j)
