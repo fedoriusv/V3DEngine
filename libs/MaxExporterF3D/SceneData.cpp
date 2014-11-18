@@ -7,7 +7,7 @@ using namespace stream;
 
 CSceneData::CSceneData()
 {
-    m_model = std::make_shared<scene::CModel>();
+    m_model = std::make_shared<scene::CModel>("","");
 }
 
 CSceneData::~CSceneData()
@@ -39,7 +39,7 @@ v3d::ObjectPtr CSceneData::createObject(IGameObject::ObjectTypes type)
     switch (type)
     {
     case IGameObject::IGAME_MESH:
-        return std::make_shared<renderer::CMesh>();
+        return std::make_shared<renderer::CMesh>(nullptr);
 
     case IGameObject::IGAME_LIGHT:
         return std::make_shared<scene::CLight>();
@@ -112,7 +112,24 @@ bool CSceneData::save(const std::string& file)
         subStream->write(name);
         LOG_INFO("Mesh name %s", name.c_str());
 
-        //TODO : data
+        const renderer::GeometryPtr& geomerty = mesh->getGeomerty();
+        SVertexData& data = geomerty->getData();
+
+        subStream->write((u32)data._indices.size());
+        subStream->write(data._indices.data(), sizeof(u32), data._indices.size());
+        LOG_INFO("Mesh indices size %d", data._indices.size());
+
+        subStream->write((u32)data._vertices.size());
+        subStream->write(data._vertices.data(), sizeof(f32), data._vertices.size() * 3);
+        LOG_INFO("Mesh vertices size %d", data._vertices.size() * 3);
+
+        subStream->write((u32)data._normals.size());
+        subStream->write(data._normals.data(), sizeof(f32), data._normals.size() * 3);
+        LOG_INFO("Mesh normals size %d", data._normals.size() * 3);
+
+        subStream->write((u32)data._texCoords[0].size());
+        subStream->write(data._texCoords[0].data(), sizeof(f32), data._texCoords[0].size() * 2);
+        LOG_INFO("Mesh texCoords size %d", data._texCoords[0].size() * 2);
 
         stream->write(subStream->size());
         LOG_INFO("Mesh stream size %d", subStream->size());

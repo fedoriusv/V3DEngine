@@ -9,7 +9,10 @@ CMesh::CMesh(const RenderTechniquePtr& technique)
 {
     m_material = std::make_shared<CMaterial>();
 
-    m_material->setRenderTechnique(technique);
+    if (technique)
+    {
+        m_material->setRenderTechnique(technique);
+    }
 }
 
 CMesh::~CMesh()
