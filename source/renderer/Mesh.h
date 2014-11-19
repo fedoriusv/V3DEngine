@@ -31,6 +31,8 @@ namespace renderer
 
         const GeometryPtr&  getGeomerty() const;
 
+        void                init();
+        void                refresh();
         void                update(f64 time);
         void                render();
 
@@ -40,6 +42,11 @@ namespace renderer
 
         MaterialPtr         m_material;
         GeometryPtr         m_geometry;
+#ifdef _DEBUG                           
+        renderer::DebugGeometryPtr m_debug;
+#endif
+
+        bool                m_initialiazed;
     };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -49,6 +49,11 @@ void CModel::render()
     }
 
     //m_renderJob->setTransform(CNode::getAbsTransform());
+
+    for (std::vector<MeshPtr>::const_iterator mesh = m_meshes.begin(); mesh < m_meshes.end(); ++mesh)
+    {
+        (*mesh)->render();
+    }
 }
 
 void CModel::update(f64 time)
@@ -58,7 +63,10 @@ void CModel::update(f64 time)
         return;
     }
 
-
+    for (std::vector<MeshPtr>::const_iterator mesh = m_meshes.begin(); mesh < m_meshes.end(); ++mesh)
+    {
+        (*mesh)->update(time);
+    }
 }
 
 void CModel::init()
@@ -102,6 +110,8 @@ void CModel::init()
         }
 
         MeshPtr mesh = std::static_pointer_cast<CMesh>(resourceMesh);
+        mesh->init();
+
         CModel::addMesh(mesh);
     }
 

@@ -35,17 +35,17 @@ void MyApplication::init()
 
     scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/texture.xml"));
 
-    for (u32 j = 0; j < 5; ++j)
-    {
-        for (u32 i = 0; i < 5; ++i)
-        {
-            scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
-            cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-            //cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
-            //cube1->getMaterial()->setDiffuseColor(Vector4D(0, 0, 1, 1));
-            cube1->getMaterial()->setTexture(0, "textures/box.jpg");
-        }
-    }
+    //for (u32 j = 0; j < 5; ++j)
+    //{
+    //    for (u32 i = 0; i < 5; ++i)
+    //    {
+    //        scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
+    //        cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
+    //        //cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
+    //        //cube1->getMaterial()->setDiffuseColor(Vector4D(0, 0, 1, 1));
+    //        cube1->getMaterial()->setTexture(0, "textures/box.jpg");
+    //    }
+    //}
 
     //BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 

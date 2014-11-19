@@ -5,9 +5,9 @@
 using namespace v3d;
 using namespace v3d::renderer;
 
-CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty, const Matrix4D& transform)
+CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
     : m_material(material)
-    , m_geomerty(geomerty)
+    , m_geometry(geometry)
     , m_transform(transform)
 {
 }
@@ -26,14 +26,14 @@ const MaterialPtr& CRenderJob::getMaterial() const
     return m_material;
 }
 
-void CRenderJob::setGeomery(const GeometryPtr& geomerty)
+void CRenderJob::setGeometry(const GeometryPtr& geometry)
 {
-   m_geomerty = geomerty;
+    m_geometry = geometry;
 }
 
 const GeometryPtr& CRenderJob::getGeometry() const
 {
-    return m_geomerty;
+    return m_geometry;
 }
 
 void CRenderJob::setTransform(const Matrix4D& transform)

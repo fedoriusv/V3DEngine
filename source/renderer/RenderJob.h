@@ -17,13 +17,13 @@ namespace renderer
     {
     public:
 
-        CRenderJob(const MaterialPtr& material, const GeometryPtr& geomerty, const Matrix4D& transform);
+        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform);
         ~CRenderJob();
 
         void                setMaterial(const MaterialPtr& material);
         const MaterialPtr&  getMaterial() const;
 
-        void                setGeomery(const GeometryPtr& geomerty);
+        void                setGeometry(const GeometryPtr& geometry);
         const GeometryPtr&  getGeometry() const;
 
         void                setTransform(const Matrix4D& transform);
@@ -35,7 +35,7 @@ namespace renderer
         friend              CDebugLight;
 
         MaterialPtr         m_material;
-        GeometryPtr         m_geomerty;
+        GeometryPtr         m_geometry;
         Matrix4D            m_transform;
     };
 

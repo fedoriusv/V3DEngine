@@ -78,7 +78,7 @@ const core::Dimension2D& CRenderer::getViewportSize() const
 void CRenderer::draw(const RenderJobPtr& job)
 {
     const MaterialPtr& material = job->getMaterial();
-    const GeometryPtr& geomerty = job->getGeometry();
+    const GeometryPtr& geometry = job->getGeometry();
     const u32 passCount = material->getRenderTechique()->getRenderPassCount();
     const core::Matrix4D& transform = job->getTransform();
 
@@ -113,7 +113,7 @@ void CRenderer::draw(const RenderJobPtr& job)
             }
         }
 
-        geomerty->draw();
+        geometry->draw();
     }
 }
 
