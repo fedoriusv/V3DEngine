@@ -2,7 +2,9 @@
 #define _V3D_WINDOW_WIN32_H_
 
 #include "Window.h"
+
 #include <windows.h>
+#include <Xinput.h>
 
 namespace v3d
 {
@@ -44,6 +46,19 @@ namespace platform
 
         HWND    m_window;
         HDC     m_context;
+
+    private:
+
+        struct SControllerState
+        {
+            XINPUT_STATE    _state;
+            bool            _connected;
+        };
+
+        static const u32    k_maxControllers = 4;
+        SControllerState    m_controllers[k_maxControllers];
+
+        bool                updateGamePadState();
 
     };
 

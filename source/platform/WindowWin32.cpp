@@ -6,6 +6,12 @@
 #include "Engine.h"
 #include "utils\Logger.h"
 
+#if(_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+#   pragma comment(lib,"xinput.lib")
+#else
+#   pragma comment(lib,"xinput9_1_0.lib")
+#endif
+
 using namespace v3d;
 using namespace v3d::platform;
 using namespace v3d::event;
@@ -219,6 +225,7 @@ bool CWindowWin32::begin()
 {
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
+    msg.message = WM_NULL;
 
     while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
     {
@@ -230,6 +237,8 @@ bool CWindowWin32::begin()
             return false;
         }
     }
+
+    CWindowWin32::updateGamePadState();
 
     return true;
 }
@@ -484,6 +493,39 @@ void CWindowWin32::addKeyCodes()
     m_keys.add(eKeyOem_Clear, 0xFE);
 }
 
+
+bool CWindowWin32::updateGamePadState()
+{
+    DWORD dwResult;
+    for (DWORD i = 0; i < k_maxControllers; ++i)
+    {
+        dwResult = XInputGetState(i, &m_controllers[i]._state);
+        if (dwResult == ERROR_SUCCESS)
+        {
+            m_controllers[i]._connected = true;
+        }
+        else
+        {
+            m_controllers[i]._connected = false;
+        }
+    }
+
+    WCHAR sz[4][1024];
+    for (DWORD i = 0; i < k_maxControllers; ++i)
+    {
+        if (m_controllers[i]._connected)
+        {
+            WORD wButtons = m_controllers[i]._state.Gamepad.wButtons;
+            DWORD packet = m_controllers[i]._state.dwPacketNumber;
+
+            int a = 0;
+
+        }
+    }
+
+    return S_OK;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #ifndef WHEEL_DELTA
@@ -624,4 +666,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
-
