@@ -2,7 +2,7 @@
 #define _V3D_WINDOW_H_
 
 #include "common.h"
-#include "event/InputEvents.h"
+#include "event/InputEventKeyboard.h"
 
 namespace v3d
 {

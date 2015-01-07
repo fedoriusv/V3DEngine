@@ -16,47 +16,5 @@ SInputEvent::~SInputEvent()
 
 bool SInputEvent::operator<(const SInputEvent& event)
 {
-	return _priority < event._priority;
-}
-
-SKeyboardInputEvent::SKeyboardInputEvent()
-    : _character(0)
-    , _key(eKeyUknown)
-    , _event(eKeyboardUnknown)
-    , _modifers(0)
-{
-	_eventType = eKeyboardInputEvent;
-}
-
-SKeyboardInputEvent::~SKeyboardInputEvent()
-{
-}
-
-SMouseInputEvent::SMouseInputEvent()
-    : _position(0,0)
-    , _wheel(0.0f)
-    , _event(eMouseUnknown)
-    , _modifers(0)
-{
-	_eventType = eMouseInputEvent;
-}
-
-SMouseInputEvent::~SMouseInputEvent()
-{
-}
-
-
-void SKeyCodes::add(EKeyCode code, u32 systemCode)
-{
-    _key.insert(std::map<u32, EKeyCode>::value_type(systemCode, code));
-}
-
-EKeyCode SKeyCodes::get(u32 code)
-{
-    if (_key.find(code) != _key.end())
-    {
-        return _key[code];
-    }
-
-    return eKeyUknown;
+    return _priority < event._priority;
 }

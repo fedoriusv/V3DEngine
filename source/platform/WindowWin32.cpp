@@ -1,4 +1,5 @@
 #include "WindowWin32.h"
+#include "event/EventManager.h"
 
 #include <winuser.h>
 
@@ -509,7 +510,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             event->_key = keys.get(wParam);
             event->_character = (c8)wParam;
 
-            INPUT_EVENTS->pushEvent(event);
+            event::CEventManager::getInstance()->pushEvent(event);
 
             return 0;
         }
@@ -524,7 +525,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             event->_key = keys.get(wParam);;
             event->_character = (c8)wParam;
 
-            INPUT_EVENTS->pushEvent(event);
+            event::CEventManager::getInstance()->pushEvent(event);
 
             return 0;
         }
@@ -582,7 +583,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
             };
 
-            INPUT_EVENTS->pushEvent(event);
+            event::CEventManager::getInstance()->pushEvent(event);
 
             return 0;
         }

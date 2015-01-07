@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "platform/Platform.h"
 #include "event/InputEventHandler.h"
+#include "event/EventManager.h"
 #include "scene/RenderTechniqueManager.h"
 #include "scene/TextureManager.h"
 #include "scene/FontManager.h"
@@ -20,14 +21,19 @@ CEngine::CEngine()
     m_platform = std::make_shared<CPlatform>();
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
     m_scene = std::make_shared<CSceneManager>();
+
+    m_inputEventHandler->setEnableEvents(true);
 }
 
 CEngine::~CEngine()
 {
+    m_inputEventHandler->setEnableEvents(false);
+
     CRenderTechniqueManager::freeInstance();
     CTextureManager::freeInstance();
     CFontManager::freeInstance();
     CModelManager::freeInstance();
+    CEventManager::freeInstance();
 }
 
 bool CEngine::init()
