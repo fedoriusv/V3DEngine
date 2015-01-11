@@ -16,6 +16,12 @@ SKeyboardInputEvent::~SKeyboardInputEvent()
 {
 }
 
+bool SKeyboardInputEvent::operator == (const SKeyboardInputEvent& event) const
+{
+    return (_character == event._character &&
+        _key == event._key &&
+        _event == event._event);
+}
 
 void SKeyCodes::add(EKeyCode code, u32 systemCode)
 {

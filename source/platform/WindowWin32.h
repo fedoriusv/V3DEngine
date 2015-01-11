@@ -2,9 +2,11 @@
 #define _V3D_WINDOW_WIN32_H_
 
 #include "Window.h"
-
 #include <windows.h>
-#include <Xinput.h>
+
+#if _DIRECTINPUT_
+#   include <dinput.h>
+#endif
 
 namespace v3d
 {
@@ -44,21 +46,49 @@ namespace platform
 
         void    addKeyCodes()                               override;
 
+        static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
         HWND    m_window;
         HDC     m_context;
 
-    private:
-
-        struct SControllerState
+#if _DIRECTINPUT_
+        struct SControllerInfo
         {
-            XINPUT_STATE    _state;
-            bool            _connected;
+            SControllerInfo();
+            bool                        init(HINSTANCE instance, HWND window);
+            void                        release();
+            static BOOL CALLBACK        enumJoysticks(LPCDIDEVICEINSTANCE lpddi, LPVOID cp);
+            static BOOL CALLBACK        enumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, LPVOID cp);
+
+            HRESULT                     updateInputState();
+
+            struct SControllerState
+            {
+                SControllerState();
+
+                s32                     _index;
+                bool                    _connected;
+                GUID                    _guid;
+                std::string             _name;
+
+                LPDIRECTINPUTDEVICE8    _joy;
+                DIDEVCAPS               _devcaps;
+                DIJOYSTATE2             _lastState;
+
+                void                    reset();
+            };
+
+            HWND                        _window;
+            LPDIRECTINPUT8              _directInput;
+
+            static const u32            k_maxControllers = 4;
+            SControllerState            _controllers[k_maxControllers];
         };
 
-        static const u32    k_maxControllers = 4;
-        SControllerState    m_controllers[k_maxControllers];
+        SControllerInfo&                getControllersInfo();
+        SControllerInfo                 m_controllersInfo;
 
-        bool                updateGamePadState();
+#endif //_DIRECTINPUT_
 
     };
 

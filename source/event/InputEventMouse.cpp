@@ -15,3 +15,10 @@ SMouseInputEvent::SMouseInputEvent()
 SMouseInputEvent::~SMouseInputEvent()
 {
 }
+
+bool SMouseInputEvent::operator == (const SMouseInputEvent& event) const
+{
+    return (_position == event._position &&
+        _wheel == event._wheel &&
+        _event == event._event);
+}

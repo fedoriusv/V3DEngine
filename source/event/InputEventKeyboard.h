@@ -27,6 +27,8 @@ namespace event
         SKeyboardInputEvent();
         virtual ~SKeyboardInputEvent();
 
+        bool operator == (const SKeyboardInputEvent& event) const;
+
         v3d::c8              _character;
         EKeyCode             _key;
         EKeyboardInputEvent  _event;
@@ -35,7 +37,7 @@ namespace event
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<SKeyboardInputEvent> SKeyboardInputEventPtr;
+    typedef std::shared_ptr<SKeyboardInputEvent> KeyboardInputEventPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

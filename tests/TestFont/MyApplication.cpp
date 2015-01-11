@@ -34,11 +34,11 @@ void MyApplication::run()
 	//TODO: main loop
 }
 
-void MyApplication::onMouse(const v3d::event::SMouseInputEventPtr& event)
+void MyApplication::onMouse(const v3d::event::MouseInputEventPtr& event)
 {
 }
 
-void MyApplication::onKeyboard(const event::SKeyboardInputEventPtr& event)
+void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
 {
     if (event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {

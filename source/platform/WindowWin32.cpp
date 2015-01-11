@@ -6,17 +6,14 @@
 #include "Engine.h"
 #include "utils\Logger.h"
 
-#if(_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-#   pragma comment(lib,"xinput.lib")
-#else
-#   pragma comment(lib,"xinput9_1_0.lib")
+#if _DIRECTINPUT_
+#   pragma comment(lib, "dinput8.lib")
+#   pragma comment(lib, "dxguid.lib")
 #endif
 
 using namespace v3d;
 using namespace v3d::platform;
 using namespace v3d::event;
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 CWindowWin32::CWindowWin32(const WindowParam& param)
     : CWindow(param)
@@ -238,8 +235,6 @@ bool CWindowWin32::begin()
         }
     }
 
-    CWindowWin32::updateGamePadState();
-
     return true;
 }
 
@@ -259,7 +254,7 @@ void CWindowWin32::create()
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wcex.lpfnWndProc = WndProc;
+    wcex.lpfnWndProc = CWindowWin32::WndProc;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
@@ -331,10 +326,18 @@ void CWindowWin32::create()
     LOG_INFO("Window Size (%d, %d)", m_param._size.width, m_param._size.height);
 
     CWindowWin32::addKeyCodes();
+
+#if _DIRECTINPUT_
+    m_controllersInfo.init(hInstance, m_window);
+#endif
 }
 
 void CWindowWin32::close()
 {
+#if _DIRECTINPUT_
+    m_controllersInfo.release();
+#endif
+
     MSG msg;
     PeekMessage(&msg, NULL, WM_QUIT, WM_QUIT, PM_REMOVE);
     PostQuitMessage(0);
@@ -493,40 +496,243 @@ void CWindowWin32::addKeyCodes()
     m_keys.add(eKeyOem_Clear, 0xFE);
 }
 
-
-bool CWindowWin32::updateGamePadState()
+#if _DIRECTINPUT_
+CWindowWin32::SControllerInfo& CWindowWin32::getControllersInfo()
 {
-    DWORD dwResult;
-    for (DWORD i = 0; i < k_maxControllers; ++i)
+    return m_controllersInfo;
+}
+
+CWindowWin32::SControllerInfo::SControllerInfo()
+: _directInput(nullptr)
+, _window(nullptr)
+{
+}
+
+bool CWindowWin32::SControllerInfo::init(HINSTANCE instance, HWND window)
+{
+    _window = window;
+
+    if (DI_OK != (DirectInput8Create(instance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&_directInput, NULL)))
     {
-        dwResult = XInputGetState(i, &m_controllers[i]._state);
-        if (dwResult == ERROR_SUCCESS)
+        LOG_WARNING("SControllerInfo: Could not create DirectInput8 Object");
+        return false;
+    }
+
+    if (!_directInput || (_directInput->EnumDevices(DI8DEVCLASS_GAMECTRL, SControllerInfo::enumJoysticks, this, DIEDFL_ATTACHEDONLY)))
+    {
+        LOG_WARNING("SControllerInfo: Could not enum DirectInput8 controllers");
+        return false;
+    }
+
+    return true;
+}
+
+void CWindowWin32::SControllerInfo::release()
+{
+    for (u32 i = 0; i < k_maxControllers; ++i)
+    {
+        LPDIRECTINPUTDEVICE8 dev = _controllers[i]._joy;
+        if (dev)
         {
-            m_controllers[i]._connected = true;
+            dev->Unacquire();
+            dev->Release();
         }
-        else
+        _controllers[i].reset();
+    }
+
+    if (_directInput)
+    {
+        _directInput->Release();
+        _directInput = nullptr;
+    }
+}
+
+BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE lpddi, LPVOID cp)
+{
+    SControllerInfo* info = reinterpret_cast<SControllerInfo*>(cp);
+
+    const GUID guid = lpddi->guidInstance;
+    const std::wstring name = lpddi->tszProductName;
+    s32 index = -1;
+
+    for (u32 i = 0; i < info->k_maxControllers; ++i)
+    {
+        if (!info->_controllers[i]._connected)
         {
-            m_controllers[i]._connected = false;
+            if (DI_OK != info->_directInput->CreateDevice(guid, &info->_controllers[i]._joy, NULL))
+            {
+                LOG_WARNING("SControllerInfo: Could not create DirectInput device");
+                return DIENUM_STOP;
+            }
+
+            index = i;
+            break;
         }
     }
 
-    WCHAR sz[4][1024];
-    for (DWORD i = 0; i < k_maxControllers; ++i)
+    if (index > -1)
     {
-        if (m_controllers[i]._connected)
+        SControllerState& controller = info->_controllers[index];
+        controller.reset();
+
+        controller._devcaps.dwSize = sizeof(controller._devcaps);
+        if (DI_OK != controller._joy->GetCapabilities(&controller._devcaps))
         {
-            WORD wButtons = m_controllers[i]._state.Gamepad.wButtons;
-            DWORD packet = m_controllers[i]._state.dwPacketNumber;
+            LOG_WARNING("SControllerInfo: Could not create DirectInput device");
+            return DIENUM_STOP;
+        }
 
-            int a = 0;
+        if (DI_OK != controller._joy->SetCooperativeLevel(info->_window, DISCL_BACKGROUND | DISCL_EXCLUSIVE))
+        {
+            LOG_WARNING("SControllerInfo: Could not set DirectInput device cooperative level");
+            return DIENUM_STOP;
+        }
 
+        if (DI_OK != controller._joy->SetDataFormat(&c_dfDIJoystick2))
+        {
+            LOG_WARNING("SControllerInfo: Could not set DirectInput device data format");
+            return DIENUM_STOP;
+        }
+
+        if (DI_OK != controller._joy->Acquire())
+        {
+            LOG_WARNING("SControllerInfo: Could not set DirectInput cooperative level");
+            return DIENUM_STOP;
+        }
+
+        if (DI_OK != controller._joy->GetDeviceState(sizeof(controller._lastState), &controller._lastState))
+        {
+            LOG_WARNING("SControllerInfo: Could not read DirectInput device state");
+            return DIENUM_STOP;
+        }
+
+        controller._connected = true;
+        controller._guid = guid;
+        controller._name = std::string(name.begin(), name.end());
+        controller._index = index;
+
+        if (DI_OK != controller._joy->EnumObjects(SControllerInfo::enumObjectsCallback, &controller, DIDFT_ALL))
+        {
+            controller.reset();
+
+            LOG_WARNING("SControllerInfo: Could not attach objects callback");
+            return DIENUM_STOP;
+        }
+
+        LOG_INFO("SControllerInfo: Joystick %s connected with index %d", controller._name.c_str(), controller._index);
+    }
+
+    return DIENUM_CONTINUE;
+}
+
+BOOL CALLBACK CWindowWin32::SControllerInfo::enumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, LPVOID cp)
+{
+    SControllerState* controller = reinterpret_cast<SControllerState*>(cp);
+
+    if (pdidoi->dwType & DIDFT_AXIS)
+    {
+        DIPROPRANGE diprg;
+        diprg.diph.dwSize = sizeof(DIPROPRANGE);
+        diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+        diprg.diph.dwHow = DIPH_BYID;
+        diprg.diph.dwObj = pdidoi->dwType; // Specify the enumerated axis
+        diprg.lMin = -1000;
+        diprg.lMax = +1000;
+
+        // Set the range for the axis
+        if (DI_OK != controller->_joy->SetProperty(DIPROP_RANGE, &diprg.diph))
+        {
+            return DIENUM_STOP;
+        }
+    }
+
+    return DIENUM_CONTINUE;
+}
+
+HRESULT CWindowWin32::SControllerInfo::updateInputState()
+{
+    DIJOYSTATE2 js;
+
+    for (u32 i = 0; i < k_maxControllers; ++i)
+    {
+        if (!_controllers[i]._connected)
+        {
+            continue;
+        }
+
+        HRESULT result = _controllers[i]._joy->Poll();
+        if (DI_OK != result)
+        {
+            result = _controllers[i]._joy->Acquire();
+            while (result == DIERR_INPUTLOST)
+            {
+                result = _controllers[i]._joy->Acquire();
+            }
+        }
+
+        if (DI_OK != _controllers[i]._joy->GetDeviceState(sizeof(DIJOYSTATE2), &js))
+        {
+            continue;
+        }
+
+        bool changed = false;
+        event::GamepadInputEventPtr event = std::make_shared<event::SGamepadInputEvent>();
+        event->_gamepad = _controllers[i]._index;
+
+        for (u16 j = 0; j < eButtonCount; ++j)
+        {
+            if (_controllers[i]._lastState.rgbButtons[j] != js.rgbButtons[j])
+            {
+                event->_event = eGamepadButtonDown;
+                changed = true;
+
+                break;
+            }
+
+        };
+
+        if (event->_event == eGamepadButtonDown)
+        {
+            BYTE* byteButtons = js.rgbButtons;
+            for (u16 j = 0; j < eButtonCount; ++j)
+            {
+                if (byteButtons[j] > 0)
+                {
+                    event->_buttons |= (1 << j);
+                }
+            };
+        }
+
+        _controllers[i]._lastState = js;
+
+        if (changed)
+        {
+            event::CEventManager::getInstance()->pushEvent(event);
         }
     }
 
     return S_OK;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+CWindowWin32::SControllerInfo::SControllerState::SControllerState()
+: _index(-1)
+, _connected(false)
+, _joy(nullptr)
+{
+}
+
+void CWindowWin32::SControllerInfo::SControllerState::reset()
+{
+    const GUID guid;
+
+    _connected = false;
+    //_guid = guid;
+    _name.clear();
+    _index = -1;
+}
+#endif
+
+LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #ifndef WHEEL_DELTA
 #   define WHEEL_DELTA 120
@@ -539,7 +745,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CREATESTRUCT* cs = (CREATESTRUCT*)lParam;
             SetWindowLongPtr(hWnd, 0, (LONG_PTR)cs->lpCreateParams);
 
-            break;
+            SetTimer(hWnd, 0, 1000 / 30, NULL);
+
+            return TRUE;
+        }
+
+        case WM_ACTIVATE:
+        {
+            BOOL focused = LOWORD(wParam) != WA_INACTIVE;
+            BOOL iconified = HIWORD(wParam) ? TRUE : FALSE;
+
+            if (focused && iconified)
+            {
+                // This is a workaround for window iconification using the
+                // taskbar leading to windows being told they're focused and
+                // iconified and then never told they're defocused
+                focused = FALSE;
+            }
+
+            return TRUE;
         }
 
         case WM_SYSKEYDOWN:
@@ -547,14 +771,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
 
-            v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
-            event->_event = v3d::event::eKeyboardPressDown;
+            event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
+            event->_event = event::eKeyboardPressDown;
             event->_key = keys.get(wParam);
             event->_character = (c8)wParam;
 
             event::CEventManager::getInstance()->pushEvent(event);
 
-            return 0;
+            return TRUE;
         }
 
         case WM_SYSKEYUP:
@@ -562,14 +786,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
 
-            v3d::event::SKeyboardInputEventPtr event = std::make_shared<v3d::event::SKeyboardInputEvent>();
-            event->_event = v3d::event::eKeyboardPressUp;
+            event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
+            event->_event = event::eKeyboardPressUp;
             event->_key = keys.get(wParam);;
             event->_character = (c8)wParam;
 
             event::CEventManager::getInstance()->pushEvent(event);
 
-            return 0;
+            return TRUE;
         }
 
         case WM_LBUTTONDOWN:
@@ -581,7 +805,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE:
         case WM_MOUSEWHEEL:
         {
-            v3d::event::SMouseInputEventPtr event = std::make_shared<v3d::event::SMouseInputEvent>();
+            event::MouseInputEventPtr event = std::make_shared<event::SMouseInputEvent>();
             event->_position.width = (s16)LOWORD(lParam);
             event->_position.height = (s16)HIWORD(lParam);
             event->_wheel = ((f32)((s16)HIWORD(wParam))) / (f32)WHEEL_DELTA;
@@ -627,39 +851,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             event::CEventManager::getInstance()->pushEvent(event);
 
-            return 0;
+            return TRUE;
+        }
+
+        case WM_TIMER:
+        {
+            platform::WindowWin32Ptr window = std::static_pointer_cast<platform::CWindowWin32>(WINDOW);
+            if (DI_OK != window->getControllersInfo().updateInputState())
+            {
+                KillTimer(hWnd, 0);
+            }
+
+            return TRUE;
         }
 
         case WM_SIZE:
         {
-            return 0;
+            return TRUE;
         }
 
         case WM_SHOWWINDOW:
         {
-            return 0;
-        }
-
-        case WM_ACTIVATE:
-        {
-            BOOL focused = LOWORD(wParam) != WA_INACTIVE;
-            BOOL iconified = HIWORD(wParam) ? TRUE : FALSE;
-
-            if (focused && iconified)
-            {
-                // This is a workaround for window iconification using the
-                // taskbar leading to windows being told they're focused and
-                // iconified and then never told they're defocused
-                focused = FALSE;
-            }
-
-            return 0;
+            return TRUE;
         }
 
         case WM_DESTROY:
         {
+            KillTimer(hWnd, 0);
             PostQuitMessage(0);
-            return 0;
+
+            return TRUE;
         }
 
     }

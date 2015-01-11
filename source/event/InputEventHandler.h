@@ -5,6 +5,7 @@
 #include "EventReceiver.h"
 #include "InputEventKeyboard.h"
 #include "InputEventMouse.h"
+#include "InputEventGamepad.h"
 
 namespace v3d
 {
@@ -21,8 +22,8 @@ namespace event
         CInputEventHandler();
         ~CInputEventHandler();
 
-        void                        connectKeyboardEvent(std::function<void(const SKeyboardInputEventPtr&)>);
-        void                        connectMouseEvent(std::function<void(const SMouseInputEventPtr&)>);
+        void                        connectKeyboardEvent(std::function<void(const KeyboardInputEventPtr&)>);
+        void                        connectMouseEvent(std::function<void(const MouseInputEventPtr&)>);
 
         void                        update();
 
@@ -48,8 +49,8 @@ namespace event
         core::Dimension2D           m_mousePosition; //WARN: need Point class
         float                       m_mouseWheel;
 
-        std::function<void(const SKeyboardInputEventPtr&)>  m_keyboardSignature;
-        std::function<void(const SMouseInputEventPtr&)>     m_mouseSignature;
+        std::function<void(const KeyboardInputEventPtr&)>  m_keyboardSignature;
+        std::function<void(const MouseInputEventPtr&)>     m_mouseSignature;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

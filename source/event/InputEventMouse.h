@@ -35,6 +35,8 @@ namespace event
         SMouseInputEvent();
         virtual ~SMouseInputEvent();
 
+        bool operator == (const SMouseInputEvent& event) const;
+
         core::Dimension2D _position; //WARN: need class Point
         v3d::f32          _wheel;
         EMouseInputEvent  _event;
@@ -44,7 +46,7 @@ namespace event
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<SMouseInputEvent> SMouseInputEventPtr;
+    typedef std::shared_ptr<SMouseInputEvent> MouseInputEventPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

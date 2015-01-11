@@ -51,7 +51,7 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
     {
         case eKeyboardInputEvent:
         {
-            const SKeyboardInputEventPtr keyEvent = std::static_pointer_cast<SKeyboardInputEvent>(event);
+            const KeyboardInputEventPtr keyEvent = std::static_pointer_cast<SKeyboardInputEvent>(event);
 
             switch (keyEvent->_event)
             {
@@ -82,7 +82,7 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
 
         case eMouseInputEvent:
         {
-            const SMouseInputEventPtr mouseEvent = std::static_pointer_cast<SMouseInputEvent>(event);
+            const MouseInputEventPtr mouseEvent = std::static_pointer_cast<SMouseInputEvent>(event);
 
             for (u32 state = 0; state < eMouseCount; ++state)
             {
@@ -128,7 +128,7 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
     }
 }
 
-void CInputEventHandler::connectKeyboardEvent(std::function<void(const SKeyboardInputEventPtr&)> signature)
+void CInputEventHandler::connectKeyboardEvent(std::function<void(const KeyboardInputEventPtr&)> signature)
 {
     if (signature)
     {
@@ -136,7 +136,7 @@ void CInputEventHandler::connectKeyboardEvent(std::function<void(const SKeyboard
     }
 }
 
-void CInputEventHandler::connectMouseEvent(std::function<void(const SMouseInputEventPtr&)> signature)
+void CInputEventHandler::connectMouseEvent(std::function<void(const MouseInputEventPtr&)> signature)
 {
     if (signature)
     {
