@@ -872,12 +872,13 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
         case WM_TIMER:
         {
+#if _DIRECTINPUT_
             platform::WindowWin32Ptr window = std::static_pointer_cast<platform::CWindowWin32>(WINDOW);
             if (DI_OK != window->getControllersInfo().updateInputState())
             {
                 KillTimer(hWnd, 0);
             }
-
+#endif
             return TRUE;
         }
 
