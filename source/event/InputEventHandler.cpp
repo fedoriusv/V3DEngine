@@ -10,6 +10,7 @@ CInputEventHandler::CInputEventHandler()
 , m_mouseWheel(0.0f)
 , m_keyboardSignature(nullptr)
 , m_mouseSignature(nullptr)
+, m_gamepadStates(0U)
 {
     resetKeyPressed();
 }
@@ -32,11 +33,13 @@ void CInputEventHandler::setEnableEvents(bool enable)
     {
         CEventManager::getInstance()->attach(eKeyboardInputEvent, shared_from_this());
         CEventManager::getInstance()->attach(eMouseInputEvent, shared_from_this());
+        CEventManager::getInstance()->attach(eGamepadInputEvent, shared_from_this());
     }
     else
     {
         CEventManager::getInstance()->dettach(eKeyboardInputEvent, shared_from_this());
         CEventManager::getInstance()->dettach(eMouseInputEvent, shared_from_this());
+        CEventManager::getInstance()->dettach(eGamepadInputEvent, shared_from_this());
     }
 }
 
@@ -51,7 +54,7 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
     {
         case eKeyboardInputEvent:
         {
-            const KeyboardInputEventPtr keyEvent = std::static_pointer_cast<SKeyboardInputEvent>(event);
+            const KeyboardInputEventPtr& keyEvent = std::static_pointer_cast<SKeyboardInputEvent>(event);
 
             switch (keyEvent->_event)
             {
@@ -82,7 +85,7 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
 
         case eMouseInputEvent:
         {
-            const MouseInputEventPtr mouseEvent = std::static_pointer_cast<SMouseInputEvent>(event);
+            const MouseInputEventPtr& mouseEvent = std::static_pointer_cast<SMouseInputEvent>(event);
 
             for (u32 state = 0; state < eMouseCount; ++state)
             {
@@ -121,6 +124,20 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
             return true;
         };
 
+        case eGamepadInputEvent:
+        {
+            const GamepadInputEventPtr& gamepadEvent = std::static_pointer_cast<SGamepadInputEvent>(event);
+
+            m_gamepadStates = gamepadEvent->_buttons;
+
+            if (m_gamepadSignature)
+            {
+                m_gamepadSignature(gamepadEvent);
+            }
+
+            return true;
+        }
+
         default:
         {
             return false;
@@ -144,6 +161,14 @@ void CInputEventHandler::connectMouseEvent(std::function<void(const MouseInputEv
     }
 }
 
+void CInputEventHandler::connectGamepadEvent(std::function<void(const GamepadInputEventPtr&)> signature)
+{
+    if (signature)
+    {
+        m_gamepadSignature = signature;
+    }
+}
+
 bool CInputEventHandler::isKeyPressed(const EKeyCode& code)  const
 {
     return m_keysPressed[code];
@@ -163,6 +188,16 @@ bool CInputEventHandler::isRightMousePressed() const
 bool CInputEventHandler::isMiddleMousePressed() const
 {
     return m_mouseStates[eMiddleMousePressedDown];
+}
+
+bool CInputEventHandler::isGamepadPressed(const EGamepadButton& code) const
+{
+    if (code >= (u32)eButtonCount)
+    {
+        return false;
+    }
+
+    return (m_gamepadStates & (1 << code)) ? true : false;
 }
 
 const core::Dimension2D& CInputEventHandler::getCursorPosition() const

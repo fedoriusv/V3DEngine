@@ -13,11 +13,9 @@ namespace event
     enum EGamepadInputEvent
     {
         eGamepadUnknown = 0,
-        eGamepadButtonDown,
-        eGamepadButtonUp,
-        eGamepadDpadMove,
-        eGamepadLeftStickMove,
-        eGamepadRightStickMove,
+        eGamepadButtonInput,
+        eGamepadDpadDirection,
+        eGamepadPOV,
 
         eGamepadCount
     };
@@ -59,8 +57,8 @@ namespace event
 
         EGamepadInputEvent  _event;
         u32                 _buttons;
-        u16                 _pov;
-        s16                 _axis[eAxesCount];
+        s32                 _pov;
+        s32                 _axis[eAxesCount];
         s32                 _gamepad;
     };
 

@@ -683,16 +683,31 @@ HRESULT CWindowWin32::SControllerInfo::updateInputState()
         {
             if (_controllers[i]._lastState.rgbButtons[j] != js.rgbButtons[j])
             {
-                event->_event = eGamepadButtonDown;
+                event->_event = eGamepadButtonInput;
                 changed = true;
 
                 break;
             }
-
         };
 
-        if (event->_event == eGamepadButtonDown)
+        if (_controllers[i]._lastState.lX != js.lX || _controllers[i]._lastState.lY != js.lY || _controllers[i]._lastState.lZ != js.lZ ||
+            _controllers[i]._lastState.lRx != js.lRx || _controllers[i]._lastState.lRy != js.lRy || _controllers[i]._lastState.lRz != js.lRz)
         {
+            event->_event = eGamepadDpadDirection;
+            changed = true;
+        }
+
+        if (_controllers[i]._lastState.rgdwPOV[0] != js.rgdwPOV[0])
+        {
+            event->_event = eGamepadPOV;
+            changed = true;
+        }
+
+        _controllers[i]._lastState = js;
+
+        if (changed)
+        {
+   
             BYTE* byteButtons = js.rgbButtons;
             for (u16 j = 0; j < eButtonCount; ++j)
             {
@@ -701,12 +716,16 @@ HRESULT CWindowWin32::SControllerInfo::updateInputState()
                     event->_buttons |= (1 << j);
                 }
             };
-        }
 
-        _controllers[i]._lastState = js;
+            event->_axis[eAxis_X] = js.lX;
+            event->_axis[eAxis_Y] = js.lY;
+            event->_axis[eAxis_Z] = js.lZ;
+            event->_axis[eAxis_R] = js.lRx;
+            event->_axis[eAxis_U] = js.lRy;
+            event->_axis[eAxis_V] = js.lRz;
 
-        if (changed)
-        {
+            event->_pov = js.rgdwPOV[0];
+
             event::CEventManager::getInstance()->pushEvent(event);
         }
     }
@@ -723,10 +742,7 @@ CWindowWin32::SControllerInfo::SControllerState::SControllerState()
 
 void CWindowWin32::SControllerInfo::SControllerState::reset()
 {
-    const GUID guid;
-
     _connected = false;
-    //_guid = guid;
     _name.clear();
     _index = -1;
 }
@@ -773,7 +789,7 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
             event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
             event->_event = event::eKeyboardPressDown;
-            event->_key = keys.get(wParam);
+            event->_key = keys.get((u32)wParam);
             event->_character = (c8)wParam;
 
             event::CEventManager::getInstance()->pushEvent(event);
@@ -788,7 +804,7 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
             event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
             event->_event = event::eKeyboardPressUp;
-            event->_key = keys.get(wParam);;
+            event->_key = keys.get((u32)wParam);;
             event->_character = (c8)wParam;
 
             event::CEventManager::getInstance()->pushEvent(event);

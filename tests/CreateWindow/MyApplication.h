@@ -12,8 +12,9 @@ public:
 	void	init() override;
 	void	run()  override;
 
-    void	onKeyboard(const v3d::event::KeyboardInputEventPtr& event);
+    void    onKeyboard(const v3d::event::KeyboardInputEventPtr& event);
     void    onMouse(const v3d::event::MouseInputEventPtr& event);
+    void    onGamepad(const v3d::event::GamepadInputEventPtr& event);
 };
 
 #endif //_MY_APPLICATION_H_

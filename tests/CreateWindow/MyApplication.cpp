@@ -63,16 +63,20 @@ void MyApplication::init()
     
 	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
+    BaseApplication::getInputEventHandler()->connectGamepadEvent(std::bind(&MyApplication::onGamepad, this, std::placeholders::_1));
 }
 
 void MyApplication::run()
 {
-	//TODO: main loop
+    //TODO: main loop
 }
 
 void MyApplication::onMouse(const v3d::event::MouseInputEventPtr& event)
 {
+}
 
+void MyApplication::onGamepad(const v3d::event::GamepadInputEventPtr& event)
+{
 }
 
 void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
