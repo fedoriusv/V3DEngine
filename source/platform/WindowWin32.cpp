@@ -607,7 +607,7 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
             return DIENUM_STOP;
         }
 
-        if (DI_OK != controller._joy->SetCooperativeLevel(info->_window, DISCL_FOREGROUND | DISCL_EXCLUSIVE))
+        if (DI_OK != controller._joy->SetCooperativeLevel(info->_window, DISCL_BACKGROUND | DISCL_EXCLUSIVE))
         {
             LOG_WARNING("SControllerInfo: Could not set DirectInput device cooperative level");
             return DIENUM_STOP;
@@ -628,19 +628,6 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
         if (DI_OK != controller._joy->GetDeviceState(sizeof(controller._lastState), &controller._lastState))
         {
             LOG_WARNING("SControllerInfo: Could not read DirectInput device state");
-            return DIENUM_STOP;
-        }
-
-        DIPROPDWORD dipAutocenter;
-
-        dipAutocenter.diph.dwSize = sizeof(DIPROPDWORD);
-        dipAutocenter.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-        dipAutocenter.diph.dwObj = 0;
-        dipAutocenter.diph.dwHow = DIPH_DEVICE;
-        dipAutocenter.dwData = FALSE;
-
-        if (DI_OK != controller._joy->SetProperty(DIPROP_AUTOCENTER, &dipAutocenter.diph))
-        {
             return DIENUM_STOP;
         }
 
