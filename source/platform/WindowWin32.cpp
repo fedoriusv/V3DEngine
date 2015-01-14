@@ -575,6 +575,31 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
         SControllerState& controller = info->_controllers[index];
         controller.reset();
 
+        DIDEVICEINSTANCE dev;
+        dev.dwSize = sizeof(DIDEVICEINSTANCE);
+        if (DI_OK != controller._joy->GetDeviceInfo(&dev))
+        {
+            LOG_WARNING("SControllerInfo: Cannot get device info");
+            return DIENUM_STOP;
+        }
+
+        switch (dev.dwDevType & 0xff)
+        {
+        case DI8DEVTYPE_GAMEPAD:
+            controller._type = eCGamepad;
+            break;
+
+        case DI8DEVTYPE_JOYSTICK:
+            controller._type = eCJoystick;
+            break;
+
+        default:
+            controller.reset();
+            LOG_WARNING("SControllerInfo: Found unknown device");
+
+            return DIENUM_STOP;
+        }
+
         controller._devcaps.dwSize = sizeof(controller._devcaps);
         if (DI_OK != controller._joy->GetCapabilities(&controller._devcaps))
         {
@@ -582,13 +607,13 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
             return DIENUM_STOP;
         }
 
-        if (DI_OK != controller._joy->SetCooperativeLevel(info->_window, DISCL_BACKGROUND | DISCL_EXCLUSIVE))
+        if (DI_OK != controller._joy->SetCooperativeLevel(info->_window, DISCL_FOREGROUND | DISCL_EXCLUSIVE))
         {
             LOG_WARNING("SControllerInfo: Could not set DirectInput device cooperative level");
             return DIENUM_STOP;
         }
 
-        if (DI_OK != controller._joy->SetDataFormat(&c_dfDIJoystick2))
+        if (DI_OK != controller._joy->SetDataFormat(&c_dfDIJoystick))
         {
             LOG_WARNING("SControllerInfo: Could not set DirectInput device data format");
             return DIENUM_STOP;
@@ -603,6 +628,19 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
         if (DI_OK != controller._joy->GetDeviceState(sizeof(controller._lastState), &controller._lastState))
         {
             LOG_WARNING("SControllerInfo: Could not read DirectInput device state");
+            return DIENUM_STOP;
+        }
+
+        DIPROPDWORD dipAutocenter;
+
+        dipAutocenter.diph.dwSize = sizeof(DIPROPDWORD);
+        dipAutocenter.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+        dipAutocenter.diph.dwObj = 0;
+        dipAutocenter.diph.dwHow = DIPH_DEVICE;
+        dipAutocenter.dwData = FALSE;
+
+        if (DI_OK != controller._joy->SetProperty(DIPROP_AUTOCENTER, &dipAutocenter.diph))
+        {
             return DIENUM_STOP;
         }
 
@@ -651,7 +689,7 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumObjectsCallback(const DIDEVICEO
 
 HRESULT CWindowWin32::SControllerInfo::updateInputState()
 {
-    DIJOYSTATE2 js;
+    DIJOYSTATE js;
 
     for (u32 i = 0; i < k_maxControllers; ++i)
     {
@@ -670,7 +708,7 @@ HRESULT CWindowWin32::SControllerInfo::updateInputState()
             }
         }
 
-        if (DI_OK != _controllers[i]._joy->GetDeviceState(sizeof(DIJOYSTATE2), &js))
+        if (DI_OK != _controllers[i]._joy->GetDeviceState(sizeof(DIJOYSTATE), &js))
         {
             continue;
         }
@@ -737,6 +775,7 @@ CWindowWin32::SControllerInfo::SControllerState::SControllerState()
 : _index(-1)
 , _connected(false)
 , _joy(nullptr)
+, _type(eCUnknown)
 {
 }
 
@@ -745,6 +784,7 @@ void CWindowWin32::SControllerInfo::SControllerState::reset()
     _connected = false;
     _name.clear();
     _index = -1;
+    _type = eCUnknown;
 }
 #endif
 

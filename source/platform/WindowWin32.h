@@ -62,6 +62,13 @@ namespace platform
 
             HRESULT                     updateInputState();
 
+            enum EControllerType
+            {
+                eCUnknown = -1,
+                eCJoystick,
+                eCGamepad
+            };
+
             struct SControllerState
             {
                 SControllerState();
@@ -73,7 +80,9 @@ namespace platform
 
                 LPDIRECTINPUTDEVICE8    _joy;
                 DIDEVCAPS               _devcaps;
-                DIJOYSTATE2             _lastState;
+                DIJOYSTATE              _lastState;
+
+                EControllerType         _type;
 
                 void                    reset();
             };
