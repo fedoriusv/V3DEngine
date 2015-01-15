@@ -274,7 +274,7 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml samplers element");
+        LOG_ERROR("CRenderPass: Error parse. Not exist xml samplers element");
         return false;
     }
 
@@ -284,7 +284,7 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find sampler name from pass '%s'", m_name.c_str());
+            LOG_ERROR("CRenderPass: Cannot find sampler name from pass '%s'", m_name.c_str());
 
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -302,7 +302,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml shader element");
+        LOG_ERROR("CRenderPass: Error parse. Not exist xml shader element");
         return false;
     }
 
@@ -313,7 +313,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         ShaderPtr shader = RENDERER->makeSharedShader();
         if (!shader)
         {
-            LOG_ERROR("Error parse. Could not create shader");
+            LOG_ERROR("CRenderPass: Error parse. Could not create shader");
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
@@ -326,7 +326,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         }
         else
         {
-            LOG_WARNING("Warrning parse. empty vshader name");
+            LOG_WARNING("CRenderPass: Warrning parse. empty vshader name");
         }
 
         CShader::EShaderType type = CShader::eVertex;
@@ -334,7 +334,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         if (shaderType.empty())
         {
             type = CShader::eVertex;
-            LOG_WARNING("Warrning parse. Shader have not type. Set Vertex type");
+            LOG_WARNING("CRenderPass: Warrning parse. Shader have not type. Set Vertex type");
         }
         else
         {
@@ -346,22 +346,22 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             const std::string shaderBody = shaderElement->GetText();
             if (shaderBody.empty())
             {
-                LOG_WARNING("Warrning parse. Empty shader body");
+                LOG_WARNING("CRenderPass: Warrning parse. Empty shader body");
             }
 
-            LOG_INFO("Info parse. Create shader [%s] from data", shaderName.c_str());
+            LOG_INFO("CRenderPass: Info parse. Create shader [%s] from data", shaderName.c_str());
             if (!shader->create(shaderBody, type))
             {
-                LOG_ERROR("Error Load Shader body");
+                LOG_ERROR("CRenderPass: Error Load Shader body");
             }
         }
         else
         {
             const std::string shaderPath = shaderElement->Attribute("path");
-            LOG_INFO("Info parse. Create shader from file: %s", shaderPath.c_str());
+            LOG_INFO("CRenderPass: Info parse. Create shader from file: %s", shaderPath.c_str());
             if (!shader->load(shaderPath, type))
             {
-                LOG_ERROR("Error Load Shader %s", shaderPath.c_str());
+                LOG_ERROR("CRenderPass: Error Load Shader %s", shaderPath.c_str());
             }
         }
 
@@ -372,7 +372,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
 
     if (!m_program->create())
     {
-        LOG_ERROR("Error Create Shader Program %s", m_program->getName().c_str());
+        LOG_ERROR("CRenderPass: Error Create Shader Program %s", m_program->getName().c_str());
         return false;
     }
 
@@ -391,9 +391,37 @@ bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml element");
+        LOG_ERROR("CRenderPass: Error parse. Not exist xml element");
         return false;
     }
+
+    u32 width = root->IntAttribute("width");
+    u32 height = root->IntAttribute("height");
+    if (width > 0 && height > 0)
+    {
+        if (!core::isPowerOf2(width))
+        {
+            LOG_WARNING("CRenderPass: Render Target width must be power of 2 - %d", width);
+        }
+
+        if (!core::isPowerOf2(height))
+        {
+            LOG_WARNING("CRenderPass: Render Target height must be power of 2 - %d", height);
+        }
+    }
+
+    f64 ratio = root->DoubleAttribute("ratio");
+    if (ratio > 0.0)
+    {
+       /* getViewport();
+        width = getWidth() * ratio);
+        height = getHeight() * ratio);*/
+    }
+
+    bool colorbuf = root->BoolAttribute("colorbuf");
+    bool depthbuf = root->BoolAttribute("depthbuf");
+
+    //GetColor
 
     return true;
 }
@@ -402,7 +430,7 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml renderstate element");
+        LOG_ERROR("CRenderPass: Error parse. Not exist xml renderstate element");
         return false;
     }
 

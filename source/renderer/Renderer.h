@@ -51,6 +51,7 @@ namespace renderer
         virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)      = 0;
         virtual TexturePtr          makeSharedTexture()                                          = 0;
         virtual RenderStatePtr      makeSharedRenderState()                                      = 0;
+        virtual RenderTargetPtr     makeSharedRenderTarget()                                     = 0;
 #ifdef _DEBUG
         virtual DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              = 0;
         virtual DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) = 0;

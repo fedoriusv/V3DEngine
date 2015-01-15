@@ -6,6 +6,7 @@
 #include "ShaderData.h"
 #include "RenderState.h"
 #include "RenderLOD.h"
+#include "RenderTarget.h"
 
 namespace tinyxml2
 {
@@ -67,7 +68,7 @@ namespace renderer
         ShaderDataPtr           m_shaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
-        //RenderTarget
+        RenderTargetPtr         m_renderTarget;
 
         bool                    m_enable;
 

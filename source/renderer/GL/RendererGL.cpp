@@ -4,6 +4,7 @@
 #include "GeometryGL.h"
 #include "TextureGL.h"
 #include "RenderStateGL.h"
+#include "RenderTargetGL.h"
 #include "DebugGeometryGL.h"
 #include "DebugLightGL.h"
 
@@ -101,6 +102,11 @@ TexturePtr CRendererGL::makeSharedTexture()
 RenderStatePtr CRendererGL::makeSharedRenderState()
 {
     return std::make_shared<CRenderStateGL>();
+}
+
+RenderTargetPtr CRendererGL::makeSharedRenderTarget()
+{
+    return std::make_shared<CRenderTargetGL>();
 }
 
 #ifdef _DEBUG

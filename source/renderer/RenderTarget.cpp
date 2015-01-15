@@ -57,4 +57,5 @@ const core::Dimension2D& CRenderTarget::getViewportSize() const
 bool CRenderTarget::parse(tinyxml2::XMLElement* root)
 {
     //TODO:
+    return false;
 }
