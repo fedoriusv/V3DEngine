@@ -67,11 +67,11 @@ char* CShader::read(const std::string& file)
     FILE* pFile;
     char* content = nullptr;
 
-    int count = 0;
+    s32 count = 0;
 
     if (!file.empty())
     {
-        pFile = fopen(file.c_str(), "rt");
+        fopen_s(&pFile, file.c_str(), "rt");
 
         if (pFile != nullptr)
         {
