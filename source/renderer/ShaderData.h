@@ -1,7 +1,6 @@
 #ifndef _V3D_SHADER_DATA_H_
 #define _V3D_SHADER_DATA_H_
 
-#include "Object.h"
 #include "ShaderUniform.h"
 #include "ShaderAttribute.h"
 #include "ShaderSampler.h"
@@ -18,7 +17,7 @@ namespace renderer
     class CDebugGeometry;
     class CDebugLight;
 
-    class CShaderData : public CObject
+    class CShaderData
     {
     public:
 

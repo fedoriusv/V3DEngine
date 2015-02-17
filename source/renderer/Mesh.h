@@ -31,6 +31,9 @@ namespace renderer
 
         const GeometryPtr&  getGeomerty() const;
 
+        const std::string&  getName()   const;
+        s32                 getID()     const;
+
         void                init();
         void                refresh();
         void                update(f64 time);
@@ -42,8 +45,11 @@ namespace renderer
 
         MaterialPtr         m_material;
         GeometryPtr         m_geometry;
+
+        s32                 m_id;
+        std::string         m_name;
 #ifdef _DEBUG                           
-        renderer::DebugGeometryPtr m_debug;
+//        renderer::DebugGeometryPtr m_debug;
 #endif
 
         bool                m_initialiazed;

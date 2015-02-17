@@ -20,26 +20,28 @@ namespace renderer
     public:
 
         CRenderTechnique();
-        virtual              ~CRenderTechnique();
+        virtual                 ~CRenderTechnique();
 
-        const RenderPassPtr& getRenderPass(u32 id) const;
-        u32                  getRenderPassCount()  const;
-        void                 addRenderPass(const RenderPassPtr& pass);
+        const RenderPassPtr&    getRenderPass(u32 id) const;
+        u32                     getRenderPassCount()  const;
+        void                    addRenderPass(const RenderPassPtr& pass);
 
-        const RenderPassList& getRenderPassList() const;
+        const RenderPassList&   getRenderPassList() const;
+
+        const std::string&      getName() const;
 
 
-        void                 init(const stream::IStreamPtr& stream) override;
-        bool                 load()                                 override;
+        void                    init(const stream::IStreamPtr& stream) override;
+        bool                    load()                                 override;
 
-        void                 refresh();
-
+        void                    refresh();
 
     private:
 
-        bool                 parse(tinyxml2::XMLElement* root);
+        bool                    parse(tinyxml2::XMLElement* root);
 
-        RenderPassList       m_renderPassList;
+        RenderPassList          m_renderPassList;
+        std::string             m_name;
 
     };
 

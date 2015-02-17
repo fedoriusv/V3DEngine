@@ -1,7 +1,7 @@
 #ifndef _V3D_SHADER_H_
 #define _V3D_SHADER_H_
 
-#include "Object.h"
+#include "common.h"
 
 namespace v3d
 {
@@ -9,7 +9,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShader : public CObject
+    class CShader
     {
     public:
 
@@ -38,6 +38,9 @@ namespace renderer
         static const std::string&   getShaderTypeNameByType(EShaderType type);
         static EShaderType          getShaderTypeByName(const std::string& name);
 
+        const std::string           getName() const;
+        void                        setName(const std::string& name);
+
     protected:
 
         char*                       read(const std::string& file);
@@ -48,6 +51,7 @@ namespace renderer
         EShaderType                 m_shaderType;
         bool                        m_compileStatus;
         void*                       m_data;
+        std::string                 m_name;
 
     private:
 
@@ -57,8 +61,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShader>				ShaderPtr;
-    typedef std::vector<ShaderPtr>				ShaderList;
+    typedef std::shared_ptr<CShader>    ShaderPtr;
+    typedef std::vector<ShaderPtr>      ShaderList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

@@ -14,9 +14,7 @@ CTexture::CTexture()
     , m_anisotropicLevel(EAnisotropic::eAnisotropic16x)
     , m_enable(false)
 {
-    m_type = EObjectType::eTypeTexture;
 }
-
 
 CTexture::~CTexture()
 {
@@ -34,7 +32,7 @@ bool CTexture::load()
     const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
+        LOG_ERROR("CTexture: Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
         return false;
     }
 

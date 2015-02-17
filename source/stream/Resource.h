@@ -1,7 +1,6 @@
 #ifndef _V3D_RESOURCE_H_
 #define _V3D_RESOURCE_H_
 
-#include "Object.h"
 #include "stream/IStream.h"
 
 namespace v3d
@@ -10,7 +9,7 @@ namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CResource : public CObject
+    class CResource
     {
     public:
 

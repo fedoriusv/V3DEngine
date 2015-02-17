@@ -14,7 +14,7 @@ CModel::CModel(const std::string& file, const std::string& techique)
 , m_techique(techique)
 {
     m_nodeType = ENodeType::eModel;
-    LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
+    LOG_INFO("CModel: Create node type: %s, name: %s", getNodeNameByType(m_nodeType).c_str(), m_file.c_str());
 }
 
 CModel::~CModel()
@@ -38,7 +38,7 @@ const renderer::MeshPtr& CModel::getMesh(u32 id) const
 
 u32 CModel::getMeshCount() const
 {
-    return m_meshes.size();
+    return (u32)m_meshes.size();
 }
 
 void CModel::render()

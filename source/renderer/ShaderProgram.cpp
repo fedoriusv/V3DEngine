@@ -50,7 +50,7 @@ void CShaderProgram::destroyShader(ShaderPtr shader)
         auto current = std::find(m_shaderList.begin(), m_shaderList.end(), shader);
         if (current == m_shaderList.end())
         {
-            LOG_ERROR("DestroyShader : Shader Program not found");
+            LOG_ERROR("CShaderProgram: Shader Program not found");
             return;
         }
 

@@ -9,8 +9,10 @@ CMesh::CMesh(const RenderTechniquePtr& technique)
 : m_initialiazed(false)
 , m_material(nullptr)
 , m_geometry(nullptr)
+, m_name("")
+, m_id(-1)
 #ifdef _DEBUG
-, m_debug(nullptr)
+//, m_debug(nullptr)
 #endif
 {
     m_material = std::make_shared<CMaterial>();
@@ -41,6 +43,16 @@ const GeometryPtr& CMesh::getGeomerty() const
     return m_geometry;
 }
 
+const std::string& CMesh::getName() const
+{
+    return m_name;
+}
+
+s32 CMesh::getID() const
+{
+    return m_id;
+}
+
 void CMesh::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
@@ -61,7 +73,7 @@ bool CMesh::load()
     const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CMesh::load: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CMesh: Empty Stream with name [%s]", CResource::getResourseName().c_str());
         return false;
     }
 
@@ -108,7 +120,7 @@ void CMesh::init()
 
     m_geometry->init();
 #ifdef _DEBUG
-    m_debug->init();
+//    m_debug->init();
 #endif
 
     m_initialiazed = true;
@@ -123,7 +135,7 @@ void CMesh::refresh()
 
     m_geometry->refresh();
 #ifdef _DEBUG
-    m_debug->refresh();
+//    m_debug->refresh();
 #endif
 }
 

@@ -66,7 +66,7 @@ void CWindowWin32::setResizeble(bool value)
         return;
     }
 
-    LONG_PTR style = WS_POPUP;
+    DWORD style = WS_POPUP;
     if (value)
     {
         style = WS_THICKFRAME | WS_SYSMENU | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
@@ -105,7 +105,7 @@ void CWindowWin32::setFullScreen(bool value)
         return;
     }
 
-    LONG_PTR style = WS_POPUP;
+    DWORD style = WS_POPUP;
     if (!value)
     {
         style = WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;

@@ -34,13 +34,12 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShader::CShader()
-    : CObject()
-    , m_shaderID(0)
+    : m_shaderID(0)
     , m_shaderType(EShaderType::eShaderUnknown)
     , m_compileStatus(false)
     , m_data(nullptr)
+    , m_name("")
 {
-    m_type = EObjectType::eTypeShader;
 }
 
 CShader::~CShader()
@@ -60,6 +59,16 @@ CShader::EShaderType CShader::getShaderType() const
 bool CShader::getCompileStatus() const
 {
     return m_compileStatus;
+}
+
+const std::string CShader::getName() const
+{
+    return m_name;
+}
+
+void CShader::setName(const std::string& name)
+{
+    m_name = name;
 }
 
 char* CShader::read(const std::string& file)
@@ -82,7 +91,7 @@ char* CShader::read(const std::string& file)
             if (count > 0)
             {
                 content = (char *)malloc(sizeof(char)* (count + 1));
-                count = fread(content, sizeof(char), count, pFile);
+                count = (s32)fread(content, sizeof(char), count, pFile);
                 content[count] = '\0';
             }
 

@@ -1,5 +1,4 @@
 #include "RenderTechnique.h"
-
 #include "utils/Logger.h"
 
 #include "tinyxml2.h"
@@ -8,12 +7,18 @@ using namespace v3d;
 using namespace v3d::renderer;
 
 CRenderTechnique::CRenderTechnique()
+    : m_name("")
 {
 }
 
 CRenderTechnique::~CRenderTechnique()
 {
     m_renderPassList.clear();
+}
+
+const std::string& CRenderTechnique::getName() const
+{
+    return m_name;
 }
 
 const RenderPassPtr& CRenderTechnique::getRenderPass(u32 id) const
@@ -25,7 +30,7 @@ const RenderPassPtr& CRenderTechnique::getRenderPass(u32 id) const
 
 u32 CRenderTechnique::getRenderPassCount() const
 {
-    return m_renderPassList.size();
+    return (u32)m_renderPassList.size();
 }
 
 void CRenderTechnique::addRenderPass(const RenderPassPtr& pass)
@@ -46,25 +51,25 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
     const int techniqueVersion = root->IntAttribute("version");
     if (techniqueVersion != SHADER_PARSER )
     {
-        LOG_ERROR("Error parse. Need version %d", SHADER_PARSER);
+        LOG_ERROR("CRenderTechnique: Need version %d", SHADER_PARSER);
         return false;
     }
 
     const std::string techniqueName = root->Attribute("name");
     if (techniqueName.empty())
     {
-        LOG_ERROR("Error parse. Have no technique name");
+        LOG_ERROR("CRenderTechnique: Have no technique name");
         return false;
     }
 
     m_name = techniqueName;
 
-    LOG_INFO("Info parse. Parse render technique [%s]", m_name.c_str());
+    LOG_INFO("CRenderTechnique: Parse render technique [%s]", m_name.c_str());
 
     tinyxml2::XMLElement* passElement = root->FirstChildElement("pass");
     if (!passElement)
     {
-        LOG_ERROR("Error parse. Have no pass section");
+        LOG_ERROR("CRenderTechnique: Have no pass section");
         return false;
     }
 
@@ -73,7 +78,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
         RenderPassPtr pass = std::make_shared<CRenderPass>();
         if (!pass->parse(passElement))
         {
-            LOG_ERROR("Error parse. Pass section");
+            LOG_ERROR("CRenderTechnique: Pass section");
             return false;
         }
         CRenderTechnique::addRenderPass(pass);
@@ -95,7 +100,7 @@ bool CRenderTechnique::load()
     const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("Empty Stream with name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Empty Stream with name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 
@@ -115,14 +120,14 @@ bool CRenderTechnique::load()
     tinyxml2::XMLError success = doc.Parse(data.c_str());
     if (success)
     {
-        LOG_ERROR("Error Parse Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Error Parse Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 
     tinyxml2::XMLElement* rootElement = doc.FirstChildElement("technique");
     if (!rootElement)
     {
-        LOG_ERROR("Can not find technique in Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Can not find technique in Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
         return false;
     }
 

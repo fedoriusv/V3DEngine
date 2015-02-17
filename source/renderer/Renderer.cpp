@@ -293,7 +293,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
             {
             case EUniformData::eLightsCount:
 
-                program->setUniformInt(id, lights.size());
+                program->setUniformInt(id, (s32)lights.size());
                 break;
 
             case EUniformData::eLightPosition:

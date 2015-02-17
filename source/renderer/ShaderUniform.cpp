@@ -168,7 +168,7 @@ void CShaderUniform::allocMemory(EDataType type, void* value)
         }
     }
 
-    LOG_ERROR("Type Data not exist");
+    LOG_ERROR("CShaderUniform: Type Data not exist");
 }
 
 void CShaderUniform::deallocMemory()

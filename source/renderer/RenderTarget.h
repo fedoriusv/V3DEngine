@@ -1,7 +1,6 @@
 #ifndef _V3D_RENDER_TARGET_H_
 #define _V3D_RENDER_TARGET_H_
 
-#include "Object.h"
 #include "Texture.h"
 
 namespace tinyxml2
@@ -15,7 +14,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTarget : public CObject
+    class CRenderTarget
     {
     public:
 

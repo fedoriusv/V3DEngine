@@ -22,7 +22,7 @@ namespace renderer
     class CRenderer;
     class CRenderTechnique;
 
-    class CRenderPass : public CObject
+    class CRenderPass
     {
     public:
 
@@ -50,16 +50,16 @@ namespace renderer
 
         void                    init();
 
-        bool                    parse            (tinyxml2::XMLElement* root);
+        bool                    parse            (const tinyxml2::XMLElement* root);
 
-        bool                    parseUniforms    (tinyxml2::XMLElement* root);
-        bool                    parseAttributes  (tinyxml2::XMLElement* root);
-        bool                    parseSamplers    (tinyxml2::XMLElement* root);
-        bool                    parseShaders     (tinyxml2::XMLElement* root);
-        bool                    parseRenderTarget(tinyxml2::XMLElement* root);
-        bool                    parseRenderState (tinyxml2::XMLElement* root);
-        bool                    parseRenderLOD   (tinyxml2::XMLElement* root);
-        bool                    parseUserUniform (tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type);
+        bool                    parseUniforms    (const tinyxml2::XMLElement* root);
+        bool                    parseAttributes  (const tinyxml2::XMLElement* root);
+        bool                    parseSamplers    (const tinyxml2::XMLElement* root);
+        bool                    parseShaders     (const tinyxml2::XMLElement* root);
+        bool                    parseRenderTarget(const tinyxml2::XMLElement* root);
+        bool                    parseRenderState (const tinyxml2::XMLElement* root);
+        bool                    parseRenderLOD   (const tinyxml2::XMLElement* root);
+        bool                    parseUserUniform (const tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type);
 
         const std::string       attachIndexToUniform(const std::string& name, s32 idx);
         void                    parseArrayValue(const std::string& val, f32* array, u32 count);
@@ -71,6 +71,7 @@ namespace renderer
         RenderTargetPtr         m_renderTarget;
 
         bool                    m_enable;
+        std::string             m_name;
 
     };
 

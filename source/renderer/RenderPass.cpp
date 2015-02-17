@@ -14,6 +14,7 @@ CRenderPass::CRenderPass()
     , m_renderState(nullptr)
     , m_lods(nullptr)
     , m_enable(true)
+    , m_name("")
 {
     CRenderPass::init();
 }
@@ -52,25 +53,25 @@ void CRenderPass::setRenderState(const RenderStatePtr& state)
     m_renderState = state;
 }
 
-bool CRenderPass::parse(tinyxml2::XMLElement* root)
+bool CRenderPass::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse.  Cannot read render pass element");
+        LOG_ERROR("CRenderPass: Cannot read render pass element");
         return false;
     }
 
     const std::string passName = root->Attribute("name");
     if (passName.empty())
     {
-        LOG_ERROR("Error parse. Cannot read render pass name");
+        LOG_ERROR("CRenderPass: Cannot read render pass name");
         return false;
     }
 
     m_name = passName;
 
     //uniforms
-    tinyxml2::XMLElement*  uniformsElement = root->FirstChildElement("uniforms");
+    const tinyxml2::XMLElement* uniformsElement = root->FirstChildElement("uniforms");
     if (uniformsElement)
     {
         if (!parseUniforms(uniformsElement))
@@ -80,7 +81,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //attributes
-    tinyxml2::XMLElement*  attributesElement = root->FirstChildElement("attributes");
+    const tinyxml2::XMLElement* attributesElement = root->FirstChildElement("attributes");
     if (attributesElement)
     {
         if (!parseAttributes(attributesElement))
@@ -90,7 +91,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //samplers
-    tinyxml2::XMLElement*  samplersElement = root->FirstChildElement("samplers");
+    const tinyxml2::XMLElement* samplersElement = root->FirstChildElement("samplers");
     if (samplersElement)
     {
         if (!parseSamplers(samplersElement))
@@ -100,7 +101,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //shaders
-    tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
+    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
     if (shadersElement)
     {
         if (!parseShaders(shadersElement))
@@ -110,7 +111,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //rendertarget
-    tinyxml2::XMLElement*  rendertargetElement = root->FirstChildElement("rendertarget");
+    const tinyxml2::XMLElement*  rendertargetElement = root->FirstChildElement("rendertarget");
     if (rendertargetElement)
     {
         if (!parseRenderTarget(rendertargetElement))
@@ -120,7 +121,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //renderstate
-    tinyxml2::XMLElement*  renderstateElement = root->FirstChildElement("renderstate");
+    const tinyxml2::XMLElement*  renderstateElement = root->FirstChildElement("renderstate");
     if (renderstateElement)
     {
         if (!parseRenderState(renderstateElement))
@@ -130,7 +131,7 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     }
 
     //lod
-    tinyxml2::XMLElement*  renderlodElement = root->FirstChildElement("lod");
+    const tinyxml2::XMLElement*  renderlodElement = root->FirstChildElement("lod");
     if (renderlodElement)
     {
         if (!parseRenderLOD(renderlodElement))
@@ -142,21 +143,21 @@ bool CRenderPass::parse(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
+bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml uniforms element");
+        LOG_ERROR("CRenderPass: Not exist xml uniforms element");
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
+    const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
+            LOG_ERROR("CRenderPass: Cannot find uniform name from pass '%s'", m_name.c_str());
 
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -165,7 +166,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
+            LOG_ERROR("CRenderPass: Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
 
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -179,7 +180,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             const std::string varType = varElement->Attribute("type");
             if (varType.empty())
             {
-                LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
+                LOG_ERROR("CRenderPass: Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
 
                 varElement = varElement->NextSiblingElement("var");
                 continue;
@@ -188,7 +189,7 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
             uniformType = CShaderData::getDataTypeByName(varType);
             if (uniformType == CShaderUniform::eTypeNone)
             {
-                LOG_ERROR("Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
+                LOG_ERROR("CRenderPass: Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
 
                 varElement = varElement->NextSiblingElement("var");
                 continue;
@@ -232,21 +233,21 @@ bool CRenderPass::parseUniforms(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
+bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml attributes element");
+        LOG_ERROR("CRenderPass: Not exist xml attributes element");
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
+    const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
-            LOG_ERROR("Cannot find uniform name from pass '%s'", m_name.c_str());
+            LOG_ERROR("CRenderPass: Cannot find uniform name from pass '%s'", m_name.c_str());
 
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -255,7 +256,7 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
         const std::string varVal = varElement->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
+            LOG_ERROR("CRenderPass: Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
 
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -270,15 +271,15 @@ bool CRenderPass::parseAttributes(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
+bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Error parse. Not exist xml samplers element");
+        LOG_ERROR("CRenderPass: Not exist xml samplers element");
         return false;
     }
 
-    tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
+    const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
         const std::string varName = varElement->Attribute("name");
@@ -298,22 +299,22 @@ bool CRenderPass::parseSamplers(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
+bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Error parse. Not exist xml shader element");
+        LOG_ERROR("CRenderPass: Not exist xml shader element");
         return false;
     }
 
     //vshader
-    tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
+    const tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
         ShaderPtr shader = RENDERER->makeSharedShader();
         if (!shader)
         {
-            LOG_ERROR("CRenderPass: Error parse. Could not create shader");
+            LOG_ERROR("CRenderPass: Could not create shader");
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
@@ -326,7 +327,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         }
         else
         {
-            LOG_WARNING("CRenderPass: Warrning parse. empty vshader name");
+            LOG_WARNING("CRenderPass: Empty vshader name");
         }
 
         CShader::EShaderType type = CShader::eVertex;
@@ -334,7 +335,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         if (shaderType.empty())
         {
             type = CShader::eVertex;
-            LOG_WARNING("CRenderPass: Warrning parse. Shader have not type. Set Vertex type");
+            LOG_WARNING("CRenderPass: Shader have not type. Set Vertex type");
         }
         else
         {
@@ -346,10 +347,10 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
             const std::string shaderBody = shaderElement->GetText();
             if (shaderBody.empty())
             {
-                LOG_WARNING("CRenderPass: Warrning parse. Empty shader body");
+                LOG_WARNING("CRenderPass: Empty shader body");
             }
 
-            LOG_INFO("CRenderPass: Info parse. Create shader [%s] from data", shaderName.c_str());
+            LOG_INFO("CRenderPass: Create shader [%s] from data", shaderName.c_str());
             if (!shader->create(shaderBody, type))
             {
                 LOG_ERROR("CRenderPass: Error Load Shader body");
@@ -358,7 +359,7 @@ bool CRenderPass::parseShaders(tinyxml2::XMLElement* root)
         else
         {
             const std::string shaderPath = shaderElement->Attribute("path");
-            LOG_INFO("CRenderPass: Info parse. Create shader from file: %s", shaderPath.c_str());
+            LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
             if (!shader->load(shaderPath, type))
             {
                 LOG_ERROR("CRenderPass: Error Load Shader %s", shaderPath.c_str());
@@ -387,11 +388,11 @@ void CRenderPass::init()
     m_renderState = RENDERER->makeSharedRenderState();
 }
 
-bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
+bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Error parse. Not exist xml element");
+        LOG_ERROR("CRenderPass: Not exist xml element");
         return false;
     }
 
@@ -426,11 +427,11 @@ bool CRenderPass::parseRenderTarget(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
+bool CRenderPass::parseRenderState(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Error parse. Not exist xml renderstate element");
+        LOG_ERROR("CRenderPass: Not exist xml renderstate element");
         return false;
     }
 
@@ -470,11 +471,11 @@ bool CRenderPass::parseRenderState(tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseRenderLOD(tinyxml2::XMLElement* root)
+bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("Error parse. Not exist xml lod element");
+        LOG_ERROR("CRenderPass: Not exist xml lod element");
         return false;
     }
 
@@ -536,7 +537,7 @@ void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
     m_lods = lod;
 }
 
-bool CRenderPass::parseUserUniform(tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type)
+bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type)
 {
     switch (type)
     {

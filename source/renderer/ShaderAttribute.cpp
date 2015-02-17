@@ -16,7 +16,6 @@ const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttribute
     "mesh.texture1",
     "mesh.texture2",
     "mesh.texture3",
-
 };
 
 

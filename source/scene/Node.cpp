@@ -18,7 +18,7 @@ std::string  CNode::s_nodeTypes[ENodeType::eCount] = {
 
 const std::string& CNode::getNodeNameByType(ENodeType type)
 {
-    return  s_nodeTypes[type];
+    return s_nodeTypes[type];
 }
 
 CNode::CNode()

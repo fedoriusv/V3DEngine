@@ -8,7 +8,9 @@ using namespace v3d::resources;
 using namespace v3d::renderer;
 
 CModelData::CModelData()
-: m_countMeshes(0U)
+    : m_countMeshes(0U)
+    , m_name("")
+    , m_id(-1)
 {
 }
 
@@ -24,6 +26,16 @@ void CModelData::init(const stream::IStreamPtr& stream)
 u32 CModelData::getCountMeshes() const
 {
     return m_countMeshes;
+}
+
+const std::string& CModelData::getName() const
+{
+    return m_name;
+}
+
+s32 CModelData::getID() const
+{
+    return m_id;
 }
 
 bool CModelData::load()

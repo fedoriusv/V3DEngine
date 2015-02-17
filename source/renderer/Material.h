@@ -13,7 +13,7 @@ namespace renderer
 
     class CRenderer;
 
-    class CMaterial : public CObject
+    class CMaterial
     {
     public:
 

@@ -24,9 +24,15 @@ namespace resources
         u32                 getCountMeshes() const;
         stream::ResourcePtr readMeshResource(const renderer::RenderTechniquePtr& technique) const;
 
+        const std::string&  getName()   const;
+        s32                 getID()     const;
+
     private:
 
         u32                 m_countMeshes;
+        s32                 m_id;
+        std::string         m_name;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

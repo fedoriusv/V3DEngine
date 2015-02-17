@@ -11,10 +11,7 @@ namespace v3d
     {
         eTypeUnknown,
         eTypeNode,
-        eTypeTexture,
-        eTypeMaterial,
-        eTypeMesh,
-        eTypeShader,
+        eTypeModel,
         eTypeShaderProgram,
         eTypesCount
     };
