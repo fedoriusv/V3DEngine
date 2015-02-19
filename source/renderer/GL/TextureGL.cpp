@@ -63,6 +63,8 @@ GLenum EImageTypeGL[EImageType::eTypeCount] =
     GL_UNSIGNED_BYTE,
     GL_SHORT,
     GL_UNSIGNED_SHORT,
+    GL_UNSIGNED_SHORT_5_6_5,
+    GL_UNSIGNED_SHORT_4_4_4_4,
     GL_INT,
     GL_UNSIGNED_INT,
     GL_FLOAT,

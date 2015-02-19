@@ -35,10 +35,24 @@ namespace renderer
         void                    setViewportSize(const core::Dimension2D& size);
         const core::Dimension2D& getViewportSize() const;
 
+        void                    setClearColorBuffer(bool clear);
+        bool                    getClearColorBuffer() const;
+        bool                    hasClearColorTarget() const;
+
+        void                    setClearDepthBuffer(bool clear);
+        bool                    getClearDepthBuffer() const;
+        bool                    hasClearDepthTarget() const;
+
+        EImageFormat            getImageFormat()    const;
+        EImageType              getImageType()      const;
+
     protected:
 
         virtual void            create()    = 0;
         virtual void            destroy()   = 0;
+
+        void                    setColorTexture(const TexturePtr& texture);
+        void                    setDepthTexture(const TexturePtr& texture);
 
         bool                    parse(tinyxml2::XMLElement* root);
 
@@ -46,6 +60,17 @@ namespace renderer
         TexturePtr              m_depthTexture;
 
         core::Vector4D          m_color;
+
+        bool                    m_clearColorBuffer;
+        bool                    m_clearDepthBuffer;
+
+        bool                    m_hasClearColor;
+        bool                    m_hasClearDepth;
+
+        EImageFormat            m_imageFormat;
+        EImageType              m_imageType;
+
+
         core::Dimension2D       m_viewportSize;
     };
 

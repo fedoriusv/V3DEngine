@@ -32,7 +32,7 @@ void CGeometryGL::init()
 {
     if (m_data.empty())
     {
-        LOG_WARNING("Data empty");
+        LOG_WARNING("CGeometryGL: Data empty");
         return;
     }
 
@@ -51,7 +51,7 @@ void CGeometryGL::init()
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
 
         s32 vertexSize = CGeometryGL::computeVertexSize(attributes);
-        CGeometryGL::bufferData(GL_ARRAY_BUFFER, vertexSize, NULL);
+        CGeometryGL::bufferData(GL_ARRAY_BUFFER, vertexSize, nullptr);
 
         CGeometryGL::initBufferData(attributes);
     }
@@ -64,7 +64,7 @@ void CGeometryGL::init()
         CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data._countIndices, m_data._indices.data());
     }
 
-    RENDERER->checkForErrors("GeometryGL Init Error");
+    RENDERER->checkForErrors("GeometryGL: Init Error");
 
     CGeometryGL::bindVertexArray(0);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
@@ -124,7 +124,7 @@ void CGeometryGL::draw()
 
     CGeometryGL::bindVertexArray(0);
 
-    RENDERER->checkForErrors("GeometryGL Draw Error");
+    RENDERER->checkForErrors("GeometryGL: Draw Error");
 }
 
 void CGeometryGL::free()
@@ -208,7 +208,7 @@ void CGeometryGL::refresh()
 {
     if (m_data.empty())
     {
-        LOG_WARNING("Data empty");
+        LOG_WARNING("CGeometryGL: Data empty");
         return;
     }
 
@@ -220,7 +220,7 @@ void CGeometryGL::refresh()
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
 
         s32 vertexSize = CGeometryGL::computeVertexSize(attributes);
-        CGeometryGL::bufferData(GL_ARRAY_BUFFER, vertexSize, NULL);
+        CGeometryGL::bufferData(GL_ARRAY_BUFFER, vertexSize, nullptr);
 
         CGeometryGL::initBufferData(attributes);
     }
@@ -229,11 +229,11 @@ void CGeometryGL::refresh()
     if (m_data._countIndices > 0)
     {
         CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, m_data._indicesId);
-        CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data._countIndices, NULL);
+        CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* m_data._countIndices, nullptr);
         CGeometryGL::bufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(GLint)* m_data._countIndices, m_data._indices.data());
     }
 
-    RENDERER->checkForErrors("GeometryGL Refresh Error");
+    RENDERER->checkForErrors("GeometryGL: Refresh Error");
 
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
     CGeometryGL::bindBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);

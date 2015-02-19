@@ -11,7 +11,10 @@
 		<samplers> 
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
-		<rendertarget width="720" height="480" ratio="1.1" colorbuf="true" depthbuf="true" color="0xFFFFFF00"/>
+		<rendertarget width="720" height="480" ratio="1.1">
+            <color active="true" clear="true" format="" color="0xFFFFFF00"/>
+            <depth active="true" clear="true"/>
+        </rendertarget>
         <lod geometry="10.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">

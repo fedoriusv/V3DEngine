@@ -23,12 +23,12 @@ namespace renderer
 
         virtual bool                setVSync(bool use)                               = 0;
 
-        const core::Dimension2D&	getViewport() const;
-        const platform::WindowPtr	getWindow() const;
+        const core::Dimension2D&    getViewport() const;
+        const platform::WindowPtr&  getWindow() const;
 
     protected:
 
-        const platform::WindowPtr	m_window;
+        const platform::WindowPtr   m_window;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -271,7 +271,7 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
 
     if (m_currentTextureIndex >= m_charTexture.size())
     {
-        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), eDepthComponent, eUnsignedByte, NULL);
+        TexturePtr texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), eDepthComponent, eUnsignedByte, nullptr);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
 

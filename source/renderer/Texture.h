@@ -71,6 +71,8 @@ namespace renderer
         eUnsignedByte,
         eShort,
         eUnsignedShort,
+        eUnsignedShort_565,
+        eUnsignedShort_4444,
         eInt,
         eUnsignedInt,
         eFloat,

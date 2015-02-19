@@ -194,6 +194,7 @@ renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D&
     texture->m_data[0]._depth = 1;
     texture->m_data[0]._format = format;
     texture->m_data[0]._type = type;
+    texture->m_data[0]._data = data;
 
     texture->create();
 
