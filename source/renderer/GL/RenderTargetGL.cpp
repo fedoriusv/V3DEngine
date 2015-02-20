@@ -17,7 +17,6 @@ CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferID(0)
     , m_depthBufferID(0)
 {
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&m_frameBufferID);
 }
 
 CRenderTargetGL::~CRenderTargetGL()
@@ -27,39 +26,44 @@ CRenderTargetGL::~CRenderTargetGL()
 
 void CRenderTargetGL::bind()
 {
-    bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0, 0, 0, 0.0f);
+
+   /* bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
     if (chaned)
     {
         glViewport(0, 0, getViewportSize().width, getViewportSize().height);
-    }
+    }*/
 
-    if (chaned || true) //TODO: check current frame 
-    {
-        u32 flags = 0;
-        if (CRenderTarget::hasClearDepthTarget())
-        {
-            flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
-            glDepthMask(GL_TRUE);
+    //if (true) //TODO: check current frame 
+    //{
+    //    u32 flags = 0;
+    //    if (CRenderTarget::hasClearDepthTarget())
+    //    {
+    //        flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
+    //        glDepthMask(GL_TRUE);
 
-        }
+    //    }
 
-        if (CRenderTarget::hasClearColorTarget())
-        {
-            flags |= GL_COLOR_BUFFER_BIT;
+    //    if (CRenderTarget::hasClearColorTarget())
+    //    {
+    //        flags |= GL_COLOR_BUFFER_BIT;
 
-            const core::Vector4D& color = CRenderTarget::getCearColor();
-            glClearColor(color[0], color[1], color[2], color[3]);
-        }
+    //        const core::Vector4D& color = CRenderTarget::getCearColor();
+    //        glClearColor(color[0], color[1], color[2], color[3]);
+    //    }
 
-        if (flags)
-        {
-            glClear(flags);
-        }
-    }
+    //    if (flags)
+    //    {
+    //        glClear(flags);
+    //    }
+    //}
+
+    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
 }
 
-void CRenderTargetGL::create()
+bool CRenderTargetGL::create()
 {
     core::Dimension2D size = getViewportSize();
     if (size.width == 0)
@@ -112,15 +116,34 @@ void CRenderTargetGL::create()
             CRenderTargetGL::genRenderbuffer(m_depthBufferID);
             CRenderTargetGL::bindRenderbuffer(m_depthBufferID);
 
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.width, size.height);
+            std::function<s32(s32)> componentSize = [](s32 component)
+            {
+                switch (component)
+                {
+                case 16:
+                    return GL_DEPTH_COMPONENT16;
+                case 24:
+                    return GL_DEPTH_COMPONENT24;
+                case 32:
+                    return GL_DEPTH_COMPONENT32;
+                default:
+                    return GL_DEPTH_COMPONENT16;
+                };
+                return GL_DEPTH_COMPONENT16;
+            };
+
+            glRenderbufferStorage(GL_RENDERBUFFER, componentSize(m_depthSize), size.width, size.height);
             CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);
         }
     }
 
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (result != GL_FRAMEBUFFER_COMPLETE)
     {
         LOG_ERROR("CRenderTargetGL : Bad framebuffer");
     }
+
+    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
     if (originalRBO >= 0)
     {
@@ -130,6 +153,8 @@ void CRenderTargetGL::create()
     {
         CRenderTargetGL::bindFramebuffer(originalFBO);
     }
+
+    return result == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void CRenderTargetGL::destroy()

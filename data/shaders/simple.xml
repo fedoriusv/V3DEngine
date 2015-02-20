@@ -11,9 +11,9 @@
 		<samplers> 
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
-		<rendertarget width="720" height="480" ratio="1.1">
-            <color active="true" clear="true" format="" color="0xFFFFFF00"/>
-            <depth active="true" clear="true"/>
+		<rendertarget width="720" height="480" ratio="0.0">
+            <color active="true" clear="true" format="8888" color="0xff00ff00"/>
+            <depth active="true" clear="true" size="16"/>
         </rendertarget>
         <lod geometry="10.0"/>
 		<shaders>

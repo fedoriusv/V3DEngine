@@ -28,7 +28,6 @@ CRendererGL::~CRendererGL()
 
 void CRendererGL::init()
 {
-
     LOG_INFO("OpenGL Render Init");
 
 	reshape(m_viewportSize.width, m_viewportSize.height);
@@ -60,8 +59,8 @@ void CRendererGL::init()
 
 void CRendererGL::preRender()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
+	/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);*/
 }
 
 void CRendererGL::postRender()

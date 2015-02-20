@@ -386,6 +386,7 @@ void CRenderPass::init()
     m_lods = std::make_shared<CRenderLOD>();
     m_program = RENDERER->makeSharedProgram(m_shaderData);
     m_renderState = RENDERER->makeSharedRenderState();
+    m_renderTarget = RENDERER->makeSharedRenderTarget();
 }
 
 bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
@@ -396,35 +397,14 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    u32 width = root->IntAttribute("width");
-    u32 height = root->IntAttribute("height");
-    if (width > 0 && height > 0)
+    if (m_renderTarget->parse(root))
     {
-        if (!core::isPowerOf2(width))
+        if (!m_renderTarget->create())
         {
-            LOG_WARNING("CRenderPass: Render Target width must be power of 2 - %d", width);
-        }
-
-        if (!core::isPowerOf2(height))
-        {
-            LOG_WARNING("CRenderPass: Render Target height must be power of 2 - %d", height);
+            LOG_ERROR("CRenderPass: Can not create render target");
+            return false;
         }
     }
-
-    f64 ratio = root->DoubleAttribute("ratio");
-    if (ratio > 0.0)
-    {
-       /* getViewport();
-        width = getWidth() * ratio);
-        height = getHeight() * ratio);*/
-    }
-
-    bool colorbuf = root->BoolAttribute("colorbuf");
-    bool depthbuf = root->BoolAttribute("depthbuf");
-
-    //GetColor
-
-    return true;
 }
 
 bool CRenderPass::parseRenderState(const tinyxml2::XMLElement* root)
@@ -491,6 +471,8 @@ bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
 
 void CRenderPass::bind()
 {
+    m_renderTarget->bind();
+
     m_renderState->bind();
 
     if (!m_enable || !m_program->isEnable())

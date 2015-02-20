@@ -14,6 +14,8 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderPass;
+
     class CRenderTarget
     {
     public:
@@ -48,18 +50,21 @@ namespace renderer
 
     protected:
 
-        virtual void            create()    = 0;
+        friend                  CRenderPass;
+
+        virtual bool            create()    = 0;
         virtual void            destroy()   = 0;
 
         void                    setColorTexture(const TexturePtr& texture);
         void                    setDepthTexture(const TexturePtr& texture);
 
-        bool                    parse(tinyxml2::XMLElement* root);
+        bool                    parse(const tinyxml2::XMLElement* root);
 
         TexturePtr              m_colorTexture;
         TexturePtr              m_depthTexture;
 
         core::Vector4D          m_color;
+        std::string             m_name;
 
         bool                    m_clearColorBuffer;
         bool                    m_clearDepthBuffer;
@@ -67,11 +72,15 @@ namespace renderer
         bool                    m_hasClearColor;
         bool                    m_hasClearDepth;
 
+        s32                     m_depthSize;
+
         EImageFormat            m_imageFormat;
         EImageType              m_imageType;
 
 
         core::Dimension2D       m_viewportSize;
+
+        static RenderTargetPtr  s_default;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

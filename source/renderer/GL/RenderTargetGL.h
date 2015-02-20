@@ -18,7 +18,7 @@ namespace v3d
 
         private:
 
-            void            create()    override;
+            bool            create()    override;
             void            destroy()   override;
 
             u32             m_frameBufferID;
