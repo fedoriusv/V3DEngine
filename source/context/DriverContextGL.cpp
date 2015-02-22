@@ -383,13 +383,24 @@ void CDriverContextGL::checkForErrors(const std::string& location)
     GLenum glError = glGetError();
     if (glError != GL_NO_ERROR)
     {
+        std::string error;
+        switch (glError)
+        {
+            case GL_INVALID_OPERATION:              error = "INVALID_OPERATION";              break;
+            case GL_INVALID_ENUM:                   error = "INVALID_ENUM";                   break;
+            case GL_INVALID_VALUE:                  error = "INVALID_VALUE";                  break;
+            case GL_OUT_OF_MEMORY:                  error = "OUT_OF_MEMORY";                  break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION:  error = "INVALID_FRAMEBUFFER_OPERATION";  break;
+            default:                                error = "UNKNOWN";                        break;
+        }
+
         if (location.empty())
         {
-            LOG_ERROR("GL Error: %s", glewGetErrorString(glError))
+            LOG_ERROR("GL Error: %s. Discription %s", error.c_str(), glewGetErrorString(glError));
         }
         else
         {
-            LOG_ERROR("GL %s: %s", location.c_str(), glewGetErrorString(glError))
+            LOG_ERROR("GL %s: %s. Discription %s", location.c_str(), error.c_str(), glewGetErrorString(glError));
         }
     }
 #endif

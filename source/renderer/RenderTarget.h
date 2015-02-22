@@ -48,6 +48,23 @@ namespace renderer
         EImageFormat            getImageFormat()    const;
         EImageType              getImageType()      const;
 
+        enum EAttachmentsType
+        {
+            eEmptyAttach = -1,
+            eColorAttach,
+            eDepthAttach,
+            eStencilAttach,
+        };
+
+        struct SAttachments
+        {
+            u32                 _index;
+            EAttachmentsType    _type;
+            u32                 _format;
+            TexturePtr          _texture;
+            bool                _clearBuffer;
+        };
+
     protected:
 
         friend                  CRenderPass;
@@ -60,11 +77,11 @@ namespace renderer
 
         bool                    parse(const tinyxml2::XMLElement* root);
 
+        std::vector<SAttachments> m_attachmentsList;
         TexturePtr              m_colorTexture;
         TexturePtr              m_depthTexture;
 
         core::Vector4D          m_color;
-        std::string             m_name;
 
         bool                    m_clearColorBuffer;
         bool                    m_clearDepthBuffer;

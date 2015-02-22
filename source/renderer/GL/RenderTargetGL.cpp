@@ -95,16 +95,27 @@ bool CRenderTargetGL::create()
 
     CRenderTarget::setViewportSize(size);
 
-    //colorTexture
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);
 
+    //colorTexture
     if (CRenderTarget::hasClearColorTarget())
     {
         TexturePtr colorTexture = CTextureManager::getInstance()->createTexture2DFromData(size, format, type, nullptr);
         CRenderTarget::setColorTexture(colorTexture);
 
         CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getTextureID());
+
+        GLuint m_depthBufferID1;
+        CRenderTargetGL::genRenderbuffer(m_depthBufferID1);
+        CRenderTargetGL::bindRenderbuffer(m_depthBufferID1);
+
+       /* GLint maxColorAttachments;
+        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, size.width, size.height);
+        CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, m_depthBufferID1);
+        RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");*/
     }
 
     //depthTexture
