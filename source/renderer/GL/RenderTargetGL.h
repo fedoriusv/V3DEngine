@@ -27,6 +27,8 @@ namespace v3d
             static u32      m_currentFBO;
             static u32      m_currentRBO;
 
+            u32             m_lastFrameIndex;
+
         private:
 
             static void     genFramebuffer(u32& buffer);

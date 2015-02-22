@@ -352,13 +352,20 @@ void CDriverContextGL::driverInfo()
     const GLubyte* version = glGetString(GL_VERSION);
 
     GLint maxTextureUnits;
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &maxTextureUnits);
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+
+    GLfloat maxAnisotropy;
+    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
+    {
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+    }
 
     LOG_INFO("Render: %s", renderer);
     LOG_INFO("Vendor: %s", vendor);
     LOG_INFO("GLSL: %s", GLSL);
     LOG_INFO("GL Version: %s", version);
-    LOG_INFO("Max Texture Units: %d", maxTextureUnits);
+    LOG_INFO("Max Texure Units: %d", maxTextureUnits);
+    LOG_INFO("Max Anisotropy: %f", maxAnisotropy);
 
     /*glewIsSupported("GL_ARB_multitexture");
     glewIsSupported("GL_ARB_vertex_buffer_object");

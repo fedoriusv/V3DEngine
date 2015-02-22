@@ -79,8 +79,6 @@ namespace renderer
 
 
         core::Dimension2D       m_viewportSize;
-
-        static RenderTargetPtr  s_default;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

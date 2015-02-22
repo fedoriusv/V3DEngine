@@ -20,7 +20,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(6, 1, 5)));
+    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 1, -5)));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
@@ -28,12 +28,12 @@ void MyApplication::init()
     cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     //TODO: init
-    /*scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
-    torus->getMaterial()->setTexture(0, "textures/wall.bmp");v
-    torus->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
+    scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
+    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
+    torus->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
 
-    scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
+    //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 
     //for (u32 j = 0; j < 5; ++j)
     //{
@@ -49,9 +49,10 @@ void MyApplication::init()
 
     //BaseApplication::getSceneManager()->addLight(0, Vector3D(6, 3, 5))->setName("light");
 
-    scene::CSkybox* skybox = static_cast<scene::CSkybox*>(BaseApplication::getSceneManager()->addSkyBox("textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
+    /*scene::CSkybox* skybox = static_cast<scene::CSkybox*>(BaseApplication::getSceneManager()->addSkyBox(
+        "textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
         "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg"));
-    skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");
+    skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");*/
 
     //cube->setRotation(Vector3D(10, 120, 0));
     //Vector3D test = cube->getRotation();

@@ -16,7 +16,12 @@ u32 CRenderTargetGL::m_currentRBO = 0;
 CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferID(0)
     , m_depthBufferID(0)
+    , m_lastFrameIndex(1U)
 {
+    const core::Dimension2D& size = WINDOW->getSize();
+    CRenderTarget::setViewportSize(size);
+
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&m_frameBufferID);
 }
 
 CRenderTargetGL::~CRenderTargetGL()
@@ -26,38 +31,38 @@ CRenderTargetGL::~CRenderTargetGL()
 
 void CRenderTargetGL::bind()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0, 0, 0, 0.0f);
-
-   /* bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
+    bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
     if (chaned)
     {
         glViewport(0, 0, getViewportSize().width, getViewportSize().height);
-    }*/
+    }
 
-    //if (true) //TODO: check current frame 
-    //{
-    //    u32 flags = 0;
-    //    if (CRenderTarget::hasClearDepthTarget())
-    //    {
-    //        flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
-    //        glDepthMask(GL_TRUE);
+    u32 frameIdx = RENDERER->getFrameIndex();
+    if (chaned || frameIdx != m_lastFrameIndex)
+    {
+        m_lastFrameIndex = frameIdx;
 
-    //    }
+        u32 flags = 0;
+        if (CRenderTarget::hasClearDepthTarget())
+        {
+            flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
+            glDepthMask(GL_TRUE);
 
-    //    if (CRenderTarget::hasClearColorTarget())
-    //    {
-    //        flags |= GL_COLOR_BUFFER_BIT;
+        }
 
-    //        const core::Vector4D& color = CRenderTarget::getCearColor();
-    //        glClearColor(color[0], color[1], color[2], color[3]);
-    //    }
+        if (CRenderTarget::hasClearColorTarget())
+        {
+            flags |= GL_COLOR_BUFFER_BIT;
 
-    //    if (flags)
-    //    {
-    //        glClear(flags);
-    //    }
-    //}
+            const core::Vector4D& color = CRenderTarget::getCearColor();
+            glClearColor(color[0], color[1], color[2], color[3]);
+        }
+
+        if (flags)
+        {
+            glClear(flags);
+        }
+    }
 
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 

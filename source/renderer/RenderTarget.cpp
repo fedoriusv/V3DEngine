@@ -7,8 +7,6 @@
 using namespace v3d;
 using namespace renderer;
 
-RenderTargetPtr CRenderTarget::s_default = nullptr;
-
 CRenderTarget::CRenderTarget()
 : m_colorTexture(nullptr)
 , m_depthTexture(nullptr)
@@ -19,7 +17,7 @@ CRenderTarget::CRenderTarget()
 , m_clearDepthBuffer(true)
 
 , m_hasClearColor(true)
-, m_hasClearDepth(false)
+, m_hasClearDepth(true)
 
 , m_depthSize(16)
 
@@ -126,22 +124,11 @@ EImageType CRenderTarget::getImageType() const
 
 bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
 {
-    if (root->Attribute("val"))
+    if (!root)
     {
-        std::string def = root->Attribute("val");
-        if (def == "default")
-        {
-            CRenderTarget::setViewportSize(WINDOW->getSize());
-            LOG_INFO("CRenderTarget: Set default setting for render target");
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        LOG_ERROR("CRenderTarget: Not exist xml element");
+        return false;
     }
-
 
     u32 width = root->IntAttribute("width");
     u32 height = root->IntAttribute("height");

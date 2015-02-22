@@ -12,6 +12,12 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_orthoMatrix(core::Matrix4D())
     , m_viewMatrix(core::Matrix4D())
     , m_viewPosition(core::Vector3D(0.0f))
+
+    , m_frameIndex(0U)
+
+    , m_maxTextureUnits(0)
+    , m_maxAnisotropy(0.0f)
+
     , m_updateCamera(true)
 #ifdef _DEBUG
     , m_debugMode(false)
@@ -32,7 +38,7 @@ void CRenderer::addLight(scene::CLight* lights)
 
 void CRenderer::setBackColor(const core::Vector3D& color)
 {
-	m_backColor = color;
+    m_backColor = color;
 }
 
 const core::Vector3D& CRenderer::getBackColor() const
@@ -73,6 +79,16 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
 const core::Dimension2D& CRenderer::getViewportSize() const
 {
     return m_viewportSize;
+}
+
+u32 CRenderer::getFrameIndex() const
+{
+    return m_frameIndex;
+}
+
+const RenderTargetPtr& CRenderer::getDefaultRenderTarget() const
+{
+    return m_defaultRenderTarget;
 }
 
 void CRenderer::draw(const RenderJobPtr& job)

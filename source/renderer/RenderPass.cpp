@@ -386,7 +386,6 @@ void CRenderPass::init()
     m_lods = std::make_shared<CRenderLOD>();
     m_program = RENDERER->makeSharedProgram(m_shaderData);
     m_renderState = RENDERER->makeSharedRenderState();
-    m_renderTarget = RENDERER->makeSharedRenderTarget();
 }
 
 bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
@@ -397,12 +396,31 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    if (m_renderTarget->parse(root))
+    bool isDefault = false;
+    if (root->Attribute("val"))
     {
-        if (!m_renderTarget->create())
+        std::string def = root->Attribute("val");
+        if (def == "default")
         {
-            LOG_ERROR("CRenderPass: Can not create render target");
-            return false;
+            isDefault = true;
+        }
+    }
+
+    if (isDefault)
+    {
+        LOG_INFO("CRenderTarget: Set default setting for render target");
+        m_renderTarget = RENDERER->getDefaultRenderTarget();
+    }
+    else
+    {
+        m_renderTarget = RENDERER->makeSharedRenderTarget();
+        if (m_renderTarget->parse(root))
+        {
+            if (!m_renderTarget->create())
+            {
+                LOG_ERROR("CRenderPass: Can not create render target");
+                return false;
+            }
         }
     }
 }

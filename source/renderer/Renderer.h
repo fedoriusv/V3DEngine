@@ -46,12 +46,12 @@ namespace renderer
 
         void                        checkForErrors(const std::string& location = "");
 
-        virtual ShaderPtr           makeSharedShader()                                           = 0;
-        virtual ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                 = 0;
-        virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)      = 0;
-        virtual TexturePtr          makeSharedTexture()                                          = 0;
-        virtual RenderStatePtr      makeSharedRenderState()                                      = 0;
-        virtual RenderTargetPtr     makeSharedRenderTarget()                                     = 0;
+        virtual ShaderPtr           makeSharedShader()                                                      = 0;
+        virtual ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                            = 0;
+        virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 = 0;
+        virtual TexturePtr          makeSharedTexture()                                                     = 0;
+        virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;
+        virtual RenderTargetPtr     makeSharedRenderTarget()                                                = 0;
 #ifdef _DEBUG
         virtual DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              = 0;
         virtual DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) = 0;
@@ -60,6 +60,9 @@ namespace renderer
 #endif
 
         const core::Dimension2D&    getViewportSize() const;
+        u32                         getFrameIndex()   const;
+
+        const RenderTargetPtr&      getDefaultRenderTarget() const;
 
     protected:
 
@@ -83,7 +86,14 @@ namespace renderer
         core::Matrix4D              m_viewMatrix;
         core::Vector3D              m_viewPosition;
 
+        u32                         m_frameIndex;
+
+        s32                         m_maxTextureUnits;
+        f32                         m_maxAnisotropy;
+
         bool                        m_updateCamera;
+
+        RenderTargetPtr             m_defaultRenderTarget;
 
 #ifdef _DEBUG
         bool                        m_debugMode;

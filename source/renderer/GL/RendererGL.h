@@ -16,23 +16,29 @@ namespace renderer
         CRendererGL(const DriverContextPtr& context);
         ~CRendererGL();
     
-        void                init()                                                      override;
+        void                init()                                                                  override;
     
-        void                preRender()                                                 override;
-        void                postRender()                                                override;
+        void                preRender()                                                             override;
+        void                postRender()                                                            override;
 
-        void                reshape(u32 width, u32 height)                              override;
+        void                reshape(u32 width, u32 height)                                          override;
 
-        ShaderPtr           makeSharedShader()                                          override;
-        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                override;
-        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)     override;
-        TexturePtr          makeSharedTexture()                                         override;
-        RenderStatePtr      makeSharedRenderState()                                     override;
-        RenderTargetPtr     makeSharedRenderTarget()                                    override;
+        ShaderPtr           makeSharedShader()                                                      override;
+        ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                            override;
+        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 override;
+        TexturePtr          makeSharedTexture()                                                     override;
+        RenderStatePtr      makeSharedRenderState()                                                 override;
+        RenderTargetPtr     makeSharedRenderTarget()                                                override;
 #ifdef _DEBUG
         DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              override;
         DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) override;
 #endif
+
+        bool                isLocked() const;
+
+    private:
+
+        bool                m_isLocked;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

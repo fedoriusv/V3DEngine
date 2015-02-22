@@ -17,9 +17,11 @@ using namespace v3d;
 using namespace v3d::renderer;
 
 CRendererGL::CRendererGL(const DriverContextPtr& context)
-	: CRenderer(context)
+    : CRenderer(context)
+    , m_isLocked(false)
 {
-	m_viewportSize = m_context->getViewport();
+    m_viewportSize = m_context->getViewport();
+    m_defaultRenderTarget = makeSharedRenderTarget();
 }
 
 CRendererGL::~CRendererGL()
@@ -30,51 +32,73 @@ void CRendererGL::init()
 {
     LOG_INFO("OpenGL Render Init");
 
-	reshape(m_viewportSize.width, m_viewportSize.height);
-	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);
+    reshape(m_viewportSize.width, m_viewportSize.height);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     m_context->setVSync(false);
 
     glEnable(GL_MULTISAMPLE);
 
-    //glDisable(GL_MULTISAMPLE);
+    glDepthFunc(GL_LEQUAL);
 
-    //glEnable(GL_DEPTH);
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+
+    glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
     glClearDepth(1.0f);
-    //glDepthFunc(GL_LEQUAL);
-    //glShadeModel(GL_SMOOTH);
-
-
-    //glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    ////
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
+    ASSERT(m_maxTextureUnits > 0 || "Texture units not supported");
 
+    glActiveTexture(GL_TEXTURE0);
+
+    GLfloat m_maxAnisotropy;
+    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
+    {
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropy);
+    }
+
+    glDisable(GL_DITHER);
 
 #ifdef _DEBUG
-	m_context->checkForErrors("Render Init");
+    m_context->checkForErrors("CRendererGL: Render Init");
 #endif
 }
 
 void CRendererGL::preRender()
 {
-	/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);*/
+    if (isLocked())
+    {
+        return;
+    }
+
+    m_isLocked = true;
+
+    /*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);*/
 }
 
 void CRendererGL::postRender()
 {
+    if (!isLocked())
+    {
+        return;
+    }
+
+    m_frameIndex++;
+    m_isLocked = false;
+
 #ifdef _DEBUG
-	m_context->checkForErrors();
+    m_context->checkForErrors();
 #endif
-	glFlush();
+    glFlush();
 }
 
 void CRendererGL::reshape(u32 width, u32 height)
 {
     CRenderer::reshape(width, height);
-
     glViewport(0, 0, width, height);
 }
 
@@ -119,3 +143,8 @@ DebugLightPtr CRendererGL::makeDebugLight(const Vector3D& position, const scene:
     return std::make_shared<CDebugLightGL>(position, data);
 }
 #endif
+
+bool CRendererGL::isLocked() const
+{
+    return m_isLocked;
+}
