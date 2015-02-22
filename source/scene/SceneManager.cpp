@@ -247,16 +247,6 @@ CNode* CSceneManager::getObjectByName(const std::string& name)
 	return nullptr;
 }
 
-void CSceneManager::setBackgroundColor(const core::Vector3D& color)
-{
-    RENDERER->setBackColor(color);
-}
-
-const core::Vector3D& CSceneManager::getBackgroundColor() const
-{
-    return RENDERER->getBackColor();
-}
-
 bool CSceneManager::checkDistance(const CNode* node, const f32 distance)
 {
     if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)

@@ -7,7 +7,7 @@ namespace v3d
 {
     namespace renderer
     {
-        class CRenderTargetGL : public CRenderTarget
+        class CRenderTargetGL : public CRenderTarget, public std::enable_shared_from_this<CRenderTargetGL>
         {
         public:
 
@@ -40,6 +40,7 @@ namespace v3d
             static void     deleteRenderbuffers(u32& buffer);
 
             static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
+            static void     framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer);
         };
     }
 }

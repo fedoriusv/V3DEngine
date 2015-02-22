@@ -241,74 +241,74 @@ void CGeometryGL::refresh()
 
 void CGeometryGL::genBuffers(u32& buffer)
 {
-	glGenBuffers(1, &buffer);
-	ASSERT(glIsBuffer(buffer) || "Invalid VBO index");
+    glGenBuffers(1, &buffer);
+    ASSERT(glIsBuffer(buffer) || "Invalid VBO index");
 }
 
 void CGeometryGL::bindBuffers(const u32 target, const u32 buffer)
 {
-	ASSERT(glIsBuffer(buffer) || "Invalid VBO index");
-	glBindBuffer(target, buffer);
+    ASSERT(glIsBuffer(buffer) || "Invalid VBO index");
+    glBindBuffer(target, buffer);
 }
 
 void CGeometryGL::deleteBuffers(u32& buffer)
 {
-	if (buffer != 0)
-	{
-		ASSERT(glIsShader(buffer) || "Invalid Index Buffer");
-		glDeleteBuffers(1, &buffer);
-	}
+    if (buffer != 0)
+    {
+        ASSERT(glIsShader(buffer) || "Invalid Index Buffer");
+        glDeleteBuffers(1, &buffer);
+    }
 }
 
 void CGeometryGL::bufferData(const u32 target, const u32 size, void* data)
 {
-	glBufferData(target, size, data, GL_STATIC_DRAW);
+    glBufferData(target, size, data, GL_STATIC_DRAW);
 }
 
 void CGeometryGL::bufferSubData(const u32 target, const u32 offset, const u32 size, void* data)
 {
-	glBufferSubData(target, offset, size, data);
+    glBufferSubData(target, offset, size, data);
 }
 
 void* CGeometryGL::mapBuffer(const u32 target, const u32 access)
 {
-	return glMapBuffer(target, access);
+    return glMapBuffer(target, access);
 }
 
 void* CGeometryGL::mapBufferRange(const u32 target, const u32 offset, const u32 size, const u32 flags)
 {
-	return glMapBufferRange(target, offset, size, flags);
+    return glMapBufferRange(target, offset, size, flags);
 }
 
 bool CGeometryGL::unmapBuffer(const u32 target)
 {
-	return glUnmapBuffer(target) != 0;
+    return glUnmapBuffer(target) != 0;
 }
 
 void CGeometryGL::getBufferPointer(const u32 target, const u32 pname, void** params)
 {
-	glGetBufferPointerv(target, pname, params);
+    glGetBufferPointerv(target, pname, params);
 }
 
 void CGeometryGL::genVertexArray(u32& buffer)
 {
-	glGenVertexArrays(1, &buffer);
-	ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
+    glGenVertexArrays(1, &buffer);
+    ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
 }
 
 void CGeometryGL::bindVertexArray(const u32 buffer)
 {
-	ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
-	glBindVertexArray(buffer);
+    ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
+    glBindVertexArray(buffer);
 }
 
 void CGeometryGL::deleteVertexArray(u32& buffer)
 {
-	if (buffer)
-	{
-		ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
-		glDeleteVertexArrays(1, &buffer);
-	}
+    if (buffer)
+    {
+        ASSERT(glIsVertexArray(buffer) || "Invalid VAO index");
+        glDeleteVertexArrays(1, &buffer);
+    }
 }
 
 void CGeometryGL::initVertexAttribPointer(const v3d::u32 vertexAttrib, const u32 count, bool normalized, const u32 size, const u32 offset)

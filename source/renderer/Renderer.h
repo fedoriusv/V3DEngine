@@ -41,9 +41,6 @@ namespace renderer
 
         void                        updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up);
 
-        void                        setBackColor(const core::Vector3D& color);
-        const core::Vector3D&       getBackColor() const;
-
         void                        checkForErrors(const std::string& location = "");
 
         virtual ShaderPtr           makeSharedShader()                                                      = 0;
@@ -63,6 +60,8 @@ namespace renderer
         u32                         getFrameIndex()   const;
 
         const RenderTargetPtr&      getDefaultRenderTarget() const;
+        const RenderTargetPtr&      getCurrentRenderTarget() const;
+        void                        setCurrentRenderTarget(const RenderTargetPtr& target);
 
     protected:
 
@@ -78,9 +77,6 @@ namespace renderer
 
         DriverContextPtr            m_context;
 
-        core::Vector3D              m_backColor;
-        core::Dimension2D           m_viewportSize;
-
         core::Matrix4D              m_projectionMatrix;
         core::Matrix4D              m_orthoMatrix;
         core::Matrix4D              m_viewMatrix;
@@ -94,6 +90,7 @@ namespace renderer
         bool                        m_updateCamera;
 
         RenderTargetPtr             m_defaultRenderTarget;
+        RenderTargetPtr             m_currentRenderTarget;
 
 #ifdef _DEBUG
         bool                        m_debugMode;

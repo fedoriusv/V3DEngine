@@ -7,7 +7,6 @@ using namespace v3d::renderer;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
-    , m_backColor(core::Vector3D(0))
     , m_projectionMatrix(core::Matrix4D())
     , m_orthoMatrix(core::Matrix4D())
     , m_viewMatrix(core::Matrix4D())
@@ -19,11 +18,13 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     , m_maxAnisotropy(0.0f)
 
     , m_updateCamera(true)
+
+    , m_defaultRenderTarget(nullptr)
+    , m_currentRenderTarget(nullptr)
 #ifdef _DEBUG
     , m_debugMode(false)
 #endif
 {
-    m_viewportSize = context->getWindow()->getSize();
 }
 
 CRenderer::~CRenderer()
@@ -34,16 +35,6 @@ CRenderer::~CRenderer()
 void CRenderer::addLight(scene::CLight* lights)
 {
     m_lightList.push_back(lights);
-}
-
-void CRenderer::setBackColor(const core::Vector3D& color)
-{
-    m_backColor = color;
-}
-
-const core::Vector3D& CRenderer::getBackColor() const
-{
-	return m_backColor;
 }
 
 void CRenderer::checkForErrors(const std::string& location)
@@ -57,13 +48,10 @@ void CRenderer::reshape(u32 width, u32 height)
     {
         height = 1;
     }
-    m_viewportSize.width = width;
-    m_viewportSize.height = height;
-
-    f32 aspectRatio = (f32)m_viewportSize.width / (f32)m_viewportSize.height;
+    f32 aspectRatio = (f32)width / (f32)height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)m_viewportSize.width, 0.0f, (f32)m_viewportSize.height, -1.0f, 1.0f);
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, -1.0f, 1.0f);
     m_orthoMatrix.makeTransposed();
 
 }
@@ -78,7 +66,8 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
 
 const core::Dimension2D& CRenderer::getViewportSize() const
 {
-    return m_viewportSize;
+    ASSERT(m_currentRenderTarget && "Current Render Target in null");
+    return m_currentRenderTarget->getViewportSize();
 }
 
 u32 CRenderer::getFrameIndex() const
@@ -89,6 +78,16 @@ u32 CRenderer::getFrameIndex() const
 const RenderTargetPtr& CRenderer::getDefaultRenderTarget() const
 {
     return m_defaultRenderTarget;
+}
+
+const RenderTargetPtr& CRenderer::getCurrentRenderTarget() const
+{
+    return m_currentRenderTarget;
+}
+
+void CRenderer::setCurrentRenderTarget(const RenderTargetPtr& target)
+{
+    m_currentRenderTarget = target;
 }
 
 void CRenderer::draw(const RenderJobPtr& job)

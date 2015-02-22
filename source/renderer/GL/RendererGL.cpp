@@ -20,8 +20,8 @@ CRendererGL::CRendererGL(const DriverContextPtr& context)
     : CRenderer(context)
     , m_isLocked(false)
 {
-    m_viewportSize = m_context->getViewport();
     m_defaultRenderTarget = makeSharedRenderTarget();
+    CRenderer::setCurrentRenderTarget(m_defaultRenderTarget);
 }
 
 CRendererGL::~CRendererGL()
@@ -32,7 +32,7 @@ void CRendererGL::init()
 {
     LOG_INFO("OpenGL Render Init");
 
-    reshape(m_viewportSize.width, m_viewportSize.height);
+    reshape(m_context->getViewport().width, m_context->getViewport().height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     m_context->setVSync(false);
@@ -50,7 +50,7 @@ void CRendererGL::init()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
-    ASSERT(m_maxTextureUnits > 0 || "Texture units not supported");
+    ASSERT(m_maxTextureUnits > 0 && "Texture units not supported");
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -75,9 +75,6 @@ void CRendererGL::preRender()
     }
 
     m_isLocked = true;
-
-    /*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(m_backColor[0], m_backColor[1], m_backColor[2], 0.0f);*/
 }
 
 void CRendererGL::postRender()

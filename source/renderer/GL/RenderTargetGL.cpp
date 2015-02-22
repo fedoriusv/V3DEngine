@@ -34,6 +34,7 @@ void CRenderTargetGL::bind()
     bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
     if (chaned)
     {
+        RENDERER->setCurrentRenderTarget(shared_from_this());
         glViewport(0, 0, getViewportSize().width, getViewportSize().height);
     }
 
@@ -138,7 +139,7 @@ bool CRenderTargetGL::create()
             };
 
             glRenderbufferStorage(GL_RENDERBUFFER, componentSize(m_depthSize), size.width, size.height);
-            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthBufferID);
         }
     }
 
@@ -237,4 +238,10 @@ void CRenderTargetGL::framebufferTexture2D(s32 attachment, s32 target, u32 textu
 {
     ASSERT(glIsTexture(texture) || "Invalid Index Texture");
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texture, 0);
+}
+
+void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer)
+{
+    ASSERT(glIsRenderbuffer(buffer) || "Invalid Index Renderbuffer");
+    glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, buffer);
 }

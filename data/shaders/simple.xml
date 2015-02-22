@@ -15,7 +15,7 @@
             <color active="true" clear="true" format="8888" color="0xff00ff00"/>
             <depth active="true" clear="true" size="16"/>
         </rendertarget>
-        <lod geometry="10.0"/>
+        <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[
