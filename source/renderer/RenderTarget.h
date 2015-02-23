@@ -21,32 +21,29 @@ namespace renderer
     public:
 
         CRenderTarget();
-        virtual                 ~CRenderTarget();
+        virtual                         ~CRenderTarget();
 
-        virtual void            bind() = 0;
+        virtual void                    bind() = 0;
 
-        const TexturePtr&       getColorTexture() const;
-        TexturePtr&             getColorTexture();
+        const TexturePtr&               getColorTexture(u32 index) const;
+        TexturePtr&                     getColorTexture(u32 index);
         
-        const TexturePtr&       getDepthTexture() const;
-        TexturePtr&             getDepthTexture();
+        const TexturePtr&               getDepthTexture() const;
+        TexturePtr&                     getDepthTexture();
 
-        void                    setClearColor(const core::Vector4D& color);
-        const core::Vector4D&   getCearColor() const;
+        void                            setClearColor(const core::Vector4D& color);
+        const core::Vector4D&           getCearColor() const;
 
-        void                    setViewportSize(const core::Dimension2D& size);
-        const core::Dimension2D& getViewportSize() const;
+        void                            setViewportSize(const core::Dimension2D& size);
+        const core::Dimension2D&        getViewportSize() const;
 
-        void                    setClearColorBuffer(bool clear);
-        bool                    getClearColorBuffer() const;
-        bool                    hasClearColorTarget() const;
+        bool                            getClearColorBuffer()   const;
+        bool                            getClearDepthBuffer()   const;
+        bool                            getclearStencilBuffer() const;
 
-        void                    setClearDepthBuffer(bool clear);
-        bool                    getClearDepthBuffer() const;
-        bool                    hasClearDepthTarget() const;
-
-        EImageFormat            getImageFormat()    const;
-        EImageType              getImageType()      const;
+        void                            setClearColorBuffer(bool clear);
+        void                            setClearDepthBuffer(bool clear);
+        void                            setClearStencilBuffer(bool clear);
 
         enum EAttachmentsType
         {
@@ -62,40 +59,27 @@ namespace renderer
             EAttachmentsType    _type;
             u32                 _format;
             TexturePtr          _texture;
-            bool                _clearBuffer;
         };
 
     protected:
 
-        friend                  CRenderPass;
+        friend                      CRenderPass;
 
-        virtual bool            create()    = 0;
-        virtual void            destroy()   = 0;
+        virtual bool                create()    = 0;
+        virtual void                destroy()   = 0;
 
-        void                    setColorTexture(const TexturePtr& texture);
-        void                    setDepthTexture(const TexturePtr& texture);
+        bool                        parse(const tinyxml2::XMLElement* root);
 
-        bool                    parse(const tinyxml2::XMLElement* root);
+        std::deque<SAttachments>    m_attachmentsList;
 
-        std::vector<SAttachments> m_attachmentsList;
-        TexturePtr              m_colorTexture;
-        TexturePtr              m_depthTexture;
+        void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt);
 
-        core::Vector4D          m_color;
+        core::Vector4D              m_color;
+        core::Dimension2D           m_viewportSize;
 
-        bool                    m_clearColorBuffer;
-        bool                    m_clearDepthBuffer;
-
-        bool                    m_hasClearColor;
-        bool                    m_hasClearDepth;
-
-        s32                     m_depthSize;
-
-        EImageFormat            m_imageFormat;
-        EImageType              m_imageType;
-
-
-        core::Dimension2D       m_viewportSize;
+        bool                        m_clearColorBuffer;
+        bool                        m_clearDepthBuffer;
+        bool                        m_clearStencilBuffer;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

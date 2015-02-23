@@ -423,6 +423,8 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
             }
         }
     }
+
+    return true;
 }
 
 bool CRenderPass::parseRenderState(const tinyxml2::XMLElement* root)

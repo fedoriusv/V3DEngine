@@ -17,6 +17,10 @@ CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferID(0)
     , m_depthBufferID(0)
     , m_lastFrameIndex(1U)
+
+    , m_hasClearColor(true)
+    , m_hasClearDepth(true)
+    , m_hasClearStencil(false)
 {
     const core::Dimension2D& size = WINDOW->getSize();
     CRenderTarget::setViewportSize(size);
@@ -27,6 +31,22 @@ CRenderTargetGL::CRenderTargetGL()
 CRenderTargetGL::~CRenderTargetGL()
 {
     CRenderTargetGL::destroy();
+}
+
+
+bool CRenderTargetGL::hasClearColorTarget() const
+{
+    return m_hasClearColor;
+}
+
+bool CRenderTargetGL::hasClearDepthTarget() const
+{
+    return m_hasClearDepth;
+}
+
+bool CRenderTargetGL::hasClearStencilTarget() const
+{
+    return m_hasClearStencil;
 }
 
 void CRenderTargetGL::bind()
@@ -44,14 +64,21 @@ void CRenderTargetGL::bind()
         m_lastFrameIndex = frameIdx;
 
         u32 flags = 0;
-        if (CRenderTarget::hasClearDepthTarget())
+        if (CRenderTargetGL::hasClearDepthTarget())
         {
             flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
             glDepthMask(GL_TRUE);
 
         }
 
-        if (CRenderTarget::hasClearColorTarget())
+        if (CRenderTargetGL::hasClearStencilTarget())
+        {
+            flags = CRenderTarget::getClearDepthBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
+            glStencilMask(GL_TRUE);
+
+        }
+
+        if (CRenderTargetGL::hasClearColorTarget())
         {
             flags |= GL_COLOR_BUFFER_BIT;
 
@@ -85,9 +112,6 @@ bool CRenderTargetGL::create()
     size.width = core::getSmallestPowerOf2(size.width);
     size.height = core::getSmallestPowerOf2(size.height);
 
-    EImageFormat format = CRenderTarget::getImageFormat();
-    EImageType type = CRenderTarget::getImageType();;
-
     GLint originalFBO = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &originalFBO);
     GLint originalRBO = 0;
@@ -98,67 +122,146 @@ bool CRenderTargetGL::create()
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);
 
-    //colorTexture
-    if (CRenderTarget::hasClearColorTarget())
+    EImageFormat imageFormat = eRGBA;
+    EImageType imageType = eUnsignedShort;
+    std::function<void(u32)> formatColor = [&imageFormat, &imageType](u32 format)
     {
-        TexturePtr colorTexture = CTextureManager::getInstance()->createTexture2DFromData(size, format, type, nullptr);
-        CRenderTarget::setColorTexture(colorTexture);
-
-        CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getTextureID());
-
-        GLuint m_depthBufferID1;
-        CRenderTargetGL::genRenderbuffer(m_depthBufferID1);
-        CRenderTargetGL::bindRenderbuffer(m_depthBufferID1);
-
-       /* GLint maxColorAttachments;
-        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, size.width, size.height);
-        CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, m_depthBufferID1);
-        RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");*/
-    }
-
-    //depthTexture
-    if (CRenderTarget::hasClearDepthTarget())
-    {
-        if (glewIsSupported("GL_ARB_depth_texture"))
+        switch (format)
         {
-            TexturePtr depthTexture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
-            CRenderTarget::setDepthTexture(depthTexture);
+        case 8888:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort;
+            break;
 
-            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getTextureID());
+        case 888:
+            imageFormat = eRGB;
+            imageType = eUnsignedShort;
+            break;
+
+        case 565:
+            imageFormat = eRGB;
+            imageType = eUnsignedShort_565;
+            break;
+
+        case 4444:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort_4444;
+            break;
+
+        default:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort;
+            LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
+            break;
         }
-        else
-        {
-            CRenderTargetGL::genRenderbuffer(m_depthBufferID);
-            CRenderTargetGL::bindRenderbuffer(m_depthBufferID);
+    };
 
-            std::function<s32(s32)> componentSize = [](s32 component)
+    for (auto& attach : m_attachmentsList)
+    {
+        switch (attach._type)
+        {
+            case eColorAttach:
             {
-                switch (component)
-                {
-                case 16:
-                    return GL_DEPTH_COMPONENT16;
-                case 24:
-                    return GL_DEPTH_COMPONENT24;
-                case 32:
-                    return GL_DEPTH_COMPONENT32;
-                default:
-                    return GL_DEPTH_COMPONENT16;
-                };
-                return GL_DEPTH_COMPONENT16;
-            };
+                formatColor(attach._format);
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, imageFormat, imageType, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
+                break;
 
-            glRenderbufferStorage(GL_RENDERBUFFER, componentSize(m_depthSize), size.width, size.height);
-            CRenderTargetGL::framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthBufferID);
+            case eDepthAttach:
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
+                break;
+
+            case eStencilAttach:
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
         }
     }
+
+    ////colorTexture
+    //if (CRenderTarget::hasClearColorTarget())
+    //{
+    //    TexturePtr colorTexture = CTextureManager::getInstance()->createTexture2DFromData(size, format, type, nullptr);
+    //    CRenderTarget::setColorTexture(colorTexture);
+
+    //    CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getTextureID());
+
+    //    GLuint m_depthBufferID1;
+    //    CRenderTargetGL::genRenderbuffer(m_depthBufferID1);
+    //    CRenderTargetGL::bindRenderbuffer(m_depthBufferID1);
+
+    //   /* GLint maxColorAttachments;
+    //    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+    //    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, size.width, size.height);
+    //    CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, m_depthBufferID1);
+    //    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");*/
+    //}
+
+    ////depthTexture
+    //if (CRenderTarget::hasClearDepthTarget())
+    //{
+    //    if (glewIsSupported("GL_ARB_depth_texture"))
+    //    {
+    //        TexturePtr depthTexture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
+    //        CRenderTarget::setDepthTexture(depthTexture);
+
+    //        CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getTextureID());
+    //    }
+    //    else
+    //    {
+    //        CRenderTargetGL::genRenderbuffer(m_depthBufferID);
+    //        CRenderTargetGL::bindRenderbuffer(m_depthBufferID);
+
+    //        std::function<s32(s32)> componentSize = [](s32 component)
+    //        {
+    //            switch (component)
+    //            {
+    //            case 16:
+    //                return GL_DEPTH_COMPONENT16;
+    //            case 24:
+    //                return GL_DEPTH_COMPONENT24;
+    //            case 32:
+    //                return GL_DEPTH_COMPONENT32;
+    //            default:
+    //                return GL_DEPTH_COMPONENT16;
+    //            };
+    //            return GL_DEPTH_COMPONENT16;
+    //        };
+
+    //        glRenderbufferStorage(GL_RENDERBUFFER, componentSize(m_depthSize), size.width, size.height);
+    //        CRenderTargetGL::framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthBufferID);
+    //    }
+    //}
 
     GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (result != GL_FRAMEBUFFER_COMPLETE)
+    switch (result)
     {
-        LOG_ERROR("CRenderTargetGL : Bad framebuffer");
-    }
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        LOG_ERROR("CRenderTargetGL: Some attachments are incomplete");
+        break;
+
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        LOG_ERROR("CRenderTargetGL: Some attachments are missing");
+        break;
+
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        LOG_ERROR("CRenderTargetGL: Draw buffer is not set");
+        break;
+
+    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        LOG_ERROR("CRenderTargetGL: Read buffer is not set");
+        break;
+
+    case GL_FRAMEBUFFER_UNSUPPORTED:
+        LOG_ERROR("CRenderTargetGL: Framebuffer objects are not supported");
+        break;
+    };
 
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
@@ -176,13 +279,25 @@ bool CRenderTargetGL::create()
 
 void CRenderTargetGL::destroy()
 {
-    CRenderTarget::setColorTexture(nullptr);
-    CRenderTarget::setDepthTexture(nullptr);
+    for (auto& attach : m_attachmentsList)
+    {
+        switch (attach._type)
+        {
+        case eColorAttach:
+            framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, 0);
+            break;
 
-    framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+        case eDepthAttach:
+            framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0);
+            break;
+
+        case eStencilAttach:
+            framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0);
+            break;
+        }
+    }
+
     CRenderTargetGL::deleteRenderbuffers(m_depthBufferID);
-
-    framebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0);
     CRenderTargetGL::deleteFramebuffers(m_frameBufferID);
 }
 

@@ -8,23 +8,12 @@ using namespace v3d;
 using namespace renderer;
 
 CRenderTarget::CRenderTarget()
-: m_colorTexture(nullptr)
-, m_depthTexture(nullptr)
-
-, m_color(core::Vector4D(0.0f))
+: m_color(core::Vector4D(0.0f))
+, m_viewportSize(Dimension2D(0U, 0U))
 
 , m_clearColorBuffer(true)
 , m_clearDepthBuffer(true)
-
-, m_hasClearColor(true)
-, m_hasClearDepth(true)
-
-, m_depthSize(16)
-
-, m_imageFormat(EImageFormat::eRGBA)
-, m_imageType(EImageType::eUnsignedByte)
-
-, m_viewportSize(Dimension2D(0U, 0U))
+, m_clearStencilBuffer(false)
 {
 }
 
@@ -32,24 +21,64 @@ CRenderTarget::~CRenderTarget()
 {
 }
 
-const TexturePtr& CRenderTarget::getColorTexture() const
+const TexturePtr& CRenderTarget::getColorTexture(u32 index) const
 {
-    return m_colorTexture;
+    std::deque<SAttachments>::const_iterator attach;
+    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    {
+        if ((*item)._type == eColorAttach && (*item)._index == index)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
 }
 
-TexturePtr& CRenderTarget::getColorTexture()
+TexturePtr& CRenderTarget::getColorTexture(u32 index)
 {
-    return m_colorTexture;
+    std::deque<SAttachments>::iterator attach;
+    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    {
+        if ((*item)._type == eColorAttach && (*item)._index == index)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
 }
 
 const TexturePtr& CRenderTarget::getDepthTexture() const
 {
-    return m_depthTexture;
+    std::deque<SAttachments>::const_iterator attach;
+    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    {
+        if ((*item)._type == eDepthAttach)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
 }
 
 TexturePtr& CRenderTarget::getDepthTexture()
 {
-    return m_depthTexture;
+    std::deque<SAttachments>::iterator attach;
+    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    {
+        if ((*item)._type == eDepthAttach)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
 }
 
 void CRenderTarget::setClearColor(const core::Vector4D& color)
@@ -72,29 +101,9 @@ const core::Dimension2D& CRenderTarget::getViewportSize() const
     return m_viewportSize;
 }
 
-void CRenderTarget::setColorTexture(const TexturePtr& texture)
-{
-    m_colorTexture = texture;
-}
-
-void CRenderTarget::setDepthTexture(const TexturePtr& texture)
-{
-    m_depthTexture = texture;
-}
-
 void CRenderTarget::setClearColorBuffer(bool clear)
 {
     m_clearColorBuffer = clear;
-}
-
-bool CRenderTarget::getClearColorBuffer() const
-{
-    return m_clearColorBuffer;
-}
-
-bool CRenderTarget::hasClearColorTarget() const
-{
-    return m_hasClearColor;
 }
 
 void CRenderTarget::setClearDepthBuffer(bool clear)
@@ -102,24 +111,24 @@ void CRenderTarget::setClearDepthBuffer(bool clear)
     m_clearDepthBuffer = clear;
 }
 
+void CRenderTarget::setClearStencilBuffer(bool clear)
+{
+    m_clearStencilBuffer = clear;
+}
+
+bool CRenderTarget::getClearColorBuffer() const
+{
+    return m_clearColorBuffer;
+}
+
 bool CRenderTarget::getClearDepthBuffer() const
 {
     return m_clearDepthBuffer;
 }
 
-bool CRenderTarget::hasClearDepthTarget() const
+bool CRenderTarget::getclearStencilBuffer() const
 {
-    return m_hasClearDepth;
-}
-
-EImageFormat CRenderTarget::getImageFormat() const
-{
-    return m_imageFormat;
-}
-
-EImageType CRenderTarget::getImageType() const
-{
-    return m_imageType;
+    return m_clearStencilBuffer;
 }
 
 bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
@@ -130,8 +139,8 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    u32 width = root->IntAttribute("width");
-    u32 height = root->IntAttribute("height");
+    u32 width = root->UnsignedAttribute("width");
+    u32 height = root->UnsignedAttribute("height");
     if (width > 0 && height > 0)
     {
         if (!core::isPowerOf2(width))
@@ -154,82 +163,115 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
 
     CRenderTarget::setViewportSize(Dimension2D(width, height));
 
+
+    if (root->Attribute("color"))
+    {
+        std::string colorStr = root->Attribute("color");
+        u32 color = strtoul(colorStr.c_str(), NULL, 16);
+
+        const f32 k_colorKoef = 0.003922f;
+
+        f32 alpha = core::clamp(((color >> 24) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
+        f32 red = core::clamp(((color >> 16) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
+        f32 green = core::clamp(((color >> 8) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
+        f32 blue = core::clamp((color & 0xFF) * k_colorKoef, 0.0f, 1.0f);
+
+        m_color.set(red, green, blue, alpha);
+    }
+
     const tinyxml2::XMLElement* colorElement = root->FirstChildElement("color");
     if (colorElement)
     {
-        m_hasClearColor = colorElement->BoolAttribute("active");
-        m_clearColorBuffer = colorElement->BoolAttribute("clear");
-        u32 format = colorElement->IntAttribute("format");
-
-        EImageFormat imageFormat = eRGBA;
-        EImageType imageType = eUnsignedShort;
-        std::function<void(u32)> formatColor = [&imageFormat, &imageType](u32 format)
+        bool hasClearColor = colorElement->BoolAttribute("active");
+        if (hasClearColor)
         {
-            switch (format)
+            bool clearColorBuffer = colorElement->BoolAttribute("clear");
+            CRenderTarget::setClearColorBuffer(clearColorBuffer);
+            
+            const tinyxml2::XMLElement* attachElement = colorElement->FirstChildElement("attach");
+            while (attachElement)
             {
-            case 8888:
-                imageFormat = eRGBA;
-                imageType = eUnsignedShort;
-                break;
+                u32 index = attachElement->UnsignedAttribute("index");
+                s32 format = attachElement->IntAttribute("format");
+                CRenderTarget::attachTarget(eColorAttach, index, format);
 
-            case 888:
-                imageFormat = eRGB;
-                imageType = eUnsignedShort;
-                break;
-
-            case 565:
-                imageFormat = eRGB;
-                imageType = eUnsignedShort_565;
-                break;
-
-            case 4444:
-                imageFormat = eRGBA;
-                imageType = eUnsignedShort_4444;
-                break;
-
-            default:
-                imageFormat = eRGBA;
-                imageType = eUnsignedShort;
-                LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
-                break;
+                attachElement = attachElement->NextSiblingElement("attach");
             }
-        };
-
-        formatColor(format);
-        m_imageType = imageType;
-        m_imageFormat = imageFormat;
-
-        if (colorElement->Attribute("color"))
-        {
-            std::string colorStr = colorElement->Attribute("color");
-            u32 color = strtoul(colorStr.c_str(), NULL, 16);
-
-            const f32 k_colorKoef = 0.003922f;
-
-            f32 alpha = core::clamp(((color >> 24) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
-            f32 red = core::clamp(((color >> 16) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
-            f32 green = core::clamp(((color >> 8) & 0xFF) * k_colorKoef, 0.0f, 1.0f);
-            f32 blue = core::clamp((color & 0xFF) * k_colorKoef, 0.0f, 1.0f);
-
-            m_color.set(red, green, blue, alpha);
         }
     }
 
     const tinyxml2::XMLElement* depthElement = root->FirstChildElement("depth");
     if (depthElement)
     {
-        m_hasClearDepth = colorElement->BoolAttribute("active");
-        m_clearDepthBuffer = colorElement->BoolAttribute("clear");
-        s32 size = colorElement->IntAttribute("size");
-        if (size)
+        bool hasClearDepth = depthElement->BoolAttribute("active");
+        if (hasClearDepth)
         {
-            if (core::isPowerOf2(size) || size > 32)
+            bool clearDepthBuffer = depthElement->BoolAttribute("clear");
+            CRenderTarget::setClearDepthBuffer(clearDepthBuffer);
+
+            s32 size = depthElement->IntAttribute("format");
+            if (size)
             {
-                LOG_ERROR("CRenderTarget: Depth component size must be 16, 24 or 32 - %d", size);
+                if (core::isPowerOf2(size) || size > 32)
+                {
+                    LOG_ERROR("CRenderTarget: Depth component size must be 16, 24 or 32 - %d", size);
+                }
             }
-            m_depthSize = size;
+            else
+            {
+                LOG_WARNING("CRenderTarget: Depth component size not found. Set default 16");
+                size = 16;
+            }
+
+            CRenderTarget::attachTarget(eDepthAttach, 0, size);
+        }
+    }
+
+    const tinyxml2::XMLElement* stencilElement = root->FirstChildElement("stencil");
+    if (stencilElement)
+    {
+        bool hasClearDepth = stencilElement->BoolAttribute("active");
+        if (hasClearDepth)
+        {
+            bool clearStencilBuffer = stencilElement->BoolAttribute("clear");
+            CRenderTarget::setClearStencilBuffer(clearStencilBuffer);
+
+            s32 size = stencilElement->IntAttribute("format");
+            if (size)
+            {
+                if (core::isPowerOf2(size) || size > 32)
+                {
+                    LOG_ERROR("CRenderTarget: Stencil component size must be 16, 24 or 32 - %d", size);
+                }
+            }
+            else
+            {
+                LOG_WARNING("CRenderTarget: Stencil component size not found. Set default 16");
+                size = 16;
+            }
+
+            CRenderTarget::attachTarget(eStencilAttach, 0, size);
         }
     }
 
     return true;
+}
+
+void CRenderTarget::attachTarget(EAttachmentsType type, u32 index, u32 format)
+{
+    SAttachments target;
+
+    target._type = type;
+    target._index = index;
+    target._format = format;
+    target._texture = nullptr;
+
+    if (type == eColorAttach)
+    {
+        m_attachmentsList.push_back(target);
+    }
+    else
+    {
+        m_attachmentsList.push_front(target);
+    }
 }

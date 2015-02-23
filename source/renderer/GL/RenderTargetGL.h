@@ -16,6 +16,11 @@ namespace v3d
 
             void            bind()      override;
 
+
+            bool            hasClearColorTarget()   const;
+            bool            hasClearDepthTarget()   const;
+            bool            hasClearStencilTarget() const;
+
         private:
 
             bool            create()    override;
@@ -28,6 +33,10 @@ namespace v3d
             static u32      m_currentRBO;
 
             u32             m_lastFrameIndex;
+
+            bool            m_hasClearColor;
+            bool            m_hasClearDepth;
+            bool            m_hasClearStencil;
 
         private:
 
