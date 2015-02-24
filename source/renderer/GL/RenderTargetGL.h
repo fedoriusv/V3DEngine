@@ -15,6 +15,7 @@ namespace v3d
             ~CRenderTargetGL();
 
             void            bind()      override;
+            void            unbind()    override;
 
 
             bool            hasClearColorTarget()   const;

@@ -23,7 +23,8 @@ namespace renderer
         CRenderTarget();
         virtual                         ~CRenderTarget();
 
-        virtual void                    bind() = 0;
+        virtual void                    bind()   = 0;
+        virtual void                    unbind() = 0;
 
         const TexturePtr&               getColorTexture(u32 index) const;
         TexturePtr&                     getColorTexture(u32 index);

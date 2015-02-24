@@ -1,4 +1,17 @@
 <technique name="simple" version="100">
+
+    <!-- Render Targets -->
+    <rendertargets>
+        <target name="filterBuffer" width="720" height="480" ratio="0.0" color="0xff00ff00">
+            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
+            <depth active="true" clear="true" format="16" output="render"/>
+            <stencil active="false" clear="true" format="16"/>
+        </target>
+        <target name="blurBufferH" width="128" height="128" format="565"/>
+        <target name="blurBufferV" width="128" height="128" format="565"/>
+    </rendertargets>
+    
+    <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -14,10 +27,9 @@
 		<rendertarget val="nodefault" width="720" height="480" ratio="0.0" color="0xff00ff00">
             <color active="true" clear="true">
                 <attach index="0" format="8888"/>
-                <attach index="1" format="8888"/>
             </color>   
             <depth active="true" clear="true" format="16"/>
-            <stencil active="true" clear="true" format="16"/>
+            <stencil active="false" clear="true" format="16"/>
         </rendertarget>
         <lod geometry="0.0"/>
 		<shaders>

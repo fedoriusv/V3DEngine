@@ -42,6 +42,7 @@ namespace renderer
         void                    setRenderLOD(const RenderLODPtr& lod);
 
         void                    bind();
+        void                    unbind();
 
     private:
 

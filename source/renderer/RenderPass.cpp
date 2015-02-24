@@ -514,6 +514,11 @@ void CRenderPass::bind()
     }
 }
 
+void CRenderPass::unbind()
+{
+    m_renderTarget->unbind();
+}
+
 const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)
 {
     size_t pos = name.find_first_of(".");

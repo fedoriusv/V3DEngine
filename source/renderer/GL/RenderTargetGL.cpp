@@ -96,6 +96,15 @@ void CRenderTargetGL::bind()
 
 }
 
+void CRenderTargetGL::unbind()
+{
+    bool chaned = CRenderTargetGL::bindFramebuffer(0);
+    if (chaned)
+    {
+        RENDERER->setCurrentRenderTarget(shared_from_this());
+    }
+}
+
 bool CRenderTargetGL::create()
 {
     core::Dimension2D size = getViewportSize();
@@ -156,22 +165,56 @@ bool CRenderTargetGL::create()
         }
     };
 
+    GLint maxColorAttachments;
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
     for (auto& attach : m_attachmentsList)
     {
         switch (attach._type)
         {
             case eColorAttach:
             {
-                formatColor(attach._format);
+                if (attach._index >= (u32)maxColorAttachments)
+                {
+                    LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
+                    ASSERT("CRenderTarget: Range out Color attachment" && false);
+                    continue;
+                }
+
+                /*formatColor(attach._format);
                 attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, imageFormat, imageType, nullptr);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());*/
+
+                //TEST
+                GLuint colorBufferID;
+                CRenderTargetGL::genRenderbuffer(colorBufferID);
+                CRenderTargetGL::bindRenderbuffer(colorBufferID);
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width, size.height);
+                CRenderTargetGL::bindRenderbuffer(0);
+
+                CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, colorBufferID);
+                //
+
+                RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
             }
                 break;
 
             case eDepthAttach:
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+                /*attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());*/
+
+                //TEST
+                GLuint depthBufferID;
+                CRenderTargetGL::genRenderbuffer(depthBufferID);
+                CRenderTargetGL::bindRenderbuffer(depthBufferID);
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, size.width, size.height);
+                CRenderTargetGL::bindRenderbuffer(0);
+
+                CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER, depthBufferID);
+                //
+
+                RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
             }
                 break;
 
@@ -179,6 +222,8 @@ bool CRenderTargetGL::create()
             {
                 attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
                 CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+
+                RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
             }
         }
     }
@@ -194,9 +239,6 @@ bool CRenderTargetGL::create()
     //    GLuint m_depthBufferID1;
     //    CRenderTargetGL::genRenderbuffer(m_depthBufferID1);
     //    CRenderTargetGL::bindRenderbuffer(m_depthBufferID1);
-
-    //   /* GLint maxColorAttachments;
-    //    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
 
     //    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, size.width, size.height);
     //    CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, m_depthBufferID1);
