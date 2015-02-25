@@ -22,9 +22,6 @@ CRenderTargetGL::CRenderTargetGL()
     , m_hasClearDepth(true)
     , m_hasClearStencil(false)
 {
-    const core::Dimension2D& size = WINDOW->getSize();
-    CRenderTarget::setViewportSize(size);
-
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&m_frameBufferID);
 }
 
@@ -55,7 +52,8 @@ void CRenderTargetGL::bind()
     if (chaned)
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
-        glViewport(0, 0, getViewportSize().width, getViewportSize().height);
+        const Rect& rect = getViewport();
+        glViewport(rect.getLeftX(), rect.getBottomY(), rect.getWidth(), rect.getHeight());
     }
 
     u32 frameIdx = RENDERER->getFrameIndex();
@@ -107,26 +105,28 @@ void CRenderTargetGL::unbind()
 
 bool CRenderTargetGL::create()
 {
-    core::Dimension2D size = getViewportSize();
-    if (size.width == 0)
+    const Rect& rect = getViewport();
+    u32 width = rect.getWidth();
+    u32 height = rect.getHeight();
+    if (width == 0)
     {
-        size.width = WINDOW->getSize().width;
+        width = WINDOW->getSize().width;
     }
 
-    if (size.height == 0)
+    if (height == 0)
     {
-        size.height = WINDOW->getSize().height;
+        height = WINDOW->getSize().height;
     }
 
-    size.width = core::getSmallestPowerOf2(size.width);
-    size.height = core::getSmallestPowerOf2(size.height);
+    /*width = core::getSmallestPowerOf2(width);
+    height = core::getSmallestPowerOf2(height);*/
 
     GLint originalFBO = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &originalFBO);
     GLint originalRBO = 0;
     glGetIntegerv(GL_RENDERBUFFER_BINDING, &originalRBO);
 
-    CRenderTarget::setViewportSize(size);
+    CRenderTarget::setViewport(Rect(rect.getLeftX(), rect.getBottomY(), width, height));
 
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);

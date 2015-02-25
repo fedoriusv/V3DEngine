@@ -52,3 +52,4 @@ namespace v3d
 #include "core/Matrix3D.h"
 #include "core/Matrix4D.h"
 #include "core/Dimension2D.h"
+#include "core/Rect.h"

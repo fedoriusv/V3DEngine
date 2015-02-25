@@ -64,10 +64,17 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
 
 }
 
-const core::Dimension2D& CRenderer::getViewportSize() const
+const core::Rect& CRenderer::getViewportSize() const
 {
     ASSERT(m_currentRenderTarget && "Current Render Target in null");
-    return m_currentRenderTarget->getViewportSize();
+    if (m_currentRenderTarget)
+    {
+        return m_currentRenderTarget->getViewport();
+    }
+    else
+    {
+        return m_defaultRenderTarget->getViewport();
+    }
 }
 
 u32 CRenderer::getFrameIndex() const
@@ -82,7 +89,14 @@ const RenderTargetPtr& CRenderer::getDefaultRenderTarget() const
 
 const RenderTargetPtr& CRenderer::getCurrentRenderTarget() const
 {
-    return m_currentRenderTarget;
+    if (m_currentRenderTarget)
+    {
+        return m_currentRenderTarget;
+    }
+    else
+    {
+        return m_defaultRenderTarget;
+    }
 }
 
 void CRenderer::setCurrentRenderTarget(const RenderTargetPtr& target)

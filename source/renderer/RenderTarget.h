@@ -35,8 +35,8 @@ namespace renderer
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getCearColor() const;
 
-        void                            setViewportSize(const core::Dimension2D& size);
-        const core::Dimension2D&        getViewportSize() const;
+        void                            setViewport(const core::Rect& size);
+        const core::Rect&               getViewport() const;
 
         bool                            getClearColorBuffer()   const;
         bool                            getClearDepthBuffer()   const;
@@ -54,10 +54,18 @@ namespace renderer
             eStencilAttach,
         };
 
+        enum EAttachmentsOutput
+        {
+            eEmptyOutput = -1,
+            eTextureOutput,
+            eRenderOutput,
+        };
+
         struct SAttachments
         {
             u32                 _index;
             EAttachmentsType    _type;
+            EAttachmentsOutput  _output;
             u32                 _format;
             TexturePtr          _texture;
         };
@@ -73,10 +81,12 @@ namespace renderer
 
         std::deque<SAttachments>    m_attachmentsList;
 
-        void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt);
+        void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt, EAttachmentsOutput output);
 
         core::Vector4D              m_color;
-        core::Dimension2D           m_viewportSize;
+        core::Rect                  m_viewport;
+
+        std::string                 m_name;
 
         bool                        m_clearColorBuffer;
         bool                        m_clearDepthBuffer;

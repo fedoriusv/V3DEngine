@@ -63,8 +63,8 @@ bool CFPSCamera::isPointOut(const Vector3D& point)
 void CFPSCamera::rotateByMouse()
 {
     Vector3D middle(0, 0);
-    middle.x = static_cast<f32>(RENDERER->getViewportSize().width / 2);
-    middle.y = static_cast<f32>(RENDERER->getViewportSize().height / 2);
+    middle.x = static_cast<f32>(WINDOW->getSize().width / 2);
+    middle.y = static_cast<f32>(WINDOW->getSize().height / 2);
 
     static f32 currentRotX = 0.0f;
     

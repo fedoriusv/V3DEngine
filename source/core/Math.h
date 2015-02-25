@@ -160,6 +160,7 @@ namespace core
 	{
 		return floorf(x + 0.5f);
 	}
+
 	inline f64 round(f64 x)
 	{
 		return floor(x + 0.5);

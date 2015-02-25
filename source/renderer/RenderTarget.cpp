@@ -9,12 +9,16 @@ using namespace renderer;
 
 CRenderTarget::CRenderTarget()
 : m_color(core::Vector4D(0.0f))
-, m_viewportSize(Dimension2D(0U, 0U))
+, m_viewport(0, 0, 0, 0)
 
 , m_clearColorBuffer(true)
 , m_clearDepthBuffer(true)
 , m_clearStencilBuffer(false)
+, m_name("default")
 {
+    u32 width = (u32)(WINDOW->getSize().width);
+    u32 height = (u32)(WINDOW->getSize().height);
+    CRenderTarget::setViewport(Rect(0, 0, width, height));
 }
 
 CRenderTarget::~CRenderTarget()
@@ -91,14 +95,14 @@ const core::Vector4D& CRenderTarget::getCearColor() const
     return m_color;
 }
 
-void CRenderTarget::setViewportSize(const core::Dimension2D& size)
+void CRenderTarget::setViewport(const core::Rect& size)
 {
-    m_viewportSize = size;
+    m_viewport = size;
 }
 
-const core::Dimension2D& CRenderTarget::getViewportSize() const
+const core::Rect& CRenderTarget::getViewport() const
 {
-    return m_viewportSize;
+    return m_viewport;
 }
 
 void CRenderTarget::setClearColorBuffer(bool clear)
@@ -135,34 +139,32 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderTarget: Not exist xml element");
+        LOG_ERROR("CRenderTarget: Not exist xml element <targets>");
         return false;
     }
 
+    if (!root->Attribute("name"))
+    {
+        LOG_ERROR("CRenderTarget: render target have not name");
+        return false;
+    }
+    std::string m_name = root->Attribute("name");
+
+    u32 x = root->UnsignedAttribute("x");
+    u32 y = root->UnsignedAttribute("y");
     u32 width = root->UnsignedAttribute("width");
     u32 height = root->UnsignedAttribute("height");
-    if (width > 0 && height > 0)
-    {
-        if (!core::isPowerOf2(width))
-        {
-            LOG_WARNING("CRenderTarget: Render Target width must be power of 2 - %d", width);
-        }
-
-        if (!core::isPowerOf2(height))
-        {
-            LOG_WARNING("CRenderTarget: Render Target height must be power of 2 - %d", height);
-        }
-    }
 
     f64 ratio = root->DoubleAttribute("ratio");
     if (ratio > 0.0)
     {
+        x = 0;
+        y = 0;
         width = (u32)(WINDOW->getSize().width * ratio);
         height = (u32)(WINDOW->getSize().height * ratio);
     }
 
-    CRenderTarget::setViewportSize(Dimension2D(width, height));
-
+    CRenderTarget::setViewport(Rect(x, y, width, height));
 
     if (root->Attribute("color"))
     {
@@ -179,6 +181,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         m_color.set(red, green, blue, alpha);
     }
 
+    //color
     const tinyxml2::XMLElement* colorElement = root->FirstChildElement("color");
     if (colorElement)
     {
@@ -188,18 +191,40 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
             bool clearColorBuffer = colorElement->BoolAttribute("clear");
             CRenderTarget::setClearColorBuffer(clearColorBuffer);
             
-            const tinyxml2::XMLElement* attachElement = colorElement->FirstChildElement("attach");
-            while (attachElement)
+            s32 format = colorElement->IntAttribute("format");
+            u32 attachCount = colorElement->UnsignedAttribute("attach");
+            
+            EAttachmentsOutput output = eTextureOutput;
+            if (colorElement->Attribute("output"))
             {
-                u32 index = attachElement->UnsignedAttribute("index");
-                s32 format = attachElement->IntAttribute("format");
-                CRenderTarget::attachTarget(eColorAttach, index, format);
+                std::string outputStr = colorElement->Attribute("output");
+                
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentoutput = [](std::string& str)->EAttachmentsOutput
+                {
+                    if (str == "texture")
+                    {
+                        return eTextureOutput;
+                    }
+                    else if (str == "render")
+                    {
+                        return eRenderOutput;
+                    }
+                    
+                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                    return eTextureOutput;
+                };
 
-                attachElement = attachElement->NextSiblingElement("attach");
+                output = getAttachmentoutput(outputStr);
+            }
+
+            for (u32 index = 0; index < attachCount; ++index)
+            {
+                CRenderTarget::attachTarget(eColorAttach, index, format, output);
             }
         }
     }
 
+    //depth
     const tinyxml2::XMLElement* depthElement = root->FirstChildElement("depth");
     if (depthElement)
     {
@@ -223,10 +248,34 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
                 size = 16;
             }
 
-            CRenderTarget::attachTarget(eDepthAttach, 0, size);
+            EAttachmentsOutput output = eTextureOutput;
+            if (depthElement->Attribute("output"))
+            {
+                std::string outputStr = depthElement->Attribute("output");
+
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentoutput = [](std::string& str)->EAttachmentsOutput
+                {
+                    if (str == "texture")
+                    {
+                        return eTextureOutput;
+                    }
+                    else if (str == "render")
+                    {
+                        return eRenderOutput;
+                    }
+
+                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                    return eTextureOutput;
+                };
+
+                output = getAttachmentoutput(outputStr);
+            }
+
+            CRenderTarget::attachTarget(eDepthAttach, 0, size, output);
         }
     }
 
+    //stencil
     const tinyxml2::XMLElement* stencilElement = root->FirstChildElement("stencil");
     if (stencilElement)
     {
@@ -250,20 +299,44 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
                 size = 16;
             }
 
-            CRenderTarget::attachTarget(eStencilAttach, 0, size);
+            EAttachmentsOutput output = eTextureOutput;
+            if (colorElement->Attribute("output"))
+            {
+                std::string outputStr = colorElement->Attribute("output");
+
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentoutput = [](std::string& str)->EAttachmentsOutput
+                {
+                    if (str == "texture")
+                    {
+                        return eTextureOutput;
+                    }
+                    else if (str == "render")
+                    {
+                        return eRenderOutput;
+                    }
+
+                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                    return eTextureOutput;
+                };
+
+                output = getAttachmentoutput(outputStr);
+            }
+
+            CRenderTarget::attachTarget(eStencilAttach, 0, size, output);
         }
     }
 
     return true;
 }
 
-void CRenderTarget::attachTarget(EAttachmentsType type, u32 index, u32 format)
+void CRenderTarget::attachTarget(EAttachmentsType type, u32 index, u32 format, EAttachmentsOutput output)
 {
     SAttachments target;
 
     target._type = type;
     target._index = index;
     target._format = format;
+    target._output = output;
     target._texture = nullptr;
 
     if (type == eColorAttach)
