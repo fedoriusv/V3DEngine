@@ -7,6 +7,17 @@
 using namespace v3d;
 using namespace renderer;
 
+CRenderTarget::SAttachments::SAttachments()
+: _index(0U)
+, _type(eEmptyAttach)
+, _output(eTextureOutput)
+, _format(8888)
+
+, _texture(nullptr)
+, _rboID(0U)
+{
+}
+
 CRenderTarget::CRenderTarget()
 : m_color(core::Vector4D(0.0f))
 , m_viewport(0, 0, 0, 0)

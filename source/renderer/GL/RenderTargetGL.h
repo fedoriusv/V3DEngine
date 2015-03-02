@@ -27,8 +27,11 @@ namespace v3d
             bool            create()    override;
             void            destroy()   override;
 
+            void            createRenderbuffer(SAttachments& attach, const Rect& rect);
+            void            createRenderToTexture(SAttachments& attach, const Rect& rect);
+
             u32             m_frameBufferID;
-            u32             m_depthBufferID;
+            u32             m_renderBufferID;
 
             static u32      m_currentFBO;
             static u32      m_currentRBO;

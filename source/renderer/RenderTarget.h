@@ -63,11 +63,15 @@ namespace renderer
 
         struct SAttachments
         {
+            SAttachments();
+
             u32                 _index;
             EAttachmentsType    _type;
             EAttachmentsOutput  _output;
             u32                 _format;
+
             TexturePtr          _texture;
+            u32                 _rboID;
         };
 
     protected:

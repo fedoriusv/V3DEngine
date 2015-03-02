@@ -14,8 +14,8 @@ u32 CRenderTargetGL::m_currentFBO = 0;
 u32 CRenderTargetGL::m_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
-    : m_frameBufferID(0)
-    , m_depthBufferID(0)
+    : m_frameBufferID(0U)
+    , m_renderBufferID(0U)
     , m_lastFrameIndex(1U)
 
     , m_hasClearColor(true)
@@ -29,7 +29,6 @@ CRenderTargetGL::~CRenderTargetGL()
 {
     CRenderTargetGL::destroy();
 }
-
 
 bool CRenderTargetGL::hasClearColorTarget() const
 {
@@ -131,155 +130,19 @@ bool CRenderTargetGL::create()
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);
 
-    EImageFormat imageFormat = eRGBA;
-    EImageType imageType = eUnsignedShort;
-    std::function<void(u32)> formatColor = [&imageFormat, &imageType](u32 format)
-    {
-        switch (format)
-        {
-        case 8888:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort;
-            break;
-
-        case 888:
-            imageFormat = eRGB;
-            imageType = eUnsignedShort;
-            break;
-
-        case 565:
-            imageFormat = eRGB;
-            imageType = eUnsignedShort_565;
-            break;
-
-        case 4444:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort_4444;
-            break;
-
-        default:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort;
-            LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
-            break;
-        }
-    };
-
-    GLint maxColorAttachments;
-    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-
     for (auto& attach : m_attachmentsList)
     {
-        switch (attach._type)
+        switch (attach._output)
         {
-            case eColorAttach:
-            {
-                if (attach._index >= (u32)maxColorAttachments)
-                {
-                    LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
-                    ASSERT("CRenderTarget: Range out Color attachment" && false);
-                    continue;
-                }
-
-                /*formatColor(attach._format);
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, imageFormat, imageType, nullptr);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());*/
-
-                //TEST
-                GLuint colorBufferID;
-                CRenderTargetGL::genRenderbuffer(colorBufferID);
-                CRenderTargetGL::bindRenderbuffer(colorBufferID);
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width, size.height);
-                CRenderTargetGL::bindRenderbuffer(0);
-
-                CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, colorBufferID);
-                //
-
-                RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
-            }
+            case eTextureOutput:
+                CRenderTargetGL::createRenderToTexture(attach, rect);
                 break;
 
-            case eDepthAttach:
-            {
-                /*attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());*/
-
-                //TEST
-                GLuint depthBufferID;
-                CRenderTargetGL::genRenderbuffer(depthBufferID);
-                CRenderTargetGL::bindRenderbuffer(depthBufferID);
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, size.width, size.height);
-                CRenderTargetGL::bindRenderbuffer(0);
-
-                CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER, depthBufferID);
-                //
-
-                RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
-            }
+            case eRenderOutput:
+                CRenderTargetGL::createRenderbuffer(attach, rect);
                 break;
-
-            case eStencilAttach:
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
-                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
-
-                RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
-            }
         }
     }
-
-    ////colorTexture
-    //if (CRenderTarget::hasClearColorTarget())
-    //{
-    //    TexturePtr colorTexture = CTextureManager::getInstance()->createTexture2DFromData(size, format, type, nullptr);
-    //    CRenderTarget::setColorTexture(colorTexture);
-
-    //    CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getTextureID());
-
-    //    GLuint m_depthBufferID1;
-    //    CRenderTargetGL::genRenderbuffer(m_depthBufferID1);
-    //    CRenderTargetGL::bindRenderbuffer(m_depthBufferID1);
-
-    //    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, size.width, size.height);
-    //    CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, m_depthBufferID1);
-    //    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");*/
-    //}
-
-    ////depthTexture
-    //if (CRenderTarget::hasClearDepthTarget())
-    //{
-    //    if (glewIsSupported("GL_ARB_depth_texture"))
-    //    {
-    //        TexturePtr depthTexture = CTextureManager::getInstance()->createTexture2DFromData(size, eDepthComponent, eUnsignedInt, nullptr);
-    //        CRenderTarget::setDepthTexture(depthTexture);
-
-    //        CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->getTextureID());
-    //    }
-    //    else
-    //    {
-    //        CRenderTargetGL::genRenderbuffer(m_depthBufferID);
-    //        CRenderTargetGL::bindRenderbuffer(m_depthBufferID);
-
-    //        std::function<s32(s32)> componentSize = [](s32 component)
-    //        {
-    //            switch (component)
-    //            {
-    //            case 16:
-    //                return GL_DEPTH_COMPONENT16;
-    //            case 24:
-    //                return GL_DEPTH_COMPONENT24;
-    //            case 32:
-    //                return GL_DEPTH_COMPONENT32;
-    //            default:
-    //                return GL_DEPTH_COMPONENT16;
-    //            };
-    //            return GL_DEPTH_COMPONENT16;
-    //        };
-
-    //        glRenderbufferStorage(GL_RENDERBUFFER, componentSize(m_depthSize), size.width, size.height);
-    //        CRenderTargetGL::framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthBufferID);
-    //    }
-    //}
 
     GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     switch (result)
@@ -339,10 +202,164 @@ void CRenderTargetGL::destroy()
         }
     }
 
-    CRenderTargetGL::deleteRenderbuffers(m_depthBufferID);
+    CRenderTargetGL::deleteRenderbuffers(m_renderBufferID);
     CRenderTargetGL::deleteFramebuffers(m_frameBufferID);
 }
 
+void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
+{
+    GLint maxColorAttachments;
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+    switch (attach._type)
+    {
+        case eColorAttach:
+        {
+            if (attach._index >= (u32)maxColorAttachments)
+            {
+                LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
+                ASSERT("CRenderTarget: Range out Color attachment" && false);
+                return;
+            }
+
+            CRenderTargetGL::genRenderbuffer(attach._rboID);
+            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::bindRenderbuffer(0);
+
+            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, attach._rboID);
+
+            RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+        }
+            break;
+
+        case eDepthAttach:
+        {
+            if (!m_renderBufferID)
+            {
+                CRenderTargetGL::genRenderbuffer(m_renderBufferID);
+            }
+            attach._rboID = m_renderBufferID;
+            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::bindRenderbuffer(0);
+
+            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER, attach._rboID);
+
+            RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+        }
+            break;
+
+        case eStencilAttach:
+        {
+            if (!m_renderBufferID)
+            {
+                CRenderTargetGL::genRenderbuffer(m_renderBufferID);
+            }
+            attach._rboID = m_renderBufferID;
+
+            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::bindRenderbuffer(0);
+
+            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, GL_FRAMEBUFFER, attach._rboID);
+
+            RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+        }
+            break;
+
+        default:
+        {
+                   LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
+                   ASSERT("CRenderTarget: Not supported attach" && false);
+        }
+    }
+}
+
+void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& rect)
+{
+    EImageFormat imageFormat = eRGBA;
+    EImageType imageType = eUnsignedShort;
+    std::function<void(u32)> formatColor = [&imageFormat, &imageType](u32 format)
+    {
+        switch (format)
+        {
+        case 8888:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort;
+            break;
+
+        case 888:
+            imageFormat = eRGB;
+            imageType = eUnsignedShort;
+            break;
+
+        case 565:
+            imageFormat = eRGB;
+            imageType = eUnsignedShort_565;
+            break;
+
+        case 4444:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort_4444;
+            break;
+
+        default:
+            imageFormat = eRGBA;
+            imageType = eUnsignedShort;
+            LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
+            break;
+        }
+    };
+
+    GLint maxColorAttachments;
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+    switch (attach._type)
+    {
+        case eColorAttach:
+        {
+            if (attach._index >= (u32)maxColorAttachments)
+            {
+                LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
+                ASSERT("CRenderTarget: Range out Color attachment" && false);
+                return;
+            }
+
+            formatColor(attach._format);
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), imageFormat, imageType, nullptr);
+            CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
+
+            RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+        }
+            break;
+
+        case eDepthAttach:
+        {
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), eDepthComponent, eUnsignedInt, nullptr);
+            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+
+            RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+        }
+            break;
+
+        case eStencilAttach:
+        {
+            //TODO: need rework
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), eDepthComponent, eUnsignedInt, nullptr);
+            CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+
+            RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+        }
+            break;
+
+        default:
+        {
+            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
+            ASSERT("CRenderTarget: Not supported attach" && false);
+        }
+    }
+}
 
 void CRenderTargetGL::genFramebuffer(u32& buffer)
 {
