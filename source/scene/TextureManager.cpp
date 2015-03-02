@@ -5,9 +5,9 @@
 #include "decoders/TextureResILDecoder.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
-using namespace v3d::decoders;
+using namespace scene;
+using namespace renderer;
+using namespace decoders;
 
 CTextureManager::CTextureManager()
 {

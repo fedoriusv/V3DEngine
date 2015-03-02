@@ -3,9 +3,9 @@
 #include "stream/StreamManager.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::stream;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace stream;
+using namespace renderer;
 
 CRenderTechniqueManager::CRenderTechniqueManager()
 {

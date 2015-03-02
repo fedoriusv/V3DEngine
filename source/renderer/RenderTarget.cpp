@@ -146,6 +146,11 @@ bool CRenderTarget::getclearStencilBuffer() const
     return m_clearStencilBuffer;
 }
 
+const std::string& CRenderTarget::getName() const
+{
+    return m_name;
+}
+
 bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)

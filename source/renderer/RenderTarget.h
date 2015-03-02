@@ -46,6 +46,8 @@ namespace renderer
         void                            setClearDepthBuffer(bool clear);
         void                            setClearStencilBuffer(bool clear);
 
+        const std::string&              getName() const;
+
         enum EAttachmentsType
         {
             eEmptyAttach = -1,
@@ -99,7 +101,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderTarget> RenderTargetPtr;
+    typedef std::shared_ptr<CRenderTarget>          RenderTargetPtr;
+    typedef std::map<std::string, RenderTargetPtr>  RenderTargetMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

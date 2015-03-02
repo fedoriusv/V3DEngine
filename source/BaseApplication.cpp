@@ -2,10 +2,10 @@
 #include "utils/Logger.h"
 
 using namespace v3d;
-using namespace v3d::event;
-using namespace v3d::scene;
-using namespace v3d::platform;
-using namespace v3d::renderer;
+using namespace event;
+using namespace scene;
+using namespace platform;
+using namespace renderer;
 
 BaseApplication::BaseApplication(int& argc, char** argv)
 {

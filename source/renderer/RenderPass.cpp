@@ -2,11 +2,13 @@
 
 #include "Engine.h"
 #include "utils/Logger.h"
+#include "scene/RenderTargetManager.h"
 
 #include "tinyxml2.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
+using namespace scene;
 
 CRenderPass::CRenderPass()
     : m_program(nullptr)
@@ -397,13 +399,19 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
     }
 
     bool isDefault = false;
+    std::string name;
     if (root->Attribute("val"))
     {
-        std::string def = root->Attribute("val");
-        if (def == "default")
+        name = root->Attribute("val");
+        if (name == "default")
         {
             isDefault = true;
         }
+    }
+    else
+    {
+        LOG_ERROR("CRenderPass: Render Target have not name");
+        return false;
     }
 
     if (isDefault)
@@ -413,7 +421,13 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
     }
     else
     {
-        m_renderTarget = RENDERER->makeSharedRenderTarget();
+        m_renderTarget = CRenderTargetManager::getInstance()->get(name);
+        if (!m_renderTarget)
+        {
+            m_renderTarget = RENDERER->makeSharedRenderTarget();
+            CRenderTargetManager::getInstance()->add(m_renderTarget);
+        }
+
         if (m_renderTarget->parse(root))
         {
             if (!m_renderTarget->create())
