@@ -25,7 +25,7 @@ namespace scene
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CSceneManager;
+    class CScene;
 
     class CNode : public CObject
     {
@@ -81,7 +81,7 @@ namespace scene
 
     protected:
 
-        friend                      CSceneManager;
+        friend                      CScene;
 
         void                        updateTransform(ENodeTransform transform);
 

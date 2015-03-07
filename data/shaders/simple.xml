@@ -24,13 +24,7 @@
 		<samplers> 
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
-		<rendertarget val="nodefault" width="720" height="480" ratio="0.0" color="0xff00ff00">
-            <color active="true" clear="true">
-                <attach index="0" format="8888"/>
-            </color>   
-            <depth active="true" clear="true" format="16"/>
-            <stencil active="false" clear="true" format="16"/>
-        </rendertarget>
+		<rendertarget val="default"/>
         <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">

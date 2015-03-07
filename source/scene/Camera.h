@@ -9,7 +9,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CSceneManager;
+    class CScene;
 
     class CCamera : public CNode
     {
@@ -32,7 +32,7 @@ namespace scene
 
     protected:
 
-        friend              CSceneManager;
+        friend              CScene;
 
         core::Vector3D      m_up;
         core::Vector3D      m_target;

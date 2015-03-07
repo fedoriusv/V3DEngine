@@ -27,8 +27,8 @@ CSceneManager::CSceneManager()
     : m_currentTime(0.0)
     , m_deltaTime(0.0)
     , m_lastTime(0.0)
-    , m_camera(nullptr)
 {
+    m_scene = std::make_shared<CScene>();
 }
 
 CSceneManager::~CSceneManager()
@@ -45,169 +45,45 @@ void CSceneManager::setDebugMode(bool active)
 
 void CSceneManager::setActiveCamera(CCamera* camera)
 {
-    if (m_camera)
-    {
-        m_camera->m_active = false;
-    }
-    m_camera = camera;
-    m_camera->m_active = true;
+    m_scene->setActiveCamera(camera);
 }
 
-const CCamera* CSceneManager::getActiveCamera(const CCamera* camera)
+CCamera* CSceneManager::getActiveCamera() const
 {
-    return m_camera;
+    return m_scene->getActiveCamera();
 }
 
 bool CSceneManager::isActiveCamera(const CCamera* camera)
 {
-    return m_camera == camera;
+    return m_scene->isActiveCamera(camera);
 }
 
 void CSceneManager::init()
 {
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-    {
-        CNode* item = (*iter);
-        item->init();
-    }
-
-    LOG_INFO("Scene: Init completed");
+    m_scene->init();
 }
 
 void CSceneManager::draw()
 {
     CSceneManager::updateDeltaTime();
-    CSceneManager::update(m_deltaTime);
 
-    RENDERER->preRender();
-
-    for (std::vector<CNode*>::iterator iter = m_drawObjects.begin(); iter < m_drawObjects.end(); ++iter)
-    {
-        CNode* item = (*iter);
-
-        item->update(m_deltaTime);
-        item->render();
-    }
-
-    RENDERER->postRender();
+    m_scene->update(m_deltaTime);
+    m_scene->renderer();
 }
 
 void CSceneManager::clear()
 {
-    m_drawObjects.clear();
-
-	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-	{
-		delete (*iter);
-		(*iter) = nullptr;
-	}
-
-	m_objects.clear();
+    m_scene->clear();
 }
 
-bool CSceneManager::drop(CNode* node)
+bool CSceneManager::dropNode(CNode* node)
 {
-	std::vector<CNode*>::iterator iter = std::find(m_objects.begin(), m_objects.end(), node);
-
-	if (iter != m_objects.end())
-	{
-		delete (*iter);
-		(*iter) = nullptr;
-		m_objects.erase(iter);
-
-		return true;
-	}
-
-	return false;
+    return m_scene->drop(node);
 }
 
 void CSceneManager::addNode(CNode* node)
 {
-	if (node)
-	{
-		m_objects.push_back(node);
-	}
-}
-
-void CSceneManager::update(v3d::f64 time)
-{
-    m_drawObjects.clear();
-
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-    {
-        CNode* node = (*iter);
-
-        switch (node->getNodeType())
-        {
-            case ENodeType::eShape:
-            {
-                f32 priority = 0.0f;
-                if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
-                {
-                    if (m_camera)
-                    {
-                        priority = (node->getPosition() - m_camera->getPosition()).length();
-                    }
-                    else
-                    {
-                        priority = node->getPosition().z;
-                    }
-                    node->m_priority = priority;
-
-                    if (checkDistance(node, priority))
-                    {
-                        m_drawObjects.push_back(node);
-                    }
-                }
-            }
-            break;
-
-            case ENodeType::eModel:
-                break;
-
-            case ENodeType::eCamera:
-            {
-                node->m_priority = 1000000.0f;
-
-                if (static_cast<CCamera*>(node)->isActive())
-                {
-                    m_drawObjects.push_back(node);
-                }
-            }
-            break;
-
-            case ENodeType::eSkyBox:
-            {
-                node->m_priority = 1000000.0f;
-
-                m_drawObjects.push_back(node);
-            }
-                break;
-
-            case ENodeType::eLight:
-            case ENodeType::eFog:
-            {
-                node->m_priority = -1000000.0f;
-            }
-            break;
-
-            case ENodeType::eFont:
-            {
-                node->m_priority = 0.0f;
-
-                m_drawObjects.push_back(node);
-            }
-            break;
-
-            default:
-            break;
-        }
-    }
-
-    std::sort(m_drawObjects.begin(), m_drawObjects.end(), [](CNode* node0, CNode* node1)
-        {
-            return  (node0->getPriority() > node1->getPriority());
-        });
+    m_scene->add(node);
 }
 
 void CSceneManager::updateDeltaTime()
@@ -221,51 +97,17 @@ void CSceneManager::updateDeltaTime()
 	m_lastTime = m_currentTime;
 }
 
-CNode* CSceneManager::getObjectByID(const s32 id)
+CNode* CSceneManager::getObjectByID(s32 id)
 {
-	for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-	{
-		if ((*iter)->getID() == id)
-		{
-			return (*iter);
-		}
-	}
-
-	return nullptr;
+    return m_scene->getNodeByID(id);
 }
 
 CNode* CSceneManager::getObjectByName(const std::string& name)
 {
-	for (std::vector<CNode*>::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-	{
-		if ((*iter)->getName().compare(name) == 0)
-		{
-			return (*iter);
-		}
-	}
-
-	return nullptr;
+    return m_scene->getNodeByName(name);
 }
 
-bool CSceneManager::checkDistance(const CNode* node, const f32 distance)
-{
-    if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)
-    {
-        const RenderTechniquePtr& technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
-        for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
-        {
-            const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();
-            if (lod->getGeometryDistance() < distance && lod->getGeometryDistance() > 0)
-            {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-CNode* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)
+CSampleShape* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)
 {
     CSampleShape* node = new CSampleShape();
     node->setParent(parent);
@@ -361,12 +203,8 @@ CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const 
     node->setPosition(pos);
     node->setTarget(target);
     node->setUpVector(up);
-    if (m_camera)
-    {
-        m_camera->m_active = false;
-    }
-    m_camera = node;
-    m_camera->m_active = true;
+    
+    m_scene->setActiveCamera(node);
 
     CSceneManager::addNode(node);
 
@@ -382,12 +220,7 @@ CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, con
     node->setUpVector(Vector3D(0.0f, 1.0f, 0.0f));
     node->setSpeed(speed);
 
-    if (m_camera)
-    {
-        m_camera->m_active = false;
-    }
-    m_camera = node;
-    m_camera->m_active = true;
+    m_scene->setActiveCamera(node);
 
     CSceneManager::addNode(node);
 

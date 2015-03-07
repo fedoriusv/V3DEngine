@@ -1,8 +1,7 @@
 #ifndef _V3D_SCENE_MANAGER_H_
 #define _V3D_SCENE_MANAGER_H_
 
-#include "scene/Node.h"
-#include "renderer/Renderer.h"
+#include "Scene.h"
 
 namespace v3d
 {
@@ -11,6 +10,8 @@ namespace scene
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CCamera;
+    class CNode;
+    class CSampleShape;
 
     class CSceneManager
     {
@@ -20,15 +21,13 @@ namespace scene
         ~CSceneManager();
 
         void                    init();
-
         void                    draw();
-
         void                    clear();
-        bool                    drop(CNode* node);
 
+        bool                    dropNode(CNode* node);
         void                    addNode(CNode* node);
 
-        CNode*                  addSample(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f));
+        CSampleShape*           addSample(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f));
         CNode*                  addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const f32 size = 1.0f);
         CNode*                  addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 1.0f);
         CNode*                  addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 0.5f, const f32 height = 1.0f);
@@ -45,7 +44,7 @@ namespace scene
         CNode*                  addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
         CNode*                  addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);
 
-        CNode*                  getObjectByID(const s32 id);
+        CNode*                  getObjectByID(s32 id);
         CNode*                  getObjectByName(const std::string& name);
 
 #ifdef _DEBUG
@@ -53,30 +52,23 @@ namespace scene
 #endif
 
         void                    setActiveCamera(CCamera* camera);
-        const CCamera*          getActiveCamera(const CCamera* camera);
+        CCamera*                getActiveCamera() const;
         bool                    isActiveCamera(const CCamera* camera);
 
     private:
+
+        ScenePtr                m_scene;
 
         f64                     m_currentTime;
         f64                     m_deltaTime;
         f64                     m_lastTime;
 
         void                    updateDeltaTime();
-        void                    update(f64 time);
-
-        std::vector<CNode*>     m_objects;
-        CCamera*                m_camera;
-
-
-        std::vector<CNode*>     m_drawObjects;
-
-        bool                    checkDistance(const CNode* node, const f32 distance);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CSceneManager>	SceneManagerPtr;
+    typedef std::shared_ptr<CSceneManager>  SceneManagerPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
