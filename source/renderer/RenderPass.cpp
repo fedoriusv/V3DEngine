@@ -558,6 +558,16 @@ void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
     m_lods = lod;
 }
 
+const RenderTargetPtr& CRenderPass::getRenderTarget() const
+{
+    return m_renderTarget;
+}
+
+void CRenderPass::setRenderTarget(const RenderTargetPtr& target)
+{
+    m_renderTarget = target;
+}
+
 bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type)
 {
     switch (type)

@@ -41,6 +41,9 @@ namespace renderer
         const RenderLODPtr&     getRenderLOD() const;
         void                    setRenderLOD(const RenderLODPtr& lod);
 
+        const RenderTargetPtr&  getRenderTarget() const;
+        void                    setRenderTarget(const RenderTargetPtr& target);
+
         void                    bind();
         void                    unbind();
 

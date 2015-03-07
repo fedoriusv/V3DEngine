@@ -61,3 +61,23 @@ void CRenderTargetManager::unloadAll()
 {
     m_renderTargets.clear();
 }
+
+RenderTargetIter CRenderTargetManager::begin()
+{
+    return m_renderTargets.begin();
+}
+
+RenderTargetCIter CRenderTargetManager::begin() const
+{
+    return m_renderTargets.cbegin();
+}
+
+RenderTargetIter CRenderTargetManager::end()
+{
+    return m_renderTargets.end();
+}
+
+RenderTargetCIter CRenderTargetManager::end() const
+{
+    return m_renderTargets.end();
+}

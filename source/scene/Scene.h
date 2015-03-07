@@ -22,8 +22,7 @@ namespace scene
 
         void                        init();
 
-        void                        update(f64 time);
-        void                        renderer();
+        void                        draw(u32 delta);
 
         void                        clear();
 
@@ -39,23 +38,36 @@ namespace scene
 
     private:
 
-        void                        updateNodes(u32 delta);
+        void                        initRenderLists();
+
+        void                        updateNodes(u32 list, u32 delta);
+        void                        updateRenderLists(u32 delta);
         bool                        checkDistance(const CNode* node, const f32 distance);
+
+        void                        needRefresh();
 
         struct SFramebuffer
         {
+            SFramebuffer(const renderer::RenderTargetPtr& target);
+            ~SFramebuffer();
+
+            void                        refresh();
+            void                        update(u32 delta);
+            void                        renderer();
+
             bool                        _active;
             renderer::RenderTargetPtr   _target;
             std::vector<CNode*>         _list;
+            std::vector<CNode*>         _draw;
             CCamera*                    _camera;
         };
 
         std::vector<CNode*>         m_objects;
         std::vector<CNode*>         m_drawObjects;
-
         std::vector<SFramebuffer>   m_renderList;
 
         CCamera*                    m_camera;
+        bool                        m_refresh;
 
         const f32                   k_maxPriority = 1000000.0f;
     };

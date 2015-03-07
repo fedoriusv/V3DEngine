@@ -14,6 +14,7 @@
 #include "scene/Model.h"
 #include "scene/CubeShape.h"
 #include "scene/Camera.h"
+#include "scene/FPSCamera.h"
 #include "scene/Skybox.h"
 
 #endif //_V3D_VALERA_3D_H_

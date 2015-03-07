@@ -104,6 +104,9 @@ namespace renderer
     typedef std::shared_ptr<CRenderTarget>          RenderTargetPtr;
     typedef std::map<std::string, RenderTargetPtr>  RenderTargetMap;
 
+    typedef RenderTargetMap::iterator               RenderTargetIter;
+    typedef RenderTargetMap::const_iterator         RenderTargetCIter;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }

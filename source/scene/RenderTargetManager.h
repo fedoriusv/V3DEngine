@@ -6,32 +6,37 @@
 
 namespace v3d
 {
-    namespace scene
+namespace scene
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CRenderTargetManager : public Singleton<CRenderTargetManager>
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public:
 
-        class CRenderTargetManager : public Singleton<CRenderTargetManager>
-        {
-        public:
+        CRenderTargetManager();
+        virtual                         ~CRenderTargetManager();
 
-            CRenderTargetManager();
-            virtual                          ~CRenderTargetManager();
+        void                            add(const renderer::RenderTargetPtr& target);
+        const renderer::RenderTargetPtr get(const std::string& name);
 
-            void                             add(const renderer::RenderTargetPtr& target);
-            const renderer::RenderTargetPtr  get(const std::string& name);
+        void                            unload(const std::string& name);
+        void                            unload(const renderer::RenderTargetPtr& target);
+        void                            unloadAll();
 
-            void                             unload(const std::string& name);
-            void                             unload(const renderer::RenderTargetPtr& target);
+        renderer::RenderTargetIter      begin();
+        renderer::RenderTargetCIter     begin() const;
 
-            void                             unloadAll();
+        renderer::RenderTargetIter      end();
+        renderer::RenderTargetCIter     end() const;
 
-        private:
+    private:
 
-            renderer::RenderTargetMap        m_renderTargets;
-        };
+        renderer::RenderTargetMap       m_renderTargets;
+    };
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 }
 
 #endif //_V3D_RENDER_TARGET_MANAGER_H_

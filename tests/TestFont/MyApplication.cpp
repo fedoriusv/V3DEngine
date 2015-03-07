@@ -6,9 +6,9 @@ using namespace v3d::core;
 using namespace v3d::scene;
 
 MyApplication::MyApplication(int& argc, char** argv)
-	: BaseApplication(argc, argv)
+    : BaseApplication(argc, argv)
 {
-	BaseApplication::getPlatform()->createWindowWithContext(core::Dimension2D(1024, 768));
+    BaseApplication::getPlatform()->createWindowWithContext(core::Dimension2D(1024, 768));
 }
 
 MyApplication::~MyApplication()
@@ -17,10 +17,10 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    scene::CText* font = static_cast<scene::CText*>(BaseApplication::getSceneManager()->addFont(0, "Hello world!", "fonts/arial.ttf", core::Vector3D(0, 0, -10)));
+    CText* font = BaseApplication::getSceneManager()->addText(0, "Hello world!", "fonts/arial.ttf", core::Vector3D(0, 0, -10));
     font->getMaterial()->setRenderTechnique("shaders/freetypefont.xml");
   
-    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -1.0f));
+    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -1.0f));
     camera->setName("camera");
 
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
@@ -29,7 +29,7 @@ void MyApplication::init()
 
 void MyApplication::run()
 {
-	//TODO: main loop
+    //TODO: main loop
 }
 
 void MyApplication::onMouse(const v3d::event::MouseInputEventPtr& event)

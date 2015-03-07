@@ -11,7 +11,7 @@ using namespace v3d::stream;
 MyApplication::MyApplication(int& argc, char** argv)
 	: BaseApplication(argc, argv)
 {
-	BaseApplication::getPlatform()->createWindowWithContext(core::Dimension2D(1024, 768));
+	BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
 }
 
 MyApplication::~MyApplication()
@@ -20,18 +20,12 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    scene::CShape* cube = static_cast<scene::CShape*>(getSceneManager()->addCube(0, core::Vector3D(0, 1, -5)));
+    CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
     //cube->getMaterial()->setRenderTechnique("shaders/light.xml");
     cube->getMaterial()->setTexture(0, "textures/box.jpg");
-
-    //TODO: init
-    scene::CShape* torus = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addTorus(0, core::Vector3D(0, 1, -10)));
-    torus->getMaterial()->setTexture(0, "textures/wall.bmp");
-    torus->getMaterial()->setRenderTechnique("shaders/simple.xml");
-
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 
@@ -57,12 +51,12 @@ void MyApplication::init()
     //cube->setRotation(Vector3D(10, 120, 0));
     //Vector3D test = cube->getRotation();
 
-    scene::CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
-    scene::CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -1.0f));
+    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -1.0f));
     camera->setName("camera");
     
-	BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
+    BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectGamepadEvent(std::bind(&MyApplication::onGamepad, this, std::placeholders::_1));
 }
@@ -72,11 +66,11 @@ void MyApplication::run()
     //TODO: main loop
 }
 
-void MyApplication::onMouse(const v3d::event::MouseInputEventPtr& event)
+void MyApplication::onMouse(const event::MouseInputEventPtr& event)
 {
 }
 
-void MyApplication::onGamepad(const v3d::event::GamepadInputEventPtr& event)
+void MyApplication::onGamepad(const event::GamepadInputEventPtr& event)
 {
 }
 
@@ -165,7 +159,4 @@ void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
 
         getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
     }
-    
-   
-    
 }

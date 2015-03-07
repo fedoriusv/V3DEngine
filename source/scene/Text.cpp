@@ -205,7 +205,7 @@ void CText::build()
     }
 
     SVertexData& data = m_geometry->getData();
-    data.malloc(m_text.size() * 6);
+    data.malloc((u32)m_text.size() * 6);
 
     u32 index = 0;
     for (std::string::const_iterator chr = m_text.begin(); chr < m_text.end(); ++chr)

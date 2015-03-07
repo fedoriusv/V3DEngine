@@ -67,8 +67,7 @@ void CSceneManager::draw()
 {
     CSceneManager::updateDeltaTime();
 
-    m_scene->update(m_deltaTime);
-    m_scene->renderer();
+    m_scene->draw(m_deltaTime);
 }
 
 void CSceneManager::clear()
@@ -118,7 +117,7 @@ CSampleShape* CSceneManager::addSample(CNode* parent, const core::Vector3D& pos)
     return node;
 }
 
-CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const f32 size)
+CCubeShape* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, f32 size)
 {
     CCubeShape* node = new CCubeShape();
     node->setParent(parent);
@@ -130,7 +129,7 @@ CNode* CSceneManager::addCube(CNode* parent, const core::Vector3D& pos, const f3
     return node;
 }
 
-CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const f32 radius)
+CSphereShape* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, f32 radius)
 {
     CSphereShape* node = new CSphereShape(radius);
     node->setParent(parent);
@@ -141,7 +140,7 @@ CNode* CSceneManager::addSphere(CNode* parent, const Vector3D& pos, const f32 ra
     return node;
 }
 
-CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const f32 radius, const f32 height)
+CCylinderShape* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, f32 radius, f32 height)
 {
     CCylinderShape* node = new CCylinderShape(radius, height);
     node->setParent(parent);
@@ -152,7 +151,7 @@ CNode* CSceneManager::addCylinder(CNode* parent, const Vector3D& pos, const f32 
     return node;
 }
 
-CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const f32 minorRadius, const f32 majorRadius)
+CTorusShape* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, f32 minorRadius, f32 majorRadius)
 {
     CTorusShape* node = new CTorusShape(minorRadius, majorRadius);
     node->setParent(parent);
@@ -163,7 +162,7 @@ CNode* CSceneManager::addTorus(CNode* parent, const Vector3D& pos, const f32 min
     return node;
 }
 
-CNode* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, const f32 minorRadius, const f32 majorRadius)
+CDiskShape* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, f32 minorRadius, f32 majorRadius)
 {
     CDiskShape* node = new CDiskShape(minorRadius, majorRadius);
     node->setParent(parent);
@@ -174,7 +173,7 @@ CNode* CSceneManager::addDisk(CNode* parent, const Vector3D& pos, const f32 mino
     return node;
 }
 
-CNode* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, const f32 extent)
+CPlaneShape* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, f32 extent)
 {
     CPlaneShape* node = new CPlaneShape(extent);
     node->setParent(parent);
@@ -185,7 +184,7 @@ CNode* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, const f32 ext
     return node;
 }
 
-CNode* CSceneManager::addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down)
+CSkybox* CSceneManager::addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down)
 {
     CSkybox* node = new CSkybox();
     node->load(front, back, left, right, up, down);
@@ -196,7 +195,7 @@ CNode* CSceneManager::addSkyBox(const std::string& front, const std::string& bac
 
 }
 
-CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
+CCamera* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
 {
     CCamera* node = new CCamera();
     node->setParent(parent);
@@ -211,7 +210,7 @@ CNode* CSceneManager::addCamera(CNode* parent, const core::Vector3D& pos, const 
     return node;
 }
 
-CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, const f32 speed)
+CFPSCamera* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, const core::Vector3D& target, f32 speed)
 {
     CFPSCamera* node = new CFPSCamera();
     node->setParent(parent);
@@ -227,7 +226,7 @@ CNode* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos, con
     return node;
 }
 
-CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4D& diffuse, const f32 radius)
+CLight* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4D& diffuse, f32 radius)
 {
     CLight* node = new CLight();
     node->setParent(parent);
@@ -241,7 +240,7 @@ CNode* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector4
     return node;
 }
 
-CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, const u32 size)
+CText* CSceneManager::addText(CNode* parent, const std::string& text, const std::string& font, const Vector3D& pos, u32 size)
 {
     CText*  node = new CText(font);
     node->setParent(parent);
@@ -254,7 +253,7 @@ CNode* CSceneManager::addFont(CNode* parent, const std::string& text, const std:
     return node;
 }
 
-CNode* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
+CModel* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
 {
     CModel* node = new CModel(file, techniqe);
     node->setParent(parent);

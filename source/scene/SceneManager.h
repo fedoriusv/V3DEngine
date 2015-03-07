@@ -12,6 +12,18 @@ namespace scene
     class CCamera;
     class CNode;
     class CSampleShape;
+    class CCubeShape;
+    class CSphereShape;
+    class CCylinderShape;
+    class CTorusShape;
+    class CDiskShape;
+    class CPlaneShape;
+    class CSkybox;
+    class CModel;
+    class CText;
+    class CLight;
+    class CCamera;
+    class CFPSCamera;
 
     class CSceneManager
     {
@@ -28,21 +40,21 @@ namespace scene
         void                    addNode(CNode* node);
 
         CSampleShape*           addSample(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f));
-        CNode*                  addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const f32 size = 1.0f);
-        CNode*                  addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 1.0f);
-        CNode*                  addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 radius = 0.5f, const f32 height = 1.0f);
-        CNode*                  addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 0.5f, const f32 majorRadius = 1.0f);
-        CNode*                  addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 minorRadius = 1.0f, const f32 majorRadius = 2.0f);
-        CNode*                  addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), const f32 extent = 2.0f);
-        CNode*                  addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
-        CNode*                  addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f));
+        CCubeShape*             addCube(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), f32 size = 1.0f);
+        CSphereShape*           addSphere(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 radius = 1.0f);
+        CCylinderShape*         addCylinder(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 radius = 0.5f, f32 height = 1.0f);
+        CTorusShape*            addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 minorRadius = 0.5f, f32 majorRadius = 1.0f);
+        CDiskShape*             addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 minorRadius = 1.0f, f32 majorRadius = 2.0f);
+        CPlaneShape*            addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 extent = 2.0f);
+        CSkybox*                addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
+        CModel*                 addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f));
 
-        CNode*                  addFont(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.0f), const u32 size = 24U);
+        CText*                  addText(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.0f), u32 size = 24U);
 
-        CNode*                  addLight(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 1.0f), const Vector4D& diffuse = Vector4D(1.0f), const f32 radius = 100.0f);
+        CLight*                 addLight(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 1.0f), const Vector4D& diffuse = Vector4D(1.0f), f32 radius = 100.0f);
 
-        CNode*                  addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
-        CNode*                  addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const f32 speed = 0.001f);
+        CCamera*                addCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), const Vector3D& up = Vector3D(0.0f, 1.0f, 0.0f));
+        CFPSCamera*             addFPSCamera(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f), const Vector3D& target = Vector3D(0.0f, 0.0f, -1.0f), f32 speed = 0.001f);
 
         CNode*                  getObjectByID(s32 id);
         CNode*                  getObjectByName(const std::string& name);

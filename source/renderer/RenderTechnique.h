@@ -41,6 +41,7 @@ namespace renderer
         bool                    parse(tinyxml2::XMLElement* root);
 
         RenderPassList          m_renderPassList;
+
         std::string             m_name;
 
     };
