@@ -1,10 +1,13 @@
 #include "RenderTechnique.h"
+#include "scene/RenderTargetManager.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 #include "tinyxml2.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
+using namespace scene;
 
 CRenderTechnique::CRenderTechnique()
     : m_name("")
@@ -65,6 +68,48 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
     m_name = techniqueName;
 
     LOG_INFO("CRenderTechnique: Parse render technique [%s]", m_name.c_str());
+
+    tinyxml2::XMLElement* rendertargetsElement = root->FirstChildElement("rendertargets");
+    if (rendertargetsElement)
+    {
+        tinyxml2::XMLElement* targetElement = rendertargetsElement->FirstChildElement("target");
+        while (targetElement)
+        {
+            if (!targetElement->Attribute("name"))
+            {
+                LOG_ERROR("CRenderTechnique: Rendertarget have not name");
+
+                targetElement = targetElement->NextSiblingElement("target");
+                continue;
+            }
+            std::string targetName = targetElement->Attribute("name");
+            if (CRenderTargetManager::getInstance()->get(targetName))
+            {
+                targetElement = targetElement->NextSiblingElement("target");
+                continue;
+            }
+
+            RenderTargetPtr target = RENDERER->makeSharedRenderTarget();
+            if (!target->parse(targetElement))
+            {
+                LOG_ERROR("CRenderTechnique: Rendertarget parse error");
+
+                targetElement = targetElement->NextSiblingElement("target");
+                continue;
+            }
+
+            if (!target->create())
+            {
+                LOG_ERROR("CRenderPass: Can not create render target");
+
+                targetElement = targetElement->NextSiblingElement("target");
+                continue;
+            }
+            CRenderTargetManager::getInstance()->add(target);
+
+            targetElement = targetElement->NextSiblingElement("pass");
+        }
+    }
 
     tinyxml2::XMLElement* passElement = root->FirstChildElement("pass");
     if (!passElement)

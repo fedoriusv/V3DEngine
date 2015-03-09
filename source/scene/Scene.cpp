@@ -11,43 +11,6 @@ using namespace v3d;
 using namespace scene;
 using namespace renderer;
 
-CScene::SFramebuffer::SFramebuffer(const renderer::RenderTargetPtr& target)
-: _active(false)
-, _target(target)
-, _camera(nullptr)
-{
-}
-
-CScene::SFramebuffer::~SFramebuffer()
-{
-    _list.clear();
-    _draw.clear();
-}
-
-void CScene::SFramebuffer::update(u32 delta)
-{
-    for (std::vector<CNode*>::const_iterator iter = _draw.begin(); iter < _draw.end(); ++iter)
-    {
-        CNode* item = (*iter);
-        item->update(delta);
-    }
-}
-
-void CScene::SFramebuffer::renderer()
-{
-    for (std::vector<CNode*>::const_iterator iter = _draw.begin(); iter < _draw.end(); ++iter)
-    {
-        CNode* item = (*iter);
-        item->render();
-    }
-}
-
-
-void CScene::SFramebuffer::refresh()
-{
-
-}
-
 CScene::CScene()
 : m_camera(nullptr)
 , m_refresh(false)
@@ -58,7 +21,6 @@ CScene::~CScene()
 {
     CScene::clear();
 
-    m_drawObjects.clear();
     m_renderList.clear();
 }
 
@@ -79,6 +41,11 @@ CCamera* CScene::getActiveCamera() const
 
 bool CScene::isActiveCamera(const CCamera* camera)
 {
+    if (!m_camera)
+    {
+        return false;
+    }
+
     return m_camera == camera;
 }
 
@@ -99,19 +66,21 @@ void CScene::draw(u32 delta)
 
     RENDERER->preRender();
 
-    u32 index = 0;
-    for (std::vector<SFramebuffer>::iterator iter = m_renderList.begin(); iter < m_renderList.end(); ++iter)
+    for (std::vector<CRenderList>::iterator iter = m_renderList.begin(); iter < m_renderList.end(); ++iter)
     {
-        if ((*iter)._active)
+        if ((*iter).isEnable())
         {
-            CScene::updateNodes(index, delta);
+            CRenderList& list = (*iter);
+            list.refresh();
 
-            SFramebuffer& buffer = (*iter);
-            buffer.update(delta);
-            buffer.renderer();
+            if (!CScene::isActiveCamera(list.getCamera()))
+            {
+                list.setCamera(m_camera);
+            }
+
+            list.update(delta);
+            list.render();
         }
-
-        ++index;
     }
 
     RENDERER->postRender();
@@ -162,102 +131,6 @@ void CScene::clear()
     CScene::needRefresh();
 }
 
-void CScene::updateNodes(u32 delta)
-{
-    m_drawObjects.clear();
-
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
-    {
-        CNode* node = (*iter);
-        switch (node->getNodeType())
-        {
-            case ENodeType::eShape:
-            case ENodeType::eModel:
-            {
-                f32 priority = 0.0f;
-                if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
-                {
-                    if (m_camera)
-                    {
-                        priority = (node->getPosition() - m_camera->getPosition()).length();
-                    }
-                    else
-                    {
-                        priority = node->getPosition().z;
-                    }
-                    node->m_priority = priority;
-
-                    if (checkDistance(node, priority))
-                    {
-                        m_drawObjects.push_back(node);
-                    }
-                }
-            }
-                break;
-
-            case ENodeType::eCamera:
-            {
-                node->m_priority = k_maxPriority;
-
-                if (static_cast<CCamera*>(node)->isActive())
-                {
-                    m_drawObjects.push_back(node);
-                }
-            }
-                break;
-
-            case ENodeType::eSkyBox:
-            {
-                node->m_priority = k_maxPriority;
-
-                m_drawObjects.push_back(node);
-            }
-                break;
-
-            case ENodeType::eLight:
-            case ENodeType::eFog:
-            {
-                node->m_priority = -k_maxPriority;
-            }
-                break;
-
-            case ENodeType::eFont:
-            {
-                node->m_priority = 0.0f;
-
-                m_drawObjects.push_back(node);
-            }
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    std::sort(m_drawObjects.begin(), m_drawObjects.end(), [](CNode* node0, CNode* node1)
-    {
-        return  (node0->getPriority() > node1->getPriority());
-    });
-}
-
-bool CScene::checkDistance(const CNode* node, const f32 distance)
-{
-    if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)
-    {
-        const RenderTechniquePtr& technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
-        for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
-        {
-            const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();
-            if (lod->getGeometryDistance() < distance && lod->getGeometryDistance() > 0)
-            {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
 CNode* CScene::getNodeByID(s32 id)
 {
     for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
@@ -304,9 +177,9 @@ void CScene::initRenderLists()
                     const RenderPassPtr& pass = techniqe->getRenderPass(i);
                     const RenderTargetPtr& target = pass->getRenderTarget();
 
-                    auto findPred = [target](SFramebuffer frame) -> bool
+                    auto findPred = [target](const CRenderList& list) -> bool
                     {
-                        if (frame._target->getName() == target->getName())
+                        if (list.getTargetName() == target->getName())
                         {
                             return true;
                         }
@@ -314,29 +187,38 @@ void CScene::initRenderLists()
                         return false;
                     };
 
-                    std::vector<SFramebuffer>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
+                    std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
                     if (findTarget != m_renderList.end())
                     {
-                        (*findTarget)._list.push_back(node);
+                        (*findTarget).add(node);
                     }
                     else
                     {
-                        SFramebuffer framebuff(target);
-                        m_renderList.push_back(framebuff);
+                        CRenderList list(target);
+                        list.setEnable(true);
+                        list.add(node);
+
+                        m_renderList.push_back(list);
                     }
                 }
             }
                 break;
 
-        case ENodeType::eLight:
-        case ENodeType::eFog:
-        {
-            //TODO:
-        }
-            break;
+            case ENodeType::eCamera:
+            {
+                //TODO:
+            }
+                break;
 
-        default:
-            break;
+            case ENodeType::eLight:
+            case ENodeType::eFog:
+            {
+                //TODO:
+            }
+                break;
+
+            default:
+                break;
         }
     }
 }

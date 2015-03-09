@@ -424,17 +424,8 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         m_renderTarget = CRenderTargetManager::getInstance()->get(name);
         if (!m_renderTarget)
         {
-            m_renderTarget = RENDERER->makeSharedRenderTarget();
-            CRenderTargetManager::getInstance()->add(m_renderTarget);
-        }
-
-        if (m_renderTarget->parse(root))
-        {
-            if (!m_renderTarget->create())
-            {
-                LOG_ERROR("CRenderPass: Can not create render target");
-                return false;
-            }
+            LOG_INFO("CRenderTarget: Render target not found with name %s, set default", name.c_str());
+            m_renderTarget = RENDERER->getDefaultRenderTarget();
         }
     }
 

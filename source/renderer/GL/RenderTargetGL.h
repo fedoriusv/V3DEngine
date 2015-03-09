@@ -42,6 +42,8 @@ namespace v3d
             bool            m_hasClearDepth;
             bool            m_hasClearStencil;
 
+            std::vector<u32> m_attachBuffers;
+
         private:
 
             static void     genFramebuffer(u32& buffer);

@@ -87,7 +87,7 @@ void CRendererGL::postRender()
     m_frameIndex++;
     m_isLocked = false;
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #ifdef _DEBUG
     m_context->checkForErrors();

@@ -2,7 +2,7 @@
 
     <!-- Render Targets -->
     <rendertargets>
-        <target name="upCorner" x="0" y="512" width="256" height="256" ratio="0.0" color="0xff00ff00">
+        <target name="all" x="0" y="0" width="256" height="256" ratio="0.0" color="0xffff0000">
             <color active="true" attach="1" clear="true" format="8888" output="render"/>
             <depth active="true" clear="true" format="16" output="render"/>
             <stencil active="false" clear="true" format="16"/>
@@ -22,7 +22,7 @@
 		<samplers> 
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
-		<rendertarget val="upCorner"/>
+		<rendertarget val="all"/>
         <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">

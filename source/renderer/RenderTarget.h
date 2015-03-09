@@ -15,6 +15,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
+    class CRenderTechnique;
 
     class CRenderTarget
     {
@@ -33,14 +34,14 @@ namespace renderer
         TexturePtr&                     getDepthTexture();
 
         void                            setClearColor(const core::Vector4D& color);
-        const core::Vector4D&           getCearColor() const;
+        const core::Vector4D&           getClearColor() const;
 
         void                            setViewport(const core::Rect& size);
         const core::Rect&               getViewport() const;
 
         bool                            getClearColorBuffer()   const;
         bool                            getClearDepthBuffer()   const;
-        bool                            getclearStencilBuffer() const;
+        bool                            getClearStencilBuffer() const;
 
         void                            setClearColorBuffer(bool clear);
         void                            setClearDepthBuffer(bool clear);
@@ -79,6 +80,7 @@ namespace renderer
     protected:
 
         friend                      CRenderPass;
+        friend                      CRenderTechnique;
 
         virtual bool                create()    = 0;
         virtual void                destroy()   = 0;

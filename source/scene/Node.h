@@ -5,6 +5,10 @@
 
 namespace v3d
 {
+namespace renderer
+{
+    class CRenderList;
+}
 namespace scene
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +28,6 @@ namespace scene
      };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    class CScene;
 
     class CNode : public CObject
     {
@@ -81,7 +83,7 @@ namespace scene
 
     protected:
 
-        friend                      CScene;
+        friend                      renderer::CRenderList;
 
         void                        updateTransform(ENodeTransform transform);
 

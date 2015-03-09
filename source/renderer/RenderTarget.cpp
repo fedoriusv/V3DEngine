@@ -101,7 +101,7 @@ void CRenderTarget::setClearColor(const core::Vector4D& color)
     m_color = color;
 }
 
-const core::Vector4D& CRenderTarget::getCearColor() const
+const core::Vector4D& CRenderTarget::getClearColor() const
 {
     return m_color;
 }
@@ -141,7 +141,7 @@ bool CRenderTarget::getClearDepthBuffer() const
     return m_clearDepthBuffer;
 }
 
-bool CRenderTarget::getclearStencilBuffer() const
+bool CRenderTarget::getClearStencilBuffer() const
 {
     return m_clearStencilBuffer;
 }
@@ -164,7 +164,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         LOG_ERROR("CRenderTarget: render target have not name");
         return false;
     }
-    std::string m_name = root->Attribute("name");
+    m_name = root->Attribute("name");
 
     u32 x = root->UnsignedAttribute("x");
     u32 y = root->UnsignedAttribute("y");
@@ -180,7 +180,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         height = (u32)(WINDOW->getSize().height * ratio);
     }
 
-    CRenderTarget::setViewport(Rect(x, y, width, height));
+    CRenderTarget::setViewport(Rect(x, y, x + width, y + height));
 
     if (root->Attribute("color"))
     {

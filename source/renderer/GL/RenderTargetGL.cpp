@@ -16,6 +16,7 @@ u32 CRenderTargetGL::m_currentRBO = 0;
 CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferID(0U)
     , m_renderBufferID(0U)
+
     , m_lastFrameIndex(1U)
 
     , m_hasClearColor(true)
@@ -28,6 +29,7 @@ CRenderTargetGL::CRenderTargetGL()
 CRenderTargetGL::~CRenderTargetGL()
 {
     CRenderTargetGL::destroy();
+    m_attachBuffers.clear();
 }
 
 bool CRenderTargetGL::hasClearColorTarget() const
@@ -52,7 +54,12 @@ void CRenderTargetGL::bind()
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
         const Rect& rect = getViewport();
-        glViewport(rect.getLeftX(), rect.getBottomY(), rect.getWidth(), rect.getHeight());
+        glViewport(rect.getLeftX(), rect.getTopY(), rect.getRightX(), rect.getHeight());
+
+        if (m_attachBuffers.size() > 0)
+        {
+            glDrawBuffers((GLsizei)m_attachBuffers.size(), &m_attachBuffers[0]);
+        }
     }
 
     u32 frameIdx = RENDERER->getFrameIndex();
@@ -70,16 +77,16 @@ void CRenderTargetGL::bind()
 
         if (CRenderTargetGL::hasClearStencilTarget())
         {
-            flags = CRenderTarget::getClearDepthBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
+            flags = CRenderTarget::getClearStencilBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
             glStencilMask(GL_TRUE);
 
         }
 
-        if (CRenderTargetGL::hasClearColorTarget())
+        if (CRenderTargetGL::hasClearColorTarget() && CRenderTarget::getClearColorBuffer())
         {
             flags |= GL_COLOR_BUFFER_BIT;
 
-            const core::Vector4D& color = CRenderTarget::getCearColor();
+            const core::Vector4D& color = CRenderTarget::getClearColor();
             glClearColor(color[0], color[1], color[2], color[3]);
         }
 
@@ -95,11 +102,19 @@ void CRenderTargetGL::bind()
 
 void CRenderTargetGL::unbind()
 {
-    bool chaned = CRenderTargetGL::bindFramebuffer(0);
-    if (chaned)
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //bool chaned = CRenderTargetGL::bindFramebuffer(0);
+    /*if (chaned)
     {
-        RENDERER->setCurrentRenderTarget(shared_from_this());
-    }
+        glReadBuffer(GL_BACK);
+        glDrawBuffer(GL_BACK);
+
+        const RenderTargetPtr& target = RENDERER->getDefaultRenderTarget();
+        const Rect& rect = target->getViewport();
+        glViewport(rect.getLeftX(), rect.getTopY(), rect.getWidth(), rect.getHeight());
+
+        RENDERER->setCurrentRenderTarget(target);
+    }*/
 }
 
 bool CRenderTargetGL::create()
@@ -107,6 +122,8 @@ bool CRenderTargetGL::create()
     const Rect& rect = getViewport();
     u32 width = rect.getWidth();
     u32 height = rect.getHeight();
+    u32 x = rect.getLeftX();
+    u32 y = rect.getTopY();
     if (width == 0)
     {
         width = WINDOW->getSize().width;
@@ -125,7 +142,7 @@ bool CRenderTargetGL::create()
     GLint originalRBO = 0;
     glGetIntegerv(GL_RENDERBUFFER_BINDING, &originalRBO);
 
-    CRenderTarget::setViewport(Rect(rect.getLeftX(), rect.getBottomY(), width, height));
+    CRenderTarget::setViewport(Rect(x, y, x + width, y + height));
 
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);
@@ -221,13 +238,14 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
                 ASSERT("CRenderTarget: Range out Color attachment" && false);
                 return;
             }
+            m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             CRenderTargetGL::genRenderbuffer(attach._rboID);
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, rect.getWidth(), rect.getHeight());
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, GL_FRAMEBUFFER, attach._rboID);
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
         }
@@ -325,6 +343,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
                 ASSERT("CRenderTarget: Range out Color attachment" && false);
                 return;
             }
+            m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             formatColor(attach._format);
             attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), imageFormat, imageType, nullptr);

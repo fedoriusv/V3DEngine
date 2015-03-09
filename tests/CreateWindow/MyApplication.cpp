@@ -20,12 +20,15 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
+    CShape* cube1 = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
+    cube1->setName("cube1");
+    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");
+
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
-    //CShape* cube = static_cast<CShape*>(getSceneManager()->addSample(0, Vector3D(0, 0, -5)));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
-    //cube->getMaterial()->setRenderTechnique("shaders/light.xml");
-    cube->getMaterial()->setTexture(0, "textures/box.jpg");
+    cube->getMaterial()->setRenderTechnique("shaders/simpledef.xml");
+
+    //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 
@@ -76,7 +79,7 @@ void MyApplication::onGamepad(const event::GamepadInputEventPtr& event)
 
 void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
 {
-    f32 step = 0.1f;
+    f32 step = 0.5f;
     f32 angle = 5.0f;
     static bool debug = false;
 
