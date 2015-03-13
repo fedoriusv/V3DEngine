@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-project(${TEST_PROJECT_0})
+set (CURRENT_PROJECT ${TEST_PROJECT_0})
+project(${CURRENT_PROJECT})
 
 file(GLOB TEST_HEADERS *.h)
 file(GLOB TEST_SOURCES *.cpp)
@@ -22,14 +23,14 @@ elseif(APPLE)
 endif()
 
 add_executable(
-	${TEST_PROJECT_0}
+	${CURRENT_PROJECT}
     WIN32 MACOSX_BUNDLE
 	${MAIN_FILE}
 	${TEST_HEADERS}
 	${TEST_SOURCES}
 	)
 
-set_target_properties(${TEST_PROJECT_0} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "CreateWindow")
+set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Test_CreateWindow")
 
 if(WIN32)
 	set(EXTERNAL_LIBS 
@@ -41,6 +42,10 @@ if(WIN32)
 		#optimized ${ENGINE_NAME}.lib
 		#optimized ${GLEW_PLOJECT}.lib
 	)
+	
+	file(COPY ${DEVIL_BIN}/DevIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Debug)
+    file(COPY ${DEVIL_BIN}/DevIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Release)
+	
 elseif(UNIX AND NOT APPLE)
 	find_package(X11)
 	set(EXTERNAL_LIBS
@@ -61,9 +66,9 @@ elseif(APPLE)
 endif()
 
 target_link_libraries(
-	${TEST_PROJECT_0}
+	${CURRENT_PROJECT}
 	${EXTERNAL_LIBS}
 	${ENGINE_NAME}
 	)
 
-add_dependencies(${TEST_PROJECT_0} ${ENGINE_NAME})
+add_dependencies(${CURRENT_PROJECT} ${ENGINE_NAME})

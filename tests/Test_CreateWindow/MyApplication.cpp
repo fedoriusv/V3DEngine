@@ -20,13 +20,9 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CShape* cube1 = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
-    cube1->setName("cube1");
-    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");
-
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simpledef.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
     //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 

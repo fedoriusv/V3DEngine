@@ -5,8 +5,10 @@ set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
 set(FREETYPE2_PROJECT freetype2)
-set(TEST_PROJECT_0 CreateWindow)
-set(TEST_PROJECT_1 TestFont)
+
+set(TEST_PROJECT_0 Test_CreateWindow)
+set(TEST_PROJECT_1 Test_Font)
+set(TEST_PROJECT_2 Test_RenderTarget)
 
 if(COMPILER_MSVC)
 	message("-- Configuring MSVC Compiler")
@@ -54,26 +56,20 @@ endif()
 ################################
 
 set(SOURCE_DIR source)
-set(LIB_DIR ..\\..\\libs)
-
-	
-
+set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs)
+set(TESTS_BIN_DIR ${CMAKE_BINARY_DIR}/tests)
 
 if(WIN32)
 	if (CMAKE_CL_64)
 		set(ARCH_DIR "x64")
 	else(CMAKE_CL_64)
-		set(ARCH_DIR "win32")
+		set(ARCH_DI11R "win32")
 	endif(CMAKE_CL_64)
 	
-	set(DEVIL_LIB ${LIB_DIR}\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL)
-	file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Debug)
-    file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_0}\\Release)
-    
-	file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Debug)
-    file(COPY libs\\DevIL\\lib\\${ARCH_DIR}\\unicode\\DevIL.dll DESTINATION ${CMAKE_BINARY_DIR}\\tests\\${TEST_PROJECT_1}\\Release)
+	set(DEVIL_LIB ../../libs/DevIL/lib/${ARCH_DIR}/unicode/DevIL)
+	set(DEVIL_BIN ${LIB_DIR}/DevIL/lib/${ARCH_DIR}/unicode)
 else(WIN32)
-	set(DEVIL_LIB ${LIB_DIR}\\DevIL)
+	set(DEVIL_LIB ${LIB_DIR}/DevIL)
 endif(WIN32)
 
 ################################
@@ -227,6 +223,7 @@ add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
 add_subdirectory(tests/${TEST_PROJECT_0})
 add_subdirectory(tests/${TEST_PROJECT_1})
+add_subdirectory(tests/${TEST_PROJECT_2})
 if(NOT WIN32)
 	add_subdirectory(libs/DevIL)
 endif(NOT WIN32)
