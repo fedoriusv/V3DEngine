@@ -203,7 +203,7 @@ void CWindowWin32::setCaption(const std::string& text)
     SetWindowTextA(m_window, text.c_str());
 }
 
-void CWindowWin32::setPosition(const core::Dimension2D& pos)
+void CWindowWin32::setPosition(const core::Point2D& pos)
 {
     if (m_param._isFullscreen)
     {
@@ -212,7 +212,7 @@ void CWindowWin32::setPosition(const core::Dimension2D& pos)
 
     /*RECT rect = { xpos, ypos, xpos, ypos };
     AdjustWindowRectEx(&rect, window->win32.dwStyle,FALSE, window->win32.dwExStyle);*/
-    SetWindowPos(m_window, NULL, pos.width, pos.height, 0, 0,
+    SetWindowPos(m_window, NULL, pos.x, pos.y, 0, 0,
         SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
 
     m_param._position = pos;
@@ -849,8 +849,8 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_MOUSEWHEEL:
         {
             event::MouseInputEventPtr event = std::make_shared<event::SMouseInputEvent>();
-            event->_position.width = (s16)LOWORD(lParam);
-            event->_position.height = (s16)HIWORD(lParam);
+            event->_position.x = (s16)LOWORD(lParam);
+            event->_position.y = (s16)HIWORD(lParam);
             event->_wheel = ((f32)((s16)HIWORD(wParam))) / (f32)WHEEL_DELTA;
             event->_event = eMouseUnknown;
             switch (message)

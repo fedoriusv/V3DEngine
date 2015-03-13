@@ -36,7 +36,7 @@ namespace event
 
         bool                        isGamepadPressed(const EGamepadButton& code)    const;
 
-        const core::Dimension2D&    getCursorPosition()                             const;
+        const core::Point2D&        getCursorPosition()                             const;
         float                       getMouseWheel()                                 const;
 
         void                        setEnableEvents(bool enable);
@@ -50,7 +50,7 @@ namespace event
         bool                        m_mouseStates[eMouseCount];
         u32                         m_gamepadStates;
 
-        core::Dimension2D           m_mousePosition; //WARN: need Point class
+        core::Point2D               m_mousePosition;
         float                       m_mouseWheel;
 
         std::function<void(const KeyboardInputEventPtr&)>  m_keyboardSignature;

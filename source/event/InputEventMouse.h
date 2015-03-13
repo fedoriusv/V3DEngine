@@ -37,7 +37,7 @@ namespace event
 
         bool operator == (const SMouseInputEvent& event) const;
 
-        core::Dimension2D _position; //WARN: need class Point
+        core::Point2D     _position;
         v3d::f32          _wheel;
         EMouseInputEvent  _event;
         v3d::u16          _modifers;

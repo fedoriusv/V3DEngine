@@ -32,7 +32,7 @@ void CRendererGL::init()
 {
     LOG_INFO("OpenGL Render Init");
 
-    reshape(m_context->getViewport().width, m_context->getViewport().height);
+    reshape(m_context->GetWindowSize().width, m_context->GetWindowSize().height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     m_context->setVSync(false);

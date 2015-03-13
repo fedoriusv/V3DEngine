@@ -1,7 +1,8 @@
 #include "Window.h"
 
 using namespace v3d;
-using namespace v3d::platform;
+using namespace platform;
+using namespace core;
 
 CWindow::CWindow(const WindowParam& param)
     : m_param(param)
@@ -23,12 +24,12 @@ bool CWindow::isResizeble() const
     return m_param._isResizeble;
 }
 
-const core::Dimension2D& CWindow::getSize() const
+const Dimension2D& CWindow::getSize() const
 {
     return m_param._size;
 }
 
-const core::Dimension2D& CWindow::getPosition() const
+const Point2D& CWindow::getPosition() const
 {
     return m_param._position;
 }

@@ -27,7 +27,7 @@ namespace platform
         void    setFullScreen(bool value = false)           override;
         void    setResizeble(bool value = true)             override;
         void    setCaption(const std::string& text)         override;
-        void    setPosition(const core::Dimension2D& pos)   override;
+        void    setPosition(const core::Point2D& pos)       override;
 
         bool    isMaximized() const                         override;
         bool    isMinimized() const                         override;

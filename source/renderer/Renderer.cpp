@@ -51,9 +51,8 @@ void CRenderer::reshape(u32 width, u32 height)
     f32 aspectRatio = (f32)width / (f32)height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, -1.0f, 1.0f);
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, 0.0f, (f32)width, (f32)height, -1.0f, 1.0f);
     m_orthoMatrix.makeTransposed();
-
 }
 
 void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
@@ -61,7 +60,6 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
     m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
     m_viewMatrix.makeTransposed();
     m_viewPosition = pos;
-
 }
 
 const core::Rect& CRenderer::getViewportSize() const
@@ -75,6 +73,32 @@ const core::Rect& CRenderer::getViewportSize() const
     {
         return m_defaultRenderTarget->getViewport();
     }
+}
+
+Vector2D CRenderer::convertPosScreenToCanvas(const Point2D& pos)
+{
+    const core::Dimension2D& size = m_context->GetWindowSize();
+    
+    Vector2D newpos(0.0f, 0.0f);
+    f32 koefW = pos.x / (f32)size.width;
+    f32 koefH = (size.height - pos.y) / (f32)size.height;
+    newpos.x = -1.0f + 2.0f * koefW;
+    newpos.y = -1.0f + 2.0f * koefH;
+
+    return newpos;
+}
+
+Point2D CRenderer::convertPosCanvasToScreen(const Vector2D& pos)
+{
+    const core::Dimension2D& size = m_context->GetWindowSize();
+
+    Point2D newpos(0, 0);
+    f32 koefW = (pos.x + 1.0f) / 2.0f;
+    f32 koefH = (pos.y + 1.0f) / 2.0f;
+    newpos.x = (u32)(koefW * size.width);
+    newpos.y = size.height - (u32)(koefH * size.height);
+
+    return newpos;
 }
 
 u32 CRenderer::getFrameIndex() const

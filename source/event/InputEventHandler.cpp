@@ -200,7 +200,7 @@ bool CInputEventHandler::isGamepadPressed(const EGamepadButton& code) const
     return (m_gamepadStates & (1 << code)) ? true : false;
 }
 
-const core::Dimension2D& CInputEventHandler::getCursorPosition() const
+const core::Point2D& CInputEventHandler::getCursorPosition() const
 {
     return m_mousePosition;
 }

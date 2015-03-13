@@ -288,7 +288,7 @@ u32 FileStream::write(const bool value)
 
 u32 FileStream::write(const std::string value)
 {
-    const u32 strLen = value.length();
+    const u32 strLen = (u32)value.length();
     u32 ret = (u32)fwrite(&strLen, sizeof(u32), 1, m_fileHandler);
     ret += (u32)fwrite(value.c_str(), sizeof(c8), strLen, m_fileHandler);
     return ret;

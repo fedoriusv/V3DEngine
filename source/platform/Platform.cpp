@@ -20,8 +20,9 @@
 
 
 using namespace v3d;
-using namespace v3d::platform;
-using namespace v3d::renderer;
+using namespace core;
+using namespace platform;
+using namespace renderer;
 
 CPlatform::CPlatform()
 {
@@ -31,7 +32,7 @@ CPlatform::~CPlatform()
 {
 }
 
-platform::WindowPtr CPlatform::createWindowWithContext(const core::Dimension2D& size, const core::Dimension2D& pos,
+WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Point2D& pos,
     bool isFullscreen, bool isResizeble, EDriverType driverType)
 {
     WindowPtr window = nullptr;

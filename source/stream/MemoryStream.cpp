@@ -467,10 +467,10 @@ u32 MemoryStream::write(const std::string value)
         return m_pos;
     }
 
-    if (checkSize(value.size()))
+    if (checkSize((u32)value.size()))
     {
         memcpy(m_stream + m_pos, &value[0], value.size());
-        m_pos += value.size();
+        m_pos += (u32)value.size();
 
         if (m_pos > m_length)
         {
