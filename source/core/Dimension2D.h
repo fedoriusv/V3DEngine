@@ -20,10 +20,10 @@ namespace core
         TDimension2D(const TVector2D<T>& other);
         TDimension2D(const TDimension2D<T>& other);
 
-        bool operator == (const TDimension2D<T>& other)                 const;
-        bool operator != (const TDimension2D<T>& other)                 const;
-        bool operator == (const TVector2D<T>& other)                    const;
-        bool operator != (const TVector2D<T>& other)                    const;
+        bool                operator == (const TDimension2D<T>& other)  const;
+        bool                operator != (const TDimension2D<T>& other)  const;
+        bool                operator == (const TVector2D<T>& other)     const;
+        bool                operator != (const TVector2D<T>& other)     const;
 
         TDimension2D<T>&    operator = (const TDimension2D<T>& other);
         TDimension2D<T>&    operator /= (const T& scale);
@@ -36,10 +36,10 @@ namespace core
 
         TDimension2D<T>&    set(const T& width, const T& height);
 
-        T getArea() const;
+        T                   getArea() const;
 
-        T width;
-        T height;
+        T                   width;
+        T                   height;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

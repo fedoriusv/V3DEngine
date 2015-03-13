@@ -22,12 +22,12 @@ namespace core
         TPoint2D(const TVector2D<T>& other);
         TPoint2D(const TDimension2D<T>& other);
 
-        bool operator == (const TPoint2D<T>& other)                 const;
-        bool operator != (const TPoint2D<T>& other)                 const;
-        bool operator == (const TDimension2D<T>& other)             const;
-        bool operator != (const TDimension2D<T>& other)             const;
-        bool operator == (const TVector2D<T>& other)                const;
-        bool operator != (const TVector2D<T>& other)                const;
+        bool            operator == (const TPoint2D<T>& other)      const;
+        bool            operator != (const TPoint2D<T>& other)      const;
+        bool            operator == (const TDimension2D<T>& other)  const;
+        bool            operator != (const TDimension2D<T>& other)  const;
+        bool            operator == (const TVector2D<T>& other)     const;
+        bool            operator != (const TVector2D<T>& other)     const;
 
         TPoint2D<T>&    operator =  (const TPoint2D<T>& other);
         TPoint2D<T>     operator *  (const T& scale)                const;
@@ -44,8 +44,8 @@ namespace core
         void            offset(const TDimension2D<T>& offset);
         void            offset(const TVector2D<T>& offset);
 
-        T x;
-        T y;
+        T               x;
+        T               y;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
