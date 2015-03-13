@@ -10,44 +10,41 @@ namespace core
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	template <class T>
-	class TVector2D;
+    template <class T>
+    class TDimension2D
+    {
+    public:
 
-	template <class T>
-	class TDimension2D
-	{
-	public:
+        TDimension2D();
+        TDimension2D(const T& width, const T& height);
+        TDimension2D(const TVector2D<T>& other);
+        TDimension2D(const TDimension2D<T>& other);
 
-		TDimension2D();
-		TDimension2D(const T& width, const T& height);
-		TDimension2D(const TVector2D<T>& other);
-		TDimension2D(const TDimension2D<T>& other);
+        bool operator == (const TDimension2D<T>& other)                 const;
+        bool operator != (const TDimension2D<T>& other)                 const;
+        bool operator == (const TVector2D<T>& other)                    const;
+        bool operator != (const TVector2D<T>& other)                    const;
 
-		bool operator == (const TDimension2D<T>& other)                 const;
-		bool operator != (const TDimension2D<T>& other)                 const;
-		bool operator == (const TVector2D<T>& other)                    const;
-		bool operator != (const TVector2D<T>& other)                    const;
+        TDimension2D<T>&    operator = (const TDimension2D<T>& other);
+        TDimension2D<T>&    operator /= (const T& scale);
+        TDimension2D<T>     operator /  (const T& scale)                const;
+        TDimension2D<T>     operator *  (const T& scale)                const;
+        TDimension2D<T>     operator +  (const TDimension2D<T>& other)  const;
+        TDimension2D<T>&    operator += (const TDimension2D<T>& other);
+        TDimension2D<T>&    operator -= (const TDimension2D<T>& other);
+        TDimension2D<T>&    operator *= (const T& scale);
 
-		TDimension2D<T>&	operator = (const TDimension2D<T>& other);
-		TDimension2D<T>&	operator /= (const T& scale);
-		TDimension2D<T>		operator /  (const T& scale)                const;
-		TDimension2D<T>		operator *  (const T& scale)                const;
-		TDimension2D<T>		operator +  (const TDimension2D<T>& other)  const;
-		TDimension2D<T>&	operator += (const TDimension2D<T>& other);
-		TDimension2D<T>&	operator -= (const TDimension2D<T>& other);
-		TDimension2D<T>&	operator *= (const T& scale);
+        TDimension2D<T>&    set(const T& width, const T& height);
 
-		TDimension2D<T>&	set(const T& width, const T& height);
+        T getArea() const;
 
-		T getArea() const;
-
-		T width;
-		T height;
-	};
+        T width;
+        T height;
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	typedef TDimension2D<u32> Dimension2D;
+    typedef TDimension2D<u32> Dimension2D;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }
