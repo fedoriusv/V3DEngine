@@ -13,6 +13,7 @@
 #include "scene/Shape.h"
 #include "scene/Model.h"
 #include "scene/CubeShape.h"
+#include "scene/SquareShape.h"
 #include "scene/Camera.h"
 #include "scene/FPSCamera.h"
 #include "scene/Skybox.h"

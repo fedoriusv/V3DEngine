@@ -22,7 +22,7 @@
 		<samplers> 
 		</samplers>
 		<renderstate polygonmode="line" winding="cw" cullface="false"/>
-		<rendertarget val="upCorner"/>
+		<rendertarget val="default"/>
         <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">

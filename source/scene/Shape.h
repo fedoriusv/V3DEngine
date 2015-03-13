@@ -24,6 +24,7 @@ namespace scene
         ePlaneShape,
         eDiskShape,
         eHeightMapShape,
+        eSquareShape,
 
         eCountShape
     };

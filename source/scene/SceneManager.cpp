@@ -6,6 +6,7 @@
 #include "TorusShape.h"
 #include "DiskShape.h"
 #include "PlaneShape.h"
+#include "SquareShape.h"
 #include "Camera.h"
 #include "Skybox.h"
 #include "Light.h"
@@ -178,6 +179,17 @@ CPlaneShape* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, f32 ext
     CPlaneShape* node = new CPlaneShape(extent);
     node->setParent(parent);
     node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CSquareShape* CSceneManager::addSquare(CNode* parent, const Rect& rect)
+{
+    CSquareShape* node = new CSquareShape();
+    node->setParent(parent);
+    node->setPosition(Vector3D(0.0f, 0.0f, -1.0f));
 
     CSceneManager::addNode(node);
 
