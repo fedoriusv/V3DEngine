@@ -17,7 +17,7 @@ const platform::WindowPtr& CDriverContext::getWindow() const
     return m_window;
 }
 
-const core::Dimension2D& CDriverContext::getViewport() const
+const core::Dimension2D& CDriverContext::getWindowSize() const
 {
     return m_window->getSize();
 }

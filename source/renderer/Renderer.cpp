@@ -77,7 +77,7 @@ const core::Rect& CRenderer::getViewportSize() const
 
 Vector2D CRenderer::convertPosScreenToCanvas(const Point2D& pos)
 {
-    const core::Dimension2D& size = m_context->GetWindowSize();
+    const core::Dimension2D& size = m_context->getWindowSize();
     
     Vector2D newpos(0.0f, 0.0f);
     f32 koefW = pos.x / (f32)size.width;
@@ -90,7 +90,7 @@ Vector2D CRenderer::convertPosScreenToCanvas(const Point2D& pos)
 
 Point2D CRenderer::convertPosCanvasToScreen(const Vector2D& pos)
 {
-    const core::Dimension2D& size = m_context->GetWindowSize();
+    const core::Dimension2D& size = m_context->getWindowSize();
 
     Point2D newpos(0, 0);
     f32 koefW = (pos.x + 1.0f) / 2.0f;

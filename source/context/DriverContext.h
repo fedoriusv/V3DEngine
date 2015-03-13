@@ -23,7 +23,7 @@ namespace renderer
 
         virtual bool                setVSync(bool use)                               = 0;
 
-        const core::Dimension2D&    GetWindowSize() const;
+        const core::Dimension2D&    getWindowSize() const;
         const platform::WindowPtr&  getWindow() const;
 
     protected:
