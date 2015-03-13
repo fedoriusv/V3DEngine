@@ -1,20 +1,10 @@
 <technique name="simple" version="100">
 
-    <!-- Render Targets -->
-    <rendertargets>
-        <target name="upCorner" x="0" y="512" width="256" height="256" ratio="0.0" color="0xff00ff00">
-            <color active="true" attach="1" clear="true" format="8888" output="render"/>
-            <depth active="true" clear="true" format="16" output="render"/>
-            <stencil active="false" clear="true" format="16"/>
-        </target>
-    </rendertargets>
-    
     <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
-			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+			<var name="transform.orthoMatrix" type="mat4" val="transform.orthoMatrix"/>
 			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
-			<var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
 		</uniforms>
 		<attributes>
 			<var name="positions" type="vec3" val="mesh.positions"/>
@@ -34,17 +24,15 @@
 
 					struct Transform
 					{
-						mat4 projectionMatrix;
+						mat4 orthoMatrix;
 						mat4 modelMatrix;
-						mat4 viewMatrix;
 					};
-
 					uniform Transform transform;
 
 					void main()
-					{
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 0.0, 1.0);
-                        gl_Position = transform.projectionMatrix * vertex;
+                    {
+                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+                        gl_Position = transform.orthoMatrix * vertex;
 					}
 				]]>
 			</var>

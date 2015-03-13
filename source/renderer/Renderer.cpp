@@ -51,8 +51,8 @@ void CRenderer::reshape(u32 width, u32 height)
     f32 aspectRatio = (f32)width / (f32)height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, 0.0f, (f32)width, (f32)height, -1.0f, 1.0f);
-    m_orthoMatrix.makeTransposed();
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, (f32)height, 0.0f, -1.0f, 1.0f);
+    //m_orthoMatrix.makeTransposed();
 }
 
 void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
