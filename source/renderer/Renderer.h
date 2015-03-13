@@ -63,6 +63,9 @@ namespace renderer
         const RenderTargetPtr&      getCurrentRenderTarget() const;
         void                        setCurrentRenderTarget(const RenderTargetPtr& target);
 
+        Point2D                    convertPosCanvasToScreen(const Vector2D& pos);
+        Vector2D                   convertPosScreenToCanvas(const Point2D& pos);
+
     protected:
 
         friend                      scene::CSceneManager;

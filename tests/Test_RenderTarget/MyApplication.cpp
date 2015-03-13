@@ -20,9 +20,13 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CSquareShape* screen1 = BaseApplication::getSceneManager()->addSquare();
+    CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect(0, 0, 512, 384));
     screen1->setName("screen1");
-    screen1->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    screen1->getMaterial()->setRenderTechnique("shaders/simple2D.xml");
+
+    CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect(512, 384, 1024, 768));
+    screen2->setName("screen2");
+    screen2->getMaterial()->setRenderTechnique("shaders/simple2D.xml");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");

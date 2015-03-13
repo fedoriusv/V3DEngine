@@ -1,35 +1,37 @@
-#include "SquareShape.h"
+#include "RectangleShape.h"
 #include "renderer/Geometry.h"
 #include "Engine.h"
 
 using namespace v3d;
+using namespace core;
 using namespace scene;
 using namespace renderer;
 
-CSquareShape::CSquareShape()
+CRectangleShape::CRectangleShape(const Rect& rect)
+: m_rect(rect)
 {
     m_shapeType = EShapeType::eSquareShape;
 }
 
-CSquareShape::~CSquareShape()
+CRectangleShape::~CRectangleShape()
 {
 }
 
-void CSquareShape::render()
+void CRectangleShape::render()
 {
     CShape::render();
 }
 
-void CSquareShape::update(f64 time)
+void CRectangleShape::update(f64 time)
 {
     CShape::update(time);
 }
 
-void CSquareShape::init()
+void CRectangleShape::init()
 {
     CShape::init();
 
-    CSquareShape::build();
+    CRectangleShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
     m_geometry->init();
@@ -40,14 +42,14 @@ void CSquareShape::init()
     m_initialiazed = true;
 }
 
-void CSquareShape::refresh()
+void CRectangleShape::refresh()
 {
     if (!m_initialiazed)
     {
         return;
     }
 
-    CSquareShape::build();
+    CRectangleShape::build();
 
     m_geometry->refresh();
 #ifdef _DEBUG
@@ -55,26 +57,30 @@ void CSquareShape::refresh()
 #endif
 }
 
-void CSquareShape::build()
+void CRectangleShape::build()
 {
     const u32 count = 6;
+    const f32 s = 0.5f;
+
+    Vector2D leftUp = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getLeftX(), m_rect.getTopY()));
+    Vector2D rightDown = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getRightX(), m_rect.getBottomY()));
 
     const f32 vertex[][3] =
     {
-        { -1.0f, -1.0f, 0.0f }, { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f },
-        { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { -1.0, 1.0f, 0.0f }
+        { leftUp.x, rightDown.y, 0.0f }, { leftUp.x, leftUp.y, 0.0f }, { rightDown.x, leftUp.y, 0.0f },
+        { leftUp.x, rightDown.y, 0.0f }, { rightDown.x, leftUp.y, 0.0f }, { rightDown.x, rightDown.y, 0.0f }
     };
 
     const f32 normals[][3] =
     {
         { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
-        { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
+        { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }
     };
 
     const f32 texCoord[][2] =
     {
         { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f },
-        { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f },
+        { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }
     };
 
     SVertexData& data = CShape::getGeometryData();

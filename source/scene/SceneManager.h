@@ -18,7 +18,7 @@ namespace scene
     class CTorusShape;
     class CDiskShape;
     class CPlaneShape;
-    class CSquareShape;
+    class CRectangleShape;
     class CSkybox;
     class CModel;
     class CText;
@@ -47,7 +47,7 @@ namespace scene
         CTorusShape*            addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 minorRadius = 0.5f, f32 majorRadius = 1.0f);
         CDiskShape*             addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 minorRadius = 1.0f, f32 majorRadius = 2.0f);
         CPlaneShape*            addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f), f32 extent = 2.0f);
-        CSquareShape*           addSquare(CNode* parent = nullptr, const Rect& rect = Rect(0, 0, 1024, 768));
+        CRectangleShape*        addRectangle(CNode* parent = nullptr, const Rect& rect = Rect(0, 0, 1024, 768));
         CSkybox*                addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
         CModel*                 addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.0f, 0.0f, 0.0f));
 
