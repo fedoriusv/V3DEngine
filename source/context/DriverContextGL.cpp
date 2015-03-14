@@ -254,6 +254,16 @@ bool CDriverContextGL::createWin32Context()
         return false;
     }
 
+    //TODO Need Reinit glew http://stackoverflow.com/questions/9663262/resetting-opengl-extension-pointers-in-windows-api
+    /*error = wglewContextInit();
+    if (error != GLEW_OK)
+    {
+        const GLubyte* errorStr = glewGetErrorString(error);
+        LOG_ERROR("Couldn't initialize GLEW: %s", errorStr);
+
+        return false;
+    }*/
+
     CDriverContextGL::checkForErrors("Create Context");
 
     int pf = GetPixelFormat(hDC);
