@@ -21,29 +21,35 @@ namespace renderer
         bool            create()          override;
         void            destroy()         override;
 
+        static void     reset();
+
     private:
 
         void            copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data) override;
 
+        void            initTexture1D(u32 texture);
         void            initTexture2D(u32 texture);
+        void            initTexture3D(u32 texture);
         void            initTextureCubeMap(u32 texture);
 
-        void            copyToTexture2D(u32 texture, s32 offsetX, s32 offsetY, u32 width, u32 height, u32 format, void* data);
+        static void     genTexture(u32& texture);
+        static void     deleteTexture(u32 texture);
+        static void     bindTexture(ETextureTarget target, u32 texture);
+        static void     activeTextureLayer(u32 layer);
 
-        void            genTexture(u32& texture);
-        void            deleteTexture(u32 texture);
-        void            bindTexture(u32 target, u32 texture);
-        void            activeTextureLayer(u32 layer);
-
-        void            genSampler(u32& sampler);
-        void            deleteSampler(u32 sampler);
-        void            bindSampler(u32 texture, u32 sampler);
-        void            wrapSampler(u32 sampler, u32 wrap);
-        void            filterSampler(u32 sampler, u32 min, u32 mag);
-        void            anisotropicSampler(u32 sampler, u32 level);
-        void            generateMipmap(u32 target);
+        static void     genSampler(u32& sampler);
+        static void     deleteSampler(u32 sampler);
+        static void     bindSampler(u32 texture, u32 sampler);
+        static void     wrapSampler(u32 sampler, EWrapType wrap);
+        static void     filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag);
+        static void     anisotropicSampler(u32 sampler, u32 level);
+        static void     generateMipmap(ETextureTarget target);
 
         u32             m_samplerID;
+
+        static u32      s_currentTextureID[eTargetCount];
+        static u32      s_currentLayerID;
+        static u32      s_currentSamplerID;
    };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

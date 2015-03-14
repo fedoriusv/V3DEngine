@@ -4,7 +4,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 #define TEXTURE_CUBE_MAP_COUNT 6
 
@@ -72,6 +72,10 @@ GLenum EImageTypeGL[EImageType::eTypeCount] =
     GL_HALF_FLOAT,
 };
 
+u32 CTextureGL::s_currentTextureID[] = { 0 };
+u32 CTextureGL::s_currentLayerID   = 0;
+u32 CTextureGL::s_currentSamplerID = 0;
+
 CTextureGL::CTextureGL()
     : m_samplerID(0)
 {
@@ -86,17 +90,29 @@ void CTextureGL::bind(u32 layer)
 {
     CTextureGL::activeTextureLayer(layer);
     CTextureGL::bindSampler(m_textureID, m_samplerID);
-    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
+    CTextureGL::bindTexture(m_target, m_textureID);
 
-    RENDERER->checkForErrors("Bind Texture Error");
+    RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
 }
 
 void CTextureGL::unbind(u32 layer)
 {
     CTextureGL::bindSampler(0, m_samplerID);
-    CTextureGL::bindTexture(ETextureTargetGL[m_target], 0);
+    CTextureGL::bindTexture(m_target, 0);
 
-    RENDERER->checkForErrors("Unbind Texture Error");
+    RENDERER->checkForErrors("CTextureGL: Unbind Texture Error");
+}
+
+void CTextureGL::reset()
+{
+    CTextureGL::activeTextureLayer(0);
+    CTextureGL::bindSampler(0, 0);
+    for (u32 i = 0; i < eTargetCount; ++i)
+    {
+        CTextureGL::bindTexture((ETextureTarget)i, 0);
+    }
+
+    RENDERER->checkForErrors("CTextureGL: Unbind All Texture Error");
 }
 
 bool CTextureGL::create()
@@ -109,7 +125,8 @@ bool CTextureGL::create()
     {
         case ETextureTarget::eTexture1D:
         {
-            //TODO: eTexture1D
+            CTextureGL::initTexture1D(m_textureID);
+            success = true;
         }
         break;
 
@@ -122,10 +139,10 @@ bool CTextureGL::create()
 
         case ETextureTarget::eTexture3D:
         {
-          //TODO: eTexture3D
+            CTextureGL::initTexture3D(m_textureID);
+            success = true;
         }
         break;
-
 
         case ETextureTarget::eTextureCubeMap:
         {
@@ -138,23 +155,23 @@ bool CTextureGL::create()
             break;
     }
 
-    CTextureGL::bindTexture(ETextureTargetGL[m_target], m_textureID);
+    CTextureGL::bindTexture(m_target, m_textureID);
 
     CTextureGL::genSampler(m_samplerID);
     CTextureGL::bindSampler(m_textureID, m_samplerID);
-    CTextureGL::wrapSampler(m_samplerID, EWrapTypeGL[m_wrap]);
-    CTextureGL::filterSampler(m_samplerID, ETextureFilterGL[m_minFilter], ETextureFilterGL[m_magFilter]);
+    CTextureGL::wrapSampler(m_samplerID, m_wrap);
+    CTextureGL::filterSampler(m_samplerID, m_minFilter, m_magFilter);
     CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
     CTextureGL::bindSampler(0, m_samplerID);
     
     if (m_minFilter > ETextureFilter::eLinear)
     {
-        CTextureGL::generateMipmap(ETextureTargetGL[m_target]);
+        CTextureGL::generateMipmap(m_target);
     }
 
-    CTextureGL::bindTexture(ETextureTargetGL[m_target], 0);
+    CTextureGL::bindTexture(m_target, 0);
 
-    RENDERER->checkForErrors("Create Texture Error");
+    RENDERER->checkForErrors("CTextureGL: Create Texture Error");
 
     if (success)
     {
@@ -172,25 +189,35 @@ void CTextureGL::destroy()
 
 void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
-    CTextureGL::copyToTexture2D(m_textureID, offset.width, offset.height, size.width, size.height, EImageFormatGL[format], data);
+    CTextureGL::bindTexture(eTexture2D, m_textureID);
+    glTexSubImage2D(ETextureTargetGL[eTexture2D], 0, offset.width, offset.height, size.width, size.height, EImageFormatGL[format], EImageTypeGL[eUnsignedByte], data);
+    CTextureGL::bindTexture(eTexture2D, 0);
 
-    RENDERER->checkForErrors("Copy Texture Error");
+    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
 }
 
-void CTextureGL::bindTexture(u32 target, u32 texture)
+void CTextureGL::bindTexture(ETextureTarget target, u32 texture)
 {
     if (texture != 0)
     {
         ASSERT(glIsTexture(texture) || "Invalid Texture index");
     }
 
-    glBindTexture(target, texture);
+    if (s_currentTextureID[target] != texture)
+    {
+        glBindTexture(ETextureTargetGL[target], texture);
+        s_currentTextureID[target] = texture;
+    }
 }
 
 void CTextureGL::activeTextureLayer(u32 layer)
 {
     ASSERT(ETextureLayer::eLayerMax >= layer || "Not supported count texture units");
-    glActiveTexture(GL_TEXTURE0 + layer);
+    if (s_currentLayerID != layer)
+    {
+        glActiveTexture(GL_TEXTURE0 + layer);
+        s_currentLayerID = layer;
+    }
 }
 
 void CTextureGL::genTexture(u32& texture)
@@ -208,19 +235,19 @@ void CTextureGL::deleteTexture(u32 texture)
     }
 }
 
-void CTextureGL::wrapSampler(u32 sampler, u32 wrap)
+void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
 {
     ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
-    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, wrap);
-    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, wrap);
-    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_R, wrap);
+    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, EWrapTypeGL[wrap]);
+    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, EWrapTypeGL[wrap]);
+    glSamplerParameteri(sampler, GL_TEXTURE_WRAP_R, EWrapTypeGL[wrap]);
 }
 
-void CTextureGL::filterSampler(u32 sampler, u32 min, u32 mag)
+void CTextureGL::filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag)
 {
     ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
-    glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, mag);
-    glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, min);
+    glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, ETextureFilterGL[mag]);
+    glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, ETextureFilterGL[min]);
 }
 
 void CTextureGL::anisotropicSampler(u32 sampler, u32 level)
@@ -247,7 +274,12 @@ void CTextureGL::bindSampler(u32 texture, u32 sampler)
     {
         ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
     }
-    glBindSampler(texture, sampler);
+
+    if (s_currentSamplerID != sampler)
+    {
+        glBindSampler(texture, sampler);
+        s_currentSamplerID = sampler;
+    }
 }
 
 void CTextureGL::deleteSampler(u32 sampler)
@@ -259,19 +291,28 @@ void CTextureGL::deleteSampler(u32 sampler)
     }
 }
 
-void CTextureGL::generateMipmap(u32 target)
+void CTextureGL::generateMipmap(ETextureTarget target)
 {
-    glGenerateMipmap(target);
+    glGenerateMipmap(ETextureTargetGL[target]);
 }
 
-void CTextureGL::initTexture2D(u32 texture)
+void CTextureGL::initTexture1D(u32 texture)
 {
-    CTextureGL::bindTexture(GL_TEXTURE_2D, texture);
-
+    CTextureGL::bindTexture(eTexture1D, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
 
+    glTexImage1D(ETextureTargetGL[eTexture1D], 0, format, m_data[0]._width, 0,
+        format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
+}
+
+void CTextureGL::initTexture2D(u32 texture)
+{
+    CTextureGL::bindTexture(eTexture2D, texture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    u32 format = EImageFormatGL[m_data[0]._format];
     std::function<s32(s32)> internalFormat = [](s32 format)
     {
         switch (format)
@@ -290,28 +331,31 @@ void CTextureGL::initTexture2D(u32 texture)
         return format;
     };
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat(format), m_data[0]._width, m_data[0]._height, 0, 
+    glTexImage2D(ETextureTargetGL[eTexture2D], 0, internalFormat(format), m_data[0]._width, m_data[0]._height, 0,
+        format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
+}
+
+void CTextureGL::initTexture3D(u32 texture)
+{
+    CTextureGL::bindTexture(eTexture3D, texture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    u32 format = EImageFormatGL[m_data[0]._format];
+
+    glTexImage3D(ETextureTargetGL[eTexture3D], 0, format, m_data[0]._width, m_data[0]._height, m_data[0]._depth, 0,
         format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
 }
 
 void CTextureGL::initTextureCubeMap(u32 texture)
 {
-    CTextureGL::bindTexture(GL_TEXTURE_CUBE_MAP, texture);
-
+    CTextureGL::bindTexture(eTextureCubeMap, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    u32 format = EImageFormatGL[m_data[0]._format];
 
     for (u32 i = 0; i < TEXTURE_CUBE_MAP_COUNT; ++i)
     {
-        glTexImage2D(ECubeMapGL[i], 0, GL_RGB, m_data[i]._width, m_data[i]._height, 0, EImageFormatGL[m_data[i]._format],
+        glTexImage2D(ECubeMapGL[i], 0, format, m_data[i]._width, m_data[i]._height, 0, format,
             EImageTypeGL[m_data[i]._type], m_data[i]._data);
     }
-}
-
-void CTextureGL::copyToTexture2D(u32 texture, s32 offsetX, s32 offsetY, u32 width, u32 height, u32 format, void* data)
-{
-    CTextureGL::bindTexture(GL_TEXTURE_2D, texture);
-
-    glTexSubImage2D(GL_TEXTURE_2D, 0, offsetX, offsetY, width, height, format, GL_UNSIGNED_BYTE, data);
-
-    CTextureGL::bindTexture(GL_TEXTURE_2D, 0);
 }
