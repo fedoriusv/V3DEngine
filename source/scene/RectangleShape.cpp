@@ -60,7 +60,6 @@ void CRectangleShape::refresh()
 void CRectangleShape::build()
 {
     const u32 count = 6;
-    const f32 s = 0.5f;
 
     Vector2D leftUp = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getLeftX(), m_rect.getTopY()));
     Vector2D rightDown = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getRightX(), m_rect.getBottomY()));
@@ -73,14 +72,14 @@ void CRectangleShape::build()
 
     const f32 normals[][3] =
     {
-        { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
-        { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }
+        { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, 
+        { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }
     };
 
     const f32 texCoord[][2] =
     {
-        { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f },
-        { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }
+        { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
+        { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f }
     };
 
     SVertexData& data = CShape::getGeometryData();
