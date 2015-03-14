@@ -147,3 +147,8 @@ bool CRendererGL::isLocked() const
 {
     return m_isLocked;
 }
+
+void CRendererGL::resetTexture()
+{
+    CTextureGL::reset();
+}

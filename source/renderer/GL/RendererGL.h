@@ -38,6 +38,8 @@ namespace renderer
 
     private:
 
+        void                resetTexture()                                                          override;
+
         bool                m_isLocked;
     };
 

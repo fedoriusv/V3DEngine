@@ -51,7 +51,7 @@ void CRenderer::reshape(u32 width, u32 height)
     f32 aspectRatio = (f32)width / (f32)height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, (f32)height, 0.0f, -1.0f, 1.0f);
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, - 1.0f, 1.0f);
     //m_orthoMatrix.makeTransposed();
 }
 
@@ -150,7 +150,9 @@ void CRenderer::draw(const RenderJobPtr& job)
         CRenderer::updateMaterial(material, pass);
         CRenderer::updateLight(transform, pass);
 
-        for (u32 layer = 0; layer < material->getTextureCount(); ++layer)
+        //Bind Texture
+        u32 layersCount = material->getTextureCount();
+        for (u32 layer = 0; layer < layersCount; ++layer)
         {
             const TexturePtr& texture = material->getTexture(layer);
             if (pass->getShaderData()->getSamplerList().size() >= layer)
@@ -166,6 +168,12 @@ void CRenderer::draw(const RenderJobPtr& job)
             }
         }
 
+        if (layersCount == 0)
+        {
+            this->resetTexture();
+        }
+
+        //Draw Geometry
         geometry->draw();
 
         pass->unbind();
