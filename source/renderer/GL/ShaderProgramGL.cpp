@@ -6,7 +6,9 @@
 #include "GL/glew.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
+
+u32 CShaderProgramGL::s_currentShader = 0;
 
 CShaderProgramGL::CShaderProgramGL(const ShaderDataPtr& data)
     : CShaderProgram(data)
@@ -83,11 +85,13 @@ void CShaderProgramGL::destroy()
 void CShaderProgramGL::bind()
 {
     CShaderProgramGL::useProgram(m_shaderProgID);
+    RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
 }
 
 void CShaderProgramGL::unbind()
 {
     CShaderProgramGL::useProgram(0);
+    RENDERER->checkForErrors("CShaderProgramGL: Unbind ShaderProgram Error");
 }
 
 bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& shaders)
@@ -155,7 +159,7 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
 #endif
     }
 
-    RENDERER->checkForErrors("Init ShaderProgram Error");
+    RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
 
     return (linkStatus == GL_TRUE) ? true : false;
 }
@@ -201,15 +205,22 @@ void CShaderProgramGL::deleteProgram(u32 shaderProgram)
     }
 }
 
-void CShaderProgramGL::useProgram(u32 shaderProgram)
+bool CShaderProgramGL::useProgram(u32 shaderProgram)
 {
     if (shaderProgram != 0)
     {
         ASSERT(glIsProgram(shaderProgram) || "Invalid Index bind Shader program");
     }
-    glUseProgram(shaderProgram);
 
-    RENDERER->checkForErrors("Bind ShaderProgram Error");
+    if (s_currentShader != shaderProgram)
+    {
+        glUseProgram(shaderProgram);
+        s_currentShader = shaderProgram;
+
+        return true;
+    }
+
+    return false;
 }
 
 bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value)

@@ -1,4 +1,19 @@
 <technique name="screen2D" version="100">
+	
+	<!-- Textures -->
+	<textures>
+		<texture name="wall" file="textures/wall.bmp"/>
+		<texture name="box" file="textures/box.jpg"/>
+	</textures>
+	
+	<!-- Render Targets -->
+    <rendertargets>
+        <target name="upCorner" x="0" y="512" width="256" height="256" ratio="0.0" color="0xff00ff00">
+            <color active="true" attach="1" clear="true" format="8888" output="render"/>
+            <depth active="true" clear="true" format="16" output="render"/>
+            <stencil active="false" clear="true" format="16"/>
+        </target>
+    </rendertargets>
 
     <!-- Render Passes -->
 	<pass name="pass0">
@@ -11,7 +26,7 @@
 			<var name="positions" type="vec3" val="mesh.positions"/>
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
-		<samplers> 
+		<samplers>
 		</samplers>
 		<renderstate polygonmode="fill" winding="cw" cullface="false"/>
 		<rendertarget val="default"/>

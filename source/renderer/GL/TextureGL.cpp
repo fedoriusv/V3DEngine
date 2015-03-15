@@ -196,7 +196,7 @@ void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& s
     RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
 }
 
-void CTextureGL::bindTexture(ETextureTarget target, u32 texture)
+bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
 {
     if (texture != 0)
     {
@@ -207,17 +207,25 @@ void CTextureGL::bindTexture(ETextureTarget target, u32 texture)
     {
         glBindTexture(ETextureTargetGL[target], texture);
         s_currentTextureID[target] = texture;
+
+        return true;
     }
+
+    return false;
 }
 
-void CTextureGL::activeTextureLayer(u32 layer)
+bool CTextureGL::activeTextureLayer(u32 layer)
 {
     ASSERT(ETextureLayer::eLayerMax >= layer || "Not supported count texture units");
     if (s_currentLayerID != layer)
     {
         glActiveTexture(GL_TEXTURE0 + layer);
         s_currentLayerID = layer;
+
+        return true;
     }
+
+    return false;
 }
 
 void CTextureGL::genTexture(u32& texture)
@@ -268,7 +276,7 @@ void CTextureGL::genSampler(u32& sampler)
     ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
 }
 
-void CTextureGL::bindSampler(u32 texture, u32 sampler)
+bool CTextureGL::bindSampler(u32 texture, u32 sampler)
 {
     if (sampler != 0)
     {
@@ -279,7 +287,11 @@ void CTextureGL::bindSampler(u32 texture, u32 sampler)
     {
         glBindSampler(texture, sampler);
         s_currentSamplerID = sampler;
+
+        return true;
     }
+
+    return false;
 }
 
 void CTextureGL::deleteSampler(u32 sampler)

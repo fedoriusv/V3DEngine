@@ -33,7 +33,7 @@ namespace renderer
         s32                 getAttrib(u32 shaderProgram, const std::string& name);
         void                createProgram(u32& shaderProgram);
         void                deleteProgram(u32 shaderProgram);
-        void                useProgram(u32 shaderProgram);
+        bool                useProgram(u32 shaderProgram);
 
         bool                setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) override;
 
@@ -46,6 +46,8 @@ namespace renderer
         void                setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) override;
 
         s32                 getUniformID(const u32 shader, const std::string& name)             override;
+
+        static u32          s_currentShader;
 
     };
 

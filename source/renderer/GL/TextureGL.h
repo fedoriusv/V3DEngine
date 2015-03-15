@@ -34,12 +34,12 @@ namespace renderer
 
         static void     genTexture(u32& texture);
         static void     deleteTexture(u32 texture);
-        static void     bindTexture(ETextureTarget target, u32 texture);
-        static void     activeTextureLayer(u32 layer);
+        static bool     bindTexture(ETextureTarget target, u32 texture);
+        static bool     activeTextureLayer(u32 layer);
 
         static void     genSampler(u32& sampler);
         static void     deleteSampler(u32 sampler);
-        static void     bindSampler(u32 texture, u32 sampler);
+        static bool     bindSampler(u32 texture, u32 sampler);
         static void     wrapSampler(u32 sampler, EWrapType wrap);
         static void     filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag);
         static void     anisotropicSampler(u32 sampler, u32 level);
