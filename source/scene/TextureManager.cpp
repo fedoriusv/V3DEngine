@@ -23,9 +23,15 @@ CTextureManager::~CTextureManager()
     unloadAll();
 }
 
-const TexturePtr& CTextureManager::get(const std::string& name)
+const TexturePtr CTextureManager::get(const std::string& name)
 {
-    return m_textures[name];
+    TextureMap::const_iterator it = m_textures.find(name);
+    if (it != m_textures.end())
+    {
+        return it->second;
+    }
+
+    return nullptr;
 }
 
 const TexturePtr CTextureManager::load(const std::string* files[6])
@@ -35,13 +41,12 @@ const TexturePtr CTextureManager::load(const std::string* files[6])
     return nullptr;
 }
 
-const TexturePtr CTextureManager::load(const std::string& name)
+const TexturePtr CTextureManager::load(const std::string& file, const std::string& alias)
 {
-    std::string nameStr = name;
-    std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
+    std::string nameStr = file;
+    std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
 
     auto it = m_textures.find(nameStr);
-
     if (it != m_textures.end())
     {
         return it->second;
@@ -109,8 +114,9 @@ const TexturePtr CTextureManager::load(const std::string& name)
                         return nullptr;
                     }
 
-                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(nameStr, texture));
+                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(alias.empty() ? nameStr : alias, texture));
 
+                    LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;
                 }
             }

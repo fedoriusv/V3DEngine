@@ -21,8 +21,8 @@ namespace scene
         CTextureManager();
         virtual                     ~CTextureManager();
 
-        const renderer::TexturePtr& get(const std::string& name);
-        const renderer::TexturePtr  load(const std::string& name);
+        const renderer::TexturePtr  get(const std::string& name);
+        const renderer::TexturePtr  load(const std::string& file, const std::string& alias = "");
         const renderer::TexturePtr  load(const std::string* files[6]);
 
 
