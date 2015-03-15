@@ -284,16 +284,14 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        const std::string varName = varElement->Attribute("name");
-        if (varName.empty())
+        SamplerPtr sampler = std::make_shared<CShaderSampler>();
+        if (!sampler->parse(varElement))
         {
-            LOG_ERROR("CRenderPass: Cannot find sampler name from pass '%s'", m_name.c_str());
-
+            LOG_ERROR("CRenderPass: Parse error samplers element");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
-
-        m_shaderData->addSampler(varName);
+        m_shaderData->addSampler(sampler);
 
         varElement = varElement->NextSiblingElement("var");
     }

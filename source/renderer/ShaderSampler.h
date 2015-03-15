@@ -2,6 +2,13 @@
 #define _V3D_SHADER_SAMPLER_H_
 
 #include "common.h"
+#include "RenderTarget.h"
+#include "Texture.h"
+
+namespace tinyxml2
+{
+    class XMLElement;
+}
 
 namespace v3d
 {
@@ -13,15 +20,28 @@ namespace renderer
     {
     public:
 
+        enum ESamplerType
+        {
+            eInvalidSampler = -1,
+            eTextureSampler,
+            eRenderTargetSampler
+        };
+
         CShaderSampler();
         virtual                 ~CShaderSampler();
 
-        void                    setSampler(const std::string& attribute);
+        void                    setAttribute(const std::string& attribute);
         const std::string&      getAttribute() const;
+
+        bool                    parse(const tinyxml2::XMLElement* root);
 
     protected:
 
+        ESamplerType            m_type;
+
         std::string             m_attribute;
+        RenderTargetWPtr        m_target;
+        TextureWPtr             m_texture;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

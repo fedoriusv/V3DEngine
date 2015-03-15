@@ -265,13 +265,10 @@ bool CShaderData::isExistSampler(const std::string& name)
     return (iter != m_samplerList.end());
 }
 
-void CShaderData::addSampler(const std::string& name)
+void CShaderData::addSampler(const SamplerPtr& sampler)
 {
-    if (!isExistSampler(name))
+    if (!isExistSampler(sampler->getAttribute()))
     {
-        SamplerPtr sampler = std::make_shared<CShaderSampler>();
-        sampler->setSampler(name);
-
         m_samplerList.push_back(sampler);
     }
 }

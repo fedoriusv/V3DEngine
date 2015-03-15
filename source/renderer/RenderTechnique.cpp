@@ -1,5 +1,6 @@
 #include "RenderTechnique.h"
 #include "scene/RenderTargetManager.h"
+#include "scene/TextureManager.h"
 #include "utils/Logger.h"
 #include "Engine.h"
 
@@ -61,14 +62,14 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
     const std::string techniqueName = root->Attribute("name");
     if (techniqueName.empty())
     {
-        LOG_ERROR("CRenderTechnique: Have no technique name");
+        LOG_ERROR("CRenderTechnique: Technique have't name");
         return false;
     }
-
     m_name = techniqueName;
 
     LOG_INFO("CRenderTechnique: Parse render technique [%s]", m_name.c_str());
 
+    //Parse RenderTargets
     tinyxml2::XMLElement* rendertargetsElement = root->FirstChildElement("rendertargets");
     if (rendertargetsElement)
     {
@@ -77,8 +78,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
         {
             if (!targetElement->Attribute("name"))
             {
-                LOG_ERROR("CRenderTechnique: Rendertarget have not name");
-
+                LOG_ERROR("CRenderTechnique: Rendertarget have't name");
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
             }
@@ -93,15 +93,13 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
             if (!target->parse(targetElement))
             {
                 LOG_ERROR("CRenderTechnique: Rendertarget parse error");
-
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
             }
 
             if (!target->create())
             {
-                LOG_ERROR("CRenderPass: Can not create render target");
-
+                LOG_ERROR("CRenderPass: Can't create render target");
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
             }
@@ -111,10 +109,44 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
         }
     }
 
+    //Parse Textures
+    tinyxml2::XMLElement* texturesElement = root->FirstChildElement("textures");
+    if (texturesElement)
+    {
+        tinyxml2::XMLElement* textureElement = texturesElement->FirstChildElement("texture");
+        while (textureElement)
+        {
+            if (!textureElement->Attribute("name"))
+            {
+                LOG_ERROR("CRenderTechnique: Texture have't name");
+                textureElement = textureElement->NextSiblingElement("target");
+                continue;
+            }
+
+            if (!textureElement->Attribute("file"))
+            {
+                LOG_ERROR("CRenderTechnique: Texture have't path to file");
+                textureElement = textureElement->NextSiblingElement("target");
+                continue;
+            }
+            
+            std::string nameStr = textureElement->Attribute("name");
+            std::string fileStr = textureElement->Attribute("file");
+            const TexturePtr texture = CTextureManager::getInstance()->load(fileStr, nameStr);
+            if (!texture)
+            {
+                LOG_WARNING("CRenderTechnique: File [%s] not found or not support format", fileStr.c_str());
+            }
+
+            textureElement = textureElement->NextSiblingElement("target");
+        }
+    }
+
+    //Parse Passes
     tinyxml2::XMLElement* passElement = root->FirstChildElement("pass");
     if (!passElement)
     {
-        LOG_ERROR("CRenderTechnique: Have no pass section");
+        LOG_ERROR("CRenderTechnique: Pass section have't exist");
         return false;
     }
 
@@ -123,7 +155,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
         RenderPassPtr pass = std::make_shared<CRenderPass>();
         if (!pass->parse(passElement))
         {
-            LOG_ERROR("CRenderTechnique: Pass section");
+            LOG_ERROR("CRenderTechnique: Error parse pass section");
             return false;
         }
         CRenderTechnique::addRenderPass(pass);
@@ -165,14 +197,14 @@ bool CRenderTechnique::load()
     tinyxml2::XMLError success = doc.Parse(data.c_str());
     if (success)
     {
-        LOG_ERROR("CRenderTechnique: Error Parse Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Error Parse Stream name [%s]", CResource::getResourseName().c_str());
         return false;
     }
 
     tinyxml2::XMLElement* rootElement = doc.FirstChildElement("technique");
     if (!rootElement)
     {
-        LOG_ERROR("CRenderTechnique: Can not find technique in Stream name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Can't find technique in Stream name [%s]", CResource::getResourseName().c_str());
         return false;
     }
 
