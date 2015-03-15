@@ -189,7 +189,7 @@ CRectangleShape* CSceneManager::addRectangle(CNode* parent, const Rect& rect)
 {
     CRectangleShape* node = new CRectangleShape(rect);
     node->setParent(parent);
-    node->setPosition(Vector3D(0.0f, 0.0f, 0.0f));
+    node->setPosition(Vector3D(0.f, 0.f, 0.f));
 
     CSceneManager::addNode(node);
 
