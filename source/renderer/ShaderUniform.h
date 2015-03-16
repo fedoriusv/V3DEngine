@@ -63,38 +63,38 @@ namespace renderer
         };
 
         CShaderUniform();
-        virtual                             ~CShaderUniform();
+        ~CShaderUniform();
 
-        void                                setUniform(EDataType type, const std::string& attribute, void* value);
-        void                                setUniforID(s32 id);
+        void                        setUniform(EDataType type, const std::string& attribute, void* value);
+        void                        setUniforID(s32 id);
 
-        EDataType                           getUniformType() const;
-        void*                               getUniforValue() const;
-        const std::string&                  getUniformName() const;
+        EDataType                   getUniformType() const;
+        void*                       getUniforValue() const;
+        const std::string&          getUniformName() const;
 
-        EUniformData                        getUniformData() const;
-        s32                                 getUniformID(const s32 index = -1)   const;
+        EUniformData                getUniformData() const;
+        s32                         getUniformID(const s32 index = -1)   const;
 
 
-        static const std::string&           getNameByValue(EUniformData type);
-        static const EUniformData           getValueByName(const std::string& name);
+        static const std::string&   getNameByValue(EUniformData type);
+        static const EUniformData   getValueByName(const std::string& name);
 
     private:
 
-        friend                              CShaderData;
+        friend                      CShaderData;
 
-        void                                setUniform(const std::string& attribute, EUniformData data);
+        void                        setUniform(const std::string& attribute, EUniformData data);
 
-        EDataType                           m_uniformType;
-        void*                               m_uniformValue;
-        std::string                         m_attribute;
-        EUniformData                        m_uniformData;
-        s32                                 m_id;
+        EDataType                   m_uniformType;
+        void*                       m_uniformValue;
+        std::string                 m_attribute;
+        EUniformData                m_uniformData;
+        s32                         m_id;
 
-        void                                allocMemory(EDataType type, void* value);
-        void                                deallocMemory();
+        void                        allocMemory(EDataType type, void* value);
+        void                        deallocMemory();
 
-        static const std::string            s_uniformName[eUniformsCount];
+        static const std::string    s_uniformName[eUniformsCount];
 
     };
 

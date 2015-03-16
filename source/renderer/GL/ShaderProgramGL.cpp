@@ -256,7 +256,7 @@ bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shad
                 core::Vector2D& val = *(core::Vector2D*)value;
                 CShaderProgramGL::setUniformVector2(location, val);
             }
-                break;
+            break;
 
             case CShaderUniform::eTypeVector3:
             {
@@ -290,7 +290,6 @@ bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shad
             {
                 location = -1;
             }
-            break;
         }
     }
 

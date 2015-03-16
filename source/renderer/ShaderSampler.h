@@ -38,8 +38,8 @@ namespace renderer
     protected:
 
         ESamplerType            m_type;
-
         std::string             m_attribute;
+
         RenderTargetWPtr        m_target;
         TextureWPtr             m_texture;
     };

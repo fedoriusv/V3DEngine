@@ -43,7 +43,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
         LOG_ERROR("CRenderPass: Cannot find sampler name");
         return false;
     }
-    m_attribute = varName;
+    CShaderSampler::setAttribute(varName);
 
     const std::string varVal = root->Attribute("val");
     if (!varVal.empty())
