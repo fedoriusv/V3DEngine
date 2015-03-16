@@ -9,7 +9,6 @@ using namespace renderer;
 CShaderProgram::CShaderProgram(const ShaderDataPtr& data)
     : m_shaderProgID(0)
     , m_enable(true)
-    , m_isActive(false)
     , m_shaderData(data)
 {
 }

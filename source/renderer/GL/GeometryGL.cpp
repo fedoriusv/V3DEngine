@@ -45,7 +45,7 @@ void CGeometryGL::init()
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr& pass = m_technique->getRenderPass(idx);
-        const AttributeList& attributes = pass->getUserShaderData()->getAttributeList();
+        const AttributeList& attributes = pass->getDefaultShaderData()->getAttributeList();
 
         CGeometryGL::genBuffers(m_data._verticesId);
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
@@ -215,7 +215,7 @@ void CGeometryGL::refresh()
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr& pass = m_technique->getRenderPass(idx);
-        const AttributeList& attributes = pass->getUserShaderData()->getAttributeList();
+        const AttributeList& attributes = pass->getDefaultShaderData()->getAttributeList();
 
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
 

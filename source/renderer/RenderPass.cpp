@@ -332,8 +332,9 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         if (!shader->create())
         {
             LOG_ERROR("CRenderPass: Error create shader");
+            shaderElement = shaderElement->NextSiblingElement("var");
+            continue;
         }
-
         m_program->addShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("var");

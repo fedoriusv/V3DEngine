@@ -64,7 +64,6 @@ namespace renderer
         u32             m_shaderProgID;
 
         bool            m_enable;
-        bool            m_isActive;
 
         ShaderDataPtr   m_shaderData;
         ShaderList      m_shaderList;

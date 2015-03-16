@@ -145,7 +145,10 @@ void CShaderGL::deleteShader(u32 shader)
 
 bool CShaderGL::create(const std::string& shader, EShaderType type)
 {
-    m_data = reinterpret_cast<void*>(shader[0]);
+    c8* data = (c8*)malloc(shader.size() + 1);
+    memcpy(data, shader.data(), shader.size());
+    data[shader.size()] = '\0';
+    m_data = reinterpret_cast<void*>(data);
     m_type = type;
 
     return CShaderGL::create();

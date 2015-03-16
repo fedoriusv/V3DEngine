@@ -29,23 +29,21 @@ bool CShaderProgramGL::create()
     shadersId.clear();
 
     return status;
-
 }
 
 void CShaderProgramGL::destroy()
 {
-    for (auto shader : m_shaderList)
-    {
-        CShaderProgramGL::destroyShader(shader);
-    }
-
+    m_shaderList.clear();
     CShaderProgramGL::deleteProgram(m_shaderProgID);
 }
 
 void CShaderProgramGL::bind()
 {
-    CShaderProgramGL::useProgram(m_shaderProgID);
-    RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
+    if (m_enable)
+    {
+        CShaderProgramGL::useProgram(m_shaderProgID);
+        RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
+    }
 }
 
 void CShaderProgramGL::unbind()
@@ -64,7 +62,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     }
 
     const AttributeList& attributeList = m_shaderData->getAttributeList();
-    for (auto attribute : attributeList)
+    for (auto& attribute : attributeList)
     {
         const std::string& name = attribute->getAttribute();
         CShaderAttribute::EShaderAttribute type = attribute->getType();
@@ -75,7 +73,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     glLinkProgram(m_shaderProgID);
     glValidateProgram(m_shaderProgID);
 
-    for (auto attribute : attributeList)
+    for (auto& attribute : attributeList)
     {
         const std::string& name = attribute->getAttribute();
         CShaderAttribute::EShaderAttribute type = attribute->getType();
