@@ -23,15 +23,20 @@ namespace renderer
         enum ESamplerType
         {
             eInvalidSampler = -1,
+            eUserSampler,
             eTextureSampler,
             eRenderTargetSampler
         };
 
         CShaderSampler();
-        virtual                 ~CShaderSampler();
+        ~CShaderSampler();
+
+        CShaderSampler&         operator=(const CShaderSampler& other);
 
         void                    setAttribute(const std::string& attribute);
         const std::string&      getAttribute() const;
+
+        ESamplerType            getType() const;
 
         bool                    parse(const tinyxml2::XMLElement* root);
 

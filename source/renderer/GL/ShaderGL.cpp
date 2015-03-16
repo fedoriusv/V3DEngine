@@ -5,7 +5,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CShaderGL::CShaderGL()
 {
@@ -13,45 +13,25 @@ CShaderGL::CShaderGL()
 
 CShaderGL::~CShaderGL()
 {
-    CShader::clear();
     CShaderGL::deleteShader(m_shaderID);
     m_shaderID = 0;
 }
 
-bool CShaderGL::create(const std::string& body, EShaderType type)
+bool CShaderGL::create()
 {
-    if (body.empty())
-    {
-        LOG_ERROR("Shader: Empty Shader Body");
-        return false;
-    }
-
-    m_shaderType = type;
-
-    c8* data = (c8*)malloc(body.size() + 1);
-    memcpy(data, body.data(), body.size());
-    data[body.size()] = '\0';
-
-    m_data = (void*)data;
-
-    m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
-    CShaderGL::clear();
-
-    return m_compileStatus;
-}
-
-bool CShaderGL::load(const std::string& file, EShaderType type)
-{
-    m_data = reinterpret_cast<void*>(read(file));
-    m_shaderType = type;
-
     if (!m_data)
     {
         LOG_ERROR("Shader: Empty Shader Body");
         return false;
     }
 
-    m_compileStatus = CShaderGL::initShader(m_shaderID, m_shaderType, m_data);
+    if (m_type == eShaderUnknown)
+    {
+        LOG_ERROR("Shader: Invalid Shader Type");
+        return false;
+    }
+
+    m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_data);
     CShaderGL::clear();
 
     return m_compileStatus;
@@ -78,7 +58,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
     if (!isCompiled)
     {
-        LOG_ERROR("InitShader: shader not compiled id: %d", shader);
+        LOG_ERROR("CShaderGL: shader not compiled id: %d", shader);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;
@@ -105,7 +85,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
                 }
                 return "Unknown";
             };
-            LOG_ERROR("Shader [%s] Error: %s", strFunc(type), buffer);
+            LOG_ERROR("CShaderGL: Shader [%s] Error\n: %s", strFunc(type), buffer);
         }
 #endif
     }
@@ -163,3 +143,10 @@ void CShaderGL::deleteShader(u32 shader)
     }
 }
 
+bool CShaderGL::create(const std::string& shader, EShaderType type)
+{
+    m_data = reinterpret_cast<void*>(shader[0]);
+    m_type = type;
+
+    return CShaderGL::create();
+}

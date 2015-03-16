@@ -27,13 +27,16 @@ namespace renderer
     public:
 
         CRenderPass();
-        virtual                 ~CRenderPass();
+        ~CRenderPass();
 
         const ShaderProgramPtr& getShaderProgram() const;
         void                    setShaderProgram(const ShaderProgramPtr& program);
 
-        const ShaderDataPtr&    getShaderData() const;
-        void                    setShaderData(const ShaderDataPtr& data);
+        const ShaderDataPtr&    getUserShaderData() const;
+        void                    setUserShaderData(const ShaderDataPtr& data);
+
+        const ShaderDataPtr&    getDefaultShaderData() const;
+        void                    setDefaultShaderData(const ShaderDataPtr& data);
 
         const RenderStatePtr&   getRenderState() const;
         void                    setRenderState(const RenderStatePtr& state);
@@ -69,7 +72,8 @@ namespace renderer
         void                    parseArrayValue(const std::string& val, f32* array, u32 count);
 
         ShaderProgramPtr        m_program;
-        ShaderDataPtr           m_shaderData;
+        ShaderDataPtr           m_userShaderData;
+        ShaderDataPtr           m_defaultShaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
         RenderTargetPtr         m_renderTarget;

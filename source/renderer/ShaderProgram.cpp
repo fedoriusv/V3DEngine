@@ -1,18 +1,17 @@
 #include "ShaderProgram.h"
 #include "ShaderUniform.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CShaderProgram::CShaderProgram(const ShaderDataPtr& data)
-    : CObject()
-    , m_shaderProgID(0)
+    : m_shaderProgID(0)
     , m_enable(true)
     , m_isActive(false)
     , m_shaderData(data)
 {
-    m_type = EObjectType::eTypeShaderProgram;
 }
 
 CShaderProgram::~CShaderProgram()
@@ -35,7 +34,7 @@ void CShaderProgram::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CShaderProgram::addShader(ShaderPtr shader)
+void CShaderProgram::addShader(const ShaderPtr& shader)
 {
     if (shader)
     {
@@ -43,14 +42,14 @@ void CShaderProgram::addShader(ShaderPtr shader)
     }
 }
 
-void CShaderProgram::destroyShader(ShaderPtr shader)
+void CShaderProgram::destroyShader(const ShaderPtr& shader)
 {
     if (shader)
     {
         auto current = std::find(m_shaderList.begin(), m_shaderList.end(), shader);
         if (current == m_shaderList.end())
         {
-            LOG_ERROR("CShaderProgram: Shader Program not found");
+            LOG_WARNING("CShaderProgram: Shader Program not found");
             return;
         }
 
@@ -67,4 +66,38 @@ void CShaderProgram::getShaderIDArray(std::vector<u32>& shaders)
             shaders.push_back(m_shaderList[i]->getShaderID());
         }
     }
+}
+
+bool CShaderProgram::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
+{
+    if (vertex.empty() || fragment.empty())
+    {
+        ASSERT(false && "Empty Shader file name");
+        return false;
+    }
+
+    ShaderPtr vshader = RENDERER->makeSharedShader();
+    vshader->create(vertex, CShader::eVertex);
+    CShaderProgram::addShader(vshader);
+
+    ShaderPtr fshader = RENDERER->makeSharedShader();
+    fshader->create(fragment, CShader::eFragment);
+    CShaderProgram::addShader(fshader);
+
+    va_list argList;
+    va_start(argList, arg);
+    for (u32 i = 0; i < arg; i += 2)
+    {
+        char* strName = va_arg(argList, char*);
+        int type = va_arg(argList, int);
+
+        ShaderPtr shader = RENDERER->makeSharedShader();
+        shader->create(strName, (CShader::EShaderType)type);
+        CShaderProgram::addShader(shader);
+    }
+    va_end(argList);
+
+    bool status = create();
+
+    return status;
 }

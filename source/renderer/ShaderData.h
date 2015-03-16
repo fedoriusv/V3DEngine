@@ -54,12 +54,12 @@ namespace renderer
 
         void                            addUniform(const std::string& name, CShaderUniform::EDataType type);
         void                            addDefaultUniform(const std::string& name, EUniformData data);
-        void                            addAttribute(const std::string& name, CShaderAttribute::EShaderAttribute type);
+        void                            addAttribute(const AttributePtr& attribute);
         void                            addSampler(const SamplerPtr& sampler);
 
-        AttributeList                   m_attributeList;
         UniformList                     m_uniformList;
         UniformList                     m_defaultUniformList;
+        AttributeList                   m_attributeList;
         SamplerList                     m_samplerList;
 
     private:

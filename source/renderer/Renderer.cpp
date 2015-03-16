@@ -155,7 +155,7 @@ void CRenderer::draw(const RenderJobPtr& job)
         for (u32 layer = 0; layer < layersCount; ++layer)
         {
             const TexturePtr& texture = material->getTexture(layer);
-            if (pass->getShaderData()->getSamplerList().size() >= layer)
+            if (pass->getDefaultShaderData()->getSamplerList().size() >= layer)
             {
                 if (texture->isEnable())
                 {
@@ -194,7 +194,7 @@ bool CRenderer::isDebugMode() const
 
 void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr& data = pass->getShaderData();
+    const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getDefaultUniformList();
@@ -268,7 +268,7 @@ bool CRenderer::checkLOD(const core::Matrix4D& transform, const RenderPassPtr& p
 
 void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr& data = pass->getShaderData();
+    const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getDefaultUniformList();
@@ -337,7 +337,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         return true;
     });
 
-    const ShaderDataPtr& data = pass->getShaderData();
+    const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     if (lights.empty())

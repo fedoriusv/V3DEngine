@@ -3,6 +3,11 @@
 
 #include "common.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
+
 namespace v3d
 {
 namespace renderer
@@ -27,9 +32,11 @@ namespace renderer
         CShader();
         virtual                     ~CShader();
 
-        virtual bool                create(const std::string& body, EShaderType type) = 0;
-        virtual bool                load  (const std::string& file, EShaderType type) = 0;
-        virtual void                destroy()                                         = 0;
+        virtual bool                create()                                            = 0;
+        virtual bool                create(const std::string& shader, EShaderType type) = 0;
+        virtual void                destroy()                                           = 0;
+
+        bool                        parse(const tinyxml2::XMLElement* root);
 
         u32                         getShaderID()       const;
         EShaderType                 getShaderType()     const;
@@ -43,19 +50,20 @@ namespace renderer
 
     protected:
 
-        char*                       read(const std::string& file);
+        u8*                         load(const std::string& file);
         void                        clear();
 
         u32                         m_shaderID;
 
-        EShaderType                 m_shaderType;
-        bool                        m_compileStatus;
-        void*                       m_data;
+        EShaderType                 m_type;
         std::string                 m_name;
+        void*                       m_data;
+
+        bool                        m_compileStatus;
 
     private:
 
-        static const std::string    s_shaderTypeName[EShaderType::eShaderCount];
+        static const std::string    s_shaderTypeName[eShaderCount];
 
     };
 

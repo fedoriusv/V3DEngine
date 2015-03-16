@@ -55,7 +55,7 @@ CDebugGeometryGL::~CDebugGeometryGL()
 
 void CDebugGeometryGL::draw()
 {
-    const ShaderDataPtr& data = s_pass->getShaderData();
+    /*const ShaderDataPtr& data = s_pass->getShaderData();
 
     if (m_flag & EDebugGeometryFlag::eGeometryFlagNormals)
     {
@@ -70,7 +70,7 @@ void CDebugGeometryGL::draw()
         CDebugGeometryGL::drawObject(m_objects[EDebugGeometry::eGeometryEdges]);
     }
 
-    RENDERER->checkForErrors("CDebugDrawGL Update Error");
+    RENDERER->checkForErrors("CDebugDrawGL Update Error");*/
 }
 
 void CDebugGeometryGL::drawObject(const SDebugObject& object)

@@ -1,7 +1,12 @@
 #include "Shader.h"
+#include "utils/Logger.h"
+#include "stream/StreamManager.h"
+
+#include "tinyxml2.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
+using namespace stream;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,15 +40,16 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 
 CShader::CShader()
     : m_shaderID(0)
-    , m_shaderType(EShaderType::eShaderUnknown)
-    , m_compileStatus(false)
+    , m_type(eShaderUnknown)
     , m_data(nullptr)
     , m_name("")
+    , m_compileStatus(false)
 {
 }
 
 CShader::~CShader()
 {
+    CShader::clear();
 }
 
 u32 CShader::getShaderID() const
@@ -53,7 +59,7 @@ u32 CShader::getShaderID() const
 
 CShader::EShaderType CShader::getShaderType() const
 {
-    return m_shaderType;
+    return m_type;
 }
 
 bool CShader::getCompileStatus() const
@@ -71,38 +77,6 @@ void CShader::setName(const std::string& name)
     m_name = name;
 }
 
-char* CShader::read(const std::string& file)
-{
-    FILE* pFile;
-    char* content = nullptr;
-
-    s32 count = 0;
-
-    if (!file.empty())
-    {
-        fopen_s(&pFile, file.c_str(), "rt");
-
-        if (pFile != nullptr)
-        {
-            fseek(pFile, 0, SEEK_END);
-            count = ftell(pFile);
-            rewind(pFile);
-
-            if (count > 0)
-            {
-                content = (char *)malloc(sizeof(char)* (count + 1));
-                count = (s32)fread(content, sizeof(char), count, pFile);
-                content[count] = '\0';
-            }
-
-            fclose(pFile);
-        }
-    }
-
-    return content;
-}
-
-
 void CShader::clear()
 {
     if (m_data != nullptr)
@@ -110,4 +84,82 @@ void CShader::clear()
         free(m_data);
         m_data = nullptr;
     }
+}
+
+bool CShader::parse(const tinyxml2::XMLElement* root)
+{
+    CShader::clear();
+
+    if (!root)
+    {
+        LOG_ERROR("CShader: Not exist xml shader element");
+        return false;
+    }
+
+    if (!root->Attribute("name"))
+    {
+        LOG_ERROR("CShader: Empty shader name");
+        return false;
+    }
+    const std::string shaderName = root->Attribute("name");
+    CShader::setName(shaderName);
+
+
+    if (!root->Attribute("type"))
+    {
+        LOG_ERROR("CShader: Empty shader type");
+        return false;
+    }
+    else
+    {
+        LOG_INFO("CRenderPass: Create shader [%s] from data", shaderName.c_str());
+        const std::string shaderType = root->Attribute("type");
+        m_type = CShader::getShaderTypeByName(shaderType);
+    }
+
+    if (!root->Attribute("file"))
+    {
+        const std::string shaderBody = root->GetText();
+        if (shaderBody.empty())
+        {
+            LOG_ERROR("CShader: Empty shader body");
+            return false;
+        }
+
+        c8* data = (c8*)malloc(shaderBody.size() + 1);
+        memcpy(data, shaderBody.data(), shaderBody.size());
+        data[shaderBody.size()] = '\0';
+        m_data = reinterpret_cast<void*>(data);
+    }
+    else
+    {
+        const std::string shaderPath = root->Attribute("file");
+        LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
+
+        m_data = CShader::load(shaderPath);
+        if (!m_data)
+        {
+            LOG_ERROR("CShader: Error load shader %s", shaderPath.c_str());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+u8* CShader::load(const std::string& file)
+{
+    FileStreamPtr stream = CStreamManager::createFileStream(file, FileStream::e_in);
+    if (stream->isOpen())
+    {
+        std::string data;
+
+        stream->read(data);
+        stream->close();
+
+        return nullptr;
+
+    }
+
+    return nullptr;
 }

@@ -19,6 +19,19 @@ CShaderSampler::~CShaderSampler()
 {
 }
 
+CShaderSampler& CShaderSampler::operator=(const CShaderSampler& other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    m_attribute = other.m_attribute;
+    m_type = other.m_type;
+    m_target = other.m_target;
+    m_texture = other.m_texture;
+}
+
 void CShaderSampler::setAttribute(const std::string& attribute)
 {
     m_attribute = attribute;
@@ -27,6 +40,11 @@ void CShaderSampler::setAttribute(const std::string& attribute)
 const std::string& CShaderSampler::getAttribute() const
 {
     return m_attribute;
+}
+
+CShaderSampler::ESamplerType CShaderSampler::getType() const
+{
+    return m_type;
 }
 
 bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
@@ -64,9 +82,10 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             return true;
         }
 
-        LOG_WARNING("CShaderSampler: Target with name '%s' have't exist ", varVal.c_str());
-        return false;
+        m_type = eUserSampler;
+        return true;
     }
 
+    LOG_WARNING("CShaderSampler: Empty target value");
     return false;
 }

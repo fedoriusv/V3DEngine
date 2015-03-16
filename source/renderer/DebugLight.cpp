@@ -60,7 +60,7 @@ void CDebugLight::init()
 
 void CDebugLight::bind()
 {
-    const ShaderDataPtr& data = s_pass->getShaderData();
+   /* const ShaderDataPtr& data = s_pass->getShaderData();
 
     data->addUniformVector4("color", Vector4D(0.0f, 0.0f, 1.0f, 1.0f));
     data->addUniformMatrix4("transform.projectionMatrix", RENDERER->m_projectionMatrix);
@@ -71,12 +71,12 @@ void CDebugLight::bind()
 
     s_pass->bind();
 
-    RENDERER->checkForErrors("CDebugLight Bind Error");
+    RENDERER->checkForErrors("CDebugLight Bind Error");*/
 }
 
 void CDebugLight::initShader()
 {
-    const ShaderDataPtr& data = s_pass->getShaderData();
+    /*const ShaderDataPtr& data = s_pass->getShaderData();
 
     data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
     data->addDefaultUniform("transform.projectionMatrix", eTransformProjectionMatrix);
@@ -90,7 +90,7 @@ void CDebugLight::initShader()
     ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
     program->create(*m_vertex, *m_fragment);
 
-    s_pass->setShaderProgram(program);
+    s_pass->setShaderProgram(program);*/
 }
 
 void CDebugLight::initLightPosition()

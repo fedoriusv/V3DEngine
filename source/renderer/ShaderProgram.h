@@ -17,7 +17,7 @@ namespace renderer
     class CDebugGeometry;
     class CDebugLight;
 
-    class CShaderProgram : public CObject
+    class CShaderProgram
     {
     public:
 
@@ -25,6 +25,7 @@ namespace renderer
         virtual         ~CShaderProgram();
 
         u32             getShaderID()   const;
+
         bool            isEnable()      const;
         void            setEnable(bool enable);
 
@@ -41,13 +42,12 @@ namespace renderer
         friend          CDebugGeometry;
         friend          CDebugLight;
 
-        void            addShader(ShaderPtr shader);
-        void            destroyShader(ShaderPtr shader);
+        void            addShader(const ShaderPtr& shader);
+        void            destroyShader(const ShaderPtr& shader);
 
         void            getShaderIDArray(std::vector<u32>& shaders);
 
-
-        virtual bool    create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...)                        = 0;
+        bool            create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
 
         virtual bool    setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
 

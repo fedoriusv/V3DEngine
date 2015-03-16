@@ -45,7 +45,7 @@ void CGeometryGL::init()
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr& pass = m_technique->getRenderPass(idx);
-        const AttributeList& attributes = pass->getShaderData()->getAttributeList();
+        const AttributeList& attributes = pass->getUserShaderData()->getAttributeList();
 
         CGeometryGL::genBuffers(m_data._verticesId);
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
@@ -75,9 +75,9 @@ s32 CGeometryGL::computeVertexSize(const AttributeList& attributes)
 {
     s32 vertexSize = 0;
 
-    for (auto attr : attributes)
+    for (const AttributePtr& attr : attributes)
     {
-        CShaderAttribute::EShaderAttribute type = attr.second->getAttributeType();
+        CShaderAttribute::EShaderAttribute type = attr->getType();
 
         switch (type)
         {
@@ -140,9 +140,9 @@ void CGeometryGL::initBufferData(const AttributeList& attributes)
     s32 offset = 0;
     s32 size = 0;
     u32 layer = 0;
-    for (auto attr : attributes)
+    for (const AttributePtr& attr : attributes)
     {
-        CShaderAttribute::EShaderAttribute type = attr.second->getAttributeType();
+        CShaderAttribute::EShaderAttribute type = attr->getType();
 
         switch (type)
         {
@@ -215,7 +215,7 @@ void CGeometryGL::refresh()
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
         const RenderPassPtr& pass = m_technique->getRenderPass(idx);
-        const AttributeList& attributes = pass->getShaderData()->getAttributeList();
+        const AttributeList& attributes = pass->getUserShaderData()->getAttributeList();
 
         CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, m_data._verticesId);
 

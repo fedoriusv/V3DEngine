@@ -3,6 +3,11 @@
 
 #include "common.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
+
 namespace v3d
 {
 namespace renderer
@@ -30,28 +35,33 @@ namespace renderer
         };
 
         CShaderAttribute();
-        virtual                         ~CShaderAttribute();
+        ~CShaderAttribute();
 
-        void                            setAttribute(EShaderAttribute type, const std::string& attribute);
+        CShaderAttribute&               operator=(const CShaderAttribute& other);
 
-        const std::string&              getAttributeName() const;
-        EShaderAttribute                getAttributeType() const;
+        void                            setAttribute(const std::string& attribute);
+        const std::string&              getAttribute() const;
+
+        void                            setType(EShaderAttribute type);
+        EShaderAttribute                getType() const;
 
         static const std::string&       getAttributeNameByType(EShaderAttribute type);
         static const EShaderAttribute   getAttributeTypeByName(const std::string& name);
 
+        bool                            parse(const tinyxml2::XMLElement* root);
+
     private:
 
-        EShaderAttribute                m_typeAttr;
+        EShaderAttribute                m_type;
         std::string                     m_attribute;
 
-        static const std::string        s_attributeName[EShaderAttribute::eAttributeCount];
+        static const std::string        s_attributeName[eAttributeCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<CShaderAttribute>       AttributePtr;
-    typedef std::map<std::string, AttributePtr>     AttributeList;
+    typedef std::vector<AttributePtr>               AttributeList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

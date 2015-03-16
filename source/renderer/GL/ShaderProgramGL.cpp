@@ -17,6 +17,7 @@ CShaderProgramGL::CShaderProgramGL(const ShaderDataPtr& data)
 
 CShaderProgramGL::~CShaderProgramGL()
 {
+    CShaderProgramGL::destroy();
 }
 
 bool CShaderProgramGL::create()
@@ -24,52 +25,11 @@ bool CShaderProgramGL::create()
     std::vector<u32> shadersId;
     CShaderProgramGL::getShaderIDArray(shadersId);
 
-    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
+    bool status = CShaderProgramGL::init(shadersId);
     shadersId.clear();
 
     return status;
 
-}
-
-bool CShaderProgramGL::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
-{
-    if (vertex.empty() || fragment.empty())
-    {
-        ASSERT(false && "Empty Shader FileName");
-        return false;
-    }
-
-    ShaderPtr vshader = std::make_shared<CShaderGL>();
-    vshader->create(vertex, CShader::eVertex);
-    CShaderProgram::addShader(vshader);
-
-    ShaderPtr fshader = std::make_shared<CShaderGL>();
-    fshader->create(fragment, CShader::eFragment);
-    CShaderProgram::addShader(fshader);
-
-
-    va_list argList;
-    va_start(argList, arg);
-    for (u32 i = 0; i < arg; i += 2)
-    {
-        char* strName = va_arg(argList, char*);
-        int type = va_arg(argList, int);
-
-        ShaderPtr shader = std::make_shared<CShaderGL>();
-        shader->create(strName, (CShader::EShaderType)type);
-
-        CShaderProgram::addShader(shader);
-    }
-    va_end(argList);
-
-
-    std::vector<u32> shadersId;
-    CShaderProgram::getShaderIDArray(shadersId);
-
-    bool status = CShaderProgramGL::initProgram(m_shaderProgID, shadersId);
-    shadersId.clear();
-
-    return status;
 }
 
 void CShaderProgramGL::destroy()
@@ -94,33 +54,33 @@ void CShaderProgramGL::unbind()
     RENDERER->checkForErrors("CShaderProgramGL: Unbind ShaderProgram Error");
 }
 
-bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& shaders)
+bool CShaderProgramGL::init(const std::vector<u32>& shaders)
 {
-    CShaderProgramGL::createProgram(shaderProgram);
+    CShaderProgramGL::createProgram(m_shaderProgID);
 
     for (u32 i = 0; i < shaders.size(); ++i)
     {
-        CShaderProgramGL::attachShader(shaderProgram, shaders[i]);
+        CShaderProgramGL::attachShader(m_shaderProgID, shaders[i]);
     }
 
     const AttributeList& attributeList = m_shaderData->getAttributeList();
     for (auto attribute : attributeList)
     {
-        const std::string& name = attribute.second->getAttributeName();
-        CShaderAttribute::EShaderAttribute type = attribute.second->getAttributeType();
+        const std::string& name = attribute->getAttribute();
+        CShaderAttribute::EShaderAttribute type = attribute->getType();
 
-        CShaderProgramGL::bindAttrib(shaderProgram, type, name);
+        CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
     }
 
-    glLinkProgram(shaderProgram);
-    glValidateProgram(shaderProgram);
+    glLinkProgram(m_shaderProgID);
+    glValidateProgram(m_shaderProgID);
 
     for (auto attribute : attributeList)
     {
-        const std::string& name = attribute.second->getAttributeName();
-        CShaderAttribute::EShaderAttribute type = attribute.second->getAttributeType();
+        const std::string& name = attribute->getAttribute();
+        CShaderAttribute::EShaderAttribute type = attribute->getType();
         
-        s32 id = CShaderProgramGL::getAttrib(shaderProgram, name);
+        s32 id = CShaderProgramGL::getAttrib(m_shaderProgID, name);
         if ((CShaderAttribute::EShaderAttribute)id != type)
         {
             LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
@@ -141,20 +101,20 @@ bool CShaderProgramGL::initProgram(u32& shaderProgram, const std::vector<u32>& s
     }
 
     GLint linkStatus;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(m_shaderProgID, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not compiled id: %d", shaderProgram);
+        LOG_ERROR("CShaderProgramGL: Shader program not compiled id: %d", m_shaderProgID);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
+        glGetProgramiv(m_shaderProgID, GL_INFO_LOG_LENGTH, &length);
 
         GLchar* buffer = new GLchar[length];
-        glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
+        glGetProgramInfoLog(m_shaderProgID, length, &charsWritten, buffer);
         if (strlen(buffer) > 0)
         {
-            LOG_ERROR("CShaderProgramGL: Shader Program Error: %s", buffer);
+            LOG_ERROR("CShaderProgramGL: Shader Program Error:\n %s", buffer);
         }
 #endif
     }

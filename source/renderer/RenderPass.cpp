@@ -12,7 +12,8 @@ using namespace scene;
 
 CRenderPass::CRenderPass()
     : m_program(nullptr)
-    , m_shaderData(nullptr)
+    , m_userShaderData(nullptr)
+    , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
     , m_lods(nullptr)
     , m_enable(true)
@@ -35,14 +36,24 @@ void CRenderPass::setShaderProgram(const ShaderProgramPtr& program)
     m_program = program;
 }
 
-const ShaderDataPtr& CRenderPass::getShaderData() const
+const ShaderDataPtr& CRenderPass::getUserShaderData() const
 {
-    return m_shaderData;
+    return m_userShaderData;
 }
 
-void CRenderPass::setShaderData(const ShaderDataPtr& data)
+void CRenderPass::setUserShaderData(const ShaderDataPtr& data)
 {
-    m_shaderData = data;
+    m_userShaderData = data;
+}
+
+const ShaderDataPtr& CRenderPass::getDefaultShaderData() const
+{
+    return m_defaultShaderData;
+}
+
+void CRenderPass::setDefaultShaderData(const ShaderDataPtr& data)
+{
+    m_defaultShaderData = data;
 }
 
 const RenderStatePtr& CRenderPass::getRenderState() const
@@ -156,6 +167,8 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
+
+
         const std::string varName = varElement->Attribute("name");
         if (varName.empty())
         {
@@ -208,7 +221,7 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
                 const std::string varNameIdx = CRenderPass::attachIndexToUniform(varName, index);
                 if (defaultUniform)
                 {
-                    m_shaderData->addDefaultUniform(varNameIdx, uniformName);
+                    m_defaultShaderData->addDefaultUniform(varNameIdx, uniformName);
                 }
                 else
                 {
@@ -221,7 +234,7 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
         {
             if (defaultUniform)
             {
-                m_shaderData->addDefaultUniform(varName, uniformName);
+                m_defaultShaderData->addDefaultUniform(varName, uniformName);
             }
             else
             {
@@ -246,26 +259,15 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        const std::string varName = varElement->Attribute("name");
-        if (varName.empty())
+        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        if (!attribute->parse(varElement))
         {
-            LOG_ERROR("CRenderPass: Cannot find uniform name from pass '%s'", m_name.c_str());
-
+            LOG_ERROR("CRenderPass: Parse error attribute element");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
 
-        const std::string varVal = varElement->Attribute("val");
-        if (varVal.empty())
-        {
-            LOG_ERROR("CRenderPass: Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-
-            varElement = varElement->NextSiblingElement("var");
-            continue;
-        }
-
-        CShaderAttribute::EShaderAttribute attribureName = CShaderAttribute::getAttributeTypeByName(varVal);
-        m_shaderData->addAttribute(varName, attribureName);
+        m_defaultShaderData->addAttribute(attribute);
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -291,7 +293,16 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
-        m_shaderData->addSampler(sampler);
+
+        bool isDefault = sampler->getType() != CShaderSampler::eUserSampler;
+        if (isDefault)
+        {
+            m_defaultShaderData->addSampler(sampler);
+        }
+        else
+        {
+            m_userShaderData->addSampler(sampler);
+        }
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -307,73 +318,30 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    //vshader
     const tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
         ShaderPtr shader = RENDERER->makeSharedShader();
-        if (!shader)
+        if (!shader->parse(shaderElement))
         {
-            LOG_ERROR("CRenderPass: Could not create shader");
-
+            LOG_ERROR("CRenderPass: Shader parse error");
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
         }
 
-        const std::string shaderName = shaderElement->Attribute("name");
-        if (!shaderName.empty())
+        if (!shader->create())
         {
-            shader->setName(shaderName);
-        }
-        else
-        {
-            LOG_WARNING("CRenderPass: Empty vshader name");
+            LOG_ERROR("CRenderPass: Error create shader");
         }
 
-        CShader::EShaderType type = CShader::eVertex;
-        const std::string shaderType = shaderElement->Attribute("type");
-        if (shaderType.empty())
-        {
-            type = CShader::eVertex;
-            LOG_WARNING("CRenderPass: Shader have not type. Set Vertex type");
-        }
-        else
-        {
-            type = CShader::getShaderTypeByName(shaderType);
-        }
-
-        if (!shaderElement->Attribute("path"))
-        {
-            const std::string shaderBody = shaderElement->GetText();
-            if (shaderBody.empty())
-            {
-                LOG_WARNING("CRenderPass: Empty shader body");
-            }
-
-            LOG_INFO("CRenderPass: Create shader [%s] from data", shaderName.c_str());
-            if (!shader->create(shaderBody, type))
-            {
-                LOG_ERROR("CRenderPass: Error Load Shader body");
-            }
-        }
-        else
-        {
-            const std::string shaderPath = shaderElement->Attribute("path");
-            LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
-            if (!shader->load(shaderPath, type))
-            {
-                LOG_ERROR("CRenderPass: Error Load Shader %s", shaderPath.c_str());
-            }
-        }
-
-       m_program->addShader(shader);
+        m_program->addShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("var");
     }
 
     if (!m_program->create())
     {
-        LOG_ERROR("CRenderPass: Error Create Shader Program %s", m_program->getName().c_str());
+        LOG_ERROR("CRenderPass: Error Create Shader Program");
         return false;
     }
 
@@ -382,9 +350,10 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
 void CRenderPass::init()
 {
-    m_shaderData = std::make_shared<CShaderData>();
+    m_userShaderData = std::make_shared<CShaderData>();
+    m_defaultShaderData = std::make_shared<CShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
-    m_program = RENDERER->makeSharedProgram(m_shaderData);
+    m_program = RENDERER->makeSharedProgram(m_defaultShaderData);
     m_renderState = RENDERER->makeSharedRenderState();
 }
 
@@ -506,7 +475,7 @@ void CRenderPass::bind()
 
     m_program->bind();
 
-    const UniformList& list = m_shaderData->m_uniformList;
+    const UniformList& list = m_userShaderData->m_uniformList;
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
         CShaderUniform::EDataType type = uniform->second->getUniformType();
@@ -564,14 +533,14 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
         case CShaderUniform::eTypeInt:
         {
             const s32 value = element->IntAttribute("val");
-            m_shaderData->addUniformInt(name, value);
+            m_userShaderData->addUniformInt(name, value);
 
             return true;
         }
         case CShaderUniform::eTypeFloat:
         {
             const f32 value = element->FloatAttribute("val");
-            m_shaderData->addUniformFloat(name, value);
+            m_userShaderData->addUniformFloat(name, value);
 
             return true;
         }
@@ -591,7 +560,7 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
                 delete[] val;
                 val = nullptr;
             }
-            m_shaderData->addUniformVector2(name, value);
+            m_userShaderData->addUniformVector2(name, value);
 
             return true;
         }
@@ -612,7 +581,7 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
                 delete[] val;
                 val = nullptr;
             }
-            m_shaderData->addUniformVector3(name, value);
+            m_userShaderData->addUniformVector3(name, value);
 
             return true;
         }
@@ -634,7 +603,7 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
                 delete[] val;
                 val = nullptr;
             }
-            m_shaderData->addUniformVector4(name, value);
+            m_userShaderData->addUniformVector4(name, value);
 
             return true;
         }
@@ -654,7 +623,7 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
                 delete[] val;
                 val = nullptr;
             }
-            m_shaderData->addUniformMatrix3(name, value);
+            m_userShaderData->addUniformMatrix3(name, value);
 
             return true;
         }
@@ -674,7 +643,7 @@ bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const st
                 delete[] val;
                 val = nullptr;
             }
-            m_shaderData->addUniformMatrix4(name, value);
+            m_userShaderData->addUniformMatrix4(name, value);
 
             return true;
         }

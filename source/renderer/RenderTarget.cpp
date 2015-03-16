@@ -269,7 +269,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
             {
                 std::string outputStr = depthElement->Attribute("output");
 
-                std::function<EAttachmentsOutput(std::string&)> getAttachmentoutput = [](std::string& str)->EAttachmentsOutput
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
                 {
                     if (str == "texture")
                     {
@@ -284,7 +284,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
                     return eTextureOutput;
                 };
 
-                output = getAttachmentoutput(outputStr);
+                output = getAttachmentOutput(outputStr);
             }
 
             CRenderTarget::attachTarget(eDepthAttach, 0, size, output);
@@ -320,7 +320,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
             {
                 std::string outputStr = colorElement->Attribute("output");
 
-                std::function<EAttachmentsOutput(std::string&)> getAttachmentoutput = [](std::string& str)->EAttachmentsOutput
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
                 {
                     if (str == "texture")
                     {
@@ -335,7 +335,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
                     return eTextureOutput;
                 };
 
-                output = getAttachmentoutput(outputStr);
+                output = getAttachmentOutput(outputStr);
             }
 
             CRenderTarget::attachTarget(eStencilAttach, 0, size, output);

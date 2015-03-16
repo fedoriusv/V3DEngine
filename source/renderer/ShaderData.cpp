@@ -70,13 +70,17 @@ bool CShaderData::isExistUniform(EUniformData type)
 
 bool CShaderData::isExistAttribute(const std::string& name)
 {
-    AttributeList::const_iterator iter = m_attributeList.find(name);
-    if (iter != m_attributeList.end())
+    AttributeList::const_iterator iter = std::find_if(m_attributeList.begin(), m_attributeList.end(), [name](const AttributePtr& attribute) -> bool
     {
-        return true;
-    }
+        if (attribute->getAttribute() == name)
+        {
+            return true;
+        }
 
-    return false;
+        return false;
+    });
+
+    return (iter != m_attributeList.end());
 
 }
 
@@ -215,18 +219,11 @@ void CShaderData::addDefaultUniform(const std::string& name, EUniformData data)
     }
 }
 
-void CShaderData::addAttribute(const std::string& name, CShaderAttribute::EShaderAttribute type)
+void CShaderData::addAttribute(const AttributePtr& attribute)
 {
-    if (isExistAttribute(name))
+    if (!isExistAttribute(attribute->getAttribute()))
     {
-        m_attributeList[name]->setAttribute(type, name);
-    }
-    else
-    {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
-
-        attribute->setAttribute(type, name);
-        m_attributeList[name] = attribute;
+        m_attributeList.push_back(attribute);
     }
 }
 

@@ -21,22 +21,21 @@ namespace renderer
         void                bind()      override;
         void                unbind()    override;
 
+        static void         createProgram(u32& shaderProgram);
+        static void         deleteProgram(u32 shaderProgram);
+        static bool         useProgram(u32 shaderProgram);
+
+        static void         attachShader(u32 shaderProgram, u32 shader);
+        static void         detachShader(u32 shaderProgram, u32 shader);
+
+        static void         bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name);
+        static s32          getAttrib(u32 shaderProgram, const std::string& name);
+
     private:
 
-        bool                create(const std::string& vertex, const std::string& fragment, u32 arg, ...) override;
-
-        bool                initProgram(u32& shaderProgram, const std::vector<u32>& shaders);
-
-        void                attachShader(u32 shaderProgram, u32 shader);
-        void                detachShader(u32 shaderProgram, u32 shader);
-        void                bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name);
-        s32                 getAttrib(u32 shaderProgram, const std::string& name);
-        void                createProgram(u32& shaderProgram);
-        void                deleteProgram(u32 shaderProgram);
-        bool                useProgram(u32 shaderProgram);
+        bool                init(const std::vector<u32>& shaders);
 
         bool                setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) override;
-
         void                setUniformInt    (const s32 location, const s32 value)              override;
         void                setUniformFloat  (const s32 location, const f32 value)              override;
         void                setUniformVector2(const s32 location, const core::Vector2D& vector) override;

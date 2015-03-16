@@ -69,7 +69,7 @@ void CDebugGeometry::refresh()
 
 void CDebugGeometry::bind()
 {
-    const ShaderDataPtr& data = s_pass->getShaderData();
+    //const ShaderDataPtr& data = s_pass->getShaderData();
     //CRenderJob::updateTransform(data);
 
     s_pass->bind();
@@ -82,7 +82,7 @@ void CDebugGeometry::setDebugFlag(s32 flag)
 
 void CDebugGeometry::initShader()
 {
-    const ShaderDataPtr& data = s_pass->getShaderData();
+    /*const ShaderDataPtr& data = s_pass->getShaderData();
 
     data->addAttribute("positions", CShaderAttribute::eAttributeVertex);
     data->addDefaultUniform("transform.projectionMatrix", eTransformProjectionMatrix);
@@ -96,7 +96,7 @@ void CDebugGeometry::initShader()
     ShaderProgramPtr program = RENDERER->makeSharedProgram(data);
     program->create(*m_vertex, *m_fragment);
 
-    s_pass->setShaderProgram(program);
+    s_pass->setShaderProgram(program);*/
 }
 
 void CDebugGeometry::initDrawNormalsData()
