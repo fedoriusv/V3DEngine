@@ -7,7 +7,7 @@ using namespace v3d;
 using namespace v3d::core;
 using namespace v3d::renderer;
 
-GLenum EDebugGeometryModeGL[CGeometry::eCount] =
+GLenum EDebugGeometryModeGL[CGeometry::eDrawCount] =
 {
     GL_TRIANGLE_STRIP,
     GL_TRIANGLES,
@@ -134,7 +134,7 @@ void CDebugGeometryGL::refreshDraw(SDebugObject& object)
 void CDebugGeometryGL::free()
 {
     CGeometryGL::bindVertexArray(0);
-    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
+    CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
 
    /* for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
     {

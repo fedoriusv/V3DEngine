@@ -21,7 +21,15 @@ namespace renderer
             eTriangleFan,
             eLines,
 
-            eCount
+            eDrawCount
+        };
+
+        enum EGeometryTarget
+        {
+            eArrayBuffer,
+            eArrayElementBuffer,
+
+            eTargetCount
         };
 
         enum class EGeomertyType

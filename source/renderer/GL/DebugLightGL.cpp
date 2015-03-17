@@ -67,7 +67,7 @@ void CDebugLightGL::draw()
 void CDebugLightGL::free()
 {
     CGeometryGL::bindVertexArray(0);
-    CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, 0);
+    CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
 
     /*for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
     {

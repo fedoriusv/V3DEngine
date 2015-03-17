@@ -35,26 +35,29 @@ namespace renderer
         void                initBufferData(const AttributeList& attributes);
 
         static void         genBuffers(u32& buffer);
-        static void         bindBuffers(const u32 target, const u32 buffer);
+        static void         bindBuffers(EGeometryTarget target, u32 buffer);
         static void         deleteBuffers(u32& buffer);
 
-        static void         bufferData(const u32 target, const u32 size, void* data);
-        static void         bufferSubData(const u32 target, const u32 offset, const u32 size, void* data);
+        static void         bufferData(EGeometryTarget target, u32 size, void* data);
+        static void         bufferSubData(EGeometryTarget target, u32 offset, u32 size, void* data);
 
-        static void*        mapBuffer(const u32 target, const u32 access);
-        static bool         unmapBuffer(const u32 target);
-        static void*        mapBufferRange(const u32 target, const u32 offset, const u32 size, const u32 flags);
+        static void*        mapBuffer(EGeometryTarget target, u32 access);
+        static bool         unmapBuffer(EGeometryTarget target);
+        static void*        mapBufferRange(EGeometryTarget target, u32 offset, u32 size, u32 flags);
 
-        static void         getBufferPointer(const u32 target, const u32 pname, void** params);
+        static void         getBufferPointer(EGeometryTarget target, u32 pname, void** params);
 
         static void         genVertexArray(u32& buffer);
-        static void         bindVertexArray(const u32 buffer);
+        static void         bindVertexArray(u32 buffer);
         static void         deleteVertexArray(u32& buffer);
 
-        static void         initVertexAttribPointer(const v3d::u32 vertexAttrib, const u32 count, bool normalized = false, const u32 size = 0, const u32 offset = 0);
+        static void         initVertexAttribPointer(u32 vertexAttrib, u32 count, bool normalized = false, u32 size = 0, u32 offset = 0);
 
-        static void         drawElements(const u32 mode, const u32 count);
-        static void         drawArrays(const u32 mode, const u32 first, const u32 count);
+        static void         drawElements(EDrawMode mode, u32 count);
+        static void         drawArrays(EDrawMode mode, u32 first, u32 count);
+
+        static u32          s_currentBuffer[eTargetCount];
+        static u32          s_currentArray;
 
     };
 
