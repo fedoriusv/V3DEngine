@@ -197,54 +197,53 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
-    const UniformList& list = data->getDefaultUniformList();
+    const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const EUniformData type = uniform.second->getUniformData();
-        const s32 id = uniform.second->getUniformID();
+        const CShaderUniform::EUniformData type = uniform.second->getData();
+        s32 id = uniform.second->getID();
         switch (type)
         {
-            case EUniformData::eTransformProjectionMatrix:
-            {
+            case CShaderUniform::eTransformProjectionMatrix:
+
                 program->setUniformMatrix4(id, m_projectionMatrix);
-            }
-            break;
+                break;
 
-            case EUniformData::eTransformOrthoMatrix:
-            {
+            case CShaderUniform::eTransformOrthoMatrix:
+
                 program->setUniformMatrix4(id, m_orthoMatrix);
-            }
-            break;
+                break;
 
-            case EUniformData::eTransformModelMatrix:
+            case CShaderUniform::eTransformModelMatrix:
             {
                 core::Matrix4D modelMatrix(transform);
                 modelMatrix.makeTransposed();
 
                 program->setUniformMatrix4(id, modelMatrix);
             }
-            break;
+                break;
 
-            case EUniformData::eTransformViewMatrix:
-            {
+            case CShaderUniform::eTransformViewMatrix:
+
                 program->setUniformMatrix4(id, m_viewMatrix);
-            }
-            break;
+                break;
 
-            case EUniformData::eTransformViewPosition:
-            {
+            case CShaderUniform::eTransformViewPosition:
+
                 program->setUniformVector3(id, m_viewPosition);
-            }
-            break;
+                break;
 
-            case EUniformData::eTransformNormalMatrix:
+            case CShaderUniform::eTransformNormalMatrix:
             {
                 core::Matrix4D normalMatrix;
                 transform.getInverse(normalMatrix);
 
                 program->setUniformMatrix4(id, normalMatrix);
             }
-            break;
+                break;
+
+            default:
+                break;
         }
     }
 }
@@ -271,41 +270,44 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
     const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
-    const UniformList& list = data->getDefaultUniformList();
+    const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const EUniformData type = uniform.second->getUniformData();
-        const s32 id = uniform.second->getUniformID();
+        const CShaderUniform::EUniformData type = uniform.second->getData();
+        const s32 id = uniform.second->getID();
         switch (type)
         {
-        case EUniformData::eMaterialAmbient:
+        case CShaderUniform::eMaterialAmbient:
     
             program->setUniformVector4(id, material->getAmbientColor());
             break;
 
-        case EUniformData::eMaterialDiffuse:
+        case CShaderUniform::eMaterialDiffuse:
 
             program->setUniformVector4(id, material->getDiffuseColor());
             break;
 
-        case EUniformData::eMaterialSpecular:
+        case CShaderUniform::eMaterialSpecular:
 
             program->setUniformVector4(id, material->getSpecularColor());
             break;
 
-        case EUniformData::eMaterialEmission:
+        case CShaderUniform::eMaterialEmission:
 
             program->setUniformVector4(id, material->getEmissionColor());
             break;
 
-        case EUniformData::eMaterialShininess:
+        case CShaderUniform::eMaterialShininess:
 
             program->setUniformFloat(id, material->getShininess());
             break;
 
-        case EUniformData::eMaterialTransparency:
+        case CShaderUniform::eMaterialTransparency:
 
             program->setUniformFloat(id, material->getTransparency());
+            break;
+
+        default:
             break;
         }
     }
@@ -347,51 +349,54 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
 
     for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
     {
-        const UniformList& list = data->getDefaultUniformList();
+        const UniformList& list = data->getUniformList();
         for (auto& uniform : list)
         {
-            const EUniformData type = uniform.second->getUniformData();
-            const s32 id = uniform.second->getUniformID();
+            const CShaderUniform::EUniformData type = uniform.second->getData();
+            const s32 id = uniform.second->getID();
             switch (type)
             {
-            case EUniformData::eLightsCount:
+            case CShaderUniform::eLightsCount:
 
                 program->setUniformInt(id, (s32)lights.size());
                 break;
 
-            case EUniformData::eLightPosition:
+            case CShaderUniform::eLightPosition:
 
                 program->setUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
                 break;
 
-            case EUniformData::eLightAmbient:
+            case CShaderUniform::eLightAmbient:
 
                 program->setUniformVector4(id, (*light)->getAmbient());
                 break;
 
-            case EUniformData::eLightDiffuse:
+            case CShaderUniform::eLightDiffuse:
 
                 program->setUniformVector4(id, (*light)->getDiffuse());
                 break;
 
-            case EUniformData::eLightSpecular:
+            case CShaderUniform::eLightSpecular:
 
                 program->setUniformVector4(id, (*light)->getSpecular());
                 break;
 
-            case EUniformData::eLightDirection:
+            case CShaderUniform::eLightDirection:
 
                 program->setUniformVector3(id, (*light)->getDirection());
                 break;
 
-            case EUniformData::eLightAttenuation:
+            case CShaderUniform::eLightAttenuation:
 
                 program->setUniformVector3(id, (*light)->getAttenuation());
                 break;
 
-            case EUniformData::eLightRadius:
+            case CShaderUniform::eLightRadius:
 
                 program->setUniformFloat(id, (*light)->getRadius());
+                break;
+
+            default:
                 break;
             }
         }

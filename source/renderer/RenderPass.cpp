@@ -167,79 +167,23 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
+        UniformPtr uniform = std::make_shared<CShaderUniform>();
 
-
-        const std::string varName = varElement->Attribute("name");
-        if (varName.empty())
+        if (!uniform->parse(varElement))
         {
-            LOG_ERROR("CRenderPass: Cannot find uniform name from pass '%s'", m_name.c_str());
-
+            LOG_ERROR("CRenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
 
-        const std::string varVal = varElement->Attribute("val");
-        if (varVal.empty())
+        bool isDefault = (uniform->getData() != CShaderUniform::eUniformUser);
+        if (isDefault)
         {
-            LOG_ERROR("CRenderPass: Cannot find uniform val from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-
-            varElement = varElement->NextSiblingElement("var");
-            continue;
-        }
-
-        bool defaultUniform = true;
-        CShaderUniform::EDataType uniformType = CShaderUniform::eTypeNone;
-        EUniformData uniformName = CShaderUniform::getValueByName(varVal);
-        if (uniformName == EUniformData::eUniformUser)
-        {
-            const std::string varType = varElement->Attribute("type");
-            if (varType.empty())
-            {
-                LOG_ERROR("CRenderPass: Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-
-                varElement = varElement->NextSiblingElement("var");
-                continue;
-            }
-
-            uniformType = CShaderData::getDataTypeByName(varType);
-            if (uniformType == CShaderUniform::eTypeNone)
-            {
-                LOG_ERROR("CRenderPass: Cannot find uniform type from pass '%s' in '%s'", m_name.c_str(), varName.c_str());
-
-                varElement = varElement->NextSiblingElement("var");
-                continue;
-            }
-
-            defaultUniform = false;
-        }
-
-        const u32 array = varElement->IntAttribute("array");
-        if (array > 0)
-        {
-            for (u32 index = 0; index < array; ++index)
-            {
-                const std::string varNameIdx = CRenderPass::attachIndexToUniform(varName, index);
-                if (defaultUniform)
-                {
-                    m_defaultShaderData->addDefaultUniform(varNameIdx, uniformName);
-                }
-                else
-                {
-                    CRenderPass::parseUserUniform(varElement, varNameIdx, uniformType);
-                }
-               
-            }
+            m_defaultShaderData->addUniform(uniform);
         }
         else
         {
-            if (defaultUniform)
-            {
-                m_defaultShaderData->addDefaultUniform(varName, uniformName);
-            }
-            else
-            {
-                CRenderPass::parseUserUniform(varElement, varName, uniformType);
-            }
+            m_userShaderData->addUniform(uniform);
         }
 
         varElement = varElement->NextSiblingElement("var");
@@ -479,9 +423,9 @@ void CRenderPass::bind()
     const UniformList& list = m_userShaderData->m_uniformList;
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
-        CShaderUniform::EDataType type = uniform->second->getUniformType();
+        EDataType type = uniform->second->getType();
         const std::string& attribute = uniform->first;
-        void* value = uniform->second->getUniforValue();
+        void* value = uniform->second->getValue();
 
         m_program->setUniform(type, m_program->getShaderID(), attribute, value);
     }
@@ -525,147 +469,4 @@ const RenderTargetPtr& CRenderPass::getRenderTarget() const
 void CRenderPass::setRenderTarget(const RenderTargetPtr& target)
 {
     m_renderTarget = target;
-}
-
-bool CRenderPass::parseUserUniform(const tinyxml2::XMLElement* element, const std::string& name, CShaderUniform::EDataType type)
-{
-    switch (type)
-    {
-        case CShaderUniform::eTypeInt:
-        {
-            const s32 value = element->IntAttribute("val");
-            m_userShaderData->addUniformInt(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeFloat:
-        {
-            const f32 value = element->FloatAttribute("val");
-            m_userShaderData->addUniformFloat(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeVector2:
-        {
-            Vector2D value(0.0f, 0.0f);
-            if (element->Attribute("val"))
-            {
-                std::string str = element->Attribute("val");
-
-                f32* val = new f32[2];
-
-                CRenderPass::parseArrayValue(str, val, 2);
-                value.x = val[0];
-                value.y = val[1];
-
-                delete[] val;
-                val = nullptr;
-            }
-            m_userShaderData->addUniformVector2(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeVector3:
-        {
-            Vector3D value(0.0f, 0.0f, 0.0f);
-            if (element->Attribute("val"))
-            {
-                std::string str = element->Attribute("val");
-
-                f32* val = new f32[3];
-
-                CRenderPass::parseArrayValue(str, val, 3);
-                value.x = val[0];
-                value.y = val[1];
-                value.z = val[2];
-
-                delete[] val;
-                val = nullptr;
-            }
-            m_userShaderData->addUniformVector3(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeVector4:
-        {
-            Vector4D value(0.0f, 0.0f, 0.0f, 0.0f);
-            if (element->Attribute("val"))
-            {
-                std::string str = element->Attribute("val");
-
-                f32* val = new f32[4];
-
-                CRenderPass::parseArrayValue(str, val, 4);
-                value.x = val[0];
-                value.y = val[1];
-                value.z = val[2];
-                value.w = val[3];
-
-                delete[] val;
-                val = nullptr;
-            }
-            m_userShaderData->addUniformVector4(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeMatrix3:
-        {
-            Matrix3D value;
-            if (element->Attribute("val"))
-            {
-                std::string str = element->Attribute("val");
-
-                f32* val = new f32[9];
-
-                CRenderPass::parseArrayValue(str, val, 9);
-                f32* matrix = value.getPtr();
-                memcpy(matrix, val, sizeof(f32)*9);
-
-                delete[] val;
-                val = nullptr;
-            }
-            m_userShaderData->addUniformMatrix3(name, value);
-
-            return true;
-        }
-        case CShaderUniform::eTypeMatrix4:
-        {
-            Matrix4D value;
-            if (element->Attribute("val"))
-            {
-                std::string str = element->Attribute("val");
-
-                f32* val = new f32[16];
-
-                CRenderPass::parseArrayValue(str, val, 16);
-                f32* matrix = value.getPtr();
-                memcpy(matrix, val, sizeof(f32)* 16);
-
-                delete[] val;
-                val = nullptr;
-            }
-            m_userShaderData->addUniformMatrix4(name, value);
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void CRenderPass::parseArrayValue(const std::string& valueStr, f32* array, u32 count)
-{
-    size_t pos = 0;
-    std::string str = valueStr;
-
-    for (u32 i = 0; i < count -1 ; ++i)
-    {
-        pos = str.find(";");
-        std::string valStr = str.substr(0, pos);
-        str = str.substr(pos + 1, str.size());
-
-        array[i] = ::std::stof(valStr);
-    }
-
-    array[count - 1] = ::std::stof(str);
 }

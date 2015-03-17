@@ -35,7 +35,7 @@ namespace renderer
 
         bool                init(const std::vector<u32>& shaders);
 
-        bool                setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) override;
+        bool                setUniform(EDataType type, const u32 shader, const std::string& attribute, void* value) override;
         void                setUniformInt    (const s32 location, const s32 value)              override;
         void                setUniformFloat  (const s32 location, const f32 value)              override;
         void                setUniformVector2(const s32 location, const core::Vector2D& vector) override;

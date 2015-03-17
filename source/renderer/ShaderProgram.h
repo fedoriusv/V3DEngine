@@ -49,7 +49,7 @@ namespace renderer
 
         bool            create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
 
-        virtual bool    setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
+        virtual bool    setUniform(EDataType type, const u32 shader, const std::string& attribute, void* value) = 0;
 
         virtual void    setUniformInt    (const s32 location, const s32 value)              = 0;
         virtual void    setUniformFloat  (const s32 location, const f32 value)              = 0;

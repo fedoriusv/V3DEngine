@@ -22,49 +22,45 @@ namespace renderer
     public:
 
         CShaderData();
-        virtual                         ~CShaderData();
+        ~CShaderData();
 
-        void                            addUniformInt    (const std::string& name, const s32             value);
-        void                            addUniformFloat  (const std::string& name, const f32             value);
-        void                            addUniformVector2(const std::string& name, const core::Vector2D& vector);
-        void                            addUniformVector3(const std::string& name, const core::Vector3D& vector);
-        void                            addUniformVector4(const std::string& name, const core::Vector4D& vector);
-        void                            addUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-        void                            addUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
+        void                        setUniformInt    (const std::string& name, const s32             value);
+        void                        setUniformFloat  (const std::string& name, const f32             value);
+        void                        setUniformVector2(const std::string& name, const core::Vector2D& vector);
+        void                        setUniformVector3(const std::string& name, const core::Vector3D& vector);
+        void                        setUniformVector4(const std::string& name, const core::Vector4D& vector);
+        void                        setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
+        void                        setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
 
-        const AttributeList&            getAttributeList() const;
-        const UniformList&              getUniformList() const;
-        const UniformList&              getDefaultUniformList() const;
-        const SamplerList&              getSamplerList() const;
+        const AttributeList&        getAttributeList() const;
+        const UniformList&          getUniformList() const;
+        const SamplerList&          getSamplerList() const;
 
-        static const std::string&       getDataNameByType(CShaderUniform::EDataType type);
-        static const CShaderUniform::EDataType getDataTypeByName(const std::string& name);
+        static const std::string&   getDataNameByType(EDataType type);
+        static EDataType            getDataTypeByName(const std::string& name);
 
-        bool                            isExistUniform(const std::string& name);
-        bool                            isExistUniform(EUniformData type);
-        bool                            isExistAttribute(const std::string& name);
-        bool                            isExistSampler(const std::string& name);
+        bool                        isExistUniform(const std::string& name);
+        bool                        isExistUniform(CShaderUniform::EUniformData type);
+        bool                        isExistAttribute(const std::string& name);
+        bool                        isExistSampler(const std::string& name);
 
     protected:
 
-        friend                          CRenderPass;
+        friend                      CRenderPass;
+        friend                      CDebugGeometry;
+        friend                      CDebugLight;
 
-        friend                          CDebugGeometry;
-        friend                          CDebugLight;
+        void                        addUniform(const UniformPtr& uniform);
+        void                        addAttribute(const AttributePtr& attribute);
+        void                        addSampler(const SamplerPtr& sampler);
 
-        void                            addUniform(const std::string& name, CShaderUniform::EDataType type);
-        void                            addDefaultUniform(const std::string& name, EUniformData data);
-        void                            addAttribute(const AttributePtr& attribute);
-        void                            addSampler(const SamplerPtr& sampler);
-
-        UniformList                     m_uniformList;
-        UniformList                     m_defaultUniformList;
-        AttributeList                   m_attributeList;
-        SamplerList                     m_samplerList;
+        UniformList                 m_uniformList;
+        AttributeList               m_attributeList;
+        SamplerList                 m_samplerList;
 
     private:
 
-        static const std::string       s_dataType[CShaderUniform::eTypeCount];
+        static const std::string    _dataType[EDataType::eDataTypeCount];
 
     };
 

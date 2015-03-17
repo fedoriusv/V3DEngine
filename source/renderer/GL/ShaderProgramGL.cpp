@@ -85,17 +85,17 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         }
     }
 
-    const UniformList& uniformList = m_shaderData->getDefaultUniformList();
+    const UniformList& uniformList = m_shaderData->getUniformList();
     for (auto uniform : uniformList)
     {
-        const std::string& name = uniform.second->getUniformName();
+        const std::string& name = uniform.second->getAttribute();
         s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name);
         
         if (id < 0)
         {
             LOG_WARNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
         }
-        uniform.second->setUniforID(id);
+        uniform.second->setID(id);
     }
 
     GLint linkStatus;
@@ -181,7 +181,7 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
     return false;
 }
 
-bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shader, const std::string& attribute, void* value)
+bool CShaderProgramGL::setUniform(EDataType type, const u32 shader, const std::string& attribute, void* value)
 {
     GLint location = CShaderProgramGL::getUniformID(shader, attribute);
 
@@ -189,55 +189,55 @@ bool CShaderProgramGL::setUniform(CShaderUniform::EDataType type, const u32 shad
     {
         switch (type)
         {
-            case CShaderUniform::eTypeNone:
+            case EDataType::eTypeNone:
             {
                 location = -1;
             }
             break;
 
-            case CShaderUniform::eTypeInt:
+            case EDataType::eTypeInt:
             {
                 GLint& val = *(GLint*)value;
                 CShaderProgramGL::setUniformInt(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeFloat:
+            case EDataType::eTypeFloat:
             {
                 GLfloat& val = *(GLfloat*)value;
                 CShaderProgramGL::setUniformFloat(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeVector2:
+            case EDataType::eTypeVector2:
             {
                 core::Vector2D& val = *(core::Vector2D*)value;
                 CShaderProgramGL::setUniformVector2(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeVector3:
+            case EDataType::eTypeVector3:
             {
                 core::Vector3D& val = *(core::Vector3D*)value;
                 CShaderProgramGL::setUniformVector3(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeVector4:
+            case EDataType::eTypeVector4:
             {
                 core::Vector4D& val = *(core::Vector4D*)value;
                 CShaderProgramGL::setUniformVector4(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeMatrix3:
+            case EDataType::eTypeMatrix3:
             {
                 core::Matrix3D& val = *(core::Matrix3D*)value;
                 CShaderProgramGL::setUniformMatrix3(location, val);
             }
             break;
 
-            case CShaderUniform::eTypeMatrix4:
+            case EDataType::eTypeMatrix4:
             {
                 core::Matrix4D& val = *(core::Matrix4D*)value;
                 CShaderProgramGL::setUniformMatrix4(location, val);

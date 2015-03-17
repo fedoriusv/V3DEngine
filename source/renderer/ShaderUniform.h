@@ -3,41 +3,29 @@
 
 #include "common.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
+
 namespace v3d
 {
 namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EUniformData
+    enum EDataType
     {
-        eUniformUser = -1,
+        eTypeNone = 0,
+        eTypeInt,
+        eTypeFloat,
+        eTypeVector2,
+        eTypeVector3,
+        eTypeVector4,
+        eTypeMatrix3,
+        eTypeMatrix4,
 
-        eTransformProjectionMatrix,
-        eTransformModelMatrix,
-        eTransformViewMatrix,
-        eTransformNormalMatrix,
-        eTransformViewPosition,
-        eTransformOrthoMatrix,
-
-        eMaterialAmbient,
-        eMaterialDiffuse,
-        eMaterialSpecular,
-        eMaterialEmission,
-        eMaterialShininess,
-        eMaterialTransparency,
-
-        eLightsCount,
-
-        eLightPosition,
-        eLightAmbient,
-        eLightDiffuse,
-        eLightSpecular,
-        eLightDirection,
-        eLightAttenuation,
-        eLightRadius,
-
-        eUniformsCount,
+        eDataTypeCount
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,36 +36,54 @@ namespace renderer
     {
     public:
 
-        enum EDataType
+        enum EUniformData
         {
-            eTypeNone = 0,
-            eTypeInt,
-            eTypeFloat,
-            eTypeVector2,
-            eTypeVector3,
-            eTypeVector4,
-            eTypeMatrix3,
-            eTypeMatrix4,
+            eUniformUser = -1,
 
-            eTypeCount,
+            eTransformProjectionMatrix,
+            eTransformModelMatrix,
+            eTransformViewMatrix,
+            eTransformNormalMatrix,
+            eTransformViewPosition,
+            eTransformOrthoMatrix,
+
+            eMaterialAmbient,
+            eMaterialDiffuse,
+            eMaterialSpecular,
+            eMaterialEmission,
+            eMaterialShininess,
+            eMaterialTransparency,
+
+            eLightsCount,
+
+            eLightPosition,
+            eLightAmbient,
+            eLightDiffuse,
+            eLightSpecular,
+            eLightDirection,
+            eLightAttenuation,
+            eLightRadius,
+
+            eUniformsCount,
         };
 
         CShaderUniform();
         ~CShaderUniform();
 
         void                        setUniform(EDataType type, const std::string& attribute, void* value);
-        void                        setUniforID(s32 id);
+        void                        setID(s32 id);
 
-        EDataType                   getUniformType() const;
-        void*                       getUniforValue() const;
-        const std::string&          getUniformName() const;
+        const std::string&          getAttribute()  const;
+        EDataType                   getType()       const;
+        void*                       getValue()      const;
+        EUniformData                getData()       const;
+        s32                         getID()         const;
 
-        EUniformData                getUniformData() const;
-        s32                         getUniformID(const s32 index = -1)   const;
+        bool                        parse(const tinyxml2::XMLElement* root);
 
 
         static const std::string&   getNameByValue(EUniformData type);
-        static const EUniformData   getValueByName(const std::string& name);
+        static EUniformData         getValueByName(const std::string& name);
 
     private:
 
@@ -85,10 +91,14 @@ namespace renderer
 
         void                        setUniform(const std::string& attribute, EUniformData data);
 
-        EDataType                   m_uniformType;
-        void*                       m_uniformValue;
+        bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
+        void                        parseArrayValue(const std::string& val, f32* array, u32 count);
+
+        EDataType                   m_type;
+        void*                       m_value;
         std::string                 m_attribute;
-        EUniformData                m_uniformData;
+        EUniformData                m_data;
+
         s32                         m_id;
 
         void                        allocMemory(EDataType type, void* value);

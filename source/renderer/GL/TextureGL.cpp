@@ -57,7 +57,7 @@ GLenum EImageFormatGL[EImageFormat::eFormatCount] =
     GL_DEPTH_COMPONENT,
 };
 
-GLenum EImageTypeGL[EImageType::eTypeCount] =
+GLenum EImageTypeGL[EImageType::eImageTypeCount] =
 {
     GL_BYTE,
     GL_UNSIGNED_BYTE,
