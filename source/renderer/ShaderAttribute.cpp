@@ -62,6 +62,8 @@ CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& other)
 
     m_attribute = other.m_attribute;
     m_type = other.m_type;
+
+    return *this;
 }
 
 void CShaderAttribute::setAttribute(const std::string& attribute)

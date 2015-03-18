@@ -36,6 +36,10 @@ namespace renderer
         const UniformList&          getUniformList() const;
         const SamplerList&          getSamplerList() const;
 
+        AttributeList&              getAttributeList();
+        UniformList&                getUniformList();
+        SamplerList&                getSamplerList();
+
         static const std::string&   getDataNameByType(EDataType type);
         static EDataType            getDataTypeByName(const std::string& name);
 
@@ -60,13 +64,15 @@ namespace renderer
 
     private:
 
-        static const std::string    _dataType[EDataType::eDataTypeCount];
+        static const std::string    s_dataType[EDataType::eDataTypeCount];
 
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderData> ShaderDataPtr;
+    typedef std::shared_ptr<CShaderData>    ShaderDataPtr;
+    typedef std::weak_ptr<CShaderData>      ShaderDataWPtr;
+    typedef std::vector<ShaderDataWPtr>     ShaderDataList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

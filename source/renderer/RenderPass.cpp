@@ -176,7 +176,7 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (uniform->getData() != CShaderUniform::eUniformUser);
+        bool isDefault = (uniform->getData() != CShaderUniform::eUserUniform);
         if (isDefault)
         {
             m_defaultShaderData->addUniform(uniform);
@@ -284,6 +284,9 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         shaderElement = shaderElement->NextSiblingElement("var");
     }
 
+    m_program->addShaderData(m_defaultShaderData);
+    m_program->addShaderData(m_userShaderData);
+
     if (!m_program->create())
     {
         LOG_ERROR("CRenderPass: Error Create Shader Program");
@@ -298,7 +301,7 @@ void CRenderPass::init()
     m_userShaderData = std::make_shared<CShaderData>();
     m_defaultShaderData = std::make_shared<CShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
-    m_program = RENDERER->makeSharedProgram(m_defaultShaderData);
+    m_program = RENDERER->makeSharedProgram();
     m_renderState = RENDERER->makeSharedRenderState();
 }
 

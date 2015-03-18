@@ -38,7 +38,7 @@ namespace renderer
 
         enum EUniformData
         {
-            eUniformUser = -1,
+            eUserUniform = -1,
 
             eTransformProjectionMatrix,
             eTransformModelMatrix,
@@ -111,6 +111,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<CShaderUniform>         UniformPtr;
+    typedef std::pair<std::string, UniformPtr>      UniformPair;
     typedef std::map<std::string, UniformPtr>       UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

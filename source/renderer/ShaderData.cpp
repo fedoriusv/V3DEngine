@@ -222,6 +222,21 @@ const SamplerList& CShaderData::getSamplerList() const
     return m_samplerList;
 }
 
+AttributeList& CShaderData::getAttributeList()
+{
+    return m_attributeList;
+}
+
+UniformList& CShaderData::getUniformList()
+{
+    return m_uniformList;
+}
+
+SamplerList& CShaderData::getSamplerList()
+{
+    return m_samplerList;
+}
+
 bool CShaderData::isExistSampler(const std::string& name)
 {
     SamplerList::const_iterator iter = std::find_if(m_samplerList.begin(), m_samplerList.end(), [name](const SamplerPtr& sampler) -> bool

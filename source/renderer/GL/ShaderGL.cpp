@@ -13,8 +13,7 @@ CShaderGL::CShaderGL()
 
 CShaderGL::~CShaderGL()
 {
-    CShaderGL::deleteShader(m_shaderID);
-    m_shaderID = 0;
+    CShaderGL::destroy();
 }
 
 bool CShaderGL::create()

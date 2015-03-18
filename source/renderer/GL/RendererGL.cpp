@@ -14,7 +14,7 @@
 #include "context/DriverContext.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CRendererGL::CRendererGL(const DriverContextPtr& context)
     : CRenderer(context)
@@ -106,9 +106,9 @@ ShaderPtr CRendererGL::makeSharedShader()
     return std::make_shared<CShaderGL>();
 }
 
-ShaderProgramPtr CRendererGL::makeSharedProgram(const ShaderDataPtr& data)
+ShaderProgramPtr CRendererGL::makeSharedProgram()
 {
-    return std::make_shared<CShaderProgramGL>(data);
+    return std::make_shared<CShaderProgramGL>();
 }
 
 GeometryPtr CRendererGL::makeSharedGeometry(const RenderTechniquePtr& technique)

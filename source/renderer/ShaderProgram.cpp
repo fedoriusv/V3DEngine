@@ -6,16 +6,16 @@
 using namespace v3d;
 using namespace renderer;
 
-CShaderProgram::CShaderProgram(const ShaderDataPtr& data)
+CShaderProgram::CShaderProgram()
     : m_shaderProgID(0)
     , m_enable(true)
-    , m_shaderData(data)
 {
 }
 
 CShaderProgram::~CShaderProgram()
 {
     m_shaderList.clear();
+    m_shaderDataList.clear();
 }
 
 u32 CShaderProgram::getShaderID() const
@@ -64,6 +64,14 @@ void CShaderProgram::getShaderIDArray(std::vector<u32>& shaders)
         {
             shaders.push_back(m_shaderList[i]->getShaderID());
         }
+    }
+}
+
+void CShaderProgram::addShaderData(const ShaderDataPtr& data)
+{
+    if (data)
+    {
+        m_shaderDataList.push_back(data);
     }
 }
 

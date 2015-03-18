@@ -10,8 +10,7 @@ using namespace renderer;
 
 u32 CShaderProgramGL::s_currentShader = 0;
 
-CShaderProgramGL::CShaderProgramGL(const ShaderDataPtr& data)
-    : CShaderProgram(data)
+CShaderProgramGL::CShaderProgramGL()
 {
 }
 
@@ -33,8 +32,8 @@ bool CShaderProgramGL::create()
 
 void CShaderProgramGL::destroy()
 {
-    m_shaderList.clear();
     CShaderProgramGL::deleteProgram(m_shaderProgID);
+    m_shaderProgID = 0;
 }
 
 void CShaderProgramGL::bind()
@@ -61,41 +60,71 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         CShaderProgramGL::attachShader(m_shaderProgID, shaders[i]);
     }
 
-    const AttributeList& attributeList = m_shaderData->getAttributeList();
-    for (auto& attribute : attributeList)
+    for (auto& shaderData : m_shaderDataList)
     {
-        const std::string& name = attribute->getAttribute();
-        CShaderAttribute::EShaderAttribute type = attribute->getType();
+        const AttributeList& attributeList = shaderData.lock()->getAttributeList();
+        for (auto& attribute : attributeList)
+        {
+            const std::string& name = attribute->getAttribute();
+            CShaderAttribute::EShaderAttribute type = attribute->getType();
 
-        CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
+            CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
+        }
     }
 
     glLinkProgram(m_shaderProgID);
     glValidateProgram(m_shaderProgID);
 
-    for (auto& attribute : attributeList)
+    for (auto& shaderData : m_shaderDataList)
     {
-        const std::string& name = attribute->getAttribute();
-        CShaderAttribute::EShaderAttribute type = attribute->getType();
-        
-        s32 id = CShaderProgramGL::getAttrib(m_shaderProgID, name);
-        if ((CShaderAttribute::EShaderAttribute)id != type)
+        const AttributeList& attributeList = shaderData.lock()->getAttributeList();
+        for (auto& attribute : attributeList)
         {
-            LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
-        }
-    }
+            const std::string& name = attribute->getAttribute();
+            CShaderAttribute::EShaderAttribute type = attribute->getType();
 
-    const UniformList& uniformList = m_shaderData->getUniformList();
-    for (auto uniform : uniformList)
-    {
-        const std::string& name = uniform.second->getAttribute();
-        s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name);
-        
-        if (id < 0)
-        {
-            LOG_WARNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
+            s32 id = CShaderProgramGL::getAttrib(m_shaderProgID, name);
+            if ((CShaderAttribute::EShaderAttribute)id != type)
+            {
+                LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
+            }
         }
-        uniform.second->setID(id);
+
+        UniformList& uniformList = shaderData.lock()->getUniformList();
+        for (UniformList::iterator uniform = uniformList.begin(), end = uniformList.end(); uniform != end;)
+        {
+            const std::string& name = (*uniform).second->getAttribute();
+            s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name);
+
+            if (id < 0)
+            {
+                LOG_WARNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
+                uniformList.erase(uniform++);
+            }
+            else
+            {
+                (*uniform).second->setID(id);
+                ++uniform;
+            }
+        }
+
+        SamplerList& samplerList = shaderData.lock()->getSamplerList();
+        for (auto& sampler : samplerList)
+        {
+            const std::string& name = sampler->getAttribute();
+            s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name.c_str());
+            if (id < 0)
+            {
+                LOG_WARNING("CShaderProgramGL: Sampler not found: %s", name.c_str());
+            }
+            sampler->setID(id);
+        }
+
+        std::remove_if(samplerList.begin(), samplerList.end(), [](const SamplerPtr item) -> bool
+        {
+            return (item->getID() == -1);
+        });
+
     }
 
     GLint linkStatus;

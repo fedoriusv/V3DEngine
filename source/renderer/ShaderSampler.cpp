@@ -11,7 +11,8 @@ using namespace scene;
 
 CShaderSampler::CShaderSampler()
     : m_attribute("")
-    , m_type(eInvalidSampler)
+    , m_type(eUserSampler)
+    , m_id(-1)
 {
 }
 
@@ -30,6 +31,8 @@ CShaderSampler& CShaderSampler::operator=(const CShaderSampler& other)
     m_type = other.m_type;
     m_target = other.m_target;
     m_texture = other.m_texture;
+
+    return *this;
 }
 
 void CShaderSampler::setAttribute(const std::string& attribute)
@@ -45,6 +48,16 @@ const std::string& CShaderSampler::getAttribute() const
 CShaderSampler::ESamplerType CShaderSampler::getType() const
 {
     return m_type;
+}
+
+void CShaderSampler::setID(s32 id)
+{
+    m_id = id;
+}
+
+s32 CShaderSampler::getID() const
+{
+    return m_id;
 }
 
 bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
@@ -63,9 +76,9 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
     }
     CShaderSampler::setAttribute(varName);
 
-    const std::string varVal = root->Attribute("val");
-    if (!varVal.empty())
+    if (root->Attribute("val"))
     {
+        const std::string varVal = root->Attribute("val");
         const RenderTargetPtr target = CRenderTargetManager::getInstance()->get(varVal);
         if (target)
         {
@@ -86,6 +99,5 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
         return true;
     }
 
-    LOG_WARNING("CShaderSampler: Empty target value");
-    return false;
+    return true;
 }

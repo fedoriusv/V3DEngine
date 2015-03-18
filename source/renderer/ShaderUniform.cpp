@@ -52,7 +52,7 @@ CShaderUniform::EUniformData CShaderUniform::getValueByName(const std::string& n
         }
     }
 
-    return EUniformData::eUniformUser;
+    return EUniformData::eUserUniform;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ CShaderUniform::CShaderUniform()
     : m_type(eTypeNone)
     , m_value(nullptr)
     , m_attribute("")
-    , m_data(eUniformUser)
+    , m_data(eUserUniform)
     , m_id(-1)
 {
 }
@@ -238,7 +238,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
 
     EDataType uniformType = EDataType::eTypeNone;
     EUniformData uniformName = CShaderUniform::getValueByName(varVal);
-    bool defaultUniform = (uniformName != EUniformData::eUniformUser);
+    bool defaultUniform = (uniformName != EUniformData::eUserUniform);
     if (!defaultUniform)
     {
         if (root->Attribute("type"))

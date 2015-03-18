@@ -44,7 +44,7 @@ namespace renderer
         void                        checkForErrors(const std::string& location = "");
 
         virtual ShaderPtr           makeSharedShader()                                                      = 0;
-        virtual ShaderProgramPtr    makeSharedProgram(const ShaderDataPtr& data)                            = 0;
+        virtual ShaderProgramPtr    makeSharedProgram()                                                     = 0;
         virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 = 0;
         virtual TexturePtr          makeSharedTexture()                                                     = 0;
         virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;

@@ -22,8 +22,7 @@ namespace renderer
 
         enum ESamplerType
         {
-            eInvalidSampler = -1,
-            eUserSampler,
+            eUserSampler = -1,
             eTextureSampler,
             eRenderTargetSampler
         };
@@ -36,6 +35,9 @@ namespace renderer
         void                    setAttribute(const std::string& attribute);
         const std::string&      getAttribute() const;
 
+        void                    setID(s32 id);
+        s32                     getID() const;
+
         ESamplerType            getType() const;
 
         bool                    parse(const tinyxml2::XMLElement* root);
@@ -47,6 +49,8 @@ namespace renderer
 
         RenderTargetWPtr        m_target;
         TextureWPtr             m_texture;
+
+        s32                     m_id;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

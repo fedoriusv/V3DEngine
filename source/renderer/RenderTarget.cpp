@@ -34,6 +34,7 @@ CRenderTarget::CRenderTarget()
 
 CRenderTarget::~CRenderTarget()
 {
+    m_attachmentsList.clear();
 }
 
 const TexturePtr& CRenderTarget::getColorTexture(u32 index) const

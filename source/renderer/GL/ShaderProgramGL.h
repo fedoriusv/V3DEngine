@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CShaderProgramGL(const ShaderDataPtr& data);
+        CShaderProgramGL();
         ~CShaderProgramGL();
 
         bool                create()    override;
