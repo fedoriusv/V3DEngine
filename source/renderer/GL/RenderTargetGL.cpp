@@ -221,6 +221,8 @@ void CRenderTargetGL::destroy()
 
     CRenderTargetGL::deleteRenderbuffers(m_renderBufferID);
     CRenderTargetGL::deleteFramebuffers(m_frameBufferID);
+    m_frameBufferID = 0;
+    m_renderBufferID = 0;
 }
 
 void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
@@ -448,4 +450,10 @@ void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, s32 target, u32 bu
 {
     ASSERT(glIsRenderbuffer(buffer) || "Invalid Index Renderbuffer");
     glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, buffer);
+}
+
+void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask)
+{
+    glBlitFramebuffer(src.getLeftX(), src.getTopY(), src.getRightX(), src.getHeight(),
+        dst.getLeftX(), dst.getTopY(), dst.getRightX(), dst.getHeight(), mask, GL_NEAREST);
 }

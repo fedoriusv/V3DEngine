@@ -56,6 +56,8 @@ namespace v3d
 
             static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
             static void     framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer);
+
+            static void     blitFramebuffer(const Rect& src, const Rect& dst, u32 mask);
         };
     }
 }
