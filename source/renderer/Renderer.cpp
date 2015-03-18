@@ -132,46 +132,22 @@ void CRenderer::draw(const RenderJobPtr& job)
 {
     const MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
-    const u32 passCount = material->getRenderTechique()->getRenderPassCount();
     const core::Matrix4D& transform = job->getTransform();
+    const u32 passCount = material->getRenderTechique()->getRenderPassCount();
 
     for (u32 i = 0; i < passCount; ++i)
     {
         const RenderPassPtr& pass = material->getRenderTechique()->getRenderPass(i);
 
-        /*if (!checkLOD(transform, pass))
-        {
-            continue;
-        }*/
-
         pass->bind();
 
         CRenderer::updateTransform(transform, pass);
         CRenderer::updateMaterial(material, pass);
+        CRenderer::updateTexture(material, pass);
         CRenderer::updateLight(transform, pass);
 
         //Bind Texture
-        u32 layersCount = material->getTextureCount();
-        for (u32 layer = 0; layer < layersCount; ++layer)
-        {
-            const TexturePtr& texture = material->getTexture(layer);
-            if (pass->getDefaultShaderData()->getSamplerList().size() >= layer)
-            {
-                if (texture->isEnable())
-                {
-                    texture->bind(layer);
-                }
-                else
-                {
-                    texture->unbind(layer);
-                }
-            }
-        }
-
-        if (layersCount == 0)
-        {
-            this->resetTexture();
-        }
+       
 
         //Draw Geometry
         geometry->draw();
@@ -246,23 +222,6 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                 break;
         }
     }
-}
-
-bool CRenderer::checkLOD(const core::Matrix4D& transform, const RenderPassPtr& pass)
-{
-    const RenderLODPtr& lod = pass->getRenderLOD();
-
-    if (lod->getGeometryDistance() <= 0)
-    {
-        return true;
-    }
-
-    if (lod->getGeometryDistance() < (transform.getTranslation() - m_viewPosition).length())
-    {
-        return false;
-    }
-
-    return true;
 }
 
 void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
@@ -400,5 +359,54 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
                 break;
             }
         }
+    }
+}
+
+void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& pass)
+{
+    const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
+
+    const SamplerList& samplerList = defaultData->getSamplerList();
+    for (auto& sampler : samplerList)
+    {
+        if (sampler->getID() < 0)
+        {
+            continue;
+        }
+
+        CShaderSampler::ESamplerType type = sampler->getType();
+        switch (type)
+        {
+        case CShaderSampler::eUserSampler:
+            break;
+
+        case CShaderSampler::eTextureSampler:
+            break;
+
+        case CShaderSampler::eRenderTargetSampler:
+            break;
+        }
+    }
+
+    u32 layersCount = material->getTextureCount();
+    for (u32 layer = 0; layer < layersCount; ++layer)
+    {
+        const TexturePtr& texture = material->getTexture(layer);
+        if (pass->getDefaultShaderData()->getSamplerList().size() >= layer)
+        {
+            if (texture->isEnable())
+            {
+                texture->bind(layer);
+            }
+            else
+            {
+                texture->unbind(layer);
+            }
+        }
+    }
+
+    if (layersCount == 0)
+    {
+        resetTexture();
     }
 }

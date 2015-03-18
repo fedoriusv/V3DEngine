@@ -75,6 +75,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     glLinkProgram(m_shaderProgID);
     glValidateProgram(m_shaderProgID);
 
+    s32 samplerCount = 0;
     for (auto& shaderData : m_shaderDataList)
     {
         const AttributeList& attributeList = shaderData.lock()->getAttributeList();
@@ -117,14 +118,19 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
             {
                 LOG_WARNING("CShaderProgramGL: Sampler not found: %s", name.c_str());
             }
-            sampler->setID(id);
+            else
+            {
+                sampler->setID(id);
+
+                CShaderProgramGL::setUniformInt(id, samplerCount);
+                ++samplerCount;
+            }
         }
 
         std::remove_if(samplerList.begin(), samplerList.end(), [](const SamplerPtr item) -> bool
         {
             return (item->getID() == -1);
         });
-
     }
 
     GLint linkStatus;
