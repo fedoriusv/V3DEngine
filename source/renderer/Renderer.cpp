@@ -365,8 +365,10 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
 void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& pass)
 {
     const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
-
     const SamplerList& samplerList = defaultData->getSamplerList();
+
+    bool isUserSamplers = (samplerList.size() == 0) ? true : false;
+    u32 layersCount = 0;
     for (auto& sampler : samplerList)
     {
         if (sampler->getID() < 0)
@@ -377,23 +379,33 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
         CShaderSampler::ESamplerType type = sampler->getType();
         switch (type)
         {
-        case CShaderSampler::eUserSampler:
+            case CShaderSampler::eUserSampler:
+            {
+                isUserSamplers = true;
+                break;
+            }
             break;
 
-        case CShaderSampler::eTextureSampler:
-            break;
-
-        case CShaderSampler::eRenderTargetSampler:
+            case CShaderSampler::eTextureSampler:
+            case CShaderSampler::eRenderTargetSampler:
+            {
+                const TexturePtr& texture = sampler->getTexture();
+                if (texture)
+                {
+                    texture->bind(layersCount);
+                    ++layersCount;
+                }
+            }
             break;
         }
     }
 
-    u32 layersCount = material->getTextureCount();
-    for (u32 layer = 0; layer < layersCount; ++layer)
+    if (isUserSamplers)
     {
-        const TexturePtr& texture = material->getTexture(layer);
-        if (pass->getDefaultShaderData()->getSamplerList().size() >= layer)
+        layersCount = material->getTextureCount();
+        for (u32 layer = 0; layer < layersCount; ++layer)
         {
+            const TexturePtr& texture = material->getTexture(layer);
             if (texture->isEnable())
             {
                 texture->bind(layer);
@@ -403,10 +415,10 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
                 texture->unbind(layer);
             }
         }
-    }
 
-    if (layersCount == 0)
-    {
-        resetTexture();
+        if (layersCount == 0)
+        {
+            resetTexture();
+        }
     }
 }

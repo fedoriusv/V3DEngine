@@ -16,6 +16,8 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderer;
+    
     class CShaderSampler
     {
     public:
@@ -43,6 +45,11 @@ namespace renderer
         bool                    parse(const tinyxml2::XMLElement* root);
 
     protected:
+
+        friend                  CRenderer;
+
+        const TexturePtr&       getTexture() const;
+        const RenderTargetPtr&  getTarget() const;
 
         ESamplerType            m_type;
         std::string             m_attribute;

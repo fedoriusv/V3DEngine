@@ -33,6 +33,9 @@ namespace renderer
         const TexturePtr&               getDepthTexture() const;
         TexturePtr&                     getDepthTexture();
 
+        const TexturePtr&               getStencilTexture() const;
+        TexturePtr&                     getStencilTexture();
+
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;
 

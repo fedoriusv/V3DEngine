@@ -97,6 +97,36 @@ TexturePtr& CRenderTarget::getDepthTexture()
     return (*attach)._texture;
 }
 
+const TexturePtr& CRenderTarget::getStencilTexture() const
+{
+    std::deque<SAttachments>::const_iterator attach;
+    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    {
+        if ((*item)._type == eStencilAttach)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
+}
+
+TexturePtr& CRenderTarget::getStencilTexture()
+{
+    std::deque<SAttachments>::iterator attach;
+    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    {
+        if ((*item)._type == eStencilAttach)
+        {
+            attach = item;
+            break;
+        }
+    }
+
+    return (*attach)._texture;
+}
+
 void CRenderTarget::setClearColor(const core::Vector4D& color)
 {
     m_color = color;
