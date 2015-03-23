@@ -269,68 +269,73 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
     return false;
 }
 
-bool CShaderProgramGL::setUniform(EDataType type, const u32 shader, const std::string& attribute, void* value)
+bool CShaderProgramGL::setUniform(const UniformPtr& uniform)
 {
-    GLint location = CShaderProgramGL::getUniformLocation(shader, attribute);
+    if (m_shaderProgID <= 0)
+    {
+        return false;
+    }
 
+    GLint location = CShaderProgramGL::getUniformLocation(m_shaderProgID, uniform->getAttribute());
     if (location > -1)
     {
-        switch (type)
+        void* value = uniform->getValue();
+        switch (uniform->getType())
         {
             case EDataType::eTypeNone:
             {
                 location = -1;
             }
-            break;
+                break;
 
             case EDataType::eTypeInt:
             {
                 GLint& val = *(GLint*)value;
                 CShaderProgramGL::setUniformInt(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeFloat:
             {
                 GLfloat& val = *(GLfloat*)value;
                 CShaderProgramGL::setUniformFloat(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeVector2:
             {
-                core::Vector2D& val = *(core::Vector2D*)value;
+                Vector2D& val = *(Vector2D*)value;
                 CShaderProgramGL::setUniformVector2(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeVector3:
             {
-                core::Vector3D& val = *(core::Vector3D*)value;
+                Vector3D& val = *(Vector3D*)value;
                 CShaderProgramGL::setUniformVector3(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeVector4:
             {
-                core::Vector4D& val = *(core::Vector4D*)value;
+                Vector4D& val = *(Vector4D*)value;
                 CShaderProgramGL::setUniformVector4(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeMatrix3:
             {
-                core::Matrix3D& val = *(core::Matrix3D*)value;
+                Matrix3D& val = *(Matrix3D*)value;
                 CShaderProgramGL::setUniformMatrix3(location, val);
             }
-            break;
+                break;
 
             case EDataType::eTypeMatrix4:
             {
-                core::Matrix4D& val = *(core::Matrix4D*)value;
+                Matrix4D& val = *(Matrix4D*)value;
                 CShaderProgramGL::setUniformMatrix4(location, val);
             }
-            break;
+                break;
 
             default:
             {
@@ -341,10 +346,10 @@ bool CShaderProgramGL::setUniform(EDataType type, const u32 shader, const std::s
 
     if (location == -1)
     {
-        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", attribute.data(), shader);
+        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getAttribute().c_str(), m_shaderProgID);
     }
 
-    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + attribute);
+    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getAttribute());
 
     return (location != -1);
 }

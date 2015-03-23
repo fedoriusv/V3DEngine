@@ -70,7 +70,6 @@ namespace renderer
         CShaderUniform();
         ~CShaderUniform();
 
-        void                        setUniform(EDataType type, const std::string& attribute, void* value);
         void                        setID(s32 id);
 
         const std::string&          getAttribute()  const;
@@ -90,6 +89,7 @@ namespace renderer
         friend                      CShaderData;
 
         void                        setUniform(const std::string& attribute, EUniformData data);
+        void                        setUniform(EDataType type, const std::string& attribute, void* value);
 
         bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
         void                        parseArrayValue(const std::string& val, f32* array, u32 count);

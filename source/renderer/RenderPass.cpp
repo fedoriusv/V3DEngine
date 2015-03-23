@@ -426,11 +426,13 @@ void CRenderPass::bind()
     const UniformList& list = m_userShaderData->m_uniformList;
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
-        EDataType type = uniform->second->getType();
-        const std::string& attribute = uniform->first;
-        void* value = uniform->second->getValue();
+        CShaderUniform::EUniformData data = uniform->second->getData();
+        if (data != CShaderUniform::eUserUniform)
+        {
+            continue;
+        }
 
-        m_program->setUniform(type, m_program->getShaderID(), attribute, value);
+        m_program->setUniform(uniform->second);
     }
 }
 
