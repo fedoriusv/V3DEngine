@@ -20,7 +20,7 @@
 		</attributes>
 		<samplers> 
 		</samplers>
-		<renderstate polygonmode="fill" winding="cw" cullface="false"/>
+		<renderstate polygonmode="line" winding="cw" cullface="false"/>
 		<rendertarget val="targetTest"/>
         <lod geometry="0.0"/>
 		<shaders>

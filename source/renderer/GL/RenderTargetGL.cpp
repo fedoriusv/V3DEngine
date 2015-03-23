@@ -102,9 +102,9 @@ void CRenderTargetGL::bind()
 
 void CRenderTargetGL::unbind()
 {
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //bool chaned = CRenderTargetGL::bindFramebuffer(0);
-    /*if (chaned)
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    bool chaned = CRenderTargetGL::bindFramebuffer(0);
+    if (chaned)
     {
         glReadBuffer(GL_BACK);
         glDrawBuffer(GL_BACK);
@@ -114,7 +114,7 @@ void CRenderTargetGL::unbind()
         glViewport(rect.getLeftX(), rect.getTopY(), rect.getWidth(), rect.getHeight());
 
         RENDERER->setCurrentRenderTarget(target);
-    }*/
+    }
 }
 
 bool CRenderTargetGL::create()

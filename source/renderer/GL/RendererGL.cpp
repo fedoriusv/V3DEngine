@@ -46,7 +46,11 @@ void CRendererGL::init()
 
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
-    glClearDepth(1.0f);
+    glClearDepth(1.0);
+
+    glEnable(GL_DEPTH_CLAMP);
+    glDepthRange(-1.0, 1.0);
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
@@ -86,8 +90,6 @@ void CRendererGL::postRender()
 
     m_frameIndex++;
     m_isLocked = false;
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #ifdef _DEBUG
     m_context->checkForErrors();

@@ -12,16 +12,20 @@ using namespace v3d::renderer;
 
 GLenum EDrawModeGL[CGeometry::eDrawCount] =
 {
-    GL_TRIANGLE_STRIP,
     GL_TRIANGLES,
+    GL_TRIANGLE_STRIP,
     GL_TRIANGLE_FAN,
-    GL_LINES
+    GL_LINES,
+    GL_LINE_STRIP,
+    GL_LINE_LOOP,
+    GL_POINTS
+
 };
 
 GLenum EGeometryTargetGL[CGeometry::eTargetCount] =
 {
     GL_ARRAY_BUFFER,
-    GL_ELEMENT_ARRAY_BUFFER
+    GL_ELEMENT_ARRAY_BUFFER,
 };
 
 u32 CGeometryGL::s_currentArray = 0;
@@ -337,7 +341,17 @@ void CGeometryGL::drawElements(EDrawMode mode, u32 count)
     glDrawElements(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL);
 }
 
+void CGeometryGL::drawElementsInstanced(EDrawMode mode, u32 count, u32 primCount)
+{
+    glDrawElementsInstanced(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL, primCount);
+}
+
 void CGeometryGL::drawArrays(EDrawMode mode, u32 first, u32 count)
 {
     glDrawArrays(EDrawModeGL[mode], first, count);
+}
+
+void CGeometryGL::drawArraysInstanced(EDrawMode mode, u32 first, u32 count, u32 primCount)
+{
+    glDrawArraysInstanced(EDrawModeGL[mode], first, count, primCount);
 }

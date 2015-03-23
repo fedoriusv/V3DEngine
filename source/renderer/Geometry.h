@@ -16,10 +16,13 @@ namespace renderer
 
         enum EDrawMode
         {
-            eTriangleStrip,
             eTriangles,
+            eTriangleStrip,
             eTriangleFan,
             eLines,
+            eLinesStrip,
+            eLinesLoop,
+            ePoints,
 
             eDrawCount
         };
