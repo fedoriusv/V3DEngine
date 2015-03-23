@@ -3,7 +3,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 GLenum EPolygonModeGL[] =
 {
@@ -18,7 +18,7 @@ GLenum EWindingGL[] =
     GL_CCW
 };
 
-GLenum EBlendFactorGL[] =
+GLenum EBlendFactorGL[EBlendFactor::eBlendCount] =
 {
     GL_ZERO,
     GL_ONE,
@@ -33,6 +33,11 @@ GLenum EBlendFactorGL[] =
     GL_SRC_ALPHA_SATURATE
 };
 
+bool CRenderStateGL::s_currentBlend = false;
+bool CRenderStateGL::s_currentCulling = true;
+u32 CRenderStateGL::s_currentPolygonMode = ePolyModeFill;
+u32 CRenderStateGL::s_currentWinding = eWindingCW;
+
 CRenderStateGL::CRenderStateGL()
 {
 }
@@ -43,14 +48,65 @@ CRenderStateGL::~CRenderStateGL()
 
 void CRenderStateGL::bind()
 {
-    glPolygonMode(GL_FRONT_AND_BACK, EPolygonModeGL[m_polygonMode]);
+    CRenderStateGL::polygonMode(m_polygonMode);
 
-    glFrontFace(EWindingGL[m_winding]);
-    m_cullFace ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+    CRenderStateGL::winding(m_winding);
+    CRenderStateGL::culling(m_cullFace);
 
-
-    m_blend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+    CRenderStateGL::blend(m_blend);
     glBlendFunc(EBlendFactorGL[m_blendDst], EBlendFactorGL[m_blendSrc]);
 
     RENDERER->checkForErrors("CRenderStateGL Bind Error");
+}
+
+bool CRenderStateGL::blend(bool enable)
+{
+    if (enable != s_currentBlend)
+    {
+        enable ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+        s_currentBlend = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::culling(bool enable)
+{
+    if (enable != s_currentCulling)
+    {
+        enable ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+        s_currentCulling = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::polygonMode(EPolygonMode mode)
+{
+    if (mode != s_currentPolygonMode)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, EPolygonModeGL[mode]);
+        s_currentPolygonMode = mode;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::winding(EWinding winding)
+{
+    if (winding != s_currentWinding)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, EWindingGL[winding]);
+        s_currentWinding = winding;
+
+        return true;
+    }
+
+    return false;
 }
