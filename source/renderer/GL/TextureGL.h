@@ -47,6 +47,8 @@ namespace renderer
 
         u32             m_samplerID;
 
+        bool            m_initialized;
+
         static u32      s_currentTextureID[eTargetCount];
         static u32      s_currentLayerID;
         static u32      s_currentSamplerID;

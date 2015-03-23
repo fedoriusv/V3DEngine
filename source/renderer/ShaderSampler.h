@@ -48,8 +48,8 @@ namespace renderer
 
         friend                  CRenderer;
 
-        const TexturePtr&       getTexture() const;
-        const RenderTargetPtr&  getTarget() const;
+        const TextureWPtr&      getTexture() const;
+        const RenderTargetWPtr& getTarget() const;
 
         ESamplerType            m_type;
         std::string             m_attribute;

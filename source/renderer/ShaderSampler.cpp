@@ -132,19 +132,21 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             return true;
         }
 
+        LOG_ERROR("CRenderPass: Texture with val '%s' not found", varVal.c_str());
         m_type = eUserSampler;
         return true;
     }
 
+    m_type = eUserSampler;
     return true;
 }
 
-const TexturePtr& CShaderSampler::getTexture() const
+const TextureWPtr& CShaderSampler::getTexture() const
 {
-    return m_texture.lock();
+    return m_texture;
 }
 
-const RenderTargetPtr& CShaderSampler::getTarget() const
+const RenderTargetWPtr& CShaderSampler::getTarget() const
 {
-    return m_target.lock();
+    return m_target;
 }

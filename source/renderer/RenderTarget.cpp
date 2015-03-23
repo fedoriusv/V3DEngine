@@ -286,7 +286,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
             {
                 if (core::isPowerOf2(size) || size > 32)
                 {
-                    LOG_ERROR("CRenderTarget: Depth component size must be 16, 24 or 32 - %d", size);
+                    //LOG_WARNING("CRenderTarget: Depth component size must be 16, 24 or 32 - %d", size);
                 }
             }
             else

@@ -58,8 +58,6 @@ namespace renderer
         virtual void    setUniformMatrix3(const s32 location, const core::Matrix3D& matrix) = 0;
         virtual void    setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) = 0;
 
-        virtual s32     getUniformID(const u32 shader, const std::string& name)             = 0;
-
         u32             m_shaderProgID;
 
         bool            m_enable;

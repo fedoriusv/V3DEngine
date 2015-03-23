@@ -53,7 +53,11 @@ void CShaderProgramGL::unbind()
 
 bool CShaderProgramGL::init(const std::vector<u32>& shaders)
 {
+    GLint originalProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+
     CShaderProgramGL::createProgram(m_shaderProgID);
+    RENDERER->checkForErrors("CShaderProgramGL: Create Program error");
 
     for (u32 i = 0; i < shaders.size(); ++i)
     {
@@ -72,8 +76,18 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         }
     }
 
-    glLinkProgram(m_shaderProgID);
-    glValidateProgram(m_shaderProgID);
+    if (!CShaderProgramGL::linkProgram(m_shaderProgID))
+    {
+        return false;
+    }
+
+    if (!CShaderProgramGL::validateProgram(m_shaderProgID))
+    {
+        return false;
+    }
+
+    RENDERER->checkForErrors("CShaderProgramGL: Link Program error");
+    CShaderProgramGL::useProgram(m_shaderProgID);
 
     s32 samplerCount = 0;
     for (auto& shaderData : m_shaderDataList)
@@ -95,7 +109,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         for (UniformList::iterator uniform = uniformList.begin(), end = uniformList.end(); uniform != end;)
         {
             const std::string& name = (*uniform).second->getAttribute();
-            s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name);
+            s32 id = CShaderProgramGL::getUniformLocation(m_shaderProgID, name);
 
             if (id < 0)
             {
@@ -113,7 +127,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         for (auto& sampler : samplerList)
         {
             const std::string& name = sampler->getAttribute();
-            s32 id = CShaderProgramGL::getUniformID(m_shaderProgID, name.c_str());
+            s32 id = CShaderProgramGL::getUniformLocation(m_shaderProgID, name.c_str());
             if (id < 0)
             {
                 LOG_WARNING("CShaderProgramGL: Sampler not found: %s", name.c_str());
@@ -133,18 +147,29 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         });
     }
 
+    RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
+    CShaderProgramGL::useProgram(originalProgram);
+
+    return true;
+}
+
+bool CShaderProgramGL::linkProgram(u32 shaderProgram)
+{
+    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Link Shader program");
+    glLinkProgram(shaderProgram);
+
     GLint linkStatus;
-    glGetProgramiv(m_shaderProgID, GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not compiled id: %d", m_shaderProgID);
+        LOG_ERROR("CShaderProgramGL: Shader program not linked id: %d", linkStatus);
 #ifdef _DEBUG
         GLint length;
         GLint charsWritten;
-        glGetProgramiv(m_shaderProgID, GL_INFO_LOG_LENGTH, &length);
+        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
 
         GLchar* buffer = new GLchar[length];
-        glGetProgramInfoLog(m_shaderProgID, length, &charsWritten, buffer);
+        glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
         if (strlen(buffer) > 0)
         {
             LOG_ERROR("CShaderProgramGL: Shader Program Error:\n %s", buffer);
@@ -152,9 +177,34 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
 #endif
     }
 
-    RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
-
     return (linkStatus == GL_TRUE) ? true : false;
+}
+
+bool CShaderProgramGL::validateProgram(u32 shaderProgram)
+{
+    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Validate Shader program");
+    glValidateProgram(shaderProgram);
+
+    GLint validateStatus;
+    glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &validateStatus);
+    if (!validateStatus)
+    {
+        LOG_ERROR("CShaderProgramGL: Shader program not validate id: %d", validateStatus);
+#ifdef _DEBUG
+        GLint length;
+        GLint charsWritten;
+        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
+
+        GLchar* buffer = new GLchar[length];
+        glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
+        if (strlen(buffer) > 0)
+        {
+            LOG_ERROR("CShaderProgramGL: Shader Program Error:\n %s", buffer);
+        }
+#endif
+    }
+
+    return (validateStatus == GL_TRUE) ? true : false;
 }
 
 void CShaderProgramGL::createProgram(u32& shaderProgram)
@@ -218,7 +268,7 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
 
 bool CShaderProgramGL::setUniform(EDataType type, const u32 shader, const std::string& attribute, void* value)
 {
-    GLint location = CShaderProgramGL::getUniformID(shader, attribute);
+    GLint location = CShaderProgramGL::getUniformLocation(shader, attribute);
 
     if (location > -1)
     {
@@ -351,9 +401,13 @@ void CShaderProgramGL::setUniformMatrix4(const s32 location, const core::Matrix4
     }
 }
 
-s32 CShaderProgramGL::getUniformID(const u32 shader, const std::string& name)
+s32 CShaderProgramGL::getUniformLocation(u32 shaderProgram, const std::string& name)
 {
-    GLint location = glGetUniformLocation(shader, name.data());
+    if (shaderProgram > 0)
+    {
+        GLint location = glGetUniformLocation(shaderProgram, name.data());
+        return location;
+    }
 
-    return location;
+    return -1;
 }

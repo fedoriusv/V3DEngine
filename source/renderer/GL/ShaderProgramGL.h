@@ -24,12 +24,16 @@ namespace renderer
         static void         createProgram(u32& shaderProgram);
         static void         deleteProgram(u32 shaderProgram);
         static bool         useProgram(u32 shaderProgram);
+        static bool         linkProgram(u32 shaderProgram);
+        static bool         validateProgram(u32 shaderProgram);
 
         static void         attachShader(u32 shaderProgram, u32 shader);
         static void         detachShader(u32 shaderProgram, u32 shader);
 
         static void         bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name);
         static s32          getAttrib(u32 shaderProgram, const std::string& name);
+
+        static s32          getUniformLocation(u32 shaderProgram, const std::string& name);
 
     private:
 
@@ -43,8 +47,6 @@ namespace renderer
         void                setUniformVector4(const s32 location, const core::Vector4D& vector) override;
         void                setUniformMatrix3(const s32 location, const core::Matrix3D& matrix) override;
         void                setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) override;
-
-        s32                 getUniformID(const u32 shader, const std::string& name)             override;
 
         static u32          s_currentShader;
 

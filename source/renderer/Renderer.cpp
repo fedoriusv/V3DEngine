@@ -367,7 +367,7 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
     const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
     const SamplerList& samplerList = defaultData->getSamplerList();
 
-    bool isUserSamplers = (samplerList.size() == 0) ? true : false;
+    bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
     u32 layersCount = 0;
     for (auto& sampler : samplerList)
     {
@@ -389,10 +389,10 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
             case CShaderSampler::eTextureSampler:
             case CShaderSampler::eRenderTargetSampler:
             {
-                const TexturePtr& texture = sampler->getTexture();
-                if (texture)
+                const TextureWPtr& texture = sampler->getTexture();
+                if (!texture.expired())
                 {
-                    texture->bind(layersCount);
+                    texture.lock()->bind(layersCount);
                     ++layersCount;
                 }
             }

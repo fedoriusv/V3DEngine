@@ -78,6 +78,7 @@ u32 CTextureGL::s_currentSamplerID = 0;
 
 CTextureGL::CTextureGL()
     : m_samplerID(0)
+    , m_initialized(false)
 {
 }
 
@@ -88,6 +89,11 @@ CTextureGL::~CTextureGL()
 
 void CTextureGL::bind(u32 layer)
 {
+    if (!m_initialized)
+    {
+        return;
+    }
+
     CTextureGL::activeTextureLayer(layer);
     CTextureGL::bindSampler(m_textureID, m_samplerID);
     CTextureGL::bindTexture(m_target, m_textureID);
@@ -175,6 +181,7 @@ bool CTextureGL::create()
 
     if (success)
     {
+        m_initialized = true;
         m_enable = true;
     }
 

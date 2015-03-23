@@ -2,8 +2,8 @@
 	
 	<!-- Textures -->
 	<textures>
-		<texture name="wall" file="textures/wall.bmp"/>
-		<texture name="box" file="textures/box.jpg"/>
+    	<texture name="wall" file="textures/wall.bmp"/>
+    	<texture name="box" file="textures/box.jpg"/>
 	</textures>
 	
 	<!-- Render Targets -->

@@ -119,14 +119,14 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
             if (!textureElement->Attribute("name"))
             {
                 LOG_ERROR("CRenderTechnique: Texture have't name");
-                textureElement = textureElement->NextSiblingElement("target");
+                textureElement = textureElement->NextSiblingElement("texture");
                 continue;
             }
 
             if (!textureElement->Attribute("file"))
             {
                 LOG_ERROR("CRenderTechnique: Texture have't path to file");
-                textureElement = textureElement->NextSiblingElement("target");
+                textureElement = textureElement->NextSiblingElement("texture");
                 continue;
             }
             
@@ -138,7 +138,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 LOG_WARNING("CRenderTechnique: File [%s] not found or not support format", fileStr.c_str());
             }
 
-            textureElement = textureElement->NextSiblingElement("target");
+            textureElement = textureElement->NextSiblingElement("texture");
         }
     }
 
