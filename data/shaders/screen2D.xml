@@ -8,10 +8,9 @@
 	
 	<!-- Render Targets -->
     <rendertargets>
-        <target name="upCorner" x="0" y="512" width="256" height="256" ratio="0.0" color="0xff00ff00">
-            <color active="true" attach="1" clear="true" format="8888" output="render"/>
-            <depth active="true" clear="true" format="16" output="render"/>
-            <stencil active="false" clear="true" format="16"/>
+        <target name="targetTest" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00">
+            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
+            <depth active="true" clear="true" format="16" output="texture"/>
         </target>
     </rendertargets>
 
@@ -27,7 +26,7 @@
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
 		<samplers>
-            <var name="sampler0" val="wall"/>
+            <var name="sampler0" val="targetTest" attachment="c0"/>
 		</samplers>
 		<renderstate polygonmode="fill" winding="cw" cullface="false"/>
 		<rendertarget val="default"/>

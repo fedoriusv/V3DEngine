@@ -54,7 +54,7 @@ void CRenderTargetGL::bind()
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
         const Rect& rect = getViewport();
-        glViewport(rect.getLeftX(), rect.getTopY(), rect.getRightX(), rect.getHeight());
+        glViewport(rect.getLeftX(), rect.getTopY(), rect.getRightX(), rect.getBottomY());
 
         if (m_attachBuffers.size() > 0)
         {
@@ -348,7 +348,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             formatColor(attach._format);
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), imageFormat, imageType, nullptr);
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType, nullptr);
             CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
@@ -357,7 +357,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
 
         case eDepthAttach:
         {
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), eDepthComponent, eUnsignedInt, nullptr);
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
             CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
 
             RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
@@ -367,7 +367,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
         case eStencilAttach:
         {
             //TODO: need rework
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getWidth()), eDepthComponent, eUnsignedInt, nullptr);
+            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
             CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
 
             RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");

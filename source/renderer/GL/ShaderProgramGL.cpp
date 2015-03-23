@@ -148,7 +148,10 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     }
 
     RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
-    CShaderProgramGL::useProgram(originalProgram);
+    if (originalProgram >= 0)
+    {
+        CShaderProgramGL::useProgram(originalProgram);
+    }
 
     return true;
 }
