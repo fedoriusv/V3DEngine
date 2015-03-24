@@ -354,7 +354,7 @@ bool CShaderProgramGL::setUniform(const UniformPtr& uniform)
     return (location != -1);
 }
 
-void CShaderProgramGL::setUniformInt(const s32 location, const s32 value)
+void CShaderProgramGL::setUniformInt(s32 location, s32 value)
 {
     if (location > -1)
     {
@@ -362,7 +362,7 @@ void CShaderProgramGL::setUniformInt(const s32 location, const s32 value)
     }
 }
 
-void CShaderProgramGL::setUniformFloat(const s32 location, const f32 value)
+void CShaderProgramGL::setUniformFloat(s32 location, f32 value)
 {
     if (location > -1)
     {
@@ -370,14 +370,14 @@ void CShaderProgramGL::setUniformFloat(const s32 location, const f32 value)
     }
 }
 
-void CShaderProgramGL::setUniformVector2(const s32 location, const core::Vector2D& vector)
+void CShaderProgramGL::setUniformVector2(s32 location, const core::Vector2D& vector)
 {
     if (location > -1)
     {
         glUniform2fv(location, 1, &vector.x);
     }
 }
-void CShaderProgramGL::setUniformVector3(const s32 location, const core::Vector3D& vector)
+void CShaderProgramGL::setUniformVector3(s32 location, const core::Vector3D& vector)
 {
     if (location > -1)
     {
@@ -385,7 +385,7 @@ void CShaderProgramGL::setUniformVector3(const s32 location, const core::Vector3
     }
 }
 
-void CShaderProgramGL::setUniformVector4(const s32 location, const core::Vector4D& vector)
+void CShaderProgramGL::setUniformVector4(s32 location, const core::Vector4D& vector)
 {
     if (location > -1)
     {
@@ -393,7 +393,7 @@ void CShaderProgramGL::setUniformVector4(const s32 location, const core::Vector4
     }
 }
 
-void CShaderProgramGL::setUniformMatrix3(const s32 location, const core::Matrix3D& matrix)
+void CShaderProgramGL::setUniformMatrix3(s32 location, const core::Matrix3D& matrix)
 {
     if (location > -1)
     {
@@ -401,7 +401,7 @@ void CShaderProgramGL::setUniformMatrix3(const s32 location, const core::Matrix3
     }
 }
 
-void CShaderProgramGL::setUniformMatrix4(const s32 location, const core::Matrix4D& matrix)
+void CShaderProgramGL::setUniformMatrix4(s32 location, const core::Matrix4D& matrix)
 {
     if (location > -1)
     {

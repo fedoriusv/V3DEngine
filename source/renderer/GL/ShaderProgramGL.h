@@ -21,6 +21,8 @@ namespace renderer
         void                bind()      override;
         void                unbind()    override;
 
+    public:
+
         static void         createProgram(u32& shaderProgram);
         static void         deleteProgram(u32 shaderProgram);
         static bool         useProgram(u32 shaderProgram);
@@ -41,13 +43,13 @@ namespace renderer
 
         bool                setUniform(const UniformPtr& uniform) override;
 
-        void                setUniformInt    (const s32 location, const s32 value)              override;
-        void                setUniformFloat  (const s32 location, const f32 value)              override;
-        void                setUniformVector2(const s32 location, const core::Vector2D& vector) override;
-        void                setUniformVector3(const s32 location, const core::Vector3D& vector) override;
-        void                setUniformVector4(const s32 location, const core::Vector4D& vector) override;
-        void                setUniformMatrix3(const s32 location, const core::Matrix3D& matrix) override;
-        void                setUniformMatrix4(const s32 location, const core::Matrix4D& matrix) override;
+        void                setUniformInt    (s32 location, s32 value)                    override;
+        void                setUniformFloat  (s32 location, f32 value)                    override;
+        void                setUniformVector2(s32 location, const core::Vector2D& vector) override;
+        void                setUniformVector3(s32 location, const core::Vector3D& vector) override;
+        void                setUniformVector4(s32 location, const core::Vector4D& vector) override;
+        void                setUniformMatrix3(s32 location, const core::Matrix3D& matrix) override;
+        void                setUniformMatrix4(s32 location, const core::Matrix4D& matrix) override;
 
         static u32          s_currentShader;
 
