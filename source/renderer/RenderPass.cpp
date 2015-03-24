@@ -355,37 +355,10 @@ bool CRenderPass::parseRenderState(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    if (root->Attribute("polygonmode"))
+    if (!m_renderState->parse(root))
     {
-        const std::string polygonModeStr = root->Attribute("polygonmode");
-
-        EPolygonMode polygonMode = CRenderState::getPolygonModeByName(polygonModeStr);
-        m_renderState->setPolygonMode(polygonMode);
-    }
-
-    if (root->Attribute("winding"))
-    {
-        const std::string windingStr = root->Attribute("winding");
-
-        EWinding  winding = (windingStr == "ccw") ? EWinding::eWindingCCW : EWinding::eWindingCW;
-        m_renderState->setWinding(winding);
-    }
-
-    bool cullface = root->BoolAttribute("cullface");
-    m_renderState->setCullFace(cullface);
-
-    bool blend = root->BoolAttribute("blend");
-    m_renderState->setBlend(blend);
-
-    if (root->Attribute("blendfactordst") && root->Attribute("blendfactorsrc"))
-    {
-        const std::string blendFactorDstStr = root->Attribute("blendfactordst");
-        EBlendFactor blendFactorDst = CRenderState::getBlendFactorByName(blendFactorDstStr);
-
-        const std::string blendFactorSrcStr = root->Attribute("blendfactorsrc");
-        EBlendFactor blendFactorSrc = CRenderState::getBlendFactorByName(blendFactorSrcStr);
-        
-        m_renderState->setBlendFactors(blendFactorDst, blendFactorSrc);
+        LOG_ERROR("CRenderPass: Renderstate parse error");
+        return false;
     }
 
     return true;

@@ -1,7 +1,10 @@
 #include "RenderState.h"
+#include "utils/Logger.h"
+
+#include "tinyxml2.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 const std::string CRenderState::s_renderPolygonMode[EPolygonMode::eModeCount] =
 {
@@ -51,10 +54,32 @@ EBlendFactor CRenderState::getBlendFactorByName(const std::string& name)
     return EBlendFactor::eBlendZero;
 }
 
+const std::string CRenderState::s_cullface[ECullFace::eCullfaceCount] =
+{
+    "front",
+    "back",
+    "frontAndBack"
+};
+
+ECullFace CRenderState::getCullFaceByName(const std::string& name)
+{
+    for (int i = 0; i < ECullFace::eCullfaceCount; ++i)
+    {
+        if (s_cullface[i].compare(name) == 0)
+        {
+            return (ECullFace)i;
+        }
+    }
+
+    return ECullFace::eFaceFront;
+}
+
 CRenderState::CRenderState()
-    : m_polygonMode(EPolygonMode::ePolyModeFill)
-    , m_winding(EWinding::eWindingCW)
-    , m_cullFace(true)
+    : m_culling(true)
+    , m_cullface(eFaceBack)
+    , m_winding(eWindingCW)
+    , m_polygonMode(ePolyModeFill)
+
     , m_blendDst(EBlendFactor::eBlendDstAlpha)
     , m_blendSrc(EBlendFactor::eBlendInvSrcAlpha)
     , m_blend(false)
@@ -65,9 +90,9 @@ CRenderState::~CRenderState()
 {
 }
 
-bool CRenderState::getCullFace() const
+bool CRenderState::getCulling() const
 {
-    return m_cullFace;
+    return m_culling;
 }
 
 EWinding CRenderState::getWinding() const
@@ -80,9 +105,9 @@ EPolygonMode CRenderState::getPolygonMode() const
     return m_polygonMode;
 }
 
-void CRenderState::setCullFace(bool use)
+void CRenderState::setCulling(bool enable)
 {
-    m_cullFace = use;
+    m_culling = enable;
 }
 
 void CRenderState::setWinding(EWinding type)
@@ -95,14 +120,24 @@ void CRenderState::setPolygonMode(EPolygonMode type)
     m_polygonMode = type;
 }
 
-void CRenderState::setBlend(bool use)
+void CRenderState::setBlend(bool enable)
 {
-    m_blend = use;
+    m_blend = enable;
 }
 
 bool CRenderState::getBlend() const
 {
     return m_blend;
+}
+
+ECullFace CRenderState::getCullface() const
+{
+    return m_cullface;
+}
+
+void CRenderState::setCullface(ECullFace mode)
+{
+    m_cullface = mode;
 }
 
 void CRenderState::setBlendFactors(EBlendFactor dst, EBlendFactor src)
@@ -119,4 +154,66 @@ EBlendFactor CRenderState::getBlendFactorSrc() const
 EBlendFactor CRenderState::getBlendFactorDst() const
 {
     return m_blendDst;
+}
+
+bool CRenderState::parse(const tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("CRenderPass: Not exist xml renderstate element");
+        return false;
+    }
+
+    const tinyxml2::XMLElement* polygonmodeElement = root->FirstChildElement("polygonmode");
+    if (polygonmodeElement)
+    {
+        if (polygonmodeElement->Attribute("val"))
+        {
+            const std::string polygonModeStr = polygonmodeElement->Attribute("val");
+            EPolygonMode polygonMode = CRenderState::getPolygonModeByName(polygonModeStr);
+            CRenderState::setPolygonMode(polygonMode);
+        }
+    }
+
+
+    const tinyxml2::XMLElement* windingElement = root->FirstChildElement("winding");
+    if (windingElement)
+    {
+        if (windingElement->Attribute("val"))
+        {
+            const std::string windingStr = windingElement->Attribute("val");
+            EWinding  winding = (windingStr == "ccw") ? eWindingCCW : eWindingCW;
+            CRenderState::setWinding(winding);
+        }
+    }
+
+    const tinyxml2::XMLElement* cullfaceElement = root->FirstChildElement("cullface");
+    if (cullfaceElement)
+    {
+        bool culling = cullfaceElement->BoolAttribute("val");
+        CRenderState::setCulling(culling);
+
+        if (cullfaceElement->Attribute("cull"))
+        {
+            const std::string cullfaceStr = cullfaceElement->Attribute("cull");
+            ECullFace cullface = CRenderState::getCullFaceByName(cullfaceStr);
+            CRenderState::setCullface(cullface);
+        }
+    }
+
+    /*bool blend = root->BoolAttribute("blend");
+    m_renderState->setBlend(blend);
+
+    if (root->Attribute("blendfactordst") && root->Attribute("blendfactorsrc"))
+    {
+        const std::string blendFactorDstStr = root->Attribute("blendfactordst");
+        EBlendFactor blendFactorDst = CRenderState::getBlendFactorByName(blendFactorDstStr);
+
+        const std::string blendFactorSrcStr = root->Attribute("blendfactorsrc");
+        EBlendFactor blendFactorSrc = CRenderState::getBlendFactorByName(blendFactorSrcStr);
+
+        m_renderState->setBlendFactors(blendFactorDst, blendFactorSrc);
+    }*/
+
+    return true;
 }

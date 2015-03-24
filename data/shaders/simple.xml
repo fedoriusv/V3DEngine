@@ -20,7 +20,11 @@
 		</attributes>
 		<samplers> 
 		</samplers>
-		<renderstate polygonmode="line" winding="cw" cullface="false"/>
+		<renderstate>
+            <polygonmode val="line"/>
+            <winding val="cw"/>
+            <cullface val="false" cull="back"/>
+        </renderstate>
 		<rendertarget val="targetTest"/>
         <lod geometry="0.0"/>
 		<shaders>

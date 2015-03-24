@@ -3,6 +3,11 @@
 
 #include "common.h"
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
+
 namespace v3d
 {
 namespace renderer
@@ -15,6 +20,18 @@ namespace renderer
         eWindingCCW
     };
 
+    enum ECompareFunc
+    {
+        eCmpLess,
+        eCmpLequal,
+        eCmpEqual,
+        eCmpGequal,
+        eCmpGreater,
+        eCmpNotequal,
+        eCmpAlways,
+        eCmpNever
+    };
+
     enum EPolygonMode
     {
         ePolyModeFill,
@@ -22,6 +39,15 @@ namespace renderer
         ePolyModePoint,
 
         eModeCount
+    };
+
+    enum ECullFace
+    {
+        eFaceFront,
+        eFaceBack,
+        eFaceFrontAndBack,
+
+        eCullfaceCount
     };
 
     enum EBlendFactor
@@ -50,27 +76,33 @@ namespace renderer
         CRenderState();
         virtual                   ~CRenderState();
 
-        bool                      getCullFace()       const;
+        ECullFace                 getCullface()       const;
+        bool                      getCulling()        const;
         bool                      getBlend()          const;
         EWinding                  getWinding()        const;
         EPolygonMode              getPolygonMode()    const;
         EBlendFactor              getBlendFactorSrc() const;
         EBlendFactor              getBlendFactorDst() const;
-                                  
-        void                      setCullFace(bool use);
-        void                      setBlend(bool use);
+                              
+        void                      setCullface(ECullFace mode);
+        void                      setCulling(bool enable);
+        void                      setBlend(bool enable);
         void                      setWinding(EWinding type);
         void                      setPolygonMode(EPolygonMode type);
         void                      setBlendFactors(EBlendFactor dst, EBlendFactor src);
 
         virtual void              bind() = 0;
 
+        bool                      parse(const tinyxml2::XMLElement* root);
+
         static EPolygonMode       getPolygonModeByName(const std::string& name);
         static EBlendFactor       getBlendFactorByName(const std::string& name);
+        static ECullFace          getCullFaceByName(const std::string& name);
 
     protected:
 
-        bool                      m_cullFace;
+        bool                      m_culling;
+        ECullFace                 m_cullface;
         EWinding                  m_winding;
         EPolygonMode              m_polygonMode;
 
@@ -82,7 +114,7 @@ namespace renderer
 
         static const std::string  s_renderPolygonMode[EPolygonMode::eModeCount];
         static const std::string  s_blendFactor[EBlendFactor::eBlendCount];
-
+        static const std::string  s_cullface[ECullFace::eCullfaceCount];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

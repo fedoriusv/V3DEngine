@@ -39,12 +39,12 @@ void CRendererGL::init()
 
     glEnable(GL_MULTISAMPLE);
 
-    glDepthFunc(GL_LEQUAL);
+    CRenderStateGL::winding(eWindingCW);
+    CRenderStateGL::culling(true);
+    CRenderStateGL::cullface(eFaceBack);
 
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-
-    glDepthMask(GL_TRUE);
+    CRenderStateGL::depthFunc(eCmpLequal);
+    CRenderStateGL::depthWrite(true);
     glEnable(GL_DEPTH_TEST);
     glClearDepth(1.0);
 

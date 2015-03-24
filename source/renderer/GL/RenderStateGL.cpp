@@ -5,17 +5,36 @@
 using namespace v3d;
 using namespace renderer;
 
-GLenum EPolygonModeGL[] =
+GLenum EWindingGL[] =
+{
+    GL_CW,
+    GL_CCW
+};
+
+GLenum ECompareFuncGL[] =
+{
+    GL_LESS,
+    GL_LEQUAL,
+    GL_EQUAL,
+    GL_GEQUAL,
+    GL_GREATER,
+    GL_NOTEQUAL,
+    GL_ALWAYS,
+    GL_NEVER
+};
+
+GLenum EPolygonModeGL[EPolygonMode::eModeCount] =
 {
     GL_FILL,
     GL_LINE,
     GL_POINT
 };
 
-GLenum EWindingGL[] =
+GLenum ECullfaceGL[ECullFace::eCullfaceCount] =
 {
-    GL_CW,
-    GL_CCW
+    GL_FRONT,
+    GL_BACK,
+    GL_FRONT_AND_BACK
 };
 
 GLenum EBlendFactorGL[EBlendFactor::eBlendCount] =
@@ -34,9 +53,12 @@ GLenum EBlendFactorGL[EBlendFactor::eBlendCount] =
 };
 
 bool CRenderStateGL::s_currentBlend = false;
-bool CRenderStateGL::s_currentCulling = true;
-u32 CRenderStateGL::s_currentPolygonMode = ePolyModeFill;
-u32 CRenderStateGL::s_currentWinding = eWindingCW;
+u32 CRenderStateGL::s_currentCullface = -1;
+bool CRenderStateGL::s_currentCulling = false;
+u32 CRenderStateGL::s_currentPolygonMode = -1;
+u32 CRenderStateGL::s_currentWinding = -1;
+u32 CRenderStateGL::s_currentDepthFunc = -1;
+bool CRenderStateGL::s_currentDepthMask = false;
 
 CRenderStateGL::CRenderStateGL()
 {
@@ -49,14 +71,16 @@ CRenderStateGL::~CRenderStateGL()
 void CRenderStateGL::bind()
 {
     CRenderStateGL::polygonMode(m_polygonMode);
-
     CRenderStateGL::winding(m_winding);
-    CRenderStateGL::culling(m_cullFace);
 
+    CRenderStateGL::culling(m_culling);
+    CRenderStateGL::cullface(m_cullface);
+ 
     CRenderStateGL::blend(m_blend);
     glBlendFunc(EBlendFactorGL[m_blendDst], EBlendFactorGL[m_blendSrc]);
 
-    RENDERER->checkForErrors("CRenderStateGL Bind Error");
+
+    RENDERER->checkForErrors("CRenderStateGL: Bind Error");
 }
 
 bool CRenderStateGL::blend(bool enable)
@@ -65,6 +89,19 @@ bool CRenderStateGL::blend(bool enable)
     {
         enable ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
         s_currentBlend = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::cullface(ECullFace mode)
+{
+    if (mode != s_currentCullface)
+    {
+        glCullFace(ECullfaceGL[mode]);
+        s_currentCullface = mode;
 
         return true;
     }
@@ -102,8 +139,34 @@ bool CRenderStateGL::winding(EWinding winding)
 {
     if (winding != s_currentWinding)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, EWindingGL[winding]);
+        glFrontFace(EWindingGL[winding]);
         s_currentWinding = winding;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::depthFunc(ECompareFunc mode)
+{
+    if (mode != s_currentDepthFunc)
+    {
+        glDepthFunc(ECompareFuncGL[mode]);
+        s_currentDepthFunc = mode;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::depthWrite(bool enable)
+{
+    if (enable != s_currentDepthMask)
+    {
+        enable ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
+        s_currentDepthMask = enable;
 
         return true;
     }

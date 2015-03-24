@@ -28,7 +28,8 @@
 		<samplers>
             <var name="sampler0" val="targetTest" attachment="c0"/>
 		</samplers>
-		<renderstate polygonmode="fill" winding="cw" cullface="false"/>
+		<renderstate>
+        </renderstate>
 		<rendertarget val="default"/>
         <lod geometry="0.0"/>
 		<shaders>

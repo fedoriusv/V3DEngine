@@ -1,4 +1,5 @@
 #include "RenderTargetGL.h"
+#include "RenderStateGL.h"
 #include "scene/TextureManager.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -71,7 +72,7 @@ void CRenderTargetGL::bind()
         if (CRenderTargetGL::hasClearDepthTarget())
         {
             flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
-            glDepthMask(GL_TRUE);
+            CRenderStateGL::depthWrite(true);
 
         }
 
