@@ -43,15 +43,15 @@ void CRendererGL::init()
     CRenderStateGL::culling(true);
     CRenderStateGL::cullface(eFaceBack);
 
-    CRenderStateGL::depthFunc(eCmpLequal);
     CRenderStateGL::depthWrite(true);
-    glEnable(GL_DEPTH_TEST);
+    CRenderStateGL::depthFunc(eCmpLequal);
+    CRenderStateGL::depthTest(true);
     glClearDepth(1.0);
 
     glEnable(GL_DEPTH_CLAMP);
     glDepthRange(-1.0, 1.0);
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    CRenderStateGL::blendFunc(eBlendSrcAlpha, eBlendInvSrcAlpha);
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
     ASSERT(m_maxTextureUnits > 0 && "Texture units not supported");

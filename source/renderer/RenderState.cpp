@@ -74,15 +74,44 @@ ECullFace CRenderState::getCullFaceByName(const std::string& name)
     return ECullFace::eFaceFront;
 }
 
+const std::string CRenderState::s_comparefunc[ECompareFunc::eCompareCount] =
+{
+    "less",
+    "lequal",
+    "equal",
+    "gequal",
+    "greater",
+    "notequal",
+    "always",
+    "never"
+};
+
+ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
+{
+    for (int i = 0; i < ECompareFunc::eCompareCount; ++i)
+    {
+        if (s_comparefunc[i].compare(name) == 0)
+        {
+            return (ECompareFunc)i;
+        }
+    }
+
+    return ECompareFunc::eCmpLequal;
+}
+
 CRenderState::CRenderState()
     : m_culling(true)
     , m_cullface(eFaceBack)
     , m_winding(eWindingCW)
     , m_polygonMode(ePolyModeFill)
 
-    , m_blendDst(EBlendFactor::eBlendDstAlpha)
-    , m_blendSrc(EBlendFactor::eBlendInvSrcAlpha)
+    , m_blendDst(eBlendDstAlpha)
+    , m_blendSrc(eBlendInvSrcAlpha)
     , m_blend(false)
+
+    , m_depthWrite(true)
+    , m_depthTest(true)
+    , m_depthFunc(eCmpLequal)
 {
 }
 
@@ -135,6 +164,21 @@ ECullFace CRenderState::getCullface() const
     return m_cullface;
 }
 
+bool CRenderState::getDepthWrite() const
+{
+    return m_depthWrite;
+}
+
+bool CRenderState::getDepthTest() const
+{
+    return m_depthTest;
+}
+
+ECompareFunc CRenderState::getDepthfunc() const
+{
+    return m_depthFunc;
+}
+
 void CRenderState::setCullface(ECullFace mode)
 {
     m_cullface = mode;
@@ -144,6 +188,21 @@ void CRenderState::setBlendFactors(EBlendFactor dst, EBlendFactor src)
 {
     m_blendDst = dst;
     m_blendSrc = src;
+}
+
+void CRenderState::setDepthWrite(bool enable)
+{
+    m_depthWrite = enable;
+}
+
+void CRenderState::setDepthTest(bool enable)
+{
+    m_depthTest = enable;
+}
+
+void CRenderState::setDepthFunc(ECompareFunc func)
+{
+    m_depthFunc = func;
 }
 
 EBlendFactor CRenderState::getBlendFactorSrc() const
@@ -187,33 +246,66 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
         }
     }
 
-    const tinyxml2::XMLElement* cullfaceElement = root->FirstChildElement("cullface");
+    const tinyxml2::XMLElement* cullfaceElement = root->FirstChildElement("culling");
     if (cullfaceElement)
     {
-        bool culling = cullfaceElement->BoolAttribute("val");
-        CRenderState::setCulling(culling);
-
-        if (cullfaceElement->Attribute("cull"))
+        if (cullfaceElement->Attribute("val"))
         {
-            const std::string cullfaceStr = cullfaceElement->Attribute("cull");
+            const std::string cullfaceStr = cullfaceElement->Attribute("val");
+            if (cullfaceStr == "false")
+            {
+                CRenderState::setCulling(false);
+            }
             ECullFace cullface = CRenderState::getCullFaceByName(cullfaceStr);
             CRenderState::setCullface(cullface);
         }
     }
 
-    /*bool blend = root->BoolAttribute("blend");
-    m_renderState->setBlend(blend);
-
-    if (root->Attribute("blendfactordst") && root->Attribute("blendfactorsrc"))
+    const tinyxml2::XMLElement* blendElement = root->FirstChildElement("blending");
+    if (blendElement)
     {
-        const std::string blendFactorDstStr = root->Attribute("blendfactordst");
-        EBlendFactor blendFactorDst = CRenderState::getBlendFactorByName(blendFactorDstStr);
+        bool blend = blendElement->BoolAttribute("val");
+        CRenderState::setBlend(blend);
 
-        const std::string blendFactorSrcStr = root->Attribute("blendfactorsrc");
-        EBlendFactor blendFactorSrc = CRenderState::getBlendFactorByName(blendFactorSrcStr);
+        EBlendFactor blendSrc = eBlendInvSrcAlpha;
+        if (blendElement->Attribute("src"))
+        {
+            const std::string blendSrcStr = blendElement->Attribute("src");
+            blendSrc = CRenderState::getBlendFactorByName(blendSrcStr);
+        }
 
-        m_renderState->setBlendFactors(blendFactorDst, blendFactorSrc);
-    }*/
+        EBlendFactor blendDst = eBlendDstAlpha;
+        if (blendElement->Attribute("dst"))
+        {
+            const std::string blendDstStr = blendElement->Attribute("dst");
+            blendDst = CRenderState::getBlendFactorByName(blendDstStr);
+        }
+
+        CRenderState::setBlendFactors(blendDst, blendSrc);
+    }
+
+    const tinyxml2::XMLElement* depthElement = root->FirstChildElement("depthWrite");
+    if (depthElement)
+    {
+        bool depth = depthElement->BoolAttribute("val");
+        CRenderState::setDepthWrite(depth);
+    }
+
+    const tinyxml2::XMLElement* depthTestElement = root->FirstChildElement("depthTest");
+    if (depthTestElement)
+    {
+        if (depthTestElement->Attribute("val"))
+        {
+            const std::string depthTestStr = depthTestElement->Attribute("val");
+            if (depthTestStr == "false")
+            {
+                CRenderState::setDepthTest(false);
+            }
+
+            ECompareFunc depthFunc = CRenderState::getCompareFuncByName(depthTestStr);
+            CRenderState::setDepthFunc(depthFunc);
+        }
+    }
 
     return true;
 }

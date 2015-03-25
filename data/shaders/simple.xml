@@ -23,7 +23,10 @@
 		<renderstate>
             <polygonmode val="line"/>
             <winding val="cw"/>
-            <cullface val="false" cull="back"/>
+            <culling val="false"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+            <depthWrite val="true"/>
+            <depthTest val="lequal"/>
         </renderstate>
 		<rendertarget val="targetTest"/>
         <lod geometry="0.0"/>

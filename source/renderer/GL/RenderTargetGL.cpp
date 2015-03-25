@@ -79,8 +79,7 @@ void CRenderTargetGL::bind()
         if (CRenderTargetGL::hasClearStencilTarget())
         {
             flags = CRenderTarget::getClearStencilBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
-            glStencilMask(GL_TRUE);
-
+            CRenderStateGL::stencilWrite(true);
         }
 
         if (CRenderTargetGL::hasClearColorTarget() && CRenderTarget::getClearColorBuffer())

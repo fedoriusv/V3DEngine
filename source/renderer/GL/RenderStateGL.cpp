@@ -52,13 +52,20 @@ GLenum EBlendFactorGL[EBlendFactor::eBlendCount] =
     GL_SRC_ALPHA_SATURATE
 };
 
-bool CRenderStateGL::s_currentBlend = false;
 u32 CRenderStateGL::s_currentCullface = -1;
 bool CRenderStateGL::s_currentCulling = false;
+
 u32 CRenderStateGL::s_currentPolygonMode = -1;
 u32 CRenderStateGL::s_currentWinding = -1;
+
+bool CRenderStateGL::s_currentDepthTest = false;
 u32 CRenderStateGL::s_currentDepthFunc = -1;
 bool CRenderStateGL::s_currentDepthMask = false;
+bool CRenderStateGL::s_currentStencilMask = false;
+
+bool CRenderStateGL::s_currentBlend = false;
+u32 CRenderStateGL::s_currentBlendDst = -1;
+u32 CRenderStateGL::s_currentBlendSrc = -1;
 
 CRenderStateGL::CRenderStateGL()
 {
@@ -75,10 +82,13 @@ void CRenderStateGL::bind()
 
     CRenderStateGL::culling(m_culling);
     CRenderStateGL::cullface(m_cullface);
- 
-    CRenderStateGL::blend(m_blend);
-    glBlendFunc(EBlendFactorGL[m_blendDst], EBlendFactorGL[m_blendSrc]);
 
+    CRenderStateGL::depthWrite(m_depthWrite);
+    CRenderStateGL::depthTest(m_depthTest);
+    CRenderStateGL::depthFunc(m_depthFunc);
+
+    CRenderStateGL::blend(m_blend);
+    CRenderStateGL::blendFunc(m_blendDst, m_blendSrc);
 
     RENDERER->checkForErrors("CRenderStateGL: Bind Error");
 }
@@ -165,8 +175,48 @@ bool CRenderStateGL::depthWrite(bool enable)
 {
     if (enable != s_currentDepthMask)
     {
-        enable ? glDepthMask(GL_TRUE) : glDepthMask(GL_FALSE);
+        glDepthMask(enable ? GL_TRUE : GL_FALSE);
         s_currentDepthMask = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::stencilWrite(bool enable)
+{
+    if (enable != s_currentStencilMask)
+    {
+        glStencilMask(enable ? GL_TRUE : GL_FALSE);
+        s_currentStencilMask = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::blendFunc(EBlendFactor dst, EBlendFactor src)
+{
+    if (s_currentBlendDst != dst || s_currentBlendSrc != src)
+    {
+        glBlendFunc(EBlendFactorGL[dst], EBlendFactorGL[src]);
+        s_currentBlendDst = dst;
+        s_currentBlendSrc = src;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::depthTest(bool enable)
+{
+    if (enable != s_currentDepthTest)
+    {
+        enable ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+        s_currentDepthTest = enable;
 
         return true;
     }

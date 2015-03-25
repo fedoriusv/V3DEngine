@@ -29,7 +29,9 @@ namespace renderer
         eCmpGreater,
         eCmpNotequal,
         eCmpAlways,
-        eCmpNever
+        eCmpNever,
+
+        eCompareCount
     };
 
     enum EPolygonMode
@@ -83,6 +85,9 @@ namespace renderer
         EPolygonMode              getPolygonMode()    const;
         EBlendFactor              getBlendFactorSrc() const;
         EBlendFactor              getBlendFactorDst() const;
+        bool                      getDepthWrite()     const;
+        bool                      getDepthTest()      const;
+        ECompareFunc              getDepthfunc()      const;
                               
         void                      setCullface(ECullFace mode);
         void                      setCulling(bool enable);
@@ -90,6 +95,9 @@ namespace renderer
         void                      setWinding(EWinding type);
         void                      setPolygonMode(EPolygonMode type);
         void                      setBlendFactors(EBlendFactor dst, EBlendFactor src);
+        void                      setDepthWrite(bool enable);
+        void                      setDepthTest(bool enable);
+        void                      setDepthFunc(ECompareFunc func);
 
         virtual void              bind() = 0;
 
@@ -98,6 +106,7 @@ namespace renderer
         static EPolygonMode       getPolygonModeByName(const std::string& name);
         static EBlendFactor       getBlendFactorByName(const std::string& name);
         static ECullFace          getCullFaceByName(const std::string& name);
+        static ECompareFunc       getCompareFuncByName(const std::string& name);
 
     protected:
 
@@ -110,11 +119,16 @@ namespace renderer
         EBlendFactor              m_blendDst;
         bool                      m_blend;
 
+        bool                      m_depthWrite;
+        bool                      m_depthTest;
+        ECompareFunc              m_depthFunc;
+
     private:
 
         static const std::string  s_renderPolygonMode[EPolygonMode::eModeCount];
         static const std::string  s_blendFactor[EBlendFactor::eBlendCount];
         static const std::string  s_cullface[ECullFace::eCullfaceCount];
+        static const std::string  s_comparefunc[ECompareFunc::eCompareCount];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
