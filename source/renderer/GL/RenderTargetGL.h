@@ -22,6 +22,21 @@ namespace v3d
             bool            hasClearDepthTarget()   const;
             bool            hasClearStencilTarget() const;
 
+        public:
+
+            static void     genFramebuffer(u32& buffer);
+            static bool     bindFramebuffer(u32 buffer);
+            static void     deleteFramebuffers(u32& buffer);
+
+            static void     genRenderbuffer(u32& buffer);
+            static bool     bindRenderbuffer(u32 buffer);
+            static void     deleteRenderbuffers(u32& buffer);
+
+            static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
+            static void     framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer);
+
+            static void     blitFramebuffer(const Rect& src, const Rect& dst, u32 mask);
+
         private:
 
             bool            create()    override;
@@ -33,8 +48,8 @@ namespace v3d
             u32             m_frameBufferID;
             u32             m_renderBufferID;
 
-            static u32      m_currentFBO;
-            static u32      m_currentRBO;
+            static u32      s_currentFBO;
+            static u32      s_currentRBO;
 
             u32             m_lastFrameIndex;
 
@@ -43,21 +58,6 @@ namespace v3d
             bool            m_hasClearStencil;
 
             std::vector<u32> m_attachBuffers;
-
-        private:
-
-            static void     genFramebuffer(u32& buffer);
-            static bool     bindFramebuffer(const u32 buffer);
-            static void     deleteFramebuffers(u32& buffer);
-
-            static void     genRenderbuffer(u32& buffer);
-            static bool     bindRenderbuffer(const u32 buffer);
-            static void     deleteRenderbuffers(u32& buffer);
-
-            static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
-            static void     framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer);
-
-            static void     blitFramebuffer(const Rect& src, const Rect& dst, u32 mask);
         };
     }
 }
