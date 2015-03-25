@@ -22,7 +22,7 @@ void MyApplication::init()
 {
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple2D.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
     //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 

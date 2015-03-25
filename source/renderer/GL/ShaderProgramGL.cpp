@@ -276,7 +276,16 @@ bool CShaderProgramGL::setUniform(const UniformPtr& uniform)
         return false;
     }
 
-    GLint location = CShaderProgramGL::getUniformLocation(m_shaderProgID, uniform->getAttribute());
+    GLint location = uniform->getID();
+    if (location < 0)
+    {
+        location = CShaderProgramGL::getUniformLocation(m_shaderProgID, uniform->getAttribute());
+        if (location > -1)
+        {
+            uniform->setID(location);
+        }
+    }
+
     if (location > -1)
     {
         void* value = uniform->getValue();
