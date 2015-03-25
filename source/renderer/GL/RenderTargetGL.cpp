@@ -11,8 +11,8 @@ using namespace renderer;
 using namespace scene;
 using namespace core;
 
-u32 CRenderTargetGL::m_currentFBO = 0;
-u32 CRenderTargetGL::m_currentRBO = 0;
+u32 CRenderTargetGL::s_currentFBO = 0;
+u32 CRenderTargetGL::s_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferID(0U)
@@ -218,6 +218,7 @@ void CRenderTargetGL::destroy()
             break;
         }
     }
+    //TODO: Have gl error GL_INVALID_OPERATION after call glFramebufferTexture2D
 
     CRenderTargetGL::deleteRenderbuffers(m_renderBufferID);
     CRenderTargetGL::deleteFramebuffers(m_frameBufferID);
@@ -290,8 +291,8 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
 
         default:
         {
-                   LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
-                   ASSERT("CRenderTarget: Not supported attach" && false);
+            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
+            ASSERT("CRenderTarget: Not supported attach" && false);
         }
     }
 }
@@ -385,16 +386,15 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
 void CRenderTargetGL::genFramebuffer(u32& buffer)
 {
     glGenFramebuffers(1, &buffer);
-    ASSERT(glIsFramebuffer(buffer) || "Invalid FBO index");
 }
 
-bool CRenderTargetGL::bindFramebuffer(const u32 buffer)
+bool CRenderTargetGL::bindFramebuffer(u32 buffer)
 {
-    ASSERT(glIsFramebuffer(buffer) || "Invalid FBO index");
-    if (m_currentFBO != buffer)
+    if (s_currentFBO != buffer)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, buffer);
-        m_currentFBO = buffer;
+        ASSERT((glIsFramebuffer(buffer) || buffer == 0) && "Invalid FBO index");
+        s_currentFBO = buffer;
 
         return true;
     }
@@ -406,7 +406,7 @@ void CRenderTargetGL::deleteFramebuffers(u32& buffer)
 {
     if (buffer != 0)
     {
-        ASSERT(glIsFramebuffer(buffer) || "Invalid Index FBO");
+        ASSERT(glIsFramebuffer(buffer) && "Invalid Index FBO");
         glDeleteFramebuffers(1, &buffer);
     }
 }
@@ -414,16 +414,15 @@ void CRenderTargetGL::deleteFramebuffers(u32& buffer)
 void CRenderTargetGL::genRenderbuffer(u32& buffer)
 {
     glGenRenderbuffers(1, &buffer);
-    ASSERT(glIsRenderbuffer(buffer) || "Invalid RBO index");
 }
 
-bool CRenderTargetGL::bindRenderbuffer(const u32 buffer)
+bool CRenderTargetGL::bindRenderbuffer(u32 buffer)
 {
-    ASSERT(glIsRenderbuffer(buffer) || "Invalid RBO index");
-    if (m_currentRBO != buffer)
+    if (s_currentRBO != buffer)
     {
         glBindRenderbuffer(GL_RENDERBUFFER, buffer);
-        m_currentRBO = buffer;
+        ASSERT((glIsRenderbuffer(buffer) || buffer == 0) && "Invalid RBO index");
+        s_currentRBO = buffer;
 
         return true;
     }
@@ -435,20 +434,20 @@ void CRenderTargetGL::deleteRenderbuffers(u32& buffer)
 {
     if (buffer != 0)
     {
-        ASSERT(glIsRenderbuffer(buffer) || "Invalid Index RBO");
+        ASSERT(glIsRenderbuffer(buffer) && "Invalid Index RBO");
         glDeleteRenderbuffers(1, &buffer);
     }
 }
 
 void CRenderTargetGL::framebufferTexture2D(s32 attachment, s32 target, u32 texture)
 {
-    ASSERT(glIsTexture(texture) || "Invalid Index Texture");
+    ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Index Texture");
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texture, 0);
 }
 
 void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer)
 {
-    ASSERT(glIsRenderbuffer(buffer) || "Invalid Index Renderbuffer");
+    ASSERT((glIsRenderbuffer(buffer) || buffer == 0) && "Invalid Index Renderbuffer");
     glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, buffer);
 }
 
