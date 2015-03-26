@@ -18,9 +18,11 @@ namespace renderer
 
     enum ETextureTarget
     {
-        eUnknown = -1,
+        eTextureUnknown = - 1,
+
         eTexture1D,
         eTexture2D,
+        eTexture2DMSAA,
         eTexture3D,
         eTextureCubeMap,
 

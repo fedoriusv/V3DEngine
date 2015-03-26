@@ -169,7 +169,7 @@ bool CDriverContextGL::createWin32Context()
         return false;
     }
 
-    int antiAlias = 32;
+    s32 antiAlias = 32;
 
     f32 fAttributes[] = { 0.0f, 0.0f };
     s32 iAttributes[] =
@@ -364,6 +364,9 @@ void CDriverContextGL::driverInfo()
     GLint maxTextureUnits;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
 
+    GLint maxTextureLayers;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureLayers);
+
     GLfloat maxAnisotropy = -1.f;
     if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
     {
@@ -372,6 +375,9 @@ void CDriverContextGL::driverInfo()
 
     GLint maxDrawBuffers;
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+
+    GLint maxSamplers;
+    glGetIntegerv(GL_SAMPLES_ARB, &maxSamplers);
     
     LOG_INFO("OpenGL config info:");
     LOG("Render: %s", renderer);
@@ -379,8 +385,10 @@ void CDriverContextGL::driverInfo()
     LOG("GLSL: %s", GLSL);
     LOG("GL Version: %s", version);
     LOG("Max Texure Units: %d", maxTextureUnits);
+    LOG("Max Texure Layers: %d", maxTextureLayers);
     LOG("Max Anisotropy: %f", maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
+    LOG("MSAA x%d", maxSamplers);
 
     /*glewIsSupported("GL_ARB_multitexture");
     glewIsSupported("GL_ARB_vertex_buffer_object");

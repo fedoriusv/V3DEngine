@@ -27,6 +27,7 @@ namespace scene
 
 
         renderer::TexturePtr        createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::TexturePtr        createTexture2DMSAA(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
 
         void                        copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
 

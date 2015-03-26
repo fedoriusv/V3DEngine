@@ -94,9 +94,9 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
                         return nullptr;
                     }
 
-                    renderer::TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
+                    TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
 
-                    texture->m_target = renderer::ETextureTarget::eTexture2D;
+                    texture->m_target = ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
 
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
@@ -114,7 +114,7 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
                         return nullptr;
                     }
 
-                    m_textures.insert(std::map<std::string, renderer::TexturePtr>::value_type(alias.empty() ? nameStr : alias, texture));
+                    m_textures.insert(std::map<std::string, TexturePtr>::value_type(alias.empty() ? nameStr : alias, texture));
 
                     LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;
@@ -140,9 +140,9 @@ void CTextureManager::unload(const std::string& name)
     }
 }
 
-void CTextureManager::unload(const renderer::TexturePtr& texture)
+void CTextureManager::unload(const TexturePtr& texture)
 {
-    auto predDelete = [texture](const std::pair<std::string, renderer::TexturePtr>& pair) -> bool
+    auto predDelete = [texture](const std::pair<std::string, TexturePtr>& pair) -> bool
     {
         return pair.second == texture;
     };
@@ -188,7 +188,7 @@ void CTextureManager::unregisterDecoder(DecoderPtr& decoder)
     }
 }
 
-renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data)
+TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
 {
     renderer::TexturePtr texture = RENDERER->makeSharedTexture();
 
@@ -207,7 +207,26 @@ renderer::TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D&
     return texture;
 }
 
-void CTextureManager::copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
+TexturePtr CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFormat format, EImageType type)
+{
+    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+
+    texture->m_target = ETextureTarget::eTexture2DMSAA;
+
+    texture->m_data.resize(1);
+    texture->m_data[0]._width = size.width;
+    texture->m_data[0]._height = size.height;
+    texture->m_data[0]._depth = 1;
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+    texture->m_data[0]._data = nullptr;
+
+    texture->create();
+
+    return texture;
+}
+
+void CTextureManager::copyToTexture2D(const TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
     if (!texture || texture->getTextureID() <= 0)
     {

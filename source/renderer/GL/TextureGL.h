@@ -23,12 +23,13 @@ namespace renderer
 
         static void     reset();
 
-    private:
+    public:
 
         void            copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data) override;
 
         void            initTexture1D(u32 texture);
         void            initTexture2D(u32 texture);
+        void            initTexture2DMSAA(u32 texture);
         void            initTexture3D(u32 texture);
         void            initTextureCubeMap(u32 texture);
 
@@ -44,6 +45,8 @@ namespace renderer
         static void     filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag);
         static void     anisotropicSampler(u32 sampler, u32 level);
         static void     generateMipmap(ETextureTarget target);
+
+    private:
 
         u32             m_samplerID;
 

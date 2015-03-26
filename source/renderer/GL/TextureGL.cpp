@@ -22,8 +22,18 @@ GLenum ETextureTargetGL[ETextureTarget::eTargetCount] =
 {
     GL_TEXTURE_1D,
     GL_TEXTURE_2D,
+    GL_TEXTURE_2D_MULTISAMPLE,
     GL_TEXTURE_3D,
     GL_TEXTURE_CUBE_MAP,
+};
+
+GLenum ETextureBindingGL[ETextureTarget::eTargetCount] =
+{
+    GL_TEXTURE_BINDING_1D,
+    GL_TEXTURE_BINDING_2D,
+    GL_TEXTURE_BINDING_2D_MULTISAMPLE,
+    GL_TEXTURE_BINDING_3D,
+    GL_TEXTURE_BINDING_CUBE_MAP,
 };
 
 GLenum ETextureFilterGL[ETextureFilter::eFilterCount] =
@@ -95,7 +105,7 @@ void CTextureGL::bind(u32 layer)
     }
 
     CTextureGL::activeTextureLayer(layer);
-    CTextureGL::bindSampler(m_textureID, m_samplerID);
+    //CTextureGL::bindSampler(m_textureID, m_samplerID);
     CTextureGL::bindTexture(m_target, m_textureID);
 
     RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
@@ -103,7 +113,7 @@ void CTextureGL::bind(u32 layer)
 
 void CTextureGL::unbind(u32 layer)
 {
-    CTextureGL::bindSampler(0, m_samplerID);
+    //CTextureGL::bindSampler(0, m_samplerID);
     CTextureGL::bindTexture(m_target, 0);
 
     RENDERER->checkForErrors("CTextureGL: Unbind Texture Error");
@@ -112,7 +122,7 @@ void CTextureGL::unbind(u32 layer)
 void CTextureGL::reset()
 {
     CTextureGL::activeTextureLayer(0);
-    CTextureGL::bindSampler(0, 0);
+    //CTextureGL::bindSampler(0, 0);
     for (u32 i = 0; i < eTargetCount; ++i)
     {
         CTextureGL::bindTexture((ETextureTarget)i, 0);
@@ -127,10 +137,14 @@ bool CTextureGL::create()
 
     CTextureGL::genTexture(m_textureID);
 
+    GLint originalTexture;
+    glGetIntegerv(ETextureBindingGL[m_target], &originalTexture);
+
     switch (m_target)
     {
         case ETextureTarget::eTexture1D:
         {
+            CTextureGL::bindTexture(eTexture1D, m_textureID);
             CTextureGL::initTexture1D(m_textureID);
             success = true;
         }
@@ -138,13 +152,23 @@ bool CTextureGL::create()
 
         case ETextureTarget::eTexture2D:
         {
+            CTextureGL::bindTexture(eTexture2D, m_textureID);
             CTextureGL::initTexture2D(m_textureID);
             success = true;
         }
         break;
 
+        case ETextureTarget::eTexture2DMSAA:
+        {
+            CTextureGL::bindTexture(eTexture2DMSAA, m_textureID);
+            CTextureGL::initTexture2DMSAA(m_textureID);
+            success = true;
+        }
+            break;
+
         case ETextureTarget::eTexture3D:
         {
+            CTextureGL::bindTexture(eTexture3D, m_textureID);
             CTextureGL::initTexture3D(m_textureID);
             success = true;
         }
@@ -152,30 +176,35 @@ bool CTextureGL::create()
 
         case ETextureTarget::eTextureCubeMap:
         {
+            CTextureGL::bindTexture(eTextureCubeMap, m_textureID);
             CTextureGL::initTextureCubeMap(m_textureID);
             success = true;
         }
         break;
 
         default:
-            break;
+            return success;
     }
 
-    CTextureGL::bindTexture(m_target, m_textureID);
-
-    CTextureGL::genSampler(m_samplerID);
-    CTextureGL::bindSampler(m_textureID, m_samplerID);
-    CTextureGL::wrapSampler(m_samplerID, m_wrap);
-    CTextureGL::filterSampler(m_samplerID, m_minFilter, m_magFilter);
-    CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
-    CTextureGL::bindSampler(0, m_samplerID);
-    
-    if (m_minFilter > ETextureFilter::eLinear)
+    if (m_target != eTexture2DMSAA)
     {
-        CTextureGL::generateMipmap(m_target);
+        CTextureGL::genSampler(m_samplerID);
+        CTextureGL::bindSampler(m_textureID, m_samplerID);
+
+        CTextureGL::wrapSampler(m_samplerID, m_wrap);
+        CTextureGL::filterSampler(m_samplerID, m_minFilter, m_magFilter);
+        CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
+
+        if (m_minFilter > ETextureFilter::eLinear)
+        {
+            CTextureGL::generateMipmap(m_target);
+        }
     }
 
-    CTextureGL::bindTexture(m_target, 0);
+    if (originalTexture >= 0)
+    {
+        CTextureGL::bindTexture(m_target, 0);
+    }
 
     RENDERER->checkForErrors("CTextureGL: Create Texture Error");
 
@@ -190,7 +219,10 @@ bool CTextureGL::create()
 
 void CTextureGL::destroy()
 {
+    CTextureGL::bindSampler(0, m_samplerID);
     CTextureGL::deleteSampler(m_samplerID);
+
+    CTextureGL::bindTexture(m_target, 0);
     CTextureGL::deleteTexture(m_textureID);
 }
 
@@ -205,14 +237,10 @@ void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& s
 
 bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
 {
-    if (texture != 0)
-    {
-        ASSERT(glIsTexture(texture) || "Invalid Texture index");
-    }
-
     if (s_currentTextureID[target] != texture)
     {
         glBindTexture(ETextureTargetGL[target], texture);
+        ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
         s_currentTextureID[target] = texture;
 
         return true;
@@ -223,9 +251,9 @@ bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
 
 bool CTextureGL::activeTextureLayer(u32 layer)
 {
-    ASSERT(ETextureLayer::eLayerMax >= layer || "Not supported count texture units");
     if (s_currentLayerID != layer)
     {
+        ASSERT(ETextureLayer::eLayerMax >= layer && "Not supported count texture units");
         glActiveTexture(GL_TEXTURE0 + layer);
         s_currentLayerID = layer;
 
@@ -238,21 +266,20 @@ bool CTextureGL::activeTextureLayer(u32 layer)
 void CTextureGL::genTexture(u32& texture)
 {
     glGenTextures(1, &texture);
-    ASSERT(glIsTexture(texture) || "Invalid Texture index");
 }
 
 void CTextureGL::deleteTexture(u32 texture)
 {
     if (texture > 0)
     {
-        ASSERT(glIsTexture(texture) || "Invalid Texture index");
+        ASSERT(glIsTexture(texture) && "Invalid Texture index");
         glDeleteTextures(1, &texture);
     }
 }
 
 void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
 {
-    ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, EWrapTypeGL[wrap]);
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, EWrapTypeGL[wrap]);
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_R, EWrapTypeGL[wrap]);
@@ -260,19 +287,21 @@ void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
 
 void CTextureGL::filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag)
 {
-    ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
     glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, ETextureFilterGL[mag]);
     glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, ETextureFilterGL[min]);
 }
 
 void CTextureGL::anisotropicSampler(u32 sampler, u32 level)
 {
-    ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
     if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
     {
-        GLfloat fLargest;
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
-        ASSERT(fLargest >= level || "Anisotropy level out the range");
+#ifdef _DEBUG
+        GLfloat largest;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
+        ASSERT(largest >= level && "Anisotropy level out the range");
+#endif //_DEBUG
         glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLfloat)level);
     }
 }
@@ -280,19 +309,15 @@ void CTextureGL::anisotropicSampler(u32 sampler, u32 level)
 void CTextureGL::genSampler(u32& sampler)
 {
     glGenSamplers(1, &sampler);
-    ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
 }
 
 bool CTextureGL::bindSampler(u32 texture, u32 sampler)
 {
-    if (sampler != 0)
-    {
-        ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
-    }
-
     if (s_currentSamplerID != sampler)
     {
         glBindSampler(texture, sampler);
+        ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+        ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
         s_currentSamplerID = sampler;
 
         return true;
@@ -305,7 +330,7 @@ void CTextureGL::deleteSampler(u32 sampler)
 {
     if (sampler > 0)
     {
-        ASSERT(glIsSampler(sampler) || "Invalid Sampler index");
+        ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
         glDeleteSamplers(1, &sampler);
     }
 }
@@ -317,7 +342,6 @@ void CTextureGL::generateMipmap(ETextureTarget target)
 
 void CTextureGL::initTexture1D(u32 texture)
 {
-    CTextureGL::bindTexture(eTexture1D, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
@@ -328,7 +352,6 @@ void CTextureGL::initTexture1D(u32 texture)
 
 void CTextureGL::initTexture2D(u32 texture)
 {
-    CTextureGL::bindTexture(eTexture2D, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
@@ -354,9 +377,39 @@ void CTextureGL::initTexture2D(u32 texture)
         format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
 }
 
+void CTextureGL::initTexture2DMSAA(u32 texture)
+{
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    u32 format = EImageFormatGL[m_data[0]._format];
+    std::function<s32(s32)> internalFormat = [](s32 format)
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB;
+
+        case GL_RED:
+            return GL_R8;
+
+        default:
+            return format;
+        };
+
+        return format;
+    };
+
+    GLint maxSamplers;
+    glGetIntegerv(GL_MAX_MULTISAMPLE_COVERAGE_MODES_NV, &maxSamplers);
+
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, m_data[0]._width, m_data[0]._height, false);
+    //glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], 4, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
+    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
+}
+
 void CTextureGL::initTexture3D(u32 texture)
 {
-    CTextureGL::bindTexture(eTexture3D, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
@@ -367,7 +420,6 @@ void CTextureGL::initTexture3D(u32 texture)
 
 void CTextureGL::initTextureCubeMap(u32 texture)
 {
-    CTextureGL::bindTexture(eTextureCubeMap, texture);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];

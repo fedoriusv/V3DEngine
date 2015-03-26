@@ -56,7 +56,7 @@ void CRendererGL::init()
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
     ASSERT(m_maxTextureUnits > 0 && "Texture units not supported");
 
-    glActiveTexture(GL_TEXTURE0);
+    CTextureGL::activeTextureLayer(0);
 
     GLfloat m_maxAnisotropy;
     if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))

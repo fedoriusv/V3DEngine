@@ -2,16 +2,16 @@
 #include "utils/Logger.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CTexture::CTexture()
     : CResource()
     , m_textureID(0)
-    , m_target(ETextureTarget::eUnknown)
-    , m_minFilter(ETextureFilter::eLinearMipmapLinear)
-    , m_magFilter(ETextureFilter::eLinear)
-    , m_wrap(EWrapType::eClampToEdge)
-    , m_anisotropicLevel(EAnisotropic::eAnisotropic16x)
+    , m_target(eTextureUnknown)
+    , m_minFilter(eLinearMipmapLinear)
+    , m_magFilter(eLinear)
+    , m_wrap(eClampToEdge)
+    , m_anisotropicLevel(eAnisotropic16x)
     , m_enable(false)
 {
 }
@@ -50,7 +50,7 @@ bool CTexture::load()
             m_data.resize(6);
             break;
 
-        case ETextureTarget::eUnknown:
+        case ETextureTarget::eTextureUnknown:
         default:
 
             ASSERT(true && "Invalid Select Texture target");
