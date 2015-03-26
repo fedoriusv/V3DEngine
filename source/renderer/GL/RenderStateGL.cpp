@@ -11,7 +11,7 @@ GLenum EWindingGL[] =
     GL_CCW
 };
 
-GLenum ECompareFuncGL[] =
+GLenum ECompareFuncGL[ECompareFunc::eCompareCount] =
 {
     GL_LESS,
     GL_LEQUAL,

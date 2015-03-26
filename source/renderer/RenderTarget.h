@@ -97,6 +97,8 @@ namespace renderer
         core::Vector4D              m_color;
         core::Rect                  m_viewport;
 
+        bool                        m_MSAA;
+
         std::string                 m_name;
 
         bool                        m_clearColorBuffer;

@@ -21,11 +21,13 @@ CRenderTarget::SAttachments::SAttachments()
 CRenderTarget::CRenderTarget()
 : m_color(core::Vector4D(0.0f))
 , m_viewport(0, 0, 0, 0)
+, m_MSAA(false)
+
+, m_name("default")
 
 , m_clearColorBuffer(true)
 , m_clearDepthBuffer(true)
 , m_clearStencilBuffer(false)
-, m_name("default")
 {
     u32 width = (u32)(WINDOW->getSize().width);
     u32 height = (u32)(WINDOW->getSize().height);
@@ -210,8 +212,16 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         width = (u32)(WINDOW->getSize().width * ratio);
         height = (u32)(WINDOW->getSize().height * ratio);
     }
-
     CRenderTarget::setViewport(Rect(x, y, x + width, y + height));
+
+    if (root->Attribute("aa"))
+    {
+        const std::string aaStr = root->Attribute("aa");
+        if (aaStr == "msaa")
+        {
+            m_MSAA = true;
+        }
+    }
 
     if (root->Attribute("color"))
     {

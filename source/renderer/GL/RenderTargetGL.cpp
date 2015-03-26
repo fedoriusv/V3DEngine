@@ -183,6 +183,14 @@ bool CRenderTargetGL::create()
     case GL_FRAMEBUFFER_UNSUPPORTED:
         LOG_ERROR("CRenderTargetGL: Framebuffer objects are not supported");
         break;
+
+    case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+        LOG_ERROR("CRenderTargetGL:  Some attachments is not the same for all attached renderbuffers");
+        break;
+
+    case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+        LOG_ERROR("CRenderTargetGL:  Some framebuffer attachment is layered");
+        break;
     };
 
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
@@ -349,8 +357,22 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             formatColor(attach._format);
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType, nullptr);
-            CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
+            if (m_MSAA)
+            {
+                GLuint tex;
+                glGenTextures(1, &tex);
+                glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
+                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, rect.getWidth(), rect.getHeight(), false);
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, tex);
+
+                /*attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType);
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());*/
+            }
+            else
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
         }
@@ -358,8 +380,22 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
 
         case eDepthAttach:
         {
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
-            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            if (m_MSAA)
+            {
+                GLuint tex;
+                glGenTextures(1, &tex);
+                glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
+                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_DEPTH_COMPONENT, rect.getWidth(), rect.getHeight(), false);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, tex);
+
+                /*attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());*/
+            }
+            else
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
 
             RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
         }
@@ -368,8 +404,16 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
         case eStencilAttach:
         {
             //TODO: need rework
-            attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
-            CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            if (m_MSAA)
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
+                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());
+            }
+            else
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
+                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, attach._texture->getTextureID());
+            }
 
             RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
         }

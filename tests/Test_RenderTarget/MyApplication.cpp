@@ -24,7 +24,7 @@ void MyApplication::init()
     screen1->setName("screen1");
     screen1->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
     //screen1->getMaterial()->setTexture(1, "textures/wall.bmp");
-    screen1->getMaterial()->setTexture(0, "textures/box.jpg");
+    //screen1->getMaterial()->setTexture(0, "textures/box.jpg");
 
     CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect(512, 384, 1024, 768));
     screen2->setName("screen2");
