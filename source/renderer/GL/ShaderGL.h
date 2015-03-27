@@ -24,8 +24,10 @@ namespace renderer
 
         static bool     initShader(u32& shader, const EShaderType type, void* body);
 
-        static u32      createShader(const EShaderType type);
+        static u32      createShader(EShaderType type);
         static void     deleteShader(u32 shader);
+        static void     sourceShader(u32 shader, void* body);
+        static void     compileShader(u32 shader);
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

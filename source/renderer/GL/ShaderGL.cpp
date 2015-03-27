@@ -47,11 +47,8 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
 
     shader = CShaderGL::createShader(type);
 
-    GLchar* stringPtr[1];
-    stringPtr[0] = (GLchar*)body;
-    glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
-
-    glCompileShader(shader);
+    CShaderGL::sourceShader(shader, body);
+    CShaderGL::compileShader(shader);
 
     GLint isCompiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
@@ -94,7 +91,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
     return (isCompiled == GL_TRUE) ? true : false;
 }
 
-u32 CShaderGL::createShader(const EShaderType type)
+u32 CShaderGL::createShader(EShaderType type)
 {
     u32 shader = 0;
 
@@ -126,10 +123,9 @@ u32 CShaderGL::createShader(const EShaderType type)
 
         default:
         break;
-
     }
 
-    ASSERT(glIsShader(shader) || "Can not create Shader");
+    ASSERT(glIsShader(shader) && "Shader Index Invalid");
     return shader;
 }
 
@@ -137,9 +133,24 @@ void CShaderGL::deleteShader(u32 shader)
 {
     if (shader > 0)
     {
-        ASSERT(glIsShader(shader) || "Invalid Index Deleted Shader");
+        ASSERT(glIsShader(shader) && "Shader Index Invalid");
         glDeleteShader(shader);
     }
+}
+
+void CShaderGL::sourceShader(u32 shader, void* body)
+{
+    ASSERT(glIsShader(shader) && "Shader Index Invalid");
+
+    GLchar* stringPtr[1];
+    stringPtr[0] = (GLchar*)body;
+    glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
+}
+
+void CShaderGL::compileShader(u32 shader)
+{
+    ASSERT(glIsShader(shader) && "Shader Index Invalid");
+    glCompileShader(shader);
 }
 
 bool CShaderGL::create(const std::string& shader, EShaderType type)

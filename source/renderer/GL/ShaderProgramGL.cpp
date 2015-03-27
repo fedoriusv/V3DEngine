@@ -213,32 +213,32 @@ bool CShaderProgramGL::validateProgram(u32 shaderProgram)
 void CShaderProgramGL::createProgram(u32& shaderProgram)
 {
     shaderProgram = glCreateProgram();
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Created Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index Created Shader program");
 }
 
 void CShaderProgramGL::attachShader(u32 shaderProgram, u32 shader)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Attachment Shader program");
-    ASSERT(glIsShader(shader) || "Invalid Index Attached Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index Attachment Shader program");
+    ASSERT(glIsShader(shader) && "Invalid Index Attached Shader program");
     glAttachShader(shaderProgram, shader);
 }
 
 void CShaderProgramGL::detachShader(u32 shaderProgram, u32 shader)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Detachment Shader program");
-    ASSERT(glIsShader(shader) || "Invalid Index detach Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index Detachment Shader program");
+    ASSERT(glIsShader(shader) && "Invalid Index detach Shader program");
     glDetachShader(shaderProgram, shader);
 }
 
 void CShaderProgramGL::bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index bindAttrib Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index bindAttrib Shader program");
     glBindAttribLocation(shaderProgram, type, name.c_str());
 }
 
 int CShaderProgramGL::getAttrib(u32 shaderProgram, const std::string& name)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index getAttrib Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index getAttrib Shader program");
     return (s32)glGetAttribLocation(shaderProgram, name.c_str());
 }
 
@@ -246,20 +246,16 @@ void CShaderProgramGL::deleteProgram(u32 shaderProgram)
 {
     if (shaderProgram > 0)
     {
-        ASSERT(glIsProgram(shaderProgram) || "Invalid Index delete Shader program");
+        ASSERT(glIsProgram(shaderProgram) && "Invalid Index delete Shader program");
         glDeleteProgram(shaderProgram);
     }
 }
 
 bool CShaderProgramGL::useProgram(u32 shaderProgram)
 {
-    if (shaderProgram != 0)
-    {
-        ASSERT(glIsProgram(shaderProgram) || "Invalid Index bind Shader program");
-    }
-
     if (s_currentShader != shaderProgram)
     {
+        ASSERT((glIsProgram(shaderProgram) || shaderProgram == 0) && "Invalid Index bind Shader program");
         glUseProgram(shaderProgram);
         s_currentShader = shaderProgram;
 
