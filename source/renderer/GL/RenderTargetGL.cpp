@@ -193,6 +193,7 @@ bool CRenderTargetGL::create()
         break;
     };
 
+    ASSERT((result == GL_FRAMEBUFFER_COMPLETE) && "CRenderTarget: Create render target Error");
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
     if (originalRBO >= 0)
@@ -359,14 +360,8 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
             formatColor(attach._format);
             if (m_MSAA)
             {
-                GLuint tex;
-                glGenTextures(1, &tex);
-                glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
-                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, rect.getWidth(), rect.getHeight(), false);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, tex);
-
-                /*attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());*/
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType);
+                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());
             }
             else
             {
@@ -382,14 +377,8 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
         {
             if (m_MSAA)
             {
-                GLuint tex;
-                glGenTextures(1, &tex);
-                glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
-                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_DEPTH_COMPONENT, rect.getWidth(), rect.getHeight(), false);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, tex);
-
-                /*attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());*/
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, attach._texture->getTextureID());
             }
             else
             {

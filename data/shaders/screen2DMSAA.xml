@@ -1,4 +1,4 @@
-<technique name="screen2D" version="100">
+<technique name="screen2DMSAA" version="100">
 	
 	<!-- Textures -->
 	<textures>
@@ -8,7 +8,7 @@
 	
 	<!-- Render Targets -->
     <rendertargets>
-        <target name="targetTest" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00">
+        <target name="targetTestMSAA" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00" aa="false">
             <color active="true" attach="1" clear="true" format="8888" output="texture"/>
             <depth active="true" clear="true" format="16" output="texture"/>
         </target>
@@ -34,7 +34,7 @@
 		<rendertarget val="default"/>
         <lod geometry="0.0"/>
 		<shaders>
-			<var name="vscreen2D" type="vertex">
+			<var name="vscreen2DMSAA" type="vertex">
 				<![CDATA[
 					#version 330
 					#define POSITION 	0
@@ -66,11 +66,11 @@
 					}
 				]]>
 			</var>
-			<var name="fscreen2D" type="fragment">
+			<var name="fscreen2DMSAA" type="fragment">
 				<![CDATA[
 					#version 330
 				
-					uniform sampler2D sampler0;
+					uniform sampler2DMS sampler0;
 
 					struct Vertex 
 					{
@@ -81,7 +81,12 @@
 
 					void main()
 					{
-						fragColor = texture(sampler0, fragVertex.texCoord0);
+                        ivec2 size = textureSize(sampler0);
+                        vec2 texPos = size * fragVertex.texCoord0;
+                        
+						fragColor = texelFetch(sampler0, ivec2(texPos), 0);
+                        fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                        
 					}
 				]]>
 			</var>

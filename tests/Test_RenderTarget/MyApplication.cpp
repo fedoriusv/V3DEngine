@@ -28,12 +28,12 @@ void MyApplication::init()
 
     CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect(512, 384, 1024, 768));
     screen2->setName("screen2");
-    screen2->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
+    screen2->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
     //screen1->getMaterial()->setTexture(0, "textures/wall.bmp");
 
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/simple_target.xml");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");

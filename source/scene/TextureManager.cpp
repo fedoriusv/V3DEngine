@@ -46,10 +46,10 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
     std::string nameStr = file;
     std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
 
-    auto it = m_textures.find(nameStr);
-    if (it != m_textures.end())
+    const TexturePtr findTexture = CTextureManager::get(alias.empty() ? nameStr : alias);
+    if (findTexture)
     {
-        return it->second;
+        return findTexture;
     }
     else
     {

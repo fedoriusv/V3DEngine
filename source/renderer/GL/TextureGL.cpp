@@ -316,7 +316,7 @@ bool CTextureGL::bindSampler(u32 texture, u32 sampler)
     if (s_currentSamplerID != sampler)
     {
         glBindSampler(texture, sampler);
-        ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+        ASSERT((glIsSampler(sampler) || sampler == 0) && "Invalid Sampler index");
         ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
         s_currentSamplerID = sampler;
 
@@ -403,8 +403,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
     GLint maxSamplers;
     glGetIntegerv(GL_MAX_MULTISAMPLE_COVERAGE_MODES_NV, &maxSamplers);
 
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, m_data[0]._width, m_data[0]._height, false);
-    //glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], 4, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
+    glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], 4, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
     RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
 }
 

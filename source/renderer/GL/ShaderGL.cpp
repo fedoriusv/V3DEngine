@@ -81,7 +81,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
                 }
                 return "Unknown";
             };
-            LOG_ERROR("CShaderGL: Shader [%s] Error\n: %s", strFunc(type), buffer);
+            LOG_ERROR("CShaderGL: Shader [%s] Error:\n%s", strFunc(type), buffer);
         }
 #endif
     }
