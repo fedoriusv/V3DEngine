@@ -8,7 +8,7 @@
 	
 	<!-- Render Targets -->
     <rendertargets>
-        <target name="targetTestMSAA" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00" aa="false">
+        <target name="targetTestMSAA" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00" aa="msaa">
             <color active="true" attach="1" clear="true" format="8888" output="texture"/>
             <depth active="true" clear="true" format="16" output="texture"/>
         </target>
@@ -31,7 +31,9 @@
 		<renderstate>
             <polygonmode val="fill"/>
         </renderstate>
-		<rendertarget val="default"/>
+		<rendertarget>
+			<var val="default"/>
+		</rendertarget>
         <lod geometry="0.0"/>
 		<shaders>
 			<var name="vscreen2DMSAA" type="vertex">
@@ -69,7 +71,8 @@
 			<var name="fscreen2DMSAA" type="fragment">
 				<![CDATA[
 					#version 330
-				
+					#extension GL_ARB_texture_multisample : enable
+					
 					uniform sampler2DMS sampler0;
 
 					struct Vertex 
@@ -84,9 +87,13 @@
                         ivec2 size = textureSize(sampler0);
                         vec2 texPos = size * fragVertex.texCoord0;
                         
-						fragColor = texelFetch(sampler0, ivec2(texPos), 0);
-                        fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                        
+						vec4 color;
+						for(int i = 0; i < 4; ++i)
+						{
+							color = color + texelFetch(sampler0, ivec2(texPos), i);
+						}
+						fragColor = vec4(color/4);
+						//fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 					}
 				]]>
 			</var>

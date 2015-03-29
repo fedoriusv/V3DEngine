@@ -4,7 +4,7 @@
     <rendertargets>
         <target name="targetTest" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00">
             <color active="true" attach="1" clear="true" format="8888" output="texture"/>
-            <depth active="true" clear="true" format="16" output="texture"/>
+            <depth active="true" clear="true" format="16" output="render"/>
         </target>
         <target name="targetTestMSAA" x="0" y="0" width="1024" height="768" ratio="0.0" color="0xff00ff00" aa="msaa">
             <color active="true" attach="1" clear="true" format="8888" output="texture"/>
@@ -32,7 +32,9 @@
             <depthWrite val="true"/>
             <depthTest val="lequal"/>
         </renderstate>
-		<rendertarget val="targetTestMSAA"/>
+		<rendertarget>
+			<var val="targetTest"/>
+		</rendertarget>
         <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">

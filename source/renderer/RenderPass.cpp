@@ -24,6 +24,7 @@ CRenderPass::CRenderPass()
 
 CRenderPass::~CRenderPass()
 {
+    m_renderTargets.clear();
 }
 
 const ShaderProgramPtr& CRenderPass::getShaderProgram() const
@@ -313,35 +314,53 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    bool isDefault = false;
-    std::string name;
-    if (root->Attribute("val"))
+    const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
+    while (varElement)
     {
-        name = root->Attribute("val");
-        if (name == "default")
+        bool isDefault = false;
+        std::string name;
+        if (varElement->Attribute("val"))
         {
-            isDefault = true;
+            name = varElement->Attribute("val");
+            if (name == "default")
+            {
+                isDefault = true;
+            }
         }
-    }
-    else
-    {
-        LOG_ERROR("CRenderPass: Render Target have not name");
-        return false;
+        else
+        {
+            LOG_ERROR("CRenderPass: Render Target have not name");
+            varElement = varElement->NextSiblingElement("var");
+            continue;
+        }
+
+        if (isDefault)
+        {
+            LOG_INFO("CRenderTarget: Set default setting for render target");
+            CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
+        }
+        else
+        {
+            const RenderTargetPtr target = CRenderTargetManager::getInstance()->get(name);
+            if (!target)
+            {
+                LOG_WARNING("CRenderTarget: Render target not found with name %s, set default", name.c_str());
+                CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
+            }
+            else
+            {
+                LOG_INFO("CRenderTarget: Set target with name '%s'", name.c_str());
+                CRenderPass::addRenderTarget(target);
+            }
+        }
+
+        varElement = varElement->NextSiblingElement("var");
     }
 
-    if (isDefault)
+    if (CRenderPass::getRenderTargetCount() == 0)
     {
-        LOG_INFO("CRenderTarget: Set default setting for render target");
-        m_renderTarget = RENDERER->getDefaultRenderTarget();
-    }
-    else
-    {
-        m_renderTarget = CRenderTargetManager::getInstance()->get(name);
-        if (!m_renderTarget)
-        {
-            LOG_INFO("CRenderTarget: Render target not found with name %s, set default", name.c_str());
-            m_renderTarget = RENDERER->getDefaultRenderTarget();
-        }
+        LOG_WARNING("CRenderTarget: Render target not found set default");
+        CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
     }
 
     return true;
@@ -382,9 +401,10 @@ bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
 }
 
 
-void CRenderPass::bind()
+void CRenderPass::bind(u32 target)
 {
-    m_renderTarget->bind();
+    ASSERT(m_renderTargets.size() > target && "Invalid target index");
+    m_renderTargets[target]->bind();
 
     m_renderState->bind();
 
@@ -409,9 +429,12 @@ void CRenderPass::bind()
     }
 }
 
-void CRenderPass::unbind()
+void CRenderPass::unbind(u32 target)
 {
-    m_renderTarget->unbind();
+    //m_program->unbind();
+
+    ASSERT(m_renderTargets.size() > target && "Invalid target index");
+    m_renderTargets[target]->unbind();
 }
 
 const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)
@@ -439,12 +462,34 @@ void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
     m_lods = lod;
 }
 
-const RenderTargetPtr& CRenderPass::getRenderTarget() const
+const RenderTargetPtr& CRenderPass::getRenderTarget(u32 index) const
 {
-    return m_renderTarget;
+    ASSERT(m_renderTargets.size() > index && "Invalid Render Target index");
+    return m_renderTargets[index];
 }
 
-void CRenderPass::setRenderTarget(const RenderTargetPtr& target)
+void CRenderPass::addRenderTarget(const RenderTargetPtr& target)
 {
-    m_renderTarget = target;
+    if (target)
+    {
+        RenderTargetList ::const_iterator iter = std::find(m_renderTargets.begin(), m_renderTargets.end(), target);
+        if (iter != m_renderTargets.end())
+        {
+            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter)->getName());
+            return;
+        }
+
+        m_renderTargets.push_back(target);
+    }
+}
+
+void CRenderPass::setRenderTarget(u32 index, const RenderTargetPtr& target)
+{
+    ASSERT(m_renderTargets.size() > index && "Invalid Render Target index");
+    m_renderTargets[index] = target;
+}
+
+u32 CRenderPass::getRenderTargetCount() const
+{
+    return m_renderTargets.size();
 }

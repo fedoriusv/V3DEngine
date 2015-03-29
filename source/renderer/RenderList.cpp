@@ -1,6 +1,9 @@
 #include "RenderList.h"
 #include "scene/Node.h"
 #include "scene/Shape.h"
+#include "scene/Model.h"
+#include "scene/Skybox.h"
+#include "scene/Text.h"
 #include "scene/Camera.h"
 
 using namespace v3d;
@@ -40,11 +43,11 @@ void CRenderList::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CRenderList::add(scene::CNode* node)
+void CRenderList::add(scene::CNode* node, u32 target)
 {
     if (node)
     {
-        m_list.push_back(node);
+        m_list.push_back(SNodeList(node, target));
     }
 }
 
@@ -70,9 +73,9 @@ void CRenderList::update(u32 delta)
         m_camera->update(delta);
     }
 
-    for (std::vector<CNode*>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
+    for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
-        CNode* item = (*iter);
+        CNode* item = (*iter)._node;
         item->update(delta);
     }
 }
@@ -85,9 +88,9 @@ void CRenderList::render()
         m_camera->render();
     }
 
-    for (std::vector<CNode*>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
+    for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
-        CNode* item = (*iter);
+        CNode* item = (*iter)._node;
         item->render();
     }
 }
@@ -97,16 +100,17 @@ void CRenderList::refresh()
 {
     m_draw.clear();
 
-    for (std::vector<CNode*>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
+    for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
-        CNode* node = (*iter);
+        CNode* node = (*iter)._node;
         switch (node->getNodeType())
         {
         case ENodeType::eShape:
-        case ENodeType::eModel:
+        //case ENodeType::eModel:
         {
             f32 priority = 0.0f;
-            if (static_cast<CShape*>(node)->getMaterial()->getTransparency() > 0.0f)
+            CShape* shape = static_cast<CShape*>(node);
+            if (shape->getMaterial()->getTransparency() > 0.0f)
             {
                 if (m_camera)
                 {
@@ -120,7 +124,10 @@ void CRenderList::refresh()
 
                 if (checkDistance(node, priority))
                 {
-                    m_draw.push_back(node);
+                    const RenderJobPtr& job = shape->getRenderJob();
+                    job->setRenderTarget((*iter)._targetIndex);
+
+                    m_draw.push_back((*iter));
                 }
             }
         }
@@ -139,7 +146,12 @@ void CRenderList::refresh()
         case ENodeType::eSkyBox:
         {
             node->m_priority = k_maxPriority;
-            m_draw.push_back(node);
+
+            CSkybox* skybox = static_cast<CSkybox*>(node);
+            const RenderJobPtr& job = skybox->getRenderJob();
+            job->setRenderTarget((*iter)._targetIndex);
+
+            m_draw.push_back((*iter));
         }
             break;
 
@@ -150,10 +162,15 @@ void CRenderList::refresh()
         }
             break;
 
-        case ENodeType::eFont:
+        case ENodeType::eText:
         {
             node->m_priority = 0.0f;
-            m_draw.push_back(node);
+
+            CText* text = static_cast<CText*>(node);
+            const RenderJobPtr& job = text->getRenderJob();
+            job->setRenderTarget((*iter)._targetIndex);
+
+            m_draw.push_back((*iter));
         }
             break;
 
@@ -162,9 +179,9 @@ void CRenderList::refresh()
         }
     }
 
-    std::sort(m_draw.begin(), m_draw.end(), [](CNode* node0, CNode* node1) -> bool
+    std::sort(m_draw.begin(), m_draw.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
     {
-        return  (node0->getPriority() > node1->getPriority());
+        return  (node0._node->getPriority() > node1._node->getPriority());
     });
 }
 

@@ -32,7 +32,7 @@ namespace renderer
         bool                            isEnable() const;
         void                            setEnable(bool enable);
 
-        void                            add(scene::CNode* node);
+        void                            add(scene::CNode* node, u32 target);
         void                            clear();
 
         const RenderTargetPtr&          getRenderTarget() const;
@@ -40,14 +40,25 @@ namespace renderer
 
     private:
 
+        struct SNodeList
+        {
+            SNodeList(scene::CNode* node, u32 index)
+            : _node(node)
+            , _targetIndex(index)
+            {}
+
+            scene::CNode* _node;
+            u32           _targetIndex;
+        };
+
         bool                            checkDistance(const scene::CNode* node, const f32 distance);
 
         bool                            m_enable;
 
         RenderTargetPtr                 m_target;
 
-        std::vector<scene::CNode*>      m_list;
-        std::vector<scene::CNode*>      m_draw;
+        std::vector<SNodeList>          m_list;
+        std::vector<SNodeList>          m_draw;
 
         scene::CCamera*                 m_camera;
 

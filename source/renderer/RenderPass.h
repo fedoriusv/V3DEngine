@@ -44,11 +44,13 @@ namespace renderer
         const RenderLODPtr&     getRenderLOD() const;
         void                    setRenderLOD(const RenderLODPtr& lod);
 
-        const RenderTargetPtr&  getRenderTarget() const;
-        void                    setRenderTarget(const RenderTargetPtr& target);
+        const RenderTargetPtr&  getRenderTarget(u32 index) const;
+        void                    setRenderTarget(u32 index, const RenderTargetPtr& target);
+        void                    addRenderTarget(const RenderTargetPtr& target);
+        u32                     getRenderTargetCount() const;
 
-        void                    bind();
-        void                    unbind();
+        void                    bind(u32 target = 0);
+        void                    unbind(u32 target = 0);
 
     private:
 
@@ -74,7 +76,7 @@ namespace renderer
         ShaderDataPtr           m_defaultShaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
-        RenderTargetPtr         m_renderTarget;
+        RenderTargetList        m_renderTargets;
 
         bool                    m_enable;
         std::string             m_name;

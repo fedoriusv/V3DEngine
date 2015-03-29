@@ -31,7 +31,9 @@
 		<renderstate>
             <polygonmode val="fill"/>
         </renderstate>
-		<rendertarget val="default"/>
+		<rendertarget>
+			<var val="default"/>
+		</rendertarget>
         <lod geometry="0.0"/>
 		<shaders>
 			<var name="vscreen2D" type="vertex">

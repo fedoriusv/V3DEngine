@@ -9,6 +9,7 @@ CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry,
     : m_material(material)
     , m_geometry(geometry)
     , m_transform(transform)
+    , m_targetIndex(0U)
 {
 }
 
@@ -44,4 +45,13 @@ void CRenderJob::setTransform(const Matrix4D& transform)
 const Matrix4D& CRenderJob::getTransform() const
 {
     return m_transform;
+}
+
+void CRenderJob::setRenderTarget(u32 target)
+{
+    m_targetIndex = target;
+}
+u32 CRenderJob::getRenderTarget() const
+{
+    return m_targetIndex;
 }

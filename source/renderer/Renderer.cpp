@@ -133,26 +133,24 @@ void CRenderer::draw(const RenderJobPtr& job)
     const MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
+    u32 targetIndex = job->getRenderTarget();
     const u32 passCount = material->getRenderTechique()->getRenderPassCount();
 
     for (u32 i = 0; i < passCount; ++i)
     {
         const RenderPassPtr& pass = material->getRenderTechique()->getRenderPass(i);
 
-        pass->bind();
+        pass->bind(targetIndex);
 
         CRenderer::updateTransform(transform, pass);
         CRenderer::updateMaterial(material, pass);
         CRenderer::updateTexture(material, pass);
         CRenderer::updateLight(transform, pass);
 
-        //Bind Texture
-       
-
         //Draw Geometry
         geometry->draw();
 
-        pass->unbind();
+        pass->unbind(targetIndex);
     }
 }
 
