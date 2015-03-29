@@ -22,7 +22,7 @@ namespace scene
         eLight,
         eFog,
         eSkyBox,
-        eFont,
+        eText,
 
         eCount
      };

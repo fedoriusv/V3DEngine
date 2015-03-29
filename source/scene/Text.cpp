@@ -4,9 +4,9 @@
 #include "scene/FontManager.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
-using namespace v3d::resources;
+using namespace scene;
+using namespace renderer;
+using namespace resources;
 
 CText::CText(const std::string& font)
     : m_text("")
@@ -23,7 +23,7 @@ CText::CText(const std::string& font)
     , m_font(font)
     , m_data(nullptr)
 {
-    m_nodeType = ENodeType::eFont;
+    m_nodeType = ENodeType::eText;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
     m_material = std::make_shared<CMaterial>();
@@ -63,6 +63,11 @@ void CText::setMaterial(const MaterialPtr& material)
 const renderer::MaterialPtr& CText::getMaterial() const
 {
     return m_material;
+}
+
+const RenderJobPtr& CText::getRenderJob() const
+{
+    return m_renderJob;
 }
 
 void CText::setAlignMode(EAlignMode mode)

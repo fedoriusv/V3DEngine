@@ -4,8 +4,8 @@
 #include "utils/Logger.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 CSkybox::CSkybox()
 {
@@ -145,12 +145,17 @@ void CSkybox::render()
     
 }
 
-void CSkybox::setMaterial(const renderer::MaterialPtr& material)
+void CSkybox::setMaterial(const MaterialPtr& material)
 {
     m_material = material;
 }
 
-const renderer::MaterialPtr& CSkybox::getMaterial() const
+const MaterialPtr& CSkybox::getMaterial() const
 {
     return m_material;
+}
+
+const RenderJobPtr& CSkybox::getRenderJob() const
+{
+    return m_renderJob;
 }

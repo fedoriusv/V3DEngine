@@ -72,7 +72,7 @@ void CDebugGeometry::bind()
     //const ShaderDataPtr& data = s_pass->getShaderData();
     //CRenderJob::updateTransform(data);
 
-    s_pass->bind();
+    //s_pass->bind();
 }
 
 void CDebugGeometry::setDebugFlag(s32 flag)

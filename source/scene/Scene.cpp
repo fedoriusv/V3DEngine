@@ -169,36 +169,39 @@ void CScene::initRenderLists()
             case ENodeType::eShape:
             case ENodeType::eModel:
             case ENodeType::eSkyBox:
-            case ENodeType::eFont:
+            case ENodeType::eText:
             {
                 const RenderTechniquePtr& techniqe = static_cast<CShape*>(node)->getMaterial()->getRenderTechique();
                 for (u32 i = 0; i < techniqe->getRenderPassCount(); ++i)
                 {
                     const RenderPassPtr& pass = techniqe->getRenderPass(i);
-                    const RenderTargetPtr& target = pass->getRenderTarget();
 
-                    auto findPred = [target](const CRenderList& list) -> bool
+                    for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
                     {
-                        if (list.getTargetName() == target->getName())
+                        const RenderTargetPtr& target = pass->getRenderTarget(targetIndex);
+                        auto findPred = [target](const CRenderList& list) -> bool
                         {
-                            return true;
+                            if (list.getTargetName() == target->getName())
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        };
+
+                        std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
+                        if (findTarget != m_renderList.end())
+                        {
+                            (*findTarget).add(node, targetIndex);
                         }
+                        else
+                        {
+                            CRenderList list(target);
+                            list.setEnable(true);
+                            list.add(node, targetIndex);
 
-                        return false;
-                    };
-
-                    std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
-                    if (findTarget != m_renderList.end())
-                    {
-                        (*findTarget).add(node);
-                    }
-                    else
-                    {
-                        CRenderList list(target);
-                        list.setEnable(true);
-                        list.add(node);
-
-                        m_renderList.push_back(list);
+                            m_renderList.push_back(list);
+                        }
                     }
                 }
             }

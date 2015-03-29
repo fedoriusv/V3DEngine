@@ -29,6 +29,8 @@ namespace scene
         void                            setMaterial(const renderer::MaterialPtr& material);
         const renderer::MaterialPtr&    getMaterial() const;
 
+        const renderer::RenderJobPtr&   getRenderJob() const;
+
         void                            init()             override;
         void                            update(f64 time)   override;
         void                            render()           override;

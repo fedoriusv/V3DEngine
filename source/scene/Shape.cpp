@@ -5,8 +5,8 @@
 
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 CShape::CShape()
     : m_geometry(nullptr)
@@ -53,14 +53,19 @@ EShapeType CShape::getShapeType() const
     return m_shapeType;
 }
 
-void CShape::setMaterial(const renderer::MaterialPtr& material)
+void CShape::setMaterial(const MaterialPtr& material)
 {
     m_material = material;
 }
 
-const renderer::MaterialPtr& CShape::getMaterial() const
+const MaterialPtr& CShape::getMaterial() const
 {
     return m_material;
+}
+
+const RenderJobPtr& CShape::getRenderJob() const
+{
+    return m_renderJob;
 }
 
 SVertexData& CShape::getGeometryData()
