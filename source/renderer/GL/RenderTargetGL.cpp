@@ -11,7 +11,13 @@ using namespace renderer;
 using namespace scene;
 using namespace core;
 
-u32 CRenderTargetGL::s_currentFBO = 0;
+GLenum ERenderbufferTargetGL[] =
+{
+    GL_DRAW_FRAMEBUFFER,
+    GL_READ_FRAMEBUFFER
+};
+
+u32 CRenderTargetGL::s_currentFBO[] = { 0 };
 u32 CRenderTargetGL::s_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
@@ -55,11 +61,15 @@ void CRenderTargetGL::bind()
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
         const Rect& rect = getViewport();
-        glViewport(rect.getLeftX(), rect.getTopY(), rect.getRightX(), rect.getBottomY());
+        glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
         if (m_attachBuffers.size() > 0)
         {
             glDrawBuffers((GLsizei)m_attachBuffers.size(), &m_attachBuffers[0]);
+        }
+        else
+        {
+            glDrawBuffer(m_frameBufferID ? GL_NONE : GL_BACK);
         }
     }
 
@@ -102,8 +112,7 @@ void CRenderTargetGL::bind()
 
 void CRenderTargetGL::unbind()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    bool chaned = CRenderTargetGL::bindFramebuffer(0);
+    /*bool chaned = CRenderTargetGL::bindFramebuffer(0);
     if (chaned)
     {
         glReadBuffer(GL_BACK);
@@ -111,9 +120,14 @@ void CRenderTargetGL::unbind()
 
         const RenderTargetPtr& target = RENDERER->getDefaultRenderTarget();
         const Rect& rect = target->getViewport();
-        glViewport(rect.getLeftX(), rect.getTopY(), rect.getWidth(), rect.getHeight());
+        glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
         RENDERER->setCurrentRenderTarget(target);
+    }*/
+
+    if (m_frameBufferID != 0 && m_attachBuffers.size() > 0)
+    {
+        CRenderTargetGL::copyToRenderbuffer(RENDERER->getDefaultRenderTarget());
     }
 }
 
@@ -215,15 +229,36 @@ void CRenderTargetGL::destroy()
         switch (attach._type)
         {
         case eColorAttach:
-            framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, 0);
+            if (attach._output == eTextureOutput)
+            {
+                framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, 0);
+            }
+            else if (attach._output == eRenderOutput)
+            {
+                framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, 0);
+            }
             break;
 
         case eDepthAttach:
-            framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0);
+            if (attach._output == eTextureOutput)
+            {
+                framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0);
+            }
+            else if (attach._output == eRenderOutput)
+            {
+                framebufferRenderbuffer(GL_DEPTH_ATTACHMENT + attach._index, 0);
+            }
             break;
 
         case eStencilAttach:
-            framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0);
+            if (attach._output == eTextureOutput)
+            {
+                framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0);
+            }
+            else if (attach._output == eRenderOutput)
+            {
+                framebufferRenderbuffer(GL_STENCIL_ATTACHMENT + attach._index, 0);
+            }
             break;
         }
     }
@@ -237,13 +272,41 @@ void CRenderTargetGL::destroy()
 
 void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
 {
-    GLint maxColorAttachments;
-    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+    std::function<GLenum(u32)> internalFormat = [](u32 format) -> GLenum
+    {
+        switch (format)
+        {
+        case 8888:
+            return GL_RGBA8;
+        case 888:
+            return GL_RGB8;
+        case 565:
+           return GL_RGB565;
+        case 4444:
+            return GL_RGBA4;
+        case 16:
+            return GL_DEPTH_COMPONENT16;
+        case 24:
+            return GL_DEPTH_COMPONENT24;
+        case 32:
+            return GL_DEPTH_COMPONENT32F;
+        case 8:
+            return GL_STENCIL_INDEX8;
+        default:
+            LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
+            return GL_RGBA8;
+        };
+
+        return GL_RGBA8;
+    };
 
     switch (attach._type)
     {
         case eColorAttach:
         {
+            GLint maxColorAttachments;
+            glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
             if (attach._index >= (u32)maxColorAttachments)
             {
                 LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
@@ -254,10 +317,10 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
 
             CRenderTargetGL::genRenderbuffer(attach._rboID);
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, rect.getWidth(), rect.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, GL_FRAMEBUFFER, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, attach._rboID);
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
         }
@@ -271,10 +334,10 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
             }
             attach._rboID = m_renderBufferID;
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, rect.getWidth(), rect.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, attach._rboID);
 
             RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
         }
@@ -289,10 +352,10 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
             attach._rboID = m_renderBufferID;
 
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, rect.getWidth(), rect.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, GL_FRAMEBUFFER, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, attach._rboID);
 
             RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
         }
@@ -342,13 +405,13 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
         }
     };
 
-    GLint maxColorAttachments;
-    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-
     switch (attach._type)
     {
         case eColorAttach:
         {
+            GLint maxColorAttachments;
+            glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
             if (attach._index >= (u32)maxColorAttachments)
             {
                 LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
@@ -416,18 +479,42 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& re
     }
 }
 
+void CRenderTargetGL::copyToRenderbuffer(const RenderTargetPtr& dst)
+{
+    
+    u32 dstBuffer = std::static_pointer_cast<CRenderTargetGL>(dst)->m_frameBufferID;
+    CRenderTargetGL::bindFramebuffer(dstBuffer);
+
+    CRenderTargetGL::bindFramebuffer(m_frameBufferID, eFBTargetRead);
+    for (u32 i = 0; i < m_attachBuffers.size(); ++i)
+    {
+        glReadBuffer(m_attachBuffers[i]);
+
+        s32 x = m_viewport.getLeftX();
+        s32 y = m_viewport.getTopY();
+        s32 width = m_viewport.getWidth();
+        s32 height = m_viewport.getHeight();
+        s32 invHeight = dst->getViewport().getHeight() - y;
+
+        CRenderTargetGL::blitFramebuffer(Rect(0, 0, width, height), Rect(x, invHeight - height, width + x, invHeight),
+            GL_COLOR_BUFFER_BIT, m_MSAA ? GL_NEAREST : GL_LINEAR);
+
+        RENDERER->checkForErrors("CRenderTargetGL: Copy to renderbuffer error");
+    }
+}
+
 void CRenderTargetGL::genFramebuffer(u32& buffer)
 {
     glGenFramebuffers(1, &buffer);
 }
 
-bool CRenderTargetGL::bindFramebuffer(u32 buffer)
+bool CRenderTargetGL::bindFramebuffer(u32 buffer, EFramebufferTarget target)
 {
-    if (s_currentFBO != buffer)
+    if (s_currentFBO[target] != buffer)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, buffer);
+        glBindFramebuffer(ERenderbufferTargetGL[target], buffer);
         ASSERT((glIsFramebuffer(buffer) || buffer == 0) && "Invalid FBO index");
-        s_currentFBO = buffer;
+        s_currentFBO[target] = buffer;
 
         return true;
     }
@@ -478,14 +565,15 @@ void CRenderTargetGL::framebufferTexture2D(s32 attachment, s32 target, u32 textu
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texture, 0);
 }
 
-void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, s32 target, u32 buffer)
+void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, u32 buffer)
 {
     ASSERT((glIsRenderbuffer(buffer) || buffer == 0) && "Invalid Index Renderbuffer");
-    glFramebufferRenderbuffer(target, attachment, GL_RENDERBUFFER, buffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, buffer);
 }
 
-void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask)
+void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask, u32 filter)
 {
-    glBlitFramebuffer(src.getLeftX(), src.getTopY(), src.getRightX(), src.getHeight(),
-        dst.getLeftX(), dst.getTopY(), dst.getRightX(), dst.getHeight(), mask, GL_NEAREST);
+    glBlitFramebuffer(src.getLeftX(), src.getBottomY(), src.getRightX(), src.getTopY(),
+        dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
 }
+
