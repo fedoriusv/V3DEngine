@@ -105,7 +105,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
             }
             CRenderTargetManager::getInstance()->add(target);
 
-            targetElement = targetElement->NextSiblingElement("pass");
+            targetElement = targetElement->NextSiblingElement("target");
         }
     }
 

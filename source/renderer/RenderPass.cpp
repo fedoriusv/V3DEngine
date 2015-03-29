@@ -344,7 +344,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
             const RenderTargetPtr target = CRenderTargetManager::getInstance()->get(name);
             if (!target)
             {
-                LOG_WARNING("CRenderTarget: Render target not found with name %s, set default", name.c_str());
+                LOG_WARNING("CRenderTarget: Render target not found with name '%s', set default", name.c_str());
                 CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
             }
             else

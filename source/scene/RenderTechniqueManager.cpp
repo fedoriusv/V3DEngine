@@ -10,6 +10,7 @@ using namespace renderer;
 CRenderTechniqueManager::CRenderTechniqueManager()
 {
     CRenderTechniqueManager::registerPath("../../../../data/");
+    CRenderTechniqueManager::registerPath("../../../../../data/");
     CRenderTechniqueManager::registerPath("data/");
 }
 
