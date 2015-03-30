@@ -246,7 +246,7 @@ void CRenderTargetGL::destroy()
             }
             else if (attach._output == eRenderOutput)
             {
-                framebufferRenderbuffer(GL_DEPTH_ATTACHMENT + attach._index, 0);
+                framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, 0);
             }
             break;
 
@@ -257,7 +257,7 @@ void CRenderTargetGL::destroy()
             }
             else if (attach._output == eRenderOutput)
             {
-                framebufferRenderbuffer(GL_STENCIL_ATTACHMENT + attach._index, 0);
+                framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, 0);
             }
             break;
         }
@@ -576,4 +576,3 @@ void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask
     glBlitFramebuffer(src.getLeftX(), src.getBottomY(), src.getRightX(), src.getTopY(),
         dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
 }
-
