@@ -404,26 +404,9 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
     ASSERT((m_data[0]._width < maxSize && m_data[0]._height < maxSize) && "Size greater than max value");
 
-    GLint maxSamplers;
-    glGetIntegerv(GL_MAX_SAMPLES, &maxSamplers);
+    u32 samplersSize = DRIVER_CONTEXT->getSamplersCount();
 
-    /*glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");;
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    RENDERER->checkForErrors("CTextureGL: Copy Texture Error")*/
-
-
-
-    //glTexParameteri(ETextureTargetGL[eTexture2DMSAA], GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    //glTexParameteri(ETextureTargetGL[eTexture2DMSAA], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-
-    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
-
-    glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], 4, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
+    glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplersSize, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
 
     RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
 }

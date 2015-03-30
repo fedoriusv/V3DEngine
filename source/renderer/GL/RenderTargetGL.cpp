@@ -125,10 +125,11 @@ void CRenderTargetGL::unbind()
         RENDERER->setCurrentRenderTarget(target);
     }*/
 
-    if (m_frameBufferID != 0 && m_attachBuffers.size() > 0)
+    //TODO: test blit renderbuffers
+    /*if (m_frameBufferID != 0 && m_attachBuffers.size() > 0)
     {
         CRenderTargetGL::copyToRenderbuffer(RENDERER->getDefaultRenderTarget());
-    }
+    }*/
 }
 
 bool CRenderTargetGL::create()

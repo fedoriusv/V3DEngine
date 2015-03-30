@@ -58,12 +58,6 @@ void CRendererGL::init()
 
     CTextureGL::activeTextureLayer(0);
 
-    GLfloat m_maxAnisotropy;
-    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
-    {
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropy);
-    }
-
     glDisable(GL_DITHER);
 
 #ifdef _DEBUG
