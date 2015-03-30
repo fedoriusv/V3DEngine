@@ -24,6 +24,7 @@ GLenum ETextureTargetGL[ETextureTarget::eTargetCount] =
     GL_TEXTURE_2D,
     GL_TEXTURE_2D_MULTISAMPLE,
     GL_TEXTURE_3D,
+    GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
     GL_TEXTURE_CUBE_MAP,
 };
 
@@ -105,7 +106,6 @@ void CTextureGL::bind(u32 layer)
     }
 
     CTextureGL::activeTextureLayer(layer);
-    //CTextureGL::bindSampler(m_textureID, m_samplerID);
     CTextureGL::bindTexture(m_target, m_textureID);
 
     RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
@@ -113,7 +113,6 @@ void CTextureGL::bind(u32 layer)
 
 void CTextureGL::unbind(u32 layer)
 {
-    //CTextureGL::bindSampler(0, m_samplerID);
     CTextureGL::bindTexture(m_target, 0);
 
     RENDERER->checkForErrors("CTextureGL: Unbind Texture Error");
@@ -122,7 +121,6 @@ void CTextureGL::unbind(u32 layer)
 void CTextureGL::reset()
 {
     CTextureGL::activeTextureLayer(0);
-    //CTextureGL::bindSampler(0, 0);
     for (u32 i = 0; i < eTargetCount; ++i)
     {
         CTextureGL::bindTexture((ETextureTarget)i, 0);
@@ -173,6 +171,14 @@ bool CTextureGL::create()
             success = true;
         }
         break;
+
+        case ETextureTarget::eTexture3DMSAA:
+        {
+            CTextureGL::bindTexture(eTexture3DMSAA, m_textureID);
+            CTextureGL::initTexture3DMSAA(m_textureID);
+            success = true;
+        }
+            break;
 
         case ETextureTarget::eTextureCubeMap:
         {
@@ -344,10 +350,8 @@ void CTextureGL::initTexture1D(u32 texture)
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    u32 format = EImageFormatGL[m_data[0]._format];
-
-    glTexImage1D(ETextureTargetGL[eTexture1D], 0, format, m_data[0]._width, 0,
-        format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
+    glTexImage1D(ETextureTargetGL[eTexture1D], 0, EImageFormatGL[m_data[0]._format], m_data[0]._width, 
+        0, EImageFormatGL[m_data[0]._format], EImageTypeGL[m_data[0]._type], m_data[0]._data);
 }
 
 void CTextureGL::initTexture2D(u32 texture)
@@ -355,16 +359,50 @@ void CTextureGL::initTexture2D(u32 texture)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
-    std::function<s32(s32)> internalFormat = [](s32 format)
+    u32 type = EImageTypeGL[m_data[0]._type];
+    std::function<u32(u32, u32)> internalFormat = [](u32 format, u32 type) -> u32
     {
         switch (format)
         {
         case GL_RGB:
         case GL_BGR:
-            return GL_RGB;
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_5_6_5:
+                return GL_RGB565;
+
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGB4;
+
+            default:
+                return GL_RGB8;
+            }
+
+        case GL_RGBA:
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGBA4;
+
+            default:
+                return GL_RGBA8;
+            }
 
         case GL_RED:
             return GL_R8;
+
+        case GL_DEPTH_COMPONENT:
+            switch (format)
+            {
+            case GL_FLOAT:
+                return GL_DEPTH_COMPONENT32F;
+
+            default:
+                return GL_DEPTH_COMPONENT16;
+            }
+
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
 
         default:
             return format;
@@ -373,8 +411,8 @@ void CTextureGL::initTexture2D(u32 texture)
         return format;
     };
 
-    glTexImage2D(ETextureTargetGL[eTexture2D], 0, internalFormat(format), m_data[0]._width, m_data[0]._height, 0,
-        format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
+    glTexImage2D(ETextureTargetGL[eTexture2D], 0, internalFormat(format, type), m_data[0]._width, m_data[0]._height,
+        0, format, type, m_data[0]._data);
 }
 
 void CTextureGL::initTexture2DMSAA(u32 texture)
@@ -382,16 +420,50 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
-    std::function<s32(s32)> internalFormat = [](s32 format)
+    u32 type = EImageTypeGL[m_data[0]._type];
+    std::function<u32(u32, u32)> internalFormat = [](u32 format, u32 type) -> u32
     {
         switch (format)
         {
         case GL_RGB:
         case GL_BGR:
-            return GL_RGB;
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_5_6_5:
+                return GL_RGB565;
+
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGB4;
+
+            default:
+                return GL_RGB8;
+            }
+
+        case GL_RGBA:
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGBA4;
+
+            default:
+                return GL_RGBA8;
+            }
 
         case GL_RED:
             return GL_R8;
+
+        case GL_DEPTH_COMPONENT:
+            switch (format)
+            {
+            case GL_FLOAT:
+                return GL_DEPTH_COMPONENT32F;
+
+            default:
+                return GL_DEPTH_COMPONENT16;
+            }
+
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
 
         default:
             return format;
@@ -406,9 +478,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
 
     u32 samplersSize = DRIVER_CONTEXT->getSamplersCount();
 
-    glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplersSize, internalFormat(format), m_data[0]._width, m_data[0]._height, GL_TRUE);
-
-    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
+    glTexImage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplersSize, internalFormat(format, type), m_data[0]._width, m_data[0]._height, GL_TRUE);
 }
 
 void CTextureGL::initTexture3D(u32 texture)
@@ -416,20 +486,136 @@ void CTextureGL::initTexture3D(u32 texture)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     u32 format = EImageFormatGL[m_data[0]._format];
+    std::function<u32(u32)> internalFormat = [](u32 format) -> u32
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB8;
 
-    glTexImage3D(ETextureTargetGL[eTexture3D], 0, format, m_data[0]._width, m_data[0]._height, m_data[0]._depth, 0,
+        case GL_RGBA:
+            return GL_RGBA8;
+
+        case GL_RED:
+            return GL_R8;
+
+        case GL_DEPTH_COMPONENT:
+            return GL_DEPTH_COMPONENT16;
+
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
+
+        default:
+            return format;
+        };
+
+        return format;
+    };
+
+    glTexImage3D(ETextureTargetGL[eTexture3D], 0, internalFormat(format), m_data[0]._width, m_data[0]._height, m_data[0]._depth, 0,
         format, EImageTypeGL[m_data[0]._type], m_data[0]._data);
+}
+
+void CTextureGL::initTexture3DMSAA(u32 texture)
+{
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    u32 format = EImageFormatGL[m_data[0]._format];
+    std::function<u32(u32)> internalFormat = [](u32 format) -> u32
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB8;
+
+        case GL_RGBA:
+            return GL_RGBA8;
+
+        case GL_RED:
+            return GL_R8;
+
+        case GL_DEPTH_COMPONENT:
+            return GL_DEPTH_COMPONENT16;
+
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
+
+        default:
+            return format;
+        };
+
+        return format;
+    };
+
+    u32 samplersSize = DRIVER_CONTEXT->getSamplersCount();
+
+    glTexImage3DMultisample(ETextureTargetGL[eTexture3DMSAA], samplersSize, internalFormat(format), 
+        m_data[0]._width, m_data[0]._height, m_data[0]._depth, GL_TRUE);
 }
 
 void CTextureGL::initTextureCubeMap(u32 texture)
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    u32 format = EImageFormatGL[m_data[0]._format];
+    std::function<u32(u32, u32)> internalFormat = [](u32 format, u32 type) -> u32
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_5_6_5:
+                return GL_RGB565;
+
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGB4;
+
+            default:
+                return GL_RGB8;
+            }
+
+        case GL_RGBA:
+            switch (format)
+            {
+            case GL_UNSIGNED_SHORT_4_4_4_4:
+                return GL_RGBA4;
+
+            default:
+                return GL_RGBA8;
+            }
+
+        case GL_RED:
+            return GL_R8;
+
+        case GL_DEPTH_COMPONENT:
+            switch (format)
+            {
+            case GL_FLOAT:
+                return GL_DEPTH_COMPONENT32F;
+
+            default:
+                return GL_DEPTH_COMPONENT16;
+            }
+
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
+
+        default:
+            return format;
+        };
+
+        return format;
+    };
 
     for (u32 i = 0; i < TEXTURE_CUBE_MAP_COUNT; ++i)
     {
-        glTexImage2D(ECubeMapGL[i], 0, format, m_data[i]._width, m_data[i]._height, 0, format,
-            EImageTypeGL[m_data[i]._type], m_data[i]._data);
+        u32 format = EImageFormatGL[m_data[i]._format];
+        u32 type = EImageTypeGL[m_data[i]._type];
+
+        glTexImage2D(ECubeMapGL[i], 0, internalFormat(format, type), m_data[i]._width, m_data[i]._height, 
+            0, format, type, m_data[i]._data);
     }
 }

@@ -31,6 +31,7 @@ namespace renderer
         void            initTexture2D(u32 texture);
         void            initTexture2DMSAA(u32 texture);
         void            initTexture3D(u32 texture);
+        void            initTexture3DMSAA(u32 texture);
         void            initTextureCubeMap(u32 texture);
 
         static void     genTexture(u32& texture);

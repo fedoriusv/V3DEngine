@@ -12,6 +12,7 @@ using namespace decoders;
 CTextureManager::CTextureManager()
 {
     CTextureManager::registerPath("../../../../data/");
+    CTextureManager::registerPath("../../../../../data/");
     CTextureManager::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".png", ".bmp", ".tga", ".jpg" };

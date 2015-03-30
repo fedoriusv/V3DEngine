@@ -1,4 +1,23 @@
-<technique name="texture" version="100">
+<technique name="texture_target" version="100">
+
+	<!-- Textures -->
+	<textures>
+    	<texture name="box" file="textures/box.jpg"/>
+	</textures>
+	
+    <!-- Render Targets -->
+    <rendertargets>
+        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0" color="0xffff0000">
+            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
+            <depth active="true" clear="true" format="16" output="texture"/>
+        </target>
+        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" color="0xffff0000" aa="msaa">
+            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
+            <depth active="true" clear="true" format="16" output="texture"/>
+        </target>
+    </rendertargets>
+    
+    <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -10,17 +29,18 @@
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
 		<samplers>
-			<var name="sampler0"/>
+			<var name="sampler0" val="box"/>
 		</samplers>
-		<renderstate/>
-		<polygonmode val="fill"/>
+		<renderstate>
+            <polygonmode val="fill"/>
             <winding val="cw"/>
-            <culling val="true"/>
+            <culling val="back"/>
 		</renderstate>
 		<rendertarget>
-            <var val="default"/>
+            <var val="targetTest"/>
+            <var val="targetTestMSAA"/>
 		</rendertarget>
-		<lod geometry="10.0"/>
+        <lod geometry="0.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[

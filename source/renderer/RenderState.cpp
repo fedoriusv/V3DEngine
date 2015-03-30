@@ -71,7 +71,7 @@ ECullFace CRenderState::getCullFaceByName(const std::string& name)
         }
     }
 
-    return ECullFace::eFaceFront;
+    return ECullFace::eFaceBack;
 }
 
 const std::string CRenderState::s_comparefunc[ECompareFunc::eCompareCount] =

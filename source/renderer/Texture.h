@@ -24,6 +24,7 @@ namespace renderer
         eTexture2D,
         eTexture2DMSAA,
         eTexture3D,
+        eTexture3DMSAA,
         eTextureCubeMap,
 
         eTargetCount
