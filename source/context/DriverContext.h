@@ -26,9 +26,16 @@ namespace renderer
         const core::Dimension2D&    getWindowSize() const;
         const platform::WindowPtr&  getWindow() const;
 
+        u32                         getSamplersCount() const;
+        f32                         getMaxAnisotropySize() const;
+
     protected:
 
         const platform::WindowPtr   m_window;
+
+        u32                         m_samplersCount;
+        f32                         m_maxAnisotropy;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

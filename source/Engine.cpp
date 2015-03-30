@@ -110,3 +110,13 @@ const RendererPtr CEngine::getRenderer() const
 
     return m_platform->getRenderer();
 }
+
+const renderer::DriverContextPtr CEngine::getContext() const
+{
+    if (!m_platform)
+    {
+        return nullptr;
+    }
+
+    return m_platform->getRenderer()->getContext();
+}

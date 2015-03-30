@@ -31,6 +31,8 @@ namespace renderer
         CRenderer(const DriverContextPtr& context);
         virtual                     ~CRenderer();
 
+        const DriverContextPtr&     getContext() const;
+
         virtual void                init()                         = 0;
         
         virtual void                preRender()                    = 0;

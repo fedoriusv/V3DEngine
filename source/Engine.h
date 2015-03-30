@@ -6,6 +6,7 @@
 #include "event/InputEventHandler.h"
 #include "scene/SceneManager.h"
 #include "renderer/Renderer.h"
+#include "context/DriverContext.h"
 
 namespace v3d
 {
@@ -23,6 +24,7 @@ namespace v3d
         const scene::SceneManagerPtr&       getSceneManager()      const;
         const platform::WindowPtr           getWindow()            const;
         const renderer::RendererPtr         getRenderer()          const;
+        const renderer::DriverContextPtr    getContext()           const;
 
         bool                                init();
         bool                                begin();
@@ -41,6 +43,7 @@ namespace v3d
     #define RENDERER        CEngine::getInstance()->getRenderer()
     #define INPUT_EVENTS    CEngine::getInstance()->getInputEventHandler()
     #define WINDOW          CEngine::getInstance()->getWindow()
+    #define DRIVER_CONTEXT  CEngine::getInstance()->getContext()
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

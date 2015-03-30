@@ -2,11 +2,11 @@
 
     <!-- Render Targets -->
     <rendertargets>
-        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0" color="0xff00ff00">
+        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0" color="0xffff0000">
             <color active="true" attach="1" clear="true" format="8888" output="render"/>
             <depth active="true" clear="true" format="16" output="render"/>
         </target>
-        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" color="0x00ffff00">
+        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" color="0xffff0000" aa="msaa">
             <color active="true" attach="1" clear="true" format="8888" output="render"/>
             <depth active="true" clear="true" format="16" output="render"/>
         </target>
@@ -33,7 +33,7 @@
             <depthTest val="lequal"/>
         </renderstate>
 		<rendertarget>
-			<var val="targetTest"/>
+            <var val="targetTest"/>
 			<var val="targetTestMSAA"/>
 		</rendertarget>
         <lod geometry="0.0"/>

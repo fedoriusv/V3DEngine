@@ -32,6 +32,11 @@ CRenderer::~CRenderer()
     m_lightList.clear();
 }
 
+const DriverContextPtr& CRenderer::getContext() const
+{
+    return m_context;
+}
+
 void CRenderer::addLight(scene::CLight* lights)
 {
     m_lightList.push_back(lights);

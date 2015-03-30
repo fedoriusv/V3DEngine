@@ -300,6 +300,8 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
         return GL_RGBA8;
     };
 
+    u32 samplerSize = DRIVER_CONTEXT->getSamplersCount();
+
     switch (attach._type)
     {
         case eColorAttach:
@@ -317,7 +319,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
 
             CRenderTargetGL::genRenderbuffer(attach._rboID);
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
             CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, attach._rboID);
@@ -334,7 +336,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
             }
             attach._rboID = m_renderBufferID;
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
             CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, attach._rboID);
@@ -352,7 +354,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
             attach._rboID = m_renderBufferID;
 
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
-            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat(attach._format), rect.getWidth(), rect.getHeight());
+            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
             CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, attach._rboID);
@@ -575,4 +577,16 @@ void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask
 {
     glBlitFramebuffer(src.getLeftX(), src.getBottomY(), src.getRightX(), src.getTopY(),
         dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
+}
+
+void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect& size, u32 samplers)
+{
+    if (samplers > 0)
+    {
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samplers, internalFormat, size.getWidth(), size.getHeight());
+    }
+    else
+    {
+        glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, size.getWidth(), size.getHeight());
+    }
 }
