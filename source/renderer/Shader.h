@@ -50,7 +50,6 @@ namespace renderer
 
     protected:
 
-        u8*                         load(const std::string& file);
         void                        clear();
 
         u32                         m_shaderID;
@@ -69,8 +68,9 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShader>    ShaderPtr;
-    typedef std::vector<ShaderPtr>      ShaderList;
+    typedef std::shared_ptr<CShader>            ShaderPtr;
+    typedef std::vector<ShaderPtr>              ShaderList;
+    typedef std::map<std::string, ShaderPtr>    ShaderMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

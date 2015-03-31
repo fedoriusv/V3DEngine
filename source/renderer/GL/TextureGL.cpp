@@ -300,16 +300,11 @@ void CTextureGL::filterSampler(u32 sampler, ETextureFilter min, ETextureFilter m
 
 void CTextureGL::anisotropicSampler(u32 sampler, u32 level)
 {
+    GLfloat largest = DRIVER_CONTEXT->getMaxAnisotropySize();
+    ASSERT(largest >= level && "Anisotropy level out the range");
+
     ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
-    if (glewIsSupported("GL_EXT_texture_filter_anisotropic"))
-    {
-#ifdef _DEBUG
-        GLfloat largest;
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
-        ASSERT(largest >= level && "Anisotropy level out the range");
-#endif //_DEBUG
-        glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLfloat)level);
-    }
+    glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLfloat)level);
 }
 
 void CTextureGL::genSampler(u32& sampler)

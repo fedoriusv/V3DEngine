@@ -1,12 +1,15 @@
 #include "Shader.h"
 #include "utils/Logger.h"
-#include "stream/StreamManager.h"
+#include "scene/ShaderManager.h"
+
 
 #include "tinyxml2.h"
 
 using namespace v3d;
 using namespace renderer;
 using namespace stream;
+using namespace scene;
+using namespace resources;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,7 +139,12 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
         const std::string shaderPath = root->Attribute("file");
         LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
 
-        m_data = CShader::load(shaderPath);
+        const ShaderSourceDataPtr& source = CShaderManager::getInstance()->load(shaderPath);
+
+        c8* data = (c8*)malloc(source->getBody().size() + 1);
+        memcpy(data, source->getBody().data(), source->getBody().size());
+        data[source->getBody().size()] = '\0';
+        m_data = reinterpret_cast<void*>(data);
         if (!m_data)
         {
             LOG_ERROR("CShader: Error load shader %s", shaderPath.c_str());
@@ -145,21 +153,4 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
     }
 
     return true;
-}
-
-u8* CShader::load(const std::string& file)
-{
-    FileStreamPtr stream = CStreamManager::createFileStream(file, FileStream::e_in);
-    if (stream->isOpen())
-    {
-        std::string data;
-
-        stream->read(data);
-        stream->close();
-
-        return nullptr;
-
-    }
-
-    return nullptr;
 }

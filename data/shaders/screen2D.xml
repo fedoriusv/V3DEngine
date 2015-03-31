@@ -87,6 +87,7 @@
 					}
 				]]>
 			</var>
+            <var name="ffxaa" type="fragment" file="fxaa.fsh"/>
 		</shaders>
 	</pass>
 </technique>
