@@ -33,8 +33,6 @@ bool CShaderSourceData::load()
     stream->seekBeg(0);
     stream->read(m_body);
 
-    //TODO: end terminal
-
     return true;
 }
 

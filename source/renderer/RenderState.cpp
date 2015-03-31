@@ -6,7 +6,7 @@
 using namespace v3d;
 using namespace renderer;
 
-const std::string CRenderState::s_renderPolygonMode[EPolygonMode::eModeCount] =
+const std::string CRenderState::s_renderPolygonMode[eModeCount] =
 {
     "fill",
     "line",
@@ -15,7 +15,7 @@ const std::string CRenderState::s_renderPolygonMode[EPolygonMode::eModeCount] =
 
 EPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
 {
-    for (int i = 0; i < EPolygonMode::eModeCount; ++i)
+    for (u32 i = 0; i < eModeCount; ++i)
     {
         if (s_renderPolygonMode[i].compare(name) == 0)
         {
@@ -23,10 +23,10 @@ EPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
         }
     }
 
-    return EPolygonMode::ePolyModeFill;
+    return ePolyModeFill;
 }
 
-const std::string CRenderState::s_blendFactor[EBlendFactor::eBlendCount] =
+const std::string CRenderState::s_blendFactor[eBlendCount] =
 {
     "zero",
     "one",
@@ -43,7 +43,7 @@ const std::string CRenderState::s_blendFactor[EBlendFactor::eBlendCount] =
 
 EBlendFactor CRenderState::getBlendFactorByName(const std::string& name)
 {
-    for (int i = 0; i < EBlendFactor::eBlendCount; ++i)
+    for (u32 i = 0; i < eBlendCount; ++i)
     {
         if (s_blendFactor[i].compare(name) == 0)
         {
@@ -51,10 +51,10 @@ EBlendFactor CRenderState::getBlendFactorByName(const std::string& name)
         }
     }
 
-    return EBlendFactor::eBlendZero;
+    return eBlendZero;
 }
 
-const std::string CRenderState::s_cullface[ECullFace::eCullfaceCount] =
+const std::string CRenderState::s_cullface[eCullfaceCount] =
 {
     "front",
     "back",
@@ -63,7 +63,7 @@ const std::string CRenderState::s_cullface[ECullFace::eCullfaceCount] =
 
 ECullFace CRenderState::getCullFaceByName(const std::string& name)
 {
-    for (int i = 0; i < ECullFace::eCullfaceCount; ++i)
+    for (u32 i = 0; i < eCullfaceCount; ++i)
     {
         if (s_cullface[i].compare(name) == 0)
         {
@@ -71,10 +71,10 @@ ECullFace CRenderState::getCullFaceByName(const std::string& name)
         }
     }
 
-    return ECullFace::eFaceBack;
+    return eFaceBack;
 }
 
-const std::string CRenderState::s_comparefunc[ECompareFunc::eCompareCount] =
+const std::string CRenderState::s_comparefunc[eCompareCount] =
 {
     "less",
     "lequal",
@@ -88,7 +88,7 @@ const std::string CRenderState::s_comparefunc[ECompareFunc::eCompareCount] =
 
 ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
 {
-    for (int i = 0; i < ECompareFunc::eCompareCount; ++i)
+    for (u32 i = 0; i < eCompareCount; ++i)
     {
         if (s_comparefunc[i].compare(name) == 0)
         {
@@ -96,7 +96,7 @@ ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
         }
     }
 
-    return ECompareFunc::eCmpLequal;
+    return eCmpLequal;
 }
 
 CRenderState::CRenderState()

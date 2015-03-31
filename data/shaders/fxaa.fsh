@@ -119,7 +119,7 @@ vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fx
         doneP = abs(lumaEndP) >= gradientScaled;
         if(!doneN) posN.x -= offNP.x * 2.0;
         if(!doneN) posN.y -= offNP.y * 2.0;
-        doneNP = (!doneN) || (!doneP);\n"
+        doneNP = (!doneN) || (!doneP);
         if(!doneP) posP.x += offNP.x * 2.0;
         if(!doneP) posP.y += offNP.y * 2.0;
         if(doneNP) 

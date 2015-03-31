@@ -13,7 +13,7 @@ using namespace resources;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShader::s_shaderTypeName[EShaderType::eShaderCount] = {
+const std::string CShader::s_shaderTypeName[eShaderCount] = {
 
     "vertex",
     "fragment",
@@ -28,7 +28,7 @@ const std::string& CShader::getShaderTypeNameByType(EShaderType type)
 
 CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 {
-    for (int i = 0; i < eShaderCount; ++i)
+    for (u32 i = 0; i < eShaderCount; ++i)
     {
         if (s_shaderTypeName[i].compare(name) == 0)
         {
@@ -36,7 +36,7 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
         }
     }
 
-    return EShaderType::eShaderUnknown;
+    return eShaderUnknown;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +140,11 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
         LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
 
         const ShaderSourceDataPtr& source = CShaderManager::getInstance()->load(shaderPath);
+        if (!source)
+        {
+            LOG_ERROR("CShader: Error load shader %s", shaderPath.c_str());
+            return false;
+        }
 
         c8* data = (c8*)malloc(source->getBody().size() + 1);
         memcpy(data, source->getBody().data(), source->getBody().size());

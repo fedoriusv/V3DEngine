@@ -9,7 +9,7 @@ using namespace v3d;
 using namespace v3d::scene;
 
 CFPSCamera::CFPSCamera()
-    : m_speed(0.001f)
+    : m_speed(0.003f)
 {
     m_keys._forward = EKeyCode::eKeyKey_W;
     m_keys._back    = EKeyCode::eKeyKey_S;

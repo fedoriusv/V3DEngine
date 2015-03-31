@@ -32,6 +32,10 @@ void MyApplication::init()
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/texture_target.xml");
 
+    CShape* cube2 = BaseApplication::getSceneManager()->addCube(0, Vector3D(2, 0, -8));
+    cube2->setName("cube2");
+    cube2->getMaterial()->setRenderTechnique("shaders/texture_target.xml");
+
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
     CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -1.0f));

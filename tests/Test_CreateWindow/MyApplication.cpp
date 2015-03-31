@@ -9,9 +9,9 @@ using namespace v3d::scene;
 using namespace v3d::stream;
 
 MyApplication::MyApplication(int& argc, char** argv)
-	: BaseApplication(argc, argv)
+    : BaseApplication(argc, argv)
 {
-	BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
+    BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
 }
 
 MyApplication::~MyApplication()
@@ -22,8 +22,7 @@ void MyApplication::init()
 {
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
-
+    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
     //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
@@ -75,7 +74,7 @@ void MyApplication::onGamepad(const event::GamepadInputEventPtr& event)
 
 void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
 {
-    f32 step = 0.5f;
+    f32 step = 5.0f;
     f32 angle = 5.0f;
     static bool debug = false;
 

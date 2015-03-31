@@ -88,12 +88,18 @@
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
 
+					vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fxaaQualitySubpix,
+						float fxaaQualityEdgeThreshold, float fxaaQualityEdgeThresholdMin);
+						
 					void main()
 					{
-						fragColor = texture(sampler0, fragVertex.texCoord0);
+						ivec2 size = textureSize(sampler0, 0);
+						fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+						//fragColor = texture(sampler0, fragVertex.texCoord0);
 					}
 				]]>
 			</var>
+			<var name="ffxaa" type="fragment" file="fxaa.fsh"/>
 		</shaders>
 	</pass>
 </technique>
