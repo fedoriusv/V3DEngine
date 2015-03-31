@@ -80,7 +80,6 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
                     m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
 
                     return technique;
-                    
                 }
             }
             else

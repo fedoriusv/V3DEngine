@@ -16,10 +16,10 @@ namespace renderer
         CTextureGL();
         ~CTextureGL();
 
-        void            bind(u32 layer)   override;
-        void            unbind(u32 layer) override;
-        bool            create()          override;
-        void            destroy()         override;
+        void            bind(u32 layer, u32 sampler)    override;
+        void            unbind(u32 layer, u32 sampler)  override;
+        bool            create()                        override;
+        void            destroy()                       override;
 
         static void     reset();
 

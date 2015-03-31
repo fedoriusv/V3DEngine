@@ -395,7 +395,7 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
                 const TextureWPtr& texture = sampler->getTexture();
                 if (!texture.expired())
                 {
-                    texture.lock()->bind(layersCount);
+                    texture.lock()->bind(layersCount, sampler->getID());
                     ++layersCount;
                 }
             }
@@ -406,17 +406,19 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
     if (isUserSamplers)
     {
         layersCount = material->getTextureCount();
+        u32 samplerID = 0;
         for (u32 layer = 0; layer < layersCount; ++layer)
         {
             const TexturePtr& texture = material->getTexture(layer);
             if (texture->isEnable())
             {
-                texture->bind(layer);
+                texture->bind(layer, samplerID);
             }
             else
             {
-                texture->unbind(layer);
+                texture->unbind(layer, samplerID);
             }
+            samplerID++;
         }
 
         if (layersCount == 0)

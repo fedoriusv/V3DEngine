@@ -1,4 +1,9 @@
 <technique name="texture" version="100">
+
+	<textures>
+		<texture name="box" file="textures/box.jpg"/>
+	</textures>
+
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -10,10 +15,10 @@
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
 		<samplers>
-			<var name="sampler0"/>
+			<var name="sampler0" val="box"/>
 		</samplers>
-		<renderstate/>
-		<polygonmode val="fill"/>
+		<renderstate>
+			<polygonmode val="fill"/>
             <winding val="cw"/>
             <culling val="true"/>
 		</renderstate>

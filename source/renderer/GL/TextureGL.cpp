@@ -98,7 +98,7 @@ CTextureGL::~CTextureGL()
     CTextureGL::destroy();
 }
 
-void CTextureGL::bind(u32 layer)
+void CTextureGL::bind(u32 layer, u32 sampler)
 {
     if (!m_initialized)
     {
@@ -107,13 +107,15 @@ void CTextureGL::bind(u32 layer)
 
     CTextureGL::activeTextureLayer(layer);
     CTextureGL::bindTexture(m_target, m_textureID);
+    CTextureGL::bindSampler(sampler, m_samplerID);
 
     RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
 }
 
-void CTextureGL::unbind(u32 layer)
+void CTextureGL::unbind(u32 layer, u32 sampler)
 {
     CTextureGL::bindTexture(m_target, 0);
+    CTextureGL::bindSampler(sampler, 0);
 
     RENDERER->checkForErrors("CTextureGL: Unbind Texture Error");
 }
@@ -195,8 +197,6 @@ bool CTextureGL::create()
     if (m_target != eTexture2DMSAA)
     {
         CTextureGL::genSampler(m_samplerID);
-        CTextureGL::bindSampler(m_textureID, m_samplerID);
-
         CTextureGL::wrapSampler(m_samplerID, m_wrap);
         CTextureGL::filterSampler(m_samplerID, m_minFilter, m_magFilter);
         CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);

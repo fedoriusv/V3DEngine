@@ -123,8 +123,8 @@ namespace renderer
         CTexture();
         virtual         ~CTexture();
 
-        virtual void    bind(u32 layer)                     = 0;
-        virtual void    unbind(u32 layer)                   = 0;
+        virtual void    bind(u32 layer, u32 sampler)        = 0;
+        virtual void    unbind(u32 layer, u32 sampler)      = 0;
         virtual bool    create()                            = 0;
         virtual void    destroy()                           = 0;
 
