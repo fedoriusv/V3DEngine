@@ -13,7 +13,8 @@ std::string  CNode::s_nodeTypes[ENodeType::eCount] = {
     "Light",
     "Fog",
     "SkyBox",
-    "Font",
+    "Text",
+    "Billboard"
 };
 
 const std::string& CNode::getNodeNameByType(ENodeType type)

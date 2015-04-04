@@ -23,6 +23,7 @@ namespace scene
         eFog,
         eSkyBox,
         eText,
+        eBillboard,
 
         eCount
      };
@@ -70,7 +71,7 @@ namespace scene
         CNode*                      getChildNodeByName(const std::string& name)  const;
                                     
         virtual void                render()         = 0;
-        virtual void                update(f64 time) = 0;
+        virtual void                update(s32 time) = 0;
         
         virtual void                init()           = 0;
 

@@ -24,7 +24,7 @@ namespace scene
         ePlaneShape,
         eDiskShape,
         eHeightMapShape,
-        eSquareShape,
+        eRectangleShape,
 
         eCountShape
     };
@@ -46,7 +46,7 @@ namespace scene
         const renderer::RenderJobPtr&   getRenderJob() const;
 
         void                            init()             override;
-        void                            update(f64 time)   override;
+        void                            update(s32 time)   override;
         void                            render()           override;
 
     protected:

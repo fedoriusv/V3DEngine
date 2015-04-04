@@ -24,7 +24,7 @@ CShape::CShape()
 
 void CShape::init()
 {
-    RenderTechniquePtr technique = m_material->getRenderTechique();
+    const RenderTechniquePtr& technique = m_material->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CShape: Do not exist RenderTechique");
@@ -83,7 +83,7 @@ void CShape::setGeometryDrawMode(CGeometry::EDrawMode mode)
     m_geometry->setDrawMode(mode);
 }
 
-void CShape::update(f64 time)
+void CShape::update(s32 time)
 {
     if (!m_visible || !m_initialiazed)
     {

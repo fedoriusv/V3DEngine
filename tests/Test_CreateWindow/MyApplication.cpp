@@ -4,9 +4,9 @@
 #include "stream/StreamManager.h"
 
 using namespace v3d;
-using namespace v3d::core;
-using namespace v3d::scene;
-using namespace v3d::stream;
+using namespace core;
+using namespace scene;
+using namespace stream;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
@@ -20,9 +20,14 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
+    CSampleShape* sample = BaseApplication::getSceneManager()->addSample(0, Vector3D(0, 1, -5));
+    sample->setName("cube");
+    sample->getMaterial()->setRenderTechnique("shaders/simple.xml");
+
+    /*CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
+
     //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));

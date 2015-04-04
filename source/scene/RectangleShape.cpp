@@ -10,7 +10,7 @@ using namespace renderer;
 CRectangleShape::CRectangleShape(const Rect& rect)
 : m_rect(rect)
 {
-    m_shapeType = EShapeType::eSquareShape;
+    m_shapeType = EShapeType::eRectangleShape;
 }
 
 CRectangleShape::~CRectangleShape()
@@ -22,7 +22,7 @@ void CRectangleShape::render()
     CShape::render();
 }
 
-void CRectangleShape::update(f64 time)
+void CRectangleShape::update(s32 time)
 {
     CShape::update(time);
 }

@@ -9,9 +9,9 @@ using namespace scene;
 using namespace stream;
 
 MyApplication::MyApplication(int& argc, char** argv)
-	: BaseApplication(argc, argv)
+    : BaseApplication(argc, argv)
 {
-	BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
+    BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
 }
 
 MyApplication::~MyApplication()
