@@ -157,7 +157,7 @@ void CFPSCamera::getCursorPosition(Vector3D& position)
 
 }
 
-void CFPSCamera::update(f64 time)
+void CFPSCamera::update(s32 time)
 {
     if (!m_visible)
     {

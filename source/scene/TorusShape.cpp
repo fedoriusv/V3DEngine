@@ -20,7 +20,7 @@ void CTorusShape::render()
     CShape::render();
 }
 
-void CTorusShape::update(f64 time)
+void CTorusShape::update(s32 time)
 {
     CShape::update(time);
 }

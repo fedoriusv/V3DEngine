@@ -25,7 +25,7 @@ namespace scene
         core::Vector3D      getUpVector() const;
 
         void                render()        override;
-        void                update(f64 time)override;
+        void                update(s32 time)override;
         void                init()          override;
 
         bool                isActive() const;

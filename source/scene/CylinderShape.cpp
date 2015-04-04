@@ -20,7 +20,7 @@ void CCylinderShape::render()
     CShape::render();
 }
 
-void CCylinderShape::update(f64 time)
+void CCylinderShape::update(s32 time)
 {
     CShape::update(time);
 }

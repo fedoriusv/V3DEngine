@@ -59,7 +59,7 @@ void CCamera::render()
     }
 }
 
-void CCamera::update(f64 time)
+void CCamera::update(s32 time)
 {
     if (!m_visible)
     {

@@ -31,7 +31,7 @@ namespace scene
         virtual                   ~CLight();
 
         void                      render()         override;
-        void                      update(f64 time) override;
+        void                      update(s32 time) override;
         void                      init()           override;
                                   
         void                      setAmbient(const Vector4D& color);

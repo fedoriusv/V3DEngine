@@ -21,7 +21,7 @@ void CSphereShape::render()
     CShape::render();
 }
 
-void CSphereShape::update(f64 time)
+void CSphereShape::update(s32 time)
 {
     CShape::update(time);
 }

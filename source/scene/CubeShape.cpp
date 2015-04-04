@@ -20,7 +20,7 @@ void CCubeShape::render()
     CShape::render();
 }
 
-void CCubeShape::update(f64 time)
+void CCubeShape::update(s32 time)
 {
     CShape::update(time);
 }

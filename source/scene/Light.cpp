@@ -96,7 +96,7 @@ void CLight::render()
 #endif
 }
 
-void CLight::update(f64 time)
+void CLight::update(s32 time)
 {
 }
 

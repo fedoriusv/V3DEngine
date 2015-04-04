@@ -122,7 +122,7 @@ void CText::init()
     m_initialiazed = true;
 }
 
-void CText::update(f64 time)
+void CText::update(s32 time)
 {
     if (!m_visible || !m_initialiazed)
     {

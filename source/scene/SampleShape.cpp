@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 CSampleShape::CSampleShape()
 {
@@ -20,7 +20,7 @@ void CSampleShape::render()
     CShape::render();
 }
 
-void CSampleShape::update(f64 time)
+void CSampleShape::update(s32 time)
 {
     CShape::update(time);
 }

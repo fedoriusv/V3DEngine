@@ -27,7 +27,7 @@ namespace scene
         CFPSCamera();
         virtual     ~CFPSCamera();
 
-        void        update(f64 time) override;
+        void        update(s32 time) override;
 
         void        setSpeed(f32 speed);
         f32         getSpeed() const;

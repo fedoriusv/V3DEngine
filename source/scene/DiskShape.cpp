@@ -20,7 +20,7 @@ void CDiskShape::render()
     CShape::render();
 }
 
-void CDiskShape::update(f64 time)
+void CDiskShape::update(s32 time)
 {
     CShape::update(time);
 }

@@ -491,5 +491,5 @@ void CRenderPass::setRenderTarget(u32 index, const RenderTargetPtr& target)
 
 u32 CRenderPass::getRenderTargetCount() const
 {
-    return m_renderTargets.size();
+    return (u32)m_renderTargets.size();
 }

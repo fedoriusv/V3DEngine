@@ -56,7 +56,7 @@ void CModel::render()
     }
 }
 
-void CModel::update(f64 time)
+void CModel::update(s32 time)
 {
     if (!m_visible || !m_initialiazed)
     {

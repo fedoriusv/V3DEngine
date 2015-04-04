@@ -116,7 +116,7 @@ void CSkybox::init()
     m_initialiazed = true;
 }
 
-void CSkybox::update(f64 time)
+void CSkybox::update(s32 time)
 {
     if (!m_visible || !m_initialiazed)
     {
