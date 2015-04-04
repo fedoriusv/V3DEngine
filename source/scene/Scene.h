@@ -38,6 +38,7 @@ namespace scene
     private:
 
         void                                initRenderLists();
+        void                                attachToRenderList(CNode* node);
         void                                updateRenderLists(u32 delta);
 
         void                                needRefresh();

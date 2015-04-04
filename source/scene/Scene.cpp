@@ -3,6 +3,10 @@
 #include "Engine.h"
 #include "Node.h"
 #include "Shape.h"
+#include "Billboard.h"
+#include "Model.h"
+#include "Text.h"
+#include "Skybox.h"
 #include "Camera.h"
 #include "renderer/Renderer.h"
 #include "RenderTargetManager.h"
@@ -170,40 +174,9 @@ void CScene::initRenderLists()
             case ENodeType::eModel:
             case ENodeType::eSkyBox:
             case ENodeType::eText:
+            case ENodeType::eBillboard:
             {
-                const RenderTechniquePtr& techniqe = static_cast<CShape*>(node)->getMaterial()->getRenderTechique();
-                for (u32 i = 0; i < techniqe->getRenderPassCount(); ++i)
-                {
-                    const RenderPassPtr& pass = techniqe->getRenderPass(i);
-
-                    for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
-                    {
-                        const RenderTargetPtr& target = pass->getRenderTarget(targetIndex);
-                        auto findPred = [target](const CRenderList& list) -> bool
-                        {
-                            if (list.getTargetName() == target->getName())
-                            {
-                                return true;
-                            }
-
-                            return false;
-                        };
-
-                        std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
-                        if (findTarget != m_renderList.end())
-                        {
-                            (*findTarget).add(node, targetIndex);
-                        }
-                        else
-                        {
-                            CRenderList list(target);
-                            list.setEnable(true);
-                            list.add(node, targetIndex);
-
-                            m_renderList.push_back(list);
-                        }
-                    }
-                }
+                CScene::attachToRenderList(node);
             }
                 break;
 
@@ -222,6 +195,75 @@ void CScene::initRenderLists()
 
             default:
                 break;
+        }
+    }
+}
+
+void CScene::attachToRenderList(CNode* node)
+{
+    RenderTechniquePtr techniqe = nullptr;
+
+    switch (node->getNodeType())
+    {
+        case ENodeType::eShape:
+            techniqe = static_cast<CShape*>(node)->getMaterial()->getRenderTechique();
+            break;
+
+        case ENodeType::eModel:
+            //techniqe = static_cast<CModel*>(node)->getMaterial()->getRenderTechique();
+            break;
+
+        case ENodeType::eSkyBox:
+            techniqe = static_cast<CSkybox*>(node)->getMaterial()->getRenderTechique();
+            break;
+
+        case ENodeType::eText:
+            techniqe = static_cast<CText*>(node)->getMaterial()->getRenderTechique();
+            break;
+
+        case ENodeType::eBillboard:
+            techniqe = static_cast<CBillboard*>(node)->getMaterial()->getRenderTechique();
+            break;
+
+        default:
+            break;
+    };
+
+    if (!techniqe)
+    {
+        return;
+    }
+
+    for (u32 i = 0; i < techniqe->getRenderPassCount(); ++i)
+    {
+        const RenderPassPtr& pass = techniqe->getRenderPass(i);
+
+        for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
+        {
+            const RenderTargetPtr& target = pass->getRenderTarget(targetIndex);
+            auto findPred = [target](const CRenderList& list) -> bool
+            {
+                if (list.getTargetName() == target->getName())
+                {
+                    return true;
+                }
+
+                return false;
+            };
+
+            std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
+            if (findTarget != m_renderList.end())
+            {
+                (*findTarget).add(node, targetIndex);
+            }
+            else
+            {
+                CRenderList list(target);
+                list.setEnable(true);
+                list.add(node, targetIndex);
+
+                m_renderList.push_back(list);
+            }
         }
     }
 }

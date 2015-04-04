@@ -4,6 +4,7 @@
 #include "scene/Model.h"
 #include "scene/Skybox.h"
 #include "scene/Text.h"
+#include "scene/Billboard.h"
 #include "scene/Camera.h"
 
 using namespace v3d;
@@ -133,15 +134,42 @@ void CRenderList::refresh()
         }
             break;
 
-        //case ENodeType::eCamera:
-        //{
-        //    node->m_priority = k_maxPriority;
-        //    if (static_cast<CCamera*>(node)->isActive())
-        //    {
-        //        m_draw.push_back(node);
-        //    }
-        //}
-        //    break;
+        case ENodeType::eBillboard:
+        {
+            f32 priority = 0.0f;
+            CBillboard* billboard = static_cast<CBillboard*>(node);
+            if (billboard->getMaterial()->getTransparency() > 0.0f)
+            {
+                if (m_camera)
+                {
+                    priority = (node->getPosition() - m_camera->getPosition()).length();
+                }
+                else
+                {
+                    priority = node->getPosition().z;
+                }
+                node->m_priority = priority;
+
+                if (checkDistance(node, priority))
+                {
+                    const RenderJobPtr& job = billboard->getRenderJob();
+                    job->setRenderTarget((*iter)._targetIndex);
+
+                    m_draw.push_back((*iter));
+                }
+            }
+        }
+            break;
+
+        case ENodeType::eCamera:
+        {
+            /*node->m_priority = k_maxPriority;
+            if (static_cast<CCamera*>(node)->isActive())
+            {
+                m_draw.push_back(node);
+            }*/
+        }
+            break;
 
         case ENodeType::eSkyBox:
         {

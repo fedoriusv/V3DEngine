@@ -22,6 +22,7 @@ namespace scene
     class CSkybox;
     class CModel;
     class CText;
+    class CBillboard;
     class CLight;
     class CCamera;
     class CFPSCamera;
@@ -50,7 +51,7 @@ namespace scene
         CRectangleShape*        addRectangle(CNode* parent = nullptr, const Rect& rect = Rect(0, 0, 1024, 768));
         CSkybox*                addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
         CModel*                 addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 0.f));
-
+        CBillboard*             addBillboard(const std::string& texture, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));
         CText*                  addText(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.f), u32 size = 24U);
 
         CLight*                 addLight(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 1.f), const Vector4D& diffuse = Vector4D(1.f), f32 radius = 100.f);

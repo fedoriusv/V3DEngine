@@ -7,6 +7,7 @@
 #include "DiskShape.h"
 #include "PlaneShape.h"
 #include "RectangleShape.h"
+#include "Billboard.h"
 #include "Camera.h"
 #include "Skybox.h"
 #include "Light.h"
@@ -21,8 +22,8 @@
 #endif
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 CSceneManager::CSceneManager()
     : m_currentTime(0.0)
@@ -68,6 +69,7 @@ void CSceneManager::draw()
 {
     CSceneManager::updateDeltaTime();
 
+    //TODO: rework time to clock;
     m_scene->draw(m_deltaTime);
 }
 
@@ -268,6 +270,17 @@ CText* CSceneManager::addText(CNode* parent, const std::string& text, const std:
 CModel* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
 {
     CModel* node = new CModel(file, techniqe);
+    node->setParent(parent);
+    node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CBillboard* CSceneManager::addBillboard(const std::string& texture, CNode* parent, const Vector3D& pos)
+{
+    CBillboard* node = new CBillboard(texture);
     node->setParent(parent);
     node->setPosition(pos);
 
