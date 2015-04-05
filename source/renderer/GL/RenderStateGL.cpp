@@ -88,7 +88,7 @@ void CRenderStateGL::bind()
     CRenderStateGL::depthFunc(m_depthFunc);
 
     CRenderStateGL::blend(m_blend);
-    CRenderStateGL::blendFunc(m_blendDst, m_blendSrc);
+    CRenderStateGL::blendFunc(m_blendSrc, m_blendDst);
 
     RENDERER->checkForErrors("CRenderStateGL: Bind Error");
 }
@@ -197,11 +197,11 @@ bool CRenderStateGL::stencilWrite(bool enable)
     return false;
 }
 
-bool CRenderStateGL::blendFunc(EBlendFactor dst, EBlendFactor src)
+bool CRenderStateGL::blendFunc(EBlendFactor src, EBlendFactor dst)
 {
-    if (s_currentBlendDst != dst || s_currentBlendSrc != src)
+    if (s_currentBlendSrc != src || s_currentBlendDst != dst)
     {
-        glBlendFunc(EBlendFactorGL[dst], EBlendFactorGL[src]);
+        glBlendFunc(EBlendFactorGL[src], EBlendFactorGL[dst]);
         s_currentBlendDst = dst;
         s_currentBlendSrc = src;
 

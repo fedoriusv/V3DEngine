@@ -21,10 +21,17 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CBillboard* billboard = BaseApplication::getSceneManager()->addBillboard("textures/billboard.jpg", 0, Vector3D(0, 0, -6));
-    billboard->setName("cube");
-    billboard->getMaterial()->setRenderTechnique("shaders/billboard.xml");
-    billboard->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniformVector2("billboardSize", Vector2D(1., 2.));
+    CBillboard* billboard0 = BaseApplication::getSceneManager()->addBillboard("textures/tree01.jpg", 0, Vector3D(0, 0, -6));
+    billboard0->getMaterial()->setRenderTechnique("shaders/billboard.xml");
+    billboard0->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniformVector2("billboardSize", Vector2D(1., 2.));
+
+    CBillboard* billboard1 = BaseApplication::getSceneManager()->addBillboard("textures/tree02.jpg", 0, Vector3D(2, 0, -6));
+    billboard1->getMaterial()->setRenderTechnique("shaders/billboard.xml");
+    billboard1->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniformVector2("billboardSize", Vector2D(1., 2.));
+
+    CBillboard* billboard2 = BaseApplication::getSceneManager()->addBillboard("textures/tree03.jpg", 0, Vector3D(-2, 0, -6));
+    billboard2->getMaterial()->setRenderTechnique("shaders/billboard.xml");
+    billboard2->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniformVector2("billboardSize", Vector2D(1., 2.));
 
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");

@@ -17,7 +17,7 @@
             <polygonmode val="fill"/>
             <winding val="cw"/>
             <culling val="false"/>
-            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+            <blending val="true" src="invDstColor" dst="invSrcColor"/>
             <depthWrite val="true"/>
             <depthTest val="lequal"/>
         </renderstate>

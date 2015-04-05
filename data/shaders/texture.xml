@@ -21,6 +21,7 @@
 			<polygonmode val="fill"/>
             <winding val="cw"/>
             <culling val="true"/>
+			<blending val="true" src="srcAlpha" dst="invSrcAlpha"/>
 		</renderstate>
 		<rendertarget>
             <var val="default"/>

@@ -21,7 +21,7 @@ namespace renderer
     public:
 
         static bool  blend(bool enable);
-        static bool  blendFunc(EBlendFactor dst, EBlendFactor src);
+        static bool  blendFunc(EBlendFactor src, EBlendFactor dst);
         static bool  cullface(ECullFace mode);
         static bool  culling(bool enable);
         static bool  polygonMode(EPolygonMode mode);
