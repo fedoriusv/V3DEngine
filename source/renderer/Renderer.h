@@ -86,6 +86,7 @@ namespace renderer
         core::Matrix4D              m_orthoMatrix;
         core::Matrix4D              m_viewMatrix;
         core::Vector3D              m_viewPosition;
+        core::Vector3D              m_viewUpVector;
 
         u32                         m_frameIndex;
 

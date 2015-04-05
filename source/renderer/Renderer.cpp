@@ -3,19 +3,21 @@
 #include "scene/Light.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace core;
+using namespace renderer;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
-    , m_projectionMatrix(core::Matrix4D())
-    , m_orthoMatrix(core::Matrix4D())
-    , m_viewMatrix(core::Matrix4D())
-    , m_viewPosition(core::Vector3D(0.0f))
+    , m_projectionMatrix(Matrix4D())
+    , m_orthoMatrix(Matrix4D())
+    , m_viewMatrix(Matrix4D())
+    , m_viewPosition(Vector3D(0.f))
+    , m_viewUpVector(Vector3D(0.f, 1.f, 0.f))
 
     , m_frameIndex(0U)
 
     , m_maxTextureUnits(0)
-    , m_maxAnisotropy(0.0f)
+    , m_maxAnisotropy(0.f)
 
     , m_updateCamera(true)
 
@@ -65,6 +67,7 @@ void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& ta
     m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
     m_viewMatrix.makeTransposed();
     m_viewPosition = pos;
+    m_viewUpVector = up;
 }
 
 const core::Rect& CRenderer::getViewportSize() const
@@ -210,6 +213,11 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
             case CShaderUniform::eTransformViewPosition:
 
                 program->setUniformVector3(id, m_viewPosition);
+                break;
+
+            case CShaderUniform::eTransformViewUpVector:
+
+                program->setUniformVector3(id, m_viewUpVector);
                 break;
 
             case CShaderUniform::eTransformNormalMatrix:

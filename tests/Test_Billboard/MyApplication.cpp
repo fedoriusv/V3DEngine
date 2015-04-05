@@ -21,9 +21,14 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CBillboard* billboard = BaseApplication::getSceneManager()->addBillboard("textures/billboard.jpg", 0, Vector3D(0, 1, -5));
+    CBillboard* billboard = BaseApplication::getSceneManager()->addBillboard("textures/billboard.jpg", 0, Vector3D(0, 0, -6));
     billboard->setName("cube");
-    billboard->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    billboard->getMaterial()->setRenderTechnique("shaders/billboard.xml");
+    billboard->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniformVector2("billboardSize", Vector2D(1., 2.));
+
+    CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
+    cube->setName("cube");
+    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");

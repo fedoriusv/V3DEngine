@@ -37,7 +37,7 @@ void CLogger::createLogFile(const std::string& fileName)
 
 void CLogger::log(ELoggerType type, ELogOut out, const char* format, ...)
 {
-    char buffer[256];
+    char buffer[1024];
 
     va_list args;
     va_start(args, format);

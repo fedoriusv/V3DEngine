@@ -16,6 +16,7 @@ const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = 
     "transform.viewMatrix",
     "transform.normalMatrix",
     "transform.viewPosition",
+    "transform.viewUpVector",
     "transform.orthoMatrix",
 
     "material.ambient",
@@ -241,7 +242,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
     bool defaultUniform = (uniformName != EUniformData::eUserUniform);
     if (!defaultUniform)
     {
-        if (root->Attribute("type"))
+        if (!root->Attribute("type"))
         {
             LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());
             return false;
