@@ -23,6 +23,13 @@ TDimension2D<T>::TDimension2D(const TVector2D<T>& other)
 }
 
 template <class T>
+TDimension2D<T>::TDimension2D(const TPoint2D<T>& other)
+: width(other.x)
+, height(other.y)
+{
+}
+
+template <class T>
 TDimension2D<T>::TDimension2D(const TDimension2D<T>& other)
 : width(other.width)
 , height(other.height)
@@ -61,6 +68,20 @@ bool TDimension2D<T>::operator == (const TVector2D<T>& other) const
 
 template <class T>
 bool TDimension2D<T>::operator != (const TVector2D<T>& other) const
+{
+    return !(*this == other);
+}
+
+template <class T>
+bool TDimension2D<T>::operator == (const TPoint2D<T>& other) const
+{
+    const bool isEquals = core::isEquals(width, other.x) &&
+        core::isEquals(height, other.y);
+    return isEquals;
+}
+
+template <class T>
+bool TDimension2D<T>::operator != (const TPoint2D<T>& other) const
 {
     return !(*this == other);
 }
