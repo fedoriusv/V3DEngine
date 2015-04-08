@@ -68,6 +68,7 @@
 					}
 				]]>
 			</var>
+            <var name="target_effects" type="fragment" file="target_effects.fsh"/>
 			<var name="fscreen2D" type="fragment">
 				<![CDATA[
 					#version 330
@@ -81,9 +82,10 @@
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
 
+                    vec4 sobel(sampler2D sampler, vec2 coord);
 					void main()
 					{
-						fragColor = texture(sampler0, fragVertex.texCoord0);
+                        fragColor = sobel(sampler0, fragVertex.texCoord0);
 					}
 				]]>
 			</var>

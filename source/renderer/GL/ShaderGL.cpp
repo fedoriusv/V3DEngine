@@ -30,7 +30,7 @@ bool CShaderGL::create()
         return false;
     }
 
-    m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_data);
+    m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_name, m_data);
     CShaderGL::clear();
 
     return m_compileStatus;
@@ -42,7 +42,7 @@ void CShaderGL::destroy()
     m_shaderID = 0;
 }
 
-bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
+bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::string& name, void* body)
 {
 
     shader = CShaderGL::createShader(type);
@@ -81,7 +81,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, void* body)
                 }
                 return "Unknown";
             };
-            LOG_ERROR("CShaderGL: Shader [%s] Error:\n%s", strFunc(type), buffer);
+            LOG_ERROR("CShaderGL: Shader [%s] Name [%s] Error:\n%s", strFunc(type), name.c_str(), buffer);
         }
 #endif
     }

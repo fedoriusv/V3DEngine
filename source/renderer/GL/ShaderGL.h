@@ -22,7 +22,7 @@ namespace renderer
 
     private:
 
-        static bool     initShader(u32& shader, const EShaderType type, void* body);
+        static bool     initShader(u32& shader, const EShaderType type, const std::string& name, void* body);
 
         static u32      createShader(EShaderType type);
         static void     deleteShader(u32 shader);
