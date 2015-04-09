@@ -3,7 +3,7 @@
 
 #include "Math.h"
 #include "Vector2D.h"
-#include "Point2D.h"
+//#include "Point2D.h"
 
 namespace v3d
 {
@@ -19,15 +19,15 @@ namespace core
         TDimension2D();
         TDimension2D(const T& width, const T& height);
         TDimension2D(const TVector2D<T>& other);
-        TDimension2D(const TPoint2D<T>& other);
+        //TDimension2D(const TPoint2D<T>& other);
         TDimension2D(const TDimension2D<T>& other);
 
         bool                operator == (const TDimension2D<T>& other)  const;
         bool                operator != (const TDimension2D<T>& other)  const;
         bool                operator == (const TVector2D<T>& other)     const;
         bool                operator != (const TVector2D<T>& other)     const;
-        bool                operator == (const TPoint2D<T>& other)      const;
-        bool                operator != (const TPoint2D<T>& other)      const;
+        //bool                operator == (const TPoint2D<T>& other)      const;
+        //bool                operator != (const TPoint2D<T>& other)      const;
 
         TDimension2D<T>&    operator = (const TDimension2D<T>& other);
         TDimension2D<T>&    operator /= (const T& scale);
