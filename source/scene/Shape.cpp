@@ -33,7 +33,7 @@ void CShape::init()
     }
 
     m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_transform);
+    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_modelMatrix);
 #ifdef _DEBUG
     m_debug = RENDERER->makeDebugDraw(m_geometry);
     m_debug->setDebugFlag(EDebugGeometryFlag::eGeometryFlagNone);

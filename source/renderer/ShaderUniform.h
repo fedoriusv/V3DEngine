@@ -46,7 +46,6 @@ namespace renderer
             eTransformNormalMatrix,
             eTransformViewPosition,
             eTransformViewUpVector,
-            eTransformOrthoMatrix,
 
             eMaterialAmbient,
             eMaterialDiffuse,

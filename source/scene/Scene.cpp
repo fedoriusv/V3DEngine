@@ -32,10 +32,10 @@ void CScene::setActiveCamera(CCamera* camera)
 {
     if (m_camera)
     {
-        m_camera->m_active = false;
+        m_camera->setActive(false);
     }
     m_camera = camera;
-    m_camera->m_active = true;
+    m_camera->setActive(true);
 }
 
 CCamera* CScene::getActiveCamera() const

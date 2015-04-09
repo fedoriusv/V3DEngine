@@ -63,10 +63,10 @@ namespace scene
         const core::Vector3D&       getPosition()           const;
         const core::Vector3D&       getRotation()           const;
         const core::Vector3D&       getScale()              const;
-        core::Matrix4D              getTransform()          const;
+        const core::Matrix4D&       getTransform()          const;
         core::Matrix4D              getAbsTransform()       const;
                                     
-        CNode*                      getParent       ()                           const;
+        CNode*                      getParent()                                  const;
         CNode*                      getChildNodeByID(u32 id)                     const;
         CNode*                      getChildNodeByName(const std::string& name)  const;
                                     
@@ -94,7 +94,7 @@ namespace scene
         core::Vector3D              m_position;
         core::Vector3D              m_rotation;
         core::Vector3D              m_scale;
-        core::Matrix4D              m_transform;
+        core::Matrix4D              m_modelMatrix;
 
         bool                        m_visible;
         ENodeType                   m_nodeType;

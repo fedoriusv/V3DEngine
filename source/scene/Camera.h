@@ -15,29 +15,70 @@ namespace scene
     {
     public:
 
+        enum ETransformMatrix
+        {
+            eTrnsformViewMatrix = 0,
+            eTransformProjectionMatrix,
+
+            eTransformCount,
+        };
+
+        enum ECameraState
+        {
+            eCameraStateView       = 0x00000001,
+            eCameraStateProjection = 0x00000002,
+
+            eCameraStateAll = eCameraStateView | eCameraStateProjection,
+        };
+
         CCamera();
-        virtual             ~CCamera();
+        virtual                 ~CCamera();
 
-        void                setTarget(const core::Vector3D& target);
-        void                setUpVector(const core::Vector3D& up);
+        void                    setTarget(const core::Vector3D& target);
+        void                    setUpVector(const core::Vector3D& up);
+        void                    setProjectionMatrix(const core::Matrix4D& matrix, bool ortho);
+        void                    setNearValue(f32 value);
+        void                    setFarValue(f32 value);
+        void                    setAspectRatio(f32 value);
 
-        core::Vector3D      getTarget() const;
-        core::Vector3D      getUpVector() const;
+        const core::Vector3D&   getTarget()             const;
+        const core::Vector3D&   getUpVector()           const;
+        const core::Matrix4D&   getViewMatrix();
+        const core::Matrix4D&   getProjectionMatrix();
 
-        void                render()        override;
-        void                update(s32 time)override;
-        void                init()          override;
+        f32                     getNearValue()          const;
+        f32                     getFarValue()           const;
+        f32                     getAspectRatio()        const;
 
-        bool                isActive() const;
+        bool                    isOrthogonal()          const;
+
+        void                    render()                override;
+        void                    update(s32 time)        override;
+        void                    init()                  override;
+
+        bool                    isActive()              const;
 
     protected:
 
-        friend              CScene;
+        friend                  CScene;
 
-        core::Vector3D      m_up;
-        core::Vector3D      m_target;
+        void                    setActive(bool active);
+        void                    recalculateProjectionMatrix();
+        void                    recalculateViewMatrix();
 
-        bool                m_active;
+        core::Vector3D          m_up;
+        core::Vector3D          m_target;
+
+        core::Matrix4D          m_transform[eTransformCount];
+        bool                    m_orthogonal;
+
+        u16                     m_matricesFlag;
+
+        f32                     m_aspect; 
+        f32                     m_zNear; 
+        f32                     m_zFar;
+
+        bool                    m_active;
 
         core::Vector3D      m_max;
         core::Vector3D      m_min;
@@ -45,7 +86,8 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CCamera> CameraPtr;
+    typedef std::shared_ptr<CCamera>    CameraPtr;
+    typedef std::weak_ptr<CCamera>      CameraWPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

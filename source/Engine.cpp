@@ -7,6 +7,7 @@
 #include "scene/FontManager.h"
 #include "scene/ModelManager.h"
 #include "scene/RenderTargetManager.h"
+#include "scene/ShaderManager.h"
 
 using namespace v3d;
 using namespace v3d::platform;
@@ -36,6 +37,7 @@ CEngine::~CEngine()
     CModelManager::freeInstance();
     CEventManager::freeInstance();
     CRenderTargetManager::freeInstance();
+    CShaderManager::freeInstance();
 }
 
 bool CEngine::init()

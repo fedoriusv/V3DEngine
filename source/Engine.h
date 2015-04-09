@@ -1,6 +1,7 @@
 #ifndef _V3D_ENGINE_H_
 #define _V3D_ENGINE_H_
 
+#include "Singleton.h"
 #include "platform/Platform.h"
 #include "platform/Window.h"
 #include "event/InputEventHandler.h"

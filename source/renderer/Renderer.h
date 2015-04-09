@@ -1,7 +1,6 @@
 #ifndef _V3D_RENDERER_H_
 #define _V3D_RENDERER_H_
 
-#include "Singleton.h"
 #include "context/DriverContext.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
@@ -17,6 +16,7 @@ namespace scene
 {
     class CLight;
     class CSceneManager;
+    class CCamera;
 }
 namespace renderer
 {
@@ -24,7 +24,7 @@ namespace renderer
 
     class CDebugLight;
 
-    class CRenderer : public Singleton<CRenderer>
+    class CRenderer
     {
     public:
 
@@ -41,7 +41,7 @@ namespace renderer
         void                        draw(const RenderJobPtr& job);
         virtual void                reshape(u32 width, u32 height);
 
-        void                        updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up);
+        void                        updateCamera(scene::CCamera* camera);
 
         void                        checkForErrors(const std::string& location = "");
 
@@ -82,18 +82,16 @@ namespace renderer
 
         DriverContextPtr            m_context;
 
-        core::Matrix4D              m_projectionMatrix;
+        /*core::Matrix4D              m_projectionMatrix;
         core::Matrix4D              m_orthoMatrix;
         core::Matrix4D              m_viewMatrix;
         core::Vector3D              m_viewPosition;
-        core::Vector3D              m_viewUpVector;
+        core::Vector3D              m_viewUpVector;*/
 
         u32                         m_frameIndex;
 
         s32                         m_maxTextureUnits;
         f32                         m_maxAnisotropy;
-
-        bool                        m_updateCamera;
 
         RenderTargetPtr             m_defaultRenderTarget;
         RenderTargetPtr             m_currentRenderTarget;
@@ -101,6 +99,8 @@ namespace renderer
 #ifdef _DEBUG
         bool                        m_debugMode;
 #endif
+        scene::CCamera*             m_camera;
+
         void                        addLight(scene::CLight* lights);
         std::vector<scene::CLight*> m_lightList;
     };

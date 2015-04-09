@@ -80,7 +80,7 @@ void CNode::setScale(const core::Vector3D& scale)
 
 void CNode::setTransform(const core::Matrix4D& transform)
 {
-    m_transform = transform;
+    m_modelMatrix = transform;
     CNode::updateTransform(ENodeTransform::eTransform);
 
     m_needUpdate = true;
@@ -132,19 +132,19 @@ const core::Vector3D& CNode::getScale() const
     return m_scale;
 }
 
-core::Matrix4D CNode::getTransform() const
+const core::Matrix4D& CNode::getTransform() const
 {
-    return m_transform;
+    return m_modelMatrix;
 }
 
 core::Matrix4D CNode::getAbsTransform() const
 {
     if (m_parentNode)
     {
-        const core::Matrix4D absTransform = m_parentNode->getAbsTransform() * m_transform;
+        const core::Matrix4D absTransform = m_parentNode->getAbsTransform() * m_modelMatrix;
         return absTransform;
     }
-    return m_transform;
+    return m_modelMatrix;
 }
 
 CNode* CNode::getParent() const
@@ -200,27 +200,27 @@ void CNode::updateTransform(ENodeTransform transform)
     switch (transform)
     {
     case ENodeTransform::eTranslation:
-        m_transform.setTranslation(m_position);
+        m_modelMatrix.setTranslation(m_position);
         break;
 
     case ENodeTransform::eRotation:
-        m_transform.setRotation(m_rotation);
+        m_modelMatrix.setRotation(m_rotation);
         break;
 
     case ENodeTransform::eScale:
-        m_transform.setScale(m_scale);
+        m_modelMatrix.setScale(m_scale);
         break;
 
     case ENodeTransform::eAll:
-        m_transform.setTranslation(m_position);
-        m_transform.setScale(m_scale);
-        m_transform.setRotation(m_rotation);
+        m_modelMatrix.setTranslation(m_position);
+        m_modelMatrix.setScale(m_scale);
+        m_modelMatrix.setRotation(m_rotation);
         break;
 
     case ENodeTransform::eTransform:
-        m_position = m_transform.getTranslation();
-        m_rotation = m_transform.getRotation();
-        m_scale    = m_transform.getScale();
+        m_position = m_modelMatrix.getTranslation();
+        m_rotation = m_modelMatrix.getRotation();
+        m_scale = m_modelMatrix.getScale();
         break;
 
     case ENodeTransform::eNone:

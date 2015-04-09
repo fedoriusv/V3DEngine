@@ -1,31 +1,32 @@
 #include "renderer/Renderer.h"
 #include "context/DriverContext.h"
 #include "scene/Light.h"
+#include "scene/Camera.h"
 
 using namespace v3d;
 using namespace core;
 using namespace renderer;
+using namespace scene;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
-    , m_projectionMatrix(Matrix4D())
+   /* , m_projectionMatrix(Matrix4D())
     , m_orthoMatrix(Matrix4D())
     , m_viewMatrix(Matrix4D())
     , m_viewPosition(Vector3D(0.f))
-    , m_viewUpVector(Vector3D(0.f, 1.f, 0.f))
+    , m_viewUpVector(Vector3D(0.f, 1.f, 0.f))*/
 
     , m_frameIndex(0U)
 
     , m_maxTextureUnits(0)
     , m_maxAnisotropy(0.f)
 
-    , m_updateCamera(true)
-
     , m_defaultRenderTarget(nullptr)
     , m_currentRenderTarget(nullptr)
 #ifdef _DEBUG
     , m_debugMode(false)
 #endif
+    , m_camera(nullptr)
 {
 }
 
@@ -51,23 +52,20 @@ void CRenderer::checkForErrors(const std::string& location)
 
 void CRenderer::reshape(u32 width, u32 height)
 {
-    if (height == 0)
+    /*if (height == 0)
     {
         height = 1;
     }
     f32 aspectRatio = (f32)width / (f32)height;
     m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
 
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, - 1.0f, 1.0f);
+    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, - 1.0f, 1.0f);*/
     //m_orthoMatrix.makeTransposed();
 }
 
-void CRenderer::updateCamera(const core::Vector3D& pos, const core::Vector3D& target, const core::Vector3D& up)
+void CRenderer::updateCamera(CCamera* camera)
 {
-    m_viewMatrix = core::buildLookAtMatrix(pos, target, up);
-    m_viewMatrix.makeTransposed();
-    m_viewPosition = pos;
-    m_viewUpVector = up;
+    m_camera = camera;
 }
 
 const core::Rect& CRenderer::getViewportSize() const
@@ -188,12 +186,13 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         {
             case CShaderUniform::eTransformProjectionMatrix:
 
-                program->setUniformMatrix4(id, m_projectionMatrix);
-                break;
+                if (!m_camera)
+                {
+                    ASSERT("Camera not exist" && false);
+                    break;
+                }
+                program->setUniformMatrix4(id, m_camera->getProjectionMatrix());
 
-            case CShaderUniform::eTransformOrthoMatrix:
-
-                program->setUniformMatrix4(id, m_orthoMatrix);
                 break;
 
             case CShaderUniform::eTransformModelMatrix:
@@ -207,17 +206,33 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
             case CShaderUniform::eTransformViewMatrix:
 
-                program->setUniformMatrix4(id, m_viewMatrix);
+                if (!m_camera)
+                {
+                    ASSERT("Camera not exist" && false);
+                    break;
+                }
+                program->setUniformMatrix4(id, m_camera->getViewMatrix());
+
                 break;
 
             case CShaderUniform::eTransformViewPosition:
 
-                program->setUniformVector3(id, m_viewPosition);
+                if (!m_camera)
+                {
+                    ASSERT("Camera not exist" && false);
+                    break;
+                }
+                program->setUniformVector3(id, m_camera->getPosition());
                 break;
 
             case CShaderUniform::eTransformViewUpVector:
 
-                program->setUniformVector3(id, m_viewUpVector);
+                if (!m_camera)
+                {
+                    ASSERT("Camera not exist" && false);
+                    break;
+                }
+                program->setUniformVector3(id, m_camera->getUpVector());
                 break;
 
             case CShaderUniform::eTransformNormalMatrix:

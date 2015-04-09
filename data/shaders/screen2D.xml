@@ -17,7 +17,6 @@
     <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
-			<var name="transform.orthoMatrix" type="mat4" val="transform.orthoMatrix"/>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
 			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
 		</uniforms>
@@ -82,10 +81,10 @@
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
 
-                    vec4 sobel(sampler2D sampler, vec2 coord);
+                    vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
 					void main()
 					{
-                        fragColor = sobel(sampler0, fragVertex.texCoord0);
+                        fragColor = blur(sampler0, fragVertex.texCoord0);
 					}
 				]]>
 			</var>

@@ -17,7 +17,6 @@ const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = 
     "transform.normalMatrix",
     "transform.viewPosition",
     "transform.viewUpVector",
-    "transform.orthoMatrix",
 
     "material.ambient",
     "material.diffuse",
