@@ -7,6 +7,7 @@ using namespace v3d;
 using namespace core;
 using namespace scene;
 using namespace stream;
+using namespace event;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
@@ -48,44 +49,21 @@ void MyApplication::init()
 
 void MyApplication::run()
 {
-
-    CNode* node = getSceneManager()->getObjectByName("cube");
-    if (!node)
-    {
-        return;
-    }
-
-    f32 angle = 5.0f;
-    if (INPUT_EVENTS->isKeyPressed(EKeyCode::eKeyUp))
-    {
-        node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
-    }
-    if (INPUT_EVENTS->isKeyPressed(EKeyCode::eKeyDown))
-    {
-        node->setRotation(Vector3D(node->getRotation().x - angle, node->getRotation().y, node->getRotation().z));
-    }
-    if (INPUT_EVENTS->isKeyPressed(EKeyCode::eKeyLeft))
-    {
-        node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y + angle, node->getRotation().z));
-    }
-    if (INPUT_EVENTS->isKeyPressed(EKeyCode::eKeyRight))
-    {
-        node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
-    }
+    //Main loop
 }
 
 void MyApplication::onMouse(const event::MouseInputEventPtr& event)
 {
 }
 
-void MyApplication::onGamepad(const event::GamepadInputEventPtr& event)
+void MyApplication::onGamepad(const GamepadInputEventPtr& event)
 {
 }
 
-void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
+void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)
 {
-    f32 step = 0.5f;
-    f32 angle = 5.0f;
+    f32 step = 5.5f;
+    f32 angle = 10.0f;
     static bool debug = false;
 
     if (event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
@@ -133,22 +111,22 @@ void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
             return;
         }
 
-        /*if (event->_key == EKeyCode::eKeyUp && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        if (event->_key == EKeyCode::eKeyUp && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
         {
             node->setRotation(Vector3D(node->getRotation().x + angle, node->getRotation().y, node->getRotation().z));
         }
-        if (event->_key == EKeyCode::eKeyDown && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        if (event->_key == EKeyCode::eKeyDown && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
         {
             node->setRotation(Vector3D(node->getRotation().x - angle, node->getRotation().y, node->getRotation().z));
         }
-        if (event->_key == EKeyCode::eKeyLeft && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        if (event->_key == EKeyCode::eKeyLeft && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
         {
             node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y + angle, node->getRotation().z));
         }
-        if (event->_key == EKeyCode::eKeyRight && event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
+        if (event->_key == EKeyCode::eKeyRight && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
         {
             node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
-        }*/
+        }
 
         getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
     }

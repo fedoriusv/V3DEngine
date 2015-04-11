@@ -43,7 +43,7 @@ u32 CModel::getMeshCount() const
 
 void CModel::render()
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
@@ -58,7 +58,7 @@ void CModel::render()
 
 void CModel::update(s32 time)
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
@@ -91,8 +91,8 @@ void CModel::init()
         return;
     }
 
-    m_id = m_data->getID();
-    m_name = m_data->getName();
+    CNode::setID(m_data->getID());
+    CNode::setName(m_data->getName());
 
     for (u32 i = 0; i < m_data->getCountMeshes(); ++i)
     {

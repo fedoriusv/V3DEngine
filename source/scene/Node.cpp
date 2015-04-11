@@ -25,15 +25,15 @@ const std::string& CNode::getNodeNameByType(ENodeType type)
 CNode::CNode()
     : m_parentNode(nullptr)
     , m_visible(true)
-    , m_needUpdate(true)
     , m_nodeType(ENodeType::eUnknown)
     , m_priority(0.0f)
     , m_position(core::Vector3D(0.0f))
     , m_rotation(core::Vector3D(0.0f))
     , m_scale(core::Vector3D(1.0f))
     , m_initialiazed(false)
+    , m_transformFlag(eNodeAll)
 {
-    m_type = EObjectType::eTypeNode;
+    m_transformFlag |= eNodeAll;
 }
 
 CNode::~CNode()
@@ -54,36 +54,41 @@ CNode::~CNode()
 void CNode::setPosition(const core::Vector3D& position)
 {
     m_position = position;
-    bool hasTranslate = (position.x != 0.0f || position.y != 0.0f || position.z != 0.0f);
-    CNode::updateTransform(hasTranslate ? ENodeTransform::eTranslation : ENodeTransform::eNone);
 
-    m_needUpdate = true;
+    bool hasTranslate = (position.x != 0.0f || position.y != 0.0f || position.z != 0.0f);
+    if (hasTranslate)
+    {
+        m_transformFlag |= eNodeTranslation;
+    }
 }
 
 void CNode::setRotation(const core::Vector3D& rotation)
 {
     m_rotation = rotation;
-    bool hasRotation = (rotation.x != 0.0f || rotation.y != 0.0f || rotation.z != 0.0f);
-    CNode::updateTransform(hasRotation ? ENodeTransform::eRotation : ENodeTransform::eNone);
 
-    m_needUpdate = true;
+    bool hasRotation = (rotation.x != 0.0f || rotation.y != 0.0f || rotation.z != 0.0f);
+    if (hasRotation)
+    {
+        m_transformFlag |= eNodeRotation;
+    }
 }
 
 void CNode::setScale(const core::Vector3D& scale)
 {
     m_scale = scale;
-    bool hasScale = (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f);
-    CNode::updateTransform(hasScale ? ENodeTransform::eScale : ENodeTransform::eNone);
 
-    m_needUpdate = true;
+    bool hasScale = (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f);
+    if (hasScale)
+    {
+        m_transformFlag |= eNodeScale;
+    }
 }
 
 void CNode::setTransform(const core::Matrix4D& transform)
 {
     m_modelMatrix = transform;
-    CNode::updateTransform(ENodeTransform::eTransform);
 
-    m_needUpdate = true;
+    m_transformFlag |= eNodeTransform;
 }
 
 void CNode::setParent(CNode* parent)
@@ -102,9 +107,11 @@ void CNode::setParent(CNode* parent)
 
 void CNode::attachChild(CNode* child)
 {
-    child->setParent(this);
-    m_childNodes.push_back(child);
-    m_needUpdate = true;
+    if (child)
+    {
+        child->setParent(this);
+        m_childNodes.push_back(child);
+    }
 }
 
 void CNode::dettachChild(CNode* child)
@@ -113,7 +120,8 @@ void CNode::dettachChild(CNode* child)
     {
         m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
         child->setParent(nullptr);
-        m_needUpdate = true;
+
+        child->m_transformFlag |= eNodeAll;
     }
 }
 
@@ -159,6 +167,7 @@ f32 CNode::getPriority() const
 
 CNode* CNode::getChildNodeByID(u32 id) const
 {
+    ASSERT(id < m_childNodes.size() && "invalid index");
     return m_childNodes[id];
 }
 
@@ -190,46 +199,65 @@ bool CNode::isVisible() const
     return m_visible;
 }
 
-void CNode::updateTransform(ENodeTransform transform)
+void CNode::updateTransform()
 {
     if (!m_visible)
     {
         return;
     }
 
-    switch (transform)
+    if (m_transformFlag & ENodeTransform::eNodeTransform)
     {
-    case ENodeTransform::eTranslation:
-        m_modelMatrix.setTranslation(m_position);
-        break;
-
-    case ENodeTransform::eRotation:
-        m_modelMatrix.setRotation(m_rotation);
-        break;
-
-    case ENodeTransform::eScale:
-        m_modelMatrix.setScale(m_scale);
-        break;
-
-    case ENodeTransform::eAll:
-        m_modelMatrix.setTranslation(m_position);
-        m_modelMatrix.setScale(m_scale);
-        m_modelMatrix.setRotation(m_rotation);
-        break;
-
-    case ENodeTransform::eTransform:
         m_position = m_modelMatrix.getTranslation();
         m_rotation = m_modelMatrix.getRotation();
         m_scale = m_modelMatrix.getScale();
-        break;
 
-    case ENodeTransform::eNone:
-        break;
+        m_transformFlag &= ~eNodeTransform;
+    }
+    else
+    {
+        if (m_transformFlag & ENodeTransform::eNodeTranslation)
+        {
+            m_modelMatrix.setTranslation(m_position);
+            m_transformFlag &= ~eNodeTranslation;
+        }
+
+        if (m_transformFlag & ENodeTransform::eNodeRotation)
+        {
+            m_modelMatrix.setRotation(m_rotation);
+            m_transformFlag &= ~eNodeRotation;
+        }
+
+        if (m_transformFlag & ENodeTransform::eNodeScale)
+        {
+            m_modelMatrix.setScale(m_scale);
+            m_transformFlag &= ~eNodeScale;
+        }
     }
 
     for (std::vector<CNode*>::iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
     {
-        (*iter)->updateTransform(transform);
-        (*iter)->m_needUpdate = true;
+        (*iter)->m_transformFlag = m_transformFlag;
+        (*iter)->updateTransform();
     }
+}
+
+const s32 CNode::getID() const
+{
+    return m_id;
+}
+
+const std::string& CNode::getName() const
+{
+    return m_name;
+}
+
+void CNode::setID(s32 id)
+{
+    m_id = id;
+}
+
+void CNode::setName(const std::string& name)
+{
+    m_name = name;
 }

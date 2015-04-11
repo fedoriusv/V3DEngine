@@ -85,23 +85,23 @@ void CShape::setGeometryDrawMode(CGeometry::EDrawMode mode)
 
 void CShape::update(s32 time)
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
+    CNode::updateTransform();
     m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
 void CShape::render()
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
     RENDERER->draw(m_renderJob);
-    //m_needUpdate = false;
 
 #ifdef _DEBUG
     if (RENDERER->isDebugMode())

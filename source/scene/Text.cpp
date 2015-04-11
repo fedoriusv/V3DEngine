@@ -124,17 +124,18 @@ void CText::init()
 
 void CText::update(s32 time)
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
+    CNode::updateTransform();
     m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
 void CText::render()
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }

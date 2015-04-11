@@ -46,7 +46,7 @@ void CFPSCamera::move(const Vector3D& direction)
         m_target = view;
     }
 
-    CNode::updateTransform(ENodeTransform::eTranslation);
+    CNode::updateTransform();
 }
 
 bool CFPSCamera::isPointOut(const Vector3D& point)
@@ -77,7 +77,6 @@ void CFPSCamera::rotateByMouse()
     {
         return;
     }
-    m_needUpdate = true;
 
     CFPSCamera::setCursorPosition(middle);
     
@@ -159,7 +158,7 @@ void CFPSCamera::getCursorPosition(Vector3D& position)
 
 void CFPSCamera::update(s32 time)
 {
-    if (!m_visible)
+    if (!CNode::isVisible())
     {
         return;
     }
@@ -170,22 +169,18 @@ void CFPSCamera::update(s32 time)
         if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
-            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._back))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, -s));
-            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._left))
         {
             CFPSCamera::move(Vector3D(-s, 0.0f, 0.0f));
-            m_needUpdate = true;
         }
         if (INPUT_EVENTS->isKeyPressed(m_keys._right))
         {
             CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
-            m_needUpdate = true;
         }
 
         CFPSCamera::rotateByMouse();

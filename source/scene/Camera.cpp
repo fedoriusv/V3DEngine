@@ -162,11 +162,12 @@ void CCamera::setActive(bool active)
 
 void CCamera::init()
 {
+    m_initialiazed = true;
 }
 
 void CCamera::render()
 {
-    if (!m_visible)
+    if (!CNode::isVisible())
     {
         return;
     }
@@ -174,13 +175,15 @@ void CCamera::render()
 
 void CCamera::update(s32 time)
 {
-    if (!m_visible)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
     if (m_active)
     {
+        CNode::updateTransform();
+
         if (m_matricesFlag & eCameraStateProjection)
         {
             CCamera::recalculateProjectionMatrix();

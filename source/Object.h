@@ -12,7 +12,6 @@ namespace v3d
         eTypeUnknown,
         eTypeNode,
         eTypeModel,
-        eTypeShaderProgram,
         eTypesCount
     };
 

@@ -25,8 +25,8 @@ namespace scene
 
         enum ECameraState
         {
-            eCameraStateView       = 0x00000001,
-            eCameraStateProjection = 0x00000002,
+            eCameraStateView       = 1 << 0,
+            eCameraStateProjection = 1 << 1,
 
             eCameraStateAll = eCameraStateView | eCameraStateProjection,
         };
@@ -72,8 +72,6 @@ namespace scene
         core::Matrix4D          m_transform[eTransformCount];
         bool                    m_orthogonal;
 
-        u16                     m_matricesFlag;
-
         f32                     m_aspect; 
         f32                     m_zNear; 
         f32                     m_zFar;
@@ -82,6 +80,10 @@ namespace scene
 
         core::Vector3D      m_max;
         core::Vector3D      m_min;
+
+    private:
+
+        u16                     m_matricesFlag;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

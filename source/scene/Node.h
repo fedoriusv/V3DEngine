@@ -30,23 +30,21 @@ namespace scene
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CNode : public CObject
+    class CNode
     {
     public:
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        enum class ENodeTransform
+        enum ENodeTransform
         {
-            eNone,
-            eTransform,
-            eTranslation,
-            eRotation,
-            eScale,
-            eAll
-        };
+            eNodeTranslation    = 1 << 0,
+            eNodeRotation       = 1 << 1,
+            eNodeScale          = 1 << 2,
+            eNodeTransform      = 1 << 3,
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
+            eNodeAll = eNodeTranslation | eNodeRotation | eNodeScale,
+        };
 
         CNode();
         virtual                     ~CNode();
@@ -65,13 +63,19 @@ namespace scene
         const core::Vector3D&       getScale()              const;
         const core::Matrix4D&       getTransform()          const;
         core::Matrix4D              getAbsTransform()       const;
+
+        const s32                   getID()                 const;
+        const std::string&          getName()               const;
+
+        void                        setID(s32 id);
+        void                        setName(const std::string& name);
                                     
         CNode*                      getParent()                                  const;
         CNode*                      getChildNodeByID(u32 id)                     const;
         CNode*                      getChildNodeByName(const std::string& name)  const;
                                     
         virtual void                render()         = 0;
-        virtual void                update(s32 time) = 0;
+        virtual void                update(s32 dt)   = 0;
         
         virtual void                init()           = 0;
 
@@ -86,7 +90,7 @@ namespace scene
 
         friend                      renderer::CRenderList;
 
-        void                        updateTransform(ENodeTransform transform);
+        void                        updateTransform();
 
         CNode*                      m_parentNode;
         std::vector<CNode*>         m_childNodes;
@@ -96,12 +100,19 @@ namespace scene
         core::Vector3D              m_scale;
         core::Matrix4D              m_modelMatrix;
 
-        bool                        m_visible;
         ENodeType                   m_nodeType;
 
-        bool                        m_needUpdate;
         bool                        m_initialiazed;
+
+    private:
+
         f32                         m_priority;
+        bool                        m_visible;
+
+        u16                         m_transformFlag;
+
+        s32                         m_id;
+        std::string                 m_name;
 
     private:
 

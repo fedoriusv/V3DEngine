@@ -40,7 +40,7 @@ const RenderJobPtr& CBillboard::getRenderJob() const
 
 void CBillboard::render()
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
@@ -50,11 +50,12 @@ void CBillboard::render()
 
 void CBillboard::update(s32 time)
 {
-    if (!m_visible || !m_initialiazed)
+    if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
+    CNode::updateTransform();
     m_renderJob->setTransform(CNode::getAbsTransform());
 }
 
