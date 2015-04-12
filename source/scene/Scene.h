@@ -22,7 +22,7 @@ namespace scene
 
         void                                init();
 
-        void                                draw(u32 delta);
+        void                                draw(u32 dt);
 
         void                                add(CNode* node);
         bool                                drop(CNode* node);

@@ -65,12 +65,10 @@ void CSceneManager::init()
     m_scene->init();
 }
 
-void CSceneManager::draw()
+void CSceneManager::draw(s32 dt)
 {
-    CSceneManager::updateDeltaTime();
-
-    //TODO: rework time to clock;
-    m_scene->draw(m_deltaTime);
+    updateDeltaTime();
+    m_scene->draw(dt);
 }
 
 void CSceneManager::clear()

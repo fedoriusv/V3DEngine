@@ -37,6 +37,10 @@ namespace v3d
         event::InputEventHandlerPtr         m_inputEventHandler;
         scene::SceneManagerPtr              m_scene;
 
+        s32                                 m_frameTime;
+        u64                                 m_lastTime;
+        const f32                           m_timeFactor = 1.f;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

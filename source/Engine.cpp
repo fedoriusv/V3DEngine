@@ -8,23 +8,30 @@
 #include "scene/ModelManager.h"
 #include "scene/RenderTargetManager.h"
 #include "scene/ShaderManager.h"
+#include "utils/Timer.h"
 
 using namespace v3d;
-using namespace v3d::platform;
-using namespace v3d::event;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace platform;
+using namespace event;
+using namespace scene;
+using namespace renderer;
+using namespace utils;
 
 CEngine::CEngine()
     : m_platform(nullptr)
     , m_inputEventHandler(nullptr)
     , m_scene(nullptr)
+
+    , m_frameTime(0)
+    , m_lastTime(0)
 {
     m_platform = std::make_shared<CPlatform>();
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
     m_scene = std::make_shared<CSceneManager>();
 
     m_inputEventHandler->setEnableEvents(true);
+
+    m_lastTime = CTimer::getCurrentTime();
 }
 
 CEngine::~CEngine()
@@ -77,8 +84,12 @@ bool CEngine::begin()
         return false;
     }
 
+    u64 ticks = CTimer::getCurrentTime();
+    m_frameTime = (s32)((ticks - m_lastTime) * m_timeFactor);
+    m_lastTime = ticks;
+
     m_inputEventHandler->update();
-    m_scene->draw();
+    m_scene->draw(m_frameTime);
 
     return m_platform->begin();
 }

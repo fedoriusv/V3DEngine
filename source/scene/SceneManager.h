@@ -35,7 +35,7 @@ namespace scene
         ~CSceneManager();
 
         void                    init();
-        void                    draw();
+        void                    draw(s32 dt);
         void                    clear();
 
         bool                    dropNode(CNode* node);

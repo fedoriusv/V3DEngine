@@ -64,9 +64,9 @@ void CScene::init()
     LOG_INFO("Scene: Init completed");
 }
 
-void CScene::draw(u32 delta)
+void CScene::draw(u32 dt)
 {
-    CScene::updateRenderLists(delta);
+    CScene::updateRenderLists(dt);
 
     RENDERER->preRender();
 
@@ -82,7 +82,7 @@ void CScene::draw(u32 delta)
                 list.setCamera(m_camera);
             }
 
-            list.update(delta);
+            list.update(dt);
             list.render();
         }
     }
@@ -268,7 +268,7 @@ void CScene::attachToRenderList(CNode* node)
     }
 }
 
-void CScene::updateRenderLists(u32 delta)
+void CScene::updateRenderLists(u32 dt)
 {
     if (m_refresh)
     {
