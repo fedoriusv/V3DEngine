@@ -152,6 +152,7 @@ void CCamera::recalculateViewMatrix()
     }*/
 
     m_transform[eTrnsformViewMatrix] = core::buildLookAtMatrix(position, m_target, m_up);
+    m_transform[eTrnsformViewMatrix].makeTransposed();
     m_matricesFlag &= ~eCameraStateView;
 }
 
