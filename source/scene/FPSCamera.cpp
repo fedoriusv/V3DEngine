@@ -6,7 +6,7 @@
 
 
 using namespace v3d;
-using namespace v3d::scene;
+using namespace scene;
 
 CFPSCamera::CFPSCamera()
     : m_speed(0.003f)
@@ -23,30 +23,28 @@ CFPSCamera::~CFPSCamera()
 
 void CFPSCamera::move(const Vector3D& direction)
 {
-    Vector3D pos = m_position;
+    Vector3D pos = CNode::getPosition();
     Vector3D view = m_target;
-    Vector3D move = m_target - m_position;
+    Vector3D move = m_target - CNode::getPosition();
     Vector3D strafe = core::crossProduct(move, m_up);
 
     move.normalize();
     strafe.normalize();
 
-    m_position += (move * direction.z);
-    m_target += (move * direction.z);
+    pos += (move * direction.z);
+    view += (move * direction.z);
 
-    m_position += (strafe * direction.x);
-    m_target += (strafe * direction.x);
+    pos += (strafe * direction.x);
+    view += (strafe * direction.x);
 
-    m_position.y += direction.y;
-    m_target.y += direction.y;
+    pos.y += direction.y;
+    view.y += direction.y;
 
-    if (CFPSCamera::isPointOut(m_position))
+    if (!CFPSCamera::isPointOut(pos))
     {
-        m_position = pos;
+        CNode::setPosition(pos);
         m_target = view;
     }
-
-    CNode::updateTransform();
 }
 
 bool CFPSCamera::isPointOut(const Vector3D& point)
@@ -85,7 +83,7 @@ void CFPSCamera::rotateByMouse()
     static f32 lastRotX = 0.0f;
     lastRotX = -currentRotX;
 
-    Vector3D vAxis = crossProduct(Vector3D(m_target - m_position), m_up);
+    Vector3D vAxis = crossProduct(Vector3D(m_target - CNode::getPosition()), m_up);
     vAxis.normalize();
 
     if (currentRotX > 1.0f)
@@ -117,7 +115,7 @@ void CFPSCamera::rotate(f32 angle, const Vector3D& point)
     Vector3D newView;
     Vector3D oldView;
 
-    oldView = m_target - m_position;
+    oldView = m_target - CNode::getPosition();
 
     float cosTheta = static_cast<f32>(cos(angle));
     float sinTheta = static_cast<f32>(sin(angle));
@@ -134,7 +132,7 @@ void CFPSCamera::rotate(f32 angle, const Vector3D& point)
     newView.z = newView.z + ((1 - cosTheta) * point.y * point.z + point.x * sinTheta)	* oldView.y;
     newView.z = newView.z + (cosTheta + (1 - cosTheta) * point.z * point.z) * oldView.z;
 
-    m_target = m_position + newView;
+    m_target = CNode::getPosition() + newView;
 }
 
 void CFPSCamera::setCursorPosition(const Vector3D& position)
@@ -156,16 +154,16 @@ void CFPSCamera::getCursorPosition(Vector3D& position)
 
 }
 
-void CFPSCamera::update(s32 time)
+void CFPSCamera::update(s32 dt)
 {
-    if (!CNode::isVisible())
+    if (!CNode::isVisible() && !m_initialiazed)
     {
         return;
     }
 
     if (m_active)
     {
-        f32 s = m_speed * static_cast<f32>(time);
+        f32 s = m_speed * static_cast<f32>(dt);
         if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
@@ -183,8 +181,8 @@ void CFPSCamera::update(s32 time)
             CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
         }
 
-        CFPSCamera::rotateByMouse();
-        CCamera::update(time);
+        //CFPSCamera::rotateByMouse();
+        CCamera::update(dt);
     }
 }
 

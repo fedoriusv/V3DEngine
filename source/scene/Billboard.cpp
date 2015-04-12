@@ -70,7 +70,7 @@ void CBillboard::init()
     }
 
     m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, m_modelMatrix);
+    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, CNode::getAbsTransform());
 
     CBillboard::build();
 

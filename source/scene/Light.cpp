@@ -110,8 +110,8 @@ void CLight::init()
     m_data._attenuation = Vector3D(0.5f, 0.0f, 0.02f);
 
 #ifdef _DEBUG
-    m_debug = RENDERER->makeDebugLight(m_position, m_data);
+   /* m_debug = RENDERER->makeDebugLight(CNODe, m_data);
     m_debug->setDebugFlag(EDebugLightFlag::eLightFlagPosition);
-    m_debug->init();
+    m_debug->init();*/
 #endif
 }

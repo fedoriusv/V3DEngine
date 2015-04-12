@@ -33,6 +33,11 @@ bool CShaderGL::create()
     m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_name, m_data);
     CShaderGL::clear();
 
+    if (!m_compileStatus)
+    {
+        CShaderGL::destroy();
+    }
+
     return m_compileStatus;
 }
 
@@ -55,36 +60,37 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
     if (!isCompiled)
     {
         LOG_ERROR("CShaderGL: shader not compiled id: %d", shader);
-#ifdef _DEBUG
-        GLint length;
-        GLint charsWritten;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-        GLchar* buffer = new GLchar[length];
-        glGetShaderInfoLog(shader, length, &charsWritten, buffer);
-        if (strlen(buffer) > 0)
-        {
-            std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
-            {
-                switch (type)
-                {
-                    case EShaderType::eVertex:
-                        return "Vertex";
-                    case EShaderType::eFragment:
-                        return "Fragment";
-                    case EShaderType::eGeometry:
-                        return "Geometry";
-                    case EShaderType::eCompute:
-                        return "Compute";
-                    default:
-                        return "Unknown";
-                }
-                return "Unknown";
-            };
-            LOG_ERROR("CShaderGL: Shader [%s] Name [%s] Error:\n%s", strFunc(type), name.c_str(), buffer);
-        }
-#endif
     }
+#ifdef _DEBUG
+    GLint length;
+    GLint charsWritten;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+    GLchar* buffer = new GLchar[length];
+    glGetShaderInfoLog(shader, length, &charsWritten, buffer);
+    if (strlen(buffer) > 0)
+    {
+        std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
+        {
+            switch (type)
+            {
+            case EShaderType::eVertex:
+                return "Vertex";
+            case EShaderType::eFragment:
+                return "Fragment";
+            case EShaderType::eGeometry:
+                return "Geometry";
+            case EShaderType::eCompute:
+                return "Compute";
+            default:
+                return "Unknown";
+            }
+            return "Unknown";
+        };
+        LOG_INFO("CShaderGL: Shader [%s] Name [%s] Compile Logs:\n%s", strFunc(type), name.c_str(), buffer);
+    }
+    delete[] buffer;
+#endif
 
     RENDERER->checkForErrors("Init Shader Error");
 

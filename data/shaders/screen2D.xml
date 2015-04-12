@@ -17,7 +17,6 @@
     <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
-			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
 			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
 		</uniforms>
 		<attributes>
@@ -47,9 +46,7 @@
 
 					struct Transform
 					{
-						mat4 orthoMatrix;
 						mat4 modelMatrix;
-						mat4 projectionMatrix;
 					};
 					uniform Transform transform;
 					

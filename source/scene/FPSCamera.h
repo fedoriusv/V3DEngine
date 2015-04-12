@@ -27,10 +27,11 @@ namespace scene
         CFPSCamera();
         virtual     ~CFPSCamera();
 
-        void        update(s32 time) override;
+        void        update(s32 dt) override;
 
         void        setSpeed(f32 speed);
         f32         getSpeed() const;
+
         void        setMoveKeys(const SMoveKeys& keys);
 
     private:

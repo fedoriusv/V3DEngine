@@ -78,11 +78,13 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
 
     if (!CShaderProgramGL::linkProgram(m_shaderProgID))
     {
+        CShaderProgramGL::destroy();
         return false;
     }
 
     if (!CShaderProgramGL::validateProgram(m_shaderProgID))
     {
+        CShaderProgramGL::destroy();
         return false;
     }
 
@@ -158,54 +160,57 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
 
 bool CShaderProgramGL::linkProgram(u32 shaderProgram)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Link Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index Link Shader program");
     glLinkProgram(shaderProgram);
 
     GLint linkStatus;
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not linked id: %d", linkStatus);
-#ifdef _DEBUG
-        GLint length;
-        GLint charsWritten;
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
-
-        GLchar* buffer = new GLchar[length];
-        glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
-        if (strlen(buffer) > 0)
-        {
-            LOG_ERROR("CShaderProgramGL: Shader Program Error:\n %s", buffer);
-        }
-#endif
+        LOG_ERROR("CShaderProgramGL: Shader program not linked id: %d", shaderProgram);
     }
+#ifdef _DEBUG
+    GLint length;
+    GLint charsWritten;
+    glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
+
+    GLchar* buffer = new GLchar[length];
+    glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
+    if (strlen(buffer) > 0)
+    {
+        LOG_ERROR("CShaderProgramGL: Shader Program [%d] Link Logs:\n %s", shaderProgram, buffer);
+    }
+    delete[] buffer;
+#endif
 
     return (linkStatus == GL_TRUE) ? true : false;
 }
 
 bool CShaderProgramGL::validateProgram(u32 shaderProgram)
 {
-    ASSERT(glIsProgram(shaderProgram) || "Invalid Index Validate Shader program");
+    ASSERT(glIsProgram(shaderProgram) && "Invalid Index Validate Shader program");
     glValidateProgram(shaderProgram);
 
     GLint validateStatus;
     glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &validateStatus);
     if (!validateStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not validate id: %d", validateStatus);
-#ifdef _DEBUG
-        GLint length;
-        GLint charsWritten;
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
-
-        GLchar* buffer = new GLchar[length];
-        glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
-        if (strlen(buffer) > 0)
-        {
-            LOG_ERROR("CShaderProgramGL: Shader Program Error:\n %s", buffer);
-        }
-#endif
+        LOG_ERROR("CShaderProgramGL: Shader program not validate id: %d", shaderProgram);
     }
+#ifdef _DEBUG
+
+   GLint length;
+   GLint charsWritten;
+   glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
+
+   GLchar* buffer = new GLchar[length];
+   glGetProgramInfoLog(shaderProgram, length, &charsWritten, buffer);
+   if (strlen(buffer) > 0)
+   {
+       LOG_ERROR("CShaderProgramGL: Shader Program [%d] Validate Logs:\n %s", shaderProgram, buffer);
+   }
+   delete[] buffer;
+#endif
 
     return (validateStatus == GL_TRUE) ? true : false;
 }

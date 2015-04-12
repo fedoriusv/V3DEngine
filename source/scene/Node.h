@@ -95,16 +95,16 @@ namespace scene
         CNode*                      m_parentNode;
         std::vector<CNode*>         m_childNodes;
 
-        core::Vector3D              m_position;
-        core::Vector3D              m_rotation;
-        core::Vector3D              m_scale;
-        core::Matrix4D              m_modelMatrix;
-
         ENodeType                   m_nodeType;
 
         bool                        m_initialiazed;
 
     private:
+
+        core::Vector3D              m_position;
+        core::Vector3D              m_rotation;
+        core::Vector3D              m_scale;
+        core::Matrix4D              m_modelMatrix;
 
         f32                         m_priority;
         bool                        m_visible;
