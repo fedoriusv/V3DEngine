@@ -20,7 +20,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CShape* sample = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
+    CShape* sample = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -3));
     sample->setName("cube");
     sample->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
@@ -56,7 +56,7 @@ void MyApplication::init()
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
-    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 100), Vector3D(0.0f, 0, -5.0f));
+    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
     camera->setName("camera");
     
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));

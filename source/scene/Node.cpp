@@ -3,7 +3,8 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::scene;
+using namespace scene;
+using namespace core;
 
 std::string  CNode::s_nodeTypes[ENodeType::eCount] = {
 
@@ -26,10 +27,10 @@ CNode::CNode()
     : m_parentNode(nullptr)
     , m_visible(true)
     , m_nodeType(ENodeType::eUnknown)
-    , m_priority(0.0f)
-    , m_position(core::Vector3D(0.0f))
-    , m_rotation(core::Vector3D(0.0f))
-    , m_scale(core::Vector3D(1.0f))
+    , m_priority(0.f)
+    , m_position(Vector3D(0.f))
+    , m_rotation(Vector3D(0.f))
+    , m_scale(Vector3D(1.f))
     , m_initialiazed(false)
     , m_transformFlag(eNodeAll)
 {
@@ -51,43 +52,27 @@ CNode::~CNode()
     m_childNodes.clear();
 }
 
-void CNode::setPosition(const core::Vector3D& position)
+void CNode::setPosition(const Vector3D& position)
 {
     m_position = position;
-
-    bool hasTranslate = (position.x != 0.0f || position.y != 0.0f || position.z != 0.0f);
-    if (hasTranslate)
-    {
-        m_transformFlag |= eNodeTranslation;
-    }
+    m_transformFlag |= eNodeTranslation;
 }
 
-void CNode::setRotation(const core::Vector3D& rotation)
+void CNode::setRotation(const Vector3D& rotation)
 {
     m_rotation = rotation;
-
-    bool hasRotation = (rotation.x != 0.0f || rotation.y != 0.0f || rotation.z != 0.0f);
-    if (hasRotation)
-    {
-        m_transformFlag |= eNodeRotation;
-    }
+    m_transformFlag |= eNodeRotation;
 }
 
-void CNode::setScale(const core::Vector3D& scale)
+void CNode::setScale(const Vector3D& scale)
 {
     m_scale = scale;
-
-    bool hasScale = (scale.x != 1.0f || scale.y != 1.0f || scale.z != 1.0f);
-    if (hasScale)
-    {
-        m_transformFlag |= eNodeScale;
-    }
+    m_transformFlag |= eNodeScale;
 }
 
-void CNode::setTransform(const core::Matrix4D& transform)
+void CNode::setTransform(const Matrix4D& transform)
 {
     m_modelMatrix = transform;
-
     m_transformFlag |= eNodeTransform;
 }
 
@@ -125,31 +110,31 @@ void CNode::dettachChild(CNode* child)
     }
 }
 
-const core::Vector3D& CNode::getPosition() const
+const Vector3D& CNode::getPosition() const
 {
     return m_position;
 }
 
-const core::Vector3D& CNode::getRotation() const
+const Vector3D& CNode::getRotation() const
 {
     return m_rotation;
 }
 
-const core::Vector3D& CNode::getScale() const
+const Vector3D& CNode::getScale() const
 {
     return m_scale;
 }
 
-const core::Matrix4D& CNode::getTransform() const
+const Matrix4D& CNode::getTransform() const
 {
     return m_modelMatrix;
 }
 
-core::Matrix4D CNode::getAbsTransform() const
+Matrix4D CNode::getAbsTransform() const
 {
     if (m_parentNode)
     {
-        const core::Matrix4D absTransform = m_parentNode->getAbsTransform() * m_modelMatrix;
+        const Matrix4D absTransform = m_parentNode->getAbsTransform() * m_modelMatrix;
         return absTransform;
     }
     return m_modelMatrix;
