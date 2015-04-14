@@ -25,28 +25,31 @@ namespace scene
     public:
 
         CFPSCamera();
-        virtual     ~CFPSCamera();
+        virtual         ~CFPSCamera();
 
-        void        update(s32 dt) override;
+        void            update(s32 dt) override;
 
-        void        setSpeed(f32 speed);
-        f32         getSpeed() const;
+        void            setSpeed(f32 speed);
+        f32             getSpeed() const;
 
-        void        setMoveKeys(const SMoveKeys& keys);
+        void            setMoveKeys(const SMoveKeys& keys);
 
     private:
 
-        void        move(const Vector3D& direction);
-        bool        isPointOut(const Vector3D& point);
+        void            move(const Vector3D& direction);
+        bool            isPointOut(const Vector3D& point);
 
-        void        rotateByMouse();
-        void        rotate(f32 angle, const Vector3D& point);
+        void            rotateByMouse();
+        void            rotate(f32 angle, const Vector3D& point);
 
-        void        setCursorPosition(const Vector3D& position);
-        void        getCursorPosition(Vector3D& position);
+        void            setCursorPosition(const Vector3D& position);
+        void            getCursorPosition(Vector3D& position);
 
-        SMoveKeys   m_keys;
-        f32         m_speed;
+        SMoveKeys       m_keys;
+        f32             m_speed;
+
+        core::Vector3D  m_max;
+        core::Vector3D  m_min;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

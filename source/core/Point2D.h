@@ -2,8 +2,8 @@
 #define _V3D_POINT_2D_H_
 
 #include "Math.h"
-#include "Dimension2D.h"
 #include "Vector2D.h"
+#include "Dimension2D.h"
 
 namespace v3d
 {
@@ -20,18 +20,19 @@ namespace core
         TPoint2D(const T& x, const T& y);
         TPoint2D(const TPoint2D<T>& other);
         TPoint2D(const TVector2D<T>& other);
-        //TPoint2D(const TDimension2D<T>& other);
+        TPoint2D(const TDimension2D<T>& other);
 
         bool            operator == (const TPoint2D<T>& other)      const;
         bool            operator != (const TPoint2D<T>& other)      const;
-        //bool            operator == (const TDimension2D<T>& other)  const;
-        //bool            operator != (const TDimension2D<T>& other)  const;
+        bool            operator == (const TDimension2D<T>& other)  const;
+        bool            operator != (const TDimension2D<T>& other)  const;
         bool            operator == (const TVector2D<T>& other)     const;
         bool            operator != (const TVector2D<T>& other)     const;
 
         TPoint2D<T>&    operator =  (const TPoint2D<T>& other);
         TPoint2D<T>     operator *  (const T& scale)                const;
         TPoint2D<T>     operator +  (const TPoint2D<T>& other)      const;
+        TPoint2D<T>     operator -  (const TPoint2D<T>& other)      const;
         TPoint2D<T>&    operator += (const TPoint2D<T>& other);
         TPoint2D<T>&    operator -= (const TPoint2D<T>& other);
         TPoint2D<T>&    operator *= (const T& scale);

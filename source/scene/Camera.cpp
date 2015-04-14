@@ -3,9 +3,7 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-
-const f32 k_lod = 10000.0f;
+using namespace scene;
 
 CCamera::CCamera()
     : m_target(core::Vector3D(0.0f))
@@ -13,12 +11,10 @@ CCamera::CCamera()
     , m_orthogonal(false)
     , m_matricesFlag(eCameraStateProjection)
 
-    , m_zNear(1.f)
-    , m_zFar(3000.f)
+    , m_zNear(0.5f)
+    , m_zFar(5.0f)
 
     , m_active(false)
-    , m_min(-k_lod, -k_lod, -k_lod)
-    , m_max(k_lod, k_lod, k_lod)
 {
     m_nodeType = ENodeType::eCamera;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());

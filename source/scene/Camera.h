@@ -66,9 +66,6 @@ namespace scene
         void                    recalculateProjectionMatrix();
         void                    recalculateViewMatrix();
 
-        core::Vector3D          m_up;
-        core::Vector3D          m_target;
-
         core::Matrix4D          m_transform[eTransformCount];
         bool                    m_orthogonal;
 
@@ -78,10 +75,10 @@ namespace scene
 
         bool                    m_active;
 
-        core::Vector3D      m_max;
-        core::Vector3D      m_min;
-
     private:
+
+        core::Vector3D          m_up;
+        core::Vector3D          m_target;
 
         u16                     m_matricesFlag;
     };
