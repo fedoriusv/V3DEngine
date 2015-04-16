@@ -67,17 +67,21 @@ namespace platform
         virtual void                setResizeble(bool value = true)             = 0;
         virtual void                setCaption(const std::string& text)         = 0;
         virtual void                setPosition(const core::Point2D& pos)       = 0;
+        virtual void                setCursorPosition(const core::Point2D& pos) = 0;
 
-        virtual bool                isMaximized()     const                     = 0;
-        virtual bool                isMinimized()     const                     = 0;
-        virtual bool                isActive()        const                     = 0;
-        virtual bool                isFocused()       const                     = 0;
-        bool                        isFullscreen()    const;
-        bool                        isResizeble()     const;
-        const core::Dimension2D&    getSize()         const;
-        const core::Point2D&        getPosition()     const;
-        const EPlatformType         getPlatformType() const;
-        const EDriverType           getDriverType()   const;
+        virtual bool                isMaximized()       const                   = 0;
+        virtual bool                isMinimized()       const                   = 0;
+        virtual bool                isActive()          const                   = 0;
+        virtual bool                isFocused()         const                   = 0;
+        virtual const core::Point2D& getPosition()                              = 0;
+        virtual void                getCursorPosition(core::Point2D& pos)       = 0;
+
+
+        bool                        isFullscreen()      const;
+        bool                        isResizeble()       const;
+        const core::Dimension2D&    getSize()           const;
+        const EPlatformType         getPlatformType()   const;
+        const EDriverType           getDriverType()     const;
 
         virtual bool                begin()                                     = 0;
         virtual bool                end()                                       = 0;

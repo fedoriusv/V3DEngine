@@ -60,6 +60,7 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
 
     window->setResizeble(param._isResizeble);
     window->setFullScreen(param._isFullscreen);
+    window->setPosition(param._position);
 
     renderer::DriverContextPtr driver = nullptr;
 

@@ -75,17 +75,27 @@ void CFPSCamera::rotateByMouse()
     Vector3D position(0, 0);
     CFPSCamera::getCursorPosition(position);
 
+   /* Point2D cursor;
+    WINDOW->getCursorPosition(cursor);
+
+    const Dimension2D& size = WINDOW->getSize();
+    const Point2D& position = WINDOW->getPosition();
+    Rect rect(position.x, position.y, size.width, size.height);
+    Point2D middle = Point2D(rect.getWidth() / 2, rect.getHeight() / 2);*/
+
     if (position == middle)
     {
         return;
     }
 
     CFPSCamera::setCursorPosition(middle);
+    //WINDOW->setCursorPosition(middle);
 
     static f32 currentRotX = 0.0f;
     static f32 lastRotX = 0.0f;
 
-    Vector3D angle = (middle - position) / 1000.0f;
+    Vector3D angle = Vector3D(middle.x - position.x, middle.y - position.y, 0.f);
+    angle /= 1000.0f;
     lastRotX = -currentRotX;
 
     Vector3D vAxis = crossProduct(Vector3D(CCamera::getTarget() - CNode::getPosition()), CCamera::getUpVector());
@@ -168,7 +178,7 @@ void CFPSCamera::update(s32 dt)
 
     if (m_active)
     {
-        f32 s = m_speed; //*static_cast<f32>(dt);
+        f32 s = m_speed * static_cast<f32>(dt);
         if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));

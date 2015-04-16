@@ -88,6 +88,11 @@ bool CEngine::begin()
     m_frameTime = (s32)((ticks - m_lastTime) * m_timeFactor);
     m_lastTime = ticks;
 
+    if (m_frameTime <= 0)
+    {
+        m_frameTime = 1;
+    }
+
     m_inputEventHandler->update();
     m_scene->draw(m_frameTime);
 

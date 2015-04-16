@@ -19,7 +19,7 @@ namespace platform
 
         WindowPtr                   createWindowWithContext(
                                         const core::Dimension2D& size = core::Dimension2D(800U, 600),
-                                        const core::Point2D& pos = core::Point2D(0U, 0U),
+                                        const core::Point2D& pos = core::Point2D(100U, 100U),
                                         bool isFullscreen = false,
                                         bool isResizeble = false,
                                         EDriverType driverType = EDriverType::eDriverOpenGL);

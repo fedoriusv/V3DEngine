@@ -29,11 +29,6 @@ const Dimension2D& CWindow::getSize() const
     return m_param._size;
 }
 
-const Point2D& CWindow::getPosition() const
-{
-    return m_param._position;
-}
-
 const EPlatformType CWindow::getPlatformType() const
 {
     return m_platformType;
