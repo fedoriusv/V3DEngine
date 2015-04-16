@@ -1,7 +1,4 @@
 #include "FPSCamera.h"
-#ifdef _PLATFORM_WIN_
-#	include <windows.h>
-#endif //_PLATFORM_WIN_
 #include "Engine.h"
 
 
@@ -66,30 +63,18 @@ bool CFPSCamera::isPointOut(const Vector3D& point)
 
 void CFPSCamera::rotateByMouse()
 {
-    Vector3D middle(0, 0);
-    middle.x = static_cast<f32>(WINDOW->getSize().width);
-    middle.y = static_cast<f32>(WINDOW->getSize().height);
-
-    //ShowCursor(0);
-
-    Vector3D position(0, 0);
-    CFPSCamera::getCursorPosition(position);
-
-   /* Point2D cursor;
-    WINDOW->getCursorPosition(cursor);
+    Point2D position;
+    WINDOW->getCursorPosition(position);
 
     const Dimension2D& size = WINDOW->getSize();
-    const Point2D& position = WINDOW->getPosition();
-    Rect rect(position.x, position.y, size.width, size.height);
-    Point2D middle = Point2D(rect.getWidth() / 2, rect.getHeight() / 2);*/
-
+    const Point2D& pos = WINDOW->getPosition();
+    Point2D middle = Point2D(pos.x + (size.width / 2), pos.y + (size.height / 2));
     if (position == middle)
     {
         return;
     }
 
-    CFPSCamera::setCursorPosition(middle);
-    //WINDOW->setCursorPosition(middle);
+    WINDOW->setCursorPosition(middle);
 
     static f32 currentRotX = 0.0f;
     static f32 lastRotX = 0.0f;
@@ -148,25 +133,6 @@ void CFPSCamera::rotate(f32 angle, const Vector3D& point)
     newView.z = newView.z + (cosTheta + (1 - cosTheta) * point.z * point.z) * oldView.z;
 
     CCamera::setTarget(CNode::getPosition() + newView);
-}
-
-void CFPSCamera::setCursorPosition(const Vector3D& position)
-{
-#ifdef _PLATFORM_WIN_
-    SetCursorPos(static_cast<s32>(position.x), static_cast<s32>(position.y));
-#endif //_PLATFORM_WIN_
-}
-
-void CFPSCamera::getCursorPosition(Vector3D& position)
-{
-#ifdef _PLATFORM_WIN_
-    POINT mouse;
-    GetCursorPos(&mouse);
-
-    position.x = static_cast<f32>(mouse.x);
-    position.y = static_cast<f32>(mouse.y);
-#endif //_PLATFORM_WIN_
-
 }
 
 void CFPSCamera::update(s32 dt)

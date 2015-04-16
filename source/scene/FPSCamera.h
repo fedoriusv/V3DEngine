@@ -42,9 +42,6 @@ namespace scene
         void            rotateByMouse();
         void            rotate(f32 angle, const Vector3D& point);
 
-        void            setCursorPosition(const Vector3D& position);
-        void            getCursorPosition(Vector3D& position);
-
         SMoveKeys       m_keys;
         f32             m_speed;
 
