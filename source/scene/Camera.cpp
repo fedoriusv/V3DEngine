@@ -8,7 +8,7 @@ using namespace scene;
 CCamera::CCamera()
     : m_target(core::Vector3D(0.0f))
     , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
-    , m_orthogonal(false)
+    , m_orthogonal(true)
     , m_matricesFlag(eCameraStateProjection)
 
     , m_zNear(0.5f)
@@ -127,6 +127,7 @@ void CCamera::recalculateProjectionMatrix()
     {
         const core::Rect& size = RENDERER->getViewportSize();
         m_transform[eTransformProjectionMatrix] = core::buildProjectionMatrixOrtho(0.0f, (f32)size.getWidth(), 0.0f, (f32)size.getHeight(), m_zNear, m_zFar);
+        m_transform[eTransformProjectionMatrix].makeTransposed();
     }
     else
     {

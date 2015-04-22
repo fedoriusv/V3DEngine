@@ -131,12 +131,12 @@ namespace core
 
         matrix[8] = 0.f;
         matrix[9] = 0.f;
-        matrix[10] = -1.f / (zFar - zNear);
+        matrix[10] = 2.f / (zFar - zNear);
         matrix[11] = 0.f;
 
-        matrix[12] = 0.f;
-        matrix[13] = 0.f;
-        matrix[14] = -(zNear) / (zFar - zNear);
+        matrix[12] = -(right + left) / (right - left) /*0.f*/;
+        matrix[13] = -(top + bottom) / (top - bottom) /*0.f*/;
+        matrix[14] = -(zFar + zNear) / (zFar - zNear);
         matrix[15] = 1.f;
 
         return outMatrix;
