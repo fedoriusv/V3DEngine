@@ -13,7 +13,6 @@ public:
     void    run()  override;
 
     void    onKeyboard(const v3d::event::KeyboardInputEventPtr& event);
-    void    onMouse(const v3d::event::MouseInputEventPtr& event);
 };
 
 #endif //_MY_APPLICATION_H_

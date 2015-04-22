@@ -20,10 +20,13 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CShape* sample = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -3));
+    CShape* sample = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 0, 0));
     sample->setName("cube");
     sample->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
+    sample->setPosition(Vector3D(0, 1, -3));
+    sample->setScale(Vector3D(1, 0.5, 0.2));
+    sample->setRotation(Vector3D(1, 0, 90));
     /*CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/texture.xml");*/

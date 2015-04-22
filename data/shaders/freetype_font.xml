@@ -1,4 +1,6 @@
 <technique name="font" version="100">
+
+    <!-- Render Passes -->
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -12,15 +14,21 @@
 		<samplers> 
 			<var name="sampler0"/>
 		</samplers>
-		<renderstate polygonmode="fill" winding="cw" cullface="false" blend="true" blendfactordst="srcAlpha" blendfactorsrc="invSrcAlpha"/>
-		<rendertarget val="default"/>
+		<renderstate>
+            <polygonmode val="fill"/>
+            <winding val="cw"/>
+            <culling val="false"/>
+            <blending val="true" scr="srcAlpha" dst="invSrcAlpha"/>
+        </renderstate>    
+		<rendertarget>
+            <var val="default"/>
+		</rendertarget>
 		<shaders>
 			<var type="vertex" name="vfont">
 				<![CDATA[
 					#version 330
 
 					#define POSITION 	0
-					#define NORMAL 		2
 					#define TEXCOORD0 	5
 
 					layout (location = POSITION)  in vec3 positions;
@@ -32,14 +40,12 @@
 						mat4 viewMatrix;
 						mat4 projectionMatrix;
 					};
-
 					uniform Transform 	transform;
 
 					struct Vertex 
 					{
 						vec2  texCoord0;
 					};
-
 					out Vertex fragVertex;
 
 					void main()
@@ -61,7 +67,6 @@
 					{
 						vec2  texCoord0;
 					};
-
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
 

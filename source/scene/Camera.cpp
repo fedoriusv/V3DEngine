@@ -8,7 +8,7 @@ using namespace scene;
 CCamera::CCamera()
     : m_target(core::Vector3D(0.0f))
     , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
-    , m_orthogonal(true)
+    , m_orthogonal(false)
     , m_matricesFlag(eCameraStateProjection)
 
     , m_zNear(0.5f)
