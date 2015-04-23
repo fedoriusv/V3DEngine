@@ -32,9 +32,9 @@ CNode::CNode()
     , m_rotation(Vector3D(0.f))
     , m_scale(Vector3D(1.f))
     , m_initialiazed(false)
-    , m_transformFlag(eNodeAll)
+    , m_transformFlag(eNodeTransform)
 {
-    m_transformFlag |= eNodeAll;
+    m_transformFlag |= eNodeAll | eNodeTransform;
 }
 
 CNode::~CNode()
@@ -55,25 +55,34 @@ CNode::~CNode()
 void CNode::setPosition(const Vector3D& position)
 {
     m_position = position;
-    m_transformFlag |= eNodeTranslation;
+    m_transformFlag |= eNodeTranslation | eNodeTransform;
 }
 
 void CNode::setRotation(const Vector3D& rotation)
 {
     m_rotation = rotation;
-    m_transformFlag |= eNodeRotation;
+    m_transformFlag |= eNodeRotation | eNodeTransform;
 }
 
 void CNode::setScale(const Vector3D& scale)
 {
     m_scale = scale;
-    m_transformFlag |= eNodeScale;
+
+    bool hasScale = (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
+    if (hasScale)
+    {
+        m_transformFlag |= eNodeScale | eNodeTransform;
+    }
 }
 
 void CNode::setTransform(const Matrix4D& transform)
 {
     m_modelMatrix = transform;
-    m_transformFlag |= eNodeTransform;
+
+    m_position = m_modelMatrix.getTranslation();
+    m_rotation = m_modelMatrix.getRotation();
+    m_scale = m_modelMatrix.getScale();
+    m_transformFlag &= ~eNodeTransform;
 }
 
 void CNode::setParent(CNode* parent)
@@ -106,7 +115,7 @@ void CNode::dettachChild(CNode* child)
         m_childNodes.erase(std::remove(m_childNodes.begin(), m_childNodes.end(), child), m_childNodes.end());
         child->setParent(nullptr);
 
-        child->m_transformFlag |= eNodeAll;
+        child->m_transformFlag |= eNodeAll | eNodeTransform;
     }
 }
 
@@ -127,6 +136,7 @@ const Vector3D& CNode::getScale() const
 
 const Matrix4D& CNode::getTransform() const
 {
+    CNode::updateTransform();
     return m_modelMatrix;
 }
 
@@ -184,7 +194,7 @@ bool CNode::isVisible() const
     return m_visible;
 }
 
-void CNode::updateTransform()
+void CNode::updateTransform() const
 {
     if (!m_visible)
     {
@@ -193,34 +203,36 @@ void CNode::updateTransform()
 
     if (m_transformFlag & ENodeTransform::eNodeTransform)
     {
-        m_position = m_modelMatrix.getTranslation();
-        m_rotation = m_modelMatrix.getRotation();
-        m_scale = m_modelMatrix.getScale();
+        bool post = false;
+        if (m_transformFlag & ENodeTransform::eNodeRotation)
+        {
+            m_modelMatrix.setRotation(m_rotation);
+            m_transformFlag &= ~eNodeRotation;
+            post = true;
+        }
 
-        m_transformFlag &= ~eNodeTransform;
-    }
-    else
-    {
+        if (m_transformFlag & ENodeTransform::eNodeScale)
+        {
+            if (post)
+            {
+                m_modelMatrix.postScale(m_scale);
+            }
+            else
+            {
+                m_modelMatrix.setScale(m_scale);
+            }
+            m_transformFlag &= ~eNodeScale;
+        }
+
         if (m_transformFlag & ENodeTransform::eNodeTranslation)
         {
             m_modelMatrix.setTranslation(m_position);
             m_transformFlag &= ~eNodeTranslation;
         }
-
-        if (m_transformFlag & ENodeTransform::eNodeRotation)
-        {
-            m_modelMatrix.setRotation(m_rotation);
-            m_transformFlag &= ~eNodeRotation;
-        }
-
-        if (m_transformFlag & ENodeTransform::eNodeScale)
-        {
-            m_modelMatrix.setScale(m_scale);
-            m_transformFlag &= ~eNodeScale;
-        }
+        m_transformFlag &= ~eNodeTransform;
     }
 
-    for (std::vector<CNode*>::iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
+    for (std::vector<CNode*>::const_iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
     {
         (*iter)->m_transformFlag = m_transformFlag;
         (*iter)->updateTransform();

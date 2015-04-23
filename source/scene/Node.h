@@ -90,7 +90,7 @@ namespace scene
 
         friend                      renderer::CRenderList;
 
-        void                        updateTransform();
+        void                        updateTransform() const;
 
         CNode*                      m_parentNode;
         std::vector<CNode*>         m_childNodes;
@@ -104,12 +104,12 @@ namespace scene
         core::Vector3D              m_position;
         core::Vector3D              m_rotation;
         core::Vector3D              m_scale;
-        core::Matrix4D              m_modelMatrix;
+        mutable core::Matrix4D      m_modelMatrix;
 
         f32                         m_priority;
         bool                        m_visible;
 
-        u16                         m_transformFlag;
+        mutable u16                m_transformFlag;
 
         s32                         m_id;
         std::string                 m_name;
