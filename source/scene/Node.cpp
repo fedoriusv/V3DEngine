@@ -203,24 +203,18 @@ void CNode::updateTransform() const
 
     if (m_transformFlag & ENodeTransform::eNodeTransform)
     {
-        bool post = false;
         if (m_transformFlag & ENodeTransform::eNodeRotation)
         {
             m_modelMatrix.setRotation(m_rotation);
             m_transformFlag &= ~eNodeRotation;
-            post = true;
+
+            m_modelMatrix.postScale(m_scale);
+            m_transformFlag &= ~eNodeScale;
         }
 
         if (m_transformFlag & ENodeTransform::eNodeScale)
         {
-            if (post)
-            {
-                m_modelMatrix.postScale(m_scale);
-            }
-            else
-            {
-                m_modelMatrix.setScale(m_scale);
-            }
+            m_modelMatrix.setScale(m_scale);
             m_transformFlag &= ~eNodeScale;
         }
 
