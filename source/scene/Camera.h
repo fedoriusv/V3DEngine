@@ -43,8 +43,8 @@ namespace scene
 
         const core::Vector3D&   getTarget()             const;
         const core::Vector3D&   getUpVector()           const;
-        const core::Matrix4D&   getViewMatrix();
-        const core::Matrix4D&   getProjectionMatrix();
+        const core::Matrix4D&   getViewMatrix()         const;
+        const core::Matrix4D&   getProjectionMatrix()   const;
 
         f32                     getNearValue()          const;
         f32                     getFarValue()           const;
@@ -63,10 +63,10 @@ namespace scene
         friend                  CScene;
 
         void                    setActive(bool active);
-        void                    recalculateProjectionMatrix();
-        void                    recalculateViewMatrix();
+        void                    recalculateProjectionMatrix()   const;
+        void                    recalculateViewMatrix()         const;
 
-        core::Matrix4D          m_transform[eTransformCount];
+        mutable core::Matrix4D  m_transform[eTransformCount];
         bool                    m_orthogonal;
 
         f32                     m_aspect; 
@@ -80,7 +80,7 @@ namespace scene
         core::Vector3D          m_up;
         core::Vector3D          m_target;
 
-        u16                     m_matricesFlag;
+        mutable u16             m_matricesFlag;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

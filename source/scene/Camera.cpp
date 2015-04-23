@@ -58,7 +58,7 @@ const core::Vector3D& CCamera::getUpVector() const
     return m_up;
 }
 
-const core::Matrix4D& CCamera::getViewMatrix()
+const core::Matrix4D& CCamera::getViewMatrix() const
 {
     if (m_matricesFlag & eCameraStateView)
     {
@@ -68,7 +68,7 @@ const core::Matrix4D& CCamera::getViewMatrix()
     return m_transform[eTrnsformViewMatrix];
 }
 
-const core::Matrix4D& CCamera::getProjectionMatrix()
+const core::Matrix4D& CCamera::getProjectionMatrix() const
 {
     if (m_matricesFlag & eCameraStateProjection)
     {
@@ -121,7 +121,7 @@ void CCamera::setAspectRatio(f32 value)
     m_matricesFlag |= eCameraStateProjection;
 }
 
-void CCamera::recalculateProjectionMatrix()
+void CCamera::recalculateProjectionMatrix() const
 {
     if (CCamera::isOrthogonal())
     {
@@ -136,7 +136,7 @@ void CCamera::recalculateProjectionMatrix()
     m_matricesFlag &= ~eCameraStateProjection;
 }
 
-void CCamera::recalculateViewMatrix()
+void CCamera::recalculateViewMatrix() const
 {
     const core::Vector3D& position = CNode::getAbsTransform().getTranslation();
     
