@@ -95,7 +95,7 @@ namespace renderer
         eRGBA,
         eBGR,
         eBGRA,
-        eLumiance,
+        eLuminance,
         eLuminanceAlpha,
         eDepthComponent,
 

@@ -399,7 +399,7 @@ void CShaderUniform::parseArrayValue(const std::string& valueStr, f32* array, u3
 
     for (u32 i = 0; i < count - 1; ++i)
     {
-        pos = str.find(";");
+        pos = str.find(",");
         std::string valStr = str.substr(0, pos);
         str = str.substr(pos + 1, str.size());
 

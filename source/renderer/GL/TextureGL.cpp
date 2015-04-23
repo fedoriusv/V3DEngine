@@ -361,7 +361,7 @@ void CTextureGL::initTexture2D(u32 texture)
         {
         case GL_RGB:
         case GL_BGR:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_5_6_5:
                 return GL_RGB565;
@@ -374,7 +374,7 @@ void CTextureGL::initTexture2D(u32 texture)
             }
 
         case GL_RGBA:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_4_4_4_4:
                 return GL_RGBA4;
@@ -387,7 +387,7 @@ void CTextureGL::initTexture2D(u32 texture)
             return GL_R8;
 
         case GL_DEPTH_COMPONENT:
-            switch (format)
+            switch (type)
             {
             case GL_FLOAT:
                 return GL_DEPTH_COMPONENT32F;
@@ -422,7 +422,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
         {
         case GL_RGB:
         case GL_BGR:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_5_6_5:
                 return GL_RGB565;
@@ -435,7 +435,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
             }
 
         case GL_RGBA:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_4_4_4_4:
                 return GL_RGBA4;
@@ -448,7 +448,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
             return GL_R8;
 
         case GL_DEPTH_COMPONENT:
-            switch (format)
+            switch (type)
             {
             case GL_FLOAT:
                 return GL_DEPTH_COMPONENT32F;
@@ -560,7 +560,7 @@ void CTextureGL::initTextureCubeMap(u32 texture)
         {
         case GL_RGB:
         case GL_BGR:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_5_6_5:
                 return GL_RGB565;
@@ -573,7 +573,7 @@ void CTextureGL::initTextureCubeMap(u32 texture)
             }
 
         case GL_RGBA:
-            switch (format)
+            switch (type)
             {
             case GL_UNSIGNED_SHORT_4_4_4_4:
                 return GL_RGBA4;
@@ -586,7 +586,7 @@ void CTextureGL::initTextureCubeMap(u32 texture)
             return GL_R8;
 
         case GL_DEPTH_COMPONENT:
-            switch (format)
+            switch (type)
             {
             case GL_FLOAT:
                 return GL_DEPTH_COMPONENT32F;

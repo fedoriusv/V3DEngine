@@ -100,7 +100,7 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
         return EImageFormat::eBGRA;
 
     case IL_LUMINANCE:
-        return EImageFormat::eLumiance;
+        return EImageFormat::eLuminance;
 
     case IL_LUMINANCE_ALPHA:
         return EImageFormat::eLuminanceAlpha;

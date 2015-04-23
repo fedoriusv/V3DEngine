@@ -1,4 +1,4 @@
-<technique name="font" version="100">
+<technique name="bitmap_font" version="100">
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -15,7 +15,7 @@
         <renderstate>
 			<polygonmode val="fill"/>
             <winding val="cw"/>
-            <culling val="true"/>
+            <culling val="false"/>
 			<blending val="true" src="srcAlpha" dst="invSrcAlpha"/>
 		</renderstate>
 		<rendertarget>
