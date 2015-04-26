@@ -13,11 +13,11 @@
 			<var name="material.emission" type="vec4" val="material.emission"/>
 			<var name="material.shininess" type="float" val="material.shininess"/>
 			
-			<var name="light.ambient" type="vec4" array="1" val="light.ambient"/>
-			<var name="light.diffuse" type="vec4" array="1" val="light.diffuse"/>
-			<var name="light.specular" type="vec4" array="1" val="light.specular"/>
-			<var name="light.position" type="vec4" array="1" val="light.position"/>
-			<var name="light.attenuation" type="vec3" array="1" val="light.attenuation"/>
+			<var name="light[0].ambient" type="vec4" val="light.ambient"/>
+			<var name="light[0].diffuse" type="vec4" val="light.diffuse"/>
+			<var name="light[0].specular" type="vec4" val="light.specular"/>
+			<var name="light[0].position" type="vec4" val="light.position"/>
+			<var name="light[0].attenuation" type="vec3" val="light.attenuation"/>
 		</uniforms>
 		<attributes>
 			<var name="positions" type="vec3" val="mesh.positions"/>
@@ -25,14 +25,19 @@
 		</attributes>
 		<samplers>
 		</samplers>
-		<renderstate polygonmode="full" winding="cw" cullface="true"/>
-		<rendertarget val="default"/>
+		<renderstate>
+            <polygonmode val="full"/>
+            <winding val="cw"/>
+            <culling val="back"/>
+        </renderstate>
+		<rendertarget>
+			<var val="default"/>
+		</rendertarget>
 		<lod geometry="10.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[
 					#version 330
-
 					#define POSITION 	0
 					#define NORMAL 		2
 
@@ -115,7 +120,6 @@
 						vec3  viewDir;
 						float distance;
 					};
-
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
 

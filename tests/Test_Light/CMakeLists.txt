@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set (CURRENT_PROJECT ${TEST_PROJECT_3})
+set (CURRENT_PROJECT ${TEST_PROJECT_4})
 project(${CURRENT_PROJECT})
 
 file(GLOB TEST_HEADERS *.h)
 file(GLOB TEST_SOURCES *.cpp)
 
-set(MAIN_FILE Billboard.cpp)
+set(MAIN_FILE Light.cpp)
 
 source_group(include FILES ${TEST_HEADERS})
 source_group(source  FILES ${TEST_SOURCES})
@@ -30,7 +30,7 @@ add_executable(
 	${TEST_SOURCES}
 	)
 
-set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Test_Billboard")
+set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Test_Light")
 
 if(WIN32)
 	set(EXTERNAL_LIBS 
