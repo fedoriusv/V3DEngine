@@ -10,12 +10,6 @@ using namespace scene;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
-   /* , m_projectionMatrix(Matrix4D())
-    , m_orthoMatrix(Matrix4D())
-    , m_viewMatrix(Matrix4D())
-    , m_viewPosition(Vector3D(0.f))
-    , m_viewUpVector(Vector3D(0.f, 1.f, 0.f))*/
-
     , m_frameIndex(0U)
 
     , m_maxTextureUnits(0)
@@ -48,19 +42,6 @@ void CRenderer::addLight(scene::CLight* lights)
 void CRenderer::checkForErrors(const std::string& location)
 {
     m_context->checkForErrors(location);
-}
-
-void CRenderer::reshape(u32 width, u32 height)
-{
-    /*if (height == 0)
-    {
-        height = 1;
-    }
-    f32 aspectRatio = (f32)width / (f32)height;
-    m_projectionMatrix = core::buildProjectionMatrixPerspective(45.0f, aspectRatio, 0.5f, 100.0f);
-
-    m_orthoMatrix = core::buildProjectionMatrixOrtho(0.0f, (f32)width, 0.0f, (f32)height, - 1.0f, 1.0f);*/
-    //m_orthoMatrix.makeTransposed();
 }
 
 void CRenderer::updateCamera(CCamera* camera)

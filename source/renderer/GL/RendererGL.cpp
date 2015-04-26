@@ -32,7 +32,7 @@ void CRendererGL::init()
 {
     LOG_INFO("OpenGL Render Init");
 
-    reshape(m_context->getWindowSize().width, m_context->getWindowSize().height);
+    glViewport(0,0, m_context->getWindowSize().width, m_context->getWindowSize().height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     m_context->setVSync(false);
@@ -89,12 +89,6 @@ void CRendererGL::postRender()
     m_context->checkForErrors();
 #endif
     glFlush();
-}
-
-void CRendererGL::reshape(u32 width, u32 height)
-{
-    CRenderer::reshape(width, height);
-    glViewport(0, 0, width, height);
 }
 
 ShaderPtr CRendererGL::makeSharedShader()

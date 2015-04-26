@@ -21,8 +21,6 @@ namespace renderer
         void                preRender()                                                             override;
         void                postRender()                                                            override;
 
-        void                reshape(u32 width, u32 height)                                          override;
-
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
         GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 override;

@@ -39,7 +39,6 @@ namespace renderer
         virtual void                postRender()                   = 0;
 
         void                        draw(const RenderJobPtr& job);
-        virtual void                reshape(u32 width, u32 height);
 
         void                        updateCamera(scene::CCamera* camera);
 
