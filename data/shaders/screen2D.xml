@@ -65,9 +65,11 @@
 				]]>
 			</var>
             <var name="target_effects" type="fragment" file="target_effects.fsh"/>
+			<var name="ffxaa" type="fragment" file="fxaa.fsh"/>
 			<var name="fscreen2D" type="fragment">
 				<![CDATA[
 					#version 330
+					#define USE_FXAA 0
 				
 					uniform sampler2D sampler0;
 
@@ -77,11 +79,20 @@
 					};
 					in 	Vertex 	fragVertex;
 					out vec4 	fragColor;
+					
+					vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
+					vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fxaaQualitySubpix,
+						float fxaaQualityEdgeThreshold, float fxaaQualityEdgeThresholdMin);
 
-                    vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
 					void main()
 					{
-                        fragColor = blur(sampler0, fragVertex.texCoord0);
+					#if USE_FXAA
+						ivec2 size = textureSize(sampler0, 0);
+						fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+					#else //USE_FXAA
+						//fragColor = blur(sampler0, fragVertex.texCoord0);
+						fragColor = texture(sampler0, fragVertex.texCoord0);
+					#endif //USE_FXAA
 					}
 				]]>
 			</var>

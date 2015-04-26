@@ -83,7 +83,7 @@
                         ivec2 size = textureSize(sampler0);
                         vec2 texPos = size * fragVertex.texCoord0;
                         
-						vec4 color;
+						vec4 color = vec4(0.0,0.0,0.0,1.0);
 						for(int i = 0; i < samplerSize; ++i)
 						{
 							color = color + texelFetch(sampler0, ivec2(texPos), i);

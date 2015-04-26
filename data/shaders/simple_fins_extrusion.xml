@@ -1,0 +1,203 @@
+<technique name="simple_fins_extrusion" version="100">
+
+    <!-- Render Passes -->
+	<pass name="pass0">
+		<uniforms>
+			<var name="projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+			<var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+			<var name="transform.normalMatrix" type="mat4" val="transform.normalMatrix"/>
+			<var name="transform.viewPosition" type="vec3" val="transform.viewPosition"/>
+			<var name="finSize" type="float" val="5.5"/>
+		</uniforms>
+		<attributes>
+			<var name="positions" type="vec3" val="mesh.positions"/>
+			<var name="normals" type="vec3" val="mesh.normals"/>
+		</attributes>
+		<samplers> 
+		</samplers>
+		<renderstate>
+            <polygonmode val="line"/>
+            <winding val="cw"/>
+            <culling val="front"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+            <depthWrite val="true"/>
+            <depthTest val="lequal"/>
+        </renderstate>
+		<rendertarget>
+			<var val="default"/>
+		</rendertarget>
+        <lod geometry="0.0"/>
+		<shaders>
+			<var type="vertex" name="vfins_extrusion">
+				<![CDATA[
+					#version 330
+					#define POSITION 	0
+					#define NORMAL 		2
+
+					layout (location = POSITION) in vec3 positions;
+					layout (location = NORMAL)   in vec3 normals;
+
+					struct Transform
+					{
+						mat4 modelMatrix;
+						mat4 viewMatrix;
+						mat4 normalMatrix;
+						vec3 viewPosition;
+					};
+					uniform Transform transform;
+					
+					struct Vertex 
+					{
+						vec3  normal;
+						vec3  view;
+					};
+					out Vertex vertex;
+
+					void main()
+					{
+                        vec4 position = transform.modelMatrix * vec4(positions, 1.0);
+						vertex.normal = (transform.normalMatrix * vec4(normals, 0.0)).xyz;
+						vertex.view   = normalize(transform.viewPosition - vec3(position));
+						
+                        gl_Position   = transform.viewMatrix * position;
+					}
+				]]>
+			</var>
+			<var type="geometry" name="gfins_extrusion">
+				<![CDATA[
+					#version 330
+					#define EPS 0.001
+					
+					layout(triangles) in;
+					layout(triangle_strip, max_vertices = 3) out;
+ 
+					struct Vertex 
+					{
+						vec3  normal;
+						vec3  view;
+					};
+					in Vertex vertex[];
+					out vec4 color;
+					
+					uniform mat4 projectionMatrix;
+					uniform float finSize;
+					
+					int signWithTolerance(float v)
+					{
+						if ( v > EPS )
+						{
+							return 1;
+						}
+						
+						if ( v < -EPS ) 
+						{
+							return -1;
+						}
+						
+						return 0;
+					}
+					
+					int addPoint(float f0, int i0, float f1, int i1, inout vec4 points[4], inout vec3 normals[4], int count)
+					{
+						float t = f1 / (f1 - f0);
+						points  [count]   = mix(gl_in [i1].gl_Position, gl_in [i0].gl_Position, t);
+						normals [count++] = finSize * normalize(mix(vertex[i1].normal, vertex[i0].normal, t));
+						
+						return count;
+					}
+					 
+					void main() 
+					{
+						color = vec4(1.0,1.0,1.0,1.0);
+						for(int i = 0; i < gl_in.length(); i++) 
+						{
+							gl_Position = projectionMatrix * gl_in[i].gl_Position;
+							EmitVertex();
+						}
+						EndPrimitive();
+						
+						float f0 = dot(vertex[0].view, vertex[0].normal);
+						float f1 = dot(vertex[1].view, vertex[1].normal);
+						float f2 = dot(vertex[2].view, vertex[2].normal);    
+						int   s0 = signWithTolerance(f0);
+						int   s1 = signWithTolerance(f1);
+						int   s2 = signWithTolerance(f2);
+						
+						if (s0 == 1 && s1 == 1 && s2 == 1)
+						{
+							return;
+						}
+						if (s0 == -1 && s1 == -1 && s2 == -1)
+						{
+							return;
+						}
+						
+						bool on01 = s0 * s1 <= 0;
+						bool on02 = s0 * s2 <= 0;
+						bool on12 = s1 * s2 <= 0;
+						
+						vec4 points[4] = vec4[](vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
+						vec3 normals[4] = vec3[](vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+						int  count = 0;		
+						
+						if (on01)
+						{
+							count = addPoint(f0, 0, f1, 1, points, normals, count);
+						}
+						if (on02)
+						{
+							count = addPoint(f0, 0, f2, 2, points, normals, count);
+						}
+						if (on12)
+						{
+							count = addPoint(f1, 1, f2, 2, points, normals, count);
+						}
+						
+						if (count >= 2)
+						{
+							gl_Position = projectionMatrix * points[0];
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							
+							gl_Position = projectionMatrix * (points[0] + vec4(normals[0], 0.0));
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							
+							gl_Position = projectionMatrix * points[1];
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							EndPrimitive();
+								
+							gl_Position = projectionMatrix * (points[0] + vec4(normals[0], 0.0));
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							
+							gl_Position = projectionMatrix * (points[1] + vec4(normals[1], 0.0));
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							
+							gl_Position = projectionMatrix * points[1];
+							color       = vec4(0.0, 1.0, 0.0, 1.0);
+							EmitVertex();
+							EndPrimitive();
+						}
+					}
+				]]>
+			</var>
+			<var type="fragment" name="ffins_extrusion">
+				<![CDATA[
+					#version 330
+					
+					in  vec4 color;
+					out vec4 fragColor;
+
+					void main()
+					{
+						fragColor = color;
+					}
+				]]>
+			</var>
+		</shaders>
+	</pass>
+</technique>

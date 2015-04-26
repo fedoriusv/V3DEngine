@@ -14,6 +14,8 @@
 #include "scene/SampleShape.h"
 #include "scene/Billboard.h"
 #include "scene/CubeShape.h"
+#include "scene/CylinderShape.h"
+#include "scene/TorusShape.h"
 #include "scene/RectangleShape.h"
 #include "scene/PlaneShape.h"
 #include "scene/Camera.h"
