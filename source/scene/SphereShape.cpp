@@ -3,10 +3,10 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
-CSphereShape::CSphereShape(const f32 radius)
+CSphereShape::CSphereShape(f32 radius)
     : m_radius(radius)
 {
     m_shapeType = EShapeType::eSphereShape;
@@ -33,7 +33,7 @@ void CSphereShape::init()
     CSphereShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -157,7 +157,7 @@ void CSphereShape::refresh()
 
     CSphereShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

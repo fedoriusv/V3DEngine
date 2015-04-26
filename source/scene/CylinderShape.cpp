@@ -1,10 +1,10 @@
 #include "CylinderShape.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
-CCylinderShape::CCylinderShape(const float radius, const float height)
+CCylinderShape::CCylinderShape(f32 radius, f32 height)
     : m_radius(radius)
     , m_height(height)
 {
@@ -32,7 +32,7 @@ void CCylinderShape::init()
     CCylinderShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
    m_debug->init();
 #endif
@@ -40,13 +40,13 @@ void CCylinderShape::init()
     m_initialiazed = true;
 }
 
-void CCylinderShape::setRadius(const f32 radius)
+void CCylinderShape::setRadius(f32 radius)
 {
     m_radius = radius;
     CCylinderShape::refresh();
 }
 
-void CCylinderShape::setHeight(const f32 height)
+void CCylinderShape::setHeight(f32 height)
 {
     m_height = height;
     CCylinderShape::refresh();
@@ -71,7 +71,7 @@ void CCylinderShape::refresh()
 
     CCylinderShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

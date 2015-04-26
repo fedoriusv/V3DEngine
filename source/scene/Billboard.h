@@ -3,10 +3,6 @@
 
 #include "Node.h"
 
-#include "renderer/Material.h"
-#include "renderer/RenderJob.h"
-#include "renderer/Geometry.h"
-
 namespace v3d
 {
 namespace scene
@@ -25,18 +21,9 @@ namespace scene
 
         void                            init()              override;
 
-        void                            setMaterial(const renderer::MaterialPtr& material);
-        const renderer::MaterialPtr&    getMaterial() const;
-
-        const renderer::RenderJobPtr&   getRenderJob() const;
-
     private:
 
         void                            build();
-
-        renderer::MaterialPtr           m_material;
-        renderer::GeometryPtr           m_geometry;
-        renderer::RenderJobPtr          m_renderJob;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

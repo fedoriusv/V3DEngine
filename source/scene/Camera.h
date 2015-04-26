@@ -52,9 +52,10 @@ namespace scene
 
         bool                    isOrthogonal()          const;
 
-        void                    render()                override;
-        void                    update(s32 time)        override;
         void                    init()                  override;
+        void                    update(s32 time)        override;
+        void                    render()                override;
+
 
         bool                    isActive()              const;
 

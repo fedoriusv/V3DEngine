@@ -1,10 +1,10 @@
 #include "TorusShape.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
-CTorusShape::CTorusShape(const f32 minorRadius, const f32 majorRadius)
+CTorusShape::CTorusShape(f32 minorRadius, f32 majorRadius)
     : m_minorRadius(minorRadius)
     , m_majorRadius(majorRadius)
 {
@@ -32,7 +32,7 @@ void CTorusShape::init()
     CTorusShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -40,13 +40,13 @@ void CTorusShape::init()
     m_initialiazed = true;
 }
 
-void CTorusShape::setMinorRadius(const f32 radius)
+void CTorusShape::setMinorRadius(f32 radius)
 {
     m_minorRadius = radius;
     CTorusShape::refresh();
 }
 
-void CTorusShape::setMajorRadius(const f32 radius)
+void CTorusShape::setMajorRadius(f32 radius)
 {
     m_majorRadius = radius;
     CTorusShape::refresh();
@@ -128,7 +128,7 @@ void CTorusShape::refresh()
 
     CTorusShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

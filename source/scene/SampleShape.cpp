@@ -32,7 +32,7 @@ void CSampleShape::init()
     CSampleShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -67,9 +67,9 @@ void CSampleShape::build()
     SVertexData& data = CShape::getGeometryData();
     data.malloc(3, 0);
 
-    m_geometry->copyToVertices(vertex, 3);
-    m_geometry->copyToNormals(normal, 3);
-    m_geometry->copyToTexCoords(texCoord, 0, 3);
+    CRendereble::getGeometry()->copyToVertices(vertex, 3);
+    CRendereble::getGeometry()->copyToNormals(normal, 3);
+    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, 3);
 }
 
 void CSampleShape::refresh()
@@ -81,7 +81,7 @@ void CSampleShape::refresh()
 
     CSampleShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

@@ -13,7 +13,7 @@ namespace scene
     {
     public:
 
-        CTorusShape(const f32 minorRadius = 0.5f, const f32 majorRadius = 1.0f);
+        CTorusShape(f32 minorRadius = 0.5f, f32 majorRadius = 1.0f);
         ~CTorusShape();
 
         void        render()         override;
@@ -21,8 +21,8 @@ namespace scene
 
         void        init()           override;
 
-        void        setMinorRadius(const f32 radius);
-        void        setMajorRadius(const f32 radius);
+        void        setMinorRadius(f32 radius);
+        void        setMajorRadius(f32 radius);
 
         f32         getMinorRadius() const;
         f32         getMajorRadius() const;

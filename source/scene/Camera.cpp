@@ -163,14 +163,6 @@ void CCamera::init()
     m_initialiazed = true;
 }
 
-void CCamera::render()
-{
-    if (!CNode::isVisible())
-    {
-        return;
-    }
-}
-
 void CCamera::update(s32 time)
 {
     if (!CNode::isVisible() || !m_initialiazed)
@@ -194,4 +186,8 @@ void CCamera::update(s32 time)
 
         RENDERER->updateCamera(this);
     }
+}
+
+void CCamera::render()
+{
 }

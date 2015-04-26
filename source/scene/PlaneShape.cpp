@@ -1,11 +1,11 @@
 #include "PlaneShape.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 
-CPlaneShape::CPlaneShape(const f32 extent)
+CPlaneShape::CPlaneShape(f32 extent)
     : m_extent(extent)
 {
     m_shapeType = EShapeType::ePlaneShape;
@@ -32,7 +32,7 @@ void CPlaneShape::init()
     CPlaneShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -106,7 +106,7 @@ void CPlaneShape::refresh()
 
     CPlaneShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

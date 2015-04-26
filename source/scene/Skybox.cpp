@@ -12,12 +12,12 @@ CSkybox::CSkybox()
     m_nodeType = ENodeType::eSkyBox;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    m_material = std::make_shared<CMaterial>();
+    CRendereble::setMaterial(std::make_shared<CMaterial>());
 }
 
 CSkybox::~CSkybox()
 {
-    m_geometry->free();
+    CRendereble::getGeometry()->free();
     m_textures.clear();
 }
 
@@ -87,31 +87,31 @@ void CSkybox::build()
         { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
     };
 
-    SVertexData& data = m_geometry->getData();
+    SVertexData& data = CRendereble::getGeometry()->getData();
     data.malloc(count, 0);
 
-    m_geometry->copyToVertices(vertex, count);
-    m_geometry->copyToNormals(normals, count);
-    m_geometry->copyToTexCoords(texCoord, 0, count);
+    CRendereble::getGeometry()->copyToVertices(vertex, count);
+    CRendereble::getGeometry()->copyToNormals(normals, count);
+    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, count);
 }
 
 void CSkybox::init()
 {
-    RenderTechniquePtr technique = m_material->getRenderTechique();
+    RenderTechniquePtr technique = CRendereble::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CShape: Do not exist RenderTechique");
-        ASSERT(false && "CShape: Do not exist RenderTechique");
+        LOG_ERROR("CSkybox: Do not exist RenderTechique");
+        ASSERT(false && "CSkybox: Do not exist RenderTechique");
         return;
     }
 
-    m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, CNode::getAbsTransform());
+    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
 
     CSkybox::build();
-    m_geometry->setDrawMode(CGeometry::eTriangles);
+    CRendereble::getGeometry()->setDrawMode(CGeometry::eTriangles);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 
     m_initialiazed = true;
 }
@@ -124,7 +124,7 @@ void CSkybox::update(s32 time)
     }
 
     CNode::updateTransform();
-    m_renderJob->setTransform(CNode::getAbsTransform());
+    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CSkybox::render()
@@ -136,27 +136,12 @@ void CSkybox::render()
 
     for (u32 i = 0; i < k_countSize; ++i)
     {
-        m_geometry->setInterval((i * 6), 6);
-        m_renderJob->getMaterial()->setTexture(0, m_textures[i]);
+        CRendereble::getGeometry()->setInterval((i * 6), 6);
+        CRendereble::getRenderJob()->getMaterial()->setTexture(0, m_textures[i]);
 
-        RENDERER->draw(m_renderJob);
+        RENDERER->draw(CRendereble::getRenderJob());
     }
 
-    RENDERER->draw(m_renderJob);
+    RENDERER->draw(CRendereble::getRenderJob());
     
-}
-
-void CSkybox::setMaterial(const MaterialPtr& material)
-{
-    m_material = material;
-}
-
-const MaterialPtr& CSkybox::getMaterial() const
-{
-    return m_material;
-}
-
-const RenderJobPtr& CSkybox::getRenderJob() const
-{
-    return m_renderJob;
 }

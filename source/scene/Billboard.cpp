@@ -7,35 +7,17 @@ using namespace scene;
 using namespace renderer;
 
 CBillboard::CBillboard(const std::string& texture)
-: m_material(nullptr)
-, m_geometry(nullptr)
-, m_renderJob(nullptr)
 {
     m_nodeType = ENodeType::eBillboard;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    m_material = std::make_shared<CMaterial>();
-    m_material->setTexture(0, texture);
+    CRendereble::setMaterial(std::make_shared<CMaterial>());
+    CRendereble::getMaterial()->setTexture(0, texture);
 }
 
 CBillboard::~CBillboard()
 {
-    m_geometry->free();
-}
-
-void CBillboard::setMaterial(const MaterialPtr& material)
-{
-    m_material = material;
-}
-
-const MaterialPtr& CBillboard::getMaterial() const
-{
-    return m_material;
-}
-
-const RenderJobPtr& CBillboard::getRenderJob() const
-{
-    return m_renderJob;
+    CRendereble::getGeometry()->free();
 }
 
 void CBillboard::render()
@@ -45,7 +27,7 @@ void CBillboard::render()
         return;
     }
 
-    RENDERER->draw(m_renderJob);
+    RENDERER->draw(CRendereble::getRenderJob());
 }
 
 void CBillboard::update(s32 time)
@@ -56,12 +38,12 @@ void CBillboard::update(s32 time)
     }
 
     CNode::updateTransform();
-    m_renderJob->setTransform(CNode::getAbsTransform());
+    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CBillboard::init()
 {
-    const RenderTechniquePtr& technique = m_material->getRenderTechique();
+    const RenderTechniquePtr& technique = CRendereble::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CBillboard: Do not exist RenderTechique");
@@ -69,8 +51,8 @@ void CBillboard::init()
         return;
     }
 
-    m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, CNode::getAbsTransform());
+    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
 
     CBillboard::build();
 
@@ -79,16 +61,16 @@ void CBillboard::init()
 
 void CBillboard::build()
 {
-    m_geometry->setDrawMode(CGeometry::ePoints);
+    CRendereble::getGeometry()->setDrawMode(CGeometry::ePoints);
 
     const f32 vertex[][3] =
     {
         0.0f, 0.0f, 0.0f,
     };
 
-    SVertexData& data = m_geometry->getData();
+    SVertexData& data = CRendereble::getGeometry()->getData();
     data.malloc(1, 0);
-    m_geometry->copyToVertices(vertex, 1);
+    CRendereble::getGeometry()->copyToVertices(vertex, 1);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 }

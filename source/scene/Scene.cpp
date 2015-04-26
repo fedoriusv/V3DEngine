@@ -205,8 +205,11 @@ void CScene::attachToRenderList(CNode* node)
 
     switch (node->getNodeType())
     {
-        case ENodeType::eShape:
-            techniqe = static_cast<CShape*>(node)->getMaterial()->getRenderTechique();
+    case ENodeType::eShape:
+        {
+            CRendereble* draw = static_cast<CShape*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
             break;
 
         case ENodeType::eModel:
@@ -214,15 +217,24 @@ void CScene::attachToRenderList(CNode* node)
             break;
 
         case ENodeType::eSkyBox:
-            techniqe = static_cast<CSkybox*>(node)->getMaterial()->getRenderTechique();
+            {
+                CRendereble* draw = static_cast<CSkybox*>(node);
+                techniqe = draw->getMaterial()->getRenderTechique();
+            }
             break;
 
         case ENodeType::eText:
-            techniqe = static_cast<CText*>(node)->getMaterial()->getRenderTechique();
+            {
+                CRendereble* draw = static_cast<CText*>(node);
+                techniqe = draw->getMaterial()->getRenderTechique();
+            }
             break;
 
         case ENodeType::eBillboard:
-            techniqe = static_cast<CBillboard*>(node)->getMaterial()->getRenderTechique();
+            {
+                CRendereble* draw = static_cast<CBillboard*>(node);
+                techniqe = draw->getMaterial()->getRenderTechique();
+            }
             break;
 
         default:

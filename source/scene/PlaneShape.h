@@ -13,7 +13,7 @@ namespace scene
     {
     public:
 
-        CPlaneShape(const f32 extent);
+        CPlaneShape(f32 extent);
         ~CPlaneShape();
 
         void        render()         override;

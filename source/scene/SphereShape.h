@@ -13,7 +13,7 @@ namespace scene
     {
     public:
 
-        CSphereShape(const f32 radius = 1.0f);
+        CSphereShape(f32 radius = 1.0f);
         ~CSphereShape();
 
         void        render()         override;
@@ -21,7 +21,7 @@ namespace scene
 
         void        init()           override;
 
-        void        setRadius(const f32 radius);
+        void        setRadius(f32 radius);
         f32         getRadius() const;
 
     private:

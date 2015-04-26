@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
 CCubeShape::CCubeShape()
 {
@@ -32,7 +32,7 @@ void CCubeShape::init()
     CCubeShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -49,7 +49,7 @@ void CCubeShape::refresh()
 
     CCubeShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif
@@ -104,8 +104,8 @@ void CCubeShape::build()
     SVertexData& data = CShape::getGeometryData();
     data.malloc(count, 36);
 
-    m_geometry->copyToVertices(vertex, count);
-    m_geometry->copyToNormals(normals, count);
-    m_geometry->copyToTexCoords(texCoord, 0, count);
-    m_geometry->copyToIndices(indices, 36);
+    CRendereble::getGeometry()->copyToVertices(vertex, count);
+    CRendereble::getGeometry()->copyToNormals(normals, count);
+    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, count);
+    CRendereble::getGeometry()->copyToIndices(indices, 36);
 }

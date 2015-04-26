@@ -1,7 +1,7 @@
 #ifndef _V3D_NODE_H_
 #define _V3D_NODE_H_
 
-#include "Object.h"
+#include "renderer/Rendereble.h"
 
 namespace v3d
 {
@@ -30,7 +30,7 @@ namespace scene
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CNode
+    class CNode: public renderer::CRendereble
     {
     public:
 
@@ -74,10 +74,8 @@ namespace scene
         CNode*                      getChildNodeByID(u32 id)                     const;
         CNode*                      getChildNodeByName(const std::string& name)  const;
                                     
-        virtual void                render()         = 0;
+        virtual void                init() = 0;
         virtual void                update(s32 dt)   = 0;
-        
-        virtual void                init()           = 0;
 
         void                        setVisible(bool visible);
         bool                        isVisible() const;

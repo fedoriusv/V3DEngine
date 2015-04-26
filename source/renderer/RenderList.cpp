@@ -44,7 +44,7 @@ void CRenderList::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CRenderList::add(scene::CNode* node, u32 target)
+void CRenderList::add(CNode* node, u32 target)
 {
     if (node)
     {
@@ -77,6 +77,11 @@ void CRenderList::update(u32 delta)
     for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
         CNode* item = (*iter)._node;
+        if (!item)
+        {
+            continue;
+        }
+
         item->update(delta);
     }
 }
@@ -84,14 +89,14 @@ void CRenderList::update(u32 delta)
 void CRenderList::render()
 {
 
-    if (m_camera && m_camera->isActive())
-    {
-        m_camera->render();
-    }
-
     for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
-        CNode* item = (*iter)._node;
+        CRendereble* item = (*iter)._node;
+        if (!item)
+        {
+            continue;
+        }
+
         item->render();
     }
 }

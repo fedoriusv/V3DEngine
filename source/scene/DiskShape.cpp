@@ -1,10 +1,10 @@
 #include "DiskShape.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace renderer;
 
-CDiskShape::CDiskShape(const f32 minorRadius, const f32 majorRadius)
+CDiskShape::CDiskShape(f32 minorRadius, f32 majorRadius)
     : m_minorRadius(minorRadius)
     , m_majorRadius(majorRadius)
 {
@@ -32,7 +32,7 @@ void CDiskShape::init()
     CDiskShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -40,13 +40,13 @@ void CDiskShape::init()
     m_initialiazed = true;
 }
 
-void CDiskShape::setMinorRadius(const f32 radius)
+void CDiskShape::setMinorRadius(f32 radius)
 {
     m_minorRadius = radius;
     CDiskShape::refresh();
 }
 
-void CDiskShape::setMajorRadius(const f32 radius)
+void CDiskShape::setMajorRadius(f32 radius)
 {
     m_majorRadius = radius;
     CDiskShape::refresh();
@@ -159,7 +159,7 @@ void CDiskShape::refresh()
 
     CDiskShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif

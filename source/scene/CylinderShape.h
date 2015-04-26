@@ -13,7 +13,7 @@ namespace scene
     {
     public:
 
-        CCylinderShape(const float radius = 0.5f, const float height = 1.0f);
+        CCylinderShape(f32 radius = 0.5f, f32 height = 1.0f);
         ~CCylinderShape();
 
         void        render()         override;
@@ -21,8 +21,8 @@ namespace scene
 
         void        init()           override;
 
-        void        setRadius(const f32 radius);
-        void        setHeight(const f32 height);
+        void        setRadius(f32 radius);
+        void        setHeight(f32 height);
 
         f32         getRadius() const;
         f32         getHeight() const;

@@ -3,9 +3,6 @@
 
 #include "Node.h"
 #include "renderer/Texture.h"
-#include "renderer/Geometry.h"
-#include "renderer/RenderJob.h"
-#include "renderer/Material.h"
 
 namespace v3d
 {
@@ -26,11 +23,6 @@ namespace scene
                                             const std::string& left, const std::string& right, 
                                             const std::string& up, const std::string& down);
 
-        void                            setMaterial(const renderer::MaterialPtr& material);
-        const renderer::MaterialPtr&    getMaterial() const;
-
-        const renderer::RenderJobPtr&   getRenderJob() const;
-
         void                            init()             override;
         void                            update(s32 time)   override;
         void                            render()           override;
@@ -42,11 +34,6 @@ namespace scene
         void                            build();
 
         renderer::TextureList           m_textures;
-
-        renderer::MaterialPtr           m_material;
-        renderer::GeometryPtr           m_geometry;
-        renderer::RenderJobPtr          m_renderJob;
-
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

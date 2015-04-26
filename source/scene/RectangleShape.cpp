@@ -34,7 +34,7 @@ void CRectangleShape::init()
     CRectangleShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
-    m_geometry->init();
+    CRendereble::getGeometry()->init();
 #ifdef _DEBUG
     m_debug->init();
 #endif
@@ -51,7 +51,7 @@ void CRectangleShape::refresh()
 
     CRectangleShape::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 #ifdef _DEBUG
     m_debug->refresh();
 #endif
@@ -85,7 +85,7 @@ void CRectangleShape::build()
     SVertexData& data = CShape::getGeometryData();
     data.malloc(count, 0);
 
-    m_geometry->copyToVertices(vertex, count);
-    m_geometry->copyToNormals(normals, count);
-    m_geometry->copyToTexCoords(texCoord, 0, count);
+    CRendereble::getGeometry()->copyToVertices(vertex, count);
+    CRendereble::getGeometry()->copyToNormals(normals, count);
+    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, count);
 }

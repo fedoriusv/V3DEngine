@@ -13,7 +13,7 @@ namespace scene
     {
     public:
 
-        CDiskShape(const f32 minorRadius, const f32 majorRadius);
+        CDiskShape(f32 minorRadius, f32 majorRadius);
         ~CDiskShape();
 
         void        render()         override;
@@ -21,14 +21,14 @@ namespace scene
 
         void        init()           override;
 
-        void        setMinorRadius(const f32 radius);
-        void        setMajorRadius(const f32 radius);
+        void        setMinorRadius(f32 radius);
+        void        setMajorRadius(f32 radius);
         f32         getMinorRadius() const;
         f32         getMajorRadius() const;
 
     private:
 
-        void        refresh()       override;
+        void        refresh()        override;
         void        build();
 
         f32         m_majorRadius;

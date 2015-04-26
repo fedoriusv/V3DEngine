@@ -16,21 +16,18 @@ CText::CText(const std::string& font)
     , k_textScale(0.02f)
     , k_spacing(0.1f)
 
-    , m_geometry(nullptr)
-    , m_material(nullptr)
-    , m_renderJob(nullptr)
-
     , m_font(font)
     , m_data(nullptr)
 {
     m_nodeType = ENodeType::eText;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    m_material = std::make_shared<CMaterial>();
+    CRendereble::setMaterial(std::make_shared<CMaterial>());
 }
 
 CText::~CText()
 {
+    CRendereble::getGeometry()->free();
 }
 
 void CText::setText(const std::string& text)
@@ -55,21 +52,6 @@ u32 CText::getSize() const
     return m_size;
 }
 
-void CText::setMaterial(const MaterialPtr& material)
-{
-    m_material = material;
-}
-
-const renderer::MaterialPtr& CText::getMaterial() const
-{
-    return m_material;
-}
-
-const RenderJobPtr& CText::getRenderJob() const
-{
-    return m_renderJob;
-}
-
 void CText::setAlignMode(EAlignMode mode)
 {
     m_align = mode;
@@ -83,28 +65,28 @@ CText::EAlignMode CText::getAlignMode() const
 
 void CText::init()
 {
-    RenderTechniquePtr technique = m_material->getRenderTechique();
+    RenderTechniquePtr technique = CRendereble::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CShape: Do not exist RenderTechique");
-        ASSERT(false && "CShape: Do not exist RenderTechique");
+        LOG_ERROR("CText: Do not exist RenderTechique");
+        ASSERT(false && "CText: Do not exist RenderTechique");
         return;
     }
 
-    m_geometry = RENDERER->makeSharedGeometry(technique);
-    m_renderJob = std::make_shared<CRenderJob>(m_material, m_geometry, CNode::getAbsTransform());
+    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
 
     if (m_font.empty())
     {
-        LOG_WARNING("Font name Empty");
+        LOG_WARNING("CText: Font name Empty");
         return;
     }
 
     m_data = CFontManager::getInstance()->load(m_font);
     if (!m_data)
     {
-        LOG_ERROR("Font: Can not load font: %s", m_font.c_str());
-        ASSERT(false && "Font: Can not load font");
+        LOG_ERROR("CText: Can not load font: %s", m_font.c_str());
+        ASSERT(false && "CText: Can not load font");
         return;
     }
 
@@ -113,11 +95,11 @@ void CText::init()
 
     CText::build();
 
-    m_geometry->setDrawMode(CGeometry::eTriangles);
-    m_geometry->init();
+    CRendereble::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRendereble::getGeometry()->init();
 
     //TODO: Need more texture maps
-    m_material->setTexture(0, m_data->m_charTexture[0]);
+    CRendereble::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
 
     m_initialiazed = true;
 }
@@ -130,7 +112,7 @@ void CText::update(s32 time)
     }
 
     CNode::updateTransform();
-    m_renderJob->setTransform(CNode::getAbsTransform());
+    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CText::render()
@@ -140,7 +122,7 @@ void CText::render()
         return;
     }
 
-    RENDERER->draw(m_renderJob);
+    RENDERER->draw(CRendereble::getRenderJob());
 }
 
 void CText::refresh()
@@ -155,7 +137,7 @@ void CText::refresh()
 
     CText::build();
 
-    m_geometry->refresh();
+    CRendereble::getGeometry()->refresh();
 }
 
 f32 CText::getTextWidth()
@@ -176,7 +158,7 @@ f32 CText::getTextWidth()
     return width;
 }
 
-f32 CText::adjustForKerningPairs(const CFontData::SCharDesc* info, const s32 charId)
+f32 CText::adjustForKerningPairs(const CFontData::SCharDesc* info, s32 charId)
 {
     if (charId == 0)
     {
@@ -210,7 +192,7 @@ void CText::build()
         x -= textwidth;
     }
 
-    SVertexData& data = m_geometry->getData();
+    SVertexData& data = CRendereble::getGeometry()->getData();
     data.malloc((u32)m_text.size() * 6);
 
     u32 index = 0;
