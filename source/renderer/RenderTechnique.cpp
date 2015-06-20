@@ -198,6 +198,7 @@ bool CRenderTechnique::load()
     if (success)
     {
         LOG_ERROR("CRenderTechnique: Error Parse Stream name [%s]", CResource::getResourseName().c_str());
+		ASSERT("Error Parse Stream" && false);
         return false;
     }
 
@@ -205,6 +206,7 @@ bool CRenderTechnique::load()
     if (!rootElement)
     {
         LOG_ERROR("CRenderTechnique: Can't find technique in Stream name [%s]", CResource::getResourseName().c_str());
+		ASSERT("Can't find technique in Stream" && false);
         return false;
     }
 
