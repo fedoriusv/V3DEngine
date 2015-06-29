@@ -4,6 +4,8 @@
 
 #include "tinyxml2.h"
 
+#pragma clang diagnostic ignored "-Wswitch"
+
 using namespace v3d;
 using namespace renderer;
 

@@ -105,8 +105,8 @@ CRenderState::CRenderState()
     , m_winding(eWindingCW)
     , m_polygonMode(ePolyModeFill)
 
-    , m_blendDst(eBlendDstAlpha)
     , m_blendSrc(eBlendInvSrcAlpha)
+    , m_blendDst(eBlendDstAlpha)
     , m_blend(false)
 
     , m_depthWrite(true)

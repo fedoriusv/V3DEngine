@@ -49,7 +49,7 @@ void CRenderer::updateCamera(CCamera* camera)
     m_camera = camera;
 }
 
-const core::Rect& CRenderer::getViewportSize() const
+const core::Rect32& CRenderer::getViewportSize() const
 {
     ASSERT(m_currentRenderTarget && "Current Render Target in null");
     if (m_currentRenderTarget)

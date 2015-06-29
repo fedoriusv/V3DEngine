@@ -45,7 +45,7 @@ bool CEventManager::sendEvent(const SInputEventPtr& event)
             {
                 result = true;
 
-                IEventReceiverPtr& ptr = (*iter).second.lock();
+                const IEventReceiverPtr& ptr = (*iter).second.lock();
                 ptr->onEvent(event);
             }
         }

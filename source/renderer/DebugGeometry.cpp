@@ -10,9 +10,9 @@ RenderPassPtr CDebugGeometry::s_pass = nullptr;
 
 CDebugGeometry::CDebugGeometry(const GeometryPtr& geometry)
     : m_geometry(geometry)
+    , m_flag(EDebugGeometryFlag::eGeometryFlagNone)
     , m_vertex(nullptr)
     , m_fragment(nullptr)
-    , m_flag(EDebugGeometryFlag::eGeometryFlagNone)
 {
     if (!s_pass)
     {

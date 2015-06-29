@@ -7,7 +7,7 @@ using namespace core;
 using namespace scene;
 using namespace renderer;
 
-CRectangleShape::CRectangleShape(const Rect& rect)
+CRectangleShape::CRectangleShape(const Rect32& rect)
 : m_rect(rect)
 {
     m_shapeType = EShapeType::eRectangleShape;

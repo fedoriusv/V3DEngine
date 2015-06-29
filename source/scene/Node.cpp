@@ -25,13 +25,13 @@ const std::string& CNode::getNodeNameByType(ENodeType type)
 
 CNode::CNode()
     : m_parentNode(nullptr)
-    , m_visible(true)
     , m_nodeType(ENodeType::eUnknown)
-    , m_priority(0.f)
+    , m_initialiazed(false)
     , m_position(Vector3D(0.f))
     , m_rotation(Vector3D(0.f))
     , m_scale(Vector3D(1.f))
-    , m_initialiazed(false)
+    , m_priority(0.f)
+    , m_visible(true)
     , m_transformFlag(eNodeTransform)
 {
     m_transformFlag |= eNodeAll | eNodeTransform;

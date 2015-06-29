@@ -9,8 +9,8 @@ using namespace v3d::renderer;
 
 CModelData::CModelData()
     : m_countMeshes(0U)
-    , m_name("")
     , m_id(-1)
+    , m_name("")
 {
 }
 

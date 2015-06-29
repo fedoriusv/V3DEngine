@@ -5,8 +5,8 @@ using namespace event;
 
 SGamepadInputEvent::SGamepadInputEvent()
 : _event(eGamepadUnknown)
-, _pov(0)
 , _buttons(0)
+, _pov(0)
 , _gamepad(-1)
 {
     _eventType = eGamepadInputEvent;

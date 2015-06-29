@@ -7,8 +7,10 @@
 
 #include "GL/glew.h"
 
+#pragma clang diagnostic ignored "-Wswitch"
+
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 GLenum EDrawModeGL[CGeometry::eDrawCount] =
 {

@@ -31,7 +31,7 @@ CRenderTarget::CRenderTarget()
 {
     u32 width = (u32)(WINDOW->getSize().width);
     u32 height = (u32)(WINDOW->getSize().height);
-    CRenderTarget::setViewport(Rect(0, 0, width, height));
+    CRenderTarget::setViewport(Rect32(0, 0, width, height));
 }
 
 CRenderTarget::~CRenderTarget()
@@ -139,12 +139,12 @@ const core::Vector4D& CRenderTarget::getClearColor() const
     return m_color;
 }
 
-void CRenderTarget::setViewport(const core::Rect& size)
+void CRenderTarget::setViewport(const core::Rect32& size)
 {
     m_viewport = size;
 }
 
-const core::Rect& CRenderTarget::getViewport() const
+const core::Rect32& CRenderTarget::getViewport() const
 {
     return m_viewport;
 }
@@ -212,7 +212,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         width = (u32)(WINDOW->getSize().width * ratio);
         height = (u32)(WINDOW->getSize().height * ratio);
     }
-    CRenderTarget::setViewport(Rect(x, y, x + width, y + height));
+    CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
 
     if (root->Attribute("aa"))
     {

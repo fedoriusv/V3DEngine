@@ -65,7 +65,7 @@ void CBillboard::build()
 
     const f32 vertex[][3] =
     {
-        0.0f, 0.0f, 0.0f,
+        {0.0f, 0.0f, 0.0f}
     };
 
     SVertexData& data = CRendereble::getGeometry()->getData();

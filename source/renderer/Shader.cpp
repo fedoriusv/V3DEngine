@@ -44,8 +44,8 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 CShader::CShader()
     : m_shaderID(0)
     , m_type(eShaderUnknown)
-    , m_data(nullptr)
     , m_name("")
+    , m_data(nullptr)
     , m_compileStatus(false)
 {
 }

@@ -11,8 +11,8 @@ const f32 k_lod = 10000.0f;
 CFPSCamera::CFPSCamera()
     : m_speed(0.001f)
 
-    , m_min(-k_lod, -k_lod, -k_lod)
     , m_max(k_lod, k_lod, k_lod)
+    , m_min(-k_lod, -k_lod, -k_lod)
 {
     m_keys._forward = EKeyCode::eKeyKey_W;
     m_keys._back    = EKeyCode::eKeyKey_S;

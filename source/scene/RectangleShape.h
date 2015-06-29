@@ -13,20 +13,20 @@ namespace scene
     {
     public:
 
-        explicit CRectangleShape(const core::Rect& rect);
+        explicit CRectangleShape(const core::Rect32& rect);
         ~CRectangleShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
+        void            render()         override;
+        void            update(s32 time) override;
 
-        void        init()           override;
+        void            init()           override;
 
     private:
 
-        void        refresh()        override;
-        void        build();
+        void            refresh()        override;
+        void            build();
 
-        core::Rect  m_rect;
+        core::Rect32    m_rect;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

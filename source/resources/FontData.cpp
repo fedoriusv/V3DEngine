@@ -5,9 +5,9 @@ using namespace v3d::resources;
 
 CFontData::CFontData(const std::string& font)
     : m_fontType(EFontType::eUnknownFont)
+    , m_mapSize(k_fontMapSize, k_fontMapSize)
     , m_font(font)
     , m_fontSize(32U)
-    , m_mapSize(k_fontMapSize, k_fontMapSize)
 {
 }
 

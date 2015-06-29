@@ -477,7 +477,7 @@ void CRenderPass::addRenderTarget(const RenderTargetPtr& target)
         RenderTargetList ::const_iterator iter = std::find(m_renderTargets.begin(), m_renderTargets.end(), target);
         if (iter != m_renderTargets.end())
         {
-            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter)->getName());
+            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter)->getName().c_str());
             return;
         }
 

@@ -48,7 +48,7 @@ namespace scene
         CTorusShape*            addTorus(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 0.f), f32 minorRadius = 0.5f, f32 majorRadius = 1.f);
         CDiskShape*             addDisk(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 0.f), f32 minorRadius = 1.f, f32 majorRadius = 2.f);
         CPlaneShape*            addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 0.f), f32 extent = 2.f);
-        CRectangleShape*        addRectangle(CNode* parent = nullptr, const Rect& rect = Rect(0, 0, 1024, 768));
+        CRectangleShape*        addRectangle(CNode* parent = nullptr, const Rect32& rect = Rect32(0, 0, 1024, 768));
         CSkybox*                addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
         CModel*                 addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f, 0.f, 0.f));
         CBillboard*             addBillboard(const std::string& texture, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));

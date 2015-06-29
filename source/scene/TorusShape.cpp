@@ -5,8 +5,8 @@ using namespace scene;
 using namespace renderer;
 
 CTorusShape::CTorusShape(f32 minorRadius, f32 majorRadius)
-    : m_minorRadius(minorRadius)
-    , m_majorRadius(majorRadius)
+    : m_majorRadius(majorRadius)
+    , m_minorRadius(minorRadius)
 {
     m_shapeType = EShapeType::eTorusShape;
 }

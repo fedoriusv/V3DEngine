@@ -10,8 +10,8 @@ using namespace renderer;
 using namespace scene;
 
 CShaderSampler::CShaderSampler()
-    : m_attribute("")
-    , m_type(eUserSampler)
+    : m_type(eUserSampler)
+    , m_attribute("")
     , m_id(-1)
 {
 }

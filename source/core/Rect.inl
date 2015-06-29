@@ -83,7 +83,7 @@ bool TRect<T>::operator == (const TRect<T>& other) const
 }
 
 template<class T>
-bool TRect<T>::equals(const TRect<T>& other, T tolerance = core::k_tolerance32) const
+bool TRect<T>::equals(const TRect<T>& other, T tolerance) const
 {
     return (upperLeftCorner.Equals(other.upperLeftCorner, tolerance) &&
         lowerRightCorner.Equals(other.lowerRightCorner, tolerance));

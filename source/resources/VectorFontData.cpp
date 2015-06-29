@@ -3,9 +3,9 @@
 #include "scene/TextureManager.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::resources;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace resources;
+using namespace renderer;
 
 inline int next_p2(int n)
 {
@@ -21,11 +21,10 @@ inline int next_p2(int n)
 
 CVectorFontData::CVectorFontData(const std::string& font)
     : CFontData(font)
-    , m_loaded(false)
-
     , m_xOffTextures(0U)
     , m_yOffTextures(0U)
     , m_currentTextureIndex(0U)
+    , m_loaded(false)
 {
     for (u32 i = 0; i < k_fontMapSize; ++i)
     {

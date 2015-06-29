@@ -6,11 +6,11 @@ using namespace v3d;
 using namespace v3d::renderer;
 
 CMesh::CMesh(const RenderTechniquePtr& technique)
-: m_initialiazed(false)
-, m_material(nullptr)
+: m_material(nullptr)
 , m_geometry(nullptr)
-, m_name("")
 , m_id(-1)
+, m_name("")
+, m_initialiazed(false)
 #ifdef _DEBUG
 //, m_debug(nullptr)
 #endif

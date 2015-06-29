@@ -39,8 +39,8 @@ namespace renderer
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;
 
-        void                            setViewport(const core::Rect& size);
-        const core::Rect&               getViewport() const;
+        void                            setViewport(const core::Rect32& size);
+        const core::Rect32&             getViewport() const;
 
         bool                            getClearColorBuffer()   const;
         bool                            getClearDepthBuffer()   const;
@@ -95,7 +95,7 @@ namespace renderer
         void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt, EAttachmentsOutput output);
 
         core::Vector4D              m_color;
-        core::Rect                  m_viewport;
+        core::Rect32                m_viewport;
 
         bool                        m_MSAA;
 

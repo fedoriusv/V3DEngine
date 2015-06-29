@@ -6,11 +6,12 @@ using namespace v3d;
 using namespace v3d::event;
 
 CInputEventHandler::CInputEventHandler()
-: m_mousePosition(0, 0)
+: m_gamepadStates(0U)
+, m_mousePosition(0, 0)
 , m_mouseWheel(0.0f)
 , m_keyboardSignature(nullptr)
 , m_mouseSignature(nullptr)
-, m_gamepadStates(0U)
+, m_gamepadSignature(nullptr)
 {
     resetKeyPressed();
 }

@@ -6,6 +6,8 @@
 
 #include "GL/glew.h"
 
+#pragma clang diagnostic ignored "-Wswitch"
+
 using namespace v3d;
 using namespace renderer;
 using namespace scene;
@@ -60,7 +62,7 @@ void CRenderTargetGL::bind()
     if (chaned)
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
-        const Rect& rect = getViewport();
+        const Rect32& rect = getViewport();
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
         if (m_attachBuffers.size() > 0)
@@ -134,7 +136,7 @@ void CRenderTargetGL::unbind()
 
 bool CRenderTargetGL::create()
 {
-    const Rect& rect = getViewport();
+    const Rect32& rect = getViewport();
     u32 width = rect.getWidth();
     u32 height = rect.getHeight();
     u32 x = rect.getLeftX();
@@ -157,7 +159,7 @@ bool CRenderTargetGL::create()
     GLint originalRBO = 0;
     glGetIntegerv(GL_RENDERBUFFER_BINDING, &originalRBO);
 
-    CRenderTarget::setViewport(Rect(x, y, x + width, y + height));
+    CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
 
     CRenderTargetGL::genFramebuffer(m_frameBufferID);
     CRenderTargetGL::bindFramebuffer(m_frameBufferID);
@@ -271,7 +273,7 @@ void CRenderTargetGL::destroy()
     m_renderBufferID = 0;
 }
 
-void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
+void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rect)
 {
     std::function<GLenum(u32)> internalFormat = [](u32 format) -> GLenum
     {
@@ -372,7 +374,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect& rect)
     }
 }
 
-void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect& rect)
+void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& rect)
 {
     EImageFormat imageFormat = eRGBA;
     EImageType imageType = eUnsignedShort;
@@ -499,7 +501,7 @@ void CRenderTargetGL::copyToRenderbuffer(const RenderTargetPtr& dst)
         s32 height = m_viewport.getHeight();
         s32 invHeight = dst->getViewport().getHeight() - y;
 
-        CRenderTargetGL::blitFramebuffer(Rect(0, 0, width, height), Rect(x, invHeight - height, width + x, invHeight),
+        CRenderTargetGL::blitFramebuffer(Rect32(0, 0, width, height), Rect32(x, invHeight - height, width + x, invHeight),
             GL_COLOR_BUFFER_BIT, m_MSAA ? GL_NEAREST : GL_LINEAR);
 
         RENDERER->checkForErrors("CRenderTargetGL: Copy to renderbuffer error");
@@ -574,13 +576,13 @@ void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, u32 buffer)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, buffer);
 }
 
-void CRenderTargetGL::blitFramebuffer(const Rect& src, const Rect& dst, u32 mask, u32 filter)
+void CRenderTargetGL::blitFramebuffer(const Rect32& src, const Rect32& dst, u32 mask, u32 filter)
 {
     glBlitFramebuffer(src.getLeftX(), src.getBottomY(), src.getRightX(), src.getTopY(),
         dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
 }
 
-void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect& size, u32 samplers)
+void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect32& size, u32 samplers)
 {
     if (samplers > 0)
     {

@@ -1,4 +1,4 @@
-#ifndef _V3D_GEOMETRY_GL__H_
+#ifndef _V3D_GEOMETRY_GL_H_
 #define _V3D_GEOMETRY_GL_H_
 
 #include "renderer/Geometry.h"

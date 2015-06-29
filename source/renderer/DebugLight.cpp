@@ -9,9 +9,9 @@ using namespace v3d::renderer;
 RenderPassPtr CDebugLight::s_pass = nullptr;
 
 CDebugLight::CDebugLight(const core::Vector3D& position, const scene::SLightData& data)
-    : m_data(data)
+    : m_flag(EDebugLightFlag::eLightFlagNone)
     , m_position(position)
-    , m_flag(EDebugLightFlag::eLightFlagNone)
+    , m_data(data)
 {
     if (!s_pass)
     {

@@ -185,7 +185,7 @@ CPlaneShape* CSceneManager::addPlane(CNode* parent, const Vector3D& pos, f32 ext
     return node;
 }
 
-CRectangleShape* CSceneManager::addRectangle(CNode* parent, const Rect& rect)
+CRectangleShape* CSceneManager::addRectangle(CNode* parent, const Rect32& rect)
 {
     CRectangleShape* node = new CRectangleShape(rect);
     node->setParent(parent);

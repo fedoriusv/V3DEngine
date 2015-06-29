@@ -17,9 +17,9 @@ s64 CTimer::getTicks()
 #else //_PLATFORM_WIN_
     struct timeval tp;
     gettimeofday(&tp, 0);
-    double time = double(tp.tv_sec) * 1000000 + tp.tv_usec;
+    s64 time = s64(tp.tv_sec) * 1000000 + tp.tv_usec;
 
-    return static_cast<int64>(time);
+    return time;
 #endif //_PLATFORM_WIN_
 }
 

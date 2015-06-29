@@ -83,7 +83,7 @@ bool FileStream::open(const std::string& file, EOpenMode openMode)
     }
 
     m_fileName = file;
-    fopen_s(&m_fileHandler, m_fileName.c_str(), mode);
+    m_fileHandler = fopen(m_fileName.c_str(), mode);
  
     m_isOpen = m_fileHandler != nullptr;
 

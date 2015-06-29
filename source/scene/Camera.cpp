@@ -6,20 +6,18 @@ using namespace v3d;
 using namespace scene;
 
 CCamera::CCamera()
-    : m_target(core::Vector3D(0.0f))
-    , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
-    , m_orthogonal(false)
-    , m_matricesFlag(eCameraStateProjection)
-
+    : m_orthogonal(false)
     , m_zNear(0.5f)
     , m_zFar(5.0f)
-
     , m_active(false)
+    , m_up(core::Vector3D(0.0f, 1.0f, 0.0f))
+    , m_target(core::Vector3D(0.0f))
+    , m_matricesFlag(eCameraStateProjection)
 {
     m_nodeType = ENodeType::eCamera;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    const core::Rect& size = RENDERER->getViewportSize();
+    const core::Rect32& size = RENDERER->getViewportSize();
     m_aspect = (f32)size.getWidth() / (f32)size.getHeight();
 
     m_matricesFlag |= eCameraStateProjection;
@@ -125,7 +123,7 @@ void CCamera::recalculateProjectionMatrix() const
 {
     if (CCamera::isOrthogonal())
     {
-        const core::Rect& size = RENDERER->getViewportSize();
+        const core::Rect32& size = RENDERER->getViewportSize();
         m_transform[eTransformProjectionMatrix] = core::buildProjectionMatrixOrtho(0.0f, (f32)size.getWidth(), 0.0f, (f32)size.getHeight(), m_zNear, m_zFar);
         m_transform[eTransformProjectionMatrix].makeTransposed();
     }

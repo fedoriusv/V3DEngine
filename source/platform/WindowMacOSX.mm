@@ -1,8 +1,9 @@
 #include "WindowMacOSX.h"
+#import <Cocoa/Cocoa.h>
 
 
 using namespace v3d;
-using namespace v3d::platform;
+using namespace platform;
 
 CWindowMacOSX::CWindowMacOSX(const WindowParam& param)
     : CWindow(param)
@@ -34,9 +35,12 @@ void CWindowMacOSX::setResizeble( bool value )
 {
 }
 
-void CWindowMacOSX::setPosition(const core::Dimension2D& pos)
+void CWindowMacOSX::setPosition(const core::Point2D& pos)
 {
-    //m_param.position = pos;
+}
+
+void CWindowMacOSX::setCursorPosition(const core::Point2D& pos)
+{
 }
 
 void CWindowMacOSX::setCaption( const std::string& text )
@@ -61,6 +65,14 @@ bool CWindowMacOSX::isActive() const
 bool CWindowMacOSX::isFocused() const
 {
     return false;
+}
+
+const core::Point2D& CWindowMacOSX::getPosition()
+{
+}
+
+void CWindowMacOSX::getCursorPosition(core::Point2D& pos)
+{
 }
 
 bool CWindowMacOSX::begin()
@@ -115,7 +127,7 @@ void CWindowMacOSX::create()
     //            styleMask |= NSResizableWindowMask;
     //    }
     
-    m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, m_param.size.width, m_param.size.height)
+    m_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, m_param._size.width, m_param._size.height)
                                            styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     if (m_window == nil)
     {
@@ -156,4 +168,8 @@ void CWindowMacOSX::close()
     m_window = nil;
     
     [m_autoreleasePool release];
+}
+
+void CWindowMacOSX::addKeyCodes()
+{
 }

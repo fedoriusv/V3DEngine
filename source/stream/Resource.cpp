@@ -5,10 +5,10 @@ using namespace v3d;
 using namespace v3d::stream;
 
 CResource::CResource()
-    : m_isLoaded(false)
-    , m_stream(nullptr)
+    : m_stream(nullptr)
     , m_resourceName("")
     , m_resourceFolder("")
+    , m_isLoaded(false)
 {
 }
 

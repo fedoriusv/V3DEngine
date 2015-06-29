@@ -8,11 +8,11 @@ CTexture::CTexture()
     : CResource()
     , m_textureID(0)
     , m_target(eTextureUnknown)
+    , m_enable(false)
     , m_minFilter(eLinearMipmapLinear)
     , m_magFilter(eLinear)
-    , m_wrap(eClampToEdge)
     , m_anisotropicLevel(eAnisotropic16x)
-    , m_enable(false)
+    , m_wrap(eClampToEdge)
 {
 }
 

@@ -58,49 +58,49 @@ namespace platform
     public:
 
         CWindow(const WindowParam& param);
-        virtual                     ~CWindow();
+        virtual                         ~CWindow();
 
-        virtual void                minimize()                                  = 0;
-        virtual void                maximize()                                  = 0;
-        virtual void                restore()                                   = 0;
-        virtual void                setFullScreen(bool value = true)            = 0;
-        virtual void                setResizeble(bool value = true)             = 0;
-        virtual void                setCaption(const std::string& text)         = 0;
-        virtual void                setPosition(const core::Point2D& pos)       = 0;
-        virtual void                setCursorPosition(const core::Point2D& pos) = 0;
+        virtual void                    minimize()                                  = 0;
+        virtual void                    maximize()                                  = 0;
+        virtual void                    restore()                                   = 0;
+        virtual void                    setFullScreen(bool value = true)            = 0;
+        virtual void                    setResizeble(bool value = true)             = 0;
+        virtual void                    setCaption(const std::string& text)         = 0;
+        virtual void                    setPosition(const core::Point2D& pos)       = 0;
+        virtual void                    setCursorPosition(const core::Point2D& pos) = 0;
 
-        virtual bool                isMaximized()       const                   = 0;
-        virtual bool                isMinimized()       const                   = 0;
-        virtual bool                isActive()          const                   = 0;
-        virtual bool                isFocused()         const                   = 0;
-        virtual const core::Point2D& getPosition()                              = 0;
-        virtual void                getCursorPosition(core::Point2D& pos)       = 0;
+        virtual bool                    isMaximized()       const                   = 0;
+        virtual bool                    isMinimized()       const                   = 0;
+        virtual bool                    isActive()          const                   = 0;
+        virtual bool                    isFocused()         const                   = 0;
+        virtual const core::Point2D&    getPosition()                               = 0;
+        virtual void                    getCursorPosition(core::Point2D& pos)       = 0;
 
 
-        bool                        isFullscreen()      const;
-        bool                        isResizeble()       const;
-        const core::Dimension2D&    getSize()           const;
-        const EPlatformType         getPlatformType()   const;
-        const EDriverType           getDriverType()     const;
+        bool                            isFullscreen()      const;
+        bool                            isResizeble()       const;
+        const core::Dimension2D&        getSize()           const;
+        const EPlatformType             getPlatformType()   const;
+        const EDriverType               getDriverType()     const;
 
-        virtual bool                begin()                                     = 0;
-        virtual bool                end()                                       = 0;
+        virtual bool                    begin()                                     = 0;
+        virtual bool                    end()                                       = 0;
 
-        const event::SKeyCodes&     getKeyCodes();
+        const event::SKeyCodes&         getKeyCodes();
 
     protected:
 
-        friend                      CPlatform;
+        friend                          CPlatform;
 
-        virtual void                create()                                    = 0;
-        virtual void                close()                                     = 0;
+        virtual void                    create()                                    = 0;
+        virtual void                    close()                                     = 0;
 
-        virtual void                addKeyCodes()                               = 0;
+        virtual void                    addKeyCodes()                               = 0;
 
-        WindowParam                 m_param;
-        EPlatformType               m_platformType;
+        WindowParam                     m_param;
+        EPlatformType                   m_platformType;
 
-        event::SKeyCodes            m_keys;
+        event::SKeyCodes                m_keys;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -57,7 +57,7 @@ namespace renderer
         bool                        isDebugMode() const;
 #endif
 
-        const core::Rect&           getViewportSize() const;
+        const core::Rect32&         getViewportSize() const;
         u32                         getFrameIndex()   const;
 
         const RenderTargetPtr&      getDefaultRenderTarget() const;
