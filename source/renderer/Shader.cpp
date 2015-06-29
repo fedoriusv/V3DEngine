@@ -115,13 +115,13 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
     }
     else
     {
-        LOG_INFO("CRenderPass: Create shader [%s] from data", shaderName.c_str());
         const std::string shaderType = root->Attribute("type");
         m_type = CShader::getShaderTypeByName(shaderType);
     }
 
     if (!root->Attribute("file"))
     {
+		LOG_INFO("CRenderPass: Create shader [%s] from data", shaderName.c_str());
         const std::string shaderBody = root->GetText();
         if (shaderBody.empty())
         {
