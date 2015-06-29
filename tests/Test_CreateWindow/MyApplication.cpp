@@ -64,7 +64,7 @@ void MyApplication::init()
 
 void MyApplication::run()
 {
-    //TODO: main loop
+    getPlatform()->getWindow()->setCaption("Test. FPS: " + std::to_string(v3d::CEngine::getInstance()->getFPS()));
 }
 
 void MyApplication::onMouse(const event::MouseInputEventPtr& event)
@@ -83,7 +83,6 @@ void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
 
     if (event->_event == event::EKeyboardInputEvent::eKeyboardPressDown)
     {
-
         if (event->_key == EKeyCode::eKeyEscape)
         {
             getPlatform()->closeWindow();
@@ -157,7 +156,5 @@ void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
         {
             node->setRotation(Vector3D(node->getRotation().x, node->getRotation().y - angle, node->getRotation().z));
         }
-
-        getPlatform()->getWindow()->setCaption("x= " + std::to_string(node->getRotation().x) + "; y = " + std::to_string(node->getRotation().y) + "; z = " + std::to_string(node->getRotation().z));
     }
 }

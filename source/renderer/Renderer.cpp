@@ -305,13 +305,13 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         return true;
     });
 
-    const ShaderDataPtr& data = pass->getDefaultShaderData();
-    const ShaderProgramPtr& program = pass->getShaderProgram();
-
     if (lights.empty())
     {
         return;
     }
+
+    const ShaderDataPtr& data = pass->getDefaultShaderData();
+    const ShaderProgramPtr& program = pass->getShaderProgram();
 
     for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
     {
