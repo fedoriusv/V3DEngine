@@ -1,6 +1,8 @@
 #include "Timer.h"
 #ifdef _PLATFORM_WIN_
 #   include <windows.h>
+#else //_PLATFORM_WIN_
+#   include <sys/time.h>  
 #endif //_PLATFORM_WIN_
 
 using namespace utils;
@@ -12,6 +14,12 @@ s64 CTimer::getTicks()
     QueryPerformanceCounter(&ticks);
 
     return ticks.QuadPart;
+#else //_PLATFORM_WIN_
+    struct timeval tp;
+    gettimeofday(&tp, 0);
+    double time = double(tp.tv_sec) * 1000000 + tp.tv_usec;
+
+    return static_cast<int64>(time);
 #endif //_PLATFORM_WIN_
 }
 
@@ -22,12 +30,14 @@ s64 CTimer::getTicksPerSecond()
     QueryPerformanceFrequency(&tickPerSeconds);
 
     return tickPerSeconds.QuadPart;
+#else //_PLATFORM_WIN_
+    return 1000000;
 #endif //_PLATFORM_WIN_
 }
 
-s64 CTimer::getCurrentTime()
+s64 CTimer::getCurrentTime() //in Milliseconds
 {
-    return (CTimer::getTicks() / CTimer::getTicksPerSecond());
+    return s64(((f64)CTimer::getTicks() / (f64)CTimer::getTicksPerSecond()) * 1000.0);
 }
 
 CTimer::CTimer()

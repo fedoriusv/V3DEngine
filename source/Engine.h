@@ -15,10 +15,13 @@ namespace v3d
 
     class CEngine : public Singleton<CEngine>
     {
-    public:
+    private:
 
+        friend Singleton<CEngine>;
         CEngine();
         virtual                             ~CEngine();
+
+    public:
 
         const platform::PlatformPtr&        getPlatform()          const;
         const event::InputEventHandlerPtr&  getInputEventHandler() const;
@@ -26,6 +29,8 @@ namespace v3d
         const platform::WindowPtr           getWindow()            const;
         const renderer::RendererPtr         getRenderer()          const;
         const renderer::DriverContextPtr    getContext()           const;
+
+        s32                                 getFPS()               const;
 
         bool                                init();
         bool                                begin();
@@ -40,6 +45,10 @@ namespace v3d
         s32                                 m_frameTime;
         u64                                 m_lastTime;
         const f32                           m_timeFactor = 1.f;
+
+        s32                                 m_framesCounted;
+        u32                                 m_fpsStartTime;
+        s32                                 m_fps;
 
     };
 

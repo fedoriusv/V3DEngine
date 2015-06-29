@@ -23,7 +23,11 @@ CEngine::CEngine()
     , m_scene(nullptr)
 
     , m_frameTime(0)
-    , m_lastTime(0)
+    , m_lastTime(0U)
+
+    , m_framesCounted(0)
+    , m_fpsStartTime(0U)
+    , m_fps(0)
 {
     m_platform = std::make_shared<CPlatform>();
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
@@ -77,6 +81,11 @@ const SceneManagerPtr& CEngine::getSceneManager() const
     return m_scene;
 }
 
+s32 CEngine::getFPS() const
+{
+    return m_fps;
+}
+
 bool CEngine::begin()
 {
     if (!m_platform)
@@ -84,13 +93,23 @@ bool CEngine::begin()
         return false;
     }
 
-    u64 ticks = CTimer::getCurrentTime();
+    const u64 ticks = CTimer::getCurrentTime();
     m_frameTime = (s32)((ticks - m_lastTime) * m_timeFactor);
     m_lastTime = ticks;
 
     if (m_frameTime <= 0)
     {
         m_frameTime = 1;
+    }
+
+    //FPS
+    ++m_framesCounted;
+    const u32 fpsDeltaTime = ticks - m_fpsStartTime;
+    if (fpsDeltaTime > 1000) //1 sec
+    {
+        m_fps = m_framesCounted;
+        m_framesCounted = 0;
+        m_fpsStartTime = ticks;
     }
 
     m_inputEventHandler->update();
