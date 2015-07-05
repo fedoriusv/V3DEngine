@@ -14,6 +14,6 @@ if [  ! -d ${XCODE_DIR} ] ; then
 fi
 cd ./${XCODE_DIR}
 
-cmake -G Xcode -DCOMPILER_CLANG=ON  ../.. $@   || exit $?
+cmake -G Xcode -DCOMPILER_CLANG=ON -DCMAKE_OSX_ARCHITECTURES=i386  ../.. $@   || exit $?
 cd ../..
 
