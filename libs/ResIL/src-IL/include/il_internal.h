@@ -77,6 +77,9 @@
 	#undef IL_USE_DXTC_SQUISH
 #endif//IL_NO_EXTLIBS
 
+#define IL_NO_JP2
+#define IL_NO_MNG
+
 // Windows-specific
 #ifdef _WIN32
 	#ifdef _MSC_VER

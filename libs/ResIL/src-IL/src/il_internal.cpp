@@ -49,7 +49,7 @@
 #ifdef _UNICODE
 	int iStrCmp(ILconst_string src1, ILconst_string src2)
 	{
-		return _wcsicmp(src1, src2);
+		return _wcsicmp(src1, src2, wcslen(src1));
 	}
 #else
 	int iStrCmp(ILconst_string src1, ILconst_string src2)
@@ -161,11 +161,17 @@ ILstring iGetExtension(ILconst_string FileName)
 // Checks if the file exists
 ILboolean iFileExists(ILconst_string FileName)
 {
-#if (!defined(_UNICODE) || !defined(_WIN32))
-	FILE *CheckFile = fopen(FileName, "rb");
-#else // Windows uses _wfopen instead.
-	FILE *CheckFile = _wfopen(FileName, L"rb");
-#endif//_UNICODE
+#ifndef _UNICODE
+    FILE *CheckFile = fopen(FileName, "rb");
+#else
+    // Windows has a different function, _wfopen, to open UTF16 files,
+    //  whereas Linux just uses fopen.
+#ifdef _WIN32
+    FILE *CheckFile = _wfopen(FileName, L"rb");
+#else
+    FILE *CheckFile = fopen((char*)FileName, "rb");
+#endif
+#endif//UNICODE
 
 	if (CheckFile) {
 		fclose(CheckFile);

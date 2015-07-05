@@ -24,7 +24,7 @@
 
 // Find substr in bigstr, checking no more than max characters
 // Zero-termination of bigstr is ignored
-const char* strnstr(const char* bigstr, const char* substr, size_t max)
+const char* strnstr_il(const char* bigstr, const char* substr, size_t max)
 {
 	size_t i = 0;
 
@@ -155,8 +155,8 @@ ILboolean iLoadHdrInternal(ILimage* image)
 	// Header consists of text which must be parsed
 	char header[1024]; // should be sufficient...
 	size_t read = (size_t) image->io.read(&image->io, header, 1, sizeof(header));
-	const char* wstr = strnstr(header, "+X ", read) + 3;
-	const char* hstr = strnstr(header, "-Y ", read) + 3;
+	const char* wstr = strnstr_il(header, "+X ", read) + 3;
+	const char* hstr = strnstr_il(header, "-Y ", read) + 3;
 	ILuint width = 0;
 	ILuint height = 0;
 	if (wstr != NULL) 

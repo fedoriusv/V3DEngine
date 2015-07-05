@@ -37,11 +37,17 @@ ILboolean ILAPIENTRY il2LoadPal(ILimage* image, ILconst_string FileName)
 	if (iCheckExtension(FileName, IL_TEXT("plt"))) {
 		return ilLoadPltPal(image, FileName);
 	}
-
+    
 #ifndef _UNICODE
 	f = fopen(FileName, "rt");
 #else
+    // Windows has a different function, _wfopen, to open UTF16 files,
+    //  whereas Linux just uses fopen.
+#ifdef _WIN32
 	f = _wfopen(FileName, L"rt");
+#else
+    f = fopen((char*)FileName, "rt");
+#endif
 #endif//_UNICODE
 	if (f == NULL) {
 		il2SetError(IL_COULD_NOT_OPEN_FILE);
@@ -84,7 +90,13 @@ ILboolean ilLoadJascPal(ILimage* image, ILconst_string FileName)
 #ifndef _UNICODE
 	PalFile = fopen(FileName, "rt");
 #else
+    // Windows has a different function, _wfopen, to open UTF16 files,
+    //  whereas Linux just uses fopen.
+#ifdef _WIN32
 	PalFile = _wfopen(FileName, L"rt");
+#else
+    PalFile = fopen((char*)FileName, "rt");
+#endif
 #endif//_UNICODE
 	if (PalFile == NULL) {
 		il2SetError(IL_COULD_NOT_OPEN_FILE);
@@ -251,7 +263,13 @@ ILboolean ilSaveJascPal(ILimage* image, ILconst_string FileName)
 #ifndef _UNICODE
 	PalFile = fopen(FileName, "wt");
 #else
+    // Windows has a different function, _wfopen, to open UTF16 files,
+    //  whereas Linux just uses fopen.
+#ifdef _WIN32
 	PalFile = _wfopen(FileName, L"wt");
+#else
+    PalFile = fopen((char*)FileName, "wt");
+#endif
 #endif//_UNICODE
 	if (!PalFile) {
 		il2SetError(IL_COULD_NOT_OPEN_FILE);

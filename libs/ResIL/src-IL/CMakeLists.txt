@@ -1,26 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-OPTION(BUILD_SHARED_LIBS "Build with shared (.DLL .SO) libraries." OFF)
-
-# need to check for vc6 or vc2003 output dir
-IF(BUILD_SHARED_LIBS)
-	SET(DEVIL_LIB_DEST_DIR	${CMAKE_CURRENT_SOURCE_DIR}/lib/	)
-ELSE(BUILD_SHARED_LIBS)
-	SET(DEVIL_LIB_DEST_DIR	${CMAKE_CURRENT_SOURCE_DIR}/lib/	)
-ENDIF(BUILD_SHARED_LIBS)
-
-find_package(SDL)
-if (SDL_FOUND)
-	add_definitions(-DILUT_USE_SDL)
-endif()
-find_package(LCMS)
-find_package(MNG)
-find_package(JPEG)
-find_package(PNG)
-find_package(TIFF)
-find_package(ZLIB)
-find_package(OPENEXR)
-
 PROJECT(${RESIL_PROJECT})
 
 FILE(GLOB DevIL_SRCS src/*.cpp)
@@ -34,15 +13,14 @@ INCLUDE_DIRECTORIES(
 	${OPENEXR_INCLUDE_DIR}
 	${LCMS_SOURCE_DIR}
 	${LIBJPEG_SOURCE_DIR}
-	${LIBMNG_SOURCE_DIR}
-	${LIBPNG_SOURCE_DIR}
+#	${LIBMNG_SOURCE_DIR}
+	${PNG_INCLUDE_DIR}
 	${LIBTIFF_SOURCE_DIR}
 	${ZLIB_SOURCE_DIR}
 )
 
 #SET(DevIL_INC ${DEVIL_INCS} ${DEVIL_SRCS})
-
-SET(LIBRARY_OUTPUT_PATH		${DEVIL_LIB_DEST_DIR}	)
+SET(LIBRARY_OUTPUT_PATH	${DEVIL_LIB_DEST_DIR})
 
 #
 # for windows add the .def and .rc files to the source list
@@ -68,14 +46,19 @@ SOURCE_GROUP("Resource Files" FILES ${DevIL_RSRC} )
 SOURCE_GROUP("Text Files" FILES ${DevIL_TXT} )
 
 # Remove SHARED to create a static library
-ADD_LIBRARY(DevIL SHARED ${DevIL_SRCS} ${DevIL_INC} ${DevIL_RSRC} ${DevIL_TXT})
+ADD_LIBRARY(${RESIL_PROJECT} STATIC
+	${DevIL_SRCS}
+	${DevIL_INC}
+	${DevIL_RSRC}
+	${DevIL_TXT}
+)
 
 ## add link sub library info
 
 TARGET_LINK_LIBRARIES(${RESIL_PROJECT}
 	${LCMS_LIBRARY}
 	${JPEG_LIBRARY}
-	${MNG_LIBRARY}
+#	${MNG_LIBRARY}
 	${PNG_LIBRARY}
 	${TIFF_LIBRARY}
 	${ZLIB_LIBRARY}

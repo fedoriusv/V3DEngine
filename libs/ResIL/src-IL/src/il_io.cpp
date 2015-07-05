@@ -939,7 +939,7 @@ ILboolean ILAPIENTRY il2Load(ILimage* imageExt, ILenum Type, ILconst_string File
 				&&  FileName[fnLen-1] == 't') 
 				{
 					#ifdef  UNICODE
-					TCHAR* palFN = (TCHAR*) ialloc(2*fnLen+2);
+					wchar_t* palFN = (wchar_t*) ialloc(2*fnLen+2);
 					wcscpy(palFN, FileName);
 					wcscpy(&palFN[fnLen-3], L"pal");
 					#else

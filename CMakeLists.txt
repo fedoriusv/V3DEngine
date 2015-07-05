@@ -5,6 +5,7 @@ set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
 set(FREETYPE2_PROJECT freetype2)
+set(RESIL_PROJECT ResIL)
 
 set(TEST_PROJECT_0 Test_CreateWindow)
 set(TEST_PROJECT_1 Test_Font)
@@ -48,7 +49,11 @@ if(WIN32)
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
 	endif(CMAKE_CL_64)
 elseif(APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -x objective-c++" )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -x objective-c++" )
+    set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
+	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++0x")
+	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+    
     #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
 elseif(UNIX AND NOT APPLE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
@@ -70,8 +75,6 @@ if(WIN32)
 	
 	set(DEVIL_LIB ../../libs/DevIL/lib/${ARCH_DIR}/unicode/DevIL)
 	set(DEVIL_BIN ${LIB_DIR}/DevIL/lib/${ARCH_DIR}/unicode)
-else(WIN32)
-	set(DEVIL_LIB ${LIB_DIR}/DevIL)
 endif(WIN32)
 
 ################################
@@ -192,7 +195,8 @@ include_directories(
 	libs/glew/include
 	libs/tinyxml2
 	libs/freetype2/include
-	libs/DevIL/include
+	libs/ResIL/include
+	libs/ResIL/src-IL/include
 	)
 
 add_library(
@@ -211,27 +215,35 @@ add_library(
 	${MAIN_HEADERS}        ${MAIN_SOURCES}
 	) 
 
-target_link_libraries(${ENGINE_NAME} 
+if(NOT WIN32)
+	target_link_libraries(${ENGINE_NAME} 
+		${GLEW_PLOJECT}
+		${TINYXML_PLOJECT}
+		${FREETYPE2_PROJECT}
+    	${RESIL_PROJECT}
+		)
+else()
+	target_link_libraries(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-    ${DEVIL_LIB}
-	)
+    )
+endif(NOT WIN32)
 
 ################################
 #Additional Libs
 add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
+if(NOT WIN32)
+	add_subdirectory(libs/ResIL)
+endif(NOT WIN32)
 
 add_subdirectory(tests/${TEST_PROJECT_0})
 add_subdirectory(tests/${TEST_PROJECT_1})
 add_subdirectory(tests/${TEST_PROJECT_2})
 add_subdirectory(tests/${TEST_PROJECT_3})
 add_subdirectory(tests/${TEST_PROJECT_4})
-if(NOT WIN32)
-	add_subdirectory(libs/DevIL)
-endif(NOT WIN32)
 
 ################################
 #Dependencies
@@ -240,9 +252,9 @@ if(NOT WIN32)
 		${GLEW_PLOJECT}
 		${TINYXML_PLOJECT}
 		${FREETYPE2_PROJECT}
-		${DEVIL_LIB}
+		${RESIL_LIB}
 		)
-else(NOT WIN32)
+else()
 	add_dependencies(${ENGINE_NAME} 
 		${GLEW_PLOJECT}
 		${TINYXML_PLOJECT}
