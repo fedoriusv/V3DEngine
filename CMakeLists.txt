@@ -73,8 +73,8 @@ if(WIN32)
 		set(ARCH_DI11R "win32")
 	endif(CMAKE_CL_64)
 	
-	set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-libcmt/ResIL)
-	set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-libcmt)
+	set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-msvcrt/ResIL)
+	set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-msvcrt)
 endif(WIN32)
 
 ################################
