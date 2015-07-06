@@ -20,6 +20,7 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(ILMBASE REQUIRED)
 find_package(OPENEXR REQUIRED)
 
 SET(DEVIL_INCS
