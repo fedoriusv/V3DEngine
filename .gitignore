@@ -23,6 +23,7 @@
 ipch/
 obj/
 project/win32/*
+project/xcode/*
 [Dd]ebug*/
 [Rr]elease*/
 Ankh.NoLoad
