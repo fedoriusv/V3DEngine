@@ -24,7 +24,7 @@ else()
 endif()
 
 if(WIN32)
-	message("-- Platform Win32")
+	message("-- Platform Win32_64")
 	add_definitions(-D_WIN32 -D_CONSOLE -DUNICODE -D_UNICODE)
 elseif(UNIX AND NOT APPLE)
 	message("-- Platform Linux")
@@ -73,8 +73,8 @@ if(WIN32)
 		set(ARCH_DI11R "win32")
 	endif(CMAKE_CL_64)
 	
-	set(DEVIL_LIB ../../libs/DevIL/lib/${ARCH_DIR}/unicode/DevIL)
-	set(DEVIL_BIN ${LIB_DIR}/DevIL/lib/${ARCH_DIR}/unicode)
+	set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-libcmt/ResIL)
+	set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-libcmt)
 endif(WIN32)
 
 ################################
@@ -215,20 +215,12 @@ add_library(
 	${MAIN_HEADERS}        ${MAIN_SOURCES}
 	) 
 
-if(NOT WIN32)
-	target_link_libraries(${ENGINE_NAME} 
-		${GLEW_PLOJECT}
-		${TINYXML_PLOJECT}
-		${FREETYPE2_PROJECT}
-    	${RESIL_PROJECT}
-		)
-else()
-	target_link_libraries(${ENGINE_NAME} 
+target_link_libraries(${ENGINE_NAME} 
 	${GLEW_PLOJECT}
 	${TINYXML_PLOJECT}
 	${FREETYPE2_PROJECT}
-    )
-endif(NOT WIN32)
+   	${RESIL_PROJECT}
+	)
 
 ################################
 #Additional Libs
