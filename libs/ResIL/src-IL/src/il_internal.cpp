@@ -49,7 +49,11 @@
 #ifdef _UNICODE
 	int iStrCmp(ILconst_string src1, ILconst_string src2)
 	{
+#ifdef _WIN32
+        return _wcsicmp(src1, src2);
+#else //_WIN32
 		return _wcsicmp(src1, src2, wcslen(src1));
+#endif //_WIN32
 	}
 #else
 	int iStrCmp(ILconst_string src1, ILconst_string src2)

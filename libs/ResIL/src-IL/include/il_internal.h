@@ -79,6 +79,7 @@
 
 #define IL_NO_JP2
 #define IL_NO_MNG
+#define IL_NO_WDP
 
 // Windows-specific
 #ifdef _WIN32
