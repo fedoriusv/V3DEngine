@@ -20,6 +20,7 @@ namespace renderer
         virtual void                driverInfo()                                     = 0;
         virtual void                checkForErrors(const std::string& location = "") = 0;
         virtual bool                createContext()                                  = 0;
+        virtual void                destroyContext()                                 = 0;
 
         virtual bool                setVSync(bool use)                               = 0;
 

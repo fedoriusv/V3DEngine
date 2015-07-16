@@ -12,14 +12,20 @@
 #   include "GL/glxew.h"
 #   include <GL/glx.h>
 #   include "platform/WindowLinux.h"
+#elif defined(_PLATFORM_MACOSX_)
+#   import <Cocoa/Cocoa.h>
+#   include "platform/WindowMacOSX.h"
 #endif
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CDriverContextGL::CDriverContextGL(const platform::WindowPtr& window)
     : CDriverContext(window)
 {
+#if defined(_PLATFORM_MACOSX_)
+    m_context._thread = 0;
+#endif
 }
 
 CDriverContextGL::~CDriverContextGL()
@@ -41,12 +47,21 @@ bool CDriverContextGL::createContext()
     return false;
 }
 
+void CDriverContextGL::destroyContext()
+{
 #if defined(_PLATFORM_WIN_)
+    return createWin32Context();
+#elif defined(_PLATFORM_LINUX_)
+    return createLinuxContext();
+#elif defined(_PLATFORM_MACOSX_)
+    destroyMacOSXContext();
+#endif
+}
 
+#if defined(_PLATFORM_WIN_)
 bool CDriverContextGL::createWin32Context()
 {
-
-    LOG_INFO("Create Win32 GL Context");
+    LOG_INFO("DriverContextGL::createWin32Context: Create Win32 GL Context");
 
     // Create a window to test antialiasing support
     HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -94,7 +109,7 @@ bool CDriverContextGL::createWin32Context()
 
     if (!tempWindow)
     {
-        LOG_ERROR("Cannot create a temp window");
+        LOG_ERROR("DriverContextGL::createWin32Context: Cannot create a temp window");
         UnregisterClass(className, hInstance);
 
         return false;
@@ -131,7 +146,7 @@ bool CDriverContextGL::createWin32Context()
     HGLRC hRc = wglCreateContext(tempDC);
     if (!hRc)
     {
-        LOG_ERROR("Cannot create a temporary GL rendering context");
+        LOG_ERROR("DriverContextGL::createWin32Context: Cannot create a temporary GL rendering context");
         ReleaseDC(tempWindow, tempDC);
         DestroyWindow(tempWindow);
         UnregisterClass(className, hInstance);
@@ -141,7 +156,7 @@ bool CDriverContextGL::createWin32Context()
 
     if (!wglMakeCurrent(tempDC, hRc))
     {
-        LOG_ERROR("Cannot activate a temporary GL rendering context");
+        LOG_ERROR("DriverContextGL::createWin32Context: Cannot activate a temporary GL rendering context");
         wglDeleteContext(hRc);
         ReleaseDC(tempWindow, tempDC);
         DestroyWindow(tempWindow);
@@ -151,12 +166,12 @@ bool CDriverContextGL::createWin32Context()
     }
 
     const GLubyte* version = glewGetString(GLEW_VERSION);
-    LOG_INFO("GLEW Init. Version %s", version);
+    LOG_INFO("DriverContextGL::createWin32Context: GLEW Init. Version %s", version);
     GLenum error = glewInit();
     if (error != GLEW_OK)
     {
         const GLubyte* errorStr = glewGetErrorString(error);
-        LOG_ERROR("Couldn't initialize GLEW: %s", errorStr);
+        LOG_ERROR("DriverContextGL::createWin32Context: Couldn't initialize GLEW: %s", errorStr);
 
         return false;
     }
@@ -165,7 +180,7 @@ bool CDriverContextGL::createWin32Context()
         !wglewIsSupported("WGL_ARB_pixel_format") ||
         !wglewIsSupported("WGL_ARB_multisample"))
     {
-        LOG_ERROR("Error Supported GLEW Lib");
+        LOG_ERROR("DriverContextGL::createWin32Context: Error Supported GLEW Lib");
         return false;
     }
 
@@ -198,14 +213,14 @@ bool CDriverContextGL::createWin32Context()
     {
         if (!wglChoosePixelFormatARB(tempDC, iAttributes, fAttributes, 1, &newPixelFormat, &numFormats))
         {
-            LOG_ERROR("Can't Find A Suitable ExPixelFormat");
+            LOG_ERROR("DriverContextGL::createWin32Context: Can't Find A Suitable ExPixelFormat");
             return false;
         }
 
         --iAttributes[21]; //WGL_SAMPLES_ARB, antiAlias
         if (iAttributes[21] < 0)
         {
-            LOG_ERROR("Can't Choose ExPixelFormat");
+            LOG_ERROR("DriverContextGL::createWin32Context: Can't Choose ExPixelFormat");
             iAttributes[21] = 0;
             break;
         }
@@ -223,13 +238,13 @@ bool CDriverContextGL::createWin32Context()
     HDC hDC = GetDC(window);
     if (!hDC)
     {
-        LOG_ERROR("Cannot create a GL device context");
+        LOG_ERROR("DriverContextGL::createWin32Context: Cannot create a GL device context");
         return false;
     }
 
     if (newPixelFormat == 0 || !SetPixelFormat(hDC, newPixelFormat, &pfd))
     {
-        LOG_WARNING("Cannot create ExPixelFormat. Set default pixel format");
+        LOG_WARNING("DriverContextGL::createWin32Context: Cannot create ExPixelFormat. Set default pixel format");
         newPixelFormat = ChoosePixelFormat(hDC, &pfd);
         hRc = wglCreateContext(hDC);
     }
@@ -250,7 +265,7 @@ bool CDriverContextGL::createWin32Context()
 
     if (!hRc || !wglMakeCurrent(hDC, hRc))
     {
-        LOG_ERROR("Can't Create GL Rendering Context");
+        LOG_ERROR("DriverContextGL::createWin32Context: Can't Create GL Rendering Context");
         return false;
     }
 
@@ -269,7 +284,7 @@ bool CDriverContextGL::createWin32Context()
     int pf = GetPixelFormat(hDC);
     DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
-    LOG_INFO("Win32 Context GL successful created");
+    LOG_INFO("DriverContextGL::createWin32Context: Win32 Context GL successful created");
 
     return true;
 }
@@ -280,7 +295,7 @@ typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXC
 
 bool CDriverContextGL::createLinuxContext()
 {
-    LOG_INFO("Create Linux GL Context");
+    LOG_INFO("CDriverContextGL::createLinuxContext: Create Linux GL Context");
 
     // Get the default screen's GLX extension list
     Display* display = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getDisplay();
@@ -310,7 +325,7 @@ bool CDriverContextGL::createLinuxContext()
     context = glXCreateContextAttribsARB(display, fbConfigs, 0, True, attribs);
     if (!context)
     {
-        LOG_ERROR("Error to create exContext OpenGL");
+        LOG_ERROR("CDriverContextGL::createLinuxContext: Error to create exContext OpenGL");
         return false;
     }
     
@@ -319,7 +334,7 @@ bool CDriverContextGL::createLinuxContext()
     Window window = std::static_pointer_cast<const platform::CWindowLinux>(m_window)->getWidow();
     if (!glXMakeCurrent(display, window, context))
     {
-        LOG_ERROR("Can not set current context");
+        LOG_ERROR("CDriverContextGL::createLinuxContext: Can not set current context");
         return false;
     }
 
@@ -329,7 +344,7 @@ bool CDriverContextGL::createLinuxContext()
     if (error !=  GLEW_OK)
     {
         const GLubyte* errorStr = glewGetErrorString(error);
-        LOG_ERROR("Couldn't initialize GLEW: %s", errorStr);
+        LOG_ERROR("CDriverContextGL::createLinuxContext: Couldn't initialize GLEW: %s", errorStr);
 
         glXMakeCurrent(display, 0, 0);
         glXDestroyContext(display, context);
@@ -339,18 +354,141 @@ bool CDriverContextGL::createLinuxContext()
 
     CDriverContextGL::checkForErrors("Create Context");
 
-    LOG_INFO("Linux Context GL successful created");
+    LOG_INFO("CDriverContextGL::createLinuxContext: Linux Context GL successful created");
 
     return true;
 }
 
 #elif defined(_PLATFORM_MACOSX_)
-
 bool CDriverContextGL::createMacOSXContext()
 {
-    return false;
+    LOG_INFO("DriverContextGL::createMacOSXContext: Create MacOSX GL Context");
+    
+    u32 attributeCount = 0;
+    
+    void* currentContext = pthread_getspecific(m_context._thread);
+    
+    if (pthread_key_create(&m_context._thread, NULL) != 0)
+    {
+        LOG_ERROR("DriverContextGL::createMacOSXContext: Failed to create context");
+        return false;
+    }
+    
+#define ADD_ATTR(x) { attributes[attributeCount++] = x; }
+#define ADD_ATTR2(x, y) { ADD_ATTR(x); ADD_ATTR(y); }
+    
+    // Arbitrary array size here
+    NSOpenGLPixelFormatAttribute attributes[40];
+    
+    ADD_ATTR(NSOpenGLPFAAccelerated);
+    ADD_ATTR(NSOpenGLPFAClosestPolicy);
+    
+    if (OPENGL_VERSION_MAJOR >= 4)
+    {
+        ADD_ATTR2(NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion4_1Core);
+    }
+    else if (OPENGL_VERSION_MAJOR >= 3)
+    {
+        ADD_ATTR2(NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core);
+    }
+    else if (OPENGL_VERSION_MAJOR <= 2)
+    {
+        ADD_ATTR2(NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy);
+        ADD_ATTR2(NSOpenGLPFAAuxBuffers, 0);
+        ADD_ATTR2(NSOpenGLPFAAccumSize, 0);
+    }
+    else
+    {
+        LOG_ERROR("DriverContextGL::createMacOSXContext: OpenGL version %d.%d not supported", OPENGL_VERSION_MAJOR, OPENGL_VERSION_MINOR);
+        return false;
+    }
+
+    u32 samplers = 4;
+    
+    ADD_ATTR2(NSOpenGLPFAColorSize, 24);
+    ADD_ATTR2(NSOpenGLPFAAlphaSize, 8);
+    ADD_ATTR2(NSOpenGLPFADepthSize, 24);
+    ADD_ATTR2(NSOpenGLPFAStencilSize, 8);
+    //ADD_ATTR(NSOpenGLPFAStereo);
+    ADD_ATTR(NSOpenGLPFADoubleBuffer);
+    ADD_ATTR2(NSOpenGLPFASampleBuffers, 1);
+    ADD_ATTR2(NSOpenGLPFASamples, samplers);
+    
+    ADD_ATTR(0);
+    
+#undef ADD_ATTR
+#undef ADD_ATTR2
+    
+    m_context._pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
+    if (m_context._pixelFormat == nil)
+    {
+        LOG_ERROR("DriverContextGL::createMacOSXContext: Failed to create OpenGL pixel format");
+        
+        return false;
+    }
+    
+    NSOpenGLContext* share = NULL;
+    m_context._context = [[NSOpenGLContext alloc] initWithFormat:m_context._pixelFormat
+                               shareContext:share];
+    if (m_context._context == nil)
+    {
+        LOG_ERROR("DriverContextGL::createMacOSXContext: Failed to create OpenGL context");
+        
+        return false;
+    }
+    
+    const platform::WindowNS& window = std::static_pointer_cast<const platform::CWindowMacOSX>(m_window)->getHandleWindow();
+    [m_context._context setView:window._view];
+    
+    if (window._window)
+    {
+        [m_context._context makeCurrentContext];
+    }
+    else
+    {
+        [NSOpenGLContext clearCurrentContext];
+    }
+    pthread_setspecific(m_context._thread, window._window);
+    [m_context._context flushBuffer];
+    
+    const GLubyte* version = glewGetString(GLEW_VERSION);
+    LOG_INFO("DriverContextGL::createMacOSXContext: GLEW Init. Version %s", version);
+    GLenum error = glewInit();
+    if (error != GLEW_OK)
+    {
+        const GLubyte* errorStr = glewGetErrorString(error);
+        LOG_ERROR("DriverContextGL::createMacOSXContext: Couldn't initialize GLEW: %s", errorStr);
+        
+        return false;
+    }
+    CDriverContextGL::checkForErrors("Create Context");
+    
+    pthread_setspecific(m_context._thread, currentContext);
+    LOG_INFO("DriverContextGL::createMacOSXContext: MacOSX Context GL successful created");
+    
+    return true;
 }
 
+void CDriverContextGL::destroyMacOSXContext()
+{
+    if (m_context._pixelFormat)
+    {
+        [m_context._pixelFormat release];
+        m_context._pixelFormat = nil;
+    }
+    
+    if (m_context._context)
+    {
+        [m_context._context release];
+        m_context._context = nil;
+    }
+
+    if (m_context._thread)
+    {
+        pthread_key_delete(m_context._thread);
+        m_context._thread = 0;
+    }
+}
 #endif
 
 void CDriverContextGL::driverInfo()
@@ -431,6 +569,9 @@ bool CDriverContextGL::setVSync(bool use)
     {
         succeed = (wglSwapIntervalEXT(use ? 1 : 0) == TRUE) ? true : false;
     }
+#elif defined(_PLATFORM_MACOSX_)
+    GLint sync = use ? 1 : 0;
+    [m_context._context setValues:&sync forParameter:NSOpenGLCPSwapInterval];
 #endif
     return succeed;
 }

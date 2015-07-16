@@ -73,8 +73,8 @@ namespace platform
         virtual bool                    isMinimized()       const                   = 0;
         virtual bool                    isActive()          const                   = 0;
         virtual bool                    isFocused()         const                   = 0;
-        virtual const core::Point2D&    getPosition()                               = 0;
-        virtual void                    getCursorPosition(core::Point2D& pos)       = 0;
+        virtual const core::Point2D&    getPosition()       const                   = 0;
+        virtual void                    getCursorPosition(core::Point2D& pos) const = 0;
 
 
         bool                            isFullscreen()      const;
@@ -97,7 +97,7 @@ namespace platform
 
         virtual void                    addKeyCodes()                               = 0;
 
-        WindowParam                     m_param;
+        mutable WindowParam             m_param;
         EPlatformType                   m_platformType;
 
         event::SKeyCodes                m_keys;

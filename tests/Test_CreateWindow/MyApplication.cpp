@@ -20,13 +20,15 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CCylinderShape* sample = BaseApplication::getSceneManager()->addCylinder(0, Vector3D(0, 0, 0));
-    sample->setName("cube");
-    sample->getMaterial()->setRenderTechnique("shaders/simple_fins_extrusion.xml");
+    BaseApplication::getWindow()->setCaption("asdd");
+    
+    //CCylinderShape* sample = BaseApplication::getSceneManager()->addCylinder(0, Vector3D(0, 0, 0));
+    //sample->setName("cube");
+    //sample->getMaterial()->setRenderTechnique("shaders/simple_fins_extrusion.xml");
 
-    sample->setPosition(Vector3D(0, 0, -3));
+    //sample->setPosition(Vector3D(0, 0, -3));
     //sample->setScale(Vector3D(1, 0.5, 0.2));
-    sample->setRotation(Vector3D(90, 0, 0));
+    //sample->setRotation(Vector3D(90, 0, 0));
     /*CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/texture.xml");*/
@@ -52,10 +54,10 @@ void MyApplication::init()
         "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg"));
     skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");*/
 
-    CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
-    fpsCamera->setName("fpsCamera");
-    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
-    camera->setName("camera");
+    ///CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    //fpsCamera->setName("fpsCamera");
+    ////CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
+    //camera->setName("camera");
     
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));

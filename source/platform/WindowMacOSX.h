@@ -3,12 +3,27 @@
 
 #include "Window.h"
 
-@class NSAutoreleasePool;
-
 namespace v3d
 {
 namespace platform
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    typedef struct SAppNS
+    {
+        void*               _eventSource;
+        id                  _autoreleasePool;
+        id                  _delegate;
+    } AppNS;
+    
+    typedef struct SWindowNS
+    {
+        id                  _window;
+        id                  _delegate;
+        id                  _view;
+    } WindowNS;
+
+    
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	class CWindowMacOSX : public CWindow
@@ -31,11 +46,13 @@ namespace platform
 		bool                    isMinimized()     const                     override;
 		bool                    isActive()        const                     override;
 		bool                    isFocused()       const                     override;
-        const core::Point2D&    getPosition()                               override;
-        void                    getCursorPosition(core::Point2D& pos)       override;
+        const core::Point2D&    getPosition()     const                     override;
+        void                    getCursorPosition(core::Point2D& pos) const override;
         
 		bool                    begin()                                     override;
 		bool                    end()                                       override;
+        
+        const WindowNS&         getHandleWindow() const;
         
 	protected:
         
@@ -44,8 +61,15 @@ namespace platform
         
         void                    addKeyCodes()                               override;
         
-        NSAutoreleasePool*      m_autoreleasePool;
-        id                      m_window;
+        AppNS                   m_app;
+        WindowNS                m_window;
+        
+        bool                    m_close;
+        
+       
+        bool                    init();
+        bool                    initAppKit();
+        void                    terminate();
 
 	};
 

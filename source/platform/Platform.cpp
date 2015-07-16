@@ -89,9 +89,11 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
 
     if (!driver->createContext())
     {
-        LOG_ERROR("Error create context");
-
+        LOG_ERROR("CPlatform::createWindowWithContext: Error create context");
+        
+        driver->destroyContext();
         driver = nullptr;
+        
         window->close();
         system("pause");
 
@@ -102,7 +104,10 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
     m_renderer = CPlatform::createRenderer(driver, param);
     if (!m_renderer)
     {
-        LOG_ERROR("Error create Renderer");
+        LOG_ERROR("CPlatform::createWindowWithContext: Error create Renderer");
+        
+        driver->destroyContext();
+        driver = nullptr;
 
         window->close();
         system("pause");

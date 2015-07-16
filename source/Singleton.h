@@ -19,13 +19,13 @@ namespace v3d
 	
 	private:
 
-		static T*	s_pInstance;
+		static T*	s_instance;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	template <class T>
-	T* Singleton<T>::s_pInstance = nullptr;
+	T* Singleton<T>::s_instance = nullptr;
 
 	template <class T>
 	Singleton<T>::Singleton()
@@ -40,23 +40,23 @@ namespace v3d
 	template <class T>
 	T *Singleton<T>::getInstance()
 	{
-		if( s_pInstance == nullptr )
+		if(s_instance == nullptr)
 		{
-			s_pInstance = new T;
+			s_instance = new T;
 		}
 
-		return s_pInstance;
+		return s_instance;
 	}
 
 	template <class T>
 	void Singleton<T>::freeInstance()
 	{
-		if( s_pInstance )	
+		if(s_instance)
 		{
-			delete s_pInstance;
+			delete s_instance;
 		}
 
-		s_pInstance = nullptr;
+		s_instance = nullptr;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

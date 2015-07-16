@@ -2,6 +2,7 @@
 #define _V3D_DRIVER_CONTEXT_GL_H_
 
 #include "DriverContext.h"
+#include <pthread.h>
 
 namespace v3d
 {
@@ -20,6 +21,7 @@ namespace renderer
         void    driverInfo()                                     override;
         void    checkForErrors(const std::string& location = "") override;
         bool    createContext()                                  override;
+        void    destroyContext()                                 override;
 
         bool    setVSync(bool use)                               override;
 
@@ -33,6 +35,16 @@ namespace renderer
         bool    createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)
         bool    createMacOSXContext();
+        void    destroyMacOSXContext();
+        
+        struct SContextNS
+        {
+            id              _context;
+            id              _pixelFormat;
+            pthread_key_t   _thread;
+        };
+        
+        SContextNS          m_context;
 #endif
     };
 
