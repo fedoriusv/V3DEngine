@@ -2,7 +2,9 @@
 #define _V3D_DRIVER_CONTEXT_GL_H_
 
 #include "DriverContext.h"
-#include <pthread.h>
+#if defined(_PLATFORM_MACOSX_)
+#   include <pthread.h>
+#endif //_PLATFORM_MACOSX_
 
 namespace v3d
 {
@@ -31,6 +33,7 @@ namespace renderer
 
 #if defined(_PLATFORM_WIN_)
         bool    createWin32Context();
+        void    destroyWin32Context();
 #elif defined(_PLATFORM_LINUX_)
         bool    createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)

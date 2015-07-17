@@ -29,8 +29,8 @@ namespace platform
         void    setCaption(const std::string& text)         override;
         void    setPosition(const core::Point2D& pos)       override;
         void    setCursorPosition(const core::Point2D& pos) override;
-        void    getCursorPosition(core::Point2D& pos)       override;
-        const core::Point2D& getPosition()                  override;
+        void    getCursorPosition(core::Point2D& pos) const override;
+        const core::Point2D& getPosition() const            override;
 
         bool    isMaximized() const                         override;
         bool    isMinimized() const                         override;

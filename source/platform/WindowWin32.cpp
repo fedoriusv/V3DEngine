@@ -218,7 +218,7 @@ void CWindowWin32::setPosition(const core::Point2D& pos)
     m_param._position = pos;
 }
 
-const core::Point2D& CWindowWin32::getPosition()
+const core::Point2D& CWindowWin32::getPosition() const
 {
     RECT rect;
     GetWindowRect(m_window, &rect);
@@ -234,7 +234,7 @@ void CWindowWin32::setCursorPosition(const core::Point2D& pos)
     SetCursorPos(pos.x, pos.y);
 }
 
-void CWindowWin32::getCursorPosition(core::Point2D& pos)
+void CWindowWin32::getCursorPosition(core::Point2D& pos) const
 {
     POINT mouse;
     GetCursorPos(&mouse);

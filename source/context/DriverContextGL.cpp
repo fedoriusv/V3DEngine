@@ -50,7 +50,7 @@ bool CDriverContextGL::createContext()
 void CDriverContextGL::destroyContext()
 {
 #if defined(_PLATFORM_WIN_)
-    return createWin32Context();
+    destroyWin32Context();
 #elif defined(_PLATFORM_LINUX_)
     return createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)
@@ -287,6 +287,12 @@ bool CDriverContextGL::createWin32Context()
     LOG_INFO("DriverContextGL::createWin32Context: Win32 Context GL successful created");
 
     return true;
+}
+
+void CDriverContextGL::destroyWin32Context()
+{
+    //wglMakeCurrent(NULL, NULL);
+    /// wglDeleteContext();
 }
 
 #elif defined(_PLATFORM_LINUX_)
