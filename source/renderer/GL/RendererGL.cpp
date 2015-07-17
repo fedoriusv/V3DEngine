@@ -30,7 +30,7 @@ CRendererGL::~CRendererGL()
 
 void CRendererGL::init()
 {
-    LOG_INFO("CRendererGL::init: OpenGL Render Init");
+    LOG_INFO("OpenGL Render Init");
 
     glViewport(0,0, m_context->getWindowSize().width, m_context->getWindowSize().height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

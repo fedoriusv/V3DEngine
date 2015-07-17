@@ -4,7 +4,6 @@
 #include "GL/glew.h"
 
 #if defined(_PLATFORM_WIN_)
-#   include <windows.h>
 #   include <winuser.h>
 #   include "GL/wglew.h"
 #   include "platform/WindowWin32.h"
@@ -23,7 +22,9 @@ using namespace renderer;
 CDriverContextGL::CDriverContextGL(const platform::WindowPtr& window)
     : CDriverContext(window)
 {
-#if defined(_PLATFORM_MACOSX_)
+#if defined(_PLATFORM_WIN_)
+    m_hRc = NULL;
+#elif defined(_PLATFORM_MACOSX_)
     m_context._thread = 0;
 #endif
 }
@@ -61,7 +62,7 @@ void CDriverContextGL::destroyContext()
 #if defined(_PLATFORM_WIN_)
 bool CDriverContextGL::createWin32Context()
 {
-    LOG_INFO("DriverContextGL::createWin32Context: Create Win32 GL Context");
+    LOG_INFO("Create Win32 GL Context");
 
     // Create a window to test antialiasing support
     HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -166,12 +167,16 @@ bool CDriverContextGL::createWin32Context()
     }
 
     const GLubyte* version = glewGetString(GLEW_VERSION);
-    LOG_INFO("DriverContextGL::createWin32Context: GLEW Init. Version %s", version);
+    LOG_INFO("GLEW Init. Version %s", version);
     GLenum error = glewInit();
     if (error != GLEW_OK)
     {
         const GLubyte* errorStr = glewGetErrorString(error);
         LOG_ERROR("DriverContextGL::createWin32Context: Couldn't initialize GLEW: %s", errorStr);
+        wglDeleteContext(hRc);
+        ReleaseDC(tempWindow, tempDC);
+        DestroyWindow(tempWindow);
+        UnregisterClass(className, hInstance);
 
         return false;
     }
@@ -181,6 +186,11 @@ bool CDriverContextGL::createWin32Context()
         !wglewIsSupported("WGL_ARB_multisample"))
     {
         LOG_ERROR("DriverContextGL::createWin32Context: Error Supported GLEW Lib");
+        wglDeleteContext(hRc);
+        ReleaseDC(tempWindow, tempDC);
+        DestroyWindow(tempWindow);
+        UnregisterClass(className, hInstance);
+
         return false;
     }
 
@@ -214,6 +224,11 @@ bool CDriverContextGL::createWin32Context()
         if (!wglChoosePixelFormatARB(tempDC, iAttributes, fAttributes, 1, &newPixelFormat, &numFormats))
         {
             LOG_ERROR("DriverContextGL::createWin32Context: Can't Find A Suitable ExPixelFormat");
+            wglDeleteContext(hRc);
+            ReleaseDC(tempWindow, tempDC);
+            DestroyWindow(tempWindow);
+            UnregisterClass(className, hInstance);
+
             return false;
         }
 
@@ -246,7 +261,7 @@ bool CDriverContextGL::createWin32Context()
     {
         LOG_WARNING("DriverContextGL::createWin32Context: Cannot create ExPixelFormat. Set default pixel format");
         newPixelFormat = ChoosePixelFormat(hDC, &pfd);
-        hRc = wglCreateContext(hDC);
+        m_hRc = wglCreateContext(hDC);
     }
     else
     {
@@ -259,11 +274,11 @@ bool CDriverContextGL::createWin32Context()
             0
         };
 
-        hRc = wglCreateContextAttribsARB(hDC, 0, attribs);
+        m_hRc = wglCreateContextAttribsARB(hDC, 0, attribs);
     }
 
 
-    if (!hRc || !wglMakeCurrent(hDC, hRc))
+    if (!m_hRc || !wglMakeCurrent(hDC, m_hRc))
     {
         LOG_ERROR("DriverContextGL::createWin32Context: Can't Create GL Rendering Context");
         return false;
@@ -284,15 +299,19 @@ bool CDriverContextGL::createWin32Context()
     int pf = GetPixelFormat(hDC);
     DescribePixelFormat(hDC, pf, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
-    LOG_INFO("DriverContextGL::createWin32Context: Win32 Context GL successful created");
+    LOG_INFO("Win32 Context GL successful created");
 
     return true;
 }
 
 void CDriverContextGL::destroyWin32Context()
 {
-    //wglMakeCurrent(NULL, NULL);
-    /// wglDeleteContext();
+    wglMakeCurrent(NULL, NULL);
+    if (m_hRc)
+    {
+        wglDeleteContext(m_hRc);
+        m_hRc = NULL;
+    }
 }
 
 #elif defined(_PLATFORM_LINUX_)

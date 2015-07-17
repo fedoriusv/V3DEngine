@@ -26,6 +26,7 @@ CRenderer::CRenderer(const DriverContextPtr& context)
 
 CRenderer::~CRenderer()
 {
+    m_context->destroyContext();
     m_lightList.clear();
 }
 

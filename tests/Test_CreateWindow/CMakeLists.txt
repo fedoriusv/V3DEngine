@@ -42,10 +42,11 @@ if(WIN32)
 		#optimized ${ENGINE_NAME}.lib
 		#optimized ${GLEW_PLOJECT}.lib
 	)
-	
-	file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Debug)
-    file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Release)
-	
+    
+	if(BUILD_USE_RESIL_LIB)
+        file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Debug)
+        file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Release)
+	endif(BUILD_USE_RESIL_LIB)
 elseif(UNIX AND NOT APPLE)
 	find_package(X11)
 	set(EXTERNAL_LIBS

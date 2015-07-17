@@ -15,7 +15,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 
 #define USE_LOGGER 1
-#define USE_DEVIL
+//#define USE_DEVIL
 
 //Compiler
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,8 +62,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _OPENGL_DRIVER_
-#   define OPENGL_VERSION_MAJOR 2
-#   define OPENGL_VERSION_MINOR 1
+#   define OPENGL_VERSION_MAJOR 3
+#   define OPENGL_VERSION_MINOR 3
 
 #   define GLEW_STATIC
 #endif

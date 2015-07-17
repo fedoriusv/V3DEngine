@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 2.8.9)
 
+option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." OFF)
+
 set(SOLUTION_NAME Valera3D)
 set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2static)
 set(FREETYPE2_PROJECT freetype2)
-set(RESIL_PROJECT ResIL)
+if(BUILD_USE_RESIL_LIB)
+    set(RESIL_PROJECT ResIL)
+endif(BUILD_USE_RESIL_LIB)
 
 set(TEST_PROJECT_0 Test_CreateWindow)
 set(TEST_PROJECT_1 Test_Font)
@@ -43,7 +47,7 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG")
 if(WIN32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
-    if (CMAKE_CL_64)
+    if(CMAKE_CL_64)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
     else(CMAKE_CL_64)
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
@@ -67,14 +71,16 @@ set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs)
 set(TESTS_BIN_DIR ${CMAKE_BINARY_DIR}/tests)
 
 if(WIN32)
-	if (CMAKE_CL_64)
+	if(CMAKE_CL_64)
 		set(ARCH_DIR "x64")
 	else(CMAKE_CL_64)
 		set(ARCH_DI11R "win32")
 	endif(CMAKE_CL_64)
 	
-	set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-msvcrt/ResIL)
-	set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-msvcrt)
+    if(BUILD_USE_RESIL_LIB)
+        set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-msvcrt/ResIL)
+        set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-msvcrt)
+    endif(BUILD_USE_RESIL_LIB)
 endif(WIN32)
 
 ################################
@@ -215,21 +221,29 @@ add_library(
 	${MAIN_HEADERS}        ${MAIN_SOURCES}
 	) 
 
-target_link_libraries(${ENGINE_NAME} 
-	${GLEW_PLOJECT}
-	${TINYXML_PLOJECT}
-	${FREETYPE2_PROJECT}
-   	${RESIL_PROJECT}
+if(BUILD_USE_RESIL_LIB)    
+    target_link_libraries(${ENGINE_NAME} 
+        ${GLEW_PLOJECT}
+        ${TINYXML_PLOJECT}
+        ${FREETYPE2_PROJECT}
+        ${RESIL_PROJECT}
+        )
+else()
+    target_link_libraries(${ENGINE_NAME} 
+        ${GLEW_PLOJECT}
+        ${TINYXML_PLOJECT}
+        ${FREETYPE2_PROJECT}
 	)
+endif(BUILD_USE_RESIL_LIB)
 
 ################################
 #Additional Libs
 add_subdirectory(libs/glew)
 add_subdirectory(libs/tinyxml2)
 add_subdirectory(libs/freetype2)
-if(NOT WIN32)
+if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 	add_subdirectory(libs/ResIL)
-endif(NOT WIN32)
+endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
 add_subdirectory(tests/${TEST_PROJECT_0})
 add_subdirectory(tests/${TEST_PROJECT_1})
@@ -239,7 +253,7 @@ add_subdirectory(tests/${TEST_PROJECT_4})
 
 ################################
 #Dependencies
-if(NOT WIN32)
+if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 	add_dependencies(${ENGINE_NAME} 
 		${GLEW_PLOJECT}
 		${TINYXML_PLOJECT}
@@ -252,7 +266,7 @@ else()
 		${TINYXML_PLOJECT}
 		${FREETYPE2_PROJECT}
 		)
-endif(NOT WIN32)
+endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
 
 
