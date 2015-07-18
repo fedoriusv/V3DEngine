@@ -6,9 +6,9 @@
 #endif //USE_DEVIL
 
 using namespace v3d;
-using namespace v3d::stream;
-using namespace v3d::decoders;
-using namespace v3d::renderer;
+using namespace stream;
+using namespace decoders;
+using namespace renderer;
 
 CTextureResILDecoder::CTextureResILDecoder()
     : CResourceDecoder()
@@ -38,10 +38,16 @@ stream::ResourcePtr CTextureResILDecoder::decode(const stream::IStreamPtr& strea
 
 #ifdef USE_DEVIL
     ilInit();
+
+    ILuint texid;
+    ilGenImages(1, &texid);
+    ilBindImage(texid);
+
     ILboolean success = ilLoadImage(charToWChar(file.c_str()));
     ASSERT(success == IL_TRUE && "Invalid Texture");
     if (!success)
     {
+        ilDeleteImages(1, &texid);
         return nullptr;
     }
 
@@ -69,6 +75,8 @@ stream::ResourcePtr CTextureResILDecoder::decode(const stream::IStreamPtr& strea
     data->write(bytes, size);
 
     texture->init(data);
+
+    ilDeleteImages(1, &texid);
 
     return texture;
 #endif //USE_DEVIL
