@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." OFF)
+option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." ON)
 
 set(SOLUTION_NAME Valera3D)
 set(ENGINE_NAME Valera3DEngine)
