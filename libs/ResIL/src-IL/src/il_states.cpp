@@ -429,6 +429,9 @@ ILAPI void ILAPIENTRY il2GetIntegerv(ILenum Mode, ILint *Param)
 		case IL_SQUISH_COMPRESS:
 			*Param = ilStates[ilCurrentPos].ilUseSquishDXT;
 			break;
+
+        default:
+            il2GetImageInteger(iCurImage, Mode, Param);
 	}
 
 	return;

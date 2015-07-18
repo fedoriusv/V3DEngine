@@ -2303,6 +2303,5 @@ void* ILAPIENTRY iSwitchTypes(ILuint SizeOfData, ILenum SrcType, ILenum DestType
 			break;
 	}
 
-
 	return NewData;
 }

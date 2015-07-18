@@ -144,7 +144,7 @@ ILAPI void      ILAPIENTRY ilGetBooleanv(ILenum Mode, ILboolean *Param);
 ILAPI ILubyte*  ILAPIENTRY ilGetData(void);
 ILAPI ILuint    ILAPIENTRY ilGetDXTCData(void *Buffer, ILuint BufferSize, ILenum DXTCFormat);
 ILAPI ILenum    ILAPIENTRY ilGetError(void);
-ILAPI void ILAPIENTRY ilGetImageInteger(ILenum Mode, ILint *Param);
+ILAPI void      ILAPIENTRY ilGetImageInteger(ILenum Mode, ILint *Param);
 ILAPI ILint     ILAPIENTRY ilGetInteger(ILenum Mode);
 ILAPI void      ILAPIENTRY ilGetIntegerv(ILenum Mode, ILint *Param);
 ILAPI ILuint64    ILAPIENTRY ilGetLumpPos(void);

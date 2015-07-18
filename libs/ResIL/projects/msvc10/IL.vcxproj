@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -182,35 +182,41 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-msvcrt|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-libcmt|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-msvcrt|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-libcmt|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -262,6 +268,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\include;..\..\src-IL\include;..\..\Input Libs\tiff-4.0.3\libtiff;..\..\Input Libs\lcms2-2.6\include;..\..\Input Libs\libpng1614;..\..\Input Libs\libmng-2.0.2;..\..\Input Libs\jpegsr9a;..\..\Input Libs\zlib-1.2.8;..\..\Input Libs\jasper-1.900.1\src\libjasper\include;..\..\Input Libs\openexr-2.2.0\IlmImf;..\..\Input Libs\ilmbase-2.2.0\Imath;..\..\Input Libs\ilmbase-2.2.0\config.windows;..\..\Input Libs\openexr-2.2.0\config.windows;..\..\Input Libs\ilmbase-2.2.0\Half;..\..\Input Libs\ilmbase-2.2.0\Iex</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -269,7 +276,8 @@
       <AdditionalDependencies>debug\IlmBase.lib;debug\OpenExr.lib;debug\libjasper.lib;debug\libmng.lib;debug\zlib.lib;debug\libPNG.lib;debug\lcms.lib;debug\libTIFF.lib;debug\jpeg.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>ResIL.def</ModuleDefinitionFile>
-      <Version>1.8.2</Version>
+      <Version>
+      </Version>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>DevIL.map</MapFileName>
     </Link>
@@ -281,13 +289,16 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\include;..\..\src-IL\include;..\..\Input Libs\tiff-4.0.3\libtiff;..\..\Input Libs\lcms2-2.6\include;..\..\Input Libs\libpng1614;..\..\Input Libs\libmng-2.0.2;..\..\Input Libs\jpegsr9a;..\..\Input Libs\zlib-1.2.8;..\..\Input Libs\jasper-1.900.1\src\libjasper\include;..\..\Input Libs\openexr-2.2.0\IlmImf;..\..\Input Libs\ilmbase-2.2.0\Imath;..\..\Input Libs\ilmbase-2.2.0\config.windows;..\..\Input Libs\openexr-2.2.0\config.windows;..\..\Input Libs\ilmbase-2.2.0\Half;..\..\Input Libs\ilmbase-2.2.0\Iex</AdditionalIncludeDirectories>
-      <CompileAsManaged>false</CompileAsManaged>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>x64\debug\libjasper.lib;x64\debug\libmng.lib;x64\debug\zlib.lib;x64\debug\libPNG.lib;x64\debug\lcms.lib;x64\debug\libTIFF.lib;x64\debug\jpeg.lib;x64\debug\ilmBase.lib;x64\debug\OpenExr.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Version>1.8.2</Version>
+      <Version>
+      </Version>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>$(TargetDir)$(TargetName).map</MapFileName>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
@@ -299,12 +310,14 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\include;..\..\src-IL\include;..\..\Input Libs\tiff-4.0.3\libtiff;..\..\Input Libs\lcms2-2.6\include;..\..\Input Libs\libpng1614;..\..\Input Libs\libmng-2.0.2;..\..\Input Libs\jpegsr9a;..\..\Input Libs\zlib-1.2.8;..\..\Input Libs\jasper-1.900.1\src\libjasper\include;..\..\Input Libs\openexr-2.2.0\IlmImf;..\..\Input Libs\ilmbase-2.2.0\Imath;..\..\Input Libs\ilmbase-2.2.0\config.windows;..\..\Input Libs\openexr-2.2.0\config.windows;..\..\Input Libs\ilmbase-2.2.0\Half;..\..\Input Libs\ilmbase-2.2.0\Iex;..\..\Input Libs\ilmbase-2.2.0\IlmThread</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat />
+      <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -317,7 +330,8 @@
       <ModuleDefinitionFile>ResIL.def</ModuleDefinitionFile>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <Version>1.8.2</Version>
+      <Version>
+      </Version>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
     </Link>
@@ -333,6 +347,7 @@
       <AdditionalIncludeDirectories>..\..\include;..\..\src-IL\include;..\..\Input Libs\tiff-4.0.3\libtiff;..\..\Input Libs\lcms2-2.6\include;..\..\Input Libs\libpng1614;..\..\Input Libs\libmng-2.0.2;..\..\Input Libs\jpegsr9a;..\..\Input Libs\zlib-1.2.8;..\..\Input Libs\jasper-1.900.1\src\libjasper\include;..\..\Input Libs\openexr-2.2.0\IlmImf;..\..\Input Libs\ilmbase-2.2.0\Imath;..\..\Input Libs\ilmbase-2.2.0\config.windows;..\..\Input Libs\openexr-2.2.0\config.windows;..\..\Input Libs\ilmbase-2.2.0\Half;..\..\Input Libs\ilmbase-2.2.0\Iex;..\..\Input Libs\ilmbase-2.2.0\IlmThread</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -345,7 +360,8 @@
       <ModuleDefinitionFile>ResIL.def</ModuleDefinitionFile>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <Version>1.8.2</Version>
+      <Version>
+      </Version>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
     </Link>
@@ -355,25 +371,29 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;IL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\include;..\..\src-IL\include;..\..\Input Libs\tiff-4.0.3\libtiff;..\..\Input Libs\lcms2-2.6\include;..\..\Input Libs\libpng1614;..\..\Input Libs\libmng-2.0.2;..\..\Input Libs\jpegsr9a;..\..\Input Libs\zlib-1.2.8;..\..\Input Libs\jasper-1.900.1\src\libjasper\include;..\..\Input Libs\openexr-2.2.0\IlmImf;..\..\Input Libs\ilmbase-2.2.0\Imath;..\..\Input Libs\ilmbase-2.2.0\config.windows;..\..\Input Libs\openexr-2.2.0\config.windows;..\..\Input Libs\ilmbase-2.2.0\Half;..\..\Input Libs\ilmbase-2.2.0\Iex;..\..\Input Libs\ilmbase-2.2.0\IlmThread</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <CompileAsManaged>false</CompileAsManaged>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <CompileAsManaged>
+      </CompileAsManaged>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>x64\release-msvcrt\libjasper.lib;x64\release-msvcrt\libmng.lib;x64\release-msvcrt\zlib1.lib;x64\release-msvcrt\libPNG.lib;x64\release-msvcrt\lcms.lib;x64\release-msvcrt\libTIFF.lib;x64\release-msvcrt\jpeg.lib;x64\release-msvcrt\ilmBase.lib;x64\release-msvcrt\OpenExr.lib;kernel32.lib;msvcrt.lib</AdditionalDependencies>
+      <AdditionalDependencies>x64\release-msvcrt\libjasper.lib;x64\release-msvcrt\libmng.lib;x64\release-msvcrt\zlib.lib;x64\release-msvcrt\libPNG.lib;x64\release-msvcrt\lcms.lib;x64\release-msvcrt\libTIFF.lib;x64\release-msvcrt\jpeg.lib;x64\release-msvcrt\ilmBase.lib;x64\release-msvcrt\OpenExr.lib;kernel32.lib;msvcrt.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <Version>1.8.2</Version>
+      <Version>
+      </Version>
       <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
       <GenerateMapFile>true</GenerateMapFile>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
