@@ -20,8 +20,6 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    BaseApplication::getWindow()->setCaption("asdd");
-    
     /*CCylinderShape* sample = BaseApplication::getSceneManager()->addCylinder(0, Vector3D(0, 0, 0));
     sample->setName("cube");
     sample->getMaterial()->setRenderTechnique("shaders/simple_fins_extrusion.xml");*/

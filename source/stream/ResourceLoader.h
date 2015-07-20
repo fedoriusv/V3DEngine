@@ -16,10 +16,10 @@ namespace stream
     public:
 
         TResourceLoader();
-        //virtual                     ~TResourceLoader();
+        virtual                     ~TResourceLoader();
 
         const T                     get(const std::string& name);
-        //virtual const T             load(const std::string& file, const std::string& alias = "") = 0;
+        virtual const T             load(const std::string& file, const std::string& alias = "") = 0;
 
         void                        unload(const std::string& name);
         void                        unload(const T& resource);

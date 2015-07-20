@@ -74,7 +74,7 @@ if(WIN32)
 	if(CMAKE_CL_64)
 		set(ARCH_DIR "x64")
 	else(CMAKE_CL_64)
-		set(ARCH_DI11R "win32")
+		set(ARCH_DIR "x86")
 	endif(CMAKE_CL_64)
 	
     if(BUILD_USE_RESIL_LIB)

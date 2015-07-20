@@ -6,11 +6,11 @@
 #include "renderer/Mesh.h"
 
 using namespace v3d;
-using namespace v3d::scene;
-using namespace v3d::stream;
-using namespace v3d::decoders;
-using namespace v3d::resources;
-using namespace v3d::renderer;
+using namespace scene;
+using namespace stream;
+using namespace decoders;
+using namespace resources;
+using namespace renderer;
 
 CModelManager::CModelManager()
 {
@@ -27,7 +27,7 @@ CModelManager::~CModelManager()
     m_decoders.clear();
 }
 
-ModelDataPtr CModelManager::load(const std::string& name)
+const ModelDataPtr CModelManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -92,34 +92,5 @@ ModelDataPtr CModelManager::load(const std::string& name)
     }
 
     LOG_WARNING("CModelManager::load: File [%s] not found", name.c_str());
-
     return nullptr;
-}
-
-void CModelManager::registerPath(const std::string& path)
-{
-    m_pathes.push_back(path);
-}
-
-void CModelManager::unregisterPath(const std::string& path)
-{
-    auto it = std::find(m_pathes.begin(), m_pathes.end(), path);
-    if (it != m_pathes.end())
-    {
-        m_pathes.erase(std::remove(m_pathes.begin(), m_pathes.end(), *it), m_pathes.end());
-    }
-}
-
-void CModelManager::registerDecoder(DecoderPtr decoder)
-{
-    m_decoders.push_back(decoder);
-}
-
-void CModelManager::unregisterDecoder(DecoderPtr& decoder)
-{
-    auto it = std::find(m_decoders.begin(), m_decoders.end(), decoder);
-    if (it != m_decoders.end())
-    {
-        m_decoders.erase(std::remove(m_decoders.begin(), m_decoders.end(), *it), m_decoders.end());
-    }
 }

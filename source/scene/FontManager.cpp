@@ -22,21 +22,16 @@ CFontManager::~CFontManager()
 void CFontManager::add(const FontDataPtr& font)
 {
     std::string name = font->getResourseName();
-    m_fontsData.insert(std::map<std::string, FontDataPtr>::value_type(name, font));
+    m_resources.insert(std::map<std::string, FontDataPtr>::value_type(name, font));
 }
 
-const FontDataPtr& CFontManager::get(const std::string& name)
-{
-    return m_fontsData[name];
-}
-
-const FontDataPtr CFontManager::load(const std::string& name)
+const FontDataPtr CFontManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    auto it = m_fontsData.find(nameStr);
-    if (it != m_fontsData.end())
+    auto it = m_resources.find(nameStr);
+    if (it != m_resources.end())
     {
         return it->second;
     }
@@ -96,7 +91,7 @@ const FontDataPtr CFontManager::load(const std::string& name)
                     }
                     stream->close();
 
-                    m_fontsData.insert(std::map<std::string, FontDataPtr>::value_type(nameStr, font));
+                    m_resources.insert(std::map<std::string, FontDataPtr>::value_type(nameStr, font));
 
                     return font;
                 }
@@ -110,48 +105,4 @@ const FontDataPtr CFontManager::load(const std::string& name)
     }
 
     return nullptr;
-}
-
-void CFontManager::unload(const std::string& name)
-{
-    auto it = m_fontsData.find(name);
-
-    if (it != m_fontsData.end())
-    {
-        m_fontsData.erase(it);
-    }
-}
-
-void CFontManager::unload(const FontDataPtr& font)
-{
-    auto predDelete = [&font](const std::pair<std::string, FontDataPtr>& pair) -> bool
-    {
-        return pair.second == font;
-    };
-
-    auto it = std::find_if(m_fontsData.begin(), m_fontsData.end(), predDelete);
-
-    if (it != m_fontsData.end())
-    {
-        m_fontsData.erase(it);
-    }
-}
-
-void CFontManager::unloadAll()
-{
-    m_fontsData.clear();
-}
-
-void CFontManager::registerPath(const std::string& path)
-{
-    m_pathes.push_back(path);
-}
-
-void CFontManager::unregisterPath(const std::string& path)
-{
-    auto it = std::find(m_pathes.begin(), m_pathes.end(), path);
-    if (it != m_pathes.end())
-    {
-        m_pathes.erase(std::remove(m_pathes.begin(), m_pathes.end(), *it), m_pathes.end());
-    }
 }

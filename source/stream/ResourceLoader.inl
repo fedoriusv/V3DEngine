@@ -9,20 +9,19 @@ TResourceLoader<T>::TResourceLoader()
 template <class T>
 TResourceLoader<T>::~TResourceLoader()
 {
-    unloadAll();
 }
 
-//template <class T>
-//const T IResourceLoader<T>::get(const std::string& name)
-//{
-//    auto it = m_resources.find(name);
-//    if (it != m_resources.end())
-//    {
-//        return it->second;
-//    }
-//
-//    return nullptr;
-//}
+template <class T>
+const T TResourceLoader<T>::get(const std::string& name)
+{
+    auto it = m_resources.find(name);
+    if (it != m_resources.end())
+    {
+        return it->second;
+    }
+
+    return nullptr;
+}
 
 template <class T>
 void TResourceLoader<T>::unload(const std::string& name)

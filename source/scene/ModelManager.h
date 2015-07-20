@@ -3,6 +3,7 @@
 
 #include "Singleton.h"
 #include "resources/ModelData.h"
+#include "stream/ResourceLoader.h"
 #include "decoders/ResourceDecoder.h"
 
 namespace v3d
@@ -11,25 +12,14 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelManager : public Singleton<CModelManager>
+    class CModelManager : public Singleton<CModelManager>, public stream::TResourceLoader<resources::ModelDataPtr>
     {
     public:
 
         CModelManager();
-        virtual                 ~CModelManager();
+        virtual                         ~CModelManager();
 
-        resources::ModelDataPtr load(const std::string& name);
-
-        void                    registerDecoder(decoders::DecoderPtr decoder);
-        void                    unregisterDecoder(decoders::DecoderPtr& decoder);
-
-        void                    registerPath(const std::string& path);
-        void                    unregisterPath(const std::string& path);
-
-    private:
-
-        std::vector<decoders::DecoderPtr>   m_decoders;
-        std::vector<std::string>            m_pathes;
+        const resources::ModelDataPtr   load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

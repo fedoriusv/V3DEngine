@@ -22,22 +22,17 @@ CRenderTechniqueManager::~CRenderTechniqueManager()
 void CRenderTechniqueManager::add(const renderer::RenderTechniquePtr& technique)
 {
     std::string name = technique->getResourseName();
-    m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(name, technique));
+    m_resources.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(name, technique));
 }
 
-const RenderTechniquePtr& CRenderTechniqueManager::get(const std::string& name)
-{
-    return m_renderTechniques[name];
-}
-
-const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
+const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    auto it = m_renderTechniques.find(nameStr);
+    auto it = m_resources.find(nameStr);
 
-    if (it != m_renderTechniques.end())
+    if (it != m_resources.end())
     {
         return it->second;
     }
@@ -77,7 +72,7 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
                     }
                     stream->close();
 
-                    m_renderTechniques.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
+                    m_resources.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
 
                     return technique;
                 }
@@ -90,48 +85,4 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name)
     }
 
     return nullptr;
-}
-
-void CRenderTechniqueManager::unload(const std::string& name)
-{
-    auto it = m_renderTechniques.find(name);
-
-    if (it != m_renderTechniques.end())
-    {
-        m_renderTechniques.erase(it);
-    }
-}
-
-void CRenderTechniqueManager::unload(const renderer::RenderTechniquePtr& technique)
-{
-    auto predDelete = [technique](const std::pair<std::string, renderer::RenderTechniquePtr>& pair) -> bool
-    {
-        return pair.second == technique;
-    };
-
-    auto it = std::find_if(m_renderTechniques.begin(), m_renderTechniques.end(), predDelete);
-
-    if (it != m_renderTechniques.end())
-    {
-        m_renderTechniques.erase(it);
-    }
-}
-
-void CRenderTechniqueManager::unloadAll()
-{
-    m_renderTechniques.clear();
-}
-
-void CRenderTechniqueManager::registerPath(const std::string& path)
-{
-    m_pathes.push_back(path);
-}
-
-void CRenderTechniqueManager::unregisterPath(const std::string& path)
-{
-    auto it = std::find(m_pathes.begin(), m_pathes.end(), path);
-    if (it != m_pathes.end())
-    {
-        m_pathes.erase(std::remove(m_pathes.begin(), m_pathes.end(), *it), m_pathes.end());
-    }
 }

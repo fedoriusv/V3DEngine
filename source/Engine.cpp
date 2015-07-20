@@ -104,12 +104,12 @@ bool CEngine::begin()
 
     //FPS
     ++m_framesCounted;
-    const u32 fpsDeltaTime = ticks - m_fpsStartTime;
+    const u32 fpsDeltaTime = static_cast<u32>(ticks - m_fpsStartTime);
     if (fpsDeltaTime > 1000) //1 sec
     {
         m_fps = m_framesCounted;
         m_framesCounted = 0;
-        m_fpsStartTime = ticks;
+        m_fpsStartTime = static_cast<u32>(ticks);
     }
 
     m_inputEventHandler->update();

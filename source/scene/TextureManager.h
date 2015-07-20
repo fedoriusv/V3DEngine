@@ -22,7 +22,7 @@ namespace scene
         CTextureManager();
         virtual                     ~CTextureManager();
 
-        //const renderer::TexturePtr  load(const std::string& file, const std::string& alias = "") override;
+        const renderer::TexturePtr  load(const std::string& file, const std::string& alias = "") override;
         const renderer::TexturePtr  load(const std::string* files[6]);
 
         renderer::TexturePtr        createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
