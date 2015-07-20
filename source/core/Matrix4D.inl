@@ -1,5 +1,5 @@
 using namespace v3d;
-using namespace v3d::core;
+using namespace core;
 
 template <class T>
 TMatrix4D<T>::TMatrix4D()
