@@ -37,6 +37,7 @@ namespace v3d
 #include <stdio.h>
 
 #include <iostream>
+#include <stdlib.h>
 
 #ifdef _DEBUG
 #   define ASSERT(x) assert(x)

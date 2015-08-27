@@ -2,7 +2,7 @@
 #include "GeometryGL.h"
 #include "Engine.h"
 
-#include "GL/glew.h"
+//#include "GL/glew.h"
 
 using namespace v3d;
 using namespace v3d::core;

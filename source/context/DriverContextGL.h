@@ -20,29 +20,30 @@ namespace renderer
     public:
 
         CDriverContextGL(const platform::WindowPtr& window);
-        virtual ~CDriverContextGL();
+        ~CDriverContextGL();
 
-        void    driverInfo()                                     override;
-        void    checkForErrors(const std::string& location = "") override;
-        bool    createContext()                                  override;
-        void    destroyContext()                                 override;
-
-        bool    setVSync(bool use)                               override;
+        void                driverInfo()                                     override;
+        void                checkForErrors(const std::string& location = "") override;
+        bool                createContext()                                  override;
+        void                destroyContext()                                 override;
+        void                flushBuffers()                                   override;
+        
+        bool                setVSync(bool use)                               override;
 
     protected:
 
-        void    printExtensionList() const;
+        void                printExtensionList() const;
 
 #if defined(_PLATFORM_WIN_)
-        bool    createWin32Context();
-        void    destroyWin32Context();
+        bool                createWin32Context();
+        void                destroyWin32Context();
 
-        HGLRC   m_hRc;
+        HGLRC               m_hRc;
 #elif defined(_PLATFORM_LINUX_)
-        bool    createLinuxContext();
+        bool                createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)
-        bool    createMacOSXContext();
-        void    destroyMacOSXContext();
+        bool                createMacOSXContext();
+        void                destroyMacOSXContext();
         
         struct SContextNS
         {
@@ -51,7 +52,7 @@ namespace renderer
             pthread_key_t   _thread;
         };
         
-        SContextNS m_context;
+        SContextNS          m_context;
 #endif
     };
 

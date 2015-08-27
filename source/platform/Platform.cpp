@@ -1,6 +1,5 @@
 #include "Platform.h"
 #include "utils/Logger.h"
-#include "renderer/GL/RendererGL.h"
 
 #ifdef _PLATFORM_WIN_
 #   include "platform/WindowWin32.h"
@@ -16,6 +15,12 @@
 
 #ifdef _OPENGL_DRIVER_
 #   include "context/DriverContextGL.h"
+#   include "renderer/GL/RendererGL.h"
+#endif
+
+#ifdef _DIRECT3D_DRIVER_
+#   include "context/DriverContextD3D.h"
+#   include "renderer/D3D/RendererD3D.h"
 #endif
 
 
@@ -68,13 +73,21 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
     {
         case EDriverType::eDriverOpenGL:
         {
+#ifdef _OPENGL_DRIVER_
             driver = std::make_shared<CDriverContextGL>(window);
+#else //_OPENGL_DRIVER_
+            LOG_ERROR("CPlatform::createWindowWithContext: _OPENGL_DRIVER_ not defined");
+#endif //_OPENGL_DRIVER_
             break;
         }
 
         case EDriverType::eDriverDirect3D:
         {
-            //driver = new renderer::CDriverContextD3D(this);
+#ifdef _DIRECT3D_DRIVER_
+            driver = std::make_shared<CDriverContextD3D>(window);
+#else //_DIRECT3D_DRIVER_
+            LOG_ERROR("CPlatform::createWindowWithContext: _DIRECT3D_DRIVER_ not defined");
+#endif //_DIRECT3D_DRIVER_
             break;
         }
 
@@ -85,6 +98,14 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
 
             return nullptr;
         }
+    }
+
+    if (!driver)
+    {
+        window->close();
+        system("pause");
+
+        return nullptr;
     }
 
     if (!driver->createContext())
@@ -148,13 +169,21 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
     {
         case EDriverType::eDriverOpenGL:
         {
+#ifdef _OPENGL_DRIVER_
             renderer = std::make_shared<CRendererGL>(context);
+#else //_OPENGL_DRIVER_
+            LOG_ERROR("CPlatform::createRenderer: _OPENGL_DRIVER_ not defined");
+#endif //_OPENGL_DRIVER_
             break;
         }
 
         case EDriverType::eDriverDirect3D:
         {
-            //renderer = std::make_shared<CRenderer>(CRendererD3D());
+#ifdef _DIRECT3D_DRIVER_
+            renderer = std::make_shared<CRendererD3D>(context);
+#else //_DIRECT3D_DRIVER_
+            LOG_ERROR("CPlatform::createRenderer: _DIRECT3D_DRIVER_ not defined");
+#endif //_DIRECT3D_DRIVER_
            break;
         }
 

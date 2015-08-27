@@ -265,7 +265,11 @@ bool CWindowWin32::begin()
 
 bool CWindowWin32::end()
 {
+#ifdef _OPENGL_DRIVER_
     return SwapBuffers(m_context) != FALSE;
+#else //_OPENGL_DRIVER_
+    return true;
+#endif //_OPENGL_DRIVER_
 }
 
 void CWindowWin32::create()

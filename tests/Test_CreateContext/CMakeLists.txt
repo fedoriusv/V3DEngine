@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set (CURRENT_PROJECT ${TEST_PROJECT_1})
+set (CURRENT_PROJECT ${TEST_PROJECT_5})
 project(${CURRENT_PROJECT})
 
 file(GLOB TEST_HEADERS *.h)
@@ -18,6 +18,8 @@ if(WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
 elseif(UNIX AND NOT APPLE)
 	link_directories(${ENGINE_PROJECT_DIR}/project/linux-qt/)
+elseif(APPLE)
+    link_directories(${ENGINE_PROJECT_DIR}/project/xcode/)
 endif()
 
 add_executable(
@@ -28,7 +30,7 @@ add_executable(
 	${TEST_SOURCES}
 	)
 
-set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Test_Font")
+set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "Test_CreateWindow")
 
 if(WIN32)
 	set(EXTERNAL_LIBS 
@@ -40,11 +42,11 @@ if(WIN32)
 		#optimized ${ENGINE_NAME}.lib
 		#optimized ${GLEW_PLOJECT}.lib
 	)
-	
-    if(BUILD_USE_RESIL_LIB)
+    
+	if(BUILD_USE_RESIL_LIB)
         file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Debug)
         file(COPY ${RESIL_BIN}/ResIL.dll DESTINATION ${TESTS_BIN_DIR}/${CURRENT_PROJECT}/Release)
-    endif(BUILD_USE_RESIL_LIB)	
+	endif(BUILD_USE_RESIL_LIB)
 elseif(UNIX AND NOT APPLE)
 	find_package(X11)
 	set(EXTERNAL_LIBS
@@ -54,7 +56,14 @@ elseif(UNIX AND NOT APPLE)
 	)
 	#find_library(X11 NAMES X11 x11 PATHS /usr/X11/include/X11/ /usr/X11/lib)
 elseif(APPLE)
-    find_library(COCOA_FRAMEWORK Cocoa)
+    include_directories(/System/Library/Frameworks)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OpenGL_LIBRARY OpenGL)
+    
+    set(EXTERNAL_LIBS
+        ${COCOA_LIBRARY}
+        ${OpenGL_LIBRARY}
+    )
 endif()
 
 target_link_libraries(

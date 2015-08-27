@@ -1,4 +1,8 @@
 #include "RendererGL.h"
+#include "utils/Logger.h"
+#include "context/DriverContext.h"
+
+#ifdef _OPENGL_DRIVER_
 #include "ShaderGL.h"
 #include "ShaderProgramGL.h"
 #include "GeometryGL.h"
@@ -9,9 +13,6 @@
 #include "DebugLightGL.h"
 
 #include "GL/glew.h"
-
-#include "utils/Logger.h"
-#include "context/DriverContext.h"
 
 using namespace v3d;
 using namespace renderer;
@@ -72,6 +73,9 @@ void CRendererGL::preRender()
         return;
     }
 
+    /*glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+
     m_isLocked = true;
 }
 
@@ -88,7 +92,7 @@ void CRendererGL::postRender()
 #ifdef _DEBUG
     m_context->checkForErrors();
 #endif
-    glFlush();
+    m_context->flushBuffers();
 }
 
 ShaderPtr CRendererGL::makeSharedShader()
@@ -142,3 +146,5 @@ void CRendererGL::resetTexture()
 {
     CTextureGL::reset();
 }
+
+#endif //_OPENGL_DRIVER_

@@ -16,6 +16,7 @@ set(TEST_PROJECT_1 Test_Font)
 set(TEST_PROJECT_2 Test_RenderTarget)
 set(TEST_PROJECT_3 Test_Billboard)
 set(TEST_PROJECT_4 Test_Light)
+set(TEST_PROJECT_5 Test_CreateContext)
 
 if(COMPILER_MSVC)
 	message("-- Configuring MSVC Compiler")
@@ -155,6 +156,10 @@ file(GLOB DECODERS_SOURCES ${SOURCE_DIR}/decoders/*.cpp)
 file(GLOB GL_HEADERS ${SOURCE_DIR}/*/GL/*.h)
 file(GLOB GL_SOURCES ${SOURCE_DIR}/*/GL/*.cpp)
 
+#D3D Source
+file(GLOB D3D_HEADERS ${SOURCE_DIR}/*/D3D/*.h)
+file(GLOB D3D_SOURCES ${SOURCE_DIR}/*/D3D/*.cpp)
+
 #Context Source
 file(GLOB CONTEXT_HEADERS ${SOURCE_DIR}/context/*.h)
 file(GLOB CONTEXT_SOURCES ${SOURCE_DIR}/context/*.cpp)
@@ -187,6 +192,7 @@ source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
 source_group(resources        FILES ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES})
 source_group(decoders         FILES ${DECODERS_HEADERS}    ${DECODERS_SOURCES})
 source_group(gl               FILES ${GL_HEADERS}          ${GL_SOURCES})
+source_group(d3d              FILES ${D3D_HEADERS}         ${D3D_SOURCES})
 source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
 source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES})
 source_group(scene            FILES ${SCENE_HEADERS}       ${SCENE_SOURCES})
@@ -213,6 +219,7 @@ add_library(
 	${DECODERS_HEADERS}	   ${DECODERS_SOURCES}
 	${RESOURCES_HEADERS}   ${RESOURCES_SOURCES}
 	${GL_HEADERS}          ${GL_SOURCES}
+    ${D3D_HEADERS}         ${D3D_SOURCES}
 	${CONTEXT_HEADERS}     ${CONTEXT_SOURCES}
 	${STREAM_HEADERS}      ${STREAM_SOURCES}
 	${SCENE_HEADERS}       ${SCENE_SOURCES}
@@ -250,6 +257,7 @@ add_subdirectory(tests/${TEST_PROJECT_1})
 add_subdirectory(tests/${TEST_PROJECT_2})
 add_subdirectory(tests/${TEST_PROJECT_3})
 add_subdirectory(tests/${TEST_PROJECT_4})
+add_subdirectory(tests/${TEST_PROJECT_5})
 
 ################################
 #Dependencies

@@ -45,19 +45,19 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined (_PLATFORM_WIN_)
-#   define _OPENGL_DRIVER_
+//#   define _OPENGL_DRIVER_
 #   define _DIRECT3D_DRIVER_
 
 #   define _DIRECTINPUT_ 1
-#endif
+#endif //_PLATFORM_WIN_
 
 #if defined (_PLATFORM_LINUX_)
 #   define _OPENGL_DRIVER_
-#endif
+#endif //_PLATFORM_LINUX_
 
 #if defined (_PLATFORM_MACOSX_)
 #   define _OPENGL_DRIVER_
-#endif
+#endif //_PLATFORM_MACOSX_
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +66,12 @@
 #   define OPENGL_VERSION_MINOR 3
 
 #   define GLEW_STATIC
-#endif
+#endif //_OPENGL_DRIVER_
+
+#ifdef _DIRECT3D_DRIVER_
+#   define DIRECTD3D_VERSION_MAJOR 11
+#   define DIRECTD3D_VERSION_MINOR 0
+#endif //_DIRECT3D_DRIVER_
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 

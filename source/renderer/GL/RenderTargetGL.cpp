@@ -1,9 +1,10 @@
 #include "RenderTargetGL.h"
-#include "RenderStateGL.h"
 #include "scene/TextureManager.h"
 #include "Engine.h"
 #include "utils/Logger.h"
 
+#ifdef _OPENGL_DRIVER_
+#include "RenderStateGL.h"
 #include "GL/glew.h"
 
 #ifndef _PLATFORM_WIN_
@@ -595,3 +596,5 @@ void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect32& size
         glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, size.getWidth(), size.getHeight());
     }
 }
+
+#endif //_OPENGL_DRIVER_

@@ -34,7 +34,7 @@ set_target_properties(${CURRENT_PROJECT} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "T
 
 if(WIN32)
 	set(EXTERNAL_LIBS 
-		OpenGL32.lib
+		#OpenGL32.lib
 		#debug
 		#debug ${ENGINE_NAME}_d.lib
 		#debug ${GLEW_PLOJECT}_d.lib

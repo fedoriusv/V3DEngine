@@ -1,10 +1,10 @@
 #include "GeometryGL.h"
-
 #include "renderer/ShaderAttribute.h"
 #include "renderer/ShaderData.h"
 #include "utils/Logger.h"
 #include "Engine.h"
 
+#ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
 #ifndef _PLATFORM_WIN_
@@ -359,3 +359,5 @@ void CGeometryGL::drawArraysInstanced(EDrawMode mode, u32 first, u32 count, u32 
 {
     glDrawArraysInstanced(EDrawModeGL[mode], first, count, primCount);
 }
+
+#endif //_OPENGL_DRIVER_

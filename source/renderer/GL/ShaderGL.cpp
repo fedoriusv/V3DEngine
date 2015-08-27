@@ -1,7 +1,8 @@
 #include "ShaderGL.h"
-
 #include "utils/Logger.h"
 #include "Engine.h"
+
+#ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -169,3 +170,5 @@ bool CShaderGL::create(const std::string& shader, EShaderType type)
 
     return CShaderGL::create();
 }
+
+#endif //_OPENGL_DRIVER_

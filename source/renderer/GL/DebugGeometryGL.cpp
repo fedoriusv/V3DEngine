@@ -1,19 +1,20 @@
 #include "DebugGeometryGL.h"
 #include "GeometryGL.h"
 #include "Engine.h"
-#include "GL/glew.h"
+
+//#include "GL/glew.h"
 
 using namespace v3d;
-using namespace v3d::core;
-using namespace v3d::renderer;
+using namespace core;
+using namespace renderer;
 
-GLenum EDebugGeometryModeGL[CGeometry::eDrawCount] =
-{
-    GL_TRIANGLE_STRIP,
-    GL_TRIANGLES,
-    GL_TRIANGLE_FAN,
-    GL_LINES
-};
+//GLenum EDebugGeometryModeGL[CGeometry::eDrawCount] =
+//{
+//    GL_TRIANGLE_STRIP,
+//    GL_TRIANGLES,
+//    GL_TRIANGLE_FAN,
+//    GL_LINES
+//};
 
 const std::string k_vertex =  "#version 330\n\
                               #define POSITION 0\n\

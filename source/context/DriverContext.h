@@ -23,12 +23,13 @@ namespace renderer
         virtual void                destroyContext()                                 = 0;
 
         virtual bool                setVSync(bool use)                               = 0;
+        virtual void                flushBuffers()                                   = 0;
 
         const core::Dimension2D&    getWindowSize() const;
-        const platform::WindowPtr&  getWindow() const;
+        const platform::WindowPtr&  getWindow()     const;
 
-        u32                         getSamplersCount() const;
-        f32                         getMaxAnisotropySize() const;
+        u32                         getSamplersCount()      const;
+        f32                         getMaxAnisotropySize()  const;
 
     protected:
 

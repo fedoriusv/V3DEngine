@@ -1,7 +1,9 @@
 #include "DriverContextGL.h"
 #include "utils/Logger.h"
 
+#ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
+#pragma comment(lib, "OpenGL32.lib")
 
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
@@ -614,3 +616,9 @@ void CDriverContextGL::printExtensionList() const
         LOG("%s", ext);
     }
 }
+
+void CDriverContextGL::flushBuffers()
+{
+    glFlush();
+}
+#endif //_OPENGL_DRIVER_

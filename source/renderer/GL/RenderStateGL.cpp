@@ -1,5 +1,7 @@
 #include "RenderStateGL.h"
 #include "Engine.h"
+
+#ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -223,3 +225,5 @@ bool CRenderStateGL::depthTest(bool enable)
 
     return false;
 }
+
+#endif //_OPENGL_DRIVER_

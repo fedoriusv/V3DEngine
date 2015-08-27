@@ -1,6 +1,7 @@
 #include "TextureGL.h"
 #include "Engine.h"
 
+#ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -614,3 +615,5 @@ void CTextureGL::initTextureCubeMap(u32 texture)
             0, format, type, m_data[i]._data);
     }
 }
+
+#endif //_OPENGL_DRIVER_

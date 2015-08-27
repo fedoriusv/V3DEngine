@@ -1,8 +1,9 @@
 #include "ShaderProgramGL.h"
-
 #include "utils/Logger.h"
-#include "renderer/GL/ShaderGL.h"
 #include "Engine.h"
+
+#ifdef _OPENGL_DRIVER_
+#include "renderer/GL/ShaderGL.h"
 #include "GL/glew.h"
 
 using namespace v3d;
@@ -429,3 +430,5 @@ s32 CShaderProgramGL::getUniformLocation(u32 shaderProgram, const std::string& n
 
     return -1;
 }
+
+#endif //_OPENGL_DRIVER_
