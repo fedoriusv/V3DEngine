@@ -18,12 +18,9 @@ GLenum EDrawModeGL[CGeometry::eDrawCount] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
-    GL_TRIANGLE_FAN,
     GL_LINES,
     GL_LINE_STRIP,
-    GL_LINE_LOOP,
     GL_POINTS
-
 };
 
 GLenum EGeometryTargetGL[CGeometry::eTargetCount] =

@@ -18,10 +18,8 @@ namespace renderer
         {
             eTriangles,
             eTriangleStrip,
-            eTriangleFan,
             eLines,
             eLinesStrip,
-            eLinesLoop,
             ePoints,
 
             eDrawCount
