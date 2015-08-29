@@ -1,7 +1,6 @@
 #ifndef _V3D_DEBUG_LIGHT_H_
 #define _V3D_DEBUG_LIGHT_H_
 
-#include "Object.h"
 #include "RenderPass.h"
 #include "Vertex.h"
 
@@ -46,7 +45,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugLight : public CObject
+    class CDebugLight
     {
     public:
 

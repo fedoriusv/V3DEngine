@@ -1,7 +1,6 @@
 #ifndef _V3D_RENDER_PASS_H_
 #define _V3D_RENDER_PASS_H_
 
-#include "Object.h"
 #include "ShaderProgram.h"
 #include "ShaderData.h"
 #include "RenderState.h"
@@ -52,6 +51,8 @@ namespace renderer
         void                    bind(u32 target = 0);
         void                    unbind(u32 target = 0);
 
+        bool                    isCurrent() const;
+
     private:
 
         friend                  CRenderer;
@@ -79,6 +80,7 @@ namespace renderer
         RenderTargetList        m_renderTargets;
 
         bool                    m_enable;
+        bool                    m_current;
         std::string             m_name;
 
     };

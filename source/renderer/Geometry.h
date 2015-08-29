@@ -22,7 +22,7 @@ namespace renderer
             eLinesStrip,
             ePoints,
 
-            eDrawCount
+            eDrawModeCount
         };
 
         enum EGeometryTarget
@@ -30,13 +30,15 @@ namespace renderer
             eArrayBuffer,
             eArrayElementBuffer,
 
-            eTargetCount
+            eArrayTargetCount
         };
 
-        enum class EGeomertyType
+        enum EGeomertyType
         {
             eGeomertyStatic,
-            eGeomertyDynamic
+            eGeomertyDynamic,
+
+            eGeometryTypeCount
         };
 
         struct SInterval
@@ -53,22 +55,20 @@ namespace renderer
         CGeometry(const RenderTechniquePtr& technique);
         virtual                 ~CGeometry();
 
-        virtual void            init()   = 0;
-        virtual void            draw()   = 0;
-        virtual void            free()   = 0;
-        virtual void            refresh()= 0;
+        virtual void            init()      = 0;
+        virtual void            free()      = 0;
+        virtual void            draw()      = 0;
+        virtual void            refresh()   = 0;
+
+        bool                    updated() const;
 
         SVertexData&            getData();
 
         EDrawMode               getDrawMode() const;
         void                    setDrawMode(EDrawMode mode);
 
-        void                    copyToVertices (const f32 vertices[][3], u32 size);
-        void                    copyToNormals  (const f32 normals[][3], u32 size);
-        void                    copyToTexCoords(const f32 texCoords[][2], u32 layer, u32 size);
-        void                    copyToIndices  (const u32* indices, u32 size);
-
         void                    setInterval(u32 begin, u32 count);
+        const SInterval&        getInterval() const;
 
         void                    addVertex(const core::Vector3D& vertex);
         void                    addNormal(const core::Vector3D& normal);
@@ -77,12 +77,17 @@ namespace renderer
 
     protected:
 
+        void                    setVertexMask(u32 mask);
+
         EDrawMode               m_drawMode;
         EGeomertyType           m_geometyType;
         SVertexData             m_data;
         RenderTechniquePtr      m_technique;
 
+    private:
+
         SInterval               m_interval;
+        u32                     m_currentVertexMask;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

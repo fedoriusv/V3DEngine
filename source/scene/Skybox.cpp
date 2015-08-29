@@ -12,12 +12,12 @@ CSkybox::CSkybox()
     m_nodeType = ENodeType::eSkyBox;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRendereble::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(std::make_shared<CMaterial>());
 }
 
 CSkybox::~CSkybox()
 {
-    CRendereble::getGeometry()->free();
+    CRenderable::getGeometry()->free();
     m_textures.clear();
 }
 
@@ -54,10 +54,10 @@ void CSkybox::load(const std::string& front, const std::string& back, const std:
 
 void CSkybox::build()
 {
-    f32 s = 50.0f;
-    u32 count = 36;
+    f32 s = k_extend;
+    SVertexData& data = CRenderable::getGeometry()->getData();
 
-    f32 vertex[][3] =
+    data._vertices =
     {
         { -s, s, -s }, { -s, -s, -s }, { s, s, -s  }, { -s, -s, -s}, { s, s, -s  }, { s, -s, -s},
         { -s, s, s  }, { -s, -s, s  }, { s, s, s   }, { -s, -s, s }, { s, s, s   }, { s, -s, s },
@@ -67,7 +67,7 @@ void CSkybox::build()
         { -s, -s, s }, { -s, -s, -s }, { s, -s, s  }, { -s, -s, -s}, { s, -s, s  }, { s, -s, -s}
     };
 
-    f32 normals[][3] =
+    data._normals =
     {
         { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  },
         { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
@@ -77,7 +77,8 @@ void CSkybox::build()
         { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  },
     };
 
-    f32 texCoord[][2] =
+    data._texCoords.resize(1);
+    data._texCoords[0] =
     {
         { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f },
         { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f },
@@ -86,18 +87,11 @@ void CSkybox::build()
         { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f },
         { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
     };
-
-    SVertexData& data = CRendereble::getGeometry()->getData();
-    data.malloc(count, 0);
-
-    CRendereble::getGeometry()->copyToVertices(vertex, count);
-    CRendereble::getGeometry()->copyToNormals(normals, count);
-    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, count);
 }
 
 void CSkybox::init()
 {
-    RenderTechniquePtr technique = CRendereble::getMaterial()->getRenderTechique();
+    RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CSkybox: Do not exist RenderTechique");
@@ -105,26 +99,25 @@ void CSkybox::init()
         return;
     }
 
-    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
+    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
 
     CSkybox::build();
-    CRendereble::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
 
-    CRendereble::getGeometry()->init();
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
-void CSkybox::update(s32 time)
+void CSkybox::update(s32 dt)
 {
     if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
-    CNode::updateTransform();
-    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
+    CNode::update(dt);
+    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CSkybox::render()
@@ -136,12 +129,12 @@ void CSkybox::render()
 
     for (u32 i = 0; i < k_countSize; ++i)
     {
-        CRendereble::getGeometry()->setInterval((i * 6), 6);
-        CRendereble::getRenderJob()->getMaterial()->setTexture(0, m_textures[i]);
+        CRenderable::getGeometry()->setInterval((i * 6), 6);
+        CRenderable::getRenderJob()->getMaterial()->setTexture(0, m_textures[i]);
 
-        RENDERER->draw(CRendereble::getRenderJob());
+        RENDERER->draw(CRenderable::getRenderJob());
     }
 
-    RENDERER->draw(CRendereble::getRenderJob());
+    RENDERER->draw(CRenderable::getRenderJob());
     
 }

@@ -16,10 +16,9 @@ namespace scene
         CTorusShape(f32 minorRadius = 0.5f, f32 majorRadius = 1.0f);
         ~CTorusShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
-
-        void        init()           override;
+        void        init()         override;
+        void        render()       override;
+        void        update(s32 dt) override;
 
         void        setMinorRadius(f32 radius);
         void        setMajorRadius(f32 radius);
@@ -29,7 +28,7 @@ namespace scene
     
     private:
 
-        void        refresh()        override;
+        void        refresh();
         void        build();
 
         f32         m_majorRadius;

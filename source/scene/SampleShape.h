@@ -16,14 +16,14 @@ namespace scene
         CSampleShape();
         ~CSampleShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
 
-        void        init()           override;
+        void        init()          override;
+        void        render()        override;
+        void        update(s32 dt)  override;
 
     private:
 
-        void        refresh()        override;
+        void        refresh();
         void        build();
     };
 

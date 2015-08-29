@@ -32,11 +32,7 @@ void CDiskShape::init()
     CDiskShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -158,9 +154,5 @@ void CDiskShape::refresh()
     }
 
     CDiskShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }

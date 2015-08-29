@@ -16,15 +16,15 @@ namespace scene
         CCubeShape();
         ~CCubeShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
-
-        void        init()           override;
+        void        init()          override;
+        void        render()        override;
+        void        update(s32 dt)  override;
 
     private:
 
-        void        refresh()        override;
         void        build();
+
+        const f32   k_extend = 0.5f;
 
     };
 

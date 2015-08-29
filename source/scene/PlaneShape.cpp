@@ -20,9 +20,9 @@ void CPlaneShape::render()
     CShape::render();
 }
 
-void CPlaneShape::update(s32 time)
+void CPlaneShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CPlaneShape::init()
@@ -32,11 +32,7 @@ void CPlaneShape::init()
     CPlaneShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -105,9 +101,5 @@ void CPlaneShape::refresh()
     }
 
     CPlaneShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }

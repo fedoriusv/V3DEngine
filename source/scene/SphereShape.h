@@ -13,20 +13,20 @@ namespace scene
     {
     public:
 
-        CSphereShape(f32 radius = 1.0f);
+        explicit CSphereShape(f32 radius = 1.f);
         ~CSphereShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
 
-        void        init()           override;
+        void        init()         override;
+        void        render()       override;
+        void        update(s32 dt) override;
 
         void        setRadius(f32 radius);
         f32         getRadius() const;
 
     private:
 
-        void        refresh()        override;
+        void        refresh();
         void        build();
 
         f32         m_radius;

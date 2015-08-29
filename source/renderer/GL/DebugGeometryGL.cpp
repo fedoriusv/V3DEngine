@@ -76,7 +76,7 @@ void CDebugGeometryGL::draw()
 
 void CDebugGeometryGL::drawObject(const SDebugObject& object)
 {
-    CDebugGeometry::bind();
+    //CDebugGeometry::bind();
 
    /* u32 mode = EDebugGeometryModeGL[object._drawMode];
     CGeometryGL::bindVertexArray(object._arrayId);
@@ -88,14 +88,14 @@ void CDebugGeometryGL::drawObject(const SDebugObject& object)
     {
         CGeometryGL::drawArrays(mode, 0, object._vertex.vertex.size());
     }*/
-    CGeometryGL::bindVertexArray(0);
+    //CGeometryGL::bindVertexArray(0);
 }
 
 void CDebugGeometryGL::initDraw(SDebugObject& object)
 {
-    CGeometryGL::genVertexArray(object._arrayId);
+    //CGeometryGL::genVertexArray(object._arrayId);
 
-    CGeometryGL::bindVertexArray(object._arrayId);
+    //CGeometryGL::bindVertexArray(object._arrayId);
 
    /* CGeometryGL::genBuffers(object._vertex.id);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
@@ -109,7 +109,7 @@ void CDebugGeometryGL::initDraw(SDebugObject& object)
         CGeometryGL::bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint)* object._index.vertex.size(), object._index.vertex.data());
     }*/
 
-    CGeometryGL::bindVertexArray(0);
+    //CGeometryGL::bindVertexArray(0);
 
     RENDERER->checkForErrors("CDebugDrawGL Init Error");
 }
@@ -134,8 +134,8 @@ void CDebugGeometryGL::refreshDraw(SDebugObject& object)
 
 void CDebugGeometryGL::free()
 {
-    CGeometryGL::bindVertexArray(0);
-    CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
+    //CGeometryGL::bindVertexArray(0);
+    //CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
 
    /* for (u32 i = 0; i < EDebugGeometry::eGeometryCount; ++i)
     {

@@ -2,7 +2,7 @@
 #define _V3D_SHAPE_H_
 
 #include "scene/Node.h"
-#include "renderer/DebugGeometry.h"
+#include "renderer/Renderable.h"
 
 namespace v3d
 {
@@ -28,7 +28,7 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShape : public CNode
+    class CShape : public CNode, public renderer::CRenderable
     {
     public:
 
@@ -43,13 +43,7 @@ namespace scene
 
     protected:
 
-        virtual void                    refresh() = 0;
-
         EShapeType                      m_shapeType;
-
-#ifdef _DEBUG                           
-        renderer::DebugGeometryPtr      m_debug;
-#endif
 
         SVertexData&                   getGeometryData();
         renderer::CGeometry::EDrawMode getGeometryDrawMode() const;

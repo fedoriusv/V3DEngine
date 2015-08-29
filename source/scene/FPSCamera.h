@@ -25,7 +25,7 @@ namespace scene
     public:
 
         CFPSCamera();
-        virtual         ~CFPSCamera();
+        ~CFPSCamera();
 
         void            update(s32 dt) override;
 

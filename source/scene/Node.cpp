@@ -252,3 +252,8 @@ void CNode::setName(const std::string& name)
 {
     m_name = name;
 }
+
+void CNode::update(s32 dt)
+{
+    CNode::updateTransform();
+}

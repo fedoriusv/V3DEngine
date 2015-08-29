@@ -21,7 +21,7 @@ namespace renderer
         enum EShaderAttribute
         {
             eAttributeNone = -1,
-            eAttributeVertex,
+            eAttributePosition,
             eAttributeColor,
             eAttributeNormal,
             eAttributeBinormal,

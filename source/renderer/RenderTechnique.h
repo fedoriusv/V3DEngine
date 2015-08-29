@@ -23,10 +23,12 @@ namespace renderer
         virtual                 ~CRenderTechnique();
 
         const RenderPassPtr&    getRenderPass(u32 id) const;
-        u32                     getRenderPassCount()  const;
-        void                    addRenderPass(const RenderPassPtr& pass);
-
         const RenderPassList&   getRenderPassList() const;
+        void                    addRenderPass(const RenderPassPtr& pass);
+        u32                     getRenderPassCount()  const;
+
+        void                    setCurrentPass(u32 pass);
+        u32                     getCurrentPass() const;
 
         const std::string&      getName() const;
 
@@ -41,6 +43,7 @@ namespace renderer
         bool                    parse(tinyxml2::XMLElement* root);
 
         RenderPassList          m_renderPassList;
+        u32                     m_currentPass;
 
         std::string             m_name;
 

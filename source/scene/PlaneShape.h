@@ -13,20 +13,19 @@ namespace scene
     {
     public:
 
-        CPlaneShape(f32 extent);
+        explicit CPlaneShape(f32 extent = 2.f);
         ~CPlaneShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
+        void        init()          override;
+        void        render()        override;
+        void        update(s32 dt)  override;
 
-        void        init()           override;
-
-        void        setExtent(const f32 extent);
+        void        setExtent(f32 extent);
         f32         getExtent() const;
 
     private:
 
-        void        refresh()        override;
+        void        refresh();
         void        build();
 
         f32         m_extent;

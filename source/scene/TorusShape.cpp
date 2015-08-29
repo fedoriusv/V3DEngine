@@ -20,9 +20,9 @@ void CTorusShape::render()
     CShape::render();
 }
 
-void CTorusShape::update(s32 time)
+void CTorusShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CTorusShape::init()
@@ -32,11 +32,7 @@ void CTorusShape::init()
     CTorusShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -127,9 +123,5 @@ void CTorusShape::refresh()
     }
 
     CTorusShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }

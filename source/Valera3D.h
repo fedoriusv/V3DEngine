@@ -5,7 +5,6 @@
 
 #include "common.h"
 #include "Singleton.h"
-#include "Object.h"
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "scene/Node.h"

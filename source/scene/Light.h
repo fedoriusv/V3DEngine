@@ -2,7 +2,6 @@
 #define _V3D_LIGHT_H_
 
 #include "Node.h"
-#include "renderer/DebugLight.h"
 
 namespace v3d
 {
@@ -30,9 +29,8 @@ namespace scene
         CLight();
         virtual                   ~CLight();
 
-        void                      render()         override;
-        void                      update(s32 time) override;
-        void                      init()           override;
+        void                      init()         override;
+        void                      update(s32 dt) override;
                                   
         void                      setAmbient(const Vector4D& color);
         void                      setDiffuse(const Vector4D& color);
@@ -51,13 +49,6 @@ namespace scene
     private:
 
         SLightData                m_data;
-
-        bool                      m_needUpdate;
-
-#ifdef _DEBUG
-        renderer::DebugLightPtr   m_debug;
-#endif
-
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

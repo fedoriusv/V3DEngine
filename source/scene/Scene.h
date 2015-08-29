@@ -21,8 +21,7 @@ namespace scene
         ~CScene();
 
         void                                init();
-
-        void                                draw(u32 dt);
+        void                                draw(s32 dt);
 
         void                                add(CNode* node);
         bool                                drop(CNode* node);
@@ -39,7 +38,7 @@ namespace scene
 
         void                                initRenderLists();
         void                                attachToRenderList(CNode* node);
-        void                                updateRenderLists(u32 delta);
+        void                                updateRenderLists(s32 delta);
 
         void                                needRefresh();
 

@@ -22,9 +22,9 @@ void CRectangleShape::render()
     CShape::render();
 }
 
-void CRectangleShape::update(s32 time)
+void CRectangleShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CRectangleShape::init()
@@ -34,11 +34,7 @@ void CRectangleShape::init()
     CRectangleShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -50,42 +46,32 @@ void CRectangleShape::refresh()
     }
 
     CRectangleShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }
 
 void CRectangleShape::build()
 {
-    const u32 count = 6;
+    SVertexData& data = CShape::getGeometryData();
 
     Vector2D leftUp = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getLeftX(), m_rect.getTopY()));
     Vector2D rightDown = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getRightX(), m_rect.getBottomY()));
 
-    const f32 vertex[][3] =
+    data._vertices =
     {
         { leftUp.x, rightDown.y, 0.0f }, { leftUp.x, leftUp.y, 0.0f }, { rightDown.x, leftUp.y, 0.0f },
         { leftUp.x, rightDown.y, 0.0f }, { rightDown.x, leftUp.y, 0.0f }, { rightDown.x, rightDown.y, 0.0f }
     };
 
-    const f32 normals[][3] =
+    data._normals =
     {
         { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, 
         { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }
     };
 
-    const f32 texCoord[][2] =
+    data._texCoords.resize(1);
+    data._texCoords[0] =
     {
         { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
         { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f }
     };
-
-    SVertexData& data = CShape::getGeometryData();
-    data.malloc(count, 0);
-
-    CRendereble::getGeometry()->copyToVertices(vertex, count);
-    CRendereble::getGeometry()->copyToNormals(normals, count);
-    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, count);
 }

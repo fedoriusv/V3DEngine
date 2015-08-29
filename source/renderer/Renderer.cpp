@@ -122,13 +122,18 @@ void CRenderer::draw(const RenderJobPtr& job)
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
     u32 targetIndex = job->getRenderTarget();
-    const u32 passCount = material->getRenderTechique()->getRenderPassCount();
+    const RenderTechniquePtr& techique = material->getRenderTechique();
+    const u32 passCount = techique->getRenderPassCount();
 
-    for (u32 i = 0; i < passCount; ++i)
+    for (u32 passIdx = 0; passIdx < passCount; ++passIdx)
     {
-        const RenderPassPtr& pass = material->getRenderTechique()->getRenderPass(i);
-
+        const RenderPassPtr& pass = techique->getRenderPass(passIdx);
         pass->bind(targetIndex);
+
+        if (pass->isCurrent())
+        {
+            techique->setCurrentPass(passIdx);
+        }
 
         CRenderer::updateTransform(transform, pass);
         CRenderer::updateMaterial(material, pass);
@@ -136,6 +141,10 @@ void CRenderer::draw(const RenderJobPtr& job)
         CRenderer::updateLight(transform, pass);
 
         //Draw Geometry
+        if (geometry->updated())
+        {
+            geometry->refresh();
+        }
         geometry->draw();
 
         pass->unbind(targetIndex);

@@ -44,11 +44,11 @@ void CRenderList::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CRenderList::add(CNode* node, u32 target)
+void CRenderList::add(CNode* node, CRenderable* draw, u32 target)
 {
-    if (node)
+    if (node && draw)
     {
-        m_list.push_back(SNodeList(node, target));
+        m_list.push_back(SNodeList(node, draw, target));
     }
 }
 
@@ -91,7 +91,7 @@ void CRenderList::render()
 
     for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
-        CRendereble* item = (*iter)._node;
+        CRenderable* item = (*iter)._draw;
         if (!item)
         {
             continue;

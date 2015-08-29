@@ -16,14 +16,13 @@ namespace scene
         explicit CRectangleShape(const core::Rect32& rect);
         ~CRectangleShape();
 
-        void            render()         override;
-        void            update(s32 time) override;
-
-        void            init()           override;
+        void            init()          override;
+        void            render()        override;
+        void            update(s32 dt)  override;
 
     private:
 
-        void            refresh()        override;
+        void            refresh();
         void            build();
 
         core::Rect32    m_rect;

@@ -2,6 +2,7 @@
 #define _V3D_MODEL_H_
 
 #include "Node.h"
+#include "renderer/Renderable.h"
 #include "renderer/Mesh.h"
 #include "resources/ModelData.h"
 
@@ -13,7 +14,7 @@ namespace scene
 
     class CModelManager;
 
-    class CModel : public CNode
+    class CModel : public CNode, public renderer::CRenderable
     {
     public:
 

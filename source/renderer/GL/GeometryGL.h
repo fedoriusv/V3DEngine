@@ -9,9 +9,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugGeometryGL;
-    class CDebugLightGL;
-
     class CGeometryGL : public CGeometry
     {
     public:
@@ -19,17 +16,16 @@ namespace renderer
         CGeometryGL(const RenderTechniquePtr& technique);
         ~CGeometryGL();
         
-        void                init()    override;
-        void                draw()    override;
-        void                free()    override;
-        void                refresh() override;
+        void                init()      override;
+        void                free()      override;
+        void                draw()      override;
+        void                refresh()   override;
 
     private:
 
-        friend              CDebugGeometryGL;
-        friend              CDebugLightGL;
-
-        v3d::u32            m_arrayId;
+        u32                 m_arrayId;
+        u32                 m_verticesId;
+        u32                 m_indicesId;
 
         s32                 computeVertexSize(const AttributeList& attributes);
         void                initBufferData(const AttributeList& attributes);
@@ -38,7 +34,7 @@ namespace renderer
         static void         bindBuffers(EGeometryTarget target, u32 buffer);
         static void         deleteBuffers(u32& buffer);
 
-        static void         bufferData(EGeometryTarget target, u32 size, void* data);
+        static void         bufferData(EGeometryTarget target, EGeomertyType type, u32 size, void* data);
         static void         bufferSubData(EGeometryTarget target, u32 offset, u32 size, void* data);
 
         static void*        mapBuffer(EGeometryTarget target, u32 access);
@@ -52,6 +48,7 @@ namespace renderer
         static void         deleteVertexArray(u32& buffer);
 
         static void         initVertexAttribPointer(u32 vertexAttrib, u32 count, bool normalized = false, u32 size = 0, u32 offset = 0);
+        static void         vertexAttribArray(u32 vertexAttrib, bool enable);
 
         static void         drawElements(EDrawMode mode, u32 count);
         static void         drawElementsInstanced(EDrawMode mode, u32 count, u32 primCount);

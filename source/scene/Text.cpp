@@ -22,12 +22,12 @@ CText::CText(const std::string& font)
     m_nodeType = ENodeType::eText;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRendereble::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(std::make_shared<CMaterial>());
 }
 
 CText::~CText()
 {
-    CRendereble::getGeometry()->free();
+    CRenderable::getGeometry()->free();
 }
 
 void CText::setText(const std::string& text)
@@ -65,7 +65,7 @@ CText::EAlignMode CText::getAlignMode() const
 
 void CText::init()
 {
-    RenderTechniquePtr technique = CRendereble::getMaterial()->getRenderTechique();
+    RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CText: Do not exist RenderTechique");
@@ -73,8 +73,8 @@ void CText::init()
         return;
     }
 
-    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
+    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
 
     if (m_font.empty())
     {
@@ -95,24 +95,24 @@ void CText::init()
 
     CText::build();
 
-    CRendereble::getGeometry()->setDrawMode(CGeometry::eTriangles);
-    CRendereble::getGeometry()->init();
+    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRenderable::getGeometry()->init();
 
     //TODO: Need more texture maps
-    CRendereble::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
+    CRenderable::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
 
     m_initialiazed = true;
 }
 
-void CText::update(s32 time)
+void CText::update(s32 dt)
 {
     if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
-    CNode::updateTransform();
-    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
+    CNode::update(dt);
+    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CText::render()
@@ -122,7 +122,7 @@ void CText::render()
         return;
     }
 
-    RENDERER->draw(CRendereble::getRenderJob());
+    RENDERER->draw(CRenderable::getRenderJob());
 }
 
 void CText::refresh()
@@ -137,7 +137,7 @@ void CText::refresh()
 
     CText::build();
 
-    CRendereble::getGeometry()->refresh();
+    CRenderable::getGeometry()->refresh();
 }
 
 f32 CText::getTextWidth()
@@ -192,7 +192,7 @@ void CText::build()
         x -= textwidth;
     }
 
-    SVertexData& data = CRendereble::getGeometry()->getData();
+    SVertexData& data = CRenderable::getGeometry()->getData();
     data.malloc((u32)m_text.size() * 6);
 
     u32 index = 0;

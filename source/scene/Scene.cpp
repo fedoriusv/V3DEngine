@@ -64,7 +64,7 @@ void CScene::init()
     LOG_INFO("Scene: Init completed");
 }
 
-void CScene::draw(u32 dt)
+void CScene::draw(s32 dt)
 {
     CScene::updateRenderLists(dt);
 
@@ -95,7 +95,6 @@ void CScene::add(CNode* node)
     if (node)
     {
         m_objects.push_back(node);
-
         CScene::needRefresh();
     }
 }
@@ -113,8 +112,8 @@ bool CScene::drop(CNode* node)
     {
         delete (*iter);
         (*iter) = nullptr;
-        m_objects.erase(iter);
 
+        m_objects.erase(iter);
         CScene::needRefresh();
 
         return true;
@@ -202,12 +201,13 @@ void CScene::initRenderLists()
 void CScene::attachToRenderList(CNode* node)
 {
     RenderTechniquePtr techniqe = nullptr;
+    CRenderable* draw = nullptr;
 
     switch (node->getNodeType())
     {
     case ENodeType::eShape:
         {
-            CRendereble* draw = static_cast<CShape*>(node);
+            draw = static_cast<CShape*>(node);
             techniqe = draw->getMaterial()->getRenderTechique();
         }
             break;
@@ -218,21 +218,21 @@ void CScene::attachToRenderList(CNode* node)
 
         case ENodeType::eSkyBox:
             {
-                CRendereble* draw = static_cast<CSkybox*>(node);
+                draw = static_cast<CSkybox*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
             break;
 
         case ENodeType::eText:
             {
-                CRendereble* draw = static_cast<CText*>(node);
+                draw = static_cast<CText*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
             break;
 
         case ENodeType::eBillboard:
             {
-                CRendereble* draw = static_cast<CBillboard*>(node);
+                draw = static_cast<CBillboard*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
             break;
@@ -241,7 +241,7 @@ void CScene::attachToRenderList(CNode* node)
             break;
     };
 
-    if (!techniqe)
+    if (!techniqe || !draw)
     {
         return;
     }
@@ -266,13 +266,13 @@ void CScene::attachToRenderList(CNode* node)
             std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
             if (findTarget != m_renderList.end())
             {
-                (*findTarget).add(node, targetIndex);
+                (*findTarget).add(node, draw, targetIndex);
             }
             else
             {
                 CRenderList list(target);
                 list.setEnable(true);
-                list.add(node, targetIndex);
+                list.add(node, draw, targetIndex);
 
                 m_renderList.push_back(list);
             }
@@ -280,7 +280,7 @@ void CScene::attachToRenderList(CNode* node)
     }
 }
 
-void CScene::updateRenderLists(u32 dt)
+void CScene::updateRenderLists(s32 dt)
 {
     if (m_refresh)
     {

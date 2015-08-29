@@ -21,9 +21,9 @@ void CSphereShape::render()
     CShape::render();
 }
 
-void CSphereShape::update(s32 time)
+void CSphereShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CSphereShape::init()
@@ -33,11 +33,7 @@ void CSphereShape::init()
     CSphereShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -156,9 +152,5 @@ void CSphereShape::refresh()
     }
 
     CSphereShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }

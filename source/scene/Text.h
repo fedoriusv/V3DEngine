@@ -2,6 +2,7 @@
 #define _V3D_TEXT_H_
 
 #include "Node.h"
+#include "renderer/Renderable.h"
 #include "resources/FontData.h"
 
 namespace v3d
@@ -10,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CText : public CNode
+    class CText : public CNode, public renderer::CRenderable
     {
     public:
 
@@ -22,7 +23,7 @@ namespace scene
         };
 
         CText(const std::string& font);
-        virtual                         ~CText();
+        ~CText();
 
         void                            setText(const std::string& text);
         const std::string&              getText() const;
@@ -33,9 +34,9 @@ namespace scene
         void                            setAlignMode(EAlignMode mode);
         EAlignMode                      getAlignMode() const;
 
-        void                            init()                          override;
-        void                            update(s32 time)                override;
-        void                            render()                        override;
+        void                            init()          override;
+        void                            update(s32 dt)  override;
+        void                            render()        override;
 
     protected:
 

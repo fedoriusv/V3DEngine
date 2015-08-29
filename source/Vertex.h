@@ -14,21 +14,19 @@ namespace v3d
     struct SVertexData
     {
         std::vector<core::Vector3D>   _vertices;
-        std::vector<core::Vector3D>   _normals;
         std::vector<core::Vector3D>   _colors;
+        std::vector<core::Vector3D>   _normals;
+        std::vector<core::Vector3D>   _binormals;
         std::vector<core::Vector3D>   _tangents;
         TextureCoords                 _texCoords;
 
-        std::vector<v3d::u32>         _indices;
+        std::vector<u32>              _indices;
 
-        v3d::u32                      _verticesId;
-        v3d::u32                      _indicesId;
-
-        v3d::u32                      _countVertices;
-        v3d::u32                      _countIndices;
+        u32                           verticesSize();
+        u32                           indicesSize();
 
         void                          clear();
-        void                          malloc(v3d::u32 count, v3d::u32 index = 0, v3d::u32 layer = 1, bool color = false, bool tangent = false);
+        void                          malloc(u32 count, u32 index = 0, u32 layer = 1, bool basis = false, bool color = false);
         bool                          empty() const;
 
         SVertexData();

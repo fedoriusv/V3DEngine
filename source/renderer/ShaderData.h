@@ -48,6 +48,8 @@ namespace renderer
         bool                        isExistAttribute(const std::string& name);
         bool                        isExistSampler(const std::string& name);
 
+        u32                         getVertexFormatMask() const;
+
     protected:
 
         friend                      CRenderPass;
@@ -61,6 +63,7 @@ namespace renderer
         UniformList                 m_uniformList;
         AttributeList               m_attributeList;
         SamplerList                 m_samplerList;
+        u32                         m_vertexFormatMask;
 
     private:
 

@@ -79,7 +79,7 @@ void CFPSCamera::rotateByMouse()
     static f32 currentRotX = 0.0f;
     static f32 lastRotX = 0.0f;
 
-    Vector3D angle = Vector3D(middle.x - position.x, middle.y - position.y, 0.f);
+    Vector3D angle = Vector3D(f32(middle.x - position.x), f32(middle.y - position.y), 0.f);
     angle /= 1000.0f;
     lastRotX = -currentRotX;
 

@@ -37,6 +37,7 @@ EDataType CShaderData::getDataTypeByName(const std::string& name)
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShaderData::CShaderData()
+: m_vertexFormatMask(0U)
 {
 }
 
@@ -45,6 +46,12 @@ CShaderData::~CShaderData()
     m_attributeList.clear();
     m_uniformList.clear();
     m_samplerList.clear();
+    m_vertexFormatMask = 0U;
+}
+
+u32 CShaderData::getVertexFormatMask() const
+{
+    return m_vertexFormatMask;
 }
 
 bool CShaderData::isExistUniform(const std::string& name)
@@ -204,6 +211,7 @@ void CShaderData::addAttribute(const AttributePtr& attribute)
     if (!isExistAttribute(attribute->getAttribute()))
     {
         m_attributeList.push_back(attribute);
+        m_vertexFormatMask |= 1 << (attribute->getType() + 1);
     }
 }
 

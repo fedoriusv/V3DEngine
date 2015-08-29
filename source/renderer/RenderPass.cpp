@@ -17,6 +17,7 @@ CRenderPass::CRenderPass()
     , m_renderState(nullptr)
     , m_lods(nullptr)
     , m_enable(true)
+    , m_current(false)
     , m_name("")
 {
     CRenderPass::init();
@@ -405,6 +406,8 @@ bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
 
 void CRenderPass::bind(u32 target)
 {
+    m_current = true;
+
     ASSERT(m_renderTargets.size() > target && "Invalid target index");
     m_renderTargets[target]->bind();
 
@@ -437,6 +440,8 @@ void CRenderPass::unbind(u32 target)
 
     ASSERT(m_renderTargets.size() > target && "Invalid target index");
     m_renderTargets[target]->unbind();
+
+    m_current = false;
 }
 
 const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)
@@ -494,4 +499,9 @@ void CRenderPass::setRenderTarget(u32 index, const RenderTargetPtr& target)
 u32 CRenderPass::getRenderTargetCount() const
 {
     return (u32)m_renderTargets.size();
+}
+
+bool CRenderPass::isCurrent() const
+{
+    return m_current;
 }

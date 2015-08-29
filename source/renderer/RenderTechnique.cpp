@@ -12,6 +12,7 @@ using namespace scene;
 
 CRenderTechnique::CRenderTechnique()
     : m_name("")
+    , m_currentPass(0U)
 {
 }
 
@@ -48,6 +49,16 @@ void CRenderTechnique::addRenderPass(const RenderPassPtr& pass)
 const RenderPassList& CRenderTechnique::getRenderPassList() const
 {
     return m_renderPassList;
+}
+
+u32 CRenderTechnique::getCurrentPass() const
+{
+    return m_currentPass;
+}
+
+void CRenderTechnique::setCurrentPass(u32 pass)
+{
+    m_currentPass = pass;
 }
 
 bool CRenderTechnique::parse(tinyxml2::XMLElement* root)

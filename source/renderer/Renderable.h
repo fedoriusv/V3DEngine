@@ -11,12 +11,12 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRendereble
+    class CRenderable
     {
     public:
 
-        CRendereble();
-        virtual             ~CRendereble();
+        CRenderable();
+        virtual             ~CRenderable();
 
         virtual void        render() = 0;
 

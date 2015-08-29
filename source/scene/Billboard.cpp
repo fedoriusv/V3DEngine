@@ -11,13 +11,13 @@ CBillboard::CBillboard(const std::string& texture)
     m_nodeType = ENodeType::eBillboard;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRendereble::setMaterial(std::make_shared<CMaterial>());
-    CRendereble::getMaterial()->setTexture(0, texture);
+    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::getMaterial()->setTexture(0, texture);
 }
 
 CBillboard::~CBillboard()
 {
-    CRendereble::getGeometry()->free();
+    CRenderable::getGeometry()->free();
 }
 
 void CBillboard::render()
@@ -27,23 +27,23 @@ void CBillboard::render()
         return;
     }
 
-    RENDERER->draw(CRendereble::getRenderJob());
+    RENDERER->draw(CRenderable::getRenderJob());
 }
 
-void CBillboard::update(s32 time)
+void CBillboard::update(s32 dt)
 {
     if (!CNode::isVisible() || !m_initialiazed)
     {
         return;
     }
 
-    CNode::updateTransform();
-    CRendereble::getRenderJob()->setTransform(CNode::getAbsTransform());
+    CNode::update(dt);
+    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CBillboard::init()
 {
-    const RenderTechniquePtr& technique = CRendereble::getMaterial()->getRenderTechique();
+    const RenderTechniquePtr& technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CBillboard: Do not exist RenderTechique");
@@ -51,26 +51,22 @@ void CBillboard::init()
         return;
     }
 
-    CRendereble::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRendereble::setRenderJob(std::make_shared<CRenderJob>(CRendereble::getMaterial(), CRendereble::getGeometry(), CNode::getAbsTransform()));
+    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+
 
     CBillboard::build();
+    CRenderable::getGeometry()->setDrawMode(CGeometry::ePoints);
 
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
 void CBillboard::build()
 {
-    CRendereble::getGeometry()->setDrawMode(CGeometry::ePoints);
-
-    const f32 vertex[][3] =
+    SVertexData& data = CRenderable::getGeometry()->getData();
+    data._vertices =
     {
         {0.0f, 0.0f, 0.0f}
     };
-
-    SVertexData& data = CRendereble::getGeometry()->getData();
-    data.malloc(1, 0);
-    CRendereble::getGeometry()->copyToVertices(vertex, 1);
-
-    CRendereble::getGeometry()->init();
 }

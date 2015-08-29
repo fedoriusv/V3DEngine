@@ -15,7 +15,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRendereble;
+    class CRenderable;
 
     class CRenderList
     {
@@ -34,7 +34,7 @@ namespace renderer
         bool                            isEnable() const;
         void                            setEnable(bool enable);
 
-        void                            add(scene::CNode* node, u32 target);
+        void                            add(scene::CNode* node, CRenderable* draw, u32 target);
         void                            clear();
 
         const RenderTargetPtr&          getRenderTarget() const;
@@ -44,13 +44,15 @@ namespace renderer
 
         struct SNodeList
         {
-            SNodeList(scene::CNode* node, u32 index)
+            SNodeList(scene::CNode* node, CRenderable* draw, u32 index)
             : _node(node)
+            , _draw(draw)
             , _targetIndex(index)
             {}
 
-            scene::CNode* _node;
-            u32           _targetIndex;
+            scene::CNode*   _node;
+            CRenderable*    _draw;
+            u32             _targetIndex;
         };
 
         bool                            checkDistance(const scene::CNode* node, const f32 distance);

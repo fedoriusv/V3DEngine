@@ -1,7 +1,7 @@
 #ifndef _V3D_NODE_H_
 #define _V3D_NODE_H_
 
-#include "renderer/Rendereble.h"
+#include "common.h"
 
 namespace v3d
 {
@@ -30,7 +30,7 @@ namespace scene
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CNode: public renderer::CRendereble
+    class CNode
     {
     public:
 
@@ -53,22 +53,22 @@ namespace scene
         void                        setRotation (const core::Vector3D& rotation);
         void                        setScale    (const core::Vector3D& scale);
         void                        setTransform(const core::Matrix4D& transform);
-                                    
-        void                        setParent   (CNode* parent);
-        void                        attachChild (CNode* child);
-        void                        dettachChild(CNode* child);
-                                    
+
         const core::Vector3D&       getPosition()           const;
         const core::Vector3D&       getRotation()           const;
         const core::Vector3D&       getScale()              const;
         const core::Matrix4D&       getTransform()          const;
         core::Matrix4D              getAbsTransform()       const;
-
+                                    
+        void                        setID(s32 id);
+        void                        setName(const std::string& name);
+                                    
         const s32                   getID()                 const;
         const std::string&          getName()               const;
 
-        void                        setID(s32 id);
-        void                        setName(const std::string& name);
+        void                        setParent(CNode* parent);
+        void                        attachChild(CNode* child);
+        void                        dettachChild(CNode* child);
                                     
         CNode*                      getParent()                                  const;
         CNode*                      getChildNodeByID(u32 id)                     const;
@@ -88,21 +88,20 @@ namespace scene
 
         friend                      renderer::CRenderList;
 
-        void                        updateTransform() const;
-
-        CNode*                      m_parentNode;
-        std::vector<CNode*>         m_childNodes;
-
         ENodeType                   m_nodeType;
-
         bool                        m_initialiazed;
 
     private:
+
+        void                        updateTransform() const;
 
         core::Vector3D              m_position;
         core::Vector3D              m_rotation;
         core::Vector3D              m_scale;
         mutable core::Matrix4D      m_modelMatrix;
+
+        CNode*                      m_parentNode;
+        std::vector<CNode*>         m_childNodes;
 
         f32                         m_priority;
         bool                        m_visible;

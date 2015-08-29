@@ -20,9 +20,9 @@ void CSampleShape::render()
     CShape::render();
 }
 
-void CSampleShape::update(s32 time)
+void CSampleShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CSampleShape::init()
@@ -32,44 +32,35 @@ void CSampleShape::init()
     CSampleShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangles);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-    m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
 void CSampleShape::build()
 {
-    const f32 vertex[][3] =
+    SVertexData& data = CShape::getGeometryData();
+
+    data._vertices =
     {
         {-1.0f, -1.0f, 0.0f},
         { 0.0f,  1.0f, 0.0f},
         { 1.0f, -1.0f, 0.0f},
     };
 
-    const f32 normal[][3] =
+    data._normals =
     {
         {0.0f, 0.0f, 1.0f},
         {0.0f, 0.0f, 1.0f},
         {0.0f, 0.0f, 1.0f},
     };
 
-    const f32 texCoord[][2] =
+    data._texCoords.resize(1);
+    data._texCoords[0] =
     {
         {0.0f, 0.0f},
         {0.5f, 1.0f},
         {1.0f, 0.0f},
     };
-
-
-    SVertexData& data = CShape::getGeometryData();
-    data.malloc(3, 0);
-
-    CRendereble::getGeometry()->copyToVertices(vertex, 3);
-    CRendereble::getGeometry()->copyToNormals(normal, 3);
-    CRendereble::getGeometry()->copyToTexCoords(texCoord, 0, 3);
 }
 
 void CSampleShape::refresh()
@@ -80,9 +71,5 @@ void CSampleShape::refresh()
     }
 
     CSampleShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }

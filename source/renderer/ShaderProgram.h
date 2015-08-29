@@ -1,7 +1,6 @@
 #ifndef _V3D_SHADER_PROGRAM_H_
 #define _V3D_SHADER_PROGRAM_H_
 
-#include "Object.h"
 #include "Shader.h"
 #include "ShaderData.h"
 

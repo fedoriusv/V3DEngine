@@ -20,9 +20,9 @@ void CCylinderShape::render()
     CShape::render();
 }
 
-void CCylinderShape::update(s32 time)
+void CCylinderShape::update(s32 dt)
 {
-    CShape::update(time);
+    CShape::update(dt);
 }
 
 void CCylinderShape::init()
@@ -32,11 +32,7 @@ void CCylinderShape::init()
     CCylinderShape::build();
     CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
 
-    CRendereble::getGeometry()->init();
-#ifdef _DEBUG
-   m_debug->init();
-#endif
-
+    CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -70,11 +66,7 @@ void CCylinderShape::refresh()
     }
 
     CCylinderShape::build();
-
-    CRendereble::getGeometry()->refresh();
-#ifdef _DEBUG
-    m_debug->refresh();
-#endif
+    CRenderable::getGeometry()->refresh();
 }
 
 void CCylinderShape::build()

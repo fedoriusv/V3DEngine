@@ -66,8 +66,8 @@ void CDebugLightGL::draw()
 
 void CDebugLightGL::free()
 {
-    CGeometryGL::bindVertexArray(0);
-    CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
+    //CGeometryGL::bindVertexArray(0);
+    //CGeometryGL::bindBuffers(CGeometry::eArrayBuffer, 0);
 
     /*for (u32 i = 0; i < EDebugLight::eDebugLightCount; ++i)
     {
@@ -80,16 +80,16 @@ void CDebugLightGL::free()
 
 void CDebugLightGL::initDraw(SDebugLight& object)
 {
-    CGeometryGL::genVertexArray(object._arrayId);
+    //CGeometryGL::genVertexArray(object._arrayId);
 
-    CGeometryGL::bindVertexArray(object._arrayId);
+    //CGeometryGL::bindVertexArray(object._arrayId);
 
     /*CGeometryGL::genBuffers(object._vertex.id);
     CGeometryGL::bindBuffers(GL_ARRAY_BUFFER, object._vertex.id);
     CGeometryGL::bufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)* object._vertex.vertex.size() * 3, object._vertex.vertex.data());
     CGeometryGL::initVertexAttribPointer(EShaderAttribute::eAttributeVertex, 3);*/
 
-    CGeometryGL::bindVertexArray(0);
+    //CGeometryGL::bindVertexArray(0);
 
     RENDERER->checkForErrors("CDebugLightGL Init Error");
 }

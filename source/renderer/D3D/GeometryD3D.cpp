@@ -8,7 +8,7 @@
 using namespace v3d;
 using namespace renderer;
 
-D3D_PRIMITIVE_TOPOLOGY EDrawModeD3D[CGeometry::eDrawCount] =
+D3D_PRIMITIVE_TOPOLOGY EDrawModeD3D[CGeometry::eDrawModeCount] =
 {
     D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
     D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
@@ -37,8 +37,7 @@ void CGeometryD3D::init()
         return;
     }
 
-    m_interval._begin = 0;
-    m_interval._count = m_data._countVertices;
+    CGeometry::setInterval(0, m_data.verticesSize());
 
     for (u32 idx = 0; idx < m_technique->getRenderPassCount(); ++idx)
     {
@@ -51,7 +50,7 @@ void CGeometryD3D::init()
     //s_device->CreateBuffer()
 
     //Indices
-    if (m_data._countIndices > 0)
+    if (m_data.indicesSize() > 0)
     {
        //TODO:
     }

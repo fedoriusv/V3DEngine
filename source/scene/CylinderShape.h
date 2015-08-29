@@ -16,10 +16,9 @@ namespace scene
         CCylinderShape(f32 radius = 0.5f, f32 height = 1.0f);
         ~CCylinderShape();
 
-        void        render()         override;
-        void        update(s32 time) override;
-
         void        init()           override;
+        void        render()         override;
+        void        update(s32 dt)   override;
 
         void        setRadius(f32 radius);
         void        setHeight(f32 height);
@@ -29,8 +28,8 @@ namespace scene
 
     private:
 
-        void        refresh()        override;
         void        build();
+        void        refresh();
 
         f32         m_radius;
         f32         m_height;

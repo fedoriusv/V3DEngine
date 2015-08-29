@@ -161,7 +161,7 @@ void CCamera::init()
     m_initialiazed = true;
 }
 
-void CCamera::update(s32 time)
+void CCamera::update(s32 dt)
 {
     if (!CNode::isVisible() || !m_initialiazed)
     {
@@ -170,7 +170,7 @@ void CCamera::update(s32 time)
 
     if (m_active)
     {
-        CNode::updateTransform();
+        CNode::update(dt);
 
         if (m_matricesFlag & eCameraStateProjection)
         {
@@ -184,8 +184,4 @@ void CCamera::update(s32 time)
 
         RENDERER->updateCamera(this);
     }
-}
-
-void CCamera::render()
-{
 }

@@ -1,7 +1,6 @@
 #ifndef _V3D_TEXTURE_H_
 #define _V3D_TEXTURE_H_
 
-#include "Object.h"
 #include "stream/Resource.h"
 
 namespace v3d

@@ -1,7 +1,6 @@
 #ifndef _V3D_DEBUG_GEOMETRY_H_
 #define _V3D_DEBUG_GEOMETRY_H_
 
-#include "Object.h"
 #include "RenderPass.h"
 #include "Geometry.h"
 
@@ -42,7 +41,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugGeometry : public CObject
+    class CDebugGeometry
     {
     public:
 
