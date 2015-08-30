@@ -14,8 +14,16 @@
 #define SHADER_PARSER 100
 #define DIRECTINPUT_VERSION 0x0800
 
-#define USE_LOGGER 1
-#define USE_DEVIL
+#define USED_LOGGER 1
+#define USED_DEVIL 0
+
+#if USED_LOGGER
+#   define USE_LOGGER
+#endif //USED_LOGGER
+
+#if USED_DEVIL
+#   define USE_DEVIL
+#endif //USED_DEVIL
 
 //Compiler
 /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 #include "Engine.h"
 #ifdef USE_DEVIL
 #   include "IL/il.h"
+#   pragma comment(lib, "ResIL.lib")
 #endif //USE_DEVIL
 
 using namespace v3d;
