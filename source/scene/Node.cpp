@@ -10,6 +10,7 @@ std::string  CNode::s_nodeTypes[ENodeType::eCount] = {
 
     "Shape",
     "Model",
+    "Mesh",
     "Camera",
     "Light",
     "Fog",

@@ -18,6 +18,7 @@ namespace scene
         eUnknown = -1,
         eShape,
         eModel,
+        eMesh,
         eCamera,
         eLight,
         eFog,

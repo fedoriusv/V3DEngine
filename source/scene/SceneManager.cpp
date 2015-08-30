@@ -12,7 +12,7 @@
 #include "Skybox.h"
 #include "Light.h"
 #include "Text.h"
-#include "Model.h"
+#include "Mesh.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
@@ -267,7 +267,19 @@ CText* CSceneManager::addText(CNode* parent, const std::string& text, const std:
 
 CModel* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
 {
-    CModel* node = new CModel(file, techniqe);
+    /*CModel* node = new CModel(file, techniqe);
+    node->setParent(parent);
+    node->setPosition(pos);
+
+    CSceneManager::addNode(node);
+
+    return node;*/
+    return nullptr;
+}
+
+CMesh* CSceneManager::addMesh(const std::string& file, CNode* parent, const Vector3D& pos)
+{
+    CMesh* node = new CMesh(file);
     node->setParent(parent);
     node->setPosition(pos);
 

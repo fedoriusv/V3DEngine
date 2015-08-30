@@ -4,7 +4,7 @@
 #include "Node.h"
 #include "Shape.h"
 #include "Billboard.h"
-#include "Model.h"
+#include "Mesh.h"
 #include "Text.h"
 #include "Skybox.h"
 #include "Camera.h"
@@ -170,7 +170,7 @@ void CScene::initRenderLists()
         switch (node->getNodeType())
         {
             case ENodeType::eShape:
-            case ENodeType::eModel:
+            case ENodeType::eMesh:
             case ENodeType::eSkyBox:
             case ENodeType::eText:
             case ENodeType::eBillboard:
@@ -212,8 +212,11 @@ void CScene::attachToRenderList(CNode* node)
         }
             break;
 
-        case ENodeType::eModel:
-            //techniqe = static_cast<CModel*>(node)->getMaterial()->getRenderTechique();
+    case ENodeType::eMesh:
+        {
+            draw = static_cast<CMesh*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
             break;
 
         case ENodeType::eSkyBox:

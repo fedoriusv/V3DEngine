@@ -1,7 +1,7 @@
 #include "RenderList.h"
 #include "scene/Node.h"
 #include "scene/Shape.h"
-#include "scene/Model.h"
+#include "scene/Mesh.h"
 #include "scene/Skybox.h"
 #include "scene/Text.h"
 #include "scene/Billboard.h"
@@ -112,10 +112,10 @@ void CRenderList::refresh()
         switch (node->getNodeType())
         {
         case ENodeType::eShape:
-        //case ENodeType::eModel:
+        case ENodeType::eMesh:
         {
             f32 priority = 0.0f;
-            CShape* shape = static_cast<CShape*>(node);
+            CMesh* shape = static_cast<CMesh*>(node);
             if (shape->getMaterial()->getTransparency() > 0.0f)
             {
                 if (m_camera)
@@ -220,7 +220,7 @@ void CRenderList::refresh()
 
 bool CRenderList::checkDistance(const CNode* node, const f32 distance)
 {
-    if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eModel)
+    if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eMesh)
     {
         const RenderTechniquePtr& technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
         for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
