@@ -1,18 +1,15 @@
 #ifndef _EXPORTER_F3D_H_
 #define _EXPORTER_F3D_H_
 
-#include "common.h"
-#include "SceneData.h"
-
 #include "Max.h"
 #include "resource.h"
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
-
 #include "IGameError.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "SceneData.h"
+#include "ExportSettings.h"
 
 #define USE_CONSOLE 1
 
@@ -20,8 +17,6 @@
 
 class IGameScene;
 class IGameNode;
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class ExporterF3DErrorCallback : public IGameErrorCallBack
 {
@@ -70,15 +65,16 @@ public:
     static INT_PTR CALLBACK     ExporterF3DOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     static INT_PTR CALLBACK     TestOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+    v3d::CSettings*             getExportSettings() const;
+
 private:
 
     EExportError                CreateModel();
-    EExportError                ExportNode(IGameNode* node, int index);
+    EExportError                ExportNode(IGameNode* node, u32 index, scene::CNode* parent = nullptr);
 
-    bool                        ExportMesh(IGameNode* node, renderer::MeshPtr& mesh);
-    bool                        ExportLight(IGameNode* node, scene::LightPtr& light);
-    bool                        ExportCamera(IGameNode* node, scene::CameraPtr& camera);
-
+    bool                        ExportMesh(IGameNode* node, scene::CMesh* mesh);
+    bool                        ExportLight(IGameNode* node, scene::CLight* light);
+    bool                        ExportCamera(IGameNode* node, scene::CCamera* camera);
     bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material);
 
     core::Vector3D              convertPointToVector3(const Point3& point);
@@ -91,14 +87,8 @@ private:
     IGameScene*                 m_iGameScene;
     float                       m_iGameVersion;
 
-    bool                        m_exportSelected;
-    bool                        m_exportAsGeometry;
-    bool                        m_exportObjectSpace;
-    bool                        m_exportMaterials;
-    bool                        m_exportLights;
-    bool                        m_exportCamera;
-
     v3d::CSceneData*            m_scene;
+    v3d::CSettings*             m_settings;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

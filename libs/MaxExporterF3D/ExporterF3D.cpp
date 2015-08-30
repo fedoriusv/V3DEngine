@@ -10,6 +10,10 @@
 
 //#include "stream/MemoryStream.h"
 #include "utils/Logger.h"
+#include "scene/Node.h"
+#include "scene/Mesh.h"
+#include "scene/Camera.h"
+#include "scene/Light.h"
 #include "renderer/GL/GeometryGL.h"
 
 using namespace v3d;
@@ -52,19 +56,19 @@ ExporterF3D::ExporterF3D()
     : m_iGameVersion(0.0f)
     , m_iGameScene(nullptr)
 
-    , m_exportSelected(false)
-    , m_exportAsGeometry(false)
-    , m_exportObjectSpace(false)
-    , m_exportMaterials(false)
-    , m_exportLights(false)
-    , m_exportCamera(false)
-
     , m_scene(nullptr)
 {
+    m_settings = new CSettings();
 }
 
 ExporterF3D::~ExporterF3D()
 {
+    if (m_settings)
+    {
+        delete m_settings;
+        m_settings = nullptr;
+    }
+
     if (m_scene)
     {
         delete m_scene;
@@ -155,7 +159,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
     m_iGameVersion = GetIGameVersion();
     LOG_INFO("IGameVersion %f", m_iGameVersion);
 
-    int err = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), i->GetMAXHWnd(), &ExporterF3D::ExporterF3DOptionsDlgProc, (LPARAM)this);
+    INT_PTR err = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), i->GetMAXHWnd(), &ExporterF3D::ExporterF3DOptionsDlgProc, (LPARAM)this);
     if (err != IDOK)
     {
         if (err != FALSE)
@@ -172,7 +176,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
     }
 
     m_iGameScene = GetIGameInterface();
-    m_iGameScene->InitialiseIGame(m_exportSelected);
+    m_iGameScene->InitialiseIGame(m_settings->isExportSelected());
 
     IGameConversionManager* cm = GetConversionManager();
     cm->SetCoordSystem(IGameConversionManager::IGAME_USER); // IGAME_OGL); // IGAME_D3D);
@@ -196,7 +200,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
     if (success == eNoError && m_scene)
     {
-        if (!m_scene->save(TCHARToString(name)))
+        if (!m_scene->save(TCHARToString(name), m_exporterVersion))
         {
             success = eSaveError;
         }
@@ -225,12 +229,17 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
     return (success == eNoError) ? 1 : 0;
 }
 
+v3d::CSettings* ExporterF3D::getExportSettings() const
+{
+    return m_settings;
+}
+
 ExporterF3D::EExportError ExporterF3D::CreateModel()
 {
     m_scene = new CSceneData();
 
     int nodeCount = m_iGameScene->GetTopLevelNodeCount();
-    LOG_INFO("In Game Scene found [%d] Nodes\n", nodeCount);
+    LOG_INFO("In Game Scene found [%d] Nodes", nodeCount);
 
     if (nodeCount == 0)
     {
@@ -252,7 +261,7 @@ ExporterF3D::EExportError ExporterF3D::CreateModel()
     return eNoError;
 }
 
-ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
+ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, scene::CNode* parent)
 {
     IGameObject* gameObject = node->GetIGameObject();
 
@@ -261,8 +270,19 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
 
     INode* maxNode = node->GetMaxNode();
     IGameObject::ObjectTypes objectType = gameObject->GetIGameType();
+    
+    if (!m_settings->isExportLights() && objectType == IGameObject::IGAME_LIGHT)
+    {
+        LOG_WARNING("Skip export Ligth: %s", TCHARToString(node->GetName()).c_str());
+        return eNoError;
+    }
+    else if (!m_settings->isExportCameras() && objectType == IGameObject::IGAME_CAMERA)
+    {
+        LOG_WARNING("Skip export Camera: %s", TCHARToString(node->GetName()).c_str());
+        return eNoError;
+    }
 
-    ObjectPtr object = m_scene->createObject(objectType);
+    scene::CNode* object = m_scene->createNode(objectType);
     if (!object)
     {
         LOG_WARNING("Export unknown type: %d", objectType);
@@ -277,9 +297,12 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
         case IGameObject::IGAME_MESH:
         {
             LOG_INFO("Export IGAME_MESH: %s", TCHARToString(node->GetName()).c_str());
-            renderer::MeshPtr mesh = std::static_pointer_cast<renderer::CMesh>(object);
+            scene::CMesh* mesh = static_cast<scene::CMesh*>(object);
             if (!ExportMesh(node, mesh))
             {
+                delete object;
+                object = nullptr;
+
                 return eNodeMeshError;
             }
         }
@@ -288,9 +311,12 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
         case IGameObject::IGAME_LIGHT:
         {
             LOG_INFO("Export IGAME_LIGHT: %s", TCHARToString(node->GetName()).c_str());
-            scene::LightPtr light = std::static_pointer_cast<scene::CLight>(object);
+            scene::CLight* light = static_cast<scene::CLight*>(object);
             if (!ExportLight(node, light))
             {
+                delete object;
+                object = nullptr;
+
                 return eNodeLightError;
             }
         }
@@ -299,9 +325,12 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
         case IGameObject::IGAME_CAMERA:
         {
             LOG_INFO("Export IGAME_CAMERA: %s", TCHARToString(node->GetName()).c_str());
-            scene::CameraPtr camera = std::static_pointer_cast<scene::CCamera>(object);
+            scene::CCamera* camera = static_cast<scene::CCamera*>(object);
             if (!ExportCamera(node, camera))
             {
+                delete object;
+                object = nullptr;
+
                 return eNodeCameraError;
             }
         }
@@ -309,19 +338,27 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
 
         default:
         {
+            delete object;
+            object = nullptr;
+
             LOG_WARNING("Export unknown type: %d", objectType);
             return eUnknownError;
         }
     }
 
-    m_scene->addObject(std::make_pair(objectType, object));
+    if (parent)
+    {
+        parent->attachChild(object);
+    }
+
+    m_scene->addNode(std::make_pair(objectType, object));
 
     for (int i = 0; i < numChildren; ++i)
     {
         LOG_INFO("Processing child [%d/%d:%s] ", i + 1, numChildren, TCHARToString(node->GetName()).c_str());
         IGameNode* childNode = node->GetNodeChild(i);
 
-        EExportError error = ExportNode(childNode, i);
+        EExportError error = ExportNode(childNode, i, object);
         if (error != eNoError)
         {
             return error;
@@ -333,7 +370,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, int index)
     return eNoError;
 }
 
-bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
+bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
 {
     IGameMesh* gameMesh = (IGameMesh*)node->GetIGameObject();
     if (!gameMesh->InitializeData() || !gameMesh->IsRenderable())
@@ -366,10 +403,10 @@ bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
 
     Tab<int> materialList = gameMesh->GetActiveMatIDs();
     int materialCount = materialList.Count();
-    LOG_INFO("materialCount : %d", materialCount);
+    LOG_INFO("MaterialCount : %d", materialCount);
 
     renderer::MaterialPtr& material = const_cast<renderer::MaterialPtr&>(mesh->getMaterial());
-    renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeomerty());
+    renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeometry());
     geomerty = std::make_shared<renderer::CGeometryGL>(nullptr);
 
     for (int i = 0; i < materialCount; ++i)
@@ -388,38 +425,71 @@ bool ExporterF3D::ExportMesh(IGameNode* node, renderer::MeshPtr& mesh)
 
                 for (int k = 0; k < 3; ++k)
                 {
-                    //LOG_INFO("addIndex : %d", sourceFace->vert[k]);
+                    LOG_GEBUG("addIndex : %d", sourceFace->vert[k]);
                     geomerty->addIndex(sourceFace->vert[k]);
 
-                    Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_exportObjectSpace);
-                    //LOG_INFO("addVertex : x = %f, y = %f, z = %f", vertex.x, vertex.y, vertex.z);
+                    Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
+                    LOG_GEBUG("addVertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
                     geomerty->addVertex(convertPointToVector3(vertex));
 
-                    Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_exportObjectSpace).Normalize();
-                    //LOG_INFO("addNormal : x = %f, y = %f, z = %f", normal.x, normal.y, normal.z);
-                    geomerty->addNormal(convertPointToVector3(normal));
+                    if (m_settings->isExportNormals())
+                    {
+                        Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_settings->isExportObjectSpace()).Normalize();
+                        LOG_GEBUG("addNormal : (%f, %f, %f)", normal.x, normal.y, normal.z);
+                        geomerty->addNormal(convertPointToVector3(normal));
+                    }
 
-                    Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
+                    if (m_settings->isExportBinormals())
+                    {
+                        s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
+                        Point3 binormal = gameMesh->GetBinormal(binormalTangentIndex).Normalize();
+                        LOG_GEBUG("addBinormal : (%f, %f, %f)", binormal.x, binormal.y, binormal.z);
+                        geomerty->addBinormal(convertPointToVector3(binormal));
+                    }
 
-                    Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
-                    //LOG_INFO("addTexCoord : x = %f, y = %f\n", texCoord.x, texCoord.y);
-                    geomerty->addTexCoord(0, convertPointToVector2(texCoord));
+                    if (m_settings->isExportTangents())
+                    {
+                        s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
+                        Point3 tangent = gameMesh->GetTangent(binormalTangentIndex).Normalize();
+                        LOG_GEBUG("addTangent : (%f, %f, %f)", tangent.x, tangent.y, tangent.z);
+                        geomerty->addTangent(convertPointToVector3(tangent));
+                    }
+
+                    if (m_settings->isExportColors())
+                    {
+                        Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
+                        core::Vector3D col = convertPointToVector3(color);
+                        col.x = core::abs(col.x);
+                        col.y = core::abs(col.y);
+                        col.z = core::abs(col.z);
+                        LOG_GEBUG("addColor : (%f, %f, %f)", col.x, col.y, col.z);
+                        geomerty->addColor(col);
+                    }
+
+                    if (m_settings->isExportTexCoords())
+                    {
+                        u32 layer = 0;
+                        Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
+                        //TODO: tiling factor * texCoord
+                        //TODO: texcoord layers
+                        LOG_GEBUG("addTexCoord : (%f, %f)", texCoord.x, texCoord.y);
+                        geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
+                    }
                 }
             }
         }
-
     }
 
     return true;
 }
 
-bool ExporterF3D::ExportLight(IGameNode* node, scene::LightPtr& light)
+bool ExporterF3D::ExportLight(IGameNode* node, scene::CLight* light)
 {
     //TODO:
     return false;
 }
 
-bool ExporterF3D::ExportCamera(IGameNode* node, scene::CameraPtr& camera)
+bool ExporterF3D::ExportCamera(IGameNode* node, scene::CCamera* camera)
 {
     //TODO:
     return false;
@@ -427,6 +497,11 @@ bool ExporterF3D::ExportCamera(IGameNode* node, scene::CameraPtr& camera)
 
 bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material)
 {
+    if (m_settings->isExportMaterials())
+    {
+        return true;
+    }
+
     //TODO:
     return true;
 }
@@ -475,12 +550,18 @@ INT_PTR CALLBACK ExporterF3D::ExporterF3DOptionsDlgProc(HWND hWnd, UINT message,
             CenterWindow(hWnd, GetParent(hWnd));
 
             // set check box to default values
-            CheckDlgButton(hWnd, IDC_EXPORT_GEOMETRY, exporter->m_exportAsGeometry);
-            CheckDlgButton(hWnd, IDC_EXPORT_IN_OBJECT_SPACE, exporter->m_exportObjectSpace);
-            CheckDlgButton(hWnd, IDC_EXPORT_SELECTED_ONLY, exporter->m_exportSelected);
-            CheckDlgButton(hWnd, IDC_EXPORT_MATERIALS, exporter->m_exportMaterials);
-            CheckDlgButton(hWnd, IDC_EXPORT_LIGHTS, exporter->m_exportLights);
-            CheckDlgButton(hWnd, IDC_EXPORT_CAMERA, exporter->m_exportCamera);
+            v3d::CSettings* settings = exporter->getExportSettings();
+            CheckDlgButton(hWnd, IDC_EXPORT_IN_OBJECT_SPACE, settings->isExportObjectSpace());
+            CheckDlgButton(hWnd, IDC_EXPORT_SELECTED_ONLY, settings->isExportSelected());
+            CheckDlgButton(hWnd, IDC_EXPORT_MATERIALS, settings->isExportMaterials());
+            CheckDlgButton(hWnd, IDC_EXPORT_LIGHTS, settings->isExportLights());
+            CheckDlgButton(hWnd, IDC_EXPORT_CAMERA, settings->isExportCameras());
+
+            CheckDlgButton(hWnd, IDC_EXPORT_NORMAL, settings->isExportNormals());
+            CheckDlgButton(hWnd, IDC_EXPORT_BINORMAL, settings->isExportBinormals());
+            CheckDlgButton(hWnd, IDC_EXPORT_TANGENT, settings->isExportTangents());
+            CheckDlgButton(hWnd, IDC_EXPORT_COLOR, settings->isExportColors());
+            CheckDlgButton(hWnd, IDC_EXPORT_TEXCOORD, settings->isExportTexCoords());
 
             std::wstring strWindowTitle(L"", 256);
 
@@ -492,7 +573,6 @@ INT_PTR CALLBACK ExporterF3D::ExporterF3DOptionsDlgProc(HWND hWnd, UINT message,
         case WM_COMMAND:
             switch (LOWORD(wParam))
             {
-            case IDC_EXPORT_GEOMETRY:
             case IDC_EXPORT_IN_OBJECT_SPACE:
             case IDC_EXPORT_SELECTED_ONLY:
             case IDC_EXPORT_MATERIALS:
@@ -501,13 +581,23 @@ INT_PTR CALLBACK ExporterF3D::ExporterF3DOptionsDlgProc(HWND hWnd, UINT message,
                 break;
 
             case IDOK:
-                exporter->m_exportAsGeometry = IsDlgButtonChecked(hWnd, IDC_EXPORT_GEOMETRY) ? true : false;
-                exporter->m_exportObjectSpace = IsDlgButtonChecked(hWnd, IDC_EXPORT_IN_OBJECT_SPACE) ? true : false;
-                exporter->m_exportSelected = IsDlgButtonChecked(hWnd, IDC_EXPORT_SELECTED_ONLY) ? true : false;
-                exporter->m_exportMaterials = IsDlgButtonChecked(hWnd, IDC_EXPORT_MATERIALS) ? true : false;
-                exporter->m_exportLights = IsDlgButtonChecked(hWnd, IDC_EXPORT_LIGHTS) ? true : false;
-                exporter->m_exportCamera = IsDlgButtonChecked(hWnd, IDC_EXPORT_CAMERA) ? true : false;
+            {
+                v3d::CSettings* settings = exporter->getExportSettings();
+
+                settings->setExportObjectSpace(IsDlgButtonChecked(hWnd, IDC_EXPORT_IN_OBJECT_SPACE) ? true : false);
+                settings->setExportSelected(IsDlgButtonChecked(hWnd, IDC_EXPORT_SELECTED_ONLY) ? true : false);
+                settings->setExportMaterials(IsDlgButtonChecked(hWnd, IDC_EXPORT_MATERIALS) ? true : false);
+                settings->setExportLights(IsDlgButtonChecked(hWnd, IDC_EXPORT_LIGHTS) ? true : false);
+                settings->setExportCameras(IsDlgButtonChecked(hWnd, IDC_EXPORT_CAMERA) ? true : false);
+
+                settings->setExportNormals(IsDlgButtonChecked(hWnd, IDC_EXPORT_NORMAL) ? true : false);
+                settings->setExportBinormals(IsDlgButtonChecked(hWnd, IDC_EXPORT_BINORMAL) ? true : false);
+                settings->setExportTangents(IsDlgButtonChecked(hWnd, IDC_EXPORT_TANGENT) ? true : false);
+                settings->setExportTexCoords(IsDlgButtonChecked(hWnd, IDC_EXPORT_TEXCOORD) ? true : false);
+                settings->setExportColors(IsDlgButtonChecked(hWnd, IDC_EXPORT_COLOR) ? true : false);
+
                 EndDialog(hWnd, 1);
+            }
                 break;
 
             case IDCANCEL:

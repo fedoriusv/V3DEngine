@@ -7,8 +7,6 @@
 
 #define IGAMEEXPORTER_CLASS_ID  Class_ID(0x5f1b7931, 0xc7c65e4)
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
 
@@ -27,8 +25,6 @@ public:
     const TCHAR*    InternalName()                  { return _T("ExporterF3D"); }
     HINSTANCE       HInstance()                     { return hInstance; }
 };
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ClassDesc2* GetExporterDesc();
 

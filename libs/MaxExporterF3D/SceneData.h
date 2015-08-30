@@ -1,18 +1,31 @@
 #ifndef _V3D_SCENE_DATA_H_
 #define _V3D_SCENE_DATA_H_
 
-#include "../source/Object.h"
-#include "scene/Model.h"
-#include "scene/Light.h"
-#include "scene/Camera.h"
-
 #include "IGameObject.h"
+
+#ifdef max
+#   undef max
+#endif //max
+
+#ifdef min
+#   undef min
+#endif //min
+
+#include "renderer/Material.h"
+#include "stream/MemoryStream.h"
 
 namespace v3d
 {
+namespace scene
+{
+    class CNode;
+    class CMesh;
+    class CLight;
+    class CCamera;
+}
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair<IGameObject::ObjectTypes, v3d::ObjectPtr> Obj;
+    typedef std::pair<IGameObject::ObjectTypes, scene::CNode*> Obj;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,21 +36,22 @@ namespace v3d
         CSceneData();
         ~CSceneData();
 
-        const v3d::scene::ModelPtr& getModel() const;
-        const std::vector<Obj>&     getObjectList() const;
+        const std::vector<Obj>&     getNodesList() const;
+        void                        addNode(Obj& node);
 
-        void                        addObject(Obj& object);
+        scene::CNode*               createNode(IGameObject::ObjectTypes type);
 
-        void                        setName(const std::string& name);
-
-        v3d::ObjectPtr              createObject(IGameObject::ObjectTypes type);
-
-        bool                        save(const std::string& file);
-        bool                        convert();
+        bool                        save(const std::string& file, float version);
 
     private:
 
-        v3d::scene::ModelPtr        m_model;
+        bool                        saveGeometry(stream::MemoryStreamPtr& stream);
+        bool                        saveMaterial(stream::MemoryStreamPtr& stream);
+
+        bool                        serializeMesh(const scene::CMesh* node, stream::MemoryStreamPtr& stream);
+        bool                        serializeLight(const scene::CLight* node, stream::MemoryStreamPtr& stream);
+        bool                        serializeCamera(const scene::CCamera* node, stream::MemoryStreamPtr& stream);
+
         std::vector<Obj>            m_objectList;
     };
 
