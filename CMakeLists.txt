@@ -79,7 +79,8 @@ if(WIN32)
 	endif(CMAKE_CL_64)
 	
     if(BUILD_USE_RESIL_LIB)
-        set(RESIL_PROJECT ../../libs/ResIL/win32/${ARCH_DIR}-msvcrt/ResIL)
+		set(RESIL_LIBPATH libs/ResIL/win32/${ARCH_DIR}-msvcrt)
+        set(RESIL_PROJECT ../../${RESIL_LIBPATH}/ResIL)
         set(RESIL_BIN ${LIB_DIR}/ResIL/win32/${ARCH_DIR}-msvcrt)
     endif(BUILD_USE_RESIL_LIB)
 endif(WIN32)
@@ -233,8 +234,11 @@ if(BUILD_USE_RESIL_LIB)
         ${GLEW_PLOJECT}
         ${TINYXML_PLOJECT}
         ${FREETYPE2_PROJECT}
-        ${RESIL_PROJECT}
+#        ${RESIL_PROJECT}
         )
+		
+	link_directories(${ENGINE_NAME}
+		${RESIL_LIBPATH})
 else()
     target_link_libraries(${ENGINE_NAME} 
         ${GLEW_PLOJECT}
