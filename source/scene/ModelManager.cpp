@@ -3,7 +3,6 @@
 #include "decoders/ModelF3DDecoder.h"
 #include "stream/StreamManager.h"
 #include "resources/ModelData.h"
-#include "renderer/Mesh.h"
 
 using namespace v3d;
 using namespace scene;

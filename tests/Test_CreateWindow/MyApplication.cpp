@@ -1,8 +1,6 @@
 #include "MyApplication.h"
 #include "Valera3D.h"
 
-#include "stream/StreamManager.h"
-
 using namespace v3d;
 using namespace core;
 using namespace scene;
