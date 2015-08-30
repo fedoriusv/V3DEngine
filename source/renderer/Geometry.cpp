@@ -46,6 +46,21 @@ void CGeometry::addNormal(const core::Vector3D& normal)
     m_data._normals.push_back(normal);
 }
 
+void CGeometry::addBinormal(const core::Vector3D& binormal)
+{
+    m_data._binormals.push_back(binormal);
+}
+
+void CGeometry::addTangent(const core::Vector3D& tangent)
+{
+    m_data._tangents.push_back(tangent);
+}
+
+void CGeometry::addColor(const core::Vector3D& color)
+{
+    m_data._colors.push_back(color);
+}
+
 void CGeometry::addTexCoord(u32 layer, const core::Vector2D& texCoord)
 {
     if (layer >= m_data._texCoords.size())

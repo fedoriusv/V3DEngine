@@ -72,6 +72,9 @@ namespace renderer
 
         void                    addVertex(const core::Vector3D& vertex);
         void                    addNormal(const core::Vector3D& normal);
+        void                    addBinormal(const core::Vector3D& binormal);
+        void                    addTangent(const core::Vector3D& tangent);
+        void                    addColor(const core::Vector3D& color);
         void                    addTexCoord(u32 layer, const core::Vector2D& texCoord);
         void                    addIndex(u32 index);
 

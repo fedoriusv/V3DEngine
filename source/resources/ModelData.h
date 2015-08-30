@@ -1,6 +1,7 @@
 #ifndef _V3D_MODEL_DATA_H_
 #define _V3D_MODEL_DATA_H_
 
+#include "Vertex.h"
 #include "stream/Resource.h"
 #include "renderer/RenderTechnique.h"
 
@@ -26,12 +27,17 @@ namespace resources
 
         const std::string&  getName()   const;
         s32                 getID()     const;
+        const SVertexData&  getVertices() const;
 
     private:
+
+        void                loadGeometry(const stream::IStreamPtr& stream);
+        void                loadMaterial(const stream::IStreamPtr& stream);
 
         u32                 m_countMeshes;
         s32                 m_id;
         std::string         m_name;
+        SVertexData         m_vertices;
 
     };
 
