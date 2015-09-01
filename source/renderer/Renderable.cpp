@@ -1,4 +1,5 @@
 #include "Renderable.h"
+#include "Engine.h"
 
 using namespace v3d;
 using namespace renderer;
@@ -42,4 +43,10 @@ const RenderJobPtr& CRenderable::getRenderJob() const
 const GeometryPtr& CRenderable::getGeometry() const
 {
     return m_geometry;
+}
+
+void CRenderable::render()
+{
+    ASSERT(CRenderable::getRenderJob() && "CRenderable: Render job nullptr");
+    RENDERER->draw(CRenderable::getRenderJob());
 }

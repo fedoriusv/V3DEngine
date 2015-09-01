@@ -132,9 +132,6 @@ void CSkybox::render()
         CRenderable::getGeometry()->setInterval((i * 6), 6);
         CRenderable::getRenderJob()->getMaterial()->setTexture(0, m_textures[i]);
 
-        RENDERER->draw(CRenderable::getRenderJob());
+        CRenderable::render();
     }
-
-    RENDERER->draw(CRenderable::getRenderJob());
-    
 }

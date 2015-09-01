@@ -1,7 +1,7 @@
 #include "ResourceDecoder.h"
 
 using namespace v3d;
-using namespace v3d::decoders;
+using namespace decoders;
 
 CResourceDecoder::CResourceDecoder()
 {

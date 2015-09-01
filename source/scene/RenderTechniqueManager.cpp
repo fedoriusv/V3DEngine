@@ -16,13 +16,12 @@ CRenderTechniqueManager::CRenderTechniqueManager()
 
 CRenderTechniqueManager::~CRenderTechniqueManager()
 {
-    unloadAll();
 }
 
 void CRenderTechniqueManager::add(const renderer::RenderTechniquePtr& technique)
 {
     std::string name = technique->getResourseName();
-    m_resources.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(name, technique));
+    TResourceLoader::insert(technique, name);
 }
 
 const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, const std::string& alias)
@@ -30,11 +29,10 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, 
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    auto it = m_resources.find(nameStr);
-
-    if (it != m_resources.end())
+    const RenderTechniquePtr findTechnique = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    if (findTechnique)
     {
-        return it->second;
+        return findTechnique;
     }
     else
     {
@@ -72,8 +70,8 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, 
                     }
                     stream->close();
 
-                    m_resources.insert(std::map<std::string, renderer::RenderTechniquePtr>::value_type(nameStr, technique));
-
+                    TResourceLoader::insert(technique, alias.empty() ? nameStr : alias);
+                    LOG_INFO("CRenderTechniqueManager: File [%s] success loaded", fullName.c_str());
                     return technique;
                 }
             }

@@ -4,9 +4,9 @@
 #include "utils/Logger.h"
 
 using namespace v3d;
-using namespace v3d::decoders;
-using namespace v3d::resources;
-using namespace v3d::stream;
+using namespace decoders;
+using namespace resources;
+using namespace stream;
 
 CModelF3DDecoder::CModelF3DDecoder()
     : CResourceDecoder()

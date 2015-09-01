@@ -22,8 +22,6 @@ CModelManager::CModelManager()
 
 CModelManager::~CModelManager()
 {
-    m_pathes.clear();
-    m_decoders.clear();
 }
 
 const ModelDataPtr CModelManager::load(const std::string& name, const std::string& alias)
@@ -31,61 +29,68 @@ const ModelDataPtr CModelManager::load(const std::string& name, const std::strin
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    std::string fileExtension;
-
-    const size_t pos = nameStr.find('.');
-    if (pos != std::string::npos)
+    const ModelDataPtr findModel = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    if (findModel)
     {
-        fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
+        return findModel;
     }
-
-    for (std::string& path : m_pathes)
+    else
     {
-        const std::string fullName = path + nameStr;
-        const bool isFileExist = stream::FileStream::isFileExist(fullName);
-        if (isFileExist)
+        std::string fileExtension;
+
+        const size_t pos = nameStr.find('.');
+        if (pos != std::string::npos)
         {
-            const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
-            if (stream->isOpen())
+            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
+        }
+
+        for (std::string& path : m_pathes)
+        {
+            const std::string fullName = path + nameStr;
+            const bool isFileExist = stream::FileStream::isFileExist(fullName);
+            if (isFileExist)
             {
-                auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
+                const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                if (stream->isOpen())
                 {
-                    return decoder->isExtensionSupported(fileExtension);
-                };
+                    auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
+                    {
+                        return decoder->isExtensionSupported(fileExtension);
+                    };
 
-                auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
-                if (iter == m_decoders.end())
-                {
-                    LOG_ERROR("CModelManager::load: Format not supported file [%s]", nameStr.c_str());
-                    return nullptr;
-                }
+                    auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
+                    if (iter == m_decoders.end())
+                    {
+                        LOG_ERROR("CModelManager::load: Format not supported file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
 
-                const DecoderPtr& decoder = (*iter);
-                stream::ResourcePtr resource = decoder->decode(stream);
-                if (!resource)
-                {
-                    LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                    const DecoderPtr& decoder = (*iter);
+                    stream::ResourcePtr resource = decoder->decode(stream);
                     stream->close();
 
-                    return nullptr;
+                    if (!resource)
+                    {
+                        LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+
+                    resource->setResourseName(fullName);
+                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                    resource->setResourseFolder(fullPath);
+
+                    ModelDataPtr data = std::static_pointer_cast<CModelData>(resource);
+
+                    if (!data->load())
+                    {
+                        LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+
+                    TResourceLoader::insert(data, alias.empty() ? nameStr : alias);
+                    LOG_INFO("CModelManager: File [%s] success loaded", fullName.c_str());
+                    return data;
                 }
-
-                resource->setResourseName(fullName);
-                const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
-                resource->setResourseFolder(fullPath);
-
-                ModelDataPtr data = std::static_pointer_cast<CModelData>(resource);
- 
-                if (!data->load())
-                {
-                    LOG_ERROR("CModelManager::load: Streaming error read file [%s]", nameStr.c_str());
-                    stream->close();
-
-                    return nullptr;
-                }
-                stream->close();
-
-                return data;
             }
         }
     }

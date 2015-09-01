@@ -31,7 +31,7 @@ void CLight::setSpecular(const Vector4D& color)
     m_data._specular = color;
 }
 
-void CLight::setRadius(const f32 radius)
+void CLight::setRadius(f32 radius)
 {
     m_data._radius = radius;
 }

@@ -1,7 +1,7 @@
 #include "FontData.h"
 
 using namespace v3d;
-using namespace v3d::resources;
+using namespace resources;
 
 CFontData::CFontData(const std::string& font)
     : m_fontType(EFontType::eUnknownFont)
@@ -13,6 +13,7 @@ CFontData::CFontData(const std::string& font)
 
 CFontData::~CFontData()
 {
+    m_charTexture.clear();
 }
 
 CFontData::EFontType CFontData::getFontType() const

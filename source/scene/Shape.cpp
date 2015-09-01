@@ -76,5 +76,5 @@ void CShape::render()
         return;
     }
 
-    RENDERER->draw(CRenderable::getRenderJob());
+    CRenderable::render();
 }

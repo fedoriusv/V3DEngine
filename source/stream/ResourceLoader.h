@@ -33,6 +33,8 @@ namespace stream
 
     protected:
 
+        void                        insert(const T& resource, const std::string& key);
+
         std::map<std::string, T>    m_resources;
         decoders::DecoderList       m_decoders;
         std::vector<std::string>    m_pathes;

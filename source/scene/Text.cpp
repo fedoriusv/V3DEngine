@@ -122,7 +122,7 @@ void CText::render()
         return;
     }
 
-    RENDERER->draw(CRenderable::getRenderJob());
+    CRenderable::render();
 }
 
 void CText::refresh()

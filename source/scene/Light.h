@@ -35,7 +35,7 @@ namespace scene
         void                      setAmbient(const Vector4D& color);
         void                      setDiffuse(const Vector4D& color);
         void                      setSpecular(const Vector4D& color);
-        void                      setRadius(const f32 radius);
+        void                      setRadius(f32 radius);
         void                      setAttenuation(const Vector3D& attenuation);
         void                      setDirection(const Vector3D& direction);
                                   

@@ -21,7 +21,12 @@ CTextureManager::CTextureManager()
 
 CTextureManager::~CTextureManager()
 {
-    //unloadAll();
+}
+
+void CTextureManager::add(const renderer::TexturePtr& texture)
+{
+    std::string name = texture->getResourseName();
+    TResourceLoader::insert(texture, name);
 }
 
 const TexturePtr CTextureManager::load(const std::string* files[6])
@@ -36,7 +41,7 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
     std::string nameStr = file;
     std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
 
-    const TexturePtr findTexture = CTextureManager::get(alias.empty() ? nameStr : alias);
+    const TexturePtr findTexture = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findTexture)
     {
         return findTexture;
@@ -104,8 +109,7 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
                         return nullptr;
                     }
 
-                    m_resources.insert(std::map<std::string, TexturePtr>::value_type(alias.empty() ? nameStr : alias, texture));
-
+                    TResourceLoader::insert(texture, alias.empty() ? nameStr : alias);
                     LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;
                 }

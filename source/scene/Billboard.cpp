@@ -27,7 +27,7 @@ void CBillboard::render()
         return;
     }
 
-    RENDERER->draw(CRenderable::getRenderJob());
+    CRenderable::render();
 }
 
 void CBillboard::update(s32 dt)

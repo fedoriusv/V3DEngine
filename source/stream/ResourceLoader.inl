@@ -9,6 +9,10 @@ TResourceLoader<T>::TResourceLoader()
 template <class T>
 TResourceLoader<T>::~TResourceLoader()
 {
+    TResourceLoader::unloadAll();
+
+    m_pathes.clear();
+    m_decoders.clear();
 }
 
 template <class T>
@@ -85,4 +89,10 @@ void TResourceLoader<T>::unregisterDecoder(decoders::DecoderPtr& decoder)
     {
         m_decoders.erase(std::remove(m_decoders.begin(), m_decoders.end(), *it), m_decoders.end());
     }
+}
+
+template <class T>
+void TResourceLoader<T>::insert(const T& resource, const std::string& key)
+{
+    m_resources.insert(std::map<std::string, T>::value_type(key, resource));
 }

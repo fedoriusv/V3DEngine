@@ -22,6 +22,7 @@ namespace scene
         CTextureManager();
         virtual                     ~CTextureManager();
 
+        void                        add(const renderer::TexturePtr& texture);
         const renderer::TexturePtr  load(const std::string& file, const std::string& alias = "") override;
         const renderer::TexturePtr  load(const std::string* files[6]);
 
