@@ -1,4 +1,4 @@
-// Valera3D Engine (c) 2014 Bogdan Klochko / Fedor Nekrasov
+// Valera3D Engine (c) 2014 Fedor Nekrasov
 
 #ifndef _V3D_CONFIG_H_
 #define _V3D_CONFIG_H_
@@ -12,10 +12,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define SHADER_PARSER 100
+#define F3D_MODEL_LOADER_VERSION 100
 #define DIRECTINPUT_VERSION 0x0800
 
 #define USED_LOGGER 1
-#define USED_DEVIL 0
+#define USED_DEVIL 1
 
 #if USED_LOGGER
 #   define USE_LOGGER

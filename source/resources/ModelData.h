@@ -2,8 +2,8 @@
 #define _V3D_MODEL_DATA_H_
 
 #include "Vertex.h"
+#include "scene/Node.h"
 #include "stream/Resource.h"
-#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
@@ -16,28 +16,41 @@ namespace resources
 
     public:
 
+        struct SNodeData
+        {
+            SNodeData(const stream::IStreamPtr& stream, scene::ENodeType type)
+            : _stream(stream)
+            , _type(type)
+            , _parrentIdx(-1) {}
+
+            scene::ENodeType    _type;
+            stream::IStreamPtr  _stream;
+            s32                 _parrentIdx;
+        };
+
         CModelData();
-        virtual             ~CModelData();
+        virtual                         ~CModelData();
 
-        void                init(const stream::IStreamPtr& stream)  override;
-        bool                load()                                  override;
+        void                            init(const stream::IStreamPtr& stream)  override;
+        bool                            load()                                  override;
 
-        u32                 getCountMeshes() const;
-        stream::ResourcePtr readMeshResource(const renderer::RenderTechniquePtr& technique) const;
+        u32                             getCountNodes() const;
 
-        const std::string&  getName()   const;
-        s32                 getID()     const;
-        const SVertexData&  getVertices() const;
+        const std::string&              getName()   const;
+        s32                             getID()     const;
+
+        const std::vector<SNodeData>&   getNodesList() const;
 
     private:
 
-        void                loadGeometry(const stream::IStreamPtr& stream);
-        void                loadMaterial(const stream::IStreamPtr& stream);
+        void                            loadGeometry(const stream::IStreamPtr& stream);
+        void                            loadMaterial(const stream::IStreamPtr& stream);
 
-        u32                 m_countMeshes;
-        s32                 m_id;
-        std::string         m_name;
-        SVertexData         m_vertices;
+        u32                             m_countNodes;
+        s32                             m_id;
+        std::string                     m_name;
+
+        std::vector<SNodeData>          m_nodesList;
 
     };
 

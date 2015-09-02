@@ -82,6 +82,11 @@ void CLight::update(s32 time)
 
 void CLight::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     m_data._ambient = Vector4D(1.0f);
     m_data._diffuse = Vector4D(1.0f);
     m_data._specular = Vector4D(1.0f);

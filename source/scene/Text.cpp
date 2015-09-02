@@ -65,6 +65,11 @@ CText::EAlignMode CText::getAlignMode() const
 
 void CText::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
@@ -100,7 +105,6 @@ void CText::init()
 
     //TODO: Need more texture maps
     CRenderable::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
-
     m_initialiazed = true;
 }
 

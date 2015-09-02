@@ -91,6 +91,11 @@ void CSkybox::build()
 
 void CSkybox::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {

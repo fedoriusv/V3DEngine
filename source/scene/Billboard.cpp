@@ -43,6 +43,11 @@ void CBillboard::update(s32 dt)
 
 void CBillboard::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     const RenderTechniquePtr& technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {

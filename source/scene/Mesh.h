@@ -12,27 +12,26 @@ namespace scene
 
     class CModelManager;
 
-    class CMesh : public CNode, public renderer::CRenderable
+    class CMesh : public CNode, public renderer::CRenderable, public stream::CResource
     {
     public:
 
-        explicit CMesh(const std::string& file);
+        explicit CMesh();
         virtual     ~CMesh();
 
-        void        init()         override;
-        void        render()       override;
-        void        update(s32 dt) override;
+        void        init(const stream::IStreamPtr& stream)  override;
+        bool        load()                                  override;
+
+        void        init()                                  override;
+        void        render()                                override;
+        void        update(s32 dt)                          override;
 
     private:
 
+        void        loadGeometry(const stream::IStreamPtr& stream);
+        void        loadMaterial(const stream::IStreamPtr& stream);
         void        build();
-
-        std::string m_file;
     };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<CMesh> MeshPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
