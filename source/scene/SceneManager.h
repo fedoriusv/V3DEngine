@@ -24,8 +24,6 @@ namespace scene
     class CRectangleShape;
 
     class CModel;
-    class CMesh;
-
     class CSkybox;
     class CText;
     class CBillboard;
@@ -39,7 +37,7 @@ namespace scene
         ~CSceneManager();
 
         void                    init();
-        void                    draw(s32 dt);
+        void                    draw();
         void                    clear();
 
         bool                    dropNode(CNode* node);
@@ -54,8 +52,7 @@ namespace scene
         CPlaneShape*            addPlane(CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f), f32 extent = 2.f);
         CRectangleShape*        addRectangle(CNode* parent = nullptr, const Rect32& rect = Rect32(0, 0, 1024, 768));
         CSkybox*                addSkyBox(const std::string& front, const std::string& back, const std::string& left, const std::string& right, const std::string& up, const std::string& down);
-        CModel*                 addModel(const std::string& file, const std::string& techique, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));
-        CMesh*                  addMesh(const std::string& file, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));
+        CModel*                 addModel(const std::string& file, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));
         CBillboard*             addBillboard(const std::string& texture, CNode* parent = nullptr, const Vector3D& pos = Vector3D(0.f));
         CText*                  addText(CNode* parent = nullptr, const std::string& text = "text", const std::string& font = "arial.ttf", const Vector3D& pos = Vector3D(0.f), u32 size = 24U);
 
@@ -75,15 +72,20 @@ namespace scene
         CCamera*                getActiveCamera() const;
         bool                    isActiveCamera(const CCamera* camera);
 
+        s32                     getFPS() const;
+
     private:
 
         ScenePtr                m_scene;
 
-        f64                     m_currentTime;
-        f64                     m_deltaTime;
-        f64                     m_lastTime;
+        s32                     m_frameTime;
+        u64                     m_lastTime;
+        const f32               m_timeFactor = 1.f;
 
-        void                    updateDeltaTime();
+        s32                     m_framesCounted;
+        u32                     m_fpsStartTime;
+        s32                     m_fps;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

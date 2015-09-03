@@ -12,10 +12,12 @@
 #include "Skybox.h"
 #include "Light.h"
 #include "Text.h"
-#include "Mesh.h"
+#include "Model.h"
 #include "FPSCamera.h"
 #include "Engine.h"
 #include "utils/Logger.h"
+#include "utils/Timer.h"
+#include "ModelManager.h"
 
 #ifdef _PLATFORM_WIN_
 #	include <windows.h>
@@ -24,13 +26,18 @@
 using namespace v3d;
 using namespace scene;
 using namespace renderer;
+using namespace utils;
 
 CSceneManager::CSceneManager()
-    : m_currentTime(0.0)
-    , m_deltaTime(0.0)
-    , m_lastTime(0.0)
+    : m_frameTime(0)
+    , m_lastTime(0U)
+
+    , m_framesCounted(0)
+    , m_fpsStartTime(0U)
+    , m_fps(0)
 {
     m_scene = std::make_shared<CScene>();
+    m_lastTime = CTimer::getCurrentTime();
 }
 
 CSceneManager::~CSceneManager()
@@ -44,6 +51,11 @@ void CSceneManager::setDebugMode(bool active)
     RENDERER->setDebugMode(active);
 }
 #endif
+
+s32 CSceneManager::getFPS() const
+{
+    return m_fps;
+}
 
 void CSceneManager::setActiveCamera(CCamera* camera)
 {
@@ -65,10 +77,28 @@ void CSceneManager::init()
     m_scene->init();
 }
 
-void CSceneManager::draw(s32 dt)
+void CSceneManager::draw()
 {
-    updateDeltaTime();
-    m_scene->draw(dt);
+    const u64 ticks = CTimer::getCurrentTime();
+    m_frameTime = (s32)((ticks - m_lastTime) * m_timeFactor);
+    m_lastTime = ticks;
+
+    if (m_frameTime <= 0)
+    {
+        m_frameTime = 1;
+    }
+
+    //FPS
+    ++m_framesCounted;
+    const u32 fpsDeltaTime = static_cast<u32>(ticks - m_fpsStartTime);
+    if (fpsDeltaTime > 1000) //1 sec
+    {
+        m_fps = m_framesCounted;
+        m_framesCounted = 0;
+        m_fpsStartTime = static_cast<u32>(ticks);
+    }
+
+    m_scene->draw(m_frameTime);
 }
 
 void CSceneManager::clear()
@@ -84,17 +114,6 @@ bool CSceneManager::dropNode(CNode* node)
 void CSceneManager::addNode(CNode* node)
 {
     m_scene->add(node);
-}
-
-void CSceneManager::updateDeltaTime()
-{
-#ifdef _PLATFORM_WIN_
-	LARGE_INTEGER nTime;
-	QueryPerformanceCounter(&nTime);
-	m_currentTime = static_cast<double>(nTime.QuadPart);
-#endif
-	m_deltaTime = (m_currentTime - m_lastTime) * 0.001;
-	m_lastTime = m_currentTime;
 }
 
 CNode* CSceneManager::getObjectByID(s32 id)
@@ -265,21 +284,9 @@ CText* CSceneManager::addText(CNode* parent, const std::string& text, const std:
     return node;
 }
 
-CModel* CSceneManager::addModel(const std::string& file, const std::string& techniqe, CNode* parent, const Vector3D& pos)
+CModel* CSceneManager::addModel(const std::string& file, CNode* parent, const Vector3D& pos)
 {
-    /*CModel* node = new CModel(file, techniqe);
-    node->setParent(parent);
-    node->setPosition(pos);
-
-    CSceneManager::addNode(node);
-
-    return node;*/
-    return nullptr;
-}
-
-CMesh* CSceneManager::addMesh(const std::string& file, CNode* parent, const Vector3D& pos)
-{
-    CMesh* node = new CMesh(file);
+    CModel* node;// = CModelManager::getInstance()->load(file);
     node->setParent(parent);
     node->setPosition(pos);
 

@@ -30,8 +30,6 @@ namespace v3d
         const renderer::RendererPtr         getRenderer()          const;
         const renderer::DriverContextPtr    getContext()           const;
 
-        s32                                 getFPS()               const;
-
         bool                                init();
         bool                                begin();
         bool                                end();
@@ -41,14 +39,6 @@ namespace v3d
         platform::PlatformPtr               m_platform;
         event::InputEventHandlerPtr         m_inputEventHandler;
         scene::SceneManagerPtr              m_scene;
-
-        s32                                 m_frameTime;
-        u64                                 m_lastTime;
-        const f32                           m_timeFactor = 1.f;
-
-        s32                                 m_framesCounted;
-        u32                                 m_fpsStartTime;
-        s32                                 m_fps;
 
     };
 

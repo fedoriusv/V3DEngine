@@ -8,34 +8,23 @@
 #include "scene/ModelManager.h"
 #include "scene/RenderTargetManager.h"
 #include "scene/ShaderManager.h"
-#include "utils/Timer.h"
 
 using namespace v3d;
 using namespace platform;
 using namespace event;
 using namespace scene;
 using namespace renderer;
-using namespace utils;
 
 CEngine::CEngine()
     : m_platform(nullptr)
     , m_inputEventHandler(nullptr)
     , m_scene(nullptr)
-
-    , m_frameTime(0)
-    , m_lastTime(0U)
-
-    , m_framesCounted(0)
-    , m_fpsStartTime(0U)
-    , m_fps(0)
 {
     m_platform = std::make_shared<CPlatform>();
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
     m_scene = std::make_shared<CSceneManager>();
 
     m_inputEventHandler->setEnableEvents(true);
-
-    m_lastTime = CTimer::getCurrentTime();
 }
 
 CEngine::~CEngine()
@@ -81,11 +70,6 @@ const SceneManagerPtr& CEngine::getSceneManager() const
     return m_scene;
 }
 
-s32 CEngine::getFPS() const
-{
-    return m_fps;
-}
-
 bool CEngine::begin()
 {
     if (!m_platform)
@@ -93,27 +77,8 @@ bool CEngine::begin()
         return false;
     }
 
-    const u64 ticks = CTimer::getCurrentTime();
-    m_frameTime = (s32)((ticks - m_lastTime) * m_timeFactor);
-    m_lastTime = ticks;
-
-    if (m_frameTime <= 0)
-    {
-        m_frameTime = 1;
-    }
-
-    //FPS
-    ++m_framesCounted;
-    const u32 fpsDeltaTime = static_cast<u32>(ticks - m_fpsStartTime);
-    if (fpsDeltaTime > 1000) //1 sec
-    {
-        m_fps = m_framesCounted;
-        m_framesCounted = 0;
-        m_fpsStartTime = static_cast<u32>(ticks);
-    }
-
     m_inputEventHandler->update();
-    m_scene->draw(m_frameTime);
+    m_scene->draw();
 
     return m_platform->begin();
 }
