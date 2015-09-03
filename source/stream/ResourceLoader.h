@@ -18,11 +18,11 @@ namespace stream
         TResourceLoader();
         virtual                     ~TResourceLoader();
 
-        const T                     get(const std::string& name);
-        virtual const T             load(const std::string& file, const std::string& alias = "") = 0;
+        const T*                    get(const std::string& name);
+        virtual const T*            load(const std::string& file, const std::string& alias = "") = 0;
 
         void                        unload(const std::string& name);
-        void                        unload(const T& resource);
+        void                        unload(const T* resource);
         void                        unloadAll();
 
         void                        registerDecoder(decoders::DecoderPtr decoder);
@@ -33,7 +33,7 @@ namespace stream
 
     protected:
 
-        void                        insert(const T& resource, const std::string& key);
+        void                        insert(const T* resource, const std::string& key);
 
         std::map<std::string, T>    m_resources;
         decoders::DecoderList       m_decoders;

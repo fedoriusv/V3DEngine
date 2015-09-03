@@ -16,7 +16,7 @@ TResourceLoader<T>::~TResourceLoader()
 }
 
 template <class T>
-const T TResourceLoader<T>::get(const std::string& name)
+const T* TResourceLoader<T>::get(const std::string& name)
 {
     auto it = m_resources.find(name);
     if (it != m_resources.end())
@@ -33,22 +33,27 @@ void TResourceLoader<T>::unload(const std::string& name)
     auto it = m_resources.find(name);
     if (it != m_resources.end())
     {
+        delete (*it);
+        (*it) = nullptr;
+
         m_resources.erase(it);
     }
 }
 
 template <class T>
-void TResourceLoader<T>::unload(const T& resource)
+void TResourceLoader<T>::unload(const T* resource)
 {
-    auto predDelete = [resource](const std::pair<std::string, T>& pair) -> bool
+    auto predDelete = [resource](const std::pair<std::string, T*>& pair) -> bool
     {
         return pair.second == texture;
     };
 
     auto it = std::find_if(m_resources.begin(), m_resources.end(), predDelete);
-
     if (it != m_resources.end())
     {
+        delete (*it);
+        (*it) = nullptr;
+
         m_resources.erase(it);
     }
 }
@@ -56,13 +61,21 @@ void TResourceLoader<T>::unload(const T& resource)
 template <class T>
 void TResourceLoader<T>::unloadAll()
 {
+    for (auto& it : m_resources)
+    {
+        delete it.second;
+        it.second = nullptr;
+    }
     m_resources.clear();
 }
 
 template <class T>
 void TResourceLoader<T>::registerPath(const std::string& path)
 {
-    m_pathes.push_back(path);
+    if (!path.empty())
+    {
+        m_pathes.push_back(path);
+    }
 }
 
 template <class T>
@@ -92,7 +105,7 @@ void TResourceLoader<T>::unregisterDecoder(decoders::DecoderPtr& decoder)
 }
 
 template <class T>
-void TResourceLoader<T>::insert(const T& resource, const std::string& key)
+void TResourceLoader<T>::insert(const T* resource, const std::string& key)
 {
-    m_resources.insert(std::map<std::string, T>::value_type(key, resource));
+    m_resources.insert(std::map<std::string, T*>::value_type(key, resource));
 }

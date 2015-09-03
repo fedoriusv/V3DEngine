@@ -6,7 +6,7 @@ namespace v3d
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     template <class T>
-    class Singleton
+    class TSingleton
     {
     public:
 
@@ -15,8 +15,8 @@ namespace v3d
 
     protected:
 
-        Singleton();
-        virtual     ~Singleton();
+        TSingleton();
+        virtual     ~TSingleton();
 
     private:
 
@@ -26,20 +26,20 @@ namespace v3d
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     template <class T>
-    T* Singleton<T>::s_instance = nullptr;
+    T* TSingleton<T>::s_instance = nullptr;
 
     template <class T>
-    Singleton<T>::Singleton()
+    TSingleton<T>::TSingleton()
     {
     }
 
     template <class T>
-    Singleton<T>::~Singleton()
+    TSingleton<T>::~Singleton()
     {
     }
 
     template <class T>
-    T *Singleton<T>::getInstance()
+    T *TSingleton<T>::getInstance()
     {
         if (s_instance == nullptr)
         {
@@ -50,7 +50,7 @@ namespace v3d
     }
 
     template <class T>
-    void Singleton<T>::freeInstance()
+    void TSingleton<T>::freeInstance()
     {
         if (s_instance)
         {

@@ -2,6 +2,7 @@
 #define _V3D_MODEL_MANAGER_H_
 
 #include "Singleton.h"
+#include "Model.h"
 #include "resources/ModelData.h"
 #include "stream/ResourceLoader.h"
 #include "decoders/ResourceDecoder.h"
@@ -12,14 +13,14 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelManager : public Singleton<CModelManager>, public stream::TResourceLoader<resources::ModelDataPtr>
+    class CModelManager : public TSingleton<CModelManager>, public stream::TResourceLoader<CModel>
     {
     public:
 
         CModelManager();
-        virtual                         ~CModelManager();
+        ~CModelManager();
 
-        const resources::ModelDataPtr   load(const std::string& name, const std::string& alias = "") override;
+        const CModel*   load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
