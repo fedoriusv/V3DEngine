@@ -52,7 +52,7 @@ namespace renderer
             u32 _count;
         };
 
-        CGeometry(const RenderTechniquePtr& technique);
+        explicit CGeometry(const CRenderTechnique* technique);
         virtual                 ~CGeometry();
 
         virtual void            init()      = 0;

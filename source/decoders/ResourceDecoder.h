@@ -2,10 +2,13 @@
 #define _V3D_RESOURCE_DECODER_H_
 
 #include "stream/IStream.h"
-#include "stream/Resource.h"
 
 namespace v3d
 {
+namespace stream
+{
+    class CResource;
+}
 namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +22,7 @@ namespace decoders
 
         virtual                         ~CResourceDecoder();
 
-        virtual stream::ResourcePtr     decode(const stream::IStreamPtr& stream) = 0;
+        virtual stream::CResource*      decode(const stream::IStreamPtr& stream) = 0;
 
         bool                            isExtensionSupported(const std::string& extension) const;
         void                            setSupportedExtensions(const std::string supportedExtensions[]);

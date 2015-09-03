@@ -44,7 +44,7 @@ void CMesh::init()
         return;
     }
 
-    const RenderTechniquePtr& technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CMesh: Do not exist RenderTechique");

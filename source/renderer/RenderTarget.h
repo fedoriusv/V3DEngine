@@ -27,14 +27,14 @@ namespace renderer
         virtual void                    bind()   = 0;
         virtual void                    unbind() = 0;
 
-        const TexturePtr&               getColorTexture(u32 index) const;
-        TexturePtr&                     getColorTexture(u32 index);
+        const CTexture*                 getColorTexture(u32 index) const;
+        CTexture*                       getColorTexture(u32 index);
         
-        const TexturePtr&               getDepthTexture() const;
-        TexturePtr&                     getDepthTexture();
+        const CTexture*                 getDepthTexture() const;
+        CTexture*                       getDepthTexture();
 
-        const TexturePtr&               getStencilTexture() const;
-        TexturePtr&                     getStencilTexture();
+        const CTexture*                getStencilTexture() const;
+        CTexture*                      getStencilTexture();
 
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;
@@ -70,13 +70,14 @@ namespace renderer
         struct SAttachments
         {
             SAttachments();
+            ~SAttachments();
 
             u32                 _index;
             EAttachmentsType    _type;
             EAttachmentsOutput  _output;
             u32                 _format;
 
-            TexturePtr          _texture;
+            CTexture*           _texture;
             u32                 _rboID;
         };
 

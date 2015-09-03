@@ -61,9 +61,10 @@ bool CModelData::load()
 
         if (version <= F3D_MODEL_LOADER_VERSION)
         {
-            return CModelData::load100(stream);
+            //return CModelData::load100(stream);
         }
     }
 
     return false;
 }
+

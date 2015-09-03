@@ -23,25 +23,25 @@ CTextureManager::~CTextureManager()
 {
 }
 
-void CTextureManager::add(const renderer::TexturePtr& texture)
+void CTextureManager::add(const CTexture* texture)
 {
     std::string name = texture->getResourseName();
     TResourceLoader::insert(texture, name);
 }
 
-const TexturePtr CTextureManager::load(const std::string* files[6])
+const CTexture* CTextureManager::load(const std::string* files[6])
 {
     //TODO: load cubemap
 
     return nullptr;
 }
 
-const TexturePtr CTextureManager::load(const std::string& file, const std::string& alias)
+const CTexture* CTextureManager::load(const std::string& file, const std::string& alias)
 {
     std::string nameStr = file;
     std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
 
-    const TexturePtr findTexture = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    const CTexture* findTexture = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findTexture)
     {
         return findTexture;
@@ -65,22 +65,14 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
                 const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
-                    auto predCanDecode = [fileExtension](const DecoderPtr& decoder) -> bool
-                    {
-                        return decoder->isExtensionSupported(fileExtension);
-                    };
-                    
-                    auto iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
-                    if (iter == m_decoders.end())
+                    const DecoderPtr decoder = TResourceLoader::findDecoder(fileExtension);
+                    if (!decoder)
                     {
                         LOG_ERROR("CTextureManager: Format not supported file [%s]", nameStr.c_str());
-                        stream->close();
-
                         return nullptr;
                     }
 
-                    const DecoderPtr& decoder = (*iter);
-                    stream::ResourcePtr resource = decoder->decode(stream);
+                    stream::CResource* resource = decoder->decode(stream);
                     stream->close();
 
                     if (!resource)
@@ -89,7 +81,7 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
                         return nullptr;
                     }
 
-                    TexturePtr texture = std::static_pointer_cast<CTexture>(resource);
+                    CTexture* texture = static_cast<CTexture*>(resource);
 
                     texture->m_target = ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
@@ -124,9 +116,9 @@ const TexturePtr CTextureManager::load(const std::string& file, const std::strin
     return nullptr;
 }
 
-TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
+CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
 {
-    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+    renderer::CTexture* texture = RENDERER->makeSharedTexture();
 
     texture->m_target = ETextureTarget::eTexture2D;
 
@@ -143,9 +135,9 @@ TexturePtr CTextureManager::createTexture2DFromData(const Dimension2D& size, EIm
     return texture;
 }
 
-TexturePtr CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFormat format, EImageType type)
+CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFormat format, EImageType type)
 {
-    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+    renderer::CTexture* texture = RENDERER->makeSharedTexture();
 
     texture->m_target = ETextureTarget::eTexture2DMSAA;
 
@@ -162,7 +154,7 @@ TexturePtr CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageF
     return texture;
 }
 
-void CTextureManager::copyToTexture2D(const TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
+void CTextureManager::copyToTexture2D(CTexture* texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
     if (!texture || texture->getTextureID() <= 0)
     {

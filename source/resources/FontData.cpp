@@ -13,6 +13,11 @@ CFontData::CFontData(const std::string& font)
 
 CFontData::~CFontData()
 {
+    for (auto& texure : m_charTexture)
+    {
+        delete texure;
+        texure = nullptr;
+    }
     m_charTexture.clear();
 }
 

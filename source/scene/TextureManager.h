@@ -4,10 +4,7 @@
 #include "common.h"
 #include "Singleton.h"
 #include "renderer/Texture.h"
-#include "stream/IStream.h"
-#include "decoders/ResourceDecoder.h"
 #include "stream/ResourceLoader.h"
-#include "Singleton.h"
 
 namespace v3d
 {
@@ -15,21 +12,25 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureManager : public Singleton<CTextureManager>, public stream::TResourceLoader<renderer::TexturePtr>
+    class CTextureManager : public TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::CTexture>
     {
-    public:
+    private:
+
+        friend TSingleton<CTextureManager>;
 
         CTextureManager();
-        virtual                     ~CTextureManager();
+        ~CTextureManager();
 
-        void                        add(const renderer::TexturePtr& texture);
-        const renderer::TexturePtr  load(const std::string& file, const std::string& alias = "") override;
-        const renderer::TexturePtr  load(const std::string* files[6]);
+    public:
 
-        renderer::TexturePtr        createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
-        renderer::TexturePtr        createTexture2DMSAA(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
+        void                        add(const renderer::CTexture* texture);
+        const renderer::CTexture*   load(const std::string& file, const std::string& alias = "") override;
+        const renderer::CTexture*   load(const std::string* files[6]);
 
-        void                        copyToTexture2D(const renderer::TexturePtr& texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
+        renderer::CTexture*         createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::CTexture*         createTexture2DMSAA(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
+
+        void                        copyToTexture2D(renderer::CTexture* texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

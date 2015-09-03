@@ -2,6 +2,7 @@
 #define _V3D_MODEL_H_
 
 #include "Node.h"
+#include "stream/Resource.h"
 
 namespace v3d
 {
@@ -11,19 +12,24 @@ namespace scene
 
     class CModelManager;
 
-    class CModel : public CNode
+    class CModel : public CNode, public stream::CResource
     {
     public:
 
-        explicit CModel(const std::string& file);
+        CModel();
         virtual                 ~CModel();
+
+        void                    init(const stream::IStreamPtr& stream)  override;
+        bool                    load()                                  override;
 
         void                    init()         override;
         void                    update(s32 dt) override;
 
+        void                    addNode(CNode* node);
+        CNode*                  getNode(u32 index);
+
     private:
 
-        std::string             m_file;
         std::vector<CNode*>     m_nodesList;
     };
 

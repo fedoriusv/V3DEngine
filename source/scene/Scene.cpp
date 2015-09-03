@@ -200,7 +200,7 @@ void CScene::initRenderLists()
 
 void CScene::attachToRenderList(CNode* node)
 {
-    RenderTechniquePtr techniqe = nullptr;
+    const CRenderTechnique* techniqe = nullptr;
     CRenderable* draw = nullptr;
 
     switch (node->getNodeType())

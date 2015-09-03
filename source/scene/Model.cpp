@@ -5,19 +5,35 @@
 
 using namespace v3d;
 using namespace scene;
-using namespace resources;
 
-CModel::CModel(const std::string& file)
-: m_file(file)
+CModel::CModel()
 {
     m_nodeType = ENodeType::eModel;
-    LOG_INFO("CModel: Create node type: %s, name: %s", getNodeNameByType(m_nodeType).c_str(), file.c_str());
+    LOG_INFO("CModel: Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 }
 
 CModel::~CModel()
 {
-    //TODO: maybe need delete ptr
+    for (auto& it : m_nodesList)
+    {
+        delete it;
+        it = nullptr;
+    }
     m_nodesList.clear();
+}
+
+void CModel::addNode(CNode* node)
+{
+    if (node)
+    {
+        m_nodesList.push_back(node);
+    }
+}
+
+CNode* CModel::getNode(u32 index)
+{
+    ASSERT(index < m_nodesList.size() && "CModel::getNode: invalid node index");
+    return m_nodesList[index];
 }
 
 void CModel::init()
@@ -26,46 +42,6 @@ void CModel::init()
     {
         return;
     }
-
-    if (m_file.empty())
-    {
-        LOG_ERROR("CModel::init: Empty file name");
-        return;
-    }
-
-    const ModelDataPtr data = CModelManager::getInstance()->load(m_file);
-    if (!data)
-    {
-        LOG_ERROR("CModel::init: Empty model data");
-        return;
-    }
-
-    const std::vector<CModelData::SNodeData>& nodesDataList = data->getNodesList();
-    for (auto& nodeData : nodesDataList)
-    {
-        CNode* node = nullptr;
-        switch (nodeData._type)
-        {
-            case eMesh:
-            {
-                node = new CMesh();
-                static_cast<CMesh*>(node)->init(nodeData._stream);
-            }
-                break;
-
-            case eLight:
-            case eCamera:
-            default:
-                break;
-        }
-
-        if (node)
-        {
-            m_nodesList.push_back(node);
-        }
-    }
-
-    //TODO: apply parents
 
     for (std::vector<CNode*>::iterator node = m_nodesList.begin(); node < m_nodesList.end(); ++node)
     {
@@ -83,4 +59,25 @@ void CModel::update(s32 dt)
     }
 
     CNode::update(dt);
+}
+
+void CModel::init(const stream::IStreamPtr& stream)
+{
+    CResource::setStream(stream);
+}
+
+bool CModel::load()
+{
+    const stream::IStreamPtr& stream = CResource::getStream();
+    if (!stream)
+    {
+        LOG_ERROR("CModel: Empty Stream with name [%s] form File", CResource::getResourseName().c_str());
+        return false;
+    }
+
+    if (stream->size() > 0)
+    {
+        stream->read(m_id);
+        stream->read(m_name);
+    }
 }

@@ -16,7 +16,7 @@ namespace renderer
     {
     public:
 
-        CGeometryD3D(const RenderTechniquePtr& technique);
+        CGeometryD3D(const CRenderTechnique* technique);
         ~CGeometryD3D();
 
         void                init()    override;

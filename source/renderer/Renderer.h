@@ -46,8 +46,8 @@ namespace renderer
 
         virtual ShaderPtr           makeSharedShader()                                                      = 0;
         virtual ShaderProgramPtr    makeSharedProgram()                                                     = 0;
-        virtual GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 = 0;
-        virtual TexturePtr          makeSharedTexture()                                                     = 0;
+        virtual GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   = 0;
+        virtual CTexture*           makeSharedTexture()                                                     = 0;
         virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;
         virtual RenderTargetPtr     makeSharedRenderTarget()                                                = 0;
 #ifdef _DEBUG

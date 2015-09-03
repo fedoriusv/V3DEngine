@@ -19,11 +19,11 @@ namespace event
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CEventManager : public Singleton<CEventManager>
+    class CEventManager : public TSingleton<CEventManager>
     {
     private:
 
-        friend                      Singleton<CEventManager>;
+        friend                      TSingleton<CEventManager>;
 
         CEventManager();
         virtual                     ~CEventManager();

@@ -105,14 +105,14 @@ ShaderProgramPtr CRendererGL::makeSharedProgram()
     return std::make_shared<CShaderProgramGL>();
 }
 
-GeometryPtr CRendererGL::makeSharedGeometry(const RenderTechniquePtr& technique)
+GeometryPtr CRendererGL::makeSharedGeometry(const CRenderTechnique* technique)
 {
     return std::make_shared<CGeometryGL>(technique);
 }
 
-TexturePtr CRendererGL::makeSharedTexture()
+CTexture* CRendererGL::makeSharedTexture()
 {
-    return std::make_shared<CTextureGL>();
+    return new CTextureGL();
 }
 
 RenderStatePtr CRendererGL::makeSharedRenderState()

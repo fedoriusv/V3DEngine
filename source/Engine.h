@@ -13,13 +13,13 @@ namespace v3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CEngine : public Singleton<CEngine>
+    class CEngine : public TSingleton<CEngine>
     {
     private:
 
-        friend Singleton<CEngine>;
+        friend TSingleton<CEngine>;
         CEngine();
-        virtual                             ~CEngine();
+        ~CEngine();
 
     public:
 

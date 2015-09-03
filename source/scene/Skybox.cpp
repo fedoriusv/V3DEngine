@@ -26,7 +26,7 @@ void CSkybox::load(const std::string files[6])
     m_textures.resize(k_countSize);
     for (u32 i = 0; i < k_countSize; ++i)
     {
-        TexturePtr texure = CTextureManager::getInstance()->load(files[i]);
+        const CTexture* texure = CTextureManager::getInstance()->load(files[i]);
         if (!texure)
         {
             LOG_ERROR("CSkybox::load: Error load skybox. File %s", files[i].c_str());
@@ -96,7 +96,7 @@ void CSkybox::init()
         return;
     }
 
-    RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CSkybox: Do not exist RenderTechique");

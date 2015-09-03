@@ -18,6 +18,15 @@ CRenderTarget::SAttachments::SAttachments()
 {
 }
 
+CRenderTarget::SAttachments::~SAttachments()
+{
+    if (_texture)
+    {
+        delete _texture;
+        _texture = nullptr;
+    }
+}
+
 CRenderTarget::CRenderTarget()
 : m_color(core::Vector4D(0.0f))
 , m_viewport(0, 0, 0, 0)
@@ -39,7 +48,7 @@ CRenderTarget::~CRenderTarget()
     m_attachmentsList.clear();
 }
 
-const TexturePtr& CRenderTarget::getColorTexture(u32 index) const
+const CTexture* CRenderTarget::getColorTexture(u32 index) const
 {
     std::deque<SAttachments>::const_iterator attach;
     for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
@@ -54,7 +63,7 @@ const TexturePtr& CRenderTarget::getColorTexture(u32 index) const
     return (*attach)._texture;
 }
 
-TexturePtr& CRenderTarget::getColorTexture(u32 index)
+CTexture* CRenderTarget::getColorTexture(u32 index)
 {
     std::deque<SAttachments>::iterator attach;
     for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
@@ -69,7 +78,7 @@ TexturePtr& CRenderTarget::getColorTexture(u32 index)
     return (*attach)._texture;
 }
 
-const TexturePtr& CRenderTarget::getDepthTexture() const
+const CTexture* CRenderTarget::getDepthTexture() const
 {
     std::deque<SAttachments>::const_iterator attach;
     for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
@@ -84,7 +93,7 @@ const TexturePtr& CRenderTarget::getDepthTexture() const
     return (*attach)._texture;
 }
 
-TexturePtr& CRenderTarget::getDepthTexture()
+CTexture* CRenderTarget::getDepthTexture()
 {
     std::deque<SAttachments>::iterator attach;
     for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
@@ -99,7 +108,7 @@ TexturePtr& CRenderTarget::getDepthTexture()
     return (*attach)._texture;
 }
 
-const TexturePtr& CRenderTarget::getStencilTexture() const
+const CTexture* CRenderTarget::getStencilTexture() const
 {
     std::deque<SAttachments>::const_iterator attach;
     for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
@@ -114,7 +123,7 @@ const TexturePtr& CRenderTarget::getStencilTexture() const
     return (*attach)._texture;
 }
 
-TexturePtr& CRenderTarget::getStencilTexture()
+CTexture* CRenderTarget::getStencilTexture()
 {
     std::deque<SAttachments>::iterator attach;
     for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)

@@ -34,7 +34,7 @@ namespace v3d
     }
 
     template <class T>
-    TSingleton<T>::~Singleton()
+    TSingleton<T>::~TSingleton()
     {
     }
 

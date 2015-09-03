@@ -18,18 +18,18 @@ CShaderManager::~CShaderManager()
 {
 }
 
-void CShaderManager::add(const ShaderSourceDataPtr& shader)
+void CShaderManager::add(const CShaderSourceData* shader)
 {
     std::string name = shader->getName();
     TResourceLoader::insert(shader, name);
 }
 
-const ShaderSourceDataPtr CShaderManager::load(const std::string& name, const std::string& alias)
+const CShaderSourceData* CShaderManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    const ShaderSourceDataPtr findShader = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    const CShaderSourceData* findShader = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findShader)
     {
         return findShader;
@@ -53,7 +53,7 @@ const ShaderSourceDataPtr CShaderManager::load(const std::string& name, const st
                 const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
-                    ShaderSourceDataPtr shader = std::make_shared<CShaderSourceData>();
+                    CShaderSourceData* shader = new CShaderSourceData();
 
                     shader->init(stream);
                     shader->setResourseName(fullName);

@@ -1,11 +1,12 @@
 #include "ModelF3DDecoder.h"
-#include "resources/ModelData.h"
 #include "stream/StreamManager.h"
 #include "utils/Logger.h"
+#include "scene/Model.h"
+#include "scene/Mesh.h"
 
 using namespace v3d;
 using namespace decoders;
-using namespace resources;
+using namespace scene;
 using namespace stream;
 
 CModelF3DDecoder::CModelF3DDecoder()
@@ -22,7 +23,7 @@ CModelF3DDecoder::~CModelF3DDecoder()
 {
 }
 
-stream::ResourcePtr CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
+stream::CResource* CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
 {
     if (!stream)
     {
@@ -37,7 +38,7 @@ stream::ResourcePtr CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
         u32 version;
         stream->read(version);
 
-        if (version <= F3D_MODEL_LOADER_VERSION)
+        if (version == F3D_MODEL_LOADER_VERSION)
         {
             return CModelF3DDecoder::decode100(stream);
         }
@@ -52,22 +53,36 @@ stream::ResourcePtr CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
     return nullptr;
 }
 
-stream::ResourcePtr CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
+stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
 {
-    ModelDataPtr model = std::make_shared<CModelData>();
 
-    stream::IStreamPtr mem = CStreamManager::createMemoryStream(data, size);
-    model->init(mem);
+    CModel* model = new CModel();
 
-    return model;
-    stream->read(m_id);
-    stream->read(m_name);
+    stream::IStreamPtr data = CStreamManager::createMemoryStream();
+    data->seekBeg(0);
 
-    stream->read(m_countNodes);
-    for (u32 nodeIdx = 0; nodeIdx < m_countNodes; ++nodeIdx)
+    s32 id;
+    stream->read(id);
+    data->write(id);
+
+    std::string name;
+    stream->read(name);
+    data->write(name);
+
+    model->init(data);
+
+    u32 countNodes;
+    stream->read(countNodes);
+
+    std::vector<s32> parentList;
+    for (u32 nodeIdx = 0; nodeIdx < countNodes; ++nodeIdx)
     {
         s32 nodetype;
         stream->read(nodetype);
+
+        s32 parrentIdx;
+        stream->read(parrentIdx);
+        parentList.push_back(parrentIdx);
 
         u32 subStreamSize;
         stream->read(subStreamSize);
@@ -75,9 +90,38 @@ stream::ResourcePtr CModelF3DDecoder::decode100(const stream::IStreamPtr& stream
         stream::IStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
         stream->read(subStream);
 
-        SNodeData data(subStream, (scene::ENodeType)nodetype);
-        m_nodesList.push_back(data);
+        CNode* node = nullptr;
+        switch (nodetype)
+        {
+            case eMesh:
+            {
+                node = new CMesh();
+                static_cast<CMesh*>(node)->init(subStream);
+            }
+                break;
+
+            case eLight:
+            case eCamera:
+            default:
+                break;
+        }
+
+        model->addNode(node);
     }
 
-    return true;
+    for (u32 nodeIdx = 0; nodeIdx < countNodes; ++nodeIdx)
+    {
+        CNode* node = model->getNode(nodeIdx);
+        
+        if (parentList[nodeIdx] >= 0)
+        {
+            node->setParent(model->getNode(parentList[nodeIdx]));
+        }
+        else
+        {
+            node->setParent(model);
+        }
+    }
+
+    return model;
 }

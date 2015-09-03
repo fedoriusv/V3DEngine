@@ -122,7 +122,7 @@ void CRenderer::draw(const RenderJobPtr& job)
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
     u32 targetIndex = job->getRenderTarget();
-    const RenderTechniquePtr& techique = material->getRenderTechique();
+    CRenderTechnique* techique = material->getRenderTechique();
     const u32 passCount = techique->getRenderPassCount();
 
     for (u32 passIdx = 0; passIdx < passCount; ++passIdx)
@@ -406,10 +406,10 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
             case CShaderSampler::eTextureSampler:
             case CShaderSampler::eRenderTargetSampler:
             {
-                const TextureWPtr& texture = sampler->getTexture();
-                if (!texture.expired())
+                CTexture* texture = sampler->getTexture();
+                if (texture)
                 {
-                    texture.lock()->bind(layersCount, sampler->getID());
+                    texture->bind(layersCount, sampler->getID());
                     ++layersCount;
                 }
             }
@@ -423,7 +423,7 @@ void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& 
         u32 samplerID = 0;
         for (u32 layer = 0; layer < layersCount; ++layer)
         {
-            const TexturePtr& texture = material->getTexture(layer);
+            CTexture* texture = material->getTexture(layer);
             if (texture->isEnable())
             {
                 texture->bind(layer, samplerID);

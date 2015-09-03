@@ -11,15 +11,19 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechniqueManager : public Singleton<CRenderTechniqueManager>, public stream::TResourceLoader<renderer::RenderTechniquePtr>
+    class CRenderTechniqueManager : public TSingleton<CRenderTechniqueManager>, public stream::TResourceLoader<renderer::CRenderTechnique>
     {
-    public:
+    private:
+
+        friend TSingleton<CRenderTechniqueManager>;
 
         CRenderTechniqueManager();
         virtual                             ~CRenderTechniqueManager();
 
-        void                                add(const renderer::RenderTechniquePtr& technique);
-        const renderer::RenderTechniquePtr  load(const std::string& name, const std::string& alias = "") override;
+    public:
+
+        void                                add(const renderer::CRenderTechnique* technique);
+        const renderer::CRenderTechnique*   load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

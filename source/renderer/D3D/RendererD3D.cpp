@@ -3,6 +3,7 @@
 
 #ifdef _DIRECT3D_DRIVER_
 #include "context/DriverContextD3D.h"
+#include "renderer/D3D/TextureD3D.h"
 #include "GeometryD3D.h"
 
 #include <d3d11.h>
@@ -108,15 +109,14 @@ ShaderProgramPtr CRendererD3D::makeSharedProgram()
     //return std::make_shared<CShaderProgramGL>();
 }
 
-GeometryPtr CRendererD3D::makeSharedGeometry(const RenderTechniquePtr& technique)
+GeometryPtr CRendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
 {
     return std::make_shared<CGeometryD3D>(technique);
 }
 
-TexturePtr CRendererD3D::makeSharedTexture()
+CTexture* CRendererD3D::makeSharedTexture()
 {
-    return nullptr;
-    //return std::make_shared<CTextureGL>();
+    return new CTextureD3D();
 }
 
 RenderStatePtr CRendererD3D::makeSharedRenderState()

@@ -32,11 +32,15 @@ namespace utils
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CLogger : public Singleton<CLogger>
+    class CLogger : public TSingleton<CLogger>
     {
-    public:
+    private:
+
+        friend TSingleton<CLogger>;
         CLogger();
-        virtual         ~CLogger();
+        ~CLogger();
+
+    public:
 
         void            createLogFile(const std::string& filename);
 

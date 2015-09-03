@@ -49,7 +49,7 @@ void CMaterial::setEmissionColor(const core::Vector4D& color)
     m_needUpdate = true;
 }
 
-void CMaterial::setShininess(const f32 value)
+void CMaterial::setShininess(f32 value)
 {
     m_materialData._shininess = value;
     m_needUpdate = true;
@@ -80,14 +80,24 @@ f32 CMaterial::getShininess() const
     return m_materialData._shininess;
 }
 
-const TexturePtr& CMaterial::getTexture(const u32 layer) const
+const CTexture* CMaterial::getTexture(u32 layer) const
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "invalid texture layer") ;
+        ASSERT(false && "CMaterial::getTexture: Invalid texture layer") ;
     }
 
     return m_texture.at(layer);
+}
+
+CTexture* CMaterial::getTexture(u32 layer)
+{
+    if (layer >= ETextureLayer::eLayerMax)
+    {
+        ASSERT(false && "CMaterial::getTexture: Invalid texture layer");
+    }
+
+    return const_cast<CTexture*>(m_texture.at(layer));
 }
 
 u32 CMaterial::getTextureCount() const
@@ -95,18 +105,18 @@ u32 CMaterial::getTextureCount() const
     return (u32)m_texture.size();
 }
 
-bool CMaterial::setTexture(const u32 layer, const std::string& file)
+bool CMaterial::setTexture(u32 layer, const std::string& file)
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "Texture Layer range out");
+        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
         return false;
     }
 
-    TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
+    const CTexture* texture = scene::CTextureManager::getInstance()->load(file);
     if (!texture)
     {
-        LOG_ERROR("Error read file [%s]", file.c_str());
+        LOG_ERROR("CMaterial::setTexture: Error read file [%s]", file.c_str());
         return false;
     }
 
@@ -115,15 +125,15 @@ bool CMaterial::setTexture(const u32 layer, const std::string& file)
     return true;
 }
 
-bool CMaterial::setTexture(const u32 layer, const std::string* files[6])
+bool CMaterial::setTexture(u32 layer, const std::string* files[6])
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "Texture Layer range out");
+        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
         return false;
     }
 
-    TexturePtr texture = scene::CTextureManager::getInstance()->load(files);
+    const CTexture* texture = scene::CTextureManager::getInstance()->load(files);
     if (!texture)
     {
         LOG_ERROR("CMaterial: Error read cubemap files");
@@ -135,23 +145,11 @@ bool CMaterial::setTexture(const u32 layer, const std::string* files[6])
     return true;
 }
 
-void CMaterial::destroyTexture(u32 layer)
+void CMaterial::setTexture(u32 layer, const CTexture* texture)
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "Texture Layer range out");
-        return;
-    }
-
-    m_texture[layer] = nullptr;
-
-}
-
-void CMaterial::setTexture(const u32 layer, TexturePtr& texture)
-{
-    if (layer >= ETextureLayer::eLayerMax)
-    {
-        ASSERT(false && "Texture Layer range out");
+        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
         return;
     }
 
@@ -169,14 +167,19 @@ float CMaterial::getTransparency() const
     return m_materialData._transparency;
 }
 
-const RenderTechniquePtr& CMaterial::getRenderTechique() const
+const CRenderTechnique* CMaterial::getRenderTechique() const
 {
     return m_renderTechnique;
 }
 
+CRenderTechnique* CMaterial::getRenderTechique()
+{
+    return const_cast<CRenderTechnique*>(m_renderTechnique);
+}
+
 bool CMaterial::setRenderTechnique(const std::string& file)
 {
-    RenderTechniquePtr technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
     if (!technique)
     {
         LOG_ERROR("CMaterial: Error read file [%s]", file.c_str());
@@ -190,7 +193,7 @@ bool CMaterial::setRenderTechnique(const std::string& file)
 
 bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
 {
-    RenderTechniquePtr technique = std::make_shared<CRenderTechnique>();
+    CRenderTechnique* technique = new CRenderTechnique();
     technique->init(stream);
     if (technique->load())
     {
@@ -204,7 +207,7 @@ bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
     return true;
 }
 
-void CMaterial::setRenderTechnique(const RenderTechniquePtr& technique)
+void CMaterial::setRenderTechnique(const CRenderTechnique* technique)
 {
     scene::CRenderTechniqueManager::getInstance()->add(technique);
     m_renderTechnique = technique;

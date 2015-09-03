@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CFontManager : public Singleton<CFontManager>, public stream::TResourceLoader<resources::FontDataPtr>
+    class CFontManager : public TSingleton<CFontManager>, public stream::TResourceLoader<resources::FontDataPtr>
     {
     public:
 

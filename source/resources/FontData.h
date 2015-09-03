@@ -57,7 +57,7 @@ namespace resources
             {}
         };
 
-        CFontData(const std::string& font);
+        explicit CFontData(const std::string& font);
         virtual                             ~CFontData();
 
         EFontType                           getFontType() const;
@@ -81,7 +81,7 @@ namespace resources
         EFontType                           m_fontType;
 
         std::map<s32, SCharDesc>            m_charInfo;
-        std::vector<renderer::TexturePtr>   m_charTexture;
+        renderer::TextureList               m_charTexture;
         Dimension2D                         m_mapSize;
 
         std::string                         m_font;

@@ -107,5 +107,22 @@ void TResourceLoader<T>::unregisterDecoder(decoders::DecoderPtr& decoder)
 template <class T>
 void TResourceLoader<T>::insert(const T* resource, const std::string& key)
 {
-    m_resources.insert(std::map<std::string, T*>::value_type(key, resource));
+    m_resources.insert(std::map<std::string, const T*>::value_type(key, resource));
+}
+
+template <class T>
+const decoders::DecoderPtr TResourceLoader<T>::findDecoder(const std::string& extension)
+{
+    auto predCanDecode = [extension](const DecoderPtr& decoder) -> bool
+    {
+        return decoder->isExtensionSupported(extension);
+    };
+
+    std::vector<DecoderPtr>::iterator iter = std::find_if(m_decoders.begin(), m_decoders.end(), predCanDecode);
+    if (iter == m_decoders.end())
+    {
+        return nullptr;
+    }
+
+    return iter;
 }

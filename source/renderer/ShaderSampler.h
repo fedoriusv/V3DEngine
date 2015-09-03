@@ -48,14 +48,15 @@ namespace renderer
 
         friend                  CRenderer;
 
-        const TextureWPtr&      getTexture() const;
+        const CTexture*         getTexture() const;
+        CTexture*               getTexture();
         const RenderTargetWPtr& getTarget() const;
 
         ESamplerType            m_type;
         std::string             m_attribute;
 
         RenderTargetWPtr        m_target;
-        TextureWPtr             m_texture;
+        const CTexture*         m_texture;
 
         s32                     m_id;
     };

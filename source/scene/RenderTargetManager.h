@@ -10,12 +10,16 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTargetManager : public Singleton<CRenderTargetManager>
+    class CRenderTargetManager : public TSingleton<CRenderTargetManager>
     {
-    public:
+    private:
+
+        friend TSingleton<CRenderTargetManager>;
 
         CRenderTargetManager();
-        virtual                         ~CRenderTargetManager();
+        ~CRenderTargetManager();
+
+    public:
 
         void                            add(const renderer::RenderTargetPtr& target);
         const renderer::RenderTargetPtr get(const std::string& name);

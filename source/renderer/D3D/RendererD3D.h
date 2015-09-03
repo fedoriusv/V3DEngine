@@ -23,8 +23,8 @@ namespace renderer
 
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
-        GeometryPtr         makeSharedGeometry(const RenderTechniquePtr& technique)                 override;
-        TexturePtr          makeSharedTexture()                                                     override;
+        GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
+        CTexture*           makeSharedTexture()                                                     override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
 #ifdef _DEBUG

@@ -25,7 +25,7 @@ CTextureResILDecoder::~CTextureResILDecoder()
 {
 }
 
-stream::ResourcePtr CTextureResILDecoder::decode(const stream::IStreamPtr& stream)
+stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream)
 {
     std::function<wchar_t*(const char*)> charToWChar = [](const char* text)
     {
@@ -45,14 +45,14 @@ stream::ResourcePtr CTextureResILDecoder::decode(const stream::IStreamPtr& strea
     ilBindImage(texid);
 
     ILboolean success = ilLoadImage(charToWChar(file.c_str()));
-    ASSERT(success == IL_TRUE && "Invalid Texture");
+    ASSERT(success == IL_TRUE && "CTextureResILDecoder: Invalid Texture");
     if (!success)
     {
         ilDeleteImages(1, &texid);
         return nullptr;
     }
 
-    renderer::TexturePtr texture = RENDERER->makeSharedTexture();
+    CTexture* texture = RENDERER->makeSharedTexture();
 
     stream::IStreamPtr data = CStreamManager::createMemoryStream();
     data->seekBeg(0);
@@ -115,7 +115,7 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
         return EImageFormat::eLuminanceAlpha;
 
     default:
-        ASSERT(true && "Invalid IL Format");
+        ASSERT(false && "CTextureResILDecoder: Invalid IL Format");
         return EImageFormat::eRGB;
     }
 #endif //USE_DEVIL
@@ -156,7 +156,7 @@ EImageType CTextureResILDecoder::convertILType(u32 type)
         return EImageType::eHalf;
 
     default:
-        ASSERT(true && "Invalid IL Type");
+        ASSERT(false && "CTextureResILDecoder: Invalid IL Type");
         return EImageType::eUnsignedByte;
     }
 #endif //USE_DEVIL

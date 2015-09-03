@@ -24,8 +24,8 @@ namespace renderer
         void                        setDiffuseColor (const core::Vector4D& color);
         void                        setSpecularColor(const core::Vector4D& color);
         void                        setEmissionColor(const core::Vector4D& color);
-        void                        setShininess(const f32 value);
-        void                        setTransparency(const f32 value);
+        void                        setShininess(f32 value);
+        void                        setTransparency(f32 value);
 
         const core::Vector4D&       getAmbientColor()  const;
         const core::Vector4D&       getDiffuseColor()  const;
@@ -34,20 +34,20 @@ namespace renderer
         f32                         getShininess()     const;
         f32                         getTransparency()  const;
 
-        bool                        setTexture(const u32 layer, const std::string& file);
-        bool                        setTexture(const u32 layer, const std::string* files[6]);
-        void                        setTexture(const u32 layer, TexturePtr& texture);
+        bool                        setTexture(u32 layer, const std::string& file);
+        bool                        setTexture(u32 layer, const std::string* files[6]);
+        void                        setTexture(u32 layer, const CTexture* texture);
         
-        const TexturePtr&           getTexture(const u32 layer) const;
+        const CTexture*             getTexture(u32 layer) const;
+        CTexture*                   getTexture(u32 layer);
         u32                         getTextureCount()           const;
 
-        void                        destroyTexture(u32 layer);
-        
         bool                        setRenderTechnique(const std::string& file);
         bool                        setRenderTechnique(const stream::IStreamPtr& stream);
 
-        void                        setRenderTechnique(const RenderTechniquePtr& technique);
-        const RenderTechniquePtr&   getRenderTechique() const;
+        void                        setRenderTechnique(const CRenderTechnique* technique);
+        const CRenderTechnique*     getRenderTechique() const;
+        CRenderTechnique*           getRenderTechique();
 
     private:
 
@@ -68,7 +68,7 @@ namespace renderer
         SMaterialData               m_materialData;
         
         TextureLayers               m_texture;
-        RenderTechniquePtr          m_renderTechnique;
+        const CRenderTechnique*     m_renderTechnique;
 
         bool                        m_needUpdate;
 

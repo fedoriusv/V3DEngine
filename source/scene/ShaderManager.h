@@ -1,9 +1,9 @@
 #ifndef _V3D_SHADER_MANAGER_H_
 #define _V3D_SHADER_MANAGER_H_
 
+#include "Singleton.h"
 #include "resources/ShaderSouceData.h"
 #include "stream/ResourceLoader.h"
-#include "Singleton.h"
 
 namespace v3d
 {
@@ -11,15 +11,19 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderManager : public Singleton<CShaderManager>, public stream::TResourceLoader<resources::ShaderSourceDataPtr>
+    class CShaderManager : public TSingleton<CShaderManager>, public stream::TResourceLoader<resources::CShaderSourceData>
     {
-    public:
+    private:
+
+        friend TSingleton<CShaderManager>;
 
         CShaderManager();
-        virtual                                 ~CShaderManager();
+        ~CShaderManager();
 
-        void                                    add(const resources::ShaderSourceDataPtr& shader);
-        const resources::ShaderSourceDataPtr    load(const std::string& name, const std::string& alias = "") override;
+    public:
+
+        void                                add(const resources::CShaderSourceData* shader);
+        const resources::CShaderSourceData* load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

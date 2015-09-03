@@ -143,7 +143,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
             
             std::string nameStr = textureElement->Attribute("name");
             std::string fileStr = textureElement->Attribute("file");
-            const TexturePtr texture = CTextureManager::getInstance()->load(fileStr, nameStr);
+            const CTexture* texture = CTextureManager::getInstance()->load(fileStr, nameStr);
             if (!texture)
             {
                 LOG_WARNING("CRenderTechnique: File [%s] not found or not support format", fileStr.c_str());

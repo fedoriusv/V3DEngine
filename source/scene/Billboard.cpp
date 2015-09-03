@@ -48,7 +48,7 @@ void CBillboard::init()
         return;
     }
 
-    const RenderTechniquePtr& technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CBillboard: Do not exist RenderTechique");

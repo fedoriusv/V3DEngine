@@ -38,7 +38,7 @@ GLenum EGeometryTypeGL[CGeometry::eGeometryTypeCount] =
 u32 CGeometryGL::s_currentArray = 0;
 u32 CGeometryGL::s_currentBuffer[eTargetCount] = { 0 };
 
-CGeometryGL::CGeometryGL(const RenderTechniquePtr& technique)
+CGeometryGL::CGeometryGL(const CRenderTechnique* technique)
     : CGeometry(technique)
     , m_arrayId(0U)
     , m_verticesId(0U)

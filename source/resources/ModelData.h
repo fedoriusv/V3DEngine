@@ -11,7 +11,7 @@ namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelData : public stream::CResource
+    DEPRECATED class CModelData : public stream::CResource
     {
 
     public:

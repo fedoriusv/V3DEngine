@@ -18,18 +18,18 @@ CRenderTechniqueManager::~CRenderTechniqueManager()
 {
 }
 
-void CRenderTechniqueManager::add(const renderer::RenderTechniquePtr& technique)
+void CRenderTechniqueManager::add(const renderer::CRenderTechnique* technique)
 {
     std::string name = technique->getResourseName();
     TResourceLoader::insert(technique, name);
 }
 
-const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, const std::string& alias)
+const CRenderTechnique* CRenderTechniqueManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    const RenderTechniquePtr findTechnique = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    const CRenderTechnique* findTechnique = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findTechnique)
     {
         return findTechnique;
@@ -54,7 +54,7 @@ const RenderTechniquePtr CRenderTechniqueManager::load(const std::string& name, 
 
                 if (stream->isOpen())
                 {
-                    renderer::RenderTechniquePtr technique = std::make_shared<renderer::CRenderTechnique>();
+                    renderer::CRenderTechnique* technique = new renderer::CRenderTechnique();
 
                     technique->init(stream);
                     technique->setResourseName(fullName);

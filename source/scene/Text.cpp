@@ -70,7 +70,7 @@ void CText::init()
         return;
     }
 
-    RenderTechniquePtr technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CText: Do not exist RenderTechique");

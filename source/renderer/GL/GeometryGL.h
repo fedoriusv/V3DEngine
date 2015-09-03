@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CGeometryGL(const RenderTechniquePtr& technique);
+        CGeometryGL(const CRenderTechnique* technique);
         ~CGeometryGL();
         
         void                init()      override;

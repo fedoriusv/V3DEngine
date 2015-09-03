@@ -92,6 +92,9 @@ namespace scene
         ENodeType                   m_nodeType;
         bool                        m_initialiazed;
 
+        s32                         m_id;
+        std::string                 m_name;
+
     private:
 
         void                        updateTransform() const;
@@ -108,9 +111,6 @@ namespace scene
         bool                        m_visible;
 
         mutable u16                m_transformFlag;
-
-        s32                         m_id;
-        std::string                 m_name;
 
     private:
 

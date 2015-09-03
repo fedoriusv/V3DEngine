@@ -61,7 +61,7 @@ void MyApplication::init()
 
 void MyApplication::run()
 {
-    getPlatform()->getWindow()->setCaption("Test. FPS: " + std::to_string(v3d::CEngine::getInstance()->getFPS()));
+    BaseApplication::getWindow()->setCaption("Test. FPS: " + std::to_string(BaseApplication::getSceneManager()->getFPS()));
 }
 
 void MyApplication::onMouse(const event::MouseInputEventPtr& event)

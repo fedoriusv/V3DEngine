@@ -16,28 +16,29 @@ namespace stream
     public:
 
         TResourceLoader();
-        virtual                     ~TResourceLoader();
+        virtual                         ~TResourceLoader();
 
-        const T*                    get(const std::string& name);
-        virtual const T*            load(const std::string& file, const std::string& alias = "") = 0;
+        const T*                        get(const std::string& name);
+        virtual const T*                load(const std::string& file, const std::string& alias = "") = 0;
 
-        void                        unload(const std::string& name);
-        void                        unload(const T* resource);
-        void                        unloadAll();
+        void                            unload(const std::string& name);
+        void                            unload(const T* resource);
+        void                            unloadAll();
 
-        void                        registerDecoder(decoders::DecoderPtr decoder);
-        void                        unregisterDecoder(decoders::DecoderPtr& decoder);
+        void                            registerDecoder(decoders::DecoderPtr decoder);
+        void                            unregisterDecoder(decoders::DecoderPtr& decoder);
 
-        void                        registerPath(const std::string& path);
-        void                        unregisterPath(const std::string& path);
+        void                            registerPath(const std::string& path);
+        void                            unregisterPath(const std::string& path);
 
     protected:
 
-        void                        insert(const T* resource, const std::string& key);
+        void                            insert(const T* resource, const std::string& key);
+        const decoders::DecoderPtr      findDecoder(const std::string& extension);
 
-        std::map<std::string, T>    m_resources;
-        decoders::DecoderList       m_decoders;
-        std::vector<std::string>    m_pathes;
+        std::map<std::string, const T*> m_resources;
+        decoders::DecoderList           m_decoders;
+        std::vector<std::string>        m_pathes;
 
     };
 

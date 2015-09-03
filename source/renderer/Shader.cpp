@@ -139,7 +139,7 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
         const std::string shaderPath = root->Attribute("file");
         LOG_INFO("CRenderPass: Create shader from file: %s", shaderPath.c_str());
 
-        const ShaderSourceDataPtr& source = CShaderManager::getInstance()->load(shaderPath);
+        const CShaderSourceData* source = CShaderManager::getInstance()->load(shaderPath);
         if (!source)
         {
             LOG_ERROR("CShader: Error load shader %s", shaderPath.c_str());

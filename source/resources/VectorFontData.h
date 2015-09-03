@@ -17,8 +17,8 @@ namespace resources
     {
     public:
 
-        CVectorFontData(const std::string& font);
-        virtual                     ~CVectorFontData();
+        explicit CVectorFontData(const std::string& font);
+        ~CVectorFontData();
 
         void                        init(const stream::IStreamPtr& stream)  override;
         bool                        load()                                  override;

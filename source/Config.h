@@ -55,7 +55,7 @@
 
 #if defined (_PLATFORM_WIN_)
 #   define _OPENGL_DRIVER_
-#   define _DIRECT3D_DRIVER_
+//#   define _DIRECT3D_DRIVER_
 
 #   define _DIRECTINPUT_ 1
 #endif //_PLATFORM_WIN_

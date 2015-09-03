@@ -3,9 +3,7 @@
 
 #include "Singleton.h"
 #include "Model.h"
-#include "resources/ModelData.h"
 #include "stream/ResourceLoader.h"
-#include "decoders/ResourceDecoder.h"
 
 namespace v3d
 {
@@ -15,10 +13,14 @@ namespace scene
 
     class CModelManager : public TSingleton<CModelManager>, public stream::TResourceLoader<CModel>
     {
-    public:
+    private:
+
+        friend TSingleton<CModelManager>;
 
         CModelManager();
         ~CModelManager();
+
+    public:
 
         const CModel*   load(const std::string& name, const std::string& alias = "") override;
     };

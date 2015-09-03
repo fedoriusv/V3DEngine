@@ -23,7 +23,7 @@ void CShape::init()
         return;
     }
 
-    const RenderTechniquePtr& technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CShape: Do not exist RenderTechique");

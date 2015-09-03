@@ -19,7 +19,7 @@ namespace decoders
 
         virtual                 ~CTextureResILDecoder();
 
-        stream::ResourcePtr     decode(const stream::IStreamPtr& stream) override;
+        stream::CResource*      decode(const stream::IStreamPtr& stream) override;
 
     private:
 
