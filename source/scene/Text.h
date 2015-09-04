@@ -54,7 +54,7 @@ namespace scene
         const f32                       k_spacing;
 
         std::string                     m_font;
-        resources::FontDataPtr          m_data;
+        resources::CFontData*           m_data;
 
     };
 

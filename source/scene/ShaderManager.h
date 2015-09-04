@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderManager : public TSingleton<CShaderManager>, public stream::TResourceLoader<resources::CShaderSourceData>
+    class CShaderManager : public TSingleton<CShaderManager>, public stream::TResourceLoader<const resources::CShaderSourceData>
     {
     private:
 

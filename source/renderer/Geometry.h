@@ -85,7 +85,7 @@ namespace renderer
         EDrawMode               m_drawMode;
         EGeomertyType           m_geometyType;
         SVertexData             m_data;
-        RenderTechniquePtr      m_technique;
+        const CRenderTechnique* m_technique;
 
     private:
 

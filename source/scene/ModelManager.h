@@ -22,7 +22,7 @@ namespace scene
 
     public:
 
-        const CModel*   load(const std::string& name, const std::string& alias = "") override;
+        CModel*   load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

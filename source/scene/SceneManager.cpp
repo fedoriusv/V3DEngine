@@ -17,13 +17,15 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "utils/Timer.h"
-#include "ModelManager.h"
 
 #ifdef _PLATFORM_WIN_
 #	include <windows.h>
 #endif
 
+#include "ModelManager.h"
+
 using namespace v3d;
+using namespace core;
 using namespace scene;
 using namespace renderer;
 using namespace utils;
@@ -286,7 +288,7 @@ CText* CSceneManager::addText(CNode* parent, const std::string& text, const std:
 
 CModel* CSceneManager::addModel(const std::string& file, CNode* parent, const Vector3D& pos)
 {
-    CModel* node;// = CModelManager::getInstance()->load(file);
+    CModel* node = CModelManager::getInstance()->load(file);
     node->setParent(parent);
     node->setPosition(pos);
 

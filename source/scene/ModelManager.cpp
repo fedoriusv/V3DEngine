@@ -22,12 +22,12 @@ CModelManager::~CModelManager()
 {
 }
 
-const CModel* CModelManager::load(const std::string& name, const std::string& alias)
+CModel* CModelManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    const CModel* findModel = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    CModel* findModel = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findModel)
     {
         //TODO: copy

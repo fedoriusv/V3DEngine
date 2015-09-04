@@ -11,15 +11,15 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CFontManager : public TSingleton<CFontManager>, public stream::TResourceLoader<resources::FontDataPtr>
+    class CFontManager : public TSingleton<CFontManager>, public stream::TResourceLoader<const resources::CFontData>
     {
     public:
 
         CFontManager();
         virtual                             ~CFontManager();
 
-        void                                add(const resources::FontDataPtr& font);
-        const resources::FontDataPtr        load(const std::string& name, const std::string& alias = "") override;
+        void                        add(const resources::CFontData* font);
+        const resources::CFontData* load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

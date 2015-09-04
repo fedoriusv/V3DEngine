@@ -12,7 +12,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureManager : public TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::CTexture>
+    class CTextureManager : public TSingleton<CTextureManager>, public stream::TResourceLoader<const renderer::CTexture>
     {
     private:
 
@@ -27,10 +27,10 @@ namespace scene
         const renderer::CTexture*   load(const std::string& file, const std::string& alias = "") override;
         const renderer::CTexture*   load(const std::string* files[6]);
 
-        renderer::CTexture*         createTexture2DFromData(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
-        renderer::CTexture*         createTexture2DMSAA(const Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
+        renderer::CTexture*         createTexture2DFromData(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::CTexture*         createTexture2DMSAA(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
 
-        void                        copyToTexture2D(renderer::CTexture* texture, const Dimension2D& offset, const Dimension2D& size, renderer::EImageFormat format, void* data);
+        void                        copyToTexture2D(renderer::CTexture* texture, const core::Dimension2D& offset, const core::Dimension2D& size, renderer::EImageFormat format, void* data);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

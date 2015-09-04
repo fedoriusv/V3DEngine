@@ -4,6 +4,7 @@
 #include "scene/FontManager.h"
 
 using namespace v3d;
+using namespace core;
 using namespace scene;
 using namespace renderer;
 using namespace resources;
@@ -87,7 +88,7 @@ void CText::init()
         return;
     }
 
-    m_data = CFontManager::getInstance()->load(m_font);
+    m_data = const_cast<CFontData*>(CFontManager::getInstance()->load(m_font));
     if (!m_data)
     {
         LOG_ERROR("CText: Can not load font: %s", m_font.c_str());

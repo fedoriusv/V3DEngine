@@ -16,16 +16,15 @@ CFontManager::CFontManager()
 
 CFontManager::~CFontManager()
 {
-    CFontManager::unloadAll();
 }
 
-void CFontManager::add(const FontDataPtr& font)
+void CFontManager::add(const CFontData* font)
 {
     std::string name = font->getResourseName();
-    m_resources.insert(std::map<std::string, FontDataPtr>::value_type(name, font));
+    TResourceLoader::insert(font, name);
 }
 
-const FontDataPtr CFontManager::load(const std::string& name, const std::string& alias)
+const CFontData* CFontManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -55,16 +54,15 @@ const FontDataPtr CFontManager::load(const std::string& name, const std::string&
 
                 if (stream->isOpen())
                 {
-                    FontDataPtr font = nullptr;
-
+                    CFontData* font = nullptr;
                     if (fileExtension == ".fnt")
                     {
-                        font = std::make_shared<CBitmapFontData>(nameStr);
+                        font = new CBitmapFontData(nameStr);
                         font->setFontType(CFontData::EFontType::eBitmapFont);
                     }
                     else if (fileExtension == ".ttf")
                     {
-                        font = std::make_shared<CVectorFontData>(nameStr);
+                        font = new CVectorFontData(nameStr);
                         font->setFontType(CFontData::EFontType::eVectorFont);
                     }
 
@@ -81,17 +79,16 @@ const FontDataPtr CFontManager::load(const std::string& name, const std::string&
 
                     font->init(stream);
                     font->setResourseName(fullName);
+                    stream->close();
 
                     if (!font->load())
                     {
                         LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
-                        stream->close();
-
                         return nullptr;
                     }
-                    stream->close();
 
-                    m_resources.insert(std::map<std::string, FontDataPtr>::value_type(nameStr, font));
+                    TResourceLoader::insert(font, alias.empty() ? nameStr : alias);
+                    LOG_INFO("CFontManager: File [%s] success loaded", fullName.c_str());
 
                     return font;
                 }
