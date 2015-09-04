@@ -42,17 +42,17 @@ namespace v3d
 
             static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
             static void     framebufferRenderbuffer(s32 attachment, u32 buffer);
-            static void     renderbufferStorage(u32 internalFormat, const Rect32& size, u32 samplers = 0);
+            static void     renderbufferStorage(u32 internalFormat, const core::Rect32& size, u32 samplers = 0);
 
-            static void     blitFramebuffer(const Rect32& src, const Rect32& dst, u32 mask, u32 filter);
+            static void     blitFramebuffer(const core::Rect32& src, const core::Rect32& dst, u32 mask, u32 filter);
 
         private:
 
             bool            create()    override;
             void            destroy()   override;
 
-            void            createRenderbuffer(SAttachments& attach, const Rect32& rect);
-            void            createRenderToTexture(SAttachments& attach, const Rect32& rect);
+            void            createRenderbuffer(SAttachments& attach, const core::Rect32& rect);
+            void            createRenderToTexture(SAttachments& attach, const core::Rect32& rect);
             void            copyToRenderbuffer(const RenderTargetPtr& dst);
 
             u32             m_frameBufferID;

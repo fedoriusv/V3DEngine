@@ -1,6 +1,7 @@
 #include "TextureD3D.h"
 
 using namespace v3d;
+using namespace core;
 using namespace renderer;
 
 CTextureD3D::CTextureD3D()

@@ -82,7 +82,7 @@ namespace resources
 
         std::map<s32, SCharDesc>            m_charInfo;
         renderer::TextureList               m_charTexture;
-        Dimension2D                         m_mapSize;
+        core::Dimension2D                   m_mapSize;
 
         std::string                         m_font;
         u32                                 m_fontSize;

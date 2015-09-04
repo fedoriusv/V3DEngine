@@ -25,7 +25,7 @@ namespace renderer
 
     public:
 
-        void            copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data) override;
+        void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
 
         void            initTexture1D(u32 texture);
         void            initTexture2D(u32 texture);

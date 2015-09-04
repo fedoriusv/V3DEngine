@@ -5,6 +5,7 @@
 #   include <sys/time.h>  
 #endif //_PLATFORM_WIN_
 
+using namespace v3d;
 using namespace utils;
 
 s64 CTimer::getTicks()

@@ -5,6 +5,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
+using namespace core;
 using namespace renderer;
 
 #define TEXTURE_CUBE_MAP_COUNT 6

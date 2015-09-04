@@ -36,11 +36,11 @@ namespace scene
 
     private:
 
-        void            move(const Vector3D& direction);
-        bool            isPointOut(const Vector3D& point);
+        void            move(const core::Vector3D& direction);
+        bool            isPointOut(const core::Vector3D& point);
 
         void            rotateByMouse();
-        void            rotate(f32 angle, const Vector3D& point);
+        void            rotate(f32 angle, const core::Vector3D& point);
 
         SMoveKeys       m_keys;
         f32             m_speed;

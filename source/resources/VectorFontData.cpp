@@ -3,6 +3,7 @@
 #include "scene/TextureManager.h"
 
 using namespace v3d;
+using namespace core;
 using namespace scene;
 using namespace resources;
 using namespace renderer;

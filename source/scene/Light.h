@@ -11,12 +11,12 @@ namespace scene
 
     struct SLightData
     {
-        Vector4D    _ambient;
-        Vector4D    _diffuse;
-        Vector4D    _specular;
-        Vector3D    _direction;
-        Vector3D    _attenuation;
-        f32         _radius;
+        core::Vector4D    _ambient;
+        core::Vector4D    _diffuse;
+        core::Vector4D    _specular;
+        core::Vector3D    _direction;
+        core::Vector3D    _attenuation;
+        f32               _radius;
 
     };
 
@@ -32,19 +32,19 @@ namespace scene
         void                      init()         override;
         void                      update(s32 dt) override;
                                   
-        void                      setAmbient(const Vector4D& color);
-        void                      setDiffuse(const Vector4D& color);
-        void                      setSpecular(const Vector4D& color);
+        void                      setAmbient(const  core::Vector4D& color);
+        void                      setDiffuse(const  core::Vector4D& color);
+        void                      setSpecular(const  core::Vector4D& color);
         void                      setRadius(f32 radius);
-        void                      setAttenuation(const Vector3D& attenuation);
-        void                      setDirection(const Vector3D& direction);
+        void                      setAttenuation(const  core::Vector3D& attenuation);
+        void                      setDirection(const  core::Vector3D& direction);
                                   
-        const Vector4D&           getAmbient()        const;
-        const Vector4D&           getDiffuse()        const;
-        const Vector4D&           getSpecular()       const;
+        const  core::Vector4D&    getAmbient()        const;
+        const  core::Vector4D&    getDiffuse()        const;
+        const  core::Vector4D&    getSpecular()       const;
         f32                       getRadius()         const;
-        const Vector3D&           getAttenuation()    const;
-        const Vector3D&           getDirection()      const;
+        const  core::Vector3D&    getAttenuation()    const;
+        const  core::Vector3D&    getDirection()      const;
 
     private:
 

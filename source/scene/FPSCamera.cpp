@@ -3,8 +3,8 @@
 
 
 using namespace v3d;
-using namespace scene;
 using namespace core;
+using namespace scene;
 
 const f32 k_lod = 10000.0f;
 

@@ -3,7 +3,8 @@
 #include "Engine.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace core;
+using namespace renderer;
 
 CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
     : m_material(material)

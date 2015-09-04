@@ -5,6 +5,7 @@
 #include "tinyxml2.h"
 
 using namespace v3d;
+using namespace core;
 using namespace renderer;
 
 CRenderTarget::SAttachments::SAttachments()

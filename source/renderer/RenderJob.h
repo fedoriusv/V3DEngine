@@ -18,7 +18,7 @@ namespace renderer
     {
     public:
 
-        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform);
+        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const core::Matrix4D& transform);
         ~CRenderJob();
 
         void                    setMaterial(const MaterialPtr& material);
@@ -27,8 +27,8 @@ namespace renderer
         void                    setGeometry(const GeometryPtr& geometry);
         const GeometryPtr&      getGeometry() const;
 
-        void                    setTransform(const Matrix4D& transform);
-        const Matrix4D&         getTransform() const;
+        void                    setTransform(const core::Matrix4D& transform);
+        const core::Matrix4D&   getTransform() const;
 
         void                    setRenderTarget(u32 target);
         u32                     getRenderTarget() const;
@@ -40,7 +40,7 @@ namespace renderer
 
         MaterialPtr             m_material;
         GeometryPtr             m_geometry;
-        Matrix4D                m_transform;
+        core::Matrix4D          m_transform;
         u32                     m_targetIndex;
     };
 

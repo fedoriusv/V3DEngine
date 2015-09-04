@@ -7,6 +7,7 @@
 #include "GL/glew.h"
 
 using namespace v3d;
+using namespace core;
 using namespace renderer;
 
 u32 CShaderProgramGL::s_currentShader = 0;

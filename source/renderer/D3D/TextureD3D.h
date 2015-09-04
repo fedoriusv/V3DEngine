@@ -23,7 +23,7 @@ namespace renderer
 
     protected:
 
-        void            copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data) override;
+        void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 #include "Engine.h"
 
 using namespace v3d;
+using namespace core;
 using namespace scene;
 using namespace renderer;
 
