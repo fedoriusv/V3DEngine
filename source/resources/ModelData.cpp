@@ -58,11 +58,6 @@ bool CModelData::load()
 
         u32 version;
         stream->read(version);
-
-        if (version <= F3D_MODEL_LOADER_VERSION)
-        {
-            //return CModelData::load100(stream);
-        }
     }
 
     return false;

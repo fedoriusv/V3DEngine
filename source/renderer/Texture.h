@@ -184,7 +184,8 @@ namespace renderer
     typedef std::shared_ptr<CTexture>               TexturePtr;
     typedef std::weak_ptr<CTexture>                 TextureWPtr;
     typedef std::map<std::string, TexturePtr>       TextureMap;
-    typedef std::vector<const CTexture*>            TextureList;
+    typedef std::vector<CTexture*>                  TextureList;
+    typedef std::vector<const CTexture*>            KTextureList;
     typedef std::map<const u32, const CTexture*>    TextureLayers;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
