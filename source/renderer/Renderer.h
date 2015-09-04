@@ -7,8 +7,6 @@
 #include "Geometry.h"
 #include "Texture.h"
 #include "RenderJob.h"
-#include "DebugGeometry.h"
-#include "DebugLight.h"
 
 namespace v3d
 {
@@ -51,8 +49,6 @@ namespace renderer
         virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;
         virtual RenderTargetPtr     makeSharedRenderTarget()                                                = 0;
 #ifdef _DEBUG
-        virtual DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              = 0;
-        virtual DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) = 0;
         void                        setDebugMode(bool active);
         bool                        isDebugMode() const;
 #endif
@@ -64,8 +60,8 @@ namespace renderer
         const RenderTargetPtr&      getCurrentRenderTarget() const;
         void                        setCurrentRenderTarget(const RenderTargetPtr& target);
 
-        Point2D                    convertPosCanvasToScreen(const Vector2D& pos);
-        Vector2D                   convertPosScreenToCanvas(const Point2D& pos);
+        core::Point2D               convertPosCanvasToScreen(const core::Vector2D& pos);
+        core::Vector2D              convertPosScreenToCanvas(const core::Point2D& pos);
 
     protected:
 

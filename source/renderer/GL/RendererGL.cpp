@@ -9,8 +9,6 @@
 #include "TextureGL.h"
 #include "RenderStateGL.h"
 #include "RenderTargetGL.h"
-#include "DebugGeometryGL.h"
-#include "DebugLightGL.h"
 
 #include "GL/glew.h"
 
@@ -124,18 +122,6 @@ RenderTargetPtr CRendererGL::makeSharedRenderTarget()
 {
     return std::make_shared<CRenderTargetGL>();
 }
-
-#ifdef _DEBUG
-DebugGeometryPtr CRendererGL::makeDebugDraw(const GeometryPtr& geometry)
-{
-    return std::make_shared<CDebugGeometryGL>(geometry);
-}
-
-DebugLightPtr CRendererGL::makeDebugLight(const Vector3D& position, const scene::SLightData& data)
-{
-    return std::make_shared<CDebugLightGL>(position, data);
-}
-#endif
 
 bool CRendererGL::isLocked() const
 {

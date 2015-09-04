@@ -27,10 +27,6 @@ namespace renderer
         CTexture*           makeSharedTexture()                                                     override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
-#ifdef _DEBUG
-        DebugGeometryPtr    makeDebugDraw(const GeometryPtr& geometry)                              override;
-        DebugLightPtr       makeDebugLight(const Vector3D& position, const scene::SLightData& data) override;
-#endif
 
         bool                isLocked() const;
 
