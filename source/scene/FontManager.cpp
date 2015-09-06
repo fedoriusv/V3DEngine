@@ -10,12 +10,13 @@ using namespace resources;
 
 CFontManager::CFontManager()
 {
-    CFontManager::registerPath("../../../../data/");
-    CFontManager::registerPath("data/");
+    TResourceLoader::registerPath("../../../../data/");
+    TResourceLoader::registerPath("data/");
 }
 
 CFontManager::~CFontManager()
 {
+    TResourceLoader::unloadAll();
 }
 
 void CFontManager::add(const CFontData* font)

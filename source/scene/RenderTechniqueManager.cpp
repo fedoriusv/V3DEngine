@@ -9,13 +9,14 @@ using namespace renderer;
 
 CRenderTechniqueManager::CRenderTechniqueManager()
 {
-    CRenderTechniqueManager::registerPath("../../../../data/");
-    CRenderTechniqueManager::registerPath("../../../../../data/");
-    CRenderTechniqueManager::registerPath("data/");
+    TResourceLoader::registerPath("../../../../data/");
+    TResourceLoader::registerPath("../../../../../data/");
+    TResourceLoader::registerPath("data/");
 }
 
 CRenderTechniqueManager::~CRenderTechniqueManager()
 {
+    TResourceLoader::unloadAll();
 }
 
 void CRenderTechniqueManager::add(const renderer::CRenderTechnique* technique)

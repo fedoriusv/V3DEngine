@@ -9,13 +9,14 @@ using namespace resources;
 
 CShaderManager::CShaderManager()
 {
-    CShaderManager::registerPath("../../../../data/shaders/");
-    CShaderManager::registerPath("../../../../../data/shaders/");
-    CShaderManager::registerPath("data/shaders/");
+    TResourceLoader::registerPath("../../../../data/shaders/");
+    TResourceLoader::registerPath("../../../../../data/shaders/");
+    TResourceLoader::registerPath("data/shaders/");
 }
 
 CShaderManager::~CShaderManager()
 {
+    TResourceLoader::unloadAll();
 }
 
 void CShaderManager::add(const CShaderSourceData* shader)

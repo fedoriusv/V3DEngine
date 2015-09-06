@@ -12,8 +12,6 @@ namespace stream
     template <class T>
     TResourceLoader<T>::~TResourceLoader()
     {
-        TResourceLoader::unloadAll();
-
         m_pathes.clear();
         m_decoders.clear();
     }

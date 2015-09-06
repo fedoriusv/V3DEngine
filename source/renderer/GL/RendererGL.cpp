@@ -52,9 +52,7 @@ void CRendererGL::init()
 
     CRenderStateGL::blendFunc(eBlendSrcAlpha, eBlendInvSrcAlpha);
 
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
-    ASSERT(m_maxTextureUnits > 0 && "Texture units not supported");
-
+    ASSERT(m_context->getTextureUnits() > 0 && "Texture units not supported");
     CTextureGL::activeTextureLayer(0);
 
     glDisable(GL_DITHER);

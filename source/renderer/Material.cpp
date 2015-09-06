@@ -209,6 +209,5 @@ bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
 
 void CMaterial::setRenderTechnique(const CRenderTechnique* technique)
 {
-    scene::CRenderTechniqueManager::getInstance()->add(technique);
     m_renderTechnique = technique;
 }

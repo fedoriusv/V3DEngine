@@ -12,16 +12,17 @@ using namespace decoders;
 
 CTextureManager::CTextureManager()
 {
-    CTextureManager::registerPath("../../../../data/");
-    CTextureManager::registerPath("../../../../../data/");
-    CTextureManager::registerPath("data/");
+    TResourceLoader::registerPath("../../../../data/");
+    TResourceLoader::registerPath("../../../../../data/");
+    TResourceLoader::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".png", ".bmp", ".tga", ".jpg" };
-    CTextureManager::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
+    TResourceLoader::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
 }
 
 CTextureManager::~CTextureManager()
 {
+    TResourceLoader::unloadAll();
 }
 
 void CTextureManager::add(const CTexture* texture)

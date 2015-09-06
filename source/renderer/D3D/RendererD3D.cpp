@@ -131,20 +131,6 @@ RenderTargetPtr CRendererD3D::makeSharedRenderTarget()
     //return std::make_shared<CRenderTargetGL>();
 }
 
-#ifdef _DEBUG
-DebugGeometryPtr CRendererD3D::makeDebugDraw(const GeometryPtr& geometry)
-{
-    return nullptr;
-    //return std::make_shared<CDebugGeometryGL>(geometry);
-}
-
-DebugLightPtr CRendererD3D::makeDebugLight(const Vector3D& position, const scene::SLightData& data)
-{
-    return nullptr;
-    //return std::make_shared<CDebugLightGL>(position, data);
-}
-#endif
-
 bool CRendererD3D::isLocked() const
 {
     return m_isLocked;

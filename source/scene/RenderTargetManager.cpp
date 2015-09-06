@@ -13,7 +13,7 @@ CRenderTargetManager::CRenderTargetManager()
 
 CRenderTargetManager::~CRenderTargetManager()
 {
-    unloadAll();
+    CRenderTargetManager::unloadAll();
 }
 
 void CRenderTargetManager::add(const renderer::RenderTargetPtr& target)
