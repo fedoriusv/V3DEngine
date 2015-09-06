@@ -12,9 +12,6 @@ CRenderer::CRenderer(const DriverContextPtr& context)
     : m_context(context)
     , m_frameIndex(0U)
 
-    , m_maxTextureUnits(0)
-    , m_maxAnisotropy(0.f)
-
     , m_defaultRenderTarget(nullptr)
     , m_currentRenderTarget(nullptr)
 #ifdef _DEBUG
@@ -52,7 +49,7 @@ void CRenderer::updateCamera(CCamera* camera)
 
 const core::Rect32& CRenderer::getViewportSize() const
 {
-    ASSERT(m_currentRenderTarget && "Current Render Target in null");
+    ASSERT(m_currentRenderTarget && "CRenderer: Current Render Target in null");
     if (m_currentRenderTarget)
     {
         return m_currentRenderTarget->getViewport();

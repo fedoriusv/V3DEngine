@@ -20,8 +20,6 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugLight;
-
     class CRenderer
     {
     public:
@@ -66,7 +64,6 @@ namespace renderer
     protected:
 
         friend                      scene::CSceneManager;
-        friend                      CDebugLight;
 
         virtual void                resetTexture()  = 0;
 
@@ -76,17 +73,7 @@ namespace renderer
         void                        updateTexture(const MaterialPtr& material, const RenderPassPtr& pass);
 
         DriverContextPtr            m_context;
-
-        /*core::Matrix4D              m_projectionMatrix;
-        core::Matrix4D              m_orthoMatrix;
-        core::Matrix4D              m_viewMatrix;
-        core::Vector3D              m_viewPosition;
-        core::Vector3D              m_viewUpVector;*/
-
         u32                         m_frameIndex;
-
-        s32                         m_maxTextureUnits;
-        f32                         m_maxAnisotropy;
 
         RenderTargetPtr             m_defaultRenderTarget;
         RenderTargetPtr             m_currentRenderTarget;

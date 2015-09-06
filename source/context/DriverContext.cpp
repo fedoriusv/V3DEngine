@@ -6,6 +6,7 @@ using namespace renderer;
 CDriverContext::CDriverContext(const platform::WindowPtr& window)
     : m_window(window)
     , m_samplersCount(0U)
+    , m_maxTextureUnits(0U)
     , m_maxAnisotropy(0U)
 {
 }
@@ -27,6 +28,11 @@ const core::Dimension2D& CDriverContext::getWindowSize() const
 u32 CDriverContext::getSamplersCount() const
 {
     return m_samplersCount;
+}
+
+s32 CDriverContext::getTextureUnits() const
+{
+    return m_maxTextureUnits;
 }
 
 f32 CDriverContext::getMaxAnisotropySize() const

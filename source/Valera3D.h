@@ -23,6 +23,6 @@
 #include "scene/Skybox.h"
 #include "scene/Text.h"
 #include "scene/Mesh.h"
-//#include "scene/Model.h"
+#include "scene/Model.h"
 
 #endif //_V3D_VALERA_3D_H_

@@ -29,6 +29,7 @@ namespace renderer
         const platform::WindowPtr&  getWindow()     const;
 
         u32                         getSamplersCount()      const;
+        s32                         getTextureUnits()       const;
         f32                         getMaxAnisotropySize()  const;
 
     protected:
@@ -36,6 +37,7 @@ namespace renderer
         const platform::WindowPtr   m_window;
 
         u32                         m_samplersCount;
+        s32                         m_maxTextureUnits;
         f32                         m_maxAnisotropy;
 
     };

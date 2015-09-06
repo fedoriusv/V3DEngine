@@ -4,6 +4,11 @@
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 #pragma comment(lib, "OpenGL32.lib")
+#ifdef _DEBUG
+#   pragma comment(lib, "glew_static_d.lib")
+#else
+#   pragma comment(lib, "glew_static.lib")
+#endif
 
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
@@ -526,8 +531,7 @@ void CDriverContextGL::driverInfo()
     const GLubyte* GLSL = glGetString(GL_SHADING_LANGUAGE_VERSION);
     const GLubyte* version = glGetString(GL_VERSION);
 
-    GLint maxTextureUnits;
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
 
     GLint maxTextureLayers;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureLayers);
@@ -543,7 +547,7 @@ void CDriverContextGL::driverInfo()
     LOG("Vendor: %s", vendor);
     LOG("GLSL: %s", GLSL);
     LOG("GL Version: %s", version);
-    LOG("Max Texure Units: %d", maxTextureUnits);
+    LOG("Max Texure Units: %d", m_maxTextureUnits);
     LOG("Max Texure Layers: %d", maxTextureLayers);
     LOG("Max Anisotropy: %f", m_maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
