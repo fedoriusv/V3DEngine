@@ -8,6 +8,7 @@
 #include "Text.h"
 #include "Skybox.h"
 #include "Camera.h"
+#include "Model.h"
 #include "renderer/Renderer.h"
 #include "RenderTargetManager.h"
 
@@ -179,12 +180,28 @@ void CScene::initRenderLists()
             }
                 break;
 
-            case ENodeType::eCamera:
+            case ENodeType::eModel:
             {
-                //TODO:
+                CModel* model = static_cast<CModel*>(node);
+                for (NodeConstIter iter = model->Begin(); iter < model->End(); ++iter)
+                {
+                    CNode* subNode = (*iter);
+                    switch (subNode->getNodeType())
+                    {
+                      case ENodeType::eMesh:
+                          CScene::attachToRenderList(subNode);
+                          break;
+
+                      case ENodeType::eCamera:
+                      case ENodeType::eLight:
+                      default:
+                          break;
+                    }
+                }
             }
                 break;
 
+            case ENodeType::eCamera:
             case ENodeType::eLight:
             case ENodeType::eFog:
             {
