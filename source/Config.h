@@ -15,9 +15,6 @@
 #define F3D_MODEL_LOADER_VERSION 100
 #define DIRECTINPUT_VERSION 0x0800
 
-#define USED_LOGGER 1
-#define USED_DEVIL 1
-
 #if USED_LOGGER
 #   define USE_LOGGER
 #endif //USED_LOGGER
@@ -54,18 +51,27 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined (_PLATFORM_WIN_)
+#if USED_GL_RENDER
 #   define _OPENGL_DRIVER_
-//#   define _DIRECT3D_DRIVER_
+#endif //USED_GL_RENDER
+
+#if USED_D3D_RENDER
+#   define _DIRECT3D_DRIVER_
+#endif //USED_D3D_RENDER
 
 #   define _DIRECTINPUT_ 1
 #endif //_PLATFORM_WIN_
 
 #if defined (_PLATFORM_LINUX_)
+#if USED_GL_RENDER
 #   define _OPENGL_DRIVER_
+#endif //USED_GL_RENDER
 #endif //_PLATFORM_LINUX_
 
 #if defined (_PLATFORM_MACOSX_)
+#if USED_GL_RENDER
 #   define _OPENGL_DRIVER_
+#endif //USED_GL_RENDER
 #endif //_PLATFORM_MACOSX_
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
