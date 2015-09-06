@@ -111,80 +111,79 @@ bool FileStream::isOpen() const
 u32 FileStream::read(void* buffer, const u32 size, const u32 count)
 {
     ASSERT(m_fileHandler && "File Handler nullptr");
-
     const u32 ret = (u32)fread(buffer, size, count, m_fileHandler);
     return ret;
 }
 
 u32 FileStream::read(u8& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(s8& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(u16& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(s16& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(u32& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(s32& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(u64& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(s64& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(f32& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(f64& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(f80& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::read(bool& value)
 {
-    const u32 ret = (u32)read(&value, sizeof(value), 1);
+    const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
@@ -196,12 +195,9 @@ u32 FileStream::read(std::string& value)
     m_fileSize = FileStream::tell();
     rewind(m_fileHandler);
 
-    c8* buffer = new c8[m_fileSize + 1];
-    const u32 ret = (u32)fread(buffer, sizeof(c8), m_fileSize, m_fileHandler);
-    buffer[m_fileSize] = '\0';
-
-    value = buffer;
-    delete[] buffer;
+    value.clear();
+    value.resize(m_fileSize);
+    const u32 ret = FileStream::read((void*)value.data(), sizeof(c8), m_fileSize);
 
     return ret;
 }
@@ -209,88 +205,87 @@ u32 FileStream::read(std::string& value)
 u32 FileStream::write(const void* buffer, const u32 size, const u32 count)
 {
     ASSERT(m_fileHandler && "File Handler nullptr");
-
     const u32 ret = (u32)fwrite(buffer, size, count, m_fileHandler);
     return ret;
 }
 
 u32 FileStream::write(const u8 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const s8 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const u16 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const s16 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const u32 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const s32 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const u64 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const s64 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const f32 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const f64 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = (u32)write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const f80 value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const bool value)
 {
-    const u32 ret = (u32)fwrite(&value, sizeof(value), 1, m_fileHandler);
+    const u32 ret = FileStream::write(&value, sizeof(value), 1);
     return ret;
 }
 
 u32 FileStream::write(const std::string value)
 {
     const u32 strLen = (u32)value.length();
-    u32 ret = (u32)fwrite(&strLen, sizeof(u32), 1, m_fileHandler);
-    ret += (u32)fwrite(value.c_str(), sizeof(c8), strLen, m_fileHandler);
+    u32 ret = FileStream::write(&strLen, sizeof(u32), 1);
+    ret += FileStream::write(value.c_str(), sizeof(c8), strLen);
     return ret;
 }
 

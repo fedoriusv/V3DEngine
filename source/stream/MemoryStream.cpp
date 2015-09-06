@@ -19,6 +19,10 @@ MemoryStream::MemoryStream(const void* data, const u32 size)
     , m_pos(0)
     , m_mapped(false)
 {
+    if (!data && size > 0)
+    {
+        MemoryStream::allocate(size);
+    }
 }
 
 MemoryStream::~MemoryStream()
@@ -560,6 +564,7 @@ void MemoryStream::allocate(u32 size)
     }
 
     m_allocated = size;
+    m_length = size;
     m_stream = new u8[m_allocated];
 
     MemoryStream::seekBeg(0);

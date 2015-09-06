@@ -3,7 +3,7 @@
 #include "MemoryStream.h"
 
 using namespace v3d;
-using namespace v3d::stream;
+using namespace stream;
 
 FileStreamPtr CStreamManager::createFileStream(const std::string& file, FileStream::EOpenMode mode)
 {
