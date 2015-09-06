@@ -8,13 +8,12 @@
 #include "IConversionManager.h"
 #include "3dsmaxport.h"
 
-//#include "stream/MemoryStream.h"
 #include "utils/Logger.h"
 #include "scene/Node.h"
 #include "scene/Mesh.h"
 #include "scene/Camera.h"
 #include "scene/Light.h"
-#include "renderer/GL/GeometryGL.h"
+#include "renderer/NULL/GeometryNull.h"
 
 using namespace v3d;
 
@@ -238,7 +237,7 @@ ExporterF3D::EExportError ExporterF3D::CreateModel()
 {
     m_scene = new CSceneData();
 
-    int nodeCount = m_iGameScene->GetTopLevelNodeCount();
+    s32 nodeCount = m_iGameScene->GetTopLevelNodeCount();
     LOG_INFO("In Game Scene found [%d] Nodes", nodeCount);
 
     if (nodeCount == 0)
@@ -246,7 +245,12 @@ ExporterF3D::EExportError ExporterF3D::CreateModel()
         return eSceneEmptyError;
     }
 
-    for (int objectIndex = 0; objectIndex < nodeCount; ++objectIndex)
+    s32 id = 0;
+    m_scene->setId(id);
+    m_scene->setName("");
+    LOG_INFO("Game Scene Name %s, id %d", TCHARToString(m_iGameScene->GetSceneFileName()).c_str(), id);
+
+    for (u32 objectIndex = 0; objectIndex < nodeCount; ++objectIndex)
     {
         IGameNode* gameNode = m_iGameScene->GetTopLevelNode(objectIndex);
         LOG_INFO("Processing Parent object [%d/%d:%s] ", objectIndex + 1, nodeCount, TCHARToString(gameNode->GetName()).c_str());
@@ -353,7 +357,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
 
     m_scene->addNode(std::make_pair(objectType, object));
 
-    for (int i = 0; i < numChildren; ++i)
+    for (u32 i = 0; i < numChildren; ++i)
     {
         LOG_INFO("Processing child [%d/%d:%s] ", i + 1, numChildren, TCHARToString(node->GetName()).c_str());
         IGameNode* childNode = node->GetNodeChild(i);
@@ -385,13 +389,13 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
     Box3 bbox; 
     gameMesh->GetBoundingBox(bbox);
 
-    int numVerts = gameMesh->GetNumberOfVerts();
-    int numNormals = gameMesh->GetNumberOfNormals();
-    int numBinormals = gameMesh->GetNumberOfBinormals();
-    int numTangents = gameMesh->GetNumberOfTangents();
-    int numTexVerts = gameMesh->GetNumberOfTexVerts();
-    int numColorVerts = gameMesh->GetNumberOfColorVerts();
-    int numAlphaVerts = gameMesh->GetNumberOfAlphaVerts();
+    s32 numVerts = gameMesh->GetNumberOfVerts();
+    s32 numNormals = gameMesh->GetNumberOfNormals();
+    s32 numBinormals = gameMesh->GetNumberOfBinormals();
+    s32 numTangents = gameMesh->GetNumberOfTangents();
+    s32 numTexVerts = gameMesh->GetNumberOfTexVerts();
+    s32 numColorVerts = gameMesh->GetNumberOfColorVerts();
+    s32 numAlphaVerts = gameMesh->GetNumberOfAlphaVerts();
 
     LOG_INFO("Verts : %d", numVerts);
     LOG_INFO("Normals : %d", numNormals);
@@ -401,29 +405,29 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
     LOG_INFO("ColorVerts : %d", numColorVerts);
     LOG_INFO("AlphaVerts : %d", numAlphaVerts);
 
-    Tab<int> materialList = gameMesh->GetActiveMatIDs();
+    Tab<s32> materialList = gameMesh->GetActiveMatIDs();
     int materialCount = materialList.Count();
     LOG_INFO("MaterialCount : %d", materialCount);
 
     renderer::MaterialPtr& material = const_cast<renderer::MaterialPtr&>(mesh->getMaterial());
     renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeometry());
-    geomerty = std::make_shared<renderer::CGeometryGL>(nullptr);
+    geomerty = std::make_shared<renderer::CGeometryNull>(nullptr);
 
-    for (int i = 0; i < materialCount; ++i)
+    for (u32 i = 0; i < materialCount; ++i)
     {
-        int matID = materialList[i];
+        s32 matID = materialList[i];
         Tab<FaceEx*> faceList = gameMesh->GetFacesFromMatID(matID);
-        int numFaces = faceList.Count();
+        s32 numFaces = faceList.Count();
         LOG_INFO("numFaces : %d", numFaces);
 
         IGameMaterial* sourceMaterial = gameMesh->GetMaterialFromFace(faceList[0]);
         if (ExporterF3D::ExportMaterial(sourceMaterial, material))
         {
-            for (int j = 0; j < numFaces; ++j)
+            for (u32 j = 0; j < numFaces; ++j)
             {
                 FaceEx* sourceFace = faceList[j];
 
-                for (int k = 0; k < 3; ++k)
+                for (u32 k = 0; k < 3; ++k)
                 {
                     LOG_GEBUG("addIndex : %d", sourceFace->vert[k]);
                     geomerty->addIndex(sourceFace->vert[k]);

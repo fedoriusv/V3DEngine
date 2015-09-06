@@ -29,12 +29,22 @@ void CSceneData::addNode(Obj& node)
     m_objectList.push_back(node);
 }
 
+void CSceneData::setName(const std::string& name)
+{
+    m_name = name;
+}
+
+void CSceneData::setId(s32 id)
+{
+    m_id = id;
+}
+
 CNode* CSceneData::createNode(IGameObject::ObjectTypes type)
 {
     switch (type)
     {
     case IGameObject::IGAME_MESH:
-        return new CMesh("");
+        return new CMesh();
 
     case IGameObject::IGAME_LIGHT:
         return new CLight();
@@ -49,7 +59,7 @@ CNode* CSceneData::createNode(IGameObject::ObjectTypes type)
     return nullptr;
 }
 
-bool CSceneData::save(const std::string& file, float version)
+bool CSceneData::save(const std::string& file, s32 version)
 {
     if (m_objectList.empty())
     {
@@ -62,6 +72,9 @@ bool CSceneData::save(const std::string& file, float version)
     stream->seekBeg(0);
     stream->write(version);
 
+    stream->write(m_id);
+    stream->write(m_name);
+
     if (!CSceneData::saveGeometry(stream))
     {
         LOG_ERROR("CSceneData::save: Geometry serialize failed");
@@ -73,6 +86,7 @@ bool CSceneData::save(const std::string& file, float version)
         LOG_ERROR("CSceneData::save: Material serialize failed");
         return false;
     }
+
 
     LOG_INFO("CSceneData::save: Save memory stream to file stream [%s]. Size [%d]", file.c_str(), stream->size());
 
@@ -129,6 +143,9 @@ bool CSceneData::saveMaterial(MemoryStreamPtr& stream)
 
 bool CSceneData::serializeMesh(const CMesh* mesh, MemoryStreamPtr& stream)
 {
+    stream->write((s32)mesh->getNodeType());
+    stream->write(-1);
+
     MemoryStreamPtr subStream = CStreamManager::createMemoryStream();
     subStream->seekBeg(0);
 
@@ -151,42 +168,47 @@ bool CSceneData::serializeMesh(const CMesh* mesh, MemoryStreamPtr& stream)
     subStream->write((u32)data._vertices.size());
     subStream->write(data._vertices.data(), sizeof(f32), (u32)data._vertices.size() * 3);
 
-    if (data._normals.size() > 0)
+    subStream->write((u32)data._normals.size());
+    if (!data._normals.empty())
     {
         LOG_INFO("Mesh normals size %d", (u32)data._normals.size() * 3);
-        subStream->write((u32)data._normals.size());
         subStream->write(data._normals.data(), sizeof(f32), (u32)data._normals.size() * 3);
     }
 
-    if (data._binormals.size() > 0)
+    subStream->write((u32)data._binormals.size());
+    if (!data._binormals.empty())
     {
         LOG_INFO("Mesh binormals size %d", (u32)data._binormals.size() * 3);
-        subStream->write((u32)data._binormals.size());
         subStream->write(data._binormals.data(), sizeof(f32), (u32)data._binormals.size() * 3);
     }
 
-    if (data._tangents.size() > 0)
+    subStream->write((u32)data._tangents.size());
+    if (!data._tangents.empty())
     {
         LOG_INFO("Mesh tangents size %d", (u32)data._tangents.size() * 3);
-        subStream->write((u32)data._tangents.size());
         subStream->write(data._tangents.data(), sizeof(f32), (u32)data._tangents.size() * 3);
     }
 
-    if (data._colors.size() > 0)
+    subStream->write((u32)data._colors.size());
+    if (!data._colors.empty())
     {
         LOG_INFO("Mesh colors size %d", (u32)data._colors.size() * 3);
-        subStream->write((u32)data._colors.size());
         subStream->write(data._colors.data(), sizeof(f32), (u32)data._colors.size() * 3);
     }
 
-    LOG_INFO("Mesh texCoords layer count %d", (u32)data._texCoords.size());
-    for (u32 layer = 0; layer < data._texCoords.size(); ++layer)
+
+    subStream->write((u32)data._texCoords.size());
+    if (!data._texCoords.empty())
     {
-        if (data._texCoords[layer].size() > 0)
+        LOG_INFO("Mesh texCoords layer count %d", (u32)data._texCoords.size());
+        for (u32 layer = 0; layer < data._texCoords.size(); ++layer)
         {
-            LOG_INFO("Mesh texCoords[%d] size %d", layer, (u32)data._texCoords[layer].size() * 2);
-            subStream->write((u32)data._texCoords[layer].size());
-            subStream->write(data._texCoords[layer].data(), sizeof(f32), (u32)data._texCoords[layer].size() * 2);
+            if (!data._texCoords[layer].empty())
+            {
+                LOG_INFO("Mesh texCoords[%d] size %d", layer, (u32)data._texCoords[layer].size() * 2);
+                subStream->write((u32)data._texCoords[layer].size());
+                subStream->write(data._texCoords[layer].data(), sizeof(f32), (u32)data._texCoords[layer].size() * 2);
+            }
         }
     }
 
@@ -197,12 +219,18 @@ bool CSceneData::serializeMesh(const CMesh* mesh, MemoryStreamPtr& stream)
     return true;
 }
 
-bool CSceneData::serializeLight(const scene::CLight* node, MemoryStreamPtr& stream)
+bool CSceneData::serializeLight(const scene::CLight* light, MemoryStreamPtr& stream)
 {
+    stream->write((s32)light->getNodeType());
+    stream->write(-1);
+
     return true;
 }
 
-bool CSceneData::serializeCamera(const scene::CCamera* node, MemoryStreamPtr& stream)
+bool CSceneData::serializeCamera(const scene::CCamera* camera, MemoryStreamPtr& stream)
 {
+    stream->write((s32)camera->getNodeType());
+    stream->write(-1);
+
     return true;
 }

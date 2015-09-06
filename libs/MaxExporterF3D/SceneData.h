@@ -39,9 +39,12 @@ namespace scene
         const std::vector<Obj>&     getNodesList() const;
         void                        addNode(Obj& node);
 
+        void                        setName(const std::string& name);
+        void                        setId(s32 id);
+
         scene::CNode*               createNode(IGameObject::ObjectTypes type);
 
-        bool                        save(const std::string& file, float version);
+        bool                        save(const std::string& file, s32 version);
 
     private:
 
@@ -52,6 +55,8 @@ namespace scene
         bool                        serializeLight(const scene::CLight* node, stream::MemoryStreamPtr& stream);
         bool                        serializeCamera(const scene::CCamera* node, stream::MemoryStreamPtr& stream);
 
+        std::string                 m_name;
+        s32                         m_id;
         std::vector<Obj>            m_objectList;
     };
 

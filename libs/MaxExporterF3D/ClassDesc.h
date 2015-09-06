@@ -17,7 +17,7 @@ class ExporterClassDesc :public ClassDesc2
 
 public:
     int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading = FALSE)    { return new ExporterF3D(); }
+    void*           Create(BOOL loading = FALSE)    { return new v3d::ExporterF3D(); }
     const TCHAR*    ClassName()                     { return GetString(IDS_CLASS_NAME); }
     SClass_ID       SuperClassID()                  { return SCENE_EXPORT_CLASS_ID; }
     Class_ID        ClassID()                       { return IGAMEEXPORTER_CLASS_ID; }
