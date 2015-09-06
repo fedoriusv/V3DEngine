@@ -11,6 +11,8 @@ CMesh::CMesh()
 {
     m_nodeType = ENodeType::eMesh;
     LOG_INFO("CMesh: Create node type: %s", getNodeNameByType(m_nodeType).c_str());
+
+    CRenderable::setMaterial(std::make_shared<CMaterial>());
 }
 
 CMesh::~CMesh()
@@ -56,8 +58,6 @@ void CMesh::init()
     CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
     CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
 
-    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
-
     if (!CMesh::load())
     {
         LOG_ERROR("CMesh: Can't load mesh stream");
@@ -65,6 +65,7 @@ void CMesh::init()
         return;
     }
 
+    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
     CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }
@@ -83,8 +84,20 @@ bool CMesh::load()
         return false;
     }
 
-    CMesh::loadGeometry(stream);
-    CMesh::loadMaterial(stream);
+    if (stream->size() > 0)
+    {
+        stream->seekBeg(0);
+
+        stream->read(m_id);
+        stream->read(m_name);
+
+        CMesh::loadGeometry(stream);
+        CMesh::loadMaterial(stream);
+
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -92,12 +105,20 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 {
     SVertexData& data = CRenderable::getGeometry()->getData();
 
+    u32 countIndices = 0;
+    stream->read(countIndices);
+    if (countIndices > 0)
+    {
+        data._indices.resize(countIndices);
+        stream->read(data._indices.data(), sizeof(u32), countIndices);
+    }
+
     u32 countVertices = 0;
     stream->read(countVertices);
     if (countVertices > 0)
     {
         data._vertices.resize(countVertices);
-        stream->read(&data._vertices[0], sizeof(Vector3D), countVertices);
+        stream->read(data._vertices.data(), sizeof(Vector3D), countVertices);
     }
 
     u32 countNormals = 0;
@@ -105,7 +126,7 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
     if (countNormals > 0)
     {
         data._normals.resize(countNormals);
-        stream->read(&data._normals[0], sizeof(Vector3D), countNormals);
+        stream->read(data._normals.data(), sizeof(Vector3D), countNormals);
     }
 
     u32 countBinormals = 0;
@@ -113,7 +134,7 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
     if (countBinormals > 0)
     {
         data._binormals.resize(countBinormals);
-        stream->read(&data._binormals[0], sizeof(Vector3D), countBinormals);
+        stream->read(data._binormals.data(), sizeof(Vector3D), countBinormals);
     }
 
     u32 countTangents = 0;
@@ -121,29 +142,32 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
     if (countTangents > 0)
     {
         data._tangents.resize(countTangents);
-        stream->read(&data._tangents[0], sizeof(Vector3D), countTangents);
+        stream->read(data._tangents.data(), sizeof(Vector3D), countTangents);
+    }
+
+    u32 countColors = 0;
+    stream->read(countColors);
+    if (countColors > 0)
+    {
+        data._colors.resize(countColors);
+        stream->read(data._colors.data(), sizeof(Vector3D), countColors);
     }
 
     u32 countTexCoordLayers = 0;
     stream->read(countTexCoordLayers);
-    data._texCoords.resize(countTexCoordLayers);
-    for (u32 layer = 0; layer < countTexCoordLayers; ++layer)
+    if (countTexCoordLayers > 0)
     {
-        u32 countTexCoords = 0;
-        stream->read(countTexCoords);
-        if (countTexCoords > 0)
+        data._texCoords.resize(countTexCoordLayers);
+        for (u32 layer = 0; layer < countTexCoordLayers; ++layer)
         {
-            data._texCoords[layer].resize(countTexCoords);
-            stream->read(&data._texCoords[layer][0], sizeof(Vector2D), countTexCoords);
+            u32 countTexCoords = 0;
+            stream->read(countTexCoords);
+            if (countTexCoords > 0)
+            {
+                data._texCoords[layer].resize(countTexCoords);
+                stream->read(data._texCoords[layer].data(), sizeof(Vector2D), countTexCoords);
+            }
         }
-    }
-
-    u32 countIndices = 0;
-    stream->read(countIndices);
-    if (countIndices > 0)
-    {
-        data._indices.resize(countIndices);
-        stream->read(&data._indices[0], sizeof(u32), countIndices);
     }
 }
 

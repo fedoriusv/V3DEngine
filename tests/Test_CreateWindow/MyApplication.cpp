@@ -18,17 +18,14 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    /*CCylinderShape* sample = BaseApplication::getSceneManager()->addCylinder(0, Vector3D(0, 0, 0));
-    sample->setName("cube");
-    sample->getMaterial()->setRenderTechnique("shaders/simple_fins_extrusion.xml");*/
+    const SceneManagerPtr& scene = BaseApplication::getSceneManager();
 
-    //sample->setPosition(Vector3D(0, 0, -3));
-    //sample->setScale(Vector3D(1, 0.5, 0.2));
-    //sample->setRotation(Vector3D(90, 0, 0));
-    CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
+    CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/texture.xml");
-    cube->getMaterial()->setTexture(0, "textures/wall.bmp");
+    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
+
+    CModel* model = scene->addModel("models/test.f3d", nullptr, Vector3D(0, 1, -5));
+    model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 

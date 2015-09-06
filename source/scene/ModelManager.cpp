@@ -11,11 +11,12 @@ using namespace renderer;
 
 CModelManager::CModelManager()
 {
-    CModelManager::registerPath("../../../../data/");
-    CModelManager::registerPath("data/");
+    TResourceLoader::registerPath("../../../../data/");
+    TResourceLoader::registerPath("../../../../../data/");
+    TResourceLoader::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".f3d"};
-    CModelManager::registerDecoder(std::make_shared<CModelF3DDecoder>(ext));
+    TResourceLoader::registerDecoder(std::make_shared<CModelF3DDecoder>(ext));
 }
 
 CModelManager::~CModelManager()
@@ -46,10 +47,10 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
         for (std::string& path : m_pathes)
         {
             const std::string fullName = path + nameStr;
-            const bool isFileExist = stream::FileStream::isFileExist(fullName);
+            const bool isFileExist = FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                const FileStreamPtr stream = CStreamManager::createFileStream(fullName, FileStream::e_in);
                 if (stream->isOpen())
                 {
                     
@@ -60,7 +61,7 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
                         return nullptr;
                     }
 
-                    stream::CResource* resource = decoder->decode(stream);
+                    CResource* resource = decoder->decode(stream);
                     stream->close();
 
                     if (!resource)

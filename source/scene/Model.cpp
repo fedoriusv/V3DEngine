@@ -2,9 +2,11 @@
 #include "Mesh.h"
 #include "utils/Logger.h"
 #include "scene/ModelManager.h"
+#include "scene/RenderTechniqueManager.h"
 
 using namespace v3d;
 using namespace scene;
+using namespace renderer;
 
 CModel::CModel()
 {
@@ -43,7 +45,7 @@ void CModel::init()
         return;
     }
 
-    for (std::vector<CNode*>::iterator node = m_nodesList.begin(); node < m_nodesList.end(); ++node)
+    for (NodeList::iterator node = m_nodesList.begin(); node < m_nodesList.end(); ++node)
     {
         (*node)->init();
     }
@@ -77,7 +79,49 @@ bool CModel::load()
 
     if (stream->size() > 0)
     {
+        stream->seekBeg(0);
+
         stream->read(m_id);
         stream->read(m_name);
+
+        return true;
     }
+
+    return false;
+}
+
+bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
+{
+    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    if (!technique)
+    {
+        LOG_ERROR("CModel: Error read file [%s]", file.c_str());
+        return false;
+    }
+
+    for (NodeList::iterator iter = m_nodesList.begin(); iter < m_nodesList.end(); ++iter)
+    {
+        CNode* node = (*iter);
+        switch (node->getNodeType())
+        {
+            case eMesh:
+                static_cast<CMesh*>(node)->getMaterial()->setRenderTechnique(technique);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return true;
+}
+
+NodeConstIter CModel::Begin() const
+{
+    return m_nodesList.begin();
+}
+
+NodeConstIter CModel::End() const
+{
+    return m_nodesList.end();
 }

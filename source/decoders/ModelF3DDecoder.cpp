@@ -23,7 +23,7 @@ CModelF3DDecoder::~CModelF3DDecoder()
 {
 }
 
-stream::CResource* CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
+stream::CResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
 {
     if (!stream)
     {
@@ -35,16 +35,19 @@ stream::CResource* CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
     {
         stream->seekBeg(0);
 
-        u32 version;
-        stream->read(version);
+        MemoryStreamPtr data = CStreamManager::createMemoryStream(nullptr, stream->size());
+        stream->read(data->getData(), sizeof(u8), stream->size());
+
+        s32 version;
+        data->read(version);
 
         if (version == F3D_MODEL_LOADER_VERSION)
         {
-            return CModelF3DDecoder::decode100(stream);
+            return CModelF3DDecoder::decode100(data);
         }
         else
         {
-            LOG_ERROR("CModelF3DDecoder::decode: unknown svae version %d", version);
+            LOG_ERROR("CModelF3DDecoder::decode: unknown save version %d", version);
             return nullptr;
         }
     }
@@ -55,18 +58,17 @@ stream::CResource* CModelF3DDecoder::decode(const stream::IStreamPtr& stream)
 
 stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
 {
-
     CModel* model = new CModel();
-
-    stream::IStreamPtr data = CStreamManager::createMemoryStream();
-    data->seekBeg(0);
-
     s32 id;
     stream->read(id);
-    data->write(id);
 
     std::string name;
     stream->read(name);
+
+    IStreamPtr data = CStreamManager::createMemoryStream();
+    data->seekBeg(0);
+
+    data->write(id);
     data->write(name);
 
     model->init(data);
@@ -87,8 +89,8 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         u32 subStreamSize;
         stream->read(subStreamSize);
 
-        stream::IStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
-        stream->read(subStream);
+        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
+        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
 
         CNode* node = nullptr;
         switch (nodetype)

@@ -289,11 +289,13 @@ CText* CSceneManager::addText(CNode* parent, const std::string& text, const std:
 CModel* CSceneManager::addModel(const std::string& file, CNode* parent, const Vector3D& pos)
 {
     CModel* node = CModelManager::getInstance()->load(file);
-    node->setParent(parent);
-    node->setPosition(pos);
+    if (node)
+    {
+        node->setParent(parent);
+        node->setPosition(pos);
 
-    CSceneManager::addNode(node);
-
+        CSceneManager::addNode(node);
+    }
     return node;
 }
 

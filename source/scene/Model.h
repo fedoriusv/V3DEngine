@@ -17,20 +17,25 @@ namespace scene
     public:
 
         CModel();
-        virtual                 ~CModel();
+        virtual          ~CModel();
 
-        void                    init(const stream::IStreamPtr& stream)  override;
-        bool                    load()                                  override;
+        void            init(const stream::IStreamPtr& stream)  override;
+        bool            load()                                  override;
 
-        void                    init()         override;
-        void                    update(s32 dt) override;
+        void            init()         override;
+        void            update(s32 dt) override;
 
-        void                    addNode(CNode* node);
-        CNode*                  getNode(u32 index);
+        void            addNode(CNode* node);
+        CNode*          getNode(u32 index);
+
+        NodeConstIter   Begin() const;
+        NodeConstIter   End() const;
+
+        bool            setRenderTechniqueForAllMeshes(const std::string& file);
 
     private:
 
-        std::vector<CNode*>     m_nodesList;
+        NodeList        m_nodesList;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
