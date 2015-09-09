@@ -20,11 +20,11 @@ void MyApplication::init()
 {
     const SceneManagerPtr& scene = BaseApplication::getSceneManager();
 
-    CShape* cube = scene->addTorus(0, Vector3D(0, 1, -5));
+    CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
-    CModel* model = scene->addModel("models/test.f3d", nullptr, Vector3D(0, 1, -5));
+    CModel* model = scene->addModel("models/test_plane3.f3d", nullptr, Vector3D(0, 1, -5));
     model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));

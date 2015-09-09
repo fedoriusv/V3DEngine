@@ -184,7 +184,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
     userCoordSystem.rotation = 1;
     userCoordSystem.xAxis = 0; // 1
     userCoordSystem.yAxis = 3; // 2
-    userCoordSystem.zAxis = 4; // 4
+    userCoordSystem.zAxis = 5; // 4
     userCoordSystem.uAxis = 1;
     userCoordSystem.vAxis = 0;
     cm->SetUserCoordSystem(userCoordSystem);
@@ -413,6 +413,8 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
     renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeometry());
     geomerty = std::make_shared<renderer::CGeometryNull>(nullptr);
 
+    std::vector<s32> indexList;
+
     for (u32 i = 0; i < materialCount; ++i)
     {
         s32 matID = materialList[i];
@@ -432,52 +434,57 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                     LOG_GEBUG("addIndex : %d", sourceFace->vert[k]);
                     geomerty->addIndex(sourceFace->vert[k]);
 
-                    Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
-                    LOG_GEBUG("addVertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
-                    geomerty->addVertex(convertPointToVector3(vertex));
-
-                    if (m_settings->isExportNormals())
+                    if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend())
                     {
-                        Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_settings->isExportObjectSpace()).Normalize();
-                        LOG_GEBUG("addNormal : (%f, %f, %f)", normal.x, normal.y, normal.z);
-                        geomerty->addNormal(convertPointToVector3(normal));
-                    }
+                        Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
+                        LOG_GEBUG("addVertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
+                        geomerty->addVertex(convertPointToVector3(vertex));
 
-                    if (m_settings->isExportBinormals())
-                    {
-                        s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
-                        Point3 binormal = gameMesh->GetBinormal(binormalTangentIndex).Normalize();
-                        LOG_GEBUG("addBinormal : (%f, %f, %f)", binormal.x, binormal.y, binormal.z);
-                        geomerty->addBinormal(convertPointToVector3(binormal));
-                    }
+                        if (m_settings->isExportNormals())
+                        {
+                            Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_settings->isExportObjectSpace()).Normalize();
+                            LOG_GEBUG("addNormal : (%f, %f, %f)", normal.x, normal.y, normal.z);
+                            geomerty->addNormal(convertPointToVector3(normal));
+                        }
 
-                    if (m_settings->isExportTangents())
-                    {
-                        s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
-                        Point3 tangent = gameMesh->GetTangent(binormalTangentIndex).Normalize();
-                        LOG_GEBUG("addTangent : (%f, %f, %f)", tangent.x, tangent.y, tangent.z);
-                        geomerty->addTangent(convertPointToVector3(tangent));
-                    }
+                        if (m_settings->isExportBinormals())
+                        {
+                            s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
+                            Point3 binormal = gameMesh->GetBinormal(binormalTangentIndex).Normalize();
+                            LOG_GEBUG("addBinormal : (%f, %f, %f)", binormal.x, binormal.y, binormal.z);
+                            geomerty->addBinormal(convertPointToVector3(binormal));
+                        }
 
-                    if (m_settings->isExportColors())
-                    {
-                        Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
-                        core::Vector3D col = convertPointToVector3(color);
-                        col.x = core::abs(col.x);
-                        col.y = core::abs(col.y);
-                        col.z = core::abs(col.z);
-                        LOG_GEBUG("addColor : (%f, %f, %f)", col.x, col.y, col.z);
-                        geomerty->addColor(col);
-                    }
+                        if (m_settings->isExportTangents())
+                        {
+                            s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
+                            Point3 tangent = gameMesh->GetTangent(binormalTangentIndex).Normalize();
+                            LOG_GEBUG("addTangent : (%f, %f, %f)", tangent.x, tangent.y, tangent.z);
+                            geomerty->addTangent(convertPointToVector3(tangent));
+                        }
 
-                    if (m_settings->isExportTexCoords())
-                    {
-                        u32 layer = 0;
-                        Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
-                        //TODO: tiling factor * texCoord
-                        //TODO: texcoord layers
-                        LOG_GEBUG("addTexCoord : (%f, %f)", texCoord.x, texCoord.y);
-                        geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
+                        if (m_settings->isExportColors())
+                        {
+                            Point3 color = gameMesh->GetColorVertex(sourceFace->color[k]);
+                            core::Vector3D col = convertPointToVector3(color);
+                            col.x = core::abs(col.x);
+                            col.y = core::abs(col.y);
+                            col.z = core::abs(col.z);
+                            LOG_GEBUG("addColor : (%f, %f, %f)", col.x, col.y, col.z);
+                            geomerty->addColor(col);
+                        }
+
+                        if (m_settings->isExportTexCoords())
+                        {
+                            u32 layer = 0;
+                            Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
+                            //TODO: tiling factor * texCoord
+                            //TODO: texcoord layers
+                            LOG_GEBUG("addTexCoord : (%f, %f)", texCoord.x, texCoord.y);
+                            geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
+                        }
+
+                        indexList.push_back(sourceFace->vert[k]);
                     }
                 }
             }
@@ -512,12 +519,12 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::Material
 
 core::Vector3D ExporterF3D::convertPointToVector3(const Point3& point)
 {
-    return core::Vector3D(point.x, point.y, point.x);
+    return core::Vector3D(core::round(point.x, 6), core::round(point.y, 6), core::round(point.z, 6));
 }
 
 core::Vector2D ExporterF3D::convertPointToVector2(const Point2& point)
 {
-    return core::Vector2D(point.x, point.y);
+    return core::Vector2D(core::round(point.x), core::round(point.y));
 }
 
 
