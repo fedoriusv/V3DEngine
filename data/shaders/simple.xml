@@ -14,8 +14,8 @@
 		</samplers>
 		<renderstate>
             <polygonmode val="line"/>
-            <winding val="cw"/>
-            <culling val="false"/>
+            <winding val="ccw"/>
+            <culling val="back"/>
             <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
             <depthWrite val="true"/>
             <depthTest val="lequal"/>

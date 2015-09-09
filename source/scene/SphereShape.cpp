@@ -51,8 +51,8 @@ f32 CSphereShape::getRadius() const
 
 void CSphereShape::build()
 {
-    const u32 slices = 30U;
-    const u32 stacks = 30U;
+    const u32 slices = 20U;
+    const u32 stacks = 15U;
 
     f32 drho = k_pi / stacks;
     f32 dtheta = 2.0f * k_pi / slices;

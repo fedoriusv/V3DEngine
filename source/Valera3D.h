@@ -11,6 +11,7 @@
 #include "scene/Node.h"
 #include "scene/SampleShape.h"
 #include "scene/CubeShape.h"
+#include "scene/SphereShape.h"
 #include "scene/CylinderShape.h"
 #include "scene/TorusShape.h"
 #include "scene/RectangleShape.h"

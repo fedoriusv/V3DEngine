@@ -102,7 +102,7 @@ ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
 CRenderState::CRenderState()
     : m_culling(true)
     , m_cullface(eFaceBack)
-    , m_winding(eWindingCW)
+    , m_winding(eWindingCCW)
     , m_polygonMode(ePolyModeFill)
 
     , m_blendSrc(eBlendInvSrcAlpha)

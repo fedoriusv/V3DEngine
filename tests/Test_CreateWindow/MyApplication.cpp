@@ -20,7 +20,7 @@ void MyApplication::init()
 {
     const SceneManagerPtr& scene = BaseApplication::getSceneManager();
 
-    CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
+    CShape* cube = scene->addTorus(0, Vector3D(0, 1, -5));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 

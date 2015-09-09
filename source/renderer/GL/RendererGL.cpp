@@ -38,7 +38,7 @@ void CRendererGL::init()
 
     glEnable(GL_MULTISAMPLE);
 
-    CRenderStateGL::winding(eWindingCW);
+    CRenderStateGL::winding(eWindingCCW);
     CRenderStateGL::culling(true);
     CRenderStateGL::cullface(eFaceBack);
 
@@ -47,8 +47,8 @@ void CRendererGL::init()
     CRenderStateGL::depthTest(true);
     glClearDepth(1.0);
 
-    glEnable(GL_DEPTH_CLAMP);
-    glDepthRange(-1.0, 1.0);
+    //glEnable(GL_DEPTH_CLAMP);
+    //glDepthRange(-1.0, 1.0);
 
     CRenderStateGL::blendFunc(eBlendSrcAlpha, eBlendInvSrcAlpha);
 
