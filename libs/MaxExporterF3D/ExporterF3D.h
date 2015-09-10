@@ -85,10 +85,11 @@ namespace v3d
 
     private:
 
-        const s32                   m_exporterVersion = 100;
+        const s32                   k_exporterVersion = 100;
+        const s32                   k_decimalRound = 6;
 
         IGameScene*                 m_iGameScene;
-        float                       m_iGameVersion;
+        f32                         m_iGameVersion;
 
         CSceneData*                 m_scene;
         CSettings*                  m_settings;

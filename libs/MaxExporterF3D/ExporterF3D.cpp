@@ -126,7 +126,7 @@ const TCHAR* ExporterF3D::OtherMessage2()
 unsigned int ExporterF3D::Version()
 {
     //TODO: Return Version number * 100 (i.e. v3.01 = 301)
-    return m_exporterVersion * 100;
+    return k_exporterVersion * 100;
 }
 
 void ExporterF3D::ShowAbout(HWND hWnd)
@@ -182,8 +182,8 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
     UserCoord userCoordSystem;
     userCoordSystem.rotation = 1;
-    userCoordSystem.xAxis = 0; // 1
-    userCoordSystem.yAxis = 3; // 2
+    userCoordSystem.xAxis = 1; // 1
+    userCoordSystem.yAxis = 2; // 2
     userCoordSystem.zAxis = 5; // 4
     userCoordSystem.uAxis = 1;
     userCoordSystem.vAxis = 0;
@@ -199,7 +199,7 @@ int ExporterF3D::DoExport(const TCHAR* name, ExpInterface* ei, Interface* i, BOO
 
     if (success == eNoError && m_scene)
     {
-        if (!m_scene->save(TCHARToString(name), m_exporterVersion))
+        if (!m_scene->save(TCHARToString(name), k_exporterVersion))
         {
             success = eSaveError;
         }
@@ -434,7 +434,7 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                     LOG_GEBUG("addIndex : %d", sourceFace->vert[k]);
                     geomerty->addIndex(sourceFace->vert[k]);
 
-                    if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend())
+                    //if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend())
                     {
                         Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
                         LOG_GEBUG("addVertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
@@ -519,12 +519,14 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::Material
 
 core::Vector3D ExporterF3D::convertPointToVector3(const Point3& point)
 {
-    return core::Vector3D(core::round(point.x, 6), core::round(point.y, 6), core::round(point.z, 6));
+    return core::Vector3D(core::round(point.x, k_decimalRound), core::round(point.y, k_decimalRound), core::round(point.z, k_decimalRound));
+    //return core::Vector3D(point.x, point.y, point.z);
 }
 
 core::Vector2D ExporterF3D::convertPointToVector2(const Point2& point)
 {
-    return core::Vector2D(core::round(point.x), core::round(point.y));
+    return core::Vector2D(core::round(point.x, k_decimalRound), core::round(point.y, k_decimalRound));
+    //return core::Vector2D(point.x, point.y);
 }
 
 

@@ -169,13 +169,13 @@ namespace core
     }
 
     template<class T>
-    T round(T x, int decimalPlaces)
+    T round(T x, s32 decimalPlaces)
     {
-        int ix = (int)x;
+        s32 ix = (s32)x;
         T frac = x - (T)ix;
 
         T p = pow(10.f, decimalPlaces);
-        T f = (T)((int)round(frac * p));
+        T f = (T)((s32)round(frac * p));
         f /= p;
 
         return (T)ix + f;
