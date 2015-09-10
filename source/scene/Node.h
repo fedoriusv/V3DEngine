@@ -48,87 +48,92 @@ namespace scene
         };
 
         CNode();
-        virtual                     ~CNode();
+        virtual                             ~CNode();
 
-        void                        setPosition (const core::Vector3D& position);
-        void                        setRotation (const core::Vector3D& rotation);
-        void                        setScale    (const core::Vector3D& scale);
-        void                        setTransform(const core::Matrix4D& transform);
+        void                                setPosition (const core::Vector3D& position);
+        void                                setRotation (const core::Vector3D& rotation);
+        void                                setScale    (const core::Vector3D& scale);
+        void                                setTransform(const core::Matrix4D& transform);
 
-        const core::Vector3D&       getPosition()           const;
-        const core::Vector3D&       getRotation()           const;
-        const core::Vector3D&       getScale()              const;
-        const core::Matrix4D&       getTransform()          const;
+        const core::Vector3D&               getPosition()           const;
+        const core::Vector3D&               getRotation()           const;
+        const core::Vector3D&               getScale()              const;
+        const core::Matrix4D&               getTransform()          const;
 
 
-        core::Vector3D              getAbsPosition()        const;
-        core::Vector3D              getAbsRotation()        const;
-        core::Vector3D              getAbsScale()           const;
-        core::Matrix4D              getAbsTransform()       const;
+        core::Vector3D                      getAbsPosition()        const;
+        core::Vector3D                      getAbsRotation()        const;
+        core::Vector3D                      getAbsScale()           const;
+        core::Matrix4D                      getAbsTransform()       const;
+                                            
+        void                                setID(s32 id);
+        void                                setName(const std::string& name);
+                                            
+        const s32                           getID()                 const;
+        const std::string&                  getName()               const;
+
+        void                                setParent(CNode* parent);
+        void                                attachChild(CNode* child);
+        void                                dettachChild(CNode* child);
+                                            
+        CNode*                              getParent()                                  const;
+        CNode*                              getChildNodeByID(u32 id)                     const;
+        CNode*                              getChildNodeByName(const std::string& name)  const;
+
+        std::vector<CNode*>::const_iterator Begin() const;
+        std::vector<CNode*>::const_iterator End() const;
                                     
-        void                        setID(s32 id);
-        void                        setName(const std::string& name);
-                                    
-        const s32                   getID()                 const;
-        const std::string&          getName()               const;
+        virtual void                        init() = 0;
+        virtual void                        update(s32 dt)   = 0;
 
-        void                        setParent(CNode* parent);
-        void                        attachChild(CNode* child);
-        void                        dettachChild(CNode* child);
-                                    
-        CNode*                      getParent()                                  const;
-        CNode*                      getChildNodeByID(u32 id)                     const;
-        CNode*                      getChildNodeByName(const std::string& name)  const;
-                                    
-        virtual void                init() = 0;
-        virtual void                update(s32 dt)   = 0;
+        void                                setVisible(bool visible);
+        bool                                isVisible() const;
 
-        void                        setVisible(bool visible);
-        bool                        isVisible() const;
-
-        ENodeType                   getNodeType() const;
-        f32                         getPriority() const;
-        static const std::string&   getNodeNameByType(ENodeType type);
+        ENodeType                           getNodeType() const;
+        f32                                 getPriority() const;
+        static const std::string&           getNodeNameByType(ENodeType type);
 
     protected:
 
-        friend                      renderer::CRenderList;
+        std::vector<CNode*>::iterator       Begin();
+        std::vector<CNode*>::iterator       End();
 
-        void                        setPriority(s32 priority);
+        friend                              renderer::CRenderList;
 
-        ENodeType                   m_nodeType;
-        bool                        m_initialiazed;
+        void                                setPriority(f32 priority);
 
-        s32                         m_id;
-        std::string                 m_name;
+        ENodeType                           m_nodeType;
+        bool                                m_initialiazed;
 
-    private:
-
-        void                        updateTransform() const;
-
-        core::Vector3D              m_position;
-        core::Vector3D              m_rotation;
-        core::Vector3D              m_scale;
-        mutable core::Matrix4D      m_modelMatrix;
-
-        CNode*                      m_parentNode;
-        std::vector<CNode*>         m_childNodes;
-
-        f32                         m_priority;
-        bool                        m_visible;
-
-        mutable u16                m_transformFlag;
+        s32                                 m_id;
+        std::string                         m_name;
 
     private:
 
-        static std::string          s_nodeTypes[ENodeType::eCount];
+        void                                updateTransform() const;
+
+        core::Vector3D                      m_position;
+        core::Vector3D                      m_rotation;
+        core::Vector3D                      m_scale;
+        mutable core::Matrix4D              m_modelMatrix;
+
+        CNode*                              m_parentNode;
+        std::vector<CNode*>                 m_childNodes;
+
+        f32                                 m_priority;
+        bool                                m_visible;
+
+        mutable u16                         m_transformFlag;
+
+    private:
+
+        static std::string                  s_nodeTypes[ENodeType::eCount];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<CNode>      NodePtr;
     typedef std::vector<CNode*>         NodeList;
-    typedef NodeList::const_iterator    NodeConstIter;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 }

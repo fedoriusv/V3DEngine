@@ -25,17 +25,10 @@ namespace scene
         void            init()         override;
         void            update(s32 dt) override;
 
-        void            addNode(CNode* node);
-        CNode*          getNode(u32 index);
-
-        NodeConstIter   Begin() const;
-        NodeConstIter   End() const;
-
         bool            setRenderTechniqueForAllMeshes(const std::string& file);
 
     private:
 
-        NodeList        m_nodesList;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

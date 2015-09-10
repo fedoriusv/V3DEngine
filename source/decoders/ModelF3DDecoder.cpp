@@ -108,12 +108,12 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
                 break;
         }
 
-        model->addNode(node);
+        model->attachChild(node);
     }
 
-    for (u32 nodeIdx = 0; nodeIdx < countNodes; ++nodeIdx)
+    /*for (NodeList::const_iterator iter = model->Begin(); iter < model->End(); ++iter)
     {
-        CNode* node = model->getNode(nodeIdx);
+        CNode* node = (*iter);
         
         if (parentList[nodeIdx] >= 0)
         {
@@ -123,7 +123,7 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         {
             node->setParent(model);
         }
-    }
+    }*/
 
     return model;
 }

@@ -55,9 +55,7 @@ void CRenderList::add(CNode* node, CRenderable* draw, u32 target)
 void CRenderList::clear()
 {
     m_list.clear();
-
     m_draw.clear();
-    m_update.clear();
 }
 
 const RenderTargetPtr& CRenderList::getRenderTarget() const
@@ -77,7 +75,7 @@ void CRenderList::update(u32 delta)
         m_camera->update(delta);
     }
 
-    for (std::vector<SNodeList>::const_iterator iter = m_update.begin(); iter < m_update.end(); ++iter)
+    for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
         CNode* item = (*iter)._node;
         if (!item)
@@ -108,7 +106,6 @@ void CRenderList::render()
 void CRenderList::refresh()
 {
     m_draw.clear();
-    m_update.clear();
 
     for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
@@ -139,7 +136,6 @@ void CRenderList::refresh()
                     job->setRenderTarget((*iter)._targetIndex);
 
                     m_draw.push_back((*iter));
-                    m_update.push_back((*iter));
                 }
             }
         }
@@ -164,7 +160,6 @@ void CRenderList::refresh()
             job->setRenderTarget((*iter)._targetIndex);
 
             m_draw.push_back((*iter));
-            m_update.push_back((*iter));
         }
             break;
 
@@ -184,17 +179,10 @@ void CRenderList::refresh()
             job->setRenderTarget((*iter)._targetIndex);
 
             m_draw.push_back((*iter));
-            m_update.push_back((*iter));
         }
             break;
 
         case ENodeType::eModel:
-        {
-            CModel* model = static_cast<CModel*>(node);
-            m_update.push_back((*iter));
-        }
-            break;
-
         default:
             break;
         }
@@ -204,11 +192,6 @@ void CRenderList::refresh()
     {
         return  (node0._node->getPriority() > node1._node->getPriority());
     });
-
-   /* std::sort(m_update.begin(), m_update.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
-    {
-        return  node0._node->getParent() != nullptr;
-    });*/
 }
 
 bool CRenderList::checkDistance(const CNode* node, const f32 distance)

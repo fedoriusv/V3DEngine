@@ -20,14 +20,14 @@ void MyApplication::init()
 {
     const SceneManagerPtr& scene = BaseApplication::getSceneManager();
 
-    CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
+    /*CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
     CShape* cube1 = scene->addCube(cube, Vector3D(1, 0, 0), 0.2f);
-    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");*/
 
-    CModel* model = scene->addModel("models/test_plane3.f3d", nullptr, Vector3D(0, 1, -5));
+    CModel* model = scene->addModel("models/teapot.f3d", 0, Vector3D(0, 1, -5));
     model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
@@ -49,9 +49,9 @@ void MyApplication::init()
         "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg"));
     skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");*/
 
-    CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    CNode* fpsCamera = scene->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
-    CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
+    CNode* camera = scene->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
     camera->setName("camera");
     
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));

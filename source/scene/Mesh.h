@@ -16,7 +16,7 @@ namespace scene
     {
     public:
 
-        explicit CMesh();
+        explicit    CMesh();
         virtual     ~CMesh();
 
         void        init(const stream::IStreamPtr& stream)  override;

@@ -25,7 +25,6 @@ CScene::CScene()
 CScene::~CScene()
 {
     CScene::clear();
-
     m_renderList.clear();
 }
 
@@ -56,7 +55,7 @@ bool CScene::isActiveCamera(const CCamera* camera)
 
 void CScene::init()
 {
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (NodeList::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         CNode* item = (*iter);
         item->init();
@@ -78,6 +77,7 @@ void CScene::draw(s32 dt)
             CRenderList& list = (*iter);
             list.refresh();
 
+            //TODO: need rework render camera
             if (!CScene::isActiveCamera(list.getCamera()))
             {
                 list.setCamera(m_camera);
@@ -107,7 +107,7 @@ bool CScene::drop(CNode* node)
         return false;
     }
 
-    std::vector<CNode*>::iterator iter = std::find(m_objects.begin(), m_objects.end(), node);
+    NodeList::iterator iter = std::find(m_objects.begin(), m_objects.end(), node);
 
     if (iter != m_objects.end())
     {
@@ -125,7 +125,7 @@ bool CScene::drop(CNode* node)
 
 void CScene::clear()
 {
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (NodeList::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         delete (*iter);
         (*iter) = nullptr;
@@ -137,7 +137,7 @@ void CScene::clear()
 
 CNode* CScene::getNodeByID(s32 id)
 {
-    for (std::vector<CNode*>::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (NodeList::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         if ((*iter)->getID() == id)
         {
@@ -150,7 +150,7 @@ CNode* CScene::getNodeByID(s32 id)
 
 CNode* CScene::getNodeByName(const std::string& name)
 {
-    for (std::vector<CNode*>::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (NodeList::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         if ((*iter)->getName().compare(name) == 0)
         {
@@ -165,7 +165,7 @@ void CScene::initRenderLists()
 {
     m_renderList.clear();
 
-    for (std::vector<CNode*>::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    for (NodeList::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
     {
         CNode* node = (*iter);
         switch (node->getNodeType())
@@ -182,9 +182,8 @@ void CScene::initRenderLists()
 
             case ENodeType::eModel:
             {
-                CModel* model = static_cast<CModel*>(node);
-                CScene::attachToRenderList(model);
-                for (NodeConstIter iter = model->Begin(); iter < model->End(); ++iter)
+                const CModel* model = static_cast<CModel*>(node);
+                for (NodeList::const_iterator iter = model->Begin(); iter < model->End(); ++iter)
                 {
                     CNode* subNode = (*iter);
                     switch (subNode->getNodeType())

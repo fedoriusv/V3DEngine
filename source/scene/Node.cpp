@@ -143,6 +143,7 @@ const Matrix4D& CNode::getTransform() const
 
 Matrix4D CNode::getAbsTransform() const
 {
+    CNode::updateTransform();
     if (m_parentNode)
     {
         const Matrix4D absTransform = m_parentNode->getAbsTransform() * m_modelMatrix;
@@ -255,11 +256,11 @@ void CNode::updateTransform() const
         m_transformFlag &= ~eNodeTransform;
     }
 
-    for (std::vector<CNode*>::const_iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
+    /*for (std::vector<CNode*>::const_iterator iter = m_childNodes.begin(); iter < m_childNodes.end(); ++iter)
     {
         (*iter)->m_transformFlag = m_transformFlag;
         (*iter)->updateTransform();
-    }
+    }*/
 }
 
 const s32 CNode::getID() const
@@ -287,7 +288,27 @@ void CNode::update(s32 dt)
     CNode::updateTransform();
 }
 
-void CNode::setPriority(s32 priority)
+void CNode::setPriority(f32 priority)
 {
     m_priority = priority;
+}
+
+std::vector<CNode*>::const_iterator CNode::Begin() const
+{
+    return m_childNodes.cbegin();
+}
+
+std::vector<CNode*>::const_iterator CNode::End() const
+{
+    return m_childNodes.cend();
+}
+
+std::vector<CNode*>::iterator CNode::Begin()
+{
+    return m_childNodes.begin();
+}
+
+std::vector<CNode*>::iterator CNode::End()
+{
+    return m_childNodes.end();
 }

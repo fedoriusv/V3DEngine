@@ -16,26 +16,6 @@ CModel::CModel()
 
 CModel::~CModel()
 {
-    for (auto& it : m_nodesList)
-    {
-        delete it;
-        it = nullptr;
-    }
-    m_nodesList.clear();
-}
-
-void CModel::addNode(CNode* node)
-{
-    if (node)
-    {
-        m_nodesList.push_back(node);
-    }
-}
-
-CNode* CModel::getNode(u32 index)
-{
-    ASSERT(index < m_nodesList.size() && "CModel::getNode: invalid node index");
-    return m_nodesList[index];
 }
 
 void CModel::init()
@@ -45,9 +25,10 @@ void CModel::init()
         return;
     }
 
-    for (NodeList::iterator node = m_nodesList.begin(); node < m_nodesList.end(); ++node)
+    for (NodeList::const_iterator iter = CNode::Begin(); iter < CNode::End(); ++iter)
     {
-        (*node)->init();
+        CNode* node = (*iter);
+        (*iter)->init();
     }
 
     m_initialiazed = true;
@@ -99,7 +80,7 @@ bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
         return false;
     }
 
-    for (NodeList::iterator iter = m_nodesList.begin(); iter < m_nodesList.end(); ++iter)
+    for (NodeList::const_iterator iter = CNode::Begin(); iter < CNode::End(); ++iter)
     {
         CNode* node = (*iter);
         switch (node->getNodeType())
@@ -114,14 +95,4 @@ bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
     }
 
     return true;
-}
-
-NodeConstIter CModel::Begin() const
-{
-    return m_nodesList.begin();
-}
-
-NodeConstIter CModel::End() const
-{
-    return m_nodesList.end();
 }
