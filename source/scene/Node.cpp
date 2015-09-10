@@ -151,6 +151,34 @@ Matrix4D CNode::getAbsTransform() const
     return m_modelMatrix;
 }
 
+Vector3D CNode::getAbsPosition() const
+{
+    if (m_parentNode)
+    {
+        const Vector3D absPosition = m_parentNode->getAbsTransform().getTranslation() * m_position;
+        return absPosition;
+    }
+    return m_position;
+}
+Vector3D CNode::getAbsRotation() const
+{
+    if (m_parentNode)
+    {
+        const Vector3D absRotation = m_parentNode->getAbsTransform().getRotation() * m_rotation;
+        return absRotation;
+    }
+    return m_rotation;
+}
+Vector3D CNode::getAbsScale() const
+{
+    if (m_parentNode)
+    {
+        const Vector3D absScale = m_parentNode->getAbsTransform().getScale() * m_scale;
+        return absScale;
+    }
+    return m_scale;
+}
+
 CNode* CNode::getParent() const
 {
     return m_parentNode;
@@ -257,4 +285,9 @@ void CNode::setName(const std::string& name)
 void CNode::update(s32 dt)
 {
     CNode::updateTransform();
+}
+
+void CNode::setPriority(s32 priority)
+{
+    m_priority = priority;
 }

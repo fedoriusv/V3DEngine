@@ -59,6 +59,11 @@ namespace scene
         const core::Vector3D&       getRotation()           const;
         const core::Vector3D&       getScale()              const;
         const core::Matrix4D&       getTransform()          const;
+
+
+        core::Vector3D              getAbsPosition()        const;
+        core::Vector3D              getAbsRotation()        const;
+        core::Vector3D              getAbsScale()           const;
         core::Matrix4D              getAbsTransform()       const;
                                     
         void                        setID(s32 id);
@@ -88,6 +93,8 @@ namespace scene
     protected:
 
         friend                      renderer::CRenderList;
+
+        void                        setPriority(s32 priority);
 
         ENodeType                   m_nodeType;
         bool                        m_initialiazed;

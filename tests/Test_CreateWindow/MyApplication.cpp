@@ -24,6 +24,9 @@ void MyApplication::init()
     cube->setName("cube");
     cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
 
+    CShape* cube1 = scene->addCube(cube, Vector3D(1, 0, 0), 0.2f);
+    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");
+
     CModel* model = scene->addModel("models/test_plane3.f3d", nullptr, Vector3D(0, 1, -5));
     model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
 

@@ -6,6 +6,7 @@
 #include "scene/Text.h"
 #include "scene/Billboard.h"
 #include "scene/Camera.h"
+#include "scene/Model.h"
 
 using namespace v3d;
 using namespace renderer;
@@ -20,8 +21,7 @@ CRenderList::CRenderList(const RenderTargetPtr& target)
 
 CRenderList::~CRenderList()
 {
-    m_list.clear();
-    m_draw.clear();
+    CRenderList::clear();
 }
 
 void CRenderList::setCamera(scene::CCamera* camera)
@@ -55,6 +55,9 @@ void CRenderList::add(CNode* node, CRenderable* draw, u32 target)
 void CRenderList::clear()
 {
     m_list.clear();
+
+    m_draw.clear();
+    m_update.clear();
 }
 
 const RenderTargetPtr& CRenderList::getRenderTarget() const
@@ -74,7 +77,7 @@ void CRenderList::update(u32 delta)
         m_camera->update(delta);
     }
 
-    for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
+    for (std::vector<SNodeList>::const_iterator iter = m_update.begin(); iter < m_update.end(); ++iter)
     {
         CNode* item = (*iter)._node;
         if (!item)
@@ -105,6 +108,7 @@ void CRenderList::render()
 void CRenderList::refresh()
 {
     m_draw.clear();
+    m_update.clear();
 
     for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
@@ -113,54 +117,29 @@ void CRenderList::refresh()
         {
         case ENodeType::eShape:
         case ENodeType::eMesh:
-        {
-            f32 priority = 0.0f;
-            CMesh* shape = static_cast<CMesh*>(node);
-            if (shape->getMaterial()->getTransparency() > 0.0f)
-            {
-                if (m_camera)
-                {
-                    priority = (node->getPosition() - m_camera->getPosition()).length();
-                }
-                else
-                {
-                    priority = node->getPosition().z;
-                }
-                node->m_priority = priority;
-
-                if (checkDistance(node, priority))
-                {
-                    const RenderJobPtr& job = shape->getRenderJob();
-                    job->setRenderTarget((*iter)._targetIndex);
-
-                    m_draw.push_back((*iter));
-                }
-            }
-        }
-            break;
-
         case ENodeType::eBillboard:
         {
             f32 priority = 0.0f;
-            CBillboard* billboard = static_cast<CBillboard*>(node);
-            if (billboard->getMaterial()->getTransparency() > 0.0f)
+            CMesh* mesh = static_cast<CMesh*>(node);
+            if (mesh->getMaterial()->getTransparency() > 0.0f)
             {
                 if (m_camera)
                 {
-                    priority = (node->getPosition() - m_camera->getPosition()).length();
+                    priority = (node->getAbsPosition() - m_camera->getAbsPosition()).length();
                 }
                 else
                 {
-                    priority = node->getPosition().z;
+                    priority = node->getAbsPosition().z;
                 }
-                node->m_priority = priority;
+                node->setPriority(priority);
 
                 if (checkDistance(node, priority))
                 {
-                    const RenderJobPtr& job = billboard->getRenderJob();
+                    const RenderJobPtr& job = mesh->getRenderJob();
                     job->setRenderTarget((*iter)._targetIndex);
 
                     m_draw.push_back((*iter));
+                    m_update.push_back((*iter));
                 }
             }
         }
@@ -168,42 +147,51 @@ void CRenderList::refresh()
 
         case ENodeType::eCamera:
         {
-            /*node->m_priority = k_maxPriority;
+            /*node->setPriority(k_maxPriority);
             if (static_cast<CCamera*>(node)->isActive())
             {
-                m_draw.push_back(node);
+                m_update.push_back(node);
             }*/
         }
             break;
 
         case ENodeType::eSkyBox:
         {
-            node->m_priority = k_maxPriority;
+            node->setPriority(k_maxPriority);
 
             CSkybox* skybox = static_cast<CSkybox*>(node);
             const RenderJobPtr& job = skybox->getRenderJob();
             job->setRenderTarget((*iter)._targetIndex);
 
             m_draw.push_back((*iter));
+            m_update.push_back((*iter));
         }
             break;
 
         case ENodeType::eLight:
         case ENodeType::eFog:
         {
-            node->m_priority = -k_maxPriority;
+            node->setPriority(-k_maxPriority);
         }
             break;
 
         case ENodeType::eText:
         {
-            node->m_priority = 0.0f;
+            node->setPriority(0.0f);
 
             CText* text = static_cast<CText*>(node);
             const RenderJobPtr& job = text->getRenderJob();
             job->setRenderTarget((*iter)._targetIndex);
 
             m_draw.push_back((*iter));
+            m_update.push_back((*iter));
+        }
+            break;
+
+        case ENodeType::eModel:
+        {
+            CModel* model = static_cast<CModel*>(node);
+            m_update.push_back((*iter));
         }
             break;
 
@@ -216,6 +204,11 @@ void CRenderList::refresh()
     {
         return  (node0._node->getPriority() > node1._node->getPriority());
     });
+
+   /* std::sort(m_update.begin(), m_update.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
+    {
+        return  node0._node->getParent() != nullptr;
+    });*/
 }
 
 bool CRenderList::checkDistance(const CNode* node, const f32 distance)

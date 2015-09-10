@@ -183,6 +183,7 @@ void CScene::initRenderLists()
             case ENodeType::eModel:
             {
                 CModel* model = static_cast<CModel*>(node);
+                CScene::attachToRenderList(model);
                 for (NodeConstIter iter = model->Begin(); iter < model->End(); ++iter)
                 {
                     CNode* subNode = (*iter);
@@ -257,6 +258,7 @@ void CScene::attachToRenderList(CNode* node)
             }
             break;
 
+        case ENodeType::eModel:
         default:
             break;
     };
