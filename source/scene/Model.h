@@ -11,23 +11,30 @@ namespace scene
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CModelManager;
+    class CScene;
 
     class CModel : public CNode, public stream::CResource
     {
     public:
 
         CModel();
-        virtual          ~CModel();
+        virtual             ~CModel();
 
-        void            init(const stream::IStreamPtr& stream)  override;
-        bool            load()                                  override;
+        friend              CScene;
 
-        void            init()         override;
-        void            update(s32 dt) override;
+        void                init(const stream::IStreamPtr& stream)  override;
+        bool                load()                                  override;
 
-        bool            setRenderTechniqueForAllMeshes(const std::string& file);
+        void                init()         override;
+        void                update(s32 dt) override;
+
+        bool                setRenderTechniqueForAllMeshes(const std::string& file);
 
     private:
+
+        const NodeList&     getNodeList() const;
+
+        NodeList            m_nodeList;
 
     };
 

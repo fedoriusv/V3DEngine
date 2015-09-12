@@ -26,8 +26,13 @@ const std::string& CNode::getNodeNameByType(ENodeType type)
 
 CNode::CNode()
     : m_parentNode(nullptr)
+
     , m_nodeType(ENodeType::eUnknown)
     , m_initialiazed(false)
+
+    , m_id(-1)
+    , m_name("")
+
     , m_position(Vector3D(0.f))
     , m_rotation(Vector3D(0.f))
     , m_scale(Vector3D(1.f))
@@ -192,8 +197,15 @@ f32 CNode::getPriority() const
 
 CNode* CNode::getChildNodeByID(u32 id) const
 {
-    ASSERT(id < m_childNodes.size() && "invalid index");
-    return m_childNodes[id];
+    for (CNode* node : m_childNodes)
+    {
+        s32 nodeId = node->getID();
+        if (nodeId == id)
+        {
+            return node;
+        }
+    }
+    return nullptr;
 }
 
 CNode* CNode::getChildNodeByName(const std::string& name) const

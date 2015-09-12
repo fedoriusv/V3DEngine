@@ -82,6 +82,8 @@ namespace scene
 
         std::vector<CNode*>::const_iterator Begin() const;
         std::vector<CNode*>::const_iterator End() const;
+        std::vector<CNode*>::iterator       Begin();
+        std::vector<CNode*>::iterator       End();
                                     
         virtual void                        init() = 0;
         virtual void                        update(s32 dt)   = 0;
@@ -94,9 +96,6 @@ namespace scene
         static const std::string&           getNodeNameByType(ENodeType type);
 
     protected:
-
-        std::vector<CNode*>::iterator       Begin();
-        std::vector<CNode*>::iterator       End();
 
         friend                              renderer::CRenderList;
 

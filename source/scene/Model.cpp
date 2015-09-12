@@ -16,6 +16,15 @@ CModel::CModel()
 
 CModel::~CModel()
 {
+    for (NodeList::const_iterator iter = m_nodeList.cbegin(); iter < m_nodeList.cend(); ++iter)
+    {
+        CNode* node = (*iter);
+        
+        delete node;
+        node = nullptr;
+    }
+
+    m_nodeList.clear();
 }
 
 void CModel::init()
@@ -25,7 +34,7 @@ void CModel::init()
         return;
     }
 
-    for (NodeList::const_iterator iter = CNode::Begin(); iter < CNode::End(); ++iter)
+    for (NodeList::const_iterator iter = m_nodeList.cbegin(); iter < m_nodeList.cend(); ++iter)
     {
         CNode* node = (*iter);
         (*iter)->init();
@@ -65,6 +74,17 @@ bool CModel::load()
         stream->read(m_id);
         stream->read(m_name);
 
+        m_nodeList.clear();
+
+        u32 nodesCount;
+        stream->read(nodesCount);
+        for (u32 index = 0; index < nodesCount; ++index)
+        {
+            CNode* node = nullptr;
+            stream->read(&node, sizeof(CNode*), 1);
+            m_nodeList.push_back(node);
+        }
+
         return true;
     }
 
@@ -80,7 +100,7 @@ bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
         return false;
     }
 
-    for (NodeList::const_iterator iter = CNode::Begin(); iter < CNode::End(); ++iter)
+    for (NodeList::const_iterator iter = m_nodeList.cbegin(); iter < m_nodeList.cend(); ++iter)
     {
         CNode* node = (*iter);
         switch (node->getNodeType())
@@ -95,4 +115,9 @@ bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
     }
 
     return true;
+}
+
+const NodeList& CModel::getNodeList() const
+{
+    return m_nodeList;
 }

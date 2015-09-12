@@ -71,13 +71,23 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
     data->write(id);
     data->write(name);
 
-    model->init(data);
+    //Material
+    std::vector<MemoryStreamPtr> materialList;
+
+    u32 countMaterials = 0;
+    //stream->read(countMaterials);
+    for (u32 index = 0; index < countMaterials; ++index)
+    {
+        //TODO:
+    }
+
+    //Geometry
+    std::vector<s32> parentList;
+    NodeList nodeList;
 
     u32 countNodes;
     stream->read(countNodes);
-
-    std::vector<s32> parentList;
-    for (u32 nodeIdx = 0; nodeIdx < countNodes; ++nodeIdx)
+    for (u32 index = 0; index < countNodes; ++index)
     {
         s32 nodetype;
         stream->read(nodetype);
@@ -86,11 +96,33 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         stream->read(parrentIdx);
         parentList.push_back(parrentIdx);
 
-        u32 subStreamSize;
-        stream->read(subStreamSize);
+        s32 materialIdx = 0;
+        //stream->read(materialIdx);
 
-        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
-        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
+        u32 subStreamMatSize = 0;
+        if (materialIdx > 0)
+        {
+            subStreamMatSize = materialList[materialIdx]->size();
+        }
+
+        u32 subStreamGeoSize;
+        stream->read(subStreamGeoSize);
+
+        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamGeoSize + subStreamMatSize);
+        stream->read(subStream->getData(), sizeof(u8), subStreamGeoSize);
+
+        if (subStreamMatSize > 0)
+        {
+            subStream->seekCur(subStreamGeoSize + 1);
+            subStream->write(materialList[materialIdx]->getData(), sizeof(u8), subStreamMatSize);
+        }
+
+        s32 nodeIdx;
+        if (subStream->size() > 0)
+        {
+            subStream->seekBeg(0);
+            subStream->read(nodeIdx);
+        }
 
         CNode* node = nullptr;
         switch (nodetype)
@@ -108,22 +140,41 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
                 break;
         }
 
-        model->attachChild(node);
+        node->setID(nodeIdx);
+        nodeList.push_back(node);
     }
 
-    /*for (NodeList::const_iterator iter = model->Begin(); iter < model->End(); ++iter)
+    data->write((u32)nodeList.size());
+
+    //Parents
+    u32 index = 0;
+    for (NodeList::iterator iter = nodeList.begin(); iter < nodeList.end(); ++iter)
     {
         CNode* node = (*iter);
-        
-        if (parentList[nodeIdx] >= 0)
+        data->write(&node, sizeof(CNode*), 1);
+        s32 parentIdx = parentList[index];
+        if (parentIdx >= 0)
         {
-            node->setParent(model->getNode(parentList[nodeIdx]));
+            auto predHaveParent = [parentIdx](const CNode* node) -> bool
+            {
+                return parentIdx == node->getID();
+            };
+
+            auto parentIter = std::find_if(nodeList.begin(), nodeList.end(), predHaveParent);
+            node->setParent(parentIter != nodeList.end() ? (*parentIter) : model);
         }
         else
         {
             node->setParent(model);
         }
-    }*/
+        ++index;
+    }
+
+    parentList.clear();
+    nodeList.clear();
+    materialList.clear();
+
+    model->init(data);
 
     return model;
 }

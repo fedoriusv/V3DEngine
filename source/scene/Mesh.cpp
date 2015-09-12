@@ -113,7 +113,6 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
         data._indices.resize(countIndices);
         stream->read(data._indices.data(), sizeof(u32), countIndices);
     }
-    data._indices.clear();
 
     u32 countVertices = 0;
     stream->read(countVertices);

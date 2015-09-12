@@ -50,7 +50,6 @@ void CRenderTargetManager::unload(const renderer::RenderTargetPtr& target)
     };
 
     auto it = std::find_if(m_renderTargets.begin(), m_renderTargets.end(), predDelete);
-
     if (it != m_renderTargets.end())
     {
         m_renderTargets.erase(it);

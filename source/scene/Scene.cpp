@@ -137,12 +137,15 @@ void CScene::clear()
 
 CNode* CScene::getNodeByID(s32 id)
 {
-    for (NodeList::iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    auto predCheckId = [id](const CNode* node) -> bool
     {
-        if ((*iter)->getID() == id)
-        {
-            return (*iter);
-        }
+        return id == node->getID();
+    };
+
+    auto iter = std::find_if(m_objects.begin(), m_objects.end(), predCheckId);
+    if (iter != m_objects.end())
+    {
+        return (*iter);
     }
 
     return nullptr;
@@ -150,12 +153,15 @@ CNode* CScene::getNodeByID(s32 id)
 
 CNode* CScene::getNodeByName(const std::string& name)
 {
-    for (NodeList::const_iterator iter = m_objects.begin(); iter < m_objects.end(); ++iter)
+    auto predCheckName = [&name](const CNode* node) -> bool
     {
-        if ((*iter)->getName().compare(name) == 0)
-        {
-            return (*iter);
-        }
+        return name == node->getName();
+    };
+
+    auto iter = std::find_if(m_objects.begin(), m_objects.end(), predCheckName);
+    if (iter != m_objects.end())
+    {
+        return (*iter);
     }
 
     return nullptr;
@@ -183,9 +189,8 @@ void CScene::initRenderLists()
             case ENodeType::eModel:
             {
                 const CModel* model = static_cast<CModel*>(node);
-                for (NodeList::const_iterator iter = model->Begin(); iter < model->End(); ++iter)
+                for (CNode* subNode : model->getNodeList())
                 {
-                    CNode* subNode = (*iter);
                     switch (subNode->getNodeType())
                     {
                       case ENodeType::eMesh:
