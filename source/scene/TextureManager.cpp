@@ -28,7 +28,11 @@ CTextureManager::~CTextureManager()
 void CTextureManager::add(const CTexture* texture)
 {
     std::string name = texture->getResourseName();
-    TResourceLoader::insert(texture, name);
+    const CTexture* findTexture = TResourceLoader::get(name);
+    if (!findTexture)
+    {
+        TResourceLoader::insert(texture, name);;
+    }
 }
 
 const CTexture* CTextureManager::load(const std::string* files[6])
