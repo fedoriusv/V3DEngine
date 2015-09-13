@@ -519,6 +519,12 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
         return true;
     }
 
+    if (!gameMaterial)
+    {
+        LOG_WARNING("Material don't apply for this Node. Skipping Export Material");
+        return true; //maybe need false
+    }
+
     std::string materialName = TCHARToString(gameMaterial->GetMaterialName());
     std::string materialClass = TCHARToString(gameMaterial->GetMaterialClass());
 
