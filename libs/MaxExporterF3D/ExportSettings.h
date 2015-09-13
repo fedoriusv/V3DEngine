@@ -12,6 +12,7 @@ namespace v3d
         CSettings();
         ~CSettings();
 
+        void setExportIndices(bool exported);
         void setExportNormals(bool exported);
         void setExportBinormals(bool exported);
         void setExportTangents(bool exported);
@@ -25,6 +26,7 @@ namespace v3d
         void setExportCameras(bool exported);
 
 
+        bool isExportIndices() const;
         bool isExportNormals() const;
         bool isExportBinormals() const;
         bool isExportTangents() const;
@@ -40,6 +42,7 @@ namespace v3d
     private:
 
         //Geometry
+        bool    m_exportIndices;
         bool    m_exportNormals;
         bool    m_exportBinormals;
         bool    m_exportTangents;

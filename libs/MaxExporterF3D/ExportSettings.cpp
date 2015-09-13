@@ -3,7 +3,8 @@
 using namespace v3d;
 
 CSettings::CSettings()
-: m_exportNormals(true)
+: m_exportIndices(true)
+, m_exportNormals(true)
 , m_exportBinormals(false)
 , m_exportTangents(false)
 , m_exportColors(false)
@@ -19,6 +20,11 @@ CSettings::CSettings()
 
 CSettings::~CSettings()
 {
+}
+
+void CSettings::setExportIndices(bool exported)
+{
+    m_exportIndices = exported;
 }
 
 void CSettings::setExportNormals(bool exported)
@@ -69,6 +75,11 @@ void CSettings::setExportLights(bool exported)
 void CSettings::setExportCameras(bool exported)
 {
     m_exportCameras = exported;
+}
+
+bool CSettings::isExportIndices() const
+{
+    return m_exportIndices;
 }
 
 bool CSettings::isExportNormals() const

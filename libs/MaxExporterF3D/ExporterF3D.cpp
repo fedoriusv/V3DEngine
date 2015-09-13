@@ -14,8 +14,11 @@
 #include "scene/Camera.h"
 #include "scene/Light.h"
 #include "renderer/NULL/GeometryNull.h"
+#include "renderer/NULL/TextureNull.h"
 
 using namespace v3d;
+using namespace scene;
+using namespace renderer;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -265,7 +268,7 @@ ExporterF3D::EExportError ExporterF3D::CreateModel()
     return eNoError;
 }
 
-ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, scene::CNode* parent)
+ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, CNode* parent)
 {
     IGameObject* gameObject = node->GetIGameObject();
 
@@ -286,7 +289,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
         return eNoError;
     }
 
-    scene::CNode* object = m_scene->createNode(objectType);
+    CNode* object = m_scene->createNode(objectType);
     if (!object)
     {
         LOG_WARNING("Export unknown type: %d", objectType);
@@ -301,7 +304,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
         case IGameObject::IGAME_MESH:
         {
             LOG_INFO("Export IGAME_MESH: %s", TCHARToString(node->GetName()).c_str());
-            scene::CMesh* mesh = static_cast<scene::CMesh*>(object);
+            CMesh* mesh = static_cast<CMesh*>(object);
             if (!ExportMesh(node, mesh))
             {
                 delete object;
@@ -315,7 +318,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
         case IGameObject::IGAME_LIGHT:
         {
             LOG_INFO("Export IGAME_LIGHT: %s", TCHARToString(node->GetName()).c_str());
-            scene::CLight* light = static_cast<scene::CLight*>(object);
+            CLight* light = static_cast<CLight*>(object);
             if (!ExportLight(node, light))
             {
                 delete object;
@@ -329,7 +332,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
         case IGameObject::IGAME_CAMERA:
         {
             LOG_INFO("Export IGAME_CAMERA: %s", TCHARToString(node->GetName()).c_str());
-            scene::CCamera* camera = static_cast<scene::CCamera*>(object);
+            CCamera* camera = static_cast<CCamera*>(object);
             if (!ExportCamera(node, camera))
             {
                 delete object;
@@ -374,7 +377,7 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, sc
     return eNoError;
 }
 
-bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
+bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
 {
     IGameMesh* gameMesh = (IGameMesh*)node->GetIGameObject();
     if (!gameMesh->InitializeData() || !gameMesh->IsRenderable())
@@ -406,12 +409,12 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
     LOG_INFO("AlphaVerts : %d", numAlphaVerts);
 
     Tab<s32> materialList = gameMesh->GetActiveMatIDs();
-    int materialCount = materialList.Count();
+    s32 materialCount = materialList.Count();
     LOG_INFO("MaterialCount : %d", materialCount);
 
-    renderer::MaterialPtr& material = const_cast<renderer::MaterialPtr&>(mesh->getMaterial());
-    renderer::GeometryPtr& geomerty = const_cast<renderer::GeometryPtr&>(mesh->getGeometry());
-    geomerty = std::make_shared<renderer::CGeometryNull>(nullptr);
+    MaterialPtr& material = const_cast<MaterialPtr&>(mesh->getMaterial());
+    GeometryPtr& geomerty = const_cast<GeometryPtr&>(mesh->getGeometry());
+    geomerty = std::make_shared<CGeometryNull>(nullptr);
 
     std::vector<s32> indexList;
 
@@ -431,19 +434,22 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
 
                 for (u32 k = 0; k < 3; ++k)
                 {
-                    LOG_GEBUG("addIndex : %d", sourceFace->vert[k]);
-                    geomerty->addIndex(sourceFace->vert[k]);
+                    if (m_settings->isExportIndices())
+                    {
+                        LOG_DEBUG("add Index : %d", sourceFace->vert[k]);
+                        geomerty->addIndex(sourceFace->vert[k]);
+                    }
 
-                    //if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend())
+                    if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend() || !m_settings->isExportIndices())
                     {
                         Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
-                        LOG_GEBUG("addVertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
+                        LOG_DEBUG("add Vertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
                         geomerty->addVertex(convertPointToVector3(vertex));
 
                         if (m_settings->isExportNormals())
                         {
                             Point3 normal = gameMesh->GetNormal(sourceFace->norm[k], m_settings->isExportObjectSpace()).Normalize();
-                            LOG_GEBUG("addNormal : (%f, %f, %f)", normal.x, normal.y, normal.z);
+                            LOG_DEBUG("add Normal : (%f, %f, %f)", normal.x, normal.y, normal.z);
                             geomerty->addNormal(convertPointToVector3(normal));
                         }
 
@@ -451,7 +457,7 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                         {
                             s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
                             Point3 binormal = gameMesh->GetBinormal(binormalTangentIndex).Normalize();
-                            LOG_GEBUG("addBinormal : (%f, %f, %f)", binormal.x, binormal.y, binormal.z);
+                            LOG_DEBUG("add Binormal : (%f, %f, %f)", binormal.x, binormal.y, binormal.z);
                             geomerty->addBinormal(convertPointToVector3(binormal));
                         }
 
@@ -459,7 +465,7 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                         {
                             s32 binormalTangentIndex = gameMesh->GetFaceVertexTangentBinormal(j, k);
                             Point3 tangent = gameMesh->GetTangent(binormalTangentIndex).Normalize();
-                            LOG_GEBUG("addTangent : (%f, %f, %f)", tangent.x, tangent.y, tangent.z);
+                            LOG_DEBUG("add Tangent : (%f, %f, %f)", tangent.x, tangent.y, tangent.z);
                             geomerty->addTangent(convertPointToVector3(tangent));
                         }
 
@@ -470,7 +476,7 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                             col.x = core::abs(col.x);
                             col.y = core::abs(col.y);
                             col.z = core::abs(col.z);
-                            LOG_GEBUG("addColor : (%f, %f, %f)", col.x, col.y, col.z);
+                            LOG_DEBUG("add Color : (%f, %f, %f)", col.x, col.y, col.z);
                             geomerty->addColor(col);
                         }
 
@@ -480,7 +486,7 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
                             Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
                             //TODO: tiling factor * texCoord
                             //TODO: texcoord layers
-                            LOG_GEBUG("addTexCoord : (%f, %f)", texCoord.x, texCoord.y);
+                            LOG_DEBUG("add TexCoord : (%f, %f)", texCoord.x, texCoord.y);
                             geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
                         }
 
@@ -494,26 +500,196 @@ bool ExporterF3D::ExportMesh(IGameNode* node, scene::CMesh* mesh)
     return true;
 }
 
-bool ExporterF3D::ExportLight(IGameNode* node, scene::CLight* light)
+bool ExporterF3D::ExportLight(IGameNode* node, CLight* light)
 {
     //TODO:
     return false;
 }
 
-bool ExporterF3D::ExportCamera(IGameNode* node, scene::CCamera* camera)
+bool ExporterF3D::ExportCamera(IGameNode* node, CCamera* camera)
 {
     //TODO:
     return false;
 }
 
-bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material)
+bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& material)
 {
-    if (m_settings->isExportMaterials())
+    if (!m_settings->isExportMaterials())
     {
         return true;
     }
 
-    //TODO:
+    std::string materialName = TCHARToString(gameMaterial->GetMaterialName());
+    std::string materialClass = TCHARToString(gameMaterial->GetMaterialClass());
+
+    auto predMaterialExist = [&materialName](const MaterialPtr& material) -> bool
+    {
+        return material->getResourseName() == materialName;
+    };
+
+    const std::vector<MaterialPtr>& materials = m_scene->getMaterialList();
+    std::vector<MaterialPtr>::const_iterator iter = std::find_if(materials.begin(), materials.end(), predMaterialExist);
+    if (iter != materials.end())
+    {
+        material = (*iter);
+        return true;
+    }
+
+    LOG_INFO("ExportMaterial : %s, class: %s", materialName.c_str(), materialClass.c_str());
+    if (gameMaterial->IsMultiType())
+    {
+        s32 countSubMaterial = gameMaterial->GetSubMaterialCount();
+        LOG_INFO("Num Sub Materials : %d", countSubMaterial);
+        for (u32 i = 0; i < countSubMaterial; ++i)
+        {
+            if (i == 0) //Use only first
+            {
+                IGameMaterial* subGameMaterial = gameMaterial->GetSubMaterial(i);
+
+                s32 materialId = gameMaterial->GetMaterialID(i);
+                LOG_INFO("Material ID : %d", materialId);
+
+                return ExporterF3D::ExportMaterial(subGameMaterial, material);
+            }
+        }
+    }
+    else
+    {
+        material->setResourseName(materialName);
+
+        //Texture
+        for (u32 i = 0; i < gameMaterial->GetNumberOfTextureMaps(); ++i)
+        {
+            IGameTextureMap* textureMap = gameMaterial->GetIGameTextureMap(i);
+
+            std::string textureName = TCHARToString(textureMap->GetTextureName());
+            LOG_INFO("Texture Name[%d] : %s", i, textureName.c_str());
+
+            s32 textureType = textureMap->GetStdMapSlot();
+            switch (textureType)
+            {
+            case ID_DI:
+            {
+                std::string diffuseMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
+                LOG_INFO("DiffuseMap Texture File : %s", diffuseMapName.c_str());
+
+                CTexture* texture = new CTextureNull();
+                texture->setResourseName(textureName);
+                texture->setResourseFolder(diffuseMapName);
+
+                material->setTexture(i, texture);
+            }
+                break;
+
+            case ID_DP:
+            {
+                std::string heightMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
+                LOG_INFO("HeightMap Texture File : %s", heightMapName.c_str());
+
+                CTexture* texture = new CTextureNull();
+                texture->setResourseName(textureName);
+                texture->setResourseFolder(heightMapName);
+
+                material->setTexture(i, texture);
+
+            }
+                break;
+
+
+            case ID_BU:
+            {
+                std::string normalMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
+                LOG_INFO("NormalMap Texture File : %s", normalMapName.c_str());
+
+                CTexture* texture = new CTextureNull();
+                texture->setResourseName(textureName);
+                texture->setResourseFolder(normalMapName);
+
+                material->setTexture(i, texture);
+
+            }
+                break;
+
+            case ID_SP:
+            case ID_OP:
+            default:
+                break;
+            }
+        }
+
+        //Diffuse Color
+        IGameProperty* propertyDiffuseColor = gameMaterial->GetDiffuseData();
+        if (propertyDiffuseColor->GetType() == IGAME_POINT3_PROP)
+        {
+            Point3 color;
+            propertyDiffuseColor->GetPropertyValue(color);
+            LOG_DEBUG("add DiffuseColor : (%f, %f, %f)", color.x, color.y, color.z);
+            material->setDiffuseColor(convertPointToVector3(color));
+        }
+
+        //Ambient Color
+        IGameProperty* propertyAmbientColor = gameMaterial->GetAmbientData();
+        if (propertyAmbientColor->GetType() == IGAME_POINT3_PROP)
+        {
+            Point3 color;
+            propertyAmbientColor->GetPropertyValue(color);
+            LOG_DEBUG("add AmbientColor : (%f, %f, %f)", color.x, color.y, color.z);
+            material->setAmbientColor(convertPointToVector3(color));
+        }
+
+        //Specular Color
+        IGameProperty* propertySpecularColor = gameMaterial->GetSpecularData();
+        if (propertySpecularColor->GetType() == IGAME_POINT3_PROP)
+        {
+            Point3 color;
+            propertySpecularColor->GetPropertyValue(color);
+            LOG_DEBUG("add SpecularColor : (%f, %f, %f)", color.x, color.y, color.z);
+            material->setSpecularColor(convertPointToVector3(color));
+        }
+
+        //Emission Color
+        IGameProperty* propertyEmissionColor = gameMaterial->GetEmissiveData();
+        if (propertyEmissionColor->GetType() == IGAME_POINT3_PROP)
+        {
+            Point3 color;
+            propertyEmissionColor->GetPropertyValue(color);
+            LOG_DEBUG("add EmissionColor : (%f, %f, %f)", color.x, color.y, color.z);
+            material->setEmissionColor(convertPointToVector3(color));
+        }
+
+        //Opacity Color
+        IGameProperty* propertyOpacity = gameMaterial->GetOpacityData();
+        if (propertyOpacity->GetType() == IGAME_FLOAT_PROP)
+        {
+            f32 opacity;
+            propertyOpacity->GetPropertyValue(opacity);
+            LOG_DEBUG("add Transparency : %f", opacity);
+            material->setTransparency(opacity);
+        }
+
+        //Specular Level
+        IGameProperty* propertySpecularLevel = gameMaterial->GetSpecularLevelData();
+        if (propertySpecularLevel->GetType() == IGAME_FLOAT_PROP)
+        {
+            f32 level;
+            propertySpecularLevel->GetPropertyValue(level);
+            LOG_DEBUG("add SpecularLevel : %f", level);
+            material->setShininess(level);
+        }
+
+        //Glossiness
+        IGameProperty* propertyGlossiness = gameMaterial->GetGlossinessData();
+        if (propertyGlossiness->GetType() == IGAME_FLOAT_PROP)
+        {
+            f32 glossiness;
+            propertyGlossiness->GetPropertyValue(glossiness);
+            LOG_DEBUG("add Glossiness : %f", glossiness);
+            material->setGlossiness(glossiness);
+        }
+    }
+
+    m_scene->addMaterial(material);
+
     return true;
 }
 
@@ -529,6 +705,17 @@ core::Vector2D ExporterF3D::convertPointToVector2(const Point2& point)
     //return core::Vector2D(point.x, point.y);
 }
 
+core::Vector4D ExporterF3D::convertPointToVector4(const Point4& point)
+{
+    return core::Vector4D(core::round(point.x, k_decimalRound), core::round(point.y, k_decimalRound), core::round(point.z, k_decimalRound), core::round(point.w, k_decimalRound));
+    //return core::Vector3D(point.x, point.y, point.z, point.w);
+}
+
+std::string ExporterF3D::getBitmapNameWithoutPath(const std::string& name)
+{
+    std::size_t pos = name.find_last_of("\\") + 1;
+    return name.substr(pos, name.size() - pos);
+}
 
 
 INT_PTR CALLBACK ExporterF3D::TestOptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -570,6 +757,7 @@ INT_PTR CALLBACK ExporterF3D::ExporterF3DOptionsDlgProc(HWND hWnd, UINT message,
             CheckDlgButton(hWnd, IDC_EXPORT_LIGHTS, settings->isExportLights());
             CheckDlgButton(hWnd, IDC_EXPORT_CAMERA, settings->isExportCameras());
 
+            CheckDlgButton(hWnd, IDC_EXPORT_INDICES, settings->isExportIndices());
             CheckDlgButton(hWnd, IDC_EXPORT_NORMAL, settings->isExportNormals());
             CheckDlgButton(hWnd, IDC_EXPORT_BINORMAL, settings->isExportBinormals());
             CheckDlgButton(hWnd, IDC_EXPORT_TANGENT, settings->isExportTangents());
@@ -603,6 +791,7 @@ INT_PTR CALLBACK ExporterF3D::ExporterF3DOptionsDlgProc(HWND hWnd, UINT message,
                 settings->setExportLights(IsDlgButtonChecked(hWnd, IDC_EXPORT_LIGHTS) ? true : false);
                 settings->setExportCameras(IsDlgButtonChecked(hWnd, IDC_EXPORT_CAMERA) ? true : false);
 
+                settings->setExportIndices(IsDlgButtonChecked(hWnd, IDC_EXPORT_INDICES) ? true : false);
                 settings->setExportNormals(IsDlgButtonChecked(hWnd, IDC_EXPORT_NORMAL) ? true : false);
                 settings->setExportBinormals(IsDlgButtonChecked(hWnd, IDC_EXPORT_BINORMAL) ? true : false);
                 settings->setExportTangents(IsDlgButtonChecked(hWnd, IDC_EXPORT_TANGENT) ? true : false);

@@ -36,28 +36,33 @@ namespace scene
         CSceneData();
         ~CSceneData();
 
-        const std::vector<Obj>&     getNodesList() const;
-        void                        addNode(Obj& node);
+        const std::vector<Obj>&             getNodesList() const;
+        void                                addNode(const Obj& node);
 
-        void                        setName(const std::string& name);
-        void                        setId(s32 id);
+        const std::vector<renderer::MaterialPtr>& getMaterialList() const;
+        void                                addMaterial(const renderer::MaterialPtr& material);
 
-        scene::CNode*               createNode(IGameObject::ObjectTypes type);
+        void                                setName(const std::string& name);
+        void                                setId(s32 id);
 
-        bool                        save(const std::string& file, s32 version);
+        scene::CNode*                       createNode(IGameObject::ObjectTypes type);
+
+        bool                                save(const std::string& file, s32 version);
 
     private:
 
-        bool                        saveGeometry(stream::MemoryStreamPtr& stream);
-        bool                        saveMaterial(stream::MemoryStreamPtr& stream);
+        bool                                saveGeometry(stream::MemoryStreamPtr& stream);
+        bool                                saveMaterial(stream::MemoryStreamPtr& stream);
 
-        bool                        serializeMesh(const scene::CMesh* node, stream::MemoryStreamPtr& stream);
-        bool                        serializeLight(const scene::CLight* node, stream::MemoryStreamPtr& stream);
-        bool                        serializeCamera(const scene::CCamera* node, stream::MemoryStreamPtr& stream);
+        bool                                serializeMesh(const scene::CMesh* node, stream::MemoryStreamPtr& stream);
+        bool                                serializeLight(const scene::CLight* node, stream::MemoryStreamPtr& stream);
+        bool                                serializeCamera(const scene::CCamera* node, stream::MemoryStreamPtr& stream);
 
-        std::string                 m_name;
-        s32                         m_id;
-        std::vector<Obj>            m_objectList;
+        std::string                         m_name;
+        s32                                 m_id;
+
+        std::vector<Obj>                    m_objectList;
+        std::vector<renderer::MaterialPtr>  m_materialList;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

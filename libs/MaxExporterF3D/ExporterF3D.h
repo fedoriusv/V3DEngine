@@ -80,8 +80,11 @@ namespace v3d
         bool                        ExportCamera(IGameNode* node, scene::CCamera* camera);
         bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material);
 
+        core::Vector4D              convertPointToVector4(const Point4& point);
         core::Vector3D              convertPointToVector3(const Point3& point);
         core::Vector2D              convertPointToVector2(const Point2& point);
+
+        std::string                 getBitmapNameWithoutPath(const std::string& name);
 
     private:
 
