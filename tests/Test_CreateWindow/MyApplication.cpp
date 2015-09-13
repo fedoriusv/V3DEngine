@@ -27,8 +27,12 @@ void MyApplication::init()
     CShape* cube1 = scene->addCube(cube, Vector3D(1, 0, 0), 0.2f);
     cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");*/
 
-    CModel* model = scene->addModel("models/teapot.f3d", 0, Vector3D(0, 1, -5));
-    model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
+    CModel* model = scene->addModel("models/test.f3d", 0, Vector3D(0, -3, -5));
+    if (model)
+    {
+        model->setScale(Vector3D(0.1f, 0.1f, 0.1f));
+        model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
+    }
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 

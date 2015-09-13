@@ -15,7 +15,7 @@
 		<renderstate>
             <polygonmode val="line"/>
             <winding val="ccw"/>
-            <culling val="false"/>
+            <culling val="back"/>
             <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
             <depthWrite val="true"/>
             <depthTest val="lequal"/>
