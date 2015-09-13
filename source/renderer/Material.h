@@ -2,6 +2,8 @@
 #define _V3D_MATERIAL_H_
 
 #include "Texture.h"
+#include "stream/Resource.h"
+#include "utils/Cloneable.h"
 #include "ShaderProgram.h"
 #include "RenderTechnique.h"
 
@@ -13,11 +15,12 @@ namespace renderer
 
     class CRenderer;
 
-    class CMaterial
+    class CMaterial : public stream::CResource, public utils::TCloneable<std::shared_ptr<CMaterial>>
     {
     public:
 
         CMaterial();
+        CMaterial(const CMaterial&) = delete;
         virtual                     ~CMaterial();
 
         void                        setAmbientColor (const core::Vector4D& color);
@@ -25,6 +28,7 @@ namespace renderer
         void                        setSpecularColor(const core::Vector4D& color);
         void                        setEmissionColor(const core::Vector4D& color);
         void                        setShininess(f32 value);
+        void                        setGlossiness(f32 value);
         void                        setTransparency(f32 value);
 
         const core::Vector4D&       getAmbientColor()  const;
@@ -32,6 +36,7 @@ namespace renderer
         const core::Vector4D&       getSpecularColor() const;
         const core::Vector4D&       getEmissionColor() const;
         f32                         getShininess()     const;
+        f32                         getGlossiness()    const;
         f32                         getTransparency()  const;
 
         bool                        setTexture(u32 layer, const std::string& file);
@@ -49,6 +54,13 @@ namespace renderer
         const CRenderTechnique*     getRenderTechique() const;
         CRenderTechnique*           getRenderTechique();
 
+        const std::string&          getName() const;
+
+        void                        init(const stream::IStreamPtr& stream)  override;
+        bool                        load()                                  override;
+
+        std::shared_ptr<CMaterial>  clone()                                 override;
+
     private:
 
         struct SMaterialData
@@ -58,7 +70,10 @@ namespace renderer
             core::Vector4D          _specular;
             core::Vector4D          _emission;
             f32                     _shininess;
+            f32                     _glossiness;
             f32                     _transparency;
+
+            SMaterialData& operator=(const SMaterialData&);
         };
 
     protected:
@@ -71,6 +86,7 @@ namespace renderer
         const CRenderTechnique*     m_renderTechnique;
 
         bool                        m_needUpdate;
+        std::string                 m_name;
 
     };
 
