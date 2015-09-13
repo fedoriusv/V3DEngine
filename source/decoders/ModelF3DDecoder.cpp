@@ -3,11 +3,13 @@
 #include "utils/Logger.h"
 #include "scene/Model.h"
 #include "scene/Mesh.h"
+#include "renderer/Material.h"
 
 using namespace v3d;
 using namespace decoders;
 using namespace scene;
 using namespace stream;
+using namespace renderer;
 
 CModelF3DDecoder::CModelF3DDecoder()
     : CResourceDecoder()
@@ -72,13 +74,28 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
     data->write(name);
 
     //Material
-    std::vector<MemoryStreamPtr> materialList;
+    std::map<std::string, MaterialPtr> materialList;
 
     u32 countMaterials = 0;
-    //stream->read(countMaterials);
+    stream->read(countMaterials);
     for (u32 index = 0; index < countMaterials; ++index)
     {
-        //TODO:
+        u32 subStreamSize;
+        stream->read(subStreamSize);
+
+        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
+        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
+        
+        subStream->seekBeg(0);
+        std::string materialName;
+        subStream->read(materialName);
+
+        if (!materialName.empty())
+        {
+            MaterialPtr material =  std::make_shared<CMaterial>();
+            material->init(subStream);
+            materialList.insert(std::map<std::string, MaterialPtr>::value_type(materialName, material));
+        }
     }
 
     //Geometry
@@ -96,26 +113,14 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         stream->read(parrentIdx);
         parentList.push_back(parrentIdx);
 
-        s32 materialIdx = 0;
-        //stream->read(materialIdx);
+        std::string materialName;
+        stream->read(materialName);
 
-        u32 subStreamMatSize = 0;
-        if (materialIdx > 0)
-        {
-            subStreamMatSize = materialList[materialIdx]->size();
-        }
+        u32 subStreamSize;
+        stream->read(subStreamSize);
 
-        u32 subStreamGeoSize;
-        stream->read(subStreamGeoSize);
-
-        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamGeoSize + subStreamMatSize);
-        stream->read(subStream->getData(), sizeof(u8), subStreamGeoSize);
-
-        if (subStreamMatSize > 0)
-        {
-            subStream->seekCur(subStreamGeoSize + 1);
-            subStream->write(materialList[materialIdx]->getData(), sizeof(u8), subStreamMatSize);
-        }
+        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
+        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
 
         s32 nodeIdx;
         if (subStream->size() > 0)
@@ -131,6 +136,11 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
             {
                 node = new CMesh();
                 static_cast<CMesh*>(node)->init(subStream);
+                if (!materialName.empty())
+                {
+                    MaterialPtr material = materialList[materialName];
+                    static_cast<CMesh*>(node)->setMaterial(material->clone());
+                }
             }
                 break;
 

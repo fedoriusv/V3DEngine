@@ -1,11 +1,13 @@
 #include "Mesh.h"
 #include "utils/Logger.h"
+#include "stream/StreamManager.h"
 #include "Engine.h"
 
 using namespace v3d;
 using namespace core;
 using namespace scene;
 using namespace renderer;
+using namespace stream;
 
 CMesh::CMesh()
 {
@@ -81,7 +83,7 @@ bool CMesh::load()
     const stream::IStreamPtr& stream = CResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CMesh: Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
+        LOG_ERROR("CMesh: Empty Stream with name [%s]", CResource::getResourseName().c_str());
         return false;
     }
 
@@ -174,5 +176,13 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 
 void CMesh::loadMaterial(const stream::IStreamPtr& stream)
 {
-    //TODO:
+    const MaterialPtr& material = CRenderable::getMaterial();
+    if (material)
+    {
+        if (!material->load())
+        {
+            LOG_WARNING("CMesh: Material have not stream data");
+            return;
+        }
+    }
 }
