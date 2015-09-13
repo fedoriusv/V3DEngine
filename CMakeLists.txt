@@ -197,6 +197,7 @@ file(GLOB SCENE_SOURCES ${SOURCE_DIR}/scene/*.cpp)
 #Stream Source
 file(GLOB STREAM_HEADERS ${SOURCE_DIR}/stream/*.h)
 file(GLOB STREAM_SOURCES ${SOURCE_DIR}/stream/*.cpp)
+file(GLOB STREAM_SOURCES ${SOURCE_DIR}/stream/*.inl)
 
 #Utils Source
 file(GLOB UTILS_HEADERS ${SOURCE_DIR}/utils/*.h)
