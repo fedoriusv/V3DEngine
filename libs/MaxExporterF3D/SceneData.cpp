@@ -186,16 +186,16 @@ bool CSceneData::saveMaterial(MemoryStreamPtr& stream)
 
         //Colors
         core::Vector4D diffuse = material->getDiffuseColor();
-        subStream->write(&diffuse[0], sizeof(core::Vector4D), 1);
+        subStream->write(&diffuse.x, sizeof(core::Vector4D), 1);
 
         core::Vector4D ambient = material->getAmbientColor();
-        subStream->write(&ambient[0], sizeof(core::Vector4D), 1);
+        subStream->write(&ambient.x, sizeof(core::Vector4D), 1);
 
         core::Vector4D specular = material->getSpecularColor();
-        subStream->write(&specular[0], sizeof(core::Vector4D), 1);
+        subStream->write(&specular.x, sizeof(core::Vector4D), 1);
 
         core::Vector4D emission = material->getEmissionColor();
-        subStream->write(&emission[0], sizeof(core::Vector4D), 1);
+        subStream->write(&emission.x, sizeof(core::Vector4D), 1);
 
         subStream->write(material->getTransparency());
         subStream->write(material->getShininess());

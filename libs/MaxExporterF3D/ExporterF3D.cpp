@@ -574,8 +574,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 LOG_INFO("DiffuseMap Texture File : %s", diffuseMapName.c_str());
 
                 CTexture* texture = new CTextureNull();
-                texture->setResourseName(textureName);
-                texture->setResourseFolder(diffuseMapName);
+                texture->setResourseName(diffuseMapName);
 
                 material->setTexture(i, texture);
             }
@@ -587,8 +586,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 LOG_INFO("HeightMap Texture File : %s", heightMapName.c_str());
 
                 CTexture* texture = new CTextureNull();
-                texture->setResourseName(textureName);
-                texture->setResourseFolder(heightMapName);
+                texture->setResourseName(heightMapName);
 
                 material->setTexture(i, texture);
 
@@ -602,8 +600,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 LOG_INFO("NormalMap Texture File : %s", normalMapName.c_str());
 
                 CTexture* texture = new CTextureNull();
-                texture->setResourseName(textureName);
-                texture->setResourseFolder(normalMapName);
+                texture->setResourseName(normalMapName);
 
                 material->setTexture(i, texture);
 
