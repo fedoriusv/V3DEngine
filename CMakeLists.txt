@@ -159,8 +159,9 @@ endif()
 
 #Core Source
 file(GLOB CORE_HEADERS ${SOURCE_DIR}/core/*.h)
+file(GLOB CORE_INLINES ${SOURCE_DIR}/core/*.inl)
 file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.cpp)
-file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.inl)
+
 
 #Renderer Source
 file(GLOB RENDERER_HEADERS ${SOURCE_DIR}/renderer/*.h)
@@ -196,8 +197,8 @@ file(GLOB SCENE_SOURCES ${SOURCE_DIR}/scene/*.cpp)
 
 #Stream Source
 file(GLOB STREAM_HEADERS ${SOURCE_DIR}/stream/*.h)
+file(GLOB STREAM_INLINES ${SOURCE_DIR}/stream/*.inl)
 file(GLOB STREAM_SOURCES ${SOURCE_DIR}/stream/*.cpp)
-file(GLOB STREAM_SOURCES ${SOURCE_DIR}/stream/*.inl)
 
 #Utils Source
 file(GLOB UTILS_HEADERS ${SOURCE_DIR}/utils/*.h)
@@ -214,7 +215,7 @@ file(GLOB MAIN_SOURCES ${SOURCE_DIR}/*.cpp)
 ################################
 #Filters
 source_group(platform         FILES ${PLATFORM_HEADERS}    ${PLATFORM_SOURCES})
-source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES})
+source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES}    		${CORE_INLINES})
 source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
 source_group(resources        FILES ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES})
 source_group(decoders         FILES ${DECODERS_HEADERS}    ${DECODERS_SOURCES})
@@ -222,7 +223,7 @@ source_group(gl               FILES ${GL_HEADERS}          ${GL_SOURCES})
 source_group(d3d              FILES ${D3D_HEADERS}         ${D3D_SOURCES})
 source_group(null             FILES ${NULL_HEADERS}        ${NULL_SOURCES})
 source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
-source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES})
+source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES}		${STREAM_INLINES})
 source_group(scene            FILES ${SCENE_HEADERS}       ${SCENE_SOURCES})
 source_group(utils            FILES ${UTILS_HEADERS}       ${UTILS_SOURCES})
 source_group(event            FILES ${EVENT_HEADERS}       ${EVENT_SOURCES})
