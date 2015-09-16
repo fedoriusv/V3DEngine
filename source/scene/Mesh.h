@@ -3,6 +3,8 @@
 
 #include "Node.h"
 #include "renderer/Renderable.h"
+#include "stream/Resource.h"
+#include "utils/Cloneable.h"
 
 namespace v3d
 {
@@ -12,11 +14,11 @@ namespace scene
 
     class CModelManager;
 
-    class CMesh : public CNode, public renderer::CRenderable, public stream::CResource
+    class CMesh : public CNode, public renderer::CRenderable, public stream::CResource, public utils::TCloneable<CMesh*>
     {
     public:
 
-        explicit    CMesh();
+        CMesh();
         virtual     ~CMesh();
 
         void        init(const stream::IStreamPtr& stream)  override;
@@ -26,7 +28,11 @@ namespace scene
         void        render()                                override;
         void        update(s32 dt)                          override;
 
+        CMesh*      clone()                                 override;
+
     private:
+
+        CMesh(const CMesh&);
 
         void        loadGeometry(const stream::IStreamPtr& stream);
         void        loadMaterial(const stream::IStreamPtr& stream);

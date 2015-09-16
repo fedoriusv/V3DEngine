@@ -43,6 +43,25 @@ CNode::CNode()
     m_transformFlag |= eNodeAll | eNodeTransform;
 }
 
+CNode::CNode(const CNode& node)
+    : m_parentNode(nullptr)
+
+    , m_nodeType(node.m_nodeType)
+    , m_initialiazed(false)
+
+    , m_id(-1)
+    , m_name("")
+
+    , m_position(node.m_position)
+    , m_rotation(node.m_rotation)
+    , m_scale(node.m_scale)
+    , m_priority(0.f)
+    , m_visible(node.m_visible)
+    , m_transformFlag(eNodeTransform)
+{
+    m_transformFlag |= eNodeAll | eNodeTransform;
+}
+
 CNode::~CNode()
 {
     if (m_parentNode)

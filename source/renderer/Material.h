@@ -15,12 +15,12 @@ namespace renderer
 
     class CRenderer;
 
-    class CMaterial : public stream::CResource, public utils::TCloneable<std::shared_ptr<CMaterial>>
+    class CMaterial : public stream::CResource, public utils::TCloneable<std::shared_ptr<CMaterial>>, public std::enable_shared_from_this<CMaterial>
     {
     public:
 
         CMaterial();
-        CMaterial(const CMaterial&) = delete;
+        CMaterial(const CMaterial&);
         virtual                     ~CMaterial();
 
         void                        setAmbientColor (const core::Vector4D& color);

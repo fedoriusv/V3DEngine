@@ -34,6 +34,8 @@ void MyApplication::init()
         model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
     }
 
+    CModel* model2 = scene->addModel("models/test.f3d", 0, Vector3D(0, -3, -5));
+
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 
     //for (u32 j = 0; j < 5; ++j)

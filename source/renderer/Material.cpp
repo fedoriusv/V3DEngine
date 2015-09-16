@@ -40,6 +40,11 @@ CMaterial::CMaterial()
     m_materialData._transparency = 1.0f;
 }
 
+CMaterial::CMaterial(const CMaterial& material)
+{
+    //TODO:
+}
+
 CMaterial::~CMaterial()
 {
 }
@@ -294,7 +299,7 @@ const std::string& CMaterial::getName() const
 
 MaterialPtr CMaterial::clone()
 {
-    MaterialPtr clone = std::make_shared<CMaterial>();
+    MaterialPtr clone = std::make_shared<CMaterial>(*shared_from_this().get());
     
     clone->m_materialData = m_materialData;
     clone->m_texture = m_texture;

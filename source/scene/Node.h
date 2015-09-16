@@ -97,6 +97,8 @@ namespace scene
 
     protected:
 
+        CNode(const CNode&);
+
         friend                              renderer::CRenderList;
 
         void                                setPriority(f32 priority);

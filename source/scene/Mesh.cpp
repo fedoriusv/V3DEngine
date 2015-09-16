@@ -17,6 +17,13 @@ CMesh::CMesh()
     CRenderable::setMaterial(std::make_shared<CMaterial>());
 }
 
+CMesh::CMesh(const CMesh& mesh)
+    : CNode(mesh)
+{
+    m_nodeType = mesh.m_nodeType;
+    LOG_INFO("CMesh: Clone node type: %s", getNodeNameByType(m_nodeType).c_str());
+}
+
 CMesh::~CMesh()
 {
     CRenderable::getGeometry()->free();
@@ -185,4 +192,15 @@ void CMesh::loadMaterial(const stream::IStreamPtr& stream)
             return;
         }
     }
+}
+
+
+CMesh* CMesh::clone()
+{
+    CMesh* mesh = new CMesh(*this);
+    mesh->setMaterial(CMesh::getMaterial()->clone());
+
+    mesh->init(CResource::getStream());
+
+    return mesh;
 }

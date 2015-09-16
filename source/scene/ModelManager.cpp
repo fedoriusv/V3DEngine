@@ -31,8 +31,13 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
     CModel* findModel = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findModel)
     {
-        //TODO: copy
-        return findModel;
+        CModel* cloneModel = findModel->clone();
+        if (cloneModel)
+        {
+            TResourceLoader::insert(cloneModel, cloneModel->getName());
+        }
+
+        return cloneModel;
     }
     else
     {

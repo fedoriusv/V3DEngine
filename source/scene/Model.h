@@ -3,6 +3,7 @@
 
 #include "Node.h"
 #include "stream/Resource.h"
+#include "utils/Cloneable.h"
 
 namespace v3d
 {
@@ -13,7 +14,7 @@ namespace scene
     class CModelManager;
     class CScene;
 
-    class CModel : public CNode, public stream::CResource
+    class CModel : public CNode, public stream::CResource, public utils::TCloneable<CModel*>
     {
     public:
 
@@ -30,7 +31,11 @@ namespace scene
 
         bool                setRenderTechniqueForAllMeshes(const std::string& file);
 
+        CModel*             clone() override;
+
     private:
+
+        CModel(const CModel&);
 
         const NodeList&     getNodeList() const;
 
