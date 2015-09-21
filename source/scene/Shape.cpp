@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "renderer/Geometry.h"
+#include "renderer/Material.h"
 
 
 using namespace v3d;
@@ -13,7 +14,7 @@ CShape::CShape()
     m_nodeType = ENodeType::eShape;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(new CMaterial());
 }
 
 void CShape::init()

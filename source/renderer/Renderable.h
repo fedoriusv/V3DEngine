@@ -1,15 +1,16 @@
 #ifndef _V3D_RENDEREBLE_H_
 #define _V3D_RENDEREBLE_H_
 
-#include "renderer/Geometry.h"
-#include "renderer/Material.h"
-#include "renderer/RenderJob.h"
+#include "Geometry.h"
+#include "RenderJob.h"
 
 namespace v3d
 {
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class CMaterial;
 
     class CRenderable
     {
@@ -20,8 +21,8 @@ namespace renderer
 
         virtual void        render() = 0;
 
-        void                setMaterial(const MaterialPtr& material);
-        const MaterialPtr&  getMaterial() const;
+        void                setMaterial(CMaterial* material);
+        CMaterial*          getMaterial() const;
 
         const RenderJobPtr& getRenderJob() const;
         const GeometryPtr&  getGeometry() const;
@@ -33,7 +34,7 @@ namespace renderer
 
     private:
 
-        MaterialPtr         m_material;
+        CMaterial*          m_material;
         GeometryPtr         m_geometry;
         RenderJobPtr        m_renderJob;
     };

@@ -1,6 +1,7 @@
 #include "Billboard.h"
 #include "Engine.h"
 #include "utils/Logger.h"
+#include "renderer/Material.h"
 
 using namespace v3d;
 using namespace scene;
@@ -11,7 +12,7 @@ CBillboard::CBillboard(const std::string& texture)
     m_nodeType = ENodeType::eBillboard;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(new CMaterial());
     CRenderable::getMaterial()->setTexture(0, texture);
 }
 

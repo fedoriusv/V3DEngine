@@ -6,6 +6,7 @@ using namespace v3d;
 using namespace core;
 using namespace scene;
 using namespace renderer;
+using namespace stream;
 
 CLight::CLight()
 {
@@ -94,4 +95,21 @@ void CLight::init()
     m_data._radius = 100.0f;
     m_data._direction = Vector3D(0.0f, 0.0f, -1.0f);
     m_data._attenuation = Vector3D(0.5f, 0.0f, 0.02f);
+}
+
+void CLight::init(const stream::IStreamPtr& stream)
+{
+    CResource::setStream(stream);
+}
+
+bool CLight::load()
+{
+    const IStreamPtr& stream = CResource::getStream();
+    if (!stream)
+    {
+        LOG_ERROR("CLight: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        return false;
+    }
+
+    //TODO:
 }

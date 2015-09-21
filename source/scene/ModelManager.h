@@ -16,13 +16,18 @@ namespace scene
     private:
 
         friend TSingleton<CModelManager>;
+        friend CModel;
 
         CModelManager();
         ~CModelManager();
 
     public:
 
-        CModel*   load(const std::string& name, const std::string& alias = "") override;
+        CModel*     load(const std::string& name, const std::string& alias = "") override;
+
+    private:
+
+        u32         m_modelInc;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
-#include "renderer/Renderer.h"
+#include "Renderer.h"
+#include "Material.h"
 #include "context/DriverContext.h"
 #include "scene/Light.h"
 #include "scene/Camera.h"
@@ -115,7 +116,7 @@ void CRenderer::setCurrentRenderTarget(const RenderTargetPtr& target)
 
 void CRenderer::draw(const RenderJobPtr& job)
 {
-    const MaterialPtr& material = job->getMaterial();
+    CMaterial* material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
     u32 targetIndex = job->getRenderTarget();
@@ -238,7 +239,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     }
 }
 
-void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
+void CRenderer::updateMaterial(const CMaterial* material, const RenderPassPtr& pass)
 {
     const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
@@ -376,7 +377,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     }
 }
 
-void CRenderer::updateTexture(const MaterialPtr& material, const RenderPassPtr& pass)
+void CRenderer::updateTexture(CMaterial* material, const RenderPassPtr& pass)
 {
     const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
     const SamplerList& samplerList = defaultData->getSamplerList();

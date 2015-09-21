@@ -2,6 +2,7 @@
 #define _V3D_CAMERA_H_
 
 #include "Node.h"
+#include "stream/Resource.h"
 
 namespace v3d
 {
@@ -11,7 +12,7 @@ namespace scene
 
     class CScene;
 
-    class CCamera : public CNode
+    class CCamera : public CNode, stream::CResource
     {
     public:
 
@@ -54,6 +55,9 @@ namespace scene
 
         void                    init()                  override;
         void                    update(s32 dt)          override;
+
+        void                    init(const stream::IStreamPtr& stream)  override;
+        bool                    load()                                  override;
 
         bool                    isActive()              const;
 

@@ -30,6 +30,7 @@ CMaterial::SMaterialData& CMaterial::SMaterialData::operator = (const SMaterialD
 CMaterial::CMaterial()
     : m_needUpdate(true)
     , m_name("")
+    , m_renderTechnique(nullptr)
 {
     m_materialData._ambient      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
     m_materialData._diffuse      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
@@ -41,8 +42,12 @@ CMaterial::CMaterial()
 }
 
 CMaterial::CMaterial(const CMaterial& material)
+    : m_needUpdate(true)
+    , m_name(material.m_name)
 {
-    //TODO:
+    m_materialData = material.m_materialData;
+    m_texture = material.m_texture;
+    m_renderTechnique = material.m_renderTechnique;
 }
 
 CMaterial::~CMaterial()
@@ -233,7 +238,7 @@ bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
 {
     CRenderTechnique* technique = new CRenderTechnique();
     technique->init(stream);
-    if (technique->load())
+    if (!technique->load())
     {
         LOG_ERROR("CMaterial: Streaming error read");
         return false;
@@ -297,17 +302,14 @@ const std::string& CMaterial::getName() const
     return m_name;
 }
 
-MaterialPtr CMaterial::clone()
+CMaterial* CMaterial::clone()
 {
-    MaterialPtr clone = std::make_shared<CMaterial>(*shared_from_this().get());
-    
-    clone->m_materialData = m_materialData;
-    clone->m_texture = m_texture;
-    clone->m_renderTechnique = m_renderTechnique;
-    clone->m_name = m_name;
-    clone->m_needUpdate = true;
-
-    clone->init(CMaterial::getStream());
-
-    return clone;
+    CMaterial* material = new CMaterial(*this);
+    material->init(CResource::getStream());
+    if (!material->load())
+    {
+        LOG_ERROR("CMaterial: Can't load material stream");
+        ASSERT(false && "CMaterial: Can't load material stream");
+    }
+    return material;
 }

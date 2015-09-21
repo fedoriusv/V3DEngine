@@ -2,13 +2,16 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Light.h"
+#include "ModelManager.h"
+#include "RenderTechniqueManager.h"
 #include "utils/Logger.h"
-#include "scene/ModelManager.h"
-#include "scene/RenderTechniqueManager.h"
+#include "stream/StreamManager.h"
+#include "renderer/Material.h"
 
 using namespace v3d;
 using namespace scene;
 using namespace renderer;
+using namespace stream;
 
 CModel::CModel()
 {
@@ -89,9 +92,90 @@ bool CModel::load()
         stream->read(nodesCount);
         for (u32 index = 0; index < nodesCount; ++index)
         {
+            u32 nodetype;
+            stream->read(nodetype);
+
+            u32 nodeStreamSize;
+            stream->read(nodeStreamSize);
+
+            MemoryStreamPtr nodeStream = CStreamManager::createMemoryStream(nullptr, nodeStreamSize);
+            stream->read(nodeStream->getData(), sizeof(u8), nodeStreamSize);
+
             CNode* node = nullptr;
-            stream->read(&node, sizeof(CNode*), 1);
-            m_nodeList.push_back(node);
+            switch (nodetype)
+            {
+                case eMesh:
+                {
+                    node = new CMesh();
+                    static_cast<CMesh*>(node)->init(nodeStream);
+                
+                    std::string materialName;
+                    stream->read(materialName);
+                    if (!materialName.empty())
+                    {
+                        u32 materialStreamSize;
+                        stream->read(materialStreamSize);
+
+                        MemoryStreamPtr materialStream = CStreamManager::createMemoryStream(nullptr, materialStreamSize);
+                        stream->read(materialStream->getData(), sizeof(u8), materialStreamSize);
+
+                        CMaterial* material = static_cast<CMesh*>(node)->getMaterial();
+                        material->init(materialStream);
+                    }
+                }
+                    break;
+
+                case eLight:
+                {
+                    node = new CLight();
+                    static_cast<CLight*>(node)->init(nodeStream);
+                }
+                    break;
+
+                case eCamera:
+                {
+                    node = new CCamera();
+                    static_cast<CCamera*>(node)->init(nodeStream);
+                }
+                    break;
+
+            default:
+                break;
+            }
+
+            if (node)
+            {
+                m_nodeList.push_back(node);
+            }
+        }
+
+        u32 parentListSize;
+        stream->read(parentListSize);
+
+        std::vector<s32> parentList(parentListSize);
+        stream->read(parentList.data(), sizeof(s32), parentListSize);
+
+        //Parents
+        u32 index = 0;
+        for (NodeList::iterator iter = m_nodeList.begin(); iter < m_nodeList.end(); ++iter)
+        {
+            CNode* node = (*iter);
+            s32 parentIdx = parentList[index];
+            if (parentIdx >= 0)
+            {
+                auto predHaveParent = [parentIdx](const CNode* node) -> bool
+                {
+                    return parentIdx == node->getID();
+                };
+
+                auto parentIter = std::find_if(m_nodeList.begin(), m_nodeList.end(), predHaveParent);
+                node->setParent(parentIter != m_nodeList.end() ? (*parentIter) : this);
+            }
+            else
+            {
+                node->setParent(this);
+            }
+            ++index;
         }
 
         return true;
@@ -143,8 +227,6 @@ CModel* CModel::clone()
         delete model;
         model = nullptr;
     }
-
-    //TODO: set new name
 
     return model;
 }

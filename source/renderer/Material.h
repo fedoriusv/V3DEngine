@@ -15,7 +15,7 @@ namespace renderer
 
     class CRenderer;
 
-    class CMaterial : public stream::CResource, public utils::TCloneable<std::shared_ptr<CMaterial>>, public std::enable_shared_from_this<CMaterial>
+    class CMaterial : public stream::CResource, public utils::TCloneable<CMaterial*>
     {
     public:
 
@@ -59,7 +59,7 @@ namespace renderer
         void                        init(const stream::IStreamPtr& stream)  override;
         bool                        load()                                  override;
 
-        std::shared_ptr<CMaterial>  clone()                                 override;
+        CMaterial*                  clone()                                 override;
 
     private:
 
@@ -89,10 +89,6 @@ namespace renderer
         std::string                 m_name;
 
     };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<CMaterial> MaterialPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

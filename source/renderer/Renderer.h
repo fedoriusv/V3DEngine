@@ -20,6 +20,8 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CMaterial;
+
     class CRenderer
     {
     public:
@@ -68,9 +70,9 @@ namespace renderer
         virtual void                resetTexture()  = 0;
 
         void                        updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass);
-        void                        updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass);
+        void                        updateMaterial(const CMaterial* material, const RenderPassPtr& pass);
         void                        updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass);
-        void                        updateTexture(const MaterialPtr& material, const RenderPassPtr& pass);
+        void                        updateTexture(CMaterial* material, const RenderPassPtr& pass);
 
         DriverContextPtr            m_context;
         u32                         m_frameIndex;

@@ -30,11 +30,18 @@ void MyApplication::init()
     CModel* model = scene->addModel("models/test.f3d", 0, Vector3D(0, -3, -5));
     if (model)
     {
+        model->setName("model1");
         model->setScale(Vector3D(0.1f, 0.1f, 0.1f));
         model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
     }
 
-    CModel* model2 = scene->addModel("models/test.f3d", 0, Vector3D(0, -3, -5));
+    CModel* model2 = scene->addModel("models/test.f3d", 0, Vector3D(0, -6, -5));
+    if (model2)
+    {
+        model2->setName("model2");
+        model2->setScale(Vector3D(0.1f, 0.1f, 0.1f));
+        model2->setRenderTechniqueForAllMeshes("shaders/simple.xml");
+    }
 
     //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
 

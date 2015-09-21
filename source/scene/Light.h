@@ -2,6 +2,7 @@
 #define _V3D_LIGHT_H_
 
 #include "Node.h"
+#include "stream/Resource.h"
 
 namespace v3d
 {
@@ -22,7 +23,7 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CLight : public CNode
+    class CLight : public CNode, public stream::CResource
     {
     public:
 
@@ -31,6 +32,9 @@ namespace scene
 
         void                      init()         override;
         void                      update(s32 dt) override;
+
+        void                      init(const stream::IStreamPtr& stream)  override;
+        bool                      load()                                  override;
                                   
         void                      setAmbient(const  core::Vector4D& color);
         void                      setDiffuse(const  core::Vector4D& color);

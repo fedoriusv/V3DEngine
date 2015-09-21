@@ -1,4 +1,5 @@
 #include "Renderable.h"
+#include "Material.h"
 #include "Engine.h"
 
 using namespace v3d;
@@ -12,9 +13,14 @@ CRenderable::CRenderable()
 
 CRenderable::~CRenderable()
 {
+    if (m_material)
+    {
+        delete m_material;
+        m_material = nullptr;
+    }
 }
 
-void CRenderable::setMaterial(const renderer::MaterialPtr& material)
+void CRenderable::setMaterial(CMaterial* material)
 {
     m_material = material;
 }
@@ -30,7 +36,7 @@ void CRenderable::setGeometry(const GeometryPtr& geometry)
 }
 
 
-const MaterialPtr& CRenderable::getMaterial() const
+CMaterial* CRenderable::getMaterial() const
 {
     return m_material;
 }

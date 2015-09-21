@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "renderer/Renderer.h"
+#include "renderer/Material.h"
 #include "RenderTargetManager.h"
 
 using namespace v3d;

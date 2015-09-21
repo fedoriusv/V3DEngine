@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "TextureManager.h"
 #include "utils/Logger.h"
+#include "renderer/Material.h"
 
 using namespace v3d;
 using namespace scene;
@@ -12,7 +13,7 @@ CSkybox::CSkybox()
     m_nodeType = ENodeType::eSkyBox;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(new CMaterial());
 }
 
 CSkybox::~CSkybox()
@@ -135,7 +136,8 @@ void CSkybox::render()
     for (u32 i = 0; i < k_countSize; ++i)
     {
         CRenderable::getGeometry()->setInterval((i * 6), 6);
-        CRenderable::getRenderJob()->getMaterial()->setTexture(0, m_textures[i]);
+        CMaterial* material = CRenderable::getMaterial();
+        material->setTexture(0, m_textures[i]);
 
         CRenderable::render();
     }

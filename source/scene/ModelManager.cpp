@@ -10,6 +10,7 @@ using namespace decoders;
 using namespace renderer;
 
 CModelManager::CModelManager()
+: m_modelInc(0)
 {
     TResourceLoader::registerPath("../../../../data/");
     TResourceLoader::registerPath("../../../../../data/");
@@ -34,6 +35,7 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
         CModel* cloneModel = findModel->clone();
         if (cloneModel)
         {
+            nameStr.append("_" + std::to_string(++m_modelInc));
             TResourceLoader::insert(cloneModel, cloneModel->getName());
         }
 

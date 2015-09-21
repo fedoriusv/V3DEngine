@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "scene/FontManager.h"
+#include "renderer/Material.h"
 
 using namespace v3d;
 using namespace core;
@@ -23,7 +24,7 @@ CText::CText(const std::string& font)
     m_nodeType = ENodeType::eText;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(new CMaterial());
 }
 
 CText::~CText()

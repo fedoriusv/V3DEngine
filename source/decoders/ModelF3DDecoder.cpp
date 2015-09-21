@@ -74,36 +74,34 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
     data->write(name);
 
     //Material
-    std::map<std::string, MaterialPtr> materialList;
+    std::map<std::string, MemoryStreamPtr> materialList;
 
     u32 countMaterials = 0;
     stream->read(countMaterials);
     for (u32 index = 0; index < countMaterials; ++index)
     {
-        u32 subStreamSize;
-        stream->read(subStreamSize);
+        u32 materialStreamSize;
+        stream->read(materialStreamSize);
 
-        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
-        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
+        MemoryStreamPtr materialStream = stream::CStreamManager::createMemoryStream(nullptr, materialStreamSize);
+        stream->read(materialStream->getData(), sizeof(u8), materialStreamSize);
         
-        subStream->seekBeg(0);
+        materialStream->seekBeg(0);
         std::string materialName;
-        subStream->read(materialName);
+        materialStream->read(materialName);
 
         if (!materialName.empty())
         {
-            MaterialPtr material =  std::make_shared<CMaterial>();
-            material->init(subStream);
-            materialList.insert(std::map<std::string, MaterialPtr>::value_type(materialName, material));
+            materialList.insert(std::map<std::string, MemoryStreamPtr>::value_type(materialName, materialStream));
         }
     }
 
     //Geometry
     std::vector<s32> parentList;
-    NodeList nodeList;
 
     u32 countNodes;
     stream->read(countNodes);
+    data->write(countNodes);
     for (u32 index = 0; index < countNodes; ++index)
     {
         s32 nodetype;
@@ -116,30 +114,27 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         std::string materialName;
         stream->read(materialName);
 
-        u32 subStreamSize;
-        stream->read(subStreamSize);
+        u32 nodeStreamSize;
+        stream->read(nodeStreamSize);
 
-        MemoryStreamPtr subStream = stream::CStreamManager::createMemoryStream(nullptr, subStreamSize);
-        stream->read(subStream->getData(), sizeof(u8), subStreamSize);
+        MemoryStreamPtr nodeStream = stream::CStreamManager::createMemoryStream(nullptr, nodeStreamSize);
+        stream->read(nodeStream->getData(), sizeof(u8), nodeStreamSize);
 
-        s32 nodeIdx;
-        if (subStream->size() > 0)
-        {
-            subStream->seekBeg(0);
-            subStream->read(nodeIdx);
-        }
+        data->write(nodetype);
 
-        CNode* node = nullptr;
         switch (nodetype)
         {
             case eMesh:
             {
-                node = new CMesh();
-                static_cast<CMesh*>(node)->init(subStream);
+                data->write(nodeStream->size());
+                data->write(nodeStream->getData(), sizeof(u8), nodeStream->size());
+
+                data->write(materialName);
                 if (!materialName.empty())
                 {
-                    MaterialPtr material = materialList[materialName];
-                    static_cast<CMesh*>(node)->setMaterial(material->clone());
+                    MemoryStreamPtr& materialStream = materialList[materialName];
+                    data->write(materialStream->size());
+                    data->write(materialStream->getData(), sizeof(u8), materialStream->size());
                 }
             }
                 break;
@@ -149,39 +144,13 @@ stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
             default:
                 break;
         }
-
-        node->setID(nodeIdx);
-        nodeList.push_back(node);
     }
-
-    data->write((u32)nodeList.size());
 
     //Parents
-    u32 index = 0;
-    for (NodeList::iterator iter = nodeList.begin(); iter < nodeList.end(); ++iter)
-    {
-        CNode* node = (*iter);
-        data->write(&node, sizeof(CNode*), 1);
-        s32 parentIdx = parentList[index];
-        if (parentIdx >= 0)
-        {
-            auto predHaveParent = [parentIdx](const CNode* node) -> bool
-            {
-                return parentIdx == node->getID();
-            };
-
-            auto parentIter = std::find_if(nodeList.begin(), nodeList.end(), predHaveParent);
-            node->setParent(parentIter != nodeList.end() ? (*parentIter) : model);
-        }
-        else
-        {
-            node->setParent(model);
-        }
-        ++index;
-    }
+    data->write((u32)parentList.size());
+    data->write(parentList.data(), sizeof(s32), (u32)parentList.size());
 
     parentList.clear();
-    nodeList.clear();
     materialList.clear();
 
     model->init(data);

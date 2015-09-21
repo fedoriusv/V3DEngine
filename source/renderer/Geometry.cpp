@@ -1,7 +1,7 @@
 #include "Geometry.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
+using namespace renderer;
 
 CGeometry::CGeometry(const CRenderTechnique* technique)
     : m_drawMode(EDrawMode::eTriangleStrip)

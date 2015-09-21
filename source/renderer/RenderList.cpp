@@ -1,4 +1,5 @@
 #include "RenderList.h"
+#include "Material.h"
 #include "scene/Node.h"
 #include "scene/Shape.h"
 #include "scene/Mesh.h"

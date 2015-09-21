@@ -4,6 +4,7 @@
 
 using namespace v3d;
 using namespace scene;
+using namespace stream;
 
 CCamera::CCamera()
     : m_orthogonal(false)
@@ -184,4 +185,21 @@ void CCamera::update(s32 dt)
 
         RENDERER->updateCamera(this);
     }
+}
+
+void CCamera::init(const stream::IStreamPtr& stream)
+{
+    CResource::setStream(stream);
+}
+
+bool CCamera::load()
+{
+    const IStreamPtr& stream = CResource::getStream();
+    if (!stream)
+    {
+        LOG_ERROR("CCamera: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        return false;
+    }
+
+    //TODO:
 }

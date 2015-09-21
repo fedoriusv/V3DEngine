@@ -1,7 +1,6 @@
 #ifndef _V3D_RENDERJOB_H_
 #define _V3D_RENDERJOB_H_
 
-#include "Material.h"
 #include "Geometry.h"
 #include "RenderTarget.h"
 
@@ -11,18 +10,18 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CDebugGeometry;
-    class CDebugLight;
+    class CMaterial;
 
     class CRenderJob
     {
     public:
 
-        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const core::Matrix4D& transform);
+        CRenderJob(const CMaterial* material, const GeometryPtr& geometry, const core::Matrix4D& transform);
         ~CRenderJob();
 
-        void                    setMaterial(const MaterialPtr& material);
-        const MaterialPtr&      getMaterial() const;
+        void                    setMaterial(const CMaterial* material);
+        const CMaterial*        getMaterial() const;
+        CMaterial*              getMaterial();
 
         void                    setGeometry(const GeometryPtr& geometry);
         const GeometryPtr&      getGeometry() const;
@@ -35,10 +34,7 @@ namespace renderer
 
     private:
 
-        friend                  CDebugGeometry;
-        friend                  CDebugLight;
-
-        MaterialPtr             m_material;
+        const CMaterial*        m_material;
         GeometryPtr             m_geometry;
         core::Matrix4D          m_transform;
         u32                     m_targetIndex;

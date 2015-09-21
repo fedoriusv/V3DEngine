@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "renderer/Material.h"
 #include "utils/Logger.h"
 #include "stream/StreamManager.h"
 #include "Engine.h"
@@ -14,7 +15,7 @@ CMesh::CMesh()
     m_nodeType = ENodeType::eMesh;
     LOG_INFO("CMesh: Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(std::make_shared<CMaterial>());
+    CRenderable::setMaterial(new CMaterial());
 }
 
 CMesh::CMesh(const CMesh& mesh)
@@ -22,6 +23,8 @@ CMesh::CMesh(const CMesh& mesh)
 {
     m_nodeType = mesh.m_nodeType;
     LOG_INFO("CMesh: Clone node type: %s", getNodeNameByType(m_nodeType).c_str());
+
+    CRenderable::setMaterial(new CMaterial());
 }
 
 CMesh::~CMesh()
@@ -183,7 +186,7 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 
 void CMesh::loadMaterial(const stream::IStreamPtr& stream)
 {
-    const MaterialPtr& material = CRenderable::getMaterial();
+    CMaterial* material = CRenderable::getMaterial();
     if (material)
     {
         if (!material->load())

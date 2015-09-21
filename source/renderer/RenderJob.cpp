@@ -1,12 +1,12 @@
 #include "RenderJob.h"
-#include "scene/Light.h"
+#include "Material.h"
 #include "Engine.h"
 
 using namespace v3d;
 using namespace core;
 using namespace renderer;
 
-CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
+CRenderJob::CRenderJob(const CMaterial* material, const GeometryPtr& geometry, const Matrix4D& transform)
     : m_material(material)
     , m_geometry(geometry)
     , m_transform(transform)
@@ -18,14 +18,19 @@ CRenderJob::~CRenderJob()
 {
 }
 
-void CRenderJob::setMaterial(const MaterialPtr& material)
+void CRenderJob::setMaterial(const CMaterial* material)
 {
    m_material = material;
 }
 
-const MaterialPtr& CRenderJob::getMaterial() const
+const CMaterial* CRenderJob::getMaterial() const
 {
     return m_material;
+}
+
+CMaterial* CRenderJob::getMaterial()
+{
+    return const_cast<CMaterial*>(m_material);
 }
 
 void CRenderJob::setGeometry(const GeometryPtr& geometry)
