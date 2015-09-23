@@ -438,4 +438,12 @@ void CRenderer::updateTexture(CMaterial* material, const RenderPassPtr& pass)
             resetTexture();
         }
     }
+    else
+    {
+        layersCount = material->getTextureCount();
+        if (layersCount == 0)
+        {
+            resetTexture();
+        }
+    }
 }
