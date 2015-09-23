@@ -22,40 +22,24 @@ void MyApplication::init()
 
     /*CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");*/
 
-    CShape* cube1 = scene->addCube(cube, Vector3D(1, 0, 0), 0.2f);
-    cube1->getMaterial()->setRenderTechnique("shaders/simple.xml");*/
-
-    CModel* model = scene->addModel("models/test.f3d", 0, Vector3D(0, -3, -5));
-    if (model)
+    for (u32 col = 0; col < 10; ++col)
     {
-        model->setName("model1");
-        model->setScale(Vector3D(0.1f, 0.1f, 0.1f));
-        model->setRenderTechniqueForAllMeshes("shaders/simple.xml");
+        for (u32 row = 0; row < 10; ++row)
+        {
+            for (u32 width = 0; width < 2; ++width)
+            {
+                CModel* model = scene->addModel("models/test.f3d", 0, Vector3D(row * 1.2f, col * 0.2f, -1 - (width *1.f)));
+                if (model)
+                {
+                    model->setName("cube");
+                    model->setScale(Vector3D(0.01f, 0.01f, 0.01f));
+                    model->setRenderTechniqueForAllMeshes("shaders/default.xml");
+                }
+            }
+        }
     }
-
-    CModel* model2 = scene->addModel("models/test.f3d", 0, Vector3D(0, -6, -5));
-    if (model2)
-    {
-        model2->setName("model2");
-        model2->setScale(Vector3D(0.1f, 0.1f, 0.1f));
-        model2->setRenderTechniqueForAllMeshes("shaders/simple.xml");
-    }
-
-    //scene::CModel* model = static_cast<scene::CModel*>(BaseApplication::getSceneManager()->addModel("models/test.f3d", "shaders/simple.xml"));
-
-    //for (u32 j = 0; j < 5; ++j)
-    //{
-    //    for (u32 i = 0; i < 5; ++i)
-    //    {
-    //        scene::CShape* cube1 = static_cast<scene::CShape*>(BaseApplication::getSceneManager()->addCube(0, core::Vector3D(1 + j * 2, -1, 1 + i * 2)));
-    //        cube1->getMaterial()->setRenderTechnique("shaders/texture.xml");
-    //        //cube1->getMaterial()->setRenderTechnique("shaders/light.xml");
-    //        //cube1->getMaterial()->setDiffuseColor(Vector4D(0, 0, 1, 1));
-    //        cube1->getMaterial()->setTexture(0, "textures/box.jpg");
-    //    }
-    //}
 
     /*scene::CSkybox* skybox = static_cast<scene::CSkybox*>(BaseApplication::getSceneManager()->addSkyBox(
         "textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",

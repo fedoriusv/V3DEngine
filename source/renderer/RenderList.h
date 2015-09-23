@@ -62,7 +62,10 @@ namespace renderer
         RenderTargetPtr                 m_target;
 
         std::vector<SNodeList>          m_list;
+
         std::vector<SNodeList>          m_draw;
+        std::vector<SNodeList>          m_drawStatic;
+        std::vector<SNodeList>          m_drawAlpha;
 
         scene::CCamera*                 m_camera;
 

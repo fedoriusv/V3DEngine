@@ -57,6 +57,9 @@ void CRenderList::clear()
 {
     m_list.clear();
     m_draw.clear();
+
+    m_drawStatic.clear();
+    m_drawAlpha.clear();
 }
 
 const RenderTargetPtr& CRenderList::getRenderTarget() const
@@ -107,6 +110,8 @@ void CRenderList::render()
 void CRenderList::refresh()
 {
     m_draw.clear();
+    m_drawAlpha.clear();
+    m_drawStatic.clear();
 
     for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
@@ -119,7 +124,7 @@ void CRenderList::refresh()
         {
             f32 priority = 0.0f;
             CMesh* mesh = static_cast<CMesh*>(node);
-            if (mesh->getMaterial()->getTransparency() > 0.0f)
+            if (mesh->getMaterial()->getTransparency() < 1.0f)
             {
                 if (m_camera)
                 {
@@ -136,7 +141,17 @@ void CRenderList::refresh()
                     const RenderJobPtr& job = mesh->getRenderJob();
                     job->setRenderTarget((*iter)._targetIndex);
 
-                    m_draw.push_back((*iter));
+                    m_drawAlpha.push_back((*iter));
+                }
+            }
+            else if (mesh->getMaterial()->getTransparency() == 1.0f)
+            {
+                if (checkDistance(node, priority))
+                {
+                    const RenderJobPtr& job = mesh->getRenderJob();
+                    job->setRenderTarget((*iter)._targetIndex);
+
+                    m_drawStatic.push_back((*iter));
                 }
             }
         }
@@ -160,7 +175,7 @@ void CRenderList::refresh()
             const RenderJobPtr& job = skybox->getRenderJob();
             job->setRenderTarget((*iter)._targetIndex);
 
-            m_draw.push_back((*iter));
+            m_drawStatic.push_back((*iter));
         }
             break;
 
@@ -179,7 +194,14 @@ void CRenderList::refresh()
             const RenderJobPtr& job = text->getRenderJob();
             job->setRenderTarget((*iter)._targetIndex);
 
-            m_draw.push_back((*iter));
+            if (text->getMaterial()->getTransparency() < 1.0f)
+            {
+                m_drawAlpha.push_back((*iter));
+            }
+            else if (text->getMaterial()->getTransparency() == 1.0f)
+            {
+                m_drawStatic.push_back((*iter));
+            }
         }
             break;
 
@@ -189,10 +211,16 @@ void CRenderList::refresh()
         }
     }
 
-    std::sort(m_draw.begin(), m_draw.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
+    m_draw.insert(m_draw.begin(), m_drawStatic.begin(), m_drawStatic.end());
+
+    if (!m_drawAlpha.empty())
     {
-        return  (node0._node->getPriority() > node1._node->getPriority());
-    });
+        std::sort(m_drawAlpha.begin(), m_drawAlpha.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
+        {
+            return  (node0._node->getPriority() > node1._node->getPriority());
+        });
+        m_draw.insert(m_draw.end(), m_drawAlpha.begin(), m_drawAlpha.end());
+    }
 }
 
 bool CRenderList::checkDistance(const CNode* node, const f32 distance)
