@@ -11,6 +11,7 @@
 		</attributes>
 		<samplers>
 			<var name="sampler0"/>
+            <var name="sampler1"/>
 		</samplers>
 		<renderstate>
 			<polygonmode val="fill"/>
@@ -61,6 +62,7 @@
 				<![CDATA[
 					#version 330
 					uniform sampler2D sampler0;
+                    uniform sampler2D sampler1;
 
 					struct Vertex 
 					{
@@ -71,7 +73,7 @@
 
 					void main()
 					{
-						fragColor = texture(sampler0, fragVertex.texCoord0);
+						fragColor = texture(sampler0, fragVertex.texCoord0) + texture(sampler1, fragVertex.texCoord0);
 					}
 				]]>
 			</var>

@@ -110,6 +110,7 @@ void CRenderList::render()
 void CRenderList::refresh()
 {
     m_draw.clear();
+
     m_drawAlpha.clear();
     m_drawStatic.clear();
 
