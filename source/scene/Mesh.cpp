@@ -186,7 +186,7 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 
 void CMesh::loadMaterial(const stream::IStreamPtr& stream)
 {
-    CMaterial* material = CRenderable::getMaterial();
+    const MaterialPtr& material = CRenderable::getMaterial();
     if (material)
     {
         if (!material->load())

@@ -6,7 +6,7 @@ using namespace v3d;
 using namespace core;
 using namespace renderer;
 
-CRenderJob::CRenderJob(const CMaterial* material, const GeometryPtr& geometry, const Matrix4D& transform)
+CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
     : m_material(material)
     , m_geometry(geometry)
     , m_transform(transform)
@@ -18,19 +18,19 @@ CRenderJob::~CRenderJob()
 {
 }
 
-void CRenderJob::setMaterial(const CMaterial* material)
+void CRenderJob::setMaterial(const MaterialPtr& material)
 {
    m_material = material;
 }
 
-const CMaterial* CRenderJob::getMaterial() const
+const MaterialPtr& CRenderJob::getMaterial() const
 {
     return m_material;
 }
 
-CMaterial* CRenderJob::getMaterial()
+MaterialPtr& CRenderJob::getMaterial()
 {
-    return const_cast<CMaterial*>(m_material);
+    return m_material;
 }
 
 void CRenderJob::setGeometry(const GeometryPtr& geometry)

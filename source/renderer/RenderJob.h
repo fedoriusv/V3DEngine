@@ -3,6 +3,7 @@
 
 #include "Geometry.h"
 #include "RenderTarget.h"
+#include "Material.h"
 
 namespace v3d
 {
@@ -10,31 +11,33 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CMaterial;
-
     class CRenderJob
     {
     public:
 
-        CRenderJob(const CMaterial* material, const GeometryPtr& geometry, const core::Matrix4D& transform);
+        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const core::Matrix4D& transform);
         ~CRenderJob();
 
-        void                    setMaterial(const CMaterial* material);
-        const CMaterial*        getMaterial() const;
-        CMaterial*              getMaterial();
+        const MaterialPtr&      getMaterial() const;
+        MaterialPtr&            getMaterial();
 
-        void                    setGeometry(const GeometryPtr& geometry);
         const GeometryPtr&      getGeometry() const;
 
-        void                    setTransform(const core::Matrix4D& transform);
         const core::Matrix4D&   getTransform() const;
 
         void                    setRenderTarget(u32 target);
         u32                     getRenderTarget() const;
 
+        void                    setTransform(const core::Matrix4D& transform);
+
+    protected:
+
+        void                    setMaterial(const MaterialPtr& material);
+        void                    setGeometry(const GeometryPtr& geometry);
+
     private:
 
-        const CMaterial*        m_material;
+        MaterialPtr             m_material;
         GeometryPtr             m_geometry;
         core::Matrix4D          m_transform;
         u32                     m_targetIndex;

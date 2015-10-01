@@ -4,6 +4,8 @@
 #include "Texture.h"
 #include "stream/Resource.h"
 #include "utils/Cloneable.h"
+#include "utils/RefCounted.h"
+#include "utils/IntrusivePtr.h"
 #include "ShaderProgram.h"
 #include "RenderTechnique.h"
 
@@ -15,7 +17,7 @@ namespace renderer
 
     class CRenderer;
 
-    class CMaterial : public stream::CResource, public utils::TCloneable<CMaterial*>
+    class CMaterial : public stream::CResource, public utils::TCloneable<CMaterial*>, public utils::CRefCounted
     {
     public:
 
@@ -89,6 +91,10 @@ namespace renderer
         std::string                 m_name;
 
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef utils::TIntrusivePtr<CMaterial> MaterialPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

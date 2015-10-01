@@ -3,14 +3,13 @@
 
 #include "Geometry.h"
 #include "RenderJob.h"
+#include "Material.h"
 
 namespace v3d
 {
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    class CMaterial;
 
     class CRenderable
     {
@@ -21,8 +20,8 @@ namespace renderer
 
         virtual void        render() = 0;
 
-        void                setMaterial(CMaterial* material);
-        CMaterial*          getMaterial() const;
+        void                setMaterial(const MaterialPtr& material);
+        const MaterialPtr&  getMaterial() const;
 
         const RenderJobPtr& getRenderJob() const;
         const GeometryPtr&  getGeometry() const;
@@ -34,7 +33,7 @@ namespace renderer
 
     private:
 
-        CMaterial*          m_material;
+        MaterialPtr         m_material;
         GeometryPtr         m_geometry;
         RenderJobPtr        m_renderJob;
     };

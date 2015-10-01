@@ -112,4 +112,6 @@ bool CLight::load()
     }
 
     //TODO:
+
+    return true;
 }

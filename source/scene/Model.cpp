@@ -119,7 +119,7 @@ bool CModel::load()
                         MemoryStreamPtr materialStream = CStreamManager::createMemoryStream(nullptr, materialStreamSize);
                         stream->read(materialStream->getData(), sizeof(u8), materialStreamSize);
 
-                        CMaterial* material = static_cast<CMesh*>(node)->getMaterial();
+                        const MaterialPtr& material = static_cast<CMesh*>(node)->getMaterial();
                         material->init(materialStream);
                     }
                 }

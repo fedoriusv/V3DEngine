@@ -202,4 +202,6 @@ bool CCamera::load()
     }
 
     //TODO:
+
+    return true;
 }

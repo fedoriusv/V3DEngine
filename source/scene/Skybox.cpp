@@ -136,7 +136,7 @@ void CSkybox::render()
     for (u32 i = 0; i < k_countSize; ++i)
     {
         CRenderable::getGeometry()->setInterval((i * 6), 6);
-        CMaterial* material = CRenderable::getMaterial();
+        const MaterialPtr& material = CRenderable::getMaterial();
         material->setTexture(0, m_textures[i]);
 
         CRenderable::render();

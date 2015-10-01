@@ -13,14 +13,9 @@ CRenderable::CRenderable()
 
 CRenderable::~CRenderable()
 {
-    if (m_material)
-    {
-        delete m_material;
-        m_material = nullptr;
-    }
 }
 
-void CRenderable::setMaterial(CMaterial* material)
+void CRenderable::setMaterial(const MaterialPtr& material)
 {
     m_material = material;
 }
@@ -36,7 +31,7 @@ void CRenderable::setGeometry(const GeometryPtr& geometry)
 }
 
 
-CMaterial* CRenderable::getMaterial() const
+const MaterialPtr& CRenderable::getMaterial() const
 {
     return m_material;
 }
