@@ -1,7 +1,7 @@
 #ifndef _V3D_ENGINE_H_
 #define _V3D_ENGINE_H_
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include "platform/Platform.h"
 #include "platform/Window.h"
 #include "event/InputEventHandler.h"
@@ -13,11 +13,11 @@ namespace v3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CEngine : public TSingleton<CEngine>
+    class CEngine : public utils::TSingleton<CEngine>
     {
     private:
 
-        friend TSingleton<CEngine>;
+        friend utils::TSingleton<CEngine>;
         CEngine();
         ~CEngine();
 

@@ -2,7 +2,7 @@
 #define _V3D_RENDER_TARGET_MANAGER_H_
 
 #include "renderer/RenderTarget.h"
-#include "Singleton.h"
+#include "utils/Singleton.h"
 
 namespace v3d
 {
@@ -10,11 +10,11 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTargetManager : public TSingleton<CRenderTargetManager>
+    class CRenderTargetManager : public utils::TSingleton<CRenderTargetManager>
     {
     private:
 
-        friend TSingleton<CRenderTargetManager>;
+        friend utils::TSingleton<CRenderTargetManager>;
 
         CRenderTargetManager();
         ~CRenderTargetManager();

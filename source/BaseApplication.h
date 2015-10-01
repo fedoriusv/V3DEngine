@@ -21,10 +21,10 @@ namespace v3d
 
     protected:
 
-        virtual const v3d::platform::PlatformPtr&       getPlatform()          const final;
-        virtual const v3d::platform::WindowPtr          getWindow()            const final;
-        virtual const v3d::event::InputEventHandlerPtr& getInputEventHandler() const final;
-        virtual const v3d::scene::SceneManagerPtr&      getSceneManager()      const final;
+        virtual const platform::PlatformPtr&            getPlatform()          const final;
+        virtual const platform::WindowPtr               getWindow()            const final;
+        virtual const event::InputEventHandlerPtr&      getInputEventHandler() const final;
+        virtual const scene::SceneManagerPtr&           getSceneManager()      const final;
 
     private:
 

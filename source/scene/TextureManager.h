@@ -2,7 +2,7 @@
 #define _V3D_TEXTURE_MANAGER_H_
 
 #include "common.h"
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include "renderer/Texture.h"
 #include "stream/ResourceLoader.h"
 
@@ -12,11 +12,11 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureManager : public TSingleton<CTextureManager>, public stream::TResourceLoader<const renderer::CTexture>
+    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<const renderer::CTexture>
     {
     private:
 
-        friend TSingleton<CTextureManager>;
+        friend utils::TSingleton<CTextureManager>;
 
         CTextureManager();
         ~CTextureManager();

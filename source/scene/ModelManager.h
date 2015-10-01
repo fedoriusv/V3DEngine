@@ -1,7 +1,7 @@
 #ifndef _V3D_MODEL_MANAGER_H_
 #define _V3D_MODEL_MANAGER_H_
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include "Model.h"
 #include "stream/ResourceLoader.h"
 
@@ -11,11 +11,11 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelManager : public TSingleton<CModelManager>, public stream::TResourceLoader<CModel>
+    class CModelManager : public utils::TSingleton<CModelManager>, public stream::TResourceLoader<CModel>
     {
     private:
 
-        friend TSingleton<CModelManager>;
+        friend utils::TSingleton<CModelManager>;
         friend CModel;
 
         CModelManager();

@@ -3,7 +3,7 @@
 
 #include "resources/FontData.h"
 #include "stream/ResourceLoader.h"
-#include "Singleton.h"
+#include "utils/Singleton.h"
 
 namespace v3d
 {
@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CFontManager : public TSingleton<CFontManager>, public stream::TResourceLoader<const resources::CFontData>
+    class CFontManager : public utils::TSingleton<CFontManager>, public stream::TResourceLoader<const resources::CFontData>
     {
     public:
 

@@ -1,7 +1,7 @@
 #ifndef _V3D_SHADER_MANAGER_H_
 #define _V3D_SHADER_MANAGER_H_
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include "resources/ShaderSouceData.h"
 #include "stream/ResourceLoader.h"
 
@@ -11,11 +11,11 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderManager : public TSingleton<CShaderManager>, public stream::TResourceLoader<const resources::CShaderSourceData>
+    class CShaderManager : public utils::TSingleton<CShaderManager>, public stream::TResourceLoader<const resources::CShaderSourceData>
     {
     private:
 
-        friend TSingleton<CShaderManager>;
+        friend utils::TSingleton<CShaderManager>;
 
         CShaderManager();
         ~CShaderManager();

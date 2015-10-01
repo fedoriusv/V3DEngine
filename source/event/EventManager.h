@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 
 #include "InputEvents.h"
 #include "EventReceiver.h"
@@ -19,11 +19,11 @@ namespace event
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CEventManager : public TSingleton<CEventManager>
+    class CEventManager : public utils::TSingleton<CEventManager>
     {
     private:
 
-        friend                      TSingleton<CEventManager>;
+        friend                      utils::TSingleton<CEventManager>;
 
         CEventManager();
         virtual                     ~CEventManager();
