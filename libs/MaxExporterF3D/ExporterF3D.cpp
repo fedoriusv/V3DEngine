@@ -292,8 +292,16 @@ ExporterF3D::EExportError ExporterF3D::ExportNode(IGameNode* node, u32 index, CN
     CNode* object = m_scene->createNode(objectType);
     if (!object)
     {
-        LOG_WARNING("Export unknown type: %d", objectType);
-        return eUnknownError;
+        switch (objectType)
+        {
+        case IGameObject::IGAME_HELPER:
+            LOG_WARNING("Export not supported type: %d", objectType);
+            return eNoError;
+
+        default:
+            LOG_ERROR("Export unknown type: %d", objectType);
+            return eUnknownError;
+        }
     }
 
     object->setName(TCHARToString(node->GetName()));
@@ -544,6 +552,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
     LOG_INFO("ExportMaterial : %s, class: %s", materialName.c_str(), materialClass.c_str());
     if (gameMaterial->IsMultiType())
     {
+        LOG_DEBUG("ExportMaterial Export muliType");
         s32 countSubMaterial = gameMaterial->GetSubMaterialCount();
         LOG_INFO("Num Sub Materials : %d", countSubMaterial);
         for (u32 i = 0; i < countSubMaterial; ++i)
@@ -561,11 +570,13 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
     }
     else
     {
+        LOG_DEBUG("ExportMaterial Export singleType");
         material->setResourseName(materialName);
 
         //Texture
         for (u32 i = 0; i < gameMaterial->GetNumberOfTextureMaps(); ++i)
         {
+            LOG_DEBUG("ExportMaterial Textures");
             IGameTextureMap* textureMap = gameMaterial->GetIGameTextureMap(i);
 
             std::string textureName = TCHARToString(textureMap->GetTextureName());
@@ -620,9 +631,11 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
             }
         }
 
+        LOG_DEBUG("ExportMaterial Props");
+
         //Diffuse Color
         IGameProperty* propertyDiffuseColor = gameMaterial->GetDiffuseData();
-        if (propertyDiffuseColor->GetType() == IGAME_POINT3_PROP)
+        if (propertyDiffuseColor && propertyDiffuseColor->GetType() == IGAME_POINT3_PROP)
         {
             Point3 color;
             propertyDiffuseColor->GetPropertyValue(color);
@@ -632,7 +645,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Ambient Color
         IGameProperty* propertyAmbientColor = gameMaterial->GetAmbientData();
-        if (propertyAmbientColor->GetType() == IGAME_POINT3_PROP)
+        if (propertyAmbientColor && propertyAmbientColor->GetType() == IGAME_POINT3_PROP)
         {
             Point3 color;
             propertyAmbientColor->GetPropertyValue(color);
@@ -642,7 +655,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Specular Color
         IGameProperty* propertySpecularColor = gameMaterial->GetSpecularData();
-        if (propertySpecularColor->GetType() == IGAME_POINT3_PROP)
+        if (propertySpecularColor && propertySpecularColor->GetType() == IGAME_POINT3_PROP)
         {
             Point3 color;
             propertySpecularColor->GetPropertyValue(color);
@@ -652,7 +665,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Emission Color
         IGameProperty* propertyEmissionColor = gameMaterial->GetEmissiveData();
-        if (propertyEmissionColor->GetType() == IGAME_POINT3_PROP)
+        if (propertyEmissionColor && propertyEmissionColor->GetType() == IGAME_POINT3_PROP)
         {
             Point3 color;
             propertyEmissionColor->GetPropertyValue(color);
@@ -662,7 +675,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Opacity Color
         IGameProperty* propertyOpacity = gameMaterial->GetOpacityData();
-        if (propertyOpacity->GetType() == IGAME_FLOAT_PROP)
+        if (propertyOpacity && propertyOpacity->GetType() == IGAME_FLOAT_PROP)
         {
             f32 opacity;
             propertyOpacity->GetPropertyValue(opacity);
@@ -672,7 +685,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Specular Level
         IGameProperty* propertySpecularLevel = gameMaterial->GetSpecularLevelData();
-        if (propertySpecularLevel->GetType() == IGAME_FLOAT_PROP)
+        if (propertySpecularLevel && propertySpecularLevel->GetType() == IGAME_FLOAT_PROP)
         {
             f32 level;
             propertySpecularLevel->GetPropertyValue(level);
@@ -682,7 +695,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
 
         //Glossiness
         IGameProperty* propertyGlossiness = gameMaterial->GetGlossinessData();
-        if (propertyGlossiness->GetType() == IGAME_FLOAT_PROP)
+        if (propertyGlossiness && propertyGlossiness->GetType() == IGAME_FLOAT_PROP)
         {
             f32 glossiness;
             propertyGlossiness->GetPropertyValue(glossiness);

@@ -81,7 +81,7 @@ CNode* CSceneData::createNode(IGameObject::ObjectTypes type)
     return nullptr;
 }
 
-bool CSceneData::save(const std::string& file, s32 version)
+bool CSceneData::save(const std::string& file, f32 version)
 {
     if (m_objectList.empty())
     {

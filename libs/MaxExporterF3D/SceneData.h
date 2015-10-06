@@ -47,7 +47,7 @@ namespace scene
 
         scene::CNode*                       createNode(IGameObject::ObjectTypes type);
 
-        bool                                save(const std::string& file, s32 version);
+        bool                                save(const std::string& file, f32 version);
 
     private:
 

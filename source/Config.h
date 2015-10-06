@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define SHADER_PARSER 100
-#define F3D_MODEL_LOADER_VERSION 100
+#define F3D_MODEL_LOADER_VERSION 1.0f
 #define DIRECTINPUT_VERSION 0x0800
 
 #if USED_LOGGER

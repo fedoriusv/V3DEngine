@@ -40,7 +40,7 @@ stream::CResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
         MemoryStreamPtr data = CStreamManager::createMemoryStream(nullptr, stream->size());
         stream->read(data->getData(), sizeof(u8), stream->size());
 
-        s32 version;
+        f32 version;
         data->read(version);
 
         if (version == F3D_MODEL_LOADER_VERSION)

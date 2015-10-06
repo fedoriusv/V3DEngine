@@ -88,7 +88,7 @@ namespace v3d
 
     private:
 
-        const s32                   k_exporterVersion = 100;
+        const f32                   k_exporterVersion = 1.0f;
         const s32                   k_decimalRound = 6;
 
         IGameScene*                 m_iGameScene;
