@@ -424,8 +424,6 @@ bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
     GeometryPtr& geomerty = const_cast<GeometryPtr&>(mesh->getGeometry());
     geomerty = std::make_shared<CGeometryNull>(nullptr);
 
-    std::vector<s32> indexList;
-
     for (u32 i = 0; i < materialCount; ++i)
     {
         s32 matID = materialList[i];
@@ -439,16 +437,17 @@ bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
             for (u32 j = 0; j < numFaces; ++j)
             {
                 FaceEx* sourceFace = faceList[j];
-
                 for (u32 k = 0; k < 3; ++k)
                 {
+                    s32 crrIndex = ExporterF3D::findVertex(geomerty, gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace()));
                     if (m_settings->isExportIndices())
                     {
                         LOG_DEBUG("add Index : %d", sourceFace->vert[k]);
-                        geomerty->addIndex(sourceFace->vert[k]);
+                        geomerty->addIndex((crrIndex >= 0) ? crrIndex : geomerty->getData().verticesSize());
                     }
 
-                    if (std::find(indexList.cbegin(), indexList.cend(), sourceFace->vert[k]) == indexList.cend() || !m_settings->isExportIndices())
+                    
+                    if (!m_settings->isExportIndices() || crrIndex < 0)
                     {
                         Point3 vertex = gameMesh->GetVertex(sourceFace->vert[k], m_settings->isExportObjectSpace());
                         LOG_DEBUG("add Vertex : (%f, %f, %f)", vertex.x, vertex.y, vertex.z);
@@ -497,8 +496,6 @@ bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
                             LOG_DEBUG("add TexCoord : (%f, %f)", texCoord.x, texCoord.y);
                             geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
                         }
-
-                        indexList.push_back(sourceFace->vert[k]);
                     }
                 }
             }
@@ -731,6 +728,20 @@ std::string ExporterF3D::getBitmapNameWithoutPath(const std::string& name)
 {
     std::size_t pos = name.find_last_of("\\") + 1;
     return name.substr(pos, name.size() - pos);
+}
+
+s32 ExporterF3D::findVertex(const renderer::GeometryPtr& geometry, const Point3& vertex)
+{
+    const std::vector<core::Vector3D>& vertices = geometry->getData()._vertices;
+    for (u32 index = 0; index < vertices.size(); ++index)
+    {
+        if (vertices[index] == convertPointToVector3(vertex))
+        {
+            return index;
+        }
+    }
+
+    return - 1;
 }
 
 

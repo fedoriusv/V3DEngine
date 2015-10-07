@@ -12,6 +12,7 @@
 #endif //min
 
 #include "renderer/Material.h"
+#include "renderer/Geometry.h"
 #include "stream/MemoryStream.h"
 
 namespace v3d

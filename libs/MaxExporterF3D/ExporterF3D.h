@@ -83,6 +83,7 @@ namespace v3d
         core::Vector4D              convertPointToVector4(const Point4& point);
         core::Vector3D              convertPointToVector3(const Point3& point);
         core::Vector2D              convertPointToVector2(const Point2& point);
+        s32                         findVertex(const renderer::GeometryPtr& geometry, const Point3& vertex);
 
         std::string                 getBitmapNameWithoutPath(const std::string& name);
 
