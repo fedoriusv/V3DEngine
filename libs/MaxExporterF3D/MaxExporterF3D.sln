@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MaxExporterF3D", "MaxExporterF3D.vcxproj", "{0A852E24-4C6E-4546-87BE-CBF8D950AED7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -54,8 +54,8 @@ Global
 		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|Mixed Platforms.ActiveCfg = Release|x64
 		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|Mixed Platforms.Build.0 = Release|x64
 		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|Win32.ActiveCfg = Release|x64
-		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|x64.ActiveCfg = Release|x64
-		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|x64.Build.0 = Release|x64
+		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|x64.ActiveCfg = F3DRelease|x64
+		{C81F7707-77AC-4F03-864F-9BA74CDD82C2}.Release|x64.Build.0 = F3DRelease|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

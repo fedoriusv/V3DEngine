@@ -62,8 +62,8 @@
       <AdditionalIncludeDirectories>$(MaxSdkInc);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;paramblk2.lib;msxml2.lib;igame.lib;Valera3DEngine_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(MaxSdkLib);$(MaxLib);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;../../project/win32/libs/freetype2/Debug;../../project/win32/F3DDebug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>comctl32.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;paramblk2.lib;msxml2.lib;igame.lib;Valera3DEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MaxSdkLib);$(MaxLib);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;../../project/win32/libs/tinyxml2/F3DRelease;../../project/win32/libs/freetype2/F3DRelease;../../project/win32/F3DRelease;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\ExporterF3D.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -99,7 +99,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_ADESK_3DSMAX_WINDOWS_;WINVER=0x0502;_WIN32_WINNT=0x0502;_WIN32_WINDOWS=0x0502;_WIN32_IE=0x0800;_WINDOWS;ISOLATION_AWARE_ENABLED=1;MODULE_NAME=$(TargetFileName);NDEBUG;SECURE_SCL=0;WIN32;WIN64;_WINDLL;_UNICODE;UNICODE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ADESK_3DSMAX_WINDOWS_;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_NON_CONFORMING_SWPRINTFS;ISOLATION_AWARE_ENABLED=1;MODULE_NAME=$(TargetFileName);NDEBUG;SECURE_SCL=0;WIN32;WIN64;_WINDLL;_USRDLL;_UNICODE;UNICODE;USED_LOGGER=0</PreprocessorDefinitions>
+      <StringPooling />
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking />
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
