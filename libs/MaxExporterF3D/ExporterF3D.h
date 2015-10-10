@@ -78,7 +78,7 @@ namespace v3d
         bool                        ExportMesh(IGameNode* node, scene::CMesh* mesh);
         bool                        ExportLight(IGameNode* node, scene::CLight* light);
         bool                        ExportCamera(IGameNode* node, scene::CCamera* camera);
-        bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material);
+        bool                        ExportMaterial(IGameMaterial* gameMaterial, renderer::MaterialPtr& material, STileUV& tile);
 
         core::Vector4D              convertPointToVector4(const Point4& point);
         core::Vector3D              convertPointToVector3(const Point3& point);

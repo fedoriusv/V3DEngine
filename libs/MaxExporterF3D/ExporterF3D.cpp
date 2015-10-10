@@ -430,9 +430,10 @@ bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
         Tab<FaceEx*> faceList = gameMesh->GetFacesFromMatID(matID);
         s32 numFaces = faceList.Count();
         LOG_INFO("numFaces : %d", numFaces);
+        STileUV tile;
 
         IGameMaterial* sourceMaterial = gameMesh->GetMaterialFromFace(faceList[0]);
-        if (ExporterF3D::ExportMaterial(sourceMaterial, material))
+        if (ExporterF3D::ExportMaterial(sourceMaterial, material, tile))
         {
             for (u32 j = 0; j < numFaces; ++j)
             {
@@ -491,7 +492,8 @@ bool ExporterF3D::ExportMesh(IGameNode* node, CMesh* mesh)
                         {
                             u32 layer = 0;
                             Point2 texCoord = gameMesh->GetTexVertex(sourceFace->texCoord[k]);
-                            //TODO: tiling factor * texCoord
+                            texCoord.x *= tile._u;
+                            texCoord.y *= tile._v;
                             //TODO: texcoord layers
                             LOG_DEBUG("add TexCoord : (%f, %f)", texCoord.x, texCoord.y);
                             geomerty->addTexCoord(layer, convertPointToVector2(texCoord));
@@ -517,7 +519,7 @@ bool ExporterF3D::ExportCamera(IGameNode* node, CCamera* camera)
     return false;
 }
 
-bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& material)
+bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& material, STileUV& tile)
 {
     if (!m_settings->isExportMaterials())
     {
@@ -561,7 +563,7 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 s32 materialId = gameMaterial->GetMaterialID(i);
                 LOG_INFO("Material ID : %d", materialId);
 
-                return ExporterF3D::ExportMaterial(subGameMaterial, material);
+                return ExporterF3D::ExportMaterial(subGameMaterial, material, tile);
             }
         }
     }
@@ -591,6 +593,23 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 texture->setResourseName(diffuseMapName);
 
                 material->setTexture(i, texture);
+
+                IGameUVGen* uvGen = textureMap->GetIGameUVGen();
+                if (uvGen)
+                {
+                    IGameProperty* u = uvGen->GetUTilingData();
+                    IGameProperty* v = uvGen->GetVTilingData();
+
+                    if (u->GetType() == IGAME_FLOAT_PROP)
+                    {
+                        u->GetPropertyValue(tile._u);
+                    }
+
+                    if (v->GetType() == IGAME_FLOAT_PROP)
+                    {
+                        v->GetPropertyValue(tile._v);
+                    }
+                }
             }
                 break;
 
