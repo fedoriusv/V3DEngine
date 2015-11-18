@@ -19,14 +19,14 @@
 		</samplers>
 		<renderstate>
 			<polygonmode val="fill"/>
-            <winding val="cw"/>
+            <winding val="ccw"/>
             <culling val="true"/>
-			<blending val="true" src="srcAlpha" dst="invSrcAlpha"/>
+			<blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
 		</renderstate>
 		<rendertarget>
             <var val="default"/>
 		</rendertarget>
-		<lod geometry="10.0"/>
+		<lod geometry="100.0"/>
 		<shaders>
 			<var type="vertex" name="vdefault">
 				<![CDATA[
