@@ -14,10 +14,11 @@ CFPSCamera::CFPSCamera()
     , m_max(k_lod, k_lod, k_lod)
     , m_min(-k_lod, -k_lod, -k_lod)
 {
-    m_keys._forward = EKeyCode::eKeyKey_W;
-    m_keys._back    = EKeyCode::eKeyKey_S;
-    m_keys._left    = EKeyCode::eKeyKey_A;
-    m_keys._right   = EKeyCode::eKeyKey_D;
+    m_keys._forward         = EKeyCode::eKeyKey_W;
+    m_keys._back            = EKeyCode::eKeyKey_S;
+    m_keys._left            = EKeyCode::eKeyKey_A;
+    m_keys._right           = EKeyCode::eKeyKey_D;
+    m_keys._acceleration    = EKeyCode::eKeyShift;
 }
 
 CFPSCamera::~CFPSCamera()
@@ -144,7 +145,13 @@ void CFPSCamera::update(s32 dt)
 
     if (m_active)
     {
-        f32 s = m_speed * static_cast<f32>(dt);
+        f32 acceleration = 1.0f;
+        if (INPUT_EVENTS->isKeyPressed(m_keys._acceleration))
+        {
+            acceleration = 10.0f;
+        }
+
+        f32 s = m_speed * acceleration * static_cast<f32>(dt);
         if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
@@ -183,4 +190,5 @@ void CFPSCamera::setMoveKeys(const SMoveKeys& keys)
     m_keys._back = keys._back;
     m_keys._left = keys._left;
     m_keys._right = keys._right;
+    m_keys._acceleration = keys._acceleration;
 }

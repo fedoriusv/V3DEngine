@@ -16,6 +16,7 @@ namespace scene
         v3d::EKeyCode _right;
         v3d::EKeyCode _forward;
         v3d::EKeyCode _back;
+        v3d::EKeyCode _acceleration;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
