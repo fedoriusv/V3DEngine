@@ -12,11 +12,12 @@ if(BUILD_USE_RESIL_LIB)
 endif(BUILD_USE_RESIL_LIB)
 
 set(TEST_PROJECT_0 Test_CreateWindow)
-set(TEST_PROJECT_1 Test_Font)
-set(TEST_PROJECT_2 Test_RenderTarget)
-set(TEST_PROJECT_3 Test_Billboard)
+#set(TEST_PROJECT_1 Test_Font)
+#set(TEST_PROJECT_2 Test_RenderTarget)
+#set(TEST_PROJECT_3 Test_Billboard)
 set(TEST_PROJECT_4 Test_Light)
 set(TEST_PROJECT_5 Test_CreateContext)
+set(TEST_PROJECT_6 Test_Texture)
 
 if(COMPILER_MSVC)
 	message("-- Configuring MSVC Compiler")
@@ -293,11 +294,12 @@ if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
 add_subdirectory(tests/${TEST_PROJECT_0})
-add_subdirectory(tests/${TEST_PROJECT_1})
-add_subdirectory(tests/${TEST_PROJECT_2})
-add_subdirectory(tests/${TEST_PROJECT_3})
+#add_subdirectory(tests/${TEST_PROJECT_1})
+#add_subdirectory(tests/${TEST_PROJECT_2})
+#add_subdirectory(tests/${TEST_PROJECT_3})
 add_subdirectory(tests/${TEST_PROJECT_4})
 add_subdirectory(tests/${TEST_PROJECT_5})
+add_subdirectory(tests/${TEST_PROJECT_6})
 
 ################################
 #Dependencies
