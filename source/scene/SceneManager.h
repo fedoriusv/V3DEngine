@@ -73,6 +73,7 @@ namespace scene
         bool                    isActiveCamera(const CCamera* camera);
 
         s32                     getFPS() const;
+        s32                     getDeltaTime() const;
 
     private:
 

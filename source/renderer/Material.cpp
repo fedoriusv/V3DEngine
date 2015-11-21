@@ -36,7 +36,7 @@ CMaterial::CMaterial()
     m_materialData._diffuse      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
     m_materialData._specular     = core::Vector4D(1.0f);
     m_materialData._emission     = core::Vector4D(0.0f);
-    m_materialData._shininess    = 1.0f;
+    m_materialData._shininess    = 30.0f;
     m_materialData._glossiness   = 0.0f;
     m_materialData._transparency = 1.0f;
 }

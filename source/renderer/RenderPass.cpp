@@ -271,7 +271,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         if (!shader->parse(shaderElement))
         {
             LOG_ERROR("CRenderPass: Shader parse error");
-			ASSERT("Shader parse error" && false);
+            ASSERT("Shader parse error" && false);
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;

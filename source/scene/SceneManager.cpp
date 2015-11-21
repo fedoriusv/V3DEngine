@@ -59,6 +59,11 @@ s32 CSceneManager::getFPS() const
     return m_fps;
 }
 
+s32 CSceneManager::getDeltaTime() const
+{
+    return m_frameTime;
+}
+
 void CSceneManager::setActiveCamera(CCamera* camera)
 {
     m_scene->setActiveCamera(camera);
