@@ -26,10 +26,11 @@
 		<samplers>
 		</samplers>
 		<renderstate>
-            <polygonmode val="full"/>
-            <winding val="cw"/>
-            <culling val="back"/>
-        </renderstate>
+			<polygonmode val="fill"/>
+            <winding val="ccw"/>
+            <culling val="true"/>
+			<blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+		</renderstate>
 		<rendertarget>
 			<var val="default"/>
 		</rendertarget>
