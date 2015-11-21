@@ -87,7 +87,7 @@ namespace core
     template<class T>
     T dotProduct(const TVector3D<T>& v1, const TVector3D<T>& v2)
     {
-        return v1.x * v2.x + v1.y * v2.y + v2.z * v2.z;
+        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
 
     template<class T>
