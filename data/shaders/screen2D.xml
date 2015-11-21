@@ -64,8 +64,8 @@
 					}
 				]]>
 			</var>
-            <var name="target_effects" type="fragment" file="target_effects.fsh"/>
-			<var name="ffxaa" type="fragment" file="fxaa.fsh"/>
+            <var name="target_effects" type="fragment" file="target_effects_fsh.glsl"/>
+			<var name="ffxaa" type="fragment" file="fxaa_fsh.glsl"/>
 			<var name="fscreen2D" type="fragment">
 				<![CDATA[
 					#version 330
