@@ -82,5 +82,5 @@ void CCubeShape::build()
         20, 23, 21, 21, 23, 22  // right
     };
 
-    //TODO: init tanget and binormal
+    data.computeTangentBasis();
 }

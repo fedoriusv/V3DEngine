@@ -27,8 +27,8 @@ void CShape::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CShape: Do not exist RenderTechique");
-        ASSERT(false && "CShape: Do not exist RenderTechique");
+        LOG_ERROR("CShape: RenderTechique does not exist for shape [%s]", CNode::getName().c_str());
+        ASSERT(false && "CShape: RenderTechique does not exist");
         return;
     }
 
