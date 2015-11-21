@@ -1,4 +1,4 @@
-<technique name="texture" version="100">
+<technique name="texture_normalmap" version="100">
 	<pass name="pass0">
 		<uniforms>
 			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -22,10 +22,13 @@
 		<attributes>
 			<var name="positions" type="vec3" val="mesh.positions"/>
 			<var name="normals" type="vec3" val="mesh.normals"/>
+			<var name="binormals" type="vec3" val="mesh.binormals"/>
+			<var name="tangents" type="vec3" val="mesh.tangents"/>
 			<var name="texture0" type="vec2" val="mesh.texture0"/>
 		</attributes>
 		<samplers>
-			<var name="sampler0"/>
+			<var name="material.diffuseMap"/>
+			<var name="material.normalMap"/>
 		</samplers>
 		<renderstate>
 			<polygonmode val="fill"/>
@@ -38,15 +41,19 @@
 		</rendertarget>
 		<lod geometry="10.0"/>
 		<shaders>
-			<var type="vertex" name="vtexture">
+			<var type="vertex" name="vnormalmap">
 				<![CDATA[
 					#version 330
 					#define POSITION 	0
 					#define NORMAL 		2
+					#define BINORMAL    3
+					#define TANGENT 	4
 					#define TEXCOORD0 	5
 					
 					layout (location = POSITION)  in vec3 positions;
 					layout (location = NORMAL)    in vec3 normals;
+					layout (location = BINORMAL)  in vec3 binormals;
+					layout (location = TANGENT)   in vec3 tangents;
 					layout (location = TEXCOORD0) in vec2 texture0;
 					
 					struct Transform
@@ -71,37 +78,52 @@
 					
 					struct Vertex 
 					{
-						vec2  texCoord0;
-						vec3  normal;
-						vec3  lightDir;
-						vec3  viewDir;
-						float distance;
+						vec2 texCoord0;
+						vec3 normal;
+						vec3 binormal;
+						vec3 tangent;
+						vec3 viewDir;
+						vec3 lightDir;
 					};
 					out Vertex fragVertex;
+					
+					struct NormalMap
+					{
+						vec3 tangentLightPos;
+						vec3 tangentViewPos;
+						vec3 tangentFragPos;
+					};
+					out NormalMap fragNormal;
 
 					void main()
 					{
-						vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+						vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
 						
 						fragVertex.texCoord0 = texture0;
-						fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normals, 0.0)));
 						fragVertex.lightDir = vec3(normalize(light[0].position - vertex));
 						fragVertex.viewDir = vec3(normalize(vec4(transform.viewPosition, 1.0) - vertex));
-						fragVertex.distance	= length(light[0].position - vertex);
+						fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normals, 0.0)));
+						fragVertex.tangent  = vec3(normalize(transform.normalMatrix * vec4(tangents, 0.0)));
+						fragVertex.binormal = vec3(normalize(transform.normalMatrix * vec4(binormals, 0.0)));
+
+						mat3 TBNMatrix = transpose(mat3(fragVertex.tangent, fragVertex.binormal, fragVertex.normal));  
+						fragNormal.tangentLightPos = TBNMatrix * light[0].position.xyz;
+						fragNormal.tangentViewPos  = TBNMatrix * transform.viewPosition;
+						fragNormal.tangentFragPos  = TBNMatrix * vertex.xyz;
 
 						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
 					}
 				]]>
 			</var>
 			<var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
-			<var type="fragment" name="ftexture">
+			<var type="fragment" name="fnormalmap">
 				<![CDATA[
 					#version 330
 					
-					uniform sampler2D sampler0;
-					
 					struct Material
 					{
+						sampler2D diffuseMap;
+						sampler2D normalMap;
 						vec4  ambient;
 						vec4  diffuse;
 						vec4  specular;
@@ -123,13 +145,23 @@
 
 					struct Vertex 
 					{
-						vec2  texCoord0;
-						vec3  normal;
-						vec3  lightDir;
-						vec3  viewDir;
-						float distance;
+						vec2 texCoord0;
+						vec3 normal;
+						vec3 binormal;
+						vec3 tangent;
+						vec3 viewDir;
+						vec3 lightDir;
 					};
 					in 	Vertex 	fragVertex;
+					
+					struct NormalMap
+					{
+						vec3 tangentLightPos;
+						vec3 tangentViewPos;
+						vec3 tangentFragPos;
+					};
+					in NormalMap fragNormal;
+					
 					out vec4 	fragColor;
 
 					vec4 blinn(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
@@ -138,12 +170,24 @@
 					
 					void main()
 					{
-						vec3 normal   = normalize(fragVertex.normal);
-						vec3 lightDir = normalize(fragVertex.lightDir);
+						vec4 diffuseColor = texture(material.diffuseMap, fragVertex.texCoord0);
+						vec4 texNormal = texture(material.normalMap, fragVertex.texCoord0) * 2.0 - vec4(1.0);
+						
+						/*
+						vec3 tangents  = normalize(fragVertex.tangent);
+						vec3 binormals  = normalize(fragVertex.binormal);
+						vec3 normals  = normalize(fragVertex.normal);
+						vec3 normal = normalize(vec3(texNormal.x * tangents + texNormal.y * binormals + texNormal.z * normals));
 						vec3 viewDir  = normalize(fragVertex.viewDir);
+						vec3 lightDir = normalize(fragVertex.lightDir);
+						*/
+						
+						vec3 normal = normalize(texNormal).xyz;
+						vec3 viewDir = normalize(fragNormal.tangentViewPos - fragNormal.tangentFragPos);
+						vec3 lightDir = normalize(fragNormal.tangentLightPos - fragNormal.tangentFragPos);
+						
+						fragColor = blinn(normal, lightDir, viewDir, diffuseColor, material.specular, material.shininess);
 
-						vec4 diffuseColor = texture(sampler0, fragVertex.texCoord0);
-						fragColor = phong(normal, lightDir, viewDir, diffuseColor, material.specular, material.shininess);
 					}
 				]]>
 			</var>
