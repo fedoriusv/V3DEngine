@@ -5,6 +5,7 @@ using namespace v3d;
 using namespace core;
 using namespace utils;
 using namespace scene;
+using namespace event;
 
 LightAnimator::LightAnimator(const v3d::scene::SceneManagerPtr & scene)
     : m_light(nullptr)
@@ -13,6 +14,7 @@ LightAnimator::LightAnimator(const v3d::scene::SceneManagerPtr & scene)
     , m_radius(0.0f)
     , m_speed(0.0f)
     , m_index(0)
+    , m_pause(false)
 {
     m_timer = new CTimer();
 }
@@ -57,6 +59,11 @@ void LightAnimator::createLight(const v3d::core::Vector3D& pos, v3d::f32 radius,
 void LightAnimator::update(u32 dt)
 {
     if (!m_light)
+    {
+        return;
+    }
+
+    if (m_pause)
     {
         return;
     }
@@ -110,6 +117,19 @@ void LightAnimator::update(u32 dt)
 v3d::scene::CLight * LightAnimator::getLight() const
 {
     return m_light;
+}
+
+void LightAnimator::onKeyboard(const v3d::event::KeyboardInputEventPtr & event)
+{
+    if (!m_light)
+    {
+        return;
+    }
+
+    if (event->_key == EKeyCode::eKeySpace && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
+    {
+        m_pause = !m_pause;
+    }
 }
 
 void LightAnimator::calcAnimatorPoints()

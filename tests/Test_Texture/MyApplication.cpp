@@ -30,7 +30,7 @@ void MyApplication::init()
 {
     m_textureSwitcher->loadModel();
 
-    m_lightAnimator->createLight(Vector3D(0, 0, -5), 2.0f, 5.0f);
+    m_lightAnimator->createLight(Vector3D(0, 0, -5), 1.0f, 5.0f);
 
 
     m_fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0.0f), Vector3D(0.7f, 0.0f, 0.7f));
@@ -40,6 +40,7 @@ void MyApplication::init()
     m_camera->setName("camera");
 
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&TextureSwitcher::onKeyboard, m_textureSwitcher, std::placeholders::_1));
+    BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&LightAnimator::onKeyboard, m_lightAnimator, std::placeholders::_1));
 }
 
 void MyApplication::run()

@@ -28,6 +28,8 @@ public:
 
     v3d::scene::CLight* getLight() const;
 
+    void onKeyboard(const v3d::event::KeyboardInputEventPtr& event);
+
 private:
 
     void  calcAnimatorPoints();
@@ -46,6 +48,7 @@ private:
     v3d::u32                    m_lastTime2;
 
     v3d::s32                    m_index;
+    bool                        m_pause;
 
 };
 

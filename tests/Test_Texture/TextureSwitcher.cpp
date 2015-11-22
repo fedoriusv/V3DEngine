@@ -26,7 +26,7 @@ void TextureSwitcher::loadModel()
     cube->setName("cube");
 
     m_object = cube;
-    TextureSwitcher::switchTextureMode(2);
+    TextureSwitcher::switchTextureMode(3);
 }
 
 void TextureSwitcher::switchTextureMode(u32 mode)
@@ -47,18 +47,25 @@ void TextureSwitcher::switchTextureMode(u32 mode)
     {
     case 0: //default
         m_object->getMaterial()->setRenderTechnique("shaders/texture_without_light.xml");
-        m_object->getMaterial()->setTexture(0, "textures/box.jpg");
+        m_object->getMaterial()->setTexture(0, "textures/bricks2.jpg");
         break;
 
     case 1: //with light
         m_object->getMaterial()->setRenderTechnique("shaders/texture.xml");
-        m_object->getMaterial()->setTexture(0, "textures/box.jpg");
+        m_object->getMaterial()->setTexture(0, "textures/bricks2.jpg");
         break;
 
     case 2: //normal map
         m_object->getMaterial()->setRenderTechnique("shaders/texture_normalmap.xml");
-        m_object->getMaterial()->setTexture(0, "textures/wall.jpg");
-        m_object->getMaterial()->setTexture(1, "textures/wall_normal.jpg");
+        m_object->getMaterial()->setTexture(0, "textures/bricks2.jpg");
+        m_object->getMaterial()->setTexture(1, "textures/bricks2_normal.jpg");
+        break;
+
+    case 3: //parallax map
+        m_object->getMaterial()->setRenderTechnique("shaders/texture_parallaxmap.xml");
+        m_object->getMaterial()->setTexture(0, "textures/bricks2.jpg");
+        m_object->getMaterial()->setTexture(1, "textures/bricks2_normal.jpg");
+        m_object->getMaterial()->setTexture(2, "textures/bricks2_disp.jpg");
         break;
 
     default:
@@ -104,5 +111,9 @@ void TextureSwitcher::onKeyboard(const v3d::event::KeyboardInputEventPtr& event)
     else if (event->_key == EKeyCode::eKeyKey_3 && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
     {
         TextureSwitcher::switchTextureMode(2);
+    }
+    else if (event->_key == EKeyCode::eKeyKey_4 && event->_event == EKeyboardInputEvent::eKeyboardPressDown)
+    {
+        TextureSwitcher::switchTextureMode(3);
     }
 }
