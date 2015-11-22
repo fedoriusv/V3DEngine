@@ -1,4 +1,4 @@
-<technique name="texture_normalmap" version="100">
+<technique name="texture_parallaxmap" version="100">
     <pass name="pass0">
         <uniforms>
             <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -12,6 +12,8 @@
             <var name="material.specular" type="vec4" val="material.specular"/>
             <var name="material.emission" type="vec4" val="material.emission"/>
             <var name="material.shininess" type="float" val="material.shininess"/>
+            
+            <var name="material.heightScale" type="float" val="0.05"/>
             
             <var name="light[0].ambient" type="vec4" val="light.ambient"/>
             <var name="light[0].diffuse" type="vec4" val="light.diffuse"/>
@@ -28,6 +30,7 @@
         <samplers>
             <var name="material.diffuseMap"/>
             <var name="material.normalMap"/>
+            <var name="material.heightMap"/>
         </samplers>
         <renderstate>
             <polygonmode val="fill"/>
@@ -42,20 +45,23 @@
         <shaders>
             <var name="texture_TBN" type="vertex" file="texture_TBN_vsh.glsl"/>
             <var name="shading_models" type="fragment" file="shading_models_fsh.glsl"/>
-            <var type="fragment" name="fnormalmap">
+            <var type="fragment" name="fparallaxmap">
                 <![CDATA[
                     #version 330
-                    
+
                     struct Material
                     {
                         sampler2D   diffuseMap;
                         sampler2D   normalMap;
-                        
+                        sampler2D   heightMap;
+
                         vec4        ambient;
                         vec4        diffuse;
                         vec4        specular;
                         vec4        emission;
                         float       shininess;
+                        
+                        float       heightScale;
                     };
                     uniform Material material;
                     
@@ -74,11 +80,12 @@
                         vec3 normal;
                         vec3 binormal;
                         vec3 tangent;
+                        vec3 position;
                         vec3 viewDir;
                         vec3 lightDir0;
                     };
-                    in  Vertex fragVertex;
-                    
+                    in Vertex fragVertex;
+
                     struct TangentSpcae
                     {
                         vec3 tangentLightPos0;
@@ -86,31 +93,83 @@
                         vec3 tangentFragPos;
                     };
                     in TangentSpcae fragTangentSpace;
-                    
+
                     out vec4 fragColor;
 
                     vec4 blinn(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
                     vec4 phong(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
-                    vec4 lambert(vec3 normal, vec3 lightDir, vec4 diffuseColor);
-                    
+
+                    vec2 parallaxMappingOcclusion(vec2 texCoords, vec3 viewDir)
+                    {
+                        // number of depth layers
+                        const float minLayers = 10;
+                        const float maxLayers = 20;
+                        float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+                        
+                        // calculate the size of each layer
+                        float layerHeight = 1.0 / numLayers;
+                        // depth of current layer
+                        float currentLayerHeight = 0.0;
+                        
+                        // the amount to shift the texture coordinates per layer (from vector P)
+                        vec2 P = viewDir.xy / viewDir.z * material.heightScale; 
+                        vec2 deltaTexCoords = P / numLayers;
+                      
+                        // get initial values
+                        vec2  currentTexCoords     = texCoords;
+                        float currentHeightMapValue = texture(material.heightMap, currentTexCoords).r;
+                          
+                        while(currentLayerHeight < currentHeightMapValue)
+                        {
+                            // shift texture coordinates along direction of P
+                            currentTexCoords -= deltaTexCoords;
+                            // get heightmap value at current texture coordinates
+                            currentHeightMapValue = texture(material.heightMap, currentTexCoords).r;
+                            // get height of next layer
+                            currentLayerHeight += layerHeight;
+                        }
+                        
+                        // -- parallax occlusion mapping interpolation from here on
+                        // get texture coordinates before collision (reverse operations)
+                        vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+                        // get height after and before collision for linear interpolation
+                        float afterHeight  = currentHeightMapValue - currentLayerHeight;
+                        float beforeHeight = texture(material.heightMap, prevTexCoords).r - currentLayerHeight + layerHeight;
+                     
+                        // interpolation of texture coordinates
+                        float weight = afterHeight / (afterHeight - beforeHeight);
+                        vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+                        return finalTexCoords;
+                    }
+
+                    vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
+                    {
+                        float height =  texture(material.heightMap, texCoords).r;
+                        vec2 P = viewDir.xy / viewDir.z * (height * material.heightScale); 
+                        
+                        return texCoords - P;
+                    }
+
                     void main()
                     {
-                        vec4 diffuseColor = texture(material.diffuseMap, fragVertex.texCoord0);
-                        vec4 texNormal = texture(material.normalMap, fragVertex.texCoord0) * 2.0 - vec4(1.0);
-                        
-                        /*
-                        vec3 tangents  = normalize(fragVertex.tangent);
-                        vec3 binormals  = normalize(fragVertex.binormal);
-                        vec3 normals  = normalize(fragVertex.normal);
-                        vec3 normal = normalize(vec3(texNormal.x * tangents + texNormal.y * binormals + texNormal.z * normals));
-                        vec3 viewDir  = normalize(fragVertex.viewDir);
-                        vec3 lightDir0 = normalize(fragVertex.lightDir0);
-                        */
-                        
-                        vec3 normal = normalize(texNormal).rgb;
                         vec3 viewDir = normalize(fragTangentSpace.tangentViewPos - fragTangentSpace.tangentFragPos);
-                        vec3 lightDir0 = normalize(fragTangentSpace.tangentLightPos0 - fragTangentSpace.tangentFragPos);
+                        vec2 offestCoords = fragVertex.texCoord0;
+                        offestCoords = parallaxMappingOcclusion(offestCoords, viewDir);
                         
+                         if(offestCoords.x > 1.0 || offestCoords.y > 1.0 || offestCoords.x < 0.0 || offestCoords.y < 0.0)
+                         {
+                            discard;
+                         }
+                            
+                        vec4 diffuseColor = texture(material.diffuseMap, offestCoords);
+
+                        vec4 texNormal = texture(material.normalMap, fragVertex.texCoord0) * 2.0 - vec4(1.0);
+
+                        vec3 normal = normalize(texNormal).rgb;
+                        vec3 lightDir0 = normalize(fragTangentSpace.tangentLightPos0 - fragTangentSpace.tangentFragPos);
+
                         fragColor = blinn(normal, lightDir0, viewDir, diffuseColor, material.specular, material.shininess);
                     }
                 ]]>
