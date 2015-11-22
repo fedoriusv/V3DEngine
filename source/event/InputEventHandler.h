@@ -22,40 +22,44 @@ namespace event
         CInputEventHandler();
         ~CInputEventHandler();
 
-        void                        connectKeyboardEvent(std::function<void(const KeyboardInputEventPtr&)>);
-        void                        connectMouseEvent(std::function<void(const MouseInputEventPtr&)>);
-        void                        connectGamepadEvent(std::function<void(const GamepadInputEventPtr&)>);
+        void                            connectKeyboardEvent(std::function<void(const KeyboardInputEventPtr&)>);
+        void                            connectMouseEvent(std::function<void(const MouseInputEventPtr&)>);
+        void                            connectGamepadEvent(std::function<void(const GamepadInputEventPtr&)>);
 
-        void                        update();
+        void                            update();
 
-        bool                        isKeyPressed(const EKeyCode& code)              const;
+        bool                            isKeyPressed(const EKeyCode& code)              const;
 
-        bool                        isLeftMousePressed()                            const;
-        bool                        isRightMousePressed()                           const;
-        bool                        isMiddleMousePressed()                          const;
+        bool                            isLeftMousePressed()                            const;
+        bool                            isRightMousePressed()                           const;
+        bool                            isMiddleMousePressed()                          const;
 
-        bool                        isGamepadPressed(const EGamepadButton& code)    const;
+        bool                            isGamepadPressed(const EGamepadButton& code)    const;
 
-        const core::Point2D&        getCursorPosition()                             const;
-        float                       getMouseWheel()                                 const;
+        const core::Point2D&            getCursorPosition()                             const;
+        float                           getMouseWheel()                                 const;
 
-        void                        setEnableEvents(bool enable);
+        void                            setEnableEvents(bool enable);
 
     private:
 
-        bool                        onEvent(const SInputEventPtr& event)            override;
-        void                        resetKeyPressed();
+        bool                            onEvent(const SInputEventPtr& event)            override;
+        void                            resetKeyPressed();
 
-        bool                        m_keysPressed[eKey_Codes_Count];
-        bool                        m_mouseStates[eMouseCount];
-        u32                         m_gamepadStates;
+        bool                            m_keysPressed[eKey_Codes_Count];
+        bool                            m_mouseStates[eMouseCount];
+        u32                             m_gamepadStates;
 
-        core::Point2D               m_mousePosition;
-        float                       m_mouseWheel;
+        core::Point2D                   m_mousePosition;
+        float                           m_mouseWheel;
 
-        std::function<void(const KeyboardInputEventPtr&)>  m_keyboardSignature;
-        std::function<void(const MouseInputEventPtr&)>     m_mouseSignature;
-        std::function<void(const GamepadInputEventPtr&)>   m_gamepadSignature;
+        typedef std::function<void(const KeyboardInputEventPtr&)>   KeyboardCallback;
+        typedef std::function<void(const MouseInputEventPtr&)>      MouseCallback;
+        typedef std::function<void(const GamepadInputEventPtr&)>    GamepadCallback;
+
+        std::vector<KeyboardCallback>   m_keyboardSignatures;
+        std::vector<MouseCallback>      m_mouseSignatures;
+        std::vector<GamepadCallback>    m_gamepadSignatures;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

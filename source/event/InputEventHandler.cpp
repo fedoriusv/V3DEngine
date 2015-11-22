@@ -9,15 +9,15 @@ CInputEventHandler::CInputEventHandler()
 : m_gamepadStates(0U)
 , m_mousePosition(0, 0)
 , m_mouseWheel(0.0f)
-, m_keyboardSignature(nullptr)
-, m_mouseSignature(nullptr)
-, m_gamepadSignature(nullptr)
 {
     resetKeyPressed();
 }
 
 CInputEventHandler::~CInputEventHandler()
 {
+    m_keyboardSignatures.clear();
+    m_mouseSignatures.clear();
+    m_gamepadSignatures.clear();
 }
 
 void CInputEventHandler::resetKeyPressed()
@@ -77,9 +77,12 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
                 }
             }
 
-            if (m_keyboardSignature)
+            for (std::vector<KeyboardCallback>::const_iterator iter = m_keyboardSignatures.cbegin(); iter != m_keyboardSignatures.cend(); ++iter)
             {
-                m_keyboardSignature(keyEvent);
+                if ((*iter))
+                {
+                    (*iter)(keyEvent);
+                }
             }
             return true;
         }
@@ -118,9 +121,12 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
             m_mousePosition = mouseEvent->_position;
             m_mouseWheel = mouseEvent->_wheel;
 
-            if (m_mouseSignature)
+            for (std::vector<MouseCallback>::const_iterator iter = m_mouseSignatures.cbegin(); iter != m_mouseSignatures.cend(); ++iter)
             {
-                m_mouseSignature(mouseEvent);
+                if ((*iter))
+                {
+                    (*iter)(mouseEvent);
+                }
             }
             return true;
         };
@@ -131,11 +137,13 @@ bool CInputEventHandler::onEvent(const SInputEventPtr& event)
 
             m_gamepadStates = gamepadEvent->_buttons;
 
-            if (m_gamepadSignature)
+            for (std::vector<GamepadCallback>::const_iterator iter = m_gamepadSignatures.cbegin(); iter != m_gamepadSignatures.cend(); ++iter)
             {
-                m_gamepadSignature(gamepadEvent);
+                if ((*iter))
+                {
+                    (*iter)(gamepadEvent);
+                }
             }
-
             return true;
         }
 
@@ -150,7 +158,7 @@ void CInputEventHandler::connectKeyboardEvent(std::function<void(const KeyboardI
 {
     if (signature)
     {
-        m_keyboardSignature = signature;
+        m_keyboardSignatures.push_back(signature);
     }
 }
 
@@ -158,7 +166,7 @@ void CInputEventHandler::connectMouseEvent(std::function<void(const MouseInputEv
 {
     if (signature)
     {
-        m_mouseSignature = signature;
+        m_mouseSignatures.push_back(signature);
     }
 }
 
@@ -166,7 +174,7 @@ void CInputEventHandler::connectGamepadEvent(std::function<void(const GamepadInp
 {
     if (signature)
     {
-        m_gamepadSignature = signature;
+        m_gamepadSignatures.push_back(signature);
     }
 }
 
