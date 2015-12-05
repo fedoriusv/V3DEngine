@@ -42,7 +42,7 @@ namespace renderer
         f32                         getTransparency()  const;
 
         bool                        setTexture(u32 layer, const std::string& file);
-        bool                        setTexture(u32 layer, const std::string* files[6]);
+        bool                        setTexture(u32 layer, const std::string files[6]);
         void                        setTexture(u32 layer, const CTexture* texture);
         
         const CTexture*             getTexture(u32 layer) const;

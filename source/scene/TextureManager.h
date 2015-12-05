@@ -12,7 +12,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<const renderer::CTexture>
+    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::CTexture>
     {
     private:
 
@@ -23,14 +23,20 @@ namespace scene
 
     public:
 
+        void                        add(renderer::CTexture* texture);
         void                        add(const renderer::CTexture* texture);
-        const renderer::CTexture*   load(const std::string& file, const std::string& alias = "") override;
-        const renderer::CTexture*   load(const std::string* files[6]);
+        renderer::CTexture*         load(const std::string& file, const std::string& alias = "") override;
+        renderer::CTexture*         load(const std::string files[6], const std::string& alias = "");
 
         renderer::CTexture*         createTexture2DFromData(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
         renderer::CTexture*         createTexture2DMSAA(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
 
         void                        copyToTexture2D(renderer::CTexture* texture, const core::Dimension2D& offset, const core::Dimension2D& size, renderer::EImageFormat format, void* data);
+
+    private:
+
+        void                        addStreamToCubeTexture(renderer::CTexture* texture, const stream::IStreamPtr& stream);
+        std::string                 getFileExtension(const std::string& fullFileName);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

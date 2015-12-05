@@ -36,6 +36,7 @@ GLenum ETextureBindingGL[ETextureTarget::eTargetCount] =
     GL_TEXTURE_BINDING_2D,
     GL_TEXTURE_BINDING_2D_MULTISAMPLE,
     GL_TEXTURE_BINDING_3D,
+    GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY,
     GL_TEXTURE_BINDING_CUBE_MAP,
 };
 
@@ -141,7 +142,6 @@ bool CTextureGL::create()
 
     GLint originalTexture;
     glGetIntegerv(ETextureBindingGL[m_target], &originalTexture);
-
     switch (m_target)
     {
         case ETextureTarget::eTexture1D:
@@ -318,9 +318,9 @@ bool CTextureGL::bindSampler(u32 texture, u32 sampler)
 {
     if (s_currentSamplerID != sampler)
     {
-        glBindSampler(texture, sampler);
         ASSERT((glIsSampler(sampler) || sampler == 0) && "Invalid Sampler index");
         ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
+        glBindSampler(texture, sampler);
         s_currentSamplerID = sampler;
 
         return true;

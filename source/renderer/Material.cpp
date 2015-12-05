@@ -167,7 +167,7 @@ bool CMaterial::setTexture(u32 layer, const std::string& file)
     return true;
 }
 
-bool CMaterial::setTexture(u32 layer, const std::string* files[6])
+bool CMaterial::setTexture(u32 layer, const std::string files[6])
 {
     if (layer >= ETextureLayer::eLayerMax)
     {

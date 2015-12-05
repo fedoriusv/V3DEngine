@@ -9,6 +9,7 @@ using namespace core;
 using namespace scene;
 using namespace renderer;
 using namespace decoders;
+using namespace stream;
 
 CTextureManager::CTextureManager()
 {
@@ -25,43 +26,149 @@ CTextureManager::~CTextureManager()
     TResourceLoader::unloadAll();
 }
 
+void CTextureManager::add(CTexture* texture)
+{
+    std::string name = texture->getResourseName();
+    const CTexture* findTexture = TResourceLoader::get(name);
+    if (!findTexture)
+    {
+        TResourceLoader::insert(texture, name);
+    }
+}
+
 void CTextureManager::add(const CTexture* texture)
 {
     std::string name = texture->getResourseName();
     const CTexture* findTexture = TResourceLoader::get(name);
     if (!findTexture)
     {
-        TResourceLoader::insert(texture, name);;
+        TResourceLoader::insert(const_cast<CTexture*>(texture), name);
     }
 }
 
-const CTexture* CTextureManager::load(const std::string* files[6])
+CTexture* CTextureManager::load(const std::string files[6], const std::string& alias)
 {
-    //TODO: load cubemap
+    std::string aliasNameStr = "";
+    for (u32 i = 0; i < 6; ++i)
+    {
+        aliasNameStr.append(files[i]);
+    }
+    std::transform(aliasNameStr.begin(), aliasNameStr.end(), aliasNameStr.begin(), ::tolower);
 
-    return nullptr;
-}
-
-const CTexture* CTextureManager::load(const std::string& file, const std::string& alias)
-{
-    std::string nameStr = file;
-    std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
-
-    const CTexture* findTexture = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    CTexture* findTexture = TResourceLoader::get(alias.empty() ? aliasNameStr : alias);
     if (findTexture)
     {
         return findTexture;
     }
     else
     {
-        std::string fileExtension;
+        CTexture* cubeTexture = RENDERER->makeSharedTexture();
+        cubeTexture->setStream(stream::CStreamManager::createMemoryStream());
 
-        const size_t pos = nameStr.find('.');
-        if (pos != std::string::npos)
+        bool wasFound = false;
+        for (std::string& path : m_pathes)
         {
-            fileExtension = std::string(nameStr.begin() + pos, nameStr.end());
+            if (wasFound)
+            {
+                break;
+            }
+
+            for (u32 i = 0; i < 6; ++i)
+            {
+                std::string nameStr = files[i];
+                std::transform(nameStr.begin(), nameStr.end(), nameStr.begin(), ::tolower);
+
+                const std::string fullName = path + nameStr;
+                const bool isFileExist = stream::FileStream::isFileExist(fullName);
+                if (isFileExist)
+                {
+                    wasFound = true;
+                    const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                    if (stream->isOpen())
+                    {
+                        std::string fileExtension = CTextureManager::getFileExtension(nameStr);
+                        const DecoderPtr decoder = TResourceLoader::findDecoder(fileExtension);
+                        if (!decoder)
+                        {
+                            LOG_ERROR("CTextureManager: Format not supported file [%s]", nameStr.c_str());
+                            return nullptr;
+                        }
+
+                        stream::CResource* resource = decoder->decode(stream);
+                        stream->close();
+
+                        if (!resource)
+                        {
+                            LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameStr.c_str());
+                            return nullptr;
+                        }
+
+                        CTextureManager::addStreamToCubeTexture(cubeTexture, resource->getStream());
+
+                        delete resource;
+                        resource = nullptr;
+                    }
+                    else
+                    {
+                        LOG_ERROR("CTextureManager: error read file [%s]", nameStr.c_str());
+                        return nullptr;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
         }
 
+        if (wasFound)
+        {
+            cubeTexture->m_target = ETextureTarget::eTextureCubeMap;
+            cubeTexture->setResourseName(aliasNameStr);
+            cubeTexture->setResourseFolder("");
+
+            if (!cubeTexture->load())
+            {
+                delete cubeTexture;
+                cubeTexture = nullptr;
+
+                LOG_ERROR("CTextureManager: Streaming error read file [%s]", aliasNameStr.c_str());
+                return nullptr;
+            }
+
+            if (!cubeTexture->create())
+            {
+                delete cubeTexture;
+                cubeTexture = nullptr;
+
+                LOG_ERROR("CTextureManager: Error to Create Texture file [%s]", aliasNameStr.c_str());
+                return nullptr;
+            }
+
+            TResourceLoader::insert(cubeTexture, alias.empty() ? aliasNameStr : alias);
+
+            LOG_INFO("CTextureManager: File [%s] success loaded", aliasNameStr.c_str());
+            return cubeTexture;
+        }
+
+        LOG_WARNING("CTextureManager: Files [%s] not found", aliasNameStr.c_str());
+    }
+
+    return nullptr;
+}
+
+CTexture* CTextureManager::load(const std::string& file, const std::string& alias)
+{
+    std::string nameStr = file;
+    std::transform(file.begin(), file.end(), nameStr.begin(), ::tolower);
+
+    CTexture* findTexture = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    if (findTexture)
+    {
+        return findTexture;
+    }
+    else
+    {
         for (std::string& path : m_pathes)
         {
             const std::string fullName = path + nameStr;
@@ -71,6 +178,7 @@ const CTexture* CTextureManager::load(const std::string& file, const std::string
                 const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
+                    std::string fileExtension = CTextureManager::getFileExtension(nameStr);
                     const DecoderPtr decoder = TResourceLoader::findDecoder(fileExtension);
                     if (!decoder)
                     {
@@ -97,26 +205,31 @@ const CTexture* CTextureManager::load(const std::string& file, const std::string
 
                     if (!texture->load())
                     {
+                        delete texture;
+                        texture = nullptr;
+
                         LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
                     if (!texture->create())
                     {
+                        delete texture;
+                        texture = nullptr;
+
                         LOG_ERROR("CTextureManager: Error to Create Texture file [%s]", nameStr.c_str());
                         return nullptr;
                     }
 
-                    TResourceLoader::insert(texture, alias.empty() ? nameStr : alias);
+                    TResourceLoader::insert(texture, alias.empty() ? fullName : alias);
+
                     LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;
                 }
             }
-            else
-            {
-                LOG_WARNING("CTextureManager: File [%s] not found", fullName.c_str());
-            }
         }
+
+        LOG_WARNING("CTextureManager: File [%s] not found", nameStr.c_str());
     }
 
     return nullptr;
@@ -175,4 +288,27 @@ void CTextureManager::copyToTexture2D(CTexture* texture, const Dimension2D& offs
     }
 
     texture->copyToTexture2D(offset, size, format, data);
+}
+
+void v3d::scene::CTextureManager::addStreamToCubeTexture(renderer::CTexture* texture, const stream::IStreamPtr& stream)
+{
+    const IStreamPtr& streamData = texture->getStream();
+    stream->seekBeg(0);
+
+    streamData->seekBeg(streamData->size());
+    streamData->write(stream->map(stream->size()), stream->size(), sizeof(c8));
+    stream->unmap();
+}
+
+std::string v3d::scene::CTextureManager::getFileExtension(const std::string& fullFileName)
+{
+    std::string fileExtension = "";
+
+    const size_t pos = fullFileName.find('.');
+    if (pos != std::string::npos)
+    {
+        fileExtension = std::string(fullFileName.begin() + pos, fullFileName.end());
+    }
+
+    return fileExtension;
 }
