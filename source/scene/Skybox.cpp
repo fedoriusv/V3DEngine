@@ -24,6 +24,13 @@ CSkybox::~CSkybox()
 void CSkybox::load(const std::string files[6])
 {
     CTexture* texure = CTextureManager::getInstance()->load(files);
+    if (!texure)
+    {
+        LOG_ERROR("CSkybox: Texture didn't load");
+        ASSERT(false && "CSkybox: Texture didn't load");
+        return;
+    }
+
     texure->setFilterType(eLinear, eLinear);
     texure->setWrap(eClampToEdge);
 
