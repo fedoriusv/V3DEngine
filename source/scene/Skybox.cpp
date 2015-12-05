@@ -19,23 +19,16 @@ CSkybox::CSkybox()
 CSkybox::~CSkybox()
 {
     CRenderable::getGeometry()->free();
-    m_textures.clear();
 }
 
 void CSkybox::load(const std::string files[6])
 {
-    m_textures.resize(k_countSize);
-    for (u32 i = 0; i < k_countSize; ++i)
-    {
-        const CTexture* texure = CTextureManager::getInstance()->load(files[i]);
-        if (!texure)
-        {
-            LOG_ERROR("CSkybox::load: Error load skybox. File %s", files[i].c_str());
-            return;
-        }
+    CTexture* texure = CTextureManager::getInstance()->load(files);
+    texure->setFilterType(eLinear, eLinear);
+    texure->setWrap(eClampToEdge);
 
-        m_textures[i] = texure;
-    }
+    const MaterialPtr& material = CRenderable::getMaterial();
+    material->setTexture(0, texure);
 
 }
 
@@ -43,12 +36,12 @@ void CSkybox::load(const std::string& front, const std::string& back, const std:
 {
     std::string list[6];
 
-    list[0] = front;
-    list[1] = back;
-    list[2] = left;
-    list[3] = right;
-    list[4] = up;
-    list[5] = down;
+    list[0] = left;
+    list[1] = right;
+    list[2] = up;
+    list[3] = down;
+    list[4] = back;
+    list[5] = front;
 
     CSkybox::load(list);
 }
@@ -67,27 +60,6 @@ void CSkybox::build()
         { -s, s, s  }, { -s, s, -s  }, { s, s, s   }, { -s, s, -s }, { s, s, s   }, { s, s, -s },
         { -s, -s, s }, { -s, -s, -s }, { s, -s, s  }, { -s, -s, -s}, { s, -s, s  }, { s, -s, -s}
     };
-
-    data._normals =
-    {
-        { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  }, { 0.0f, 0.0f, 1.0f  },
-        { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
-        { 1.0f, 0.0f, 0.0f  }, { 1.0f, 0.0f, 0.0f  }, { 1.0f, 0.0f, 0.0f  }, { 1.0f, 0.0f, 0.0f  }, { 1.0f, 0.0f, 0.0f  }, { 1.0f, 0.0f, 0.0f  },
-        { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
-        { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f },
-        { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  }, { 0.0f, 1.0f, 0.0f  },
-    };
-
-    data._texCoords.resize(1);
-    data._texCoords[0] =
-    {
-        { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f },
-        { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f },
-        { 1.0f, 0.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f },
-        { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
-        { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f },
-        { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f },
-    };
 }
 
 void CSkybox::init()
@@ -100,8 +72,8 @@ void CSkybox::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CSkybox: Do not exist RenderTechique");
-        ASSERT(false && "CSkybox: Do not exist RenderTechique");
+        LOG_ERROR("CSkybox: RenderTechique Doesn't exist");
+        ASSERT(false && "CSkybox: RenderTechique Doesn't exist");
         return;
     }
 
@@ -133,12 +105,5 @@ void CSkybox::render()
         return;
     }
 
-    for (u32 i = 0; i < k_countSize; ++i)
-    {
-        CRenderable::getGeometry()->setInterval((i * 6), 6);
-        const MaterialPtr& material = CRenderable::getMaterial();
-        material->setTexture(0, m_textures[i]);
-
-        CRenderable::render();
-    }
+    CRenderable::render();
 }

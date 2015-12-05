@@ -33,8 +33,6 @@ namespace scene
 
         const u32               k_countSize = 6U;
         const f32               k_extend = 50.0f;
-
-        renderer::KTextureList  m_textures;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -13,6 +13,8 @@ using namespace event;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
+    , m_textureSwitcher(nullptr)
+    , m_lightAnimator(nullptr)
 {
     BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
 
@@ -24,13 +26,29 @@ MyApplication::~MyApplication()
 {
     delete m_textureSwitcher;
     m_textureSwitcher = nullptr;
+
+    delete m_lightAnimator;
+    m_lightAnimator = nullptr;
 }
 
 void MyApplication::init()
 {
-    m_textureSwitcher->loadModel();
+    if (m_textureSwitcher)
+    {
+        m_textureSwitcher->loadModel();
+        BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&TextureSwitcher::onKeyboard, m_textureSwitcher, std::placeholders::_1));
+    }
 
-    m_lightAnimator->createLight(Vector3D(0, 0, -5), 1.0f, 5.0f);
+    if (m_lightAnimator)
+    {
+        m_lightAnimator->createLight(Vector3D(0, 0, -5), 1.0f, 5.0f);
+        BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&LightAnimator::onKeyboard, m_lightAnimator, std::placeholders::_1));
+    }
+
+    CSkybox* skybox = BaseApplication::getSceneManager()->addSkyBox(
+    "textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
+    "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg");
+    skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");
 
 
     m_fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0.0f), Vector3D(0.7f, 0.0f, 0.7f));
@@ -39,8 +57,6 @@ void MyApplication::init()
     m_camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0.0f, 0.0f, 1.0f), Vector3D(0.0f, 0.0f, -1.0f));
     m_camera->setName("camera");
 
-    BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&TextureSwitcher::onKeyboard, m_textureSwitcher, std::placeholders::_1));
-    BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&LightAnimator::onKeyboard, m_lightAnimator, std::placeholders::_1));
 }
 
 void MyApplication::run()
