@@ -143,13 +143,14 @@ void CGeometryGL::draw()
         CGeometryGL::vertexAttribArray(type, true);
     }
 
+    u32 instanceAmount = 0;
     if (m_data.indicesSize() > 0)
     {
-        CGeometryGL::drawElements(m_drawMode, m_data.indicesSize());
+        CGeometryGL::drawElements(m_drawMode, m_data.indicesSize(), instanceAmount);
     }
     else
     {
-        CGeometryGL::drawArrays(m_drawMode, CGeometry::getInterval()._begin, CGeometry::getInterval()._count);
+        CGeometryGL::drawArrays(m_drawMode, CGeometry::getInterval()._begin, CGeometry::getInterval()._count, instanceAmount);
     }
 
     for (const AttributePtr& attr : attributes)
@@ -376,24 +377,28 @@ void CGeometryGL::vertexAttribArray(u32 vertexAttrib, bool enable)
     }
 }
 
-void CGeometryGL::drawElements(EDrawMode mode, u32 count)
+void CGeometryGL::drawElements(EDrawMode mode, u32 count, u32 primCount)
 {
-    glDrawElements(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL);
+    if (primCount > 0)
+    {
+        glDrawElementsInstanced(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL, primCount);
+    }
+    else
+    {
+        glDrawElements(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL);
+    }
 }
 
-void CGeometryGL::drawElementsInstanced(EDrawMode mode, u32 count, u32 primCount)
+void CGeometryGL::drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount)
 {
-    glDrawElementsInstanced(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL, primCount);
-}
-
-void CGeometryGL::drawArrays(EDrawMode mode, u32 first, u32 count)
-{
-    glDrawArrays(EDrawModeGL[mode], first, count);
-}
-
-void CGeometryGL::drawArraysInstanced(EDrawMode mode, u32 first, u32 count, u32 primCount)
-{
-    glDrawArraysInstanced(EDrawModeGL[mode], first, count, primCount);
+    if (primCount > 0)
+    {
+        glDrawArraysInstanced(EDrawModeGL[mode], first, count, primCount);
+    }
+    else
+    {
+        glDrawArrays(EDrawModeGL[mode], first, count);
+    }
 }
 
 #endif //_OPENGL_DRIVER_

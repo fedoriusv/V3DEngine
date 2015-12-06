@@ -18,7 +18,7 @@ namespace renderer
     
         void                init()                                                                  override;
     
-        void                preRender()                                                             override;
+        void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
 
         ShaderPtr           makeSharedShader()                                                      override;

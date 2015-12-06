@@ -62,15 +62,18 @@ void CRendererGL::init()
 #endif
 }
 
-void CRendererGL::preRender()
+void CRendererGL::preRender(bool clear)
 {
     if (isLocked())
     {
         return;
     }
 
-    /*glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+    if (clear)
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     m_isLocked = true;
 }

@@ -50,10 +50,8 @@ namespace renderer
         static void         initVertexAttribPointer(u32 vertexAttrib, u32 count, bool normalized = false, u32 size = 0, u32 offset = 0);
         static void         vertexAttribArray(u32 vertexAttrib, bool enable);
 
-        static void         drawElements(EDrawMode mode, u32 count);
-        static void         drawElementsInstanced(EDrawMode mode, u32 count, u32 primCount);
-        static void         drawArrays(EDrawMode mode, u32 first, u32 count);
-        static void         drawArraysInstanced(EDrawMode mode, u32 first, u32 count, u32 primCount);
+        static void         drawElements(EDrawMode mode, u32 count, u32 primCount);
+        static void         drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount);
 
         static u32          s_currentBuffer[eTargetCount];
         static u32          s_currentArray;

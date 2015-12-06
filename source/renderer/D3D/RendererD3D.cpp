@@ -71,7 +71,7 @@ void CRendererD3D::init()
 #endif
 }
 
-void CRendererD3D::preRender()
+void CRendererD3D::preRender(bool clear)
 {
     if (isLocked())
     {

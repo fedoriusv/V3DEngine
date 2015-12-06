@@ -33,7 +33,7 @@ namespace renderer
 
         virtual void                init()                         = 0;
         
-        virtual void                preRender()                    = 0;
+        virtual void                preRender(bool clear = false)  = 0;
         virtual void                postRender()                   = 0;
 
         void                        draw(const RenderJobPtr& job);
