@@ -221,7 +221,7 @@ CTexture* CTextureManager::load(const std::string& file, const std::string& alia
                         return nullptr;
                     }
 
-                    TResourceLoader::insert(texture, alias.empty() ? fullName : alias);
+                    TResourceLoader::insert(texture, alias.empty() ? nameStr : alias);
 
                     LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;

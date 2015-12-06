@@ -8,7 +8,7 @@ using namespace renderer;
 
 CCubeShape::CCubeShape()
 {
-	m_shapeType = EShapeType::eCubeShape;
+    m_shapeType = EShapeType::eCubeShape;
 }
 
 CCubeShape::~CCubeShape()

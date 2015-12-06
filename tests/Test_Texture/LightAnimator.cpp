@@ -45,13 +45,6 @@ void LightAnimator::createLight(const v3d::core::Vector3D& pos, v3d::f32 radius,
 
     LightAnimator::calcAnimatorPoints();
 
-    /*m_points.clear();
-    for (int i = 0; i < 10; i++)
-    {
-        m_points.push_back(Vector3D(0.0, 0.0, -i));
-    }*/
-
-
     m_timer->setTime(0);
     m_timer->start();
 }
@@ -87,23 +80,11 @@ void LightAnimator::update(u32 dt)
         }
         Vector3D& point = m_points[m_index];
 
-       /* scene::CNode* cube = m_scene->getObjectByName("cube");
-        const Vector3D& pos = cube->getPosition();*/
         const Vector3D& pos = m_light->getPosition();
-
         point.y = pos.y;
 
-        //printf("AAA : %d", dt);
-
         Vector3D newpos = core::interpolate(pos, point, 1.0f/(f32)dt);
-
-        /*cube->setPosition(newpos);*/
        m_light->setPosition(newpos);
-        //pos = point;
-       /* pos.x = point.x;
-        pos.y = point.y;*/
-
-
     }
 
     //u32 currTime = m_timer->getTime();
@@ -153,8 +134,6 @@ void LightAnimator::calcAnimatorPoints()
     for (s32 i = step - 1; i >= 0; --i)
     {
         f32 rho = (f32)i * drho;
-        //posX = (m_position.x + (m_radius * cos((i * core::k_pi / 360) + (drho * i))));
-        //posY = (m_position.y + (m_radius * -sin((i * core::k_pi / 360) + (drho * i))));
         posX = m_position.x + (m_radius * cos(rho + drho));
         posY = m_position.z + (m_radius * -sin(rho + drho));
         m_points.push_back(Vector3D(posX, 0.0f, posY));
