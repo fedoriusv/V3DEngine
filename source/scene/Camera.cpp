@@ -26,6 +26,7 @@ CCamera::CCamera()
 
 CCamera::~CCamera()
 {
+    LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
 }
 
 void CCamera::setTarget(const core::Vector3D& target)

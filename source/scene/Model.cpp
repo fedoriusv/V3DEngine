@@ -28,6 +28,7 @@ CModel::CModel(const CModel& model)
 
 CModel::~CModel()
 {
+    LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
     for (NodeList::const_iterator iter = m_nodeList.cbegin(); iter < m_nodeList.cend(); ++iter)
     {
         CNode* node = (*iter);

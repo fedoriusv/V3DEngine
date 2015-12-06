@@ -29,6 +29,7 @@ CMesh::CMesh(const CMesh& mesh)
 
 CMesh::~CMesh()
 {
+    LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
     CRenderable::getGeometry()->free();
 }
 

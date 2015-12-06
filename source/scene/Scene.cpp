@@ -69,7 +69,7 @@ void CScene::draw(s32 dt)
 {
     CScene::updateRenderLists(dt);
 
-    RENDERER->preRender();
+    RENDERER->preRender(m_renderList.empty());
 
     for (std::vector<CRenderList>::iterator iter = m_renderList.begin(); iter < m_renderList.end(); ++iter)
     {

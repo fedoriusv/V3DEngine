@@ -16,6 +16,7 @@ CLight::CLight()
 
 CLight::~CLight()
 {
+    LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
 }
 
 void CLight::setAmbient(const Vector4D& color)
