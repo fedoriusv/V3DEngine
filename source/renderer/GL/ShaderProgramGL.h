@@ -32,7 +32,7 @@ namespace renderer
         static void         attachShader(u32 shaderProgram, u32 shader);
         static void         detachShader(u32 shaderProgram, u32 shader);
 
-        static void         bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name);
+        static void         bindAttrib(u32 shaderProgram, u32 type, const std::string& name);
         static s32          getAttrib(u32 shaderProgram, const std::string& name);
 
         static s32          getUniformLocation(u32 shaderProgram, const std::string& name);

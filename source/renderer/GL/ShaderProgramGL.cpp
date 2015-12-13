@@ -65,16 +65,26 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     {
         CShaderProgramGL::attachShader(m_shaderProgID, shaders[i]);
     }
-
+    
+    u32 currentUserLayout = 0;
     for (auto& shaderData : m_shaderDataList)
     {
         const AttributeList& attributeList = shaderData.lock()->getAttributeList();
-        for (auto& attribute : attributeList)
+        for (const AttributePair& attribute : attributeList)
         {
-            const std::string& name = attribute->getAttribute();
-            CShaderAttribute::EShaderAttribute type = attribute->getType();
+            const std::string& name = attribute.second->getName();
+            CShaderAttribute::EShaderAttribute type = attribute.second->getType();
 
-            CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
+            if (type == CShaderAttribute::eAttributeUser)
+            {
+                u32 index = CShaderAttribute::eAttributeCount + currentUserLayout;
+                ++currentUserLayout;
+                CShaderProgramGL::bindAttrib(m_shaderProgID, index, name);
+            }
+            else
+            {
+                CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
+            }
         }
     }
 
@@ -96,23 +106,34 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     s32 samplerCount = 0;
     for (auto& shaderData : m_shaderDataList)
     {
-        const AttributeList& attributeList = shaderData.lock()->getAttributeList();
-        for (auto& attribute : attributeList)
+        AttributeList& attributeList = shaderData.lock()->getAttributeList();
+        for (AttributeList::iterator attribute = attributeList.begin(), end = attributeList.end(); attribute != end;)
         {
-            const std::string& name = attribute->getAttribute();
-            CShaderAttribute::EShaderAttribute type = attribute->getType();
+            const std::string& name = (*attribute).second->getName();
+            CShaderAttribute::EShaderAttribute type = (*attribute).second->getType();
 
             s32 id = CShaderProgramGL::getAttrib(m_shaderProgID, name);
-            if ((CShaderAttribute::EShaderAttribute)id != type)
+            if ((CShaderAttribute::EShaderAttribute)id != type && type != CShaderAttribute::eAttributeUser)
             {
                 LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
+            }
+
+            if (id < 0)
+            {
+                LOG_WARNING("CShaderProgramGL: Attribute not found: %s", name.c_str());
+                attributeList.erase(attribute++);
+            }
+            else
+            {
+                (*attribute).second->setID(id);
+                ++attribute;
             }
         }
 
         UniformList& uniformList = shaderData.lock()->getUniformList();
         for (UniformList::iterator uniform = uniformList.begin(), end = uniformList.end(); uniform != end;)
         {
-            const std::string& name = (*uniform).second->getAttribute();
+            const std::string& name = (*uniform).second->getName();
             s32 id = CShaderProgramGL::getUniformLocation(m_shaderProgID, name);
 
             if (id < 0)
@@ -237,7 +258,7 @@ void CShaderProgramGL::detachShader(u32 shaderProgram, u32 shader)
     glDetachShader(shaderProgram, shader);
 }
 
-void CShaderProgramGL::bindAttrib(u32 shaderProgram, CShaderAttribute::EShaderAttribute type, const std::string& name)
+void CShaderProgramGL::bindAttrib(u32 shaderProgram, u32 type, const std::string& name)
 {
     ASSERT(glIsProgram(shaderProgram) && "Invalid Index bindAttrib Shader program");
     glBindAttribLocation(shaderProgram, type, name.c_str());
@@ -282,7 +303,7 @@ bool CShaderProgramGL::setUniform(const UniformPtr& uniform)
     GLint location = uniform->getID();
     if (location < 0)
     {
-        location = CShaderProgramGL::getUniformLocation(m_shaderProgID, uniform->getAttribute());
+        location = CShaderProgramGL::getUniformLocation(m_shaderProgID, uniform->getName());
         if (location > -1)
         {
             uniform->setID(location);
@@ -358,10 +379,10 @@ bool CShaderProgramGL::setUniform(const UniformPtr& uniform)
 
     if (location == -1)
     {
-        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getAttribute().c_str(), m_shaderProgID);
+        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getName().c_str(), m_shaderProgID);
     }
 
-    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getAttribute());
+    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getName());
 
     return (location != -1);
 }

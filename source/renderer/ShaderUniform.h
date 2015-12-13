@@ -2,6 +2,7 @@
 #define _V3D_SHADER_UNIFORM_H_
 
 #include "common.h"
+#include "DataTypes.h"
 
 namespace tinyxml2
 {
@@ -12,22 +13,6 @@ namespace v3d
 {
 namespace renderer
 {
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum EDataType
-    {
-        eTypeNone = 0,
-        eTypeInt,
-        eTypeFloat,
-        eTypeVector2,
-        eTypeVector3,
-        eTypeVector4,
-        eTypeMatrix3,
-        eTypeMatrix4,
-
-        eDataTypeCount
-    };
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CShaderData;
@@ -72,7 +57,7 @@ namespace renderer
 
         void                        setID(s32 id);
 
-        const std::string&          getAttribute()  const;
+        const std::string&          getName()       const;
         EDataType                   getType()       const;
         void*                       getValue()      const;
         EUniformData                getData()       const;
@@ -88,15 +73,15 @@ namespace renderer
 
         friend                      CShaderData;
 
-        void                        setUniform(const std::string& attribute, EUniformData data);
-        void                        setUniform(EDataType type, const std::string& attribute, void* value);
+        void                        setUniform(const std::string& name, EUniformData data);
+        void                        setUniform(EDataType type, const std::string& name, void* value);
 
         bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
         void                        parseArrayValue(const std::string& val, f32* array, u32 count);
 
         EDataType                   m_type;
         void*                       m_value;
-        std::string                 m_attribute;
+        std::string                 m_name;
         EUniformData                m_data;
 
         s32                         m_id;

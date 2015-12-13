@@ -44,10 +44,16 @@ CGeometryGL::CGeometryGL(const CRenderTechnique* technique)
     , m_verticesId(0U)
     , m_indicesId(0U)
 {
+    LOG_DEBUG("CGeometryGL: CGeometryGL constructor %x", this);
 }
 
 CGeometryGL::~CGeometryGL()
 {
+    ASSERT(m_arrayId == 0U && "VAO doesn't deleted");
+    ASSERT(m_verticesId == 0U && "VAO doesn't deleted");
+    ASSERT(m_indicesId == 0U && "IAO doesn't deleted");
+
+    LOG_DEBUG("CGeometryGL: CGeometryGL destructor %x", this);
 }
 
 void CGeometryGL::init()
@@ -63,17 +69,20 @@ void CGeometryGL::init()
     CGeometryGL::genVertexArray(m_arrayId);
     CGeometryGL::bindVertexArray(m_arrayId);
 
-    const RenderPassPtr& pass = m_technique->getRenderPass(0);
-    CGeometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
-    const AttributeList& attributes = pass->getDefaultShaderData()->getAttributeList();
+    const RenderPassPtr& pass = m_technique->getRenderPass(m_technique->getCurrentPass());
+    u32 mask = pass->getDefaultShaderData()->getVertexFormatMask() | pass->getUserShaderData()->getVertexFormatMask();
+    CGeometry::setVertexMask(mask);
 
     CGeometryGL::genBuffers(m_verticesId);
     CGeometryGL::bindBuffers(eArrayBuffer, m_verticesId);
 
-    s32 vertexSize = CGeometryGL::computeVertexSize(attributes);
-    CGeometryGL::bufferData(eArrayBuffer, m_geometyType, vertexSize, nullptr);
+    ShaderDataList shaderData;
+    shaderData.push_back(pass->getDefaultShaderData());
+    shaderData.push_back(pass->getUserShaderData());
 
-    CGeometryGL::initBufferData(attributes);
+    u32 vertexSize = CGeometryGL::computeVertexSize(shaderData);
+    CGeometryGL::bufferData(eArrayBuffer, m_geometyType, vertexSize, nullptr);
+    CGeometryGL::initBufferData(shaderData);
 
     //Indices
     if (m_data.indicesSize() > 0)
@@ -90,38 +99,49 @@ void CGeometryGL::init()
     CGeometryGL::bindBuffers(eArrayElementBuffer, 0);
 }
 
-s32 CGeometryGL::computeVertexSize(const AttributeList& attributes)
+s32 CGeometryGL::computeVertexSize(const ShaderDataList& shaderDataList)
 {
     s32 vertexSize = 0;
 
-    for (const AttributePtr& attr : attributes)
+    for (auto& shaderData : shaderDataList)
     {
-        CShaderAttribute::EShaderAttribute type = attr->getType();
-
-        switch (type)
+        for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
-        case CShaderAttribute::eAttributePosition:
-        case CShaderAttribute::eAttributeNormal:
-        case CShaderAttribute::eAttributeBinormal:
-        case CShaderAttribute::eAttributeColor:
-        case CShaderAttribute::eAttributeTangent:
+            CShaderAttribute::EShaderAttribute type = attr.second->getType();
 
-            vertexSize += sizeof(GLfloat)* m_data.verticesSize() * 3;
-            break;
-
-        case CShaderAttribute::eAttributeTexture0:
-        case CShaderAttribute::eAttributeTexture1:
-        case CShaderAttribute::eAttributeTexture2:
-        case CShaderAttribute::eAttributeTexture3:
-
-            for (v3d::u32 layer = 0; layer < m_data._texCoords.size(); ++layer)
+            switch (type)
             {
-                vertexSize += sizeof(GLfloat)* m_data.verticesSize() * 2;
-            }
-            break;
+            case CShaderAttribute::eAttributePosition:
+            case CShaderAttribute::eAttributeNormal:
+            case CShaderAttribute::eAttributeBinormal:
+            case CShaderAttribute::eAttributeColor:
+            case CShaderAttribute::eAttributeTangent:
 
-        default:
-            break;
+                vertexSize += sizeof(GLfloat)* m_data.verticesSize() * 3;
+                break;
+
+            case CShaderAttribute::eAttributeTexture0:
+            case CShaderAttribute::eAttributeTexture1:
+            case CShaderAttribute::eAttributeTexture2:
+            case CShaderAttribute::eAttributeTexture3:
+
+                for (v3d::u32 layer = 0; layer < m_data._texCoords.size(); ++layer)
+                {
+                    vertexSize += sizeof(GLfloat)* m_data.verticesSize() * 2;
+                }
+                break;
+
+            case CShaderAttribute::eAttributeUser:
+
+                if (attr.second->getUserDataSize() > 0 && attr.second->getUserDataCount() > 0)
+                {
+                    vertexSize += attr.second->getUserDataSize() * attr.second->getUserDataCount();
+                }
+                break;
+
+            default:
+                break;
+            }
         }
     }
 
@@ -136,14 +156,22 @@ void CGeometryGL::draw()
 
     u32 passIdx = m_technique->getCurrentPass();
     const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
-    const AttributeList& attributes = pass->getDefaultShaderData()->getAttributeList();
-    for (const AttributePtr& attr : attributes)
+    const AttributeList& attributesDefault = pass->getDefaultShaderData()->getAttributeList();
+    const AttributeList& attributesUser = pass->getUserShaderData()->getAttributeList();
+
+    for (const AttributePair& attr : attributesDefault)
     {
-        CShaderAttribute::EShaderAttribute type = attr->getType();
+        CShaderAttribute::EShaderAttribute type = attr.second->getType();
         CGeometryGL::vertexAttribArray(type, true);
     }
 
-    u32 instanceAmount = 0;
+    for (const AttributePair& attr : attributesUser)
+    {
+        u32 id = attr.second->getID();
+        CGeometryGL::vertexAttribArray(id, true);
+    }
+
+    u32 instanceAmount = pass->getRenderAdvanced()->getCountInstance();
     if (m_data.indicesSize() > 0)
     {
         CGeometryGL::drawElements(m_drawMode, m_data.indicesSize(), instanceAmount);
@@ -153,10 +181,16 @@ void CGeometryGL::draw()
         CGeometryGL::drawArrays(m_drawMode, CGeometry::getInterval()._begin, CGeometry::getInterval()._count, instanceAmount);
     }
 
-    for (const AttributePtr& attr : attributes)
+    for (const AttributePair& attr : attributesDefault)
     {
-        CShaderAttribute::EShaderAttribute type = attr->getType();
+        CShaderAttribute::EShaderAttribute type = attr.second->getType();
         CGeometryGL::vertexAttribArray(type, false);
+    }
+
+    for (const AttributePair& attr : attributesUser)
+    {
+        u32 id = attr.second->getID();
+        CGeometryGL::vertexAttribArray(id, false);
     }
 
     CGeometryGL::bindVertexArray(0);
@@ -172,75 +206,107 @@ void CGeometryGL::free()
     CGeometryGL::deleteBuffers(m_indicesId);
 }
 
-void CGeometryGL::initBufferData(const AttributeList& attributes)
+void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
 {
     s32 offset = 0;
     s32 size = 0;
     u32 layer = 0;
 
-    for (const AttributePtr& attr : attributes)
+    for (auto& shaderData : shaderDataList)
     {
-        CShaderAttribute::EShaderAttribute type = attr->getType();
-
-        switch (type)
+        for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
-            case CShaderAttribute::eAttributePosition:
+            CShaderAttribute::EShaderAttribute type = attr.second->getType();
+
+            switch (type)
             {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._vertices.data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributePosition, 3, false, sizeof(GLfloat)* 3, offset);
-                offset += size;
-            }
+                case CShaderAttribute::eAttributePosition:
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 3;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._vertices.data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributePosition, 3, false, sizeof(GLfloat) * 3, offset);
+                    offset += size;
+                }
                 break;
 
             case CShaderAttribute::eAttributeNormal:
-            {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._normals.data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeNormal, 3, true, sizeof(GLfloat)* 3, offset);
-                offset += size;
-            }
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 3;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._normals.data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeNormal, 3, true, sizeof(GLfloat) * 3, offset);
+                    offset += size;
+                }
                 break;
 
             case CShaderAttribute::eAttributeColor:
-            {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._colors.data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeColor, 3, false, sizeof(GLfloat)* 3, offset);
-                offset += size;
-            }
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 3;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._colors.data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeColor, 3, false, sizeof(GLfloat) * 3, offset);
+                    offset += size;
+                }
                 break;
 
             case CShaderAttribute::eAttributeBinormal:
-            {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._binormals.data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeBinormal, 3, false, sizeof(GLfloat)* 3, offset);
-                offset += size;
-            }
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 3;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._binormals.data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeBinormal, 3, false, sizeof(GLfloat) * 3, offset);
+                    offset += size;
+                }
                 break;
 
             case CShaderAttribute::eAttributeTangent:
-            {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._tangents.data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeTangent, 3, false, sizeof(GLfloat)* 3, offset);
-                offset += size;
-            }
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 3;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._tangents.data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeTangent, 3, false, sizeof(GLfloat) * 3, offset);
+                    offset += size;
+                }
                 break;
 
             case CShaderAttribute::eAttributeTexture0:
             case CShaderAttribute::eAttributeTexture1:
             case CShaderAttribute::eAttributeTexture2:
             case CShaderAttribute::eAttributeTexture3:
-            {
-                size = sizeof(GLfloat)* m_data.verticesSize() * 2;
-                CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._texCoords.at(layer).data());
-                CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeTexture0 + layer, 2, false, sizeof(GLfloat)* 2, offset);
-                offset += size;
-                ++layer;
-            }
+                {
+                    size = sizeof(GLfloat)* m_data.verticesSize() * 2;
+                    CGeometryGL::bufferSubData(eArrayBuffer, offset, size, m_data._texCoords.at(layer).data());
+                    CGeometryGL::initVertexAttribPointer(CShaderAttribute::eAttributeTexture0 + layer, 2, false, sizeof(GLfloat) * 2, offset);
+                    offset += size;
+                    ++layer;
+                }
                 break;
+
+            case CShaderAttribute::eAttributeUser:
+                {
+                    if (attr.second->getUserDataCount() <= 0)
+                    {
+                        LOG_WARNING("CGeometryGL::initBufferData: User data have diferent size [%d]", attr.second->getUserDataCount());
+                    }
+
+                    size = attr.second->getUserDataSize() * attr.second->getUserDataCount();
+                    if (size > 0)
+                    {
+                        CGeometryGL::bufferSubData(eArrayBuffer, offset, size, attr.second->getUserData());
+
+                        u32 userLayer = attr.second->getID();
+                        u32 componentsCount = attr.second->getUserDataSize() / sizeof(GLfloat); //TODO: need rework
+                        CGeometryGL::initVertexAttribPointer(userLayer, componentsCount, false, attr.second->getUserDataSize(), offset);
+                        offset += size;
+
+                        u32 divisor = attr.second->getDivisor();
+                        if (divisor > 0)
+                        {
+                            CGeometryGL::vertexAttribDivisior(userLayer, 1);
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+            }
         }
     }
 }
@@ -255,13 +321,17 @@ void CGeometryGL::refresh()
 
     u32 passIdx = m_technique->getCurrentPass();
     const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
-    const AttributeList& attributes = pass->getDefaultShaderData()->getAttributeList();
 
     CGeometryGL::bindVertexArray(m_arrayId);
     CGeometryGL::bindBuffers(eArrayBuffer, m_verticesId);
-    s32 vertexSize = CGeometryGL::computeVertexSize(attributes);
+
+    ShaderDataList shaderData;
+    shaderData.push_back(pass->getDefaultShaderData());
+    shaderData.push_back(pass->getUserShaderData());
+
+    s32 vertexSize = CGeometryGL::computeVertexSize(shaderData);
     CGeometryGL::bufferData(eArrayBuffer, m_geometyType, vertexSize, nullptr);
-    CGeometryGL::initBufferData(attributes);
+    CGeometryGL::initBufferData(shaderData);
 
     //Indices
     if (m_data.indicesSize() > 0)
@@ -375,6 +445,11 @@ void CGeometryGL::vertexAttribArray(u32 vertexAttrib, bool enable)
     {
         glDisableVertexAttribArray(vertexAttrib);
     }
+}
+
+void CGeometryGL::vertexAttribDivisior(u32 vertexAttrib, u32 value)
+{
+    glVertexAttribDivisor(vertexAttrib, value);
 }
 
 void CGeometryGL::drawElements(EDrawMode mode, u32 count, u32 primCount)

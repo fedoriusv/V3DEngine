@@ -24,13 +24,19 @@ namespace renderer
         CShaderData();
         ~CShaderData();
 
-        void                        setUniformInt    (const std::string& name, const s32             value);
-        void                        setUniformFloat  (const std::string& name, const f32             value);
-        void                        setUniformVector2(const std::string& name, const core::Vector2D& vector);
-        void                        setUniformVector3(const std::string& name, const core::Vector3D& vector);
-        void                        setUniformVector4(const std::string& name, const core::Vector4D& vector);
-        void                        setUniformMatrix3(const std::string& name, const core::Matrix3D& matrix);
-        void                        setUniformMatrix4(const std::string& name, const core::Matrix4D& matrix);
+        void                        setUniform(const std::string& name, const s32             value);
+        void                        setUniform(const std::string& name, const f32             value);
+        void                        setUniform(const std::string& name, const core::Vector2D& vector);
+        void                        setUniform(const std::string& name, const core::Vector3D& vector);
+        void                        setUniform(const std::string& name, const core::Vector4D& vector);
+        void                        setUniform(const std::string& name, const core::Matrix3D& matrix);
+        void                        setUniform(const std::string& name, const core::Matrix4D& matrix);
+
+        void                        setAttribute(const std::string& name, u32 divisor, const std::vector<s32>&            data);
+        void                        setAttribute(const std::string& name, u32 divisor, const std::vector<f32>&            data);
+        void                        setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector2D>& data);
+        void                        setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector3D>& data);
+        void                        setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector4D>& data);
 
         const AttributeList&        getAttributeList() const;
         const UniformList&          getUniformList() const;

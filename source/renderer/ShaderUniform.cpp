@@ -66,7 +66,7 @@ CShaderUniform::EUniformData CShaderUniform::getValueByName(const std::string& n
 CShaderUniform::CShaderUniform()
     : m_type(eTypeNone)
     , m_value(nullptr)
-    , m_attribute("")
+    , m_name("")
     , m_data(eUserUniform)
     , m_id(-1)
 {
@@ -80,7 +80,7 @@ CShaderUniform::~CShaderUniform()
 void CShaderUniform::setUniform(EDataType type, const std::string& attribute, void* value)
 {
     m_type  = type;
-    m_attribute = attribute;
+    m_name = attribute;
     if (value)
     {
         allocMemory(type, value);
@@ -89,9 +89,8 @@ void CShaderUniform::setUniform(EDataType type, const std::string& attribute, vo
 
 void CShaderUniform::setUniform(const std::string& attribute, EUniformData data)
 {
-    m_attribute = attribute;
+    m_name = attribute;
     m_data = data;
-
 }
 
 void CShaderUniform::allocMemory(EDataType type, void* value)
@@ -208,9 +207,9 @@ s32 CShaderUniform::getID() const
     return m_id;
 }
 
-const std::string& CShaderUniform::getAttribute() const
+const std::string& CShaderUniform::getName() const
 {
-    return m_attribute;
+    return m_name;
 }
 
 void CShaderUniform::setID(s32 id)
@@ -235,7 +234,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
 
     if (!root->Attribute("val"))
     {
-        LOG_ERROR("CRenderPass: Cannot find uniform va");
+        LOG_ERROR("CRenderPass: Cannot find uniform val");
         return false;
     }
     const std::string varVal = root->Attribute("val");

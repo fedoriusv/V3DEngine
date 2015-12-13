@@ -219,7 +219,7 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml renderstate element");
+        LOG_ERROR("CRenderState: Not exist xml renderstate element");
         return false;
     }
 

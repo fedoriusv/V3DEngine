@@ -27,8 +27,8 @@ namespace renderer
         u32                 m_verticesId;
         u32                 m_indicesId;
 
-        s32                 computeVertexSize(const AttributeList& attributes);
-        void                initBufferData(const AttributeList& attributes);
+        s32                 computeVertexSize(const ShaderDataList& shaderDataList);
+        void                initBufferData(const ShaderDataList& shaderDataList);
 
         static void         genBuffers(u32& buffer);
         static void         bindBuffers(EGeometryTarget target, u32 buffer);
@@ -49,6 +49,7 @@ namespace renderer
 
         static void         initVertexAttribPointer(u32 vertexAttrib, u32 count, bool normalized = false, u32 size = 0, u32 offset = 0);
         static void         vertexAttribArray(u32 vertexAttrib, bool enable);
+        static void         vertexAttribDivisior(u32 vertexAttrib, u32 value);
 
         static void         drawElements(EDrawMode mode, u32 count, u32 primCount);
         static void         drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount);
