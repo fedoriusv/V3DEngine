@@ -16,6 +16,7 @@ CRenderPass::CRenderPass()
     , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
     , m_lods(nullptr)
+    , m_advanced(nullptr)
     , m_enable(true)
     , m_current(false)
     , m_name("")
@@ -155,6 +156,16 @@ bool CRenderPass::parse(const tinyxml2::XMLElement* root)
         }
     }
 
+    //advanced
+    const tinyxml2::XMLElement*  renderadvancedElement = root->FirstChildElement("advanced");
+    if (renderadvancedElement)
+    {
+        if (!parseRenderAdvanced(renderadvancedElement))
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -213,7 +224,15 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        m_defaultShaderData->addAttribute(attribute);
+        bool isDefault = (attribute->getType() != CShaderAttribute::eAttributeUser);
+        if (isDefault)
+        {
+            m_defaultShaderData->addAttribute(attribute);
+        }
+        else
+        {
+            m_userShaderData->addAttribute(attribute);
+        }
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -305,6 +324,7 @@ void CRenderPass::init()
     m_userShaderData = std::make_shared<CShaderData>();
     m_defaultShaderData = std::make_shared<CShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
+    m_advanced = std::make_shared<CRenderAdvanced>();
     m_program = RENDERER->makeSharedProgram();
     m_renderState = RENDERER->makeSharedRenderState();
 }
@@ -403,6 +423,22 @@ bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
     return true;
 }
 
+bool CRenderPass::parseRenderAdvanced(const tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        LOG_ERROR("CRenderPass: Not exist xml advanced element");
+        return false;
+    }
+
+    if (!m_advanced->parse(root))
+    {
+        LOG_ERROR("CRenderPass: RenderAdvanced parse error");
+        return false;
+    }
+
+    return true;
+}
 
 void CRenderPass::bind(u32 target)
 {
@@ -467,6 +503,15 @@ const RenderLODPtr& CRenderPass::getRenderLOD() const
 void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
 {
     m_lods = lod;
+}
+
+const RenderAdvancedPtr& CRenderPass::getRenderAdvanced() const
+{
+    return m_advanced;
+}
+void CRenderPass::setRenderAdvanced(const RenderAdvancedPtr& advanced)
+{
+    m_advanced = advanced;
 }
 
 const RenderTargetPtr& CRenderPass::getRenderTarget(u32 index) const

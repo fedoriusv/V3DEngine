@@ -1,0 +1,87 @@
+<technique name="default_instance" version="100">
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+            <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+        </uniforms>
+        <attributes>
+            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="texture0" type="vec2" val="mesh.texture0"/>
+        </attributes>
+        <samplers>
+            <var name="sampler0"/>
+        </samplers>
+        <renderstate>
+            <polygonmode val="fill"/>
+            <winding val="ccw"/>
+            <culling val="true"/>
+            <blending val="true" src="srcAlpha" dst="invSrcAlpha"/>
+        </renderstate>
+        <rendertarget>
+            <var val="default"/>
+        </rendertarget>
+        <lod geometry="10.0"/>
+        <advanced>
+            <instanced val="25"/>
+        </advanced>
+        <shaders>
+            <var type="vertex" name="vdefault_instance">
+                <![CDATA[
+                    #version 330
+
+                    #define POSITION    0
+                    #define TEXCOORD0   5
+
+                    layout (location = POSITION)  in vec3 positions;
+                    layout (location = TEXCOORD0) in vec2 texture0;
+
+                    struct Transform
+                    {
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        mat4 projectionMatrix;
+                    };
+                    uniform Transform   transform;
+                    uniform vec3 offsets[25];
+
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                    };
+                    out Vertex fragVertex;
+
+                    void main()
+                    {
+                        vec3 offset = offsets[gl_InstanceID];
+                        mat4 model = transform.modelMatrix;
+                        model[3] = vec4(offset, 1.0);
+                        
+                        vec4 vertex   = model * vec4(positions, 1.0);
+                        fragVertex.texCoord0 = texture0;
+
+                        gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
+                    }
+                ]]>
+            </var>
+            <var type="fragment" name="fdefault_instance">
+                <![CDATA[
+                    #version 330
+                    uniform sampler2D sampler0;
+
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                    };
+                    in  Vertex  fragVertex;
+                    out vec4    fragColor;
+
+                    void main()
+                    {
+                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
+</technique>
