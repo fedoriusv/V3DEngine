@@ -5,6 +5,7 @@ using namespace v3d;
 using namespace core;
 using namespace scene;
 using namespace stream;
+using namespace renderer;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
@@ -18,7 +19,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    MyApplication::switchModel(0);
+    MyApplication::switchModel(2);
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectGamepadEvent(std::bind(&MyApplication::onGamepad, this, std::placeholders::_1));
@@ -48,7 +49,7 @@ void MyApplication::useSimpleArray()
         {
             for (s32 width = 0; width < 1; ++width)
             {
-                CShape* model = scene->addCube(0, Vector3D(row, col, -5));
+                CShape* model = scene->addCube(0, Vector3D((f32)row, (f32)col, -5));
                 if (model)
                 {
                     model->setName("cube_" + std::to_string(col) + "_" + std::to_string(row));
@@ -78,8 +79,59 @@ void MyApplication::useInstancedObject()
     {
         model->setName("cube");
         model->setScale(Vector3D(0.5f));
-        model->getMaterial()->setRenderTechnique("shaders/default.xml");
+        model->getMaterial()->setRenderTechnique("shaders/default_instancing.xml");
         model->getMaterial()->setTexture(0, "textures/box.jpg");
+        const RenderPassPtr& pass = model->getMaterial()->getRenderTechique()->getRenderPass(0);
+        u32 index = 0;
+        for (s32 col = -2; col < 3; ++col)
+        {
+            for (s32 row = -2; row < 3; ++row)
+            {
+                for (s32 width = 0; width < 1; ++width)
+                {
+                    pass->getUserShaderData()->setUniform("offsets[" + std::to_string(index) + "]", Vector3D((f32)col, (f32)row, f32(- 5 - width)));
+                    ++index;
+                }
+            }
+        }
+        
+    }
+
+    CNode* fpsCamera = scene->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    fpsCamera->setName("fpsCamera");
+    CNode* camera = scene->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
+    camera->setName("camera");
+
+    scene->init();
+}
+
+void MyApplication::useInstancedAttrObject()
+{
+    const SceneManagerPtr& scene = BaseApplication::getSceneManager();
+    scene->clear();
+
+    CShape* model = scene->addCube(0, Vector3D(0, 0, 0));
+    if (model)
+    {
+        model->setName("cube");
+        model->setScale(Vector3D(0.5f));
+        model->getMaterial()->setRenderTechnique("shaders/default_instancing_attr.xml");
+        model->getMaterial()->setTexture(0, "textures/box.jpg");
+        const RenderPassPtr& pass = model->getMaterial()->getRenderTechique()->getRenderPass(0);
+        
+        std::vector<Vector3D> offset;
+        for (s32 col = -2; col < 3; ++col)
+        {
+            for (s32 row = -2; row < 3; ++row)
+            {
+                for (s32 width = 0; width < 1; ++width)
+                {
+                    offset.push_back(Vector3D((f32)col, (f32)row, f32(-5 - width)));
+                }
+            }
+        }
+
+        pass->getUserShaderData()->setAttribute("offsets", 1, offset);
     }
 
     CNode* fpsCamera = scene->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
@@ -107,6 +159,11 @@ void MyApplication::switchModel(u32 value)
 
     case 1:
         MyApplication::useInstancedObject();
+        currValue = value;
+        return;
+
+    case 2:
+        MyApplication::useInstancedAttrObject();
         currValue = value;
         return;
 
@@ -165,6 +222,10 @@ void MyApplication::onKeyboard(const event::KeyboardInputEventPtr& event)
         else if (event->_key == EKeyCode::eKeyKey_2)
         {
             MyApplication::switchModel(1);
+        }
+        else if (event->_key == EKeyCode::eKeyKey_3)
+        {
+            MyApplication::switchModel(2);
         }
     }
 }

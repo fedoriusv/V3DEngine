@@ -21,6 +21,7 @@ private:
 
     void    useSimpleArray();
     void    useInstancedObject();
+    void    useInstancedAttrObject();
 
 
     void    switchModel(v3d::u32 value);
