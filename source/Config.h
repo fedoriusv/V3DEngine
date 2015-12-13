@@ -17,6 +17,7 @@
 
 #if USED_LOGGER
 #   define USE_LOGGER
+//#   define USE_DEBUG_LOG
 #endif //USED_LOGGER
 
 #if USED_DEVIL

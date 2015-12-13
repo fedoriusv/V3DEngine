@@ -92,7 +92,7 @@ void CLogger::logToConsole(const std::string& message, ELoggerType type)
 {
     if (type == ELoggerType::eLoggerDebug)
     {
-#if defined (_DEBUG) || defined(DEBUG)
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(USE_DEBUG_LOG)
         std::cout << k_loggerType[eLoggerDebug] << ": " << message << std::endl;
 #endif
     }
@@ -108,7 +108,7 @@ void CLogger::logToFile(const std::string& message, ELoggerType type)
 
     if (type == ELoggerType::eLoggerDebug)
     {
-#if defined (_DEBUG) || defined(DEBUG)
+#if (defined(_DEBUG) || defined(DEBUG)) && defined(USE_DEBUG_LOG)
         m_file << k_loggerType[eLoggerDebug] << ": " << message << std::endl;
 #endif
     }
