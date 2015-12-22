@@ -20,26 +20,13 @@ void MyApplication::init()
 {
     const SceneManagerPtr& scene = BaseApplication::getSceneManager();
 
-    /*CShape* cube = scene->addCube(0, Vector3D(0, 1, -5));
+    CShape* cube = scene->addSphere(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");*/
+    cube->getMaterial()->setRenderTechnique("shaders/texture_debug.xml");
+    //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
-    for (u32 col = 0; col < 10; ++col)
-    {
-        for (u32 row = 0; row < 10; ++row)
-        {
-            for (u32 width = 0; width < 2; ++width)
-            {
-                CModel* model = scene->addModel("models/test.f3d", 0, Vector3D(row * 1.2f, col * 0.2f, -1 - (width *1.f)));
-                if (model)
-                {
-                    model->setName("cube");
-                    model->setScale(Vector3D(0.01f, 0.01f, 0.01f));
-                    model->setRenderTechniqueForAllMeshes("shaders/default.xml");
-                }
-            }
-        }
-    }
+    CLight* light = BaseApplication::getSceneManager()->addLight(0, Vector3D(0, 1, 0));
+    light->setName("light");
 
     /*scene::CSkybox* skybox = static_cast<scene::CSkybox*>(BaseApplication::getSceneManager()->addSkyBox(
         "textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
