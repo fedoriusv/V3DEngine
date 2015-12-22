@@ -13,10 +13,18 @@ using namespace v3d;
 using namespace renderer;
 using namespace scene;
 
+CRenderList::SNodeList::SNodeList(scene::CNode* node, CRenderable* draw, u32 target, u32 pass)
+    : _node(node)
+    , _draw(draw)
+    , _targetIndex(target)
+    , _passIndex(pass)
+{
+}
+
 CRenderList::CRenderList(const RenderTargetPtr& target)
-: m_enable(false)
-, m_target(target)
-, m_camera(nullptr)
+    : m_enable(false)
+    , m_target(target)
+    , m_camera(nullptr)
 {
 }
 
@@ -45,11 +53,11 @@ void CRenderList::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CRenderList::add(CNode* node, CRenderable* draw, u32 target)
+void CRenderList::add(CNode* node, CRenderable* draw, u32 target, u32 pass)
 {
     if (node && draw)
     {
-        m_list.push_back(SNodeList(node, draw, target));
+        m_list.push_back(SNodeList(node, draw, target, pass));
     }
 }
 
@@ -60,6 +68,27 @@ void CRenderList::clear()
 
     m_drawStatic.clear();
     m_drawAlpha.clear();
+}
+
+bool CRenderList::contain(scene::CNode* node)
+{
+    auto findPred = [node](const SNodeList& list) -> bool
+    {
+        if (list._node == node)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    std::vector<SNodeList>::const_iterator iter = std::find_if(m_list.cbegin(), m_list.cend(), findPred);
+     if (iter != m_list.cend())
+     {
+         return true;
+     }
+
+     return false;
 }
 
 const RenderTargetPtr& CRenderList::getRenderTarget() const
@@ -114,6 +143,10 @@ void CRenderList::refresh()
     m_drawAlpha.clear();
     m_drawStatic.clear();
 
+    u32 size = (u32)m_list.size();
+    m_drawAlpha.reserve(size);
+    m_drawStatic.reserve(size);
+
     for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
         CNode* node = (*iter)._node;
@@ -139,9 +172,6 @@ void CRenderList::refresh()
 
                 if (checkDistance(node, priority))
                 {
-                    const RenderJobPtr& job = mesh->getRenderJob();
-                    job->setRenderTarget((*iter)._targetIndex);
-
                     m_drawAlpha.push_back((*iter));
                 }
             }
@@ -149,9 +179,6 @@ void CRenderList::refresh()
             {
                 if (checkDistance(node, priority))
                 {
-                    const RenderJobPtr& job = mesh->getRenderJob();
-                    job->setRenderTarget((*iter)._targetIndex);
-
                     m_drawStatic.push_back((*iter));
                 }
             }
@@ -171,11 +198,6 @@ void CRenderList::refresh()
         case ENodeType::eSkyBox:
         {
             node->setPriority(k_maxPriority);
-
-            CSkybox* skybox = static_cast<CSkybox*>(node);
-            const RenderJobPtr& job = skybox->getRenderJob();
-            job->setRenderTarget((*iter)._targetIndex);
-
             m_drawStatic.push_back((*iter));
         }
             break;
@@ -192,9 +214,6 @@ void CRenderList::refresh()
             node->setPriority(0.0f);
 
             CText* text = static_cast<CText*>(node);
-            const RenderJobPtr& job = text->getRenderJob();
-            job->setRenderTarget((*iter)._targetIndex);
-
             if (text->getMaterial()->getTransparency() < 1.0f)
             {
                 m_drawAlpha.push_back((*iter));
@@ -212,10 +231,12 @@ void CRenderList::refresh()
         }
     }
 
+    m_drawStatic.shrink_to_fit();
     m_draw.insert(m_draw.begin(), m_drawStatic.begin(), m_drawStatic.end());
 
     if (!m_drawAlpha.empty())
     {
+        m_drawAlpha.shrink_to_fit();
         std::sort(m_drawAlpha.begin(), m_drawAlpha.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
         {
             return  (node0._node->getPriority() > node1._node->getPriority());

@@ -87,16 +87,17 @@ const CGeometry::SInterval& CGeometry::getInterval() const
 
 void CGeometry::draw()
 {
-    u32 passIdx = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
+    u32 passIndex = m_technique->getCurrentPass();
+    const RenderPassPtr& pass = m_technique->getRenderPass(passIndex);
+
     CGeometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
 }
 
 bool CGeometry::updated() const
 {
-    u32 passIdx = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
-    
+    u32 passIndex = m_technique->getCurrentPass();
+    const RenderPassPtr& pass = m_technique->getRenderPass(passIndex);
+
     return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
 }
 

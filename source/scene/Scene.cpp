@@ -228,40 +228,40 @@ void CScene::attachToRenderList(CNode* node)
 
     switch (node->getNodeType())
     {
-    case ENodeType::eShape:
-        {
-            draw = static_cast<CShape*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
-        }
-            break;
+        case ENodeType::eShape:
+            {
+                draw = static_cast<CShape*>(node);
+                techniqe = draw->getMaterial()->getRenderTechique();
+            }
+                break;
 
-    case ENodeType::eMesh:
-        {
-            draw = static_cast<CMesh*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
-        }
-            break;
+        case ENodeType::eMesh:
+            {
+                draw = static_cast<CMesh*>(node);
+                techniqe = draw->getMaterial()->getRenderTechique();
+            }
+                break;
 
         case ENodeType::eSkyBox:
             {
                 draw = static_cast<CSkybox*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
-            break;
+                break;
 
         case ENodeType::eText:
             {
                 draw = static_cast<CText*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
-            break;
+                break;
 
         case ENodeType::eBillboard:
             {
                 draw = static_cast<CBillboard*>(node);
                 techniqe = draw->getMaterial()->getRenderTechique();
             }
-            break;
+                break;
 
         case ENodeType::eModel:
         default:
@@ -273,9 +273,12 @@ void CScene::attachToRenderList(CNode* node)
         return;
     }
 
-    for (u32 i = 0; i < techniqe->getRenderPassCount(); ++i)
+    const RenderJobPtr& job = draw->getRenderJob();
+    job->clearRenderPassIndexList();
+
+    for (u32 passIndex = 0; passIndex < techniqe->getRenderPassCount(); ++passIndex)
     {
-        const RenderPassPtr& pass = techniqe->getRenderPass(i);
+        const RenderPassPtr& pass = techniqe->getRenderPass(passIndex);
 
         for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
         {
@@ -293,13 +296,25 @@ void CScene::attachToRenderList(CNode* node)
             std::vector<CRenderList>::iterator findTarget = std::find_if(m_renderList.begin(), m_renderList.end(), findPred);
             if (findTarget != m_renderList.end())
             {
-                (*findTarget).add(node, draw, targetIndex);
+                const RenderJobPtr& job = draw->getRenderJob();
+                job->addRenderPassIndex(passIndex);
+
+                if (!(*findTarget).contain(node))
+                {
+                    job->setRenderTarget(targetIndex);
+                    (*findTarget).add(node, draw, targetIndex, passIndex);
+                }
+
             }
             else
             {
+                const RenderJobPtr& job = draw->getRenderJob();
+                job->addRenderPassIndex(passIndex);
+                job->setRenderTarget(targetIndex);
+
                 CRenderList list(target);
                 list.setEnable(true);
-                list.add(node, draw, targetIndex);
+                list.add(node, draw, targetIndex, passIndex);
 
                 m_renderList.push_back(list);
             }

@@ -34,8 +34,10 @@ namespace renderer
         bool                            isEnable() const;
         void                            setEnable(bool enable);
 
-        void                            add(scene::CNode* node, CRenderable* draw, u32 target);
+        void                            add(scene::CNode* node, CRenderable* draw, u32 target, u32 pass);
         void                            clear();
+
+        bool                            contain(scene::CNode* node);
 
         const RenderTargetPtr&          getRenderTarget() const;
         const std::string&              getTargetName() const;
@@ -44,15 +46,12 @@ namespace renderer
 
         struct SNodeList
         {
-            SNodeList(scene::CNode* node, CRenderable* draw, u32 index)
-            : _node(node)
-            , _draw(draw)
-            , _targetIndex(index)
-            {}
+            SNodeList(scene::CNode* node, CRenderable* draw, u32 target, u32 pass);
 
             scene::CNode*   _node;
             CRenderable*    _draw;
             u32             _targetIndex;
+            u32             _passIndex;
         };
 
         bool                            checkDistance(const scene::CNode* node, const f32 distance);

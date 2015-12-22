@@ -55,8 +55,6 @@ namespace renderer
         void                    bind(u32 target = 0);
         void                    unbind(u32 target = 0);
 
-        bool                    isCurrent() const;
-
     private:
 
         friend                  CRenderer;
@@ -86,7 +84,6 @@ namespace renderer
         RenderTargetList        m_renderTargets;
 
         bool                    m_enable;
-        bool                    m_current;
         std::string             m_name;
 
     };

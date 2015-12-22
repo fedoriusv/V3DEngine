@@ -11,6 +11,8 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    typedef std::vector<u32>::const_iterator PassIndexIterConst;
+
     class CRenderJob
     {
     public:
@@ -28,6 +30,12 @@ namespace renderer
         void                    setRenderTarget(u32 target);
         u32                     getRenderTarget() const;
 
+        void                    addRenderPassIndex(u32 pass);
+        void                    clearRenderPassIndexList();
+
+        PassIndexIterConst      renderPassIndexBegin() const;
+        PassIndexIterConst      renderPassIndexEnd() const;
+
         void                    setTransform(const core::Matrix4D& transform);
 
     protected:
@@ -41,6 +49,7 @@ namespace renderer
         GeometryPtr             m_geometry;
         core::Matrix4D          m_transform;
         u32                     m_targetIndex;
+        std::vector<u32>        m_passIndexList;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
