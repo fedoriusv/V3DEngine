@@ -119,19 +119,21 @@ void CRenderer::draw(const RenderJobPtr& job)
     MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
-    u32 targetIndex = job->getRenderTarget();
     CRenderTechnique* techique = material->getRenderTechique();
-    const u32 passCount = techique->getRenderPassCount();
 
-    for (u32 passIdx = 0; passIdx < passCount; ++passIdx)
+    u32 targetIndex = job->getRenderTarget();
+    u32 passCount = techique->getRenderPassCount();
+    for (PassIndexIterConst passIter = job->renderPassIndexBegin(); passIter != job->renderPassIndexEnd(); ++passIter)
     {
-        const RenderPassPtr& pass = techique->getRenderPass(passIdx);
+        if ((*passIter) < 0 || (*passIter) > passCount)
+        {
+            continue;
+        }
+
+        const RenderPassPtr& pass = techique->getRenderPass((*passIter));
         pass->bind(targetIndex);
 
-        if (pass->isCurrent())
-        {
-            techique->setCurrentPass(passIdx);
-        }
+        techique->setCurrentPass((*passIter));
 
         CRenderer::updateTransform(transform, pass);
         CRenderer::updateMaterial(material, pass);
@@ -159,7 +161,7 @@ bool CRenderer::isDebugMode() const
 {
     return m_debugMode;
 }
-#endif
+#endif //_DEBUG
 
 void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
@@ -383,41 +385,9 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     const SamplerList& samplerList = defaultData->getSamplerList();
 
     bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
-    u32 layersCount = 0;
-    for (auto& sampler : samplerList)
-    {
-        if (sampler->getID() < 0)
-        {
-            continue;
-        }
-
-        CShaderSampler::ESamplerType type = sampler->getType();
-        switch (type)
-        {
-            case CShaderSampler::eUserSampler:
-            {
-                isUserSamplers = true;
-                break;
-            }
-            break;
-
-            case CShaderSampler::eTextureSampler:
-            case CShaderSampler::eRenderTargetSampler:
-            {
-                CTexture* texture = sampler->getTexture();
-                if (texture)
-                {
-                    texture->bind(layersCount, sampler->getID());
-                    ++layersCount;
-                }
-            }
-            break;
-        }
-    }
-
     if (isUserSamplers)
     {
-        layersCount = material->getTextureCount();
+        u32 layersCount = material->getTextureCount();
         u32 samplerID = 0;
         for (u32 layer = 0; layer < layersCount; ++layer)
         {
@@ -432,18 +402,50 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
             }
             samplerID++;
         }
-
-        if (layersCount == 0)
+    }
+    else if (!samplerList.empty())
+    {
+        u32 layersCount = 0;
+        for (auto& sampler : samplerList)
         {
-            resetTexture();
+            if (sampler->getID() < 0)
+            {
+                continue;
+            }
+
+            CShaderSampler::ESamplerType type = sampler->getType();
+            switch (type)
+            {
+                case CShaderSampler::eUserSampler:
+                {
+                    isUserSamplers = true;
+                    break;
+                }
+                break;
+
+                case CShaderSampler::eTextureSampler:
+                case CShaderSampler::eRenderTargetSampler:
+                {
+                    CTexture* texture = sampler->getTexture();
+                    if (texture)
+                    {
+                        if (texture->isEnable())
+                        {
+                            texture->bind(layersCount, sampler->getID());
+                        }
+                        else
+                        {
+                            texture->unbind(layersCount, sampler->getID());
+                        }
+                        ++layersCount;
+                    }
+                }
+                break;
+            }
         }
     }
     else
     {
-        layersCount = material->getTextureCount();
-        if (layersCount == 0)
-        {
-            resetTexture();
-        }
+        resetTexture();
     }
 }

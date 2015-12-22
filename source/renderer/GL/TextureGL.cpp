@@ -1,5 +1,6 @@
 #include "TextureGL.h"
 #include "Engine.h"
+#include "utils/Logger.h"
 
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
@@ -94,10 +95,13 @@ CTextureGL::CTextureGL()
     : m_samplerID(0)
     , m_initialized(false)
 {
+    LOG_DEBUG("CTextureGL::CTextureGL constructor %x", this);
 }
 
 CTextureGL::~CTextureGL()
 {
+    LOG_DEBUG("CTextureGL::CTextureGL destructor %x", this);
+
     CTextureGL::destroy();
 }
 
