@@ -1,85 +1,85 @@
 <technique name="texture_without_light" version="100">
 
-	<textures>
-		<texture name="box" file="textures/box.jpg"/>
-	</textures>
+    <textures>
+        <texture name="box" file="textures/box.jpg"/>
+    </textures>
 
-	<pass name="pass0">
-		<uniforms>
-			<var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
-			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
-			<var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
-		</uniforms>
-		<attributes>
-			<var name="positions" type="vec3" val="mesh.positions"/>
-			<var name="texture0" type="vec2" val="mesh.texture0"/>
-		</attributes>
-		<samplers>
-			<var name="sampler0" val="box"/>
-		</samplers>
-		<renderstate>
-			<polygonmode val="fill"/>
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+            <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+        </uniforms>
+        <attributes>
+            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="texture0" type="vec2" val="mesh.texture0"/>
+        </attributes>
+        <samplers>
+            <var name="sampler0" val="box"/>
+        </samplers>
+        <renderstate>
+            <polygonmode val="fill"/>
             <winding val="ccw"/>
             <culling val="true"/>
-			<blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
-		</renderstate>
-		<rendertarget>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+        </renderstate>
+        <rendertarget>
             <var val="default"/>
-		</rendertarget>
-		<lod geometry="100.0"/>
-		<shaders>
-			<var type="vertex" name="vdefault">
-				<![CDATA[
-					#version 330
+        </rendertarget>
+        <lod geometry="100.0"/>
+        <shaders>
+            <var type="vertex" name="vdefault">
+                <![CDATA[
+                    #version 330
 
-					#define POSITION 	0
-					#define NORMAL 		2
-					#define TEXCOORD0 	5
+                    #define POSITION    0
+                    #define NORMAL      2
+                    #define TEXCOORD0   5
 
-					layout (location = POSITION)  in vec3 positions;
-					layout (location = TEXCOORD0) in vec2 texture0;
+                    layout (location = POSITION)  in vec3 positions;
+                    layout (location = TEXCOORD0) in vec2 texture0;
 
-					struct Transform
-					{
-						mat4 modelMatrix;
-						mat4 viewMatrix;
-						mat4 projectionMatrix;
-					};
-					uniform Transform 	transform;
+                    struct Transform
+                    {
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        mat4 projectionMatrix;
+                    };
+                    uniform Transform   transform;
 
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					out Vertex fragVertex;
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                    };
+                    out Vertex fragVertex;
 
-					void main()
-					{
-						vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
-						fragVertex.texCoord0 = texture0;
+                    void main()
+                    {
+                        vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+                        fragVertex.texCoord0 = texture0;
 
-						gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
-					}
-				]]>
-			</var>
-			<var type="fragment" name="fdefault">
-				<![CDATA[
-					#version 330
-					uniform sampler2D sampler0;
+                        gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
+                    }
+                ]]>
+            </var>
+            <var type="fragment" name="fdefault">
+                <![CDATA[
+                    #version 330
+                    uniform sampler2D sampler0;
 
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					in 	Vertex 	fragVertex;
-					out vec4 	fragColor;
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                    };
+                    in  Vertex  fragVertex;
+                    out vec4    fragColor;
 
-					void main()
-					{
-						fragColor = texture(sampler0, fragVertex.texCoord0);
-					}
-				]]>
-			</var>
-		</shaders>
-	</pass>
+                    void main()
+                    {
+                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
 </technique>
