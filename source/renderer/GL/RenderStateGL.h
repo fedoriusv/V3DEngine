@@ -30,7 +30,7 @@ namespace renderer
         static bool  depthFunc(ECompareFunc mode);
         static bool  depthWrite(bool enable);
         static bool  stencilWrite(bool enable);
-
+        static bool  pointSize(bool enable);
 
     private:
 
@@ -48,6 +48,8 @@ namespace renderer
         static bool s_currentBlend;
         static u32  s_currentBlendDst;
         static u32  s_currentBlendSrc;
+
+        static bool s_pointSize;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

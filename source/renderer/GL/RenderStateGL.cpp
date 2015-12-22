@@ -69,8 +69,11 @@ bool CRenderStateGL::s_currentBlend = false;
 u32 CRenderStateGL::s_currentBlendDst = -1;
 u32 CRenderStateGL::s_currentBlendSrc = -1;
 
+bool CRenderStateGL::s_pointSize = false;
+
 CRenderStateGL::CRenderStateGL()
 {
+    CRenderStateGL::pointSize(false);
 }
 
 CRenderStateGL::~CRenderStateGL()
@@ -192,6 +195,19 @@ bool CRenderStateGL::stencilWrite(bool enable)
     {
         glStencilMask(enable ? GL_TRUE : GL_FALSE);
         s_currentStencilMask = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::pointSize(bool enable)
+{
+    if (enable != s_pointSize)
+    {
+        enable ? glEnable(GL_PROGRAM_POINT_SIZE) : glDisable(GL_PROGRAM_POINT_SIZE);
+        s_pointSize = enable;
 
         return true;
     }
