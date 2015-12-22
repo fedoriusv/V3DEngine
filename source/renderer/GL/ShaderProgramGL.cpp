@@ -159,7 +159,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
             }
             else
             {
-                sampler->setID(id);
+                sampler->setID(samplerCount);
 
                 CShaderProgramGL::setUniformInt(id, samplerCount);
                 ++samplerCount;
