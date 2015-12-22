@@ -29,6 +29,11 @@ void CSphereShape::update(s32 dt)
 
 void CSphereShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CSphereShape::build();

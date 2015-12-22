@@ -27,6 +27,11 @@ void CPlaneShape::update(s32 dt)
 
 void CPlaneShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CPlaneShape::build();

@@ -27,6 +27,11 @@ void CCubeShape::update(s32 dt)
 
 void CCubeShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CCubeShape::build();

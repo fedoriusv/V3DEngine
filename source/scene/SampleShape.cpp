@@ -27,6 +27,11 @@ void CSampleShape::update(s32 dt)
 
 void CSampleShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CSampleShape::build();

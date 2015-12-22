@@ -28,6 +28,11 @@ void CDiskShape::update(s32 time)
 
 void CDiskShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
     
     CDiskShape::build();

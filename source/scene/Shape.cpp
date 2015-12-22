@@ -19,11 +19,6 @@ CShape::CShape()
 
 void CShape::init()
 {
-    if (m_initialiazed)
-    {
-        return;
-    }
-
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {

@@ -28,6 +28,11 @@ void CCylinderShape::update(s32 dt)
 
 void CCylinderShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CCylinderShape::build();

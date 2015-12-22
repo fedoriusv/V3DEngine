@@ -28,6 +28,11 @@ void CTorusShape::update(s32 dt)
 
 void CTorusShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CTorusShape::build();

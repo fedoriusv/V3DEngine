@@ -29,6 +29,11 @@ void CRectangleShape::update(s32 dt)
 
 void CRectangleShape::init()
 {
+    if (m_initialiazed)
+    {
+        return;
+    }
+
     CShape::init();
 
     CRectangleShape::build();
