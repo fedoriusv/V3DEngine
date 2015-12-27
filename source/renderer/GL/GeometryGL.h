@@ -2,6 +2,7 @@
 #define _V3D_GEOMETRY_GL_H_
 
 #include "renderer/Geometry.h"
+#include "renderer/DataTypes.h"
 
 namespace v3d
 {
@@ -47,9 +48,9 @@ namespace renderer
         static void         bindVertexArray(u32 buffer);
         static void         deleteVertexArray(u32& buffer);
 
-        static void         initVertexAttribPointer(u32 vertexAttrib, u32 count, bool normalized = false, u32 size = 0, u32 offset = 0);
-        static void         vertexAttribArray(u32 vertexAttrib, bool enable);
-        static void         vertexAttribDivisior(u32 vertexAttrib, u32 value);
+        static void         initVertexAttribPointer(u32 attrib, EDataType type, u32 count, u32 size = 0, u32 offset = 0);
+        static void         vertexAttribArray(u32 attrib, bool enable);
+        static void         vertexAttribDivisior(u32 attrib, u32 value);
 
         static void         drawElements(EDrawMode mode, u32 count, u32 primCount);
         static void         drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount);

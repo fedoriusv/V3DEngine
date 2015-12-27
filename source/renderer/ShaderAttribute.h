@@ -23,19 +23,26 @@ namespace renderer
 
         enum EShaderAttribute
         {
-            eAttributeUser = -1,
+            eAttribUser = -1,
 
-            eAttributePosition,
-            eAttributeColor,
-            eAttributeNormal,
-            eAttributeBinormal,
-            eAttributeTangent,
-            eAttributeTexture0,
-            eAttributeTexture1,
-            eAttributeTexture2,
-            eAttributeTexture3,
+            eAttribVertexPosition,
+            eAttribVertexColor,
+            eAttribVertexNormal,
+            eAttribVertexBinormal,
+            eAttribVertexTangent,
+            eAttribVertexTexture0,
+            eAttribVertexTexture1,
+            eAttribVertexTexture2,
+            eAttribVertexTexture3,
 
-            eAttributeCount,
+            eAttribParticalPosition,
+            eAttribParticalColor,
+            eAttribParticalVelocity,
+            eAttribParticalLifeTime,
+            eAttribParticalSize,
+            eAttribParticalType,
+
+            eAttribCount,
         };
 
         CShaderAttribute();
@@ -47,7 +54,8 @@ namespace renderer
 
         const std::string&              getName()           const;
         u32                             getDivisor()        const;
-        EShaderAttribute                getType()           const;
+        EDataType                       getType()           const;
+        EShaderAttribute                getData()           const;
         u32                             getID()             const;
 
         void*                           getUserData()       const;
@@ -63,10 +71,11 @@ namespace renderer
 
         friend                          CShaderData;
 
-        void                            setAttribute(const std::string& name, EShaderAttribute type);
-        void                            setAttribute(const std::string& name, u32 divisor, u32 size, u32 count, const void* data);
+        void                            setAttribute(const std::string& name, EShaderAttribute data);
+        void                            setAttribute(EDataType type, const std::string& name, u32 divisor, u32 size, u32 count, const void* data);
 
-        EShaderAttribute                m_type;
+        EDataType                       m_type;
+        EShaderAttribute                m_data;
         std::string                     m_name;
         u32                             m_divisor;
         u32                             m_id;
@@ -89,7 +98,7 @@ namespace renderer
 
         SUserData*                      m_userData;
 
-        static const std::string        s_attributeName[eAttributeCount];
+        static const std::string        s_attributeName[eAttribCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

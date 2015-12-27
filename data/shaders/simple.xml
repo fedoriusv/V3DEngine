@@ -8,9 +8,9 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
         </attributes>
-        <samplers> 
+        <samplers>
         </samplers>
         <renderstate>
             <polygonmode val="line"/>
@@ -25,12 +25,12 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var type="vertex" name="vdefault">
+            <var type="vertex" name="vsimple">
                 <![CDATA[
                     #version 330
-                    #define POSITION    0
+                    #define POSITION    2
 
-                    layout (location = POSITION) in vec3 positions;
+                    layout (location = POSITION) in vec3 position;
 
                     struct Transform
                     {
@@ -42,12 +42,12 @@
 
                     void main()
                     {
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                     }
                 ]]>
             </var>
-            <var type="fragment" name="fdefault">
+            <var type="fragment" name="fsimple">
                 <![CDATA[
                     #version 330
                     out vec4 fragColor;

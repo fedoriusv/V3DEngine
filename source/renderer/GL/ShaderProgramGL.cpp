@@ -65,28 +65,6 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     {
         CShaderProgramGL::attachShader(m_shaderProgID, shaders[i]);
     }
-    
-    u32 currentUserLayout = 0;
-    for (auto& shaderData : m_shaderDataList)
-    {
-        const AttributeList& attributeList = shaderData.lock()->getAttributeList();
-        for (const AttributePair& attribute : attributeList)
-        {
-            const std::string& name = attribute.second->getName();
-            CShaderAttribute::EShaderAttribute type = attribute.second->getType();
-
-            if (type == CShaderAttribute::eAttributeUser)
-            {
-                u32 index = CShaderAttribute::eAttributeCount + currentUserLayout;
-                ++currentUserLayout;
-                CShaderProgramGL::bindAttrib(m_shaderProgID, index, name);
-            }
-            else
-            {
-                CShaderProgramGL::bindAttrib(m_shaderProgID, type, name);
-            }
-        }
-    }
 
     if (!CShaderProgramGL::linkProgram(m_shaderProgID))
     {
@@ -110,14 +88,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         for (AttributeList::iterator attribute = attributeList.begin(), end = attributeList.end(); attribute != end;)
         {
             const std::string& name = (*attribute).second->getName();
-            CShaderAttribute::EShaderAttribute type = (*attribute).second->getType();
-
-            s32 id = CShaderProgramGL::getAttrib(m_shaderProgID, name);
-            if ((CShaderAttribute::EShaderAttribute)id != type && type != CShaderAttribute::eAttributeUser)
-            {
-                LOG_ERROR("CShaderProgramGL: Invalid attribute Index for: %s", name.c_str());
-            }
-
+            s32 id = CShaderProgramGL::getAttribLocation(m_shaderProgID, name);
             if (id < 0)
             {
                 LOG_WARNING("CShaderProgramGL: Attribute not found: %s", name.c_str());
@@ -125,6 +96,8 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
             }
             else
             {
+                CShaderProgramGL::bindAttrib(m_shaderProgID, id, name);
+
                 (*attribute).second->setID(id);
                 ++attribute;
             }
@@ -264,7 +237,7 @@ void CShaderProgramGL::bindAttrib(u32 shaderProgram, u32 type, const std::string
     glBindAttribLocation(shaderProgram, type, name.c_str());
 }
 
-int CShaderProgramGL::getAttrib(u32 shaderProgram, const std::string& name)
+int CShaderProgramGL::getAttribLocation(u32 shaderProgram, const std::string& name)
 {
     ASSERT(glIsProgram(shaderProgram) && "Invalid Index getAttrib Shader program");
     return (s32)glGetAttribLocation(shaderProgram, name.c_str());

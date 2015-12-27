@@ -7,6 +7,7 @@ const std::string CDataType::s_typeName[eDataTypeCount] = {
 
     "int",
     "float",
+    "double",
     "vec2",
     "vec3",
     "vec4",
@@ -15,12 +16,12 @@ const std::string CDataType::s_typeName[eDataTypeCount] = {
 };
 
 
-const std::string& CDataType::getStringByType(EDataType type)
+const std::string& CDataType::getStringByDataType(EDataType type)
 {
     return s_typeName[type];
 }
 
-EDataType CDataType::getTypeByString(const std::string& name)
+EDataType CDataType::getDataTypeByString(const std::string& name)
 {
     for (int i = 0; i < eDataTypeCount; ++i)
     {

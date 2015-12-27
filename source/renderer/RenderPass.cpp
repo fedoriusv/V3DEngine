@@ -223,7 +223,7 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (attribute->getType() != CShaderAttribute::eAttributeUser);
+        bool isDefault = (attribute->getType() != CShaderAttribute::eAttribUser);
         if (isDefault)
         {
             m_defaultShaderData->addAttribute(attribute);

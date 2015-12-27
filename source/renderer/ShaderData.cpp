@@ -1,40 +1,7 @@
 #include "ShaderData.h"
 
 using namespace v3d;
-using namespace v3d::renderer;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const std::string CShaderData::s_dataType[EDataType::eDataTypeCount] = {
-
-    "int",
-    "float",
-    "vec2",
-    "vec3",
-    "vec4",
-    "mat3",
-    "mat4"
-};
-
-const std::string& CShaderData::getDataNameByType(EDataType type)
-{
-    return s_dataType[type];
-}
-
-EDataType CShaderData::getDataTypeByName(const std::string& name)
-{
-    for (int i = 0; i < EDataType::eDataTypeCount; ++i)
-    {
-        if (s_dataType[i].compare(name) == 0)
-        {
-            return (EDataType)i;
-        }
-    }
-
-    return EDataType::eTypeNone;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+using namespace renderer;
 
 CShaderData::CShaderData()
 : m_vertexFormatMask(0U)
@@ -211,13 +178,13 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(name, divisor, sizeof(s32), (u32)data.size(), data.data());
+        m_attributeList[name]->setAttribute(EDataType::eTypeInt, name, divisor, sizeof(s32), (u32)data.size(), data.data());
     }
     else
     {
         AttributePtr attribute = std::make_shared<CShaderAttribute>();
 
-        attribute->setAttribute(name, divisor, sizeof(s32), (u32)data.size(), data.data());
+        attribute->setAttribute(EDataType::eTypeInt, name, divisor, sizeof(s32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -226,13 +193,13 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(name, divisor, sizeof(f32), (u32)data.size(), data.data());
+        m_attributeList[name]->setAttribute(EDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
     }
     else
     {
         AttributePtr attribute = std::make_shared<CShaderAttribute>();
 
-        attribute->setAttribute(name, divisor, sizeof(f32), (u32)data.size(), data.data());
+        attribute->setAttribute(EDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -241,13 +208,13 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
+        m_attributeList[name]->setAttribute(EDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
     }
     else
     {
         AttributePtr attribute = std::make_shared<CShaderAttribute>();
 
-        attribute->setAttribute(name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
+        attribute->setAttribute(EDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -256,13 +223,13 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
+        m_attributeList[name]->setAttribute(EDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
     }
     else
     {
         AttributePtr attribute = std::make_shared<CShaderAttribute>();
 
-        attribute->setAttribute(name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
+        attribute->setAttribute(EDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -271,13 +238,13 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
 {
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
+        m_attributeList[name]->setAttribute(EDataType::eTypeVector4, name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
     }
     else
     {
         AttributePtr attribute = std::make_shared<CShaderAttribute>();
 
-        attribute->setAttribute(name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
+        attribute->setAttribute(EDataType::eTypeVector4, name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }

@@ -11,7 +11,7 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
@@ -31,14 +31,13 @@
             <var type="vertex" name="vdefault">
                 <![CDATA[
                     #version 330
-
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
-
-                    layout (location = POSITION)  in vec3 positions;
+                    
+                    layout (location = POSITION)  in vec3 position;
                     layout (location = TEXCOORD0) in vec2 texture0;
-
+                    
                     struct Transform
                     {
                         mat4 modelMatrix;
@@ -46,18 +45,18 @@
                         mat4 projectionMatrix;
                     };
                     uniform Transform   transform;
-
-                    struct Vertex 
+                    
+                    struct Vertex
                     {
                         vec2  texCoord0;
                     };
                     out Vertex fragVertex;
-
+                    
                     void main()
                     {
-                        vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
-
+                        
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                     }
                 ]]>
@@ -65,15 +64,16 @@
             <var type="fragment" name="fdefault">
                 <![CDATA[
                     #version 330
+                    
                     uniform sampler2D sampler0;
-
-                    struct Vertex 
+                    
+                    struct Vertex
                     {
-                        vec2  texCoord0;
+                        vec2 texCoord0;
                     };
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
-
+                    
                     void main()
                     {
                         fragColor = texture(sampler0, fragVertex.texCoord0);

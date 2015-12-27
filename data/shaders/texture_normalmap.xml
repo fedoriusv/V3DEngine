@@ -19,10 +19,10 @@
             <var name="light[0].position" type="vec4" val="light.position"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
-            <var name="normals" type="vec3" val="mesh.normals"/>
-            <var name="binormals" type="vec3" val="mesh.binormals"/>
-            <var name="tangents" type="vec3" val="mesh.tangents"/>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="normal" type="vec3" val="mesh.normal"/>
+            <var name="binormal" type="vec3" val="mesh.binormal"/>
+            <var name="tangent" type="vec3" val="mesh.tangent"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>

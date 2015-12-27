@@ -8,17 +8,24 @@ using namespace renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttributeCount] = {
+const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttribCount] = {
 
-    "mesh.positions",
-    "mesh.colors",
-    "mesh.normals",
-    "mesh.binormals",
-    "mesh.tangents",
+    "mesh.position",
+    "mesh.color",
+    "mesh.normal",
+    "mesh.binormal",
+    "mesh.tangent",
     "mesh.texture0",
     "mesh.texture1",
     "mesh.texture2",
     "mesh.texture3",
+
+    "partical.position"
+    "partical.velocity",
+    "partical.color",
+    "particals.lifetime",
+    "partical.size",
+    "partical.type"
 };
 
 
@@ -29,7 +36,7 @@ const std::string& CShaderAttribute::getNameByValue(EShaderAttribute type)
 
 const CShaderAttribute::EShaderAttribute CShaderAttribute::getValueByName(const std::string& name)
 {
-    for (int i = 0; i < eAttributeCount; ++i)
+    for (int i = 0; i < eAttribCount; ++i)
     {
         if (s_attributeName[i].compare(name) == 0)
         {
@@ -37,7 +44,7 @@ const CShaderAttribute::EShaderAttribute CShaderAttribute::getValueByName(const 
         }
     }
 
-    return eAttributeUser;
+    return eAttribUser;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +107,8 @@ void CShaderAttribute::SUserData::free()
 
 
 CShaderAttribute::CShaderAttribute()
-    : m_type(eAttributeUser)
+    : m_type(eTypeNone)
+    , m_data(eAttribUser)
     , m_name("")
     , m_divisor(0U)
     , m_userData(nullptr)
@@ -178,7 +186,12 @@ u32 CShaderAttribute::getUserDataCount() const
     return 0;
 }
 
-CShaderAttribute::EShaderAttribute CShaderAttribute::getType() const
+CShaderAttribute::EShaderAttribute CShaderAttribute::getData() const
+{
+    return m_data;
+}
+
+EDataType CShaderAttribute::getType() const
 {
     return m_type;
 }
@@ -212,36 +225,85 @@ bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
             return false;
         }
 
-        EShaderAttribute attribureType = CShaderAttribute::getValueByName(varVal);
-        if (attribureType == eAttributeUser)
+        EShaderAttribute attribureData = CShaderAttribute::getValueByName(varVal);
+        if (attribureData == eAttribUser)
         {
-            LOG_ERROR("CRenderPass:Attribute type not found [%s]", varName.c_str());
+            LOG_ERROR("CRenderPass: Attribute type not found [%s]", varName.c_str());
             return false;
         }
 
-        CShaderAttribute::setAttribute(varName, attribureType);
+        CShaderAttribute::setAttribute(varName, attribureData);
     }
     else
     {
-        LOG_INFO("CRenderPass:User attribute type '%s'", varName.c_str());
+        LOG_INFO("CRenderPass: User attribute type '%s'", varName.c_str());
+
+        if (!root->Attribute("type"))
+        {
+            LOG_ERROR("CRenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            return false;
+        }
+        const std::string varType = root->Attribute("type");
+
+        EDataType attributeType = CDataType::getDataTypeByString(varType);
+        if (attributeType == EDataType::eTypeNone)
+        {
+            LOG_ERROR("CRenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            return false;
+        }
 
         u32 varDiv = root->UnsignedAttribute("div");
-        CShaderAttribute::setAttribute(varName, varDiv, 0, 0, nullptr);
+        CShaderAttribute::setAttribute(attributeType, varName, varDiv, 0, 0, nullptr);
     }
 
     return true;
 }
 
-void CShaderAttribute::setAttribute(const std::string & name, EShaderAttribute type)
+void CShaderAttribute::setAttribute(const std::string & name, EShaderAttribute data)
 {
     m_name = name;
-    m_type = type;
+    m_data = data;
+
+    switch (m_data)
+    {
+    case EShaderAttribute::eAttribVertexPosition:
+    case EShaderAttribute::eAttribVertexNormal:
+    case EShaderAttribute::eAttribVertexBinormal:
+    case EShaderAttribute::eAttribVertexTangent:
+    case EShaderAttribute::eAttribVertexColor:
+    case EShaderAttribute::eAttribParticalPosition:
+    case EShaderAttribute::eAttribParticalColor:
+    case EShaderAttribute::eAttribParticalVelocity:
+        m_type = eTypeVector3;
+        break;
+
+    case EShaderAttribute::eAttribVertexTexture0:
+    case EShaderAttribute::eAttribVertexTexture1:
+    case EShaderAttribute::eAttribVertexTexture2:
+    case EShaderAttribute::eAttribVertexTexture3:
+        m_type = eTypeVector2;
+        break;
+
+    case EShaderAttribute::eAttribParticalLifeTime:
+    case EShaderAttribute::eAttribParticalSize:
+        m_type = eTypeFloat;
+        break;
+
+    case EShaderAttribute::eAttribParticalType:
+        m_type = eTypeInt;
+        break;
+
+    default:
+        m_type = eTypeNone;
+        break;
+    }
 }
 
-void CShaderAttribute::setAttribute(const std::string & name, u32 divisor, u32 size, u32 count, const void* data)
+void CShaderAttribute::setAttribute(EDataType type, const std::string & name, u32 divisor, u32 size, u32 count, const void* data)
 {
     m_name = name;
-    m_type = eAttributeUser;
+    m_data = eAttribUser;
+    m_type = type;
 
     m_divisor = divisor;
     if (count > 0 && data != nullptr)

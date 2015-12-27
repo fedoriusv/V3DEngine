@@ -46,9 +46,6 @@ namespace renderer
         UniformList&                getUniformList();
         SamplerList&                getSamplerList();
 
-        static const std::string&   getDataNameByType(EDataType type);
-        static EDataType            getDataTypeByName(const std::string& name);
-
         bool                        isExistUniform(const std::string& name);
         bool                        isExistUniform(CShaderUniform::EUniformData type);
         bool                        isExistAttribute(const std::string& name);
@@ -70,11 +67,6 @@ namespace renderer
         AttributeList               m_attributeList;
         SamplerList                 m_samplerList;
         u32                         m_vertexFormatMask;
-
-    private:
-
-        static const std::string    s_dataType[EDataType::eDataTypeCount];
-
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -5,10 +5,10 @@
 #define TANGENT     4
 #define TEXCOORD0   5
 
-layout (location = POSITION)  in vec3 positions;
-layout (location = NORMAL)    in vec3 normals;
-layout (location = BINORMAL)  in vec3 binormals;
-layout (location = TANGENT)   in vec3 tangents;
+layout (location = POSITION)  in vec3 position;
+layout (location = NORMAL)    in vec3 normal;
+layout (location = BINORMAL)  in vec3 binormal;
+layout (location = TANGENT)   in vec3 tangent;
 layout (location = TEXCOORD0) in vec2 texture0;
 
 struct Transform
@@ -52,19 +52,19 @@ out TangentSpcae fragTangentSpace;
 
 void main()
 {
-    vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+    vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
     
     fragVertex.texCoord0 = texture0;
     fragVertex.position = vertex.xyz;
     fragVertex.lightDir0 = vec3(normalize(light[0].position - vertex));
     fragVertex.viewDir = vec3(normalize(vec4(transform.viewPosition, 1.0) - vertex));
-    fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normals, 0.0)));
-    fragVertex.tangent  = vec3(normalize(transform.normalMatrix * vec4(tangents, 0.0)));
-    fragVertex.binormal = vec3(normalize(transform.normalMatrix * vec4(binormals, 0.0)));
+    fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normal, 0.0)));
+    fragVertex.tangent  = vec3(normalize(transform.normalMatrix * vec4(tangent, 0.0)));
+    fragVertex.binormal = vec3(normalize(transform.normalMatrix * vec4(binormal, 0.0)));
     
-    vec3 normal = vec3(normalize(transform.modelMatrix * vec4(normals, 0.0)));
-    vec3 tangent  = vec3(normalize(transform.modelMatrix * vec4(tangents, 0.0)));
-    vec3 binormal = vec3(normalize(transform.modelMatrix * vec4(binormals, 0.0)));
+    vec3 normal = vec3(normalize(transform.modelMatrix * vec4(normal, 0.0)));
+    vec3 tangent  = vec3(normalize(transform.modelMatrix * vec4(tangent, 0.0)));
+    vec3 binormal = vec3(normalize(transform.modelMatrix * vec4(binormal, 0.0)));
 
     mat3 TBNMatrix = transpose(mat3(tangent, binormal, normal));  
     fragTangentSpace.tangentLightPos0 = TBNMatrix * light[0].position.xyz;

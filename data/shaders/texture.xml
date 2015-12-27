@@ -20,8 +20,8 @@
             <var name="light[0].attenuation" type="vec3" val="light.attenuation"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
-            <var name="normals" type="vec3" val="mesh.normals"/>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="normal" type="vec3" val="mesh.normal"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
@@ -45,8 +45,8 @@
                     #define NORMAL      2
                     #define TEXCOORD0   5
                     
-                    layout (location = POSITION)  in vec3 positions;
-                    layout (location = NORMAL)    in vec3 normals;
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = NORMAL)    in vec3 normal;
                     layout (location = TEXCOORD0) in vec2 texture0;
                     
                     struct Transform
@@ -58,7 +58,7 @@
                         vec3 viewPosition;
                     };
                     uniform Transform transform;
-
+                    
                     struct Light
                     {
                         vec4    position;
@@ -69,7 +69,7 @@
                     };
                     uniform Light light[1];
                     
-                    struct Vertex 
+                    struct Vertex
                     {
                         vec2  texCoord0;
                         vec3  normal;
@@ -78,17 +78,17 @@
                         float distance;
                     };
                     out Vertex fragVertex;
-
+                    
                     void main()
                     {
-                        vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex   = transform.modelMatrix * vec4(position, 1.0);
                         
                         fragVertex.texCoord0 = texture0;
-                        fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normals, 0.0)));
+                        fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normal, 0.0)));
                         fragVertex.lightDir = vec3(normalize(light[0].position - vertex));
                         fragVertex.viewDir = vec3(normalize(vec4(transform.viewPosition, 1.0) - vertex));
                         fragVertex.distance = length(light[0].position - vertex);
-
+                        
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                     }
                 ]]>
@@ -120,7 +120,7 @@
                         vec3    attenuation;
                     };
                     uniform Light light[1];
-
+                    
                     struct Vertex 
                     {
                         vec2  texCoord0;
@@ -131,7 +131,7 @@
                     };
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
-
+                    
                     vec4 blinn(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
                     vec4 phong(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
                     vec4 lambert(vec3 normal, vec3 lightDir, vec4 diffuseColor);
@@ -141,7 +141,7 @@
                         vec3 normal   = normalize(fragVertex.normal);
                         vec3 lightDir = normalize(fragVertex.lightDir);
                         vec3 viewDir  = normalize(fragVertex.viewDir);
-
+                        
                         vec4 diffuseColor = texture(sampler0, fragVertex.texCoord0);
                         fragColor = phong(normal, lightDir, viewDir, diffuseColor, material.specular, material.shininess);
                     }

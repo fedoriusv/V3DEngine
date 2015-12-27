@@ -15,6 +15,7 @@ namespace renderer
         eTypeNone = -1,
         eTypeInt,
         eTypeFloat,
+        ETypeDouble,
         eTypeVector2,
         eTypeVector3,
         eTypeVector4,
@@ -28,8 +29,8 @@ namespace renderer
     {
     public:
 
-        static const std::string&   getStringByType(EDataType type);
-        static EDataType            getTypeByString(const std::string& name);
+        static const std::string&   getStringByDataType(EDataType type);
+        static EDataType            getDataTypeByString(const std::string& name);
 
     private:
 
