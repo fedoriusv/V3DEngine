@@ -1,0 +1,182 @@
+<technique name="exploding_effect" version="100">
+
+    <textures>
+        <texture name="box" file="textures/box.jpg"/>
+    </textures>
+
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+            <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+            <var name="transform.normalMatrix" type="mat4" val="transform.normalMatrix"/>
+            <var name="transform.viewPosition" type="vec3" val="transform.viewPosition"/>
+            
+            <var name="material.specular" type="vec4" val="material.specular"/>
+            <var name="material.shininess" type="float" val="material.shininess"/>
+            
+            <var name="light[0].position" type="vec4" val="light.position"/>
+            
+            <var name="time" type="int" val="currentTime"/>
+        </uniforms>
+        <attributes>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="normal" type="vec3" val="mesh.normal"/>
+            <var name="texture0" type="vec2" val="mesh.texture0"/>
+        </attributes>
+        <samplers>
+            <var name="sampler0" val="box"/>
+        </samplers>
+        <renderstate>
+            <polygonmode val="fill"/>
+            <winding val="ccw"/>
+            <culling val="true"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+        </renderstate>
+        <rendertarget>
+            <var val="default"/>
+        </rendertarget>
+        <lod geometry="0.0"/>
+        <shaders>
+            <var type="vertex" name="vexploding_effect">
+                <![CDATA[
+                    #version 330
+                    #define POSITION    0
+                    #define NORMAL      2
+                    #define TEXCOORD0   5
+                    
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = NORMAL)    in vec3 normal;
+                    layout (location = TEXCOORD0) in vec2 texture0;
+                    
+                    struct Transform
+                    {
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        mat4 projectionMatrix;
+                        mat4 normalMatrix;
+                        vec3 viewPosition;
+                    };
+                    uniform Transform transform;
+                    
+                    struct Light
+                    {
+                        vec4    position;
+                    };
+                    uniform Light light[1];
+                    
+                    struct Vertex
+                    {
+                        vec2  texCoord0;
+                        vec3  normal;
+                        vec3  lightDir;
+                        vec3  viewDir;
+                        float distance;
+                    };
+                    out Vertex geomVertex;
+                    
+                    void main()
+                    {
+                        vec4 vertex   = transform.modelMatrix * vec4(position, 1.0);
+                        
+                        geomVertex.texCoord0 = texture0;
+                        geomVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normal, 0.0)));
+                        geomVertex.lightDir = vec3(normalize(light[0].position - vertex));
+                        geomVertex.viewDir = vec3(normalize(vec4(transform.viewPosition, 1.0) - vertex));
+                        geomVertex.distance = length(light[0].position - vertex);
+                        
+                        gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
+                    }
+                ]]>
+            </var>
+             <var type="geometry" name="gexploding_effect">
+                <![CDATA[
+                    #version 330
+                    
+                    layout (triangles) in;
+                    layout (triangle_strip, max_vertices = 3) out;
+                    
+                    struct Vertex
+                    {
+                        vec2  texCoord0;
+                        vec3  normal;
+                        vec3  lightDir;
+                        vec3  viewDir;
+                        float distance;
+                    };
+                    in Vertex geomVertex[];
+                    out Vertex fragVertex;
+                    
+                    uniform int time;
+                    
+                    vec4 explode(vec4 position, vec3 normal)
+                    {
+                        float magnitude = 0.8f;
+                        vec3 direction = normal * ((sin(time) + 1.0f) / 2.0f) * magnitude;
+                        return position + vec4(direction, 0.0f);
+                    }
+                    
+                    vec3 GetNormal()
+                    {
+                        vec3 a = vec3(gl_in[0].gl_Position) - vec3(gl_in[1].gl_Position);
+                        vec3 b = vec3(gl_in[2].gl_Position) - vec3(gl_in[1].gl_Position);
+                        return normalize(cross(a, b));
+                    }
+                    
+                    void main()
+                    {
+                        vec3 normal = GetNormal();
+                        
+                        for (int index = 0; index < 3; ++index)
+                        {
+                            gl_Position = explode(gl_in[index].gl_Position, normal);
+                            fragVertex = geomVertex[index];
+                            EmitVertex();
+                        }
+                        EndPrimitive();
+                    }
+                ]]>
+            </var>
+            <var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
+            <var type="fragment" name="fexploding_effect">
+                <![CDATA[
+                    #version 330
+                    
+                    uniform sampler2D sampler0;
+                    
+                    struct Material
+                    {
+                        vec4  specular;
+                        float shininess;
+                    };
+                    uniform Material material;
+                    
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                        vec3  normal;
+                        vec3  lightDir;
+                        vec3  viewDir;
+                        float distance;
+                    };
+                    in  Vertex  fragVertex;
+                    out vec4    fragColor;
+                    
+                    vec4 blinn(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
+                    vec4 phong(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
+                    vec4 lambert(vec3 normal, vec3 lightDir, vec4 diffuseColor);
+                    
+                    void main()
+                    {
+                        vec3 normal   = normalize(fragVertex.normal);
+                        vec3 lightDir = normalize(fragVertex.lightDir);
+                        vec3 viewDir  = normalize(fragVertex.viewDir);
+                        
+                        vec4 diffuseColor = texture(sampler0, fragVertex.texCoord0);
+                        fragColor = phong(normal, lightDir, viewDir, diffuseColor, material.specular, material.shininess);
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
+</technique>
