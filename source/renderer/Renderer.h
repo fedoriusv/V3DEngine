@@ -73,6 +73,7 @@ namespace renderer
         void                        updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass);
         void                        updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass);
         void                        updateTexture(MaterialPtr& material, const RenderPassPtr& pass);
+        void                        updateAdvanced(const RenderPassPtr& pass);
 
         DriverContextPtr            m_context;
         u32                         m_frameIndex;

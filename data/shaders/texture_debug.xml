@@ -18,8 +18,8 @@
             <var name="light[0].position" type="vec4" val="light.position"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
-            <var name="normals" type="vec3" val="mesh.normals"/>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="normal" type="vec3" val="mesh.normal"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
@@ -36,16 +36,15 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var type="vertex" name="vtexture_debug">
+            <var type="vertex" name="vtexture_debug_0">
                 <![CDATA[
                     #version 330
-                    
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
                     
-                    layout (location = POSITION)  in vec3 positions;
-                    layout (location = NORMAL)    in vec3 normals;
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = NORMAL)    in vec3 normal;
                     layout (location = TEXCOORD0) in vec2 texture0;
                     
                     struct Transform
@@ -76,10 +75,10 @@
                     
                     void main()
                     {
-                        vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex   = transform.modelMatrix * vec4(position, 1.0);
                         
                         fragVertex.texCoord0 = texture0;
-                        fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normals, 0.0)));
+                        fragVertex.normal = vec3(normalize(transform.normalMatrix * vec4(normal, 0.0)));
                         fragVertex.lightDir = vec3(normalize(light[0].position - vertex));
                         fragVertex.viewDir = vec3(normalize(vec4(transform.viewPosition, 1.0) - vertex));
                         fragVertex.distance = length(light[0].position - vertex);
@@ -89,7 +88,7 @@
                 ]]>
             </var>
             <var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
-            <var type="fragment" name="ftexture_debug">
+            <var type="fragment" name="ftexture_debug_0">
                 <![CDATA[
                     #version 330
                     
@@ -102,7 +101,7 @@
                     };
                     uniform Material material;
                     
-                    struct Vertex 
+                    struct Vertex
                     {
                         vec2  texCoord0;
                         vec3  normal;
@@ -138,8 +137,8 @@
             <var name="transform.normalMatrix" type="mat4" val="transform.normalMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
-            <var name="normals" type="vec3" val="mesh.normals"/>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="normal" type="vec3" val="mesh.normal"/>
         </attributes>
         <samplers>
         </samplers>
@@ -154,15 +153,15 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var type="vertex" name="vtexture_debug">
+            <var type="vertex" name="vtexture_debug_1">
                 <![CDATA[
                     #version 330
                     
                     #define POSITION    0
                     #define NORMAL      2
                     
-                    layout (location = POSITION)  in vec3 positions;
-                    layout (location = NORMAL)    in vec3 normals;
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = NORMAL)    in vec3 normal;
                     
                     struct Transform
                     {
@@ -183,16 +182,16 @@
                     
                     void main()
                     {
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                         
                         mat3 normalMatrix = mat3(transpose(inverse(transform.viewMatrix * transform.modelMatrix)));
-                        fragVertex.normal = normalize(vec3(transform.projectionMatrix * vec4(normalMatrix * normals, 1.0)));
+                        fragVertex.normal = normalize(vec3(transform.projectionMatrix * vec4(normalMatrix * normal, 1.0)));
                         
                     }
                 ]]>
             </var>
-            <var type="geometry" name="gtexture_debug">
+            <var type="geometry" name="gtexture_debug_1">
                 <![CDATA[
                     #version 330
                     
@@ -227,7 +226,7 @@
                     }
                 ]]>
             </var>
-            <var type="fragment" name="ftexture_debug">
+            <var type="fragment" name="ftexture_debug_1">
                 <![CDATA[
                     #version 330
                     

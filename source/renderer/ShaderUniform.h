@@ -40,7 +40,6 @@ namespace renderer
             eMaterialTransparency,
 
             eLightsCount,
-
             eLightPosition,
             eLightAmbient,
             eLightDiffuse,
@@ -48,6 +47,8 @@ namespace renderer
             eLightDirection,
             eLightAttenuation,
             eLightRadius,
+
+            eCurrentTime,
 
             eUniformsCount,
         };

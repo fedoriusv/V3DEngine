@@ -31,7 +31,6 @@ const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = 
     "material.transparency",
 
     "lights.count",
-
     "light.position",
     "light.ambient",
     "light.diffuse",
@@ -39,6 +38,8 @@ const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = 
     "light.direction",
     "light.attenuation",
     "light.radius",
+
+    "currentTime",
 };
 
 
@@ -91,6 +92,50 @@ void CShaderUniform::setUniform(const std::string& attribute, EUniformData data)
 {
     m_name = attribute;
     m_data = data;
+
+    switch (m_data)
+    {
+    case CShaderUniform::eTransformProjectionMatrix:
+    case CShaderUniform::eTransformModelMatrix:
+    case CShaderUniform::eTransformViewMatrix:
+    case CShaderUniform::eTransformNormalMatrix:
+        m_type = eTypeMatrix4;
+        break;
+
+    case CShaderUniform::eTransformViewPosition:
+    case CShaderUniform::eTransformViewUpVector:
+    case CShaderUniform::eLightPosition:
+    case CShaderUniform::eLightDirection:
+    case CShaderUniform::eLightAttenuation:
+
+        m_type = eTypeVector3;
+        break;
+
+    case CShaderUniform::eMaterialAmbient:
+    case CShaderUniform::eMaterialDiffuse:
+    case CShaderUniform::eMaterialSpecular:
+    case CShaderUniform::eMaterialEmission:
+    case CShaderUniform::eLightAmbient:
+    case CShaderUniform::eLightDiffuse:
+    case CShaderUniform::eLightSpecular:
+        m_type = eTypeVector4;
+        break;
+
+    case CShaderUniform::eMaterialShininess:
+    case CShaderUniform::eMaterialTransparency:
+    case CShaderUniform::eLightRadius:
+        m_type = eTypeFloat;
+        break;
+
+    case CShaderUniform::eLightsCount:
+    case CShaderUniform::eCurrentTime:
+        m_type = eTypeInt;
+        break;
+
+    default:
+        m_type = eTypeNone;
+        break;
+    }
 }
 
 void CShaderUniform::allocMemory(EDataType type, void* value)
@@ -101,9 +146,9 @@ void CShaderUniform::allocMemory(EDataType type, void* value)
         {
             if (m_value == nullptr)
             {
-                m_value = new int();
+                m_value = new s32();
             }
-            memcpy(m_value, value, sizeof(int));
+            memcpy(m_value, value, sizeof(s32));
 
             return;
         }
@@ -112,9 +157,20 @@ void CShaderUniform::allocMemory(EDataType type, void* value)
         {
             if (m_value == nullptr)
             {
-                m_value = new float();
+                m_value = new f32();
             }
-            memcpy(m_value, value, sizeof(float));
+            memcpy(m_value, value, sizeof(f32));
+
+            return;
+        }
+
+        case EDataType::ETypeDouble:
+        {
+            if (m_value == nullptr)
+            {
+                m_value = new f64();
+            }
+            memcpy(m_value, value, sizeof(f64));
 
             return;
         }
@@ -252,7 +308,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        uniformType = CShaderData::getDataTypeByName(varType);
+        uniformType = ::CDataType::getDataTypeByString(varType);
         if (uniformType == EDataType::eTypeNone)
         {
             LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());

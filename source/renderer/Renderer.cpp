@@ -3,6 +3,7 @@
 #include "context/DriverContext.h"
 #include "scene/Light.h"
 #include "scene/Camera.h"
+#include "utils/Timer.h"
 
 using namespace v3d;
 using namespace core;
@@ -139,6 +140,7 @@ void CRenderer::draw(const RenderJobPtr& job)
         CRenderer::updateMaterial(material, pass);
         CRenderer::updateTexture(material, pass);
         CRenderer::updateLight(transform, pass);
+        CRenderer::updateAdvanced(pass);
 
         //Draw Geometry
         if (geometry->updated())
@@ -447,5 +449,30 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     else
     {
         resetTexture();
+    }
+}
+
+void CRenderer::updateAdvanced(const RenderPassPtr & pass)
+{
+    const ShaderDataPtr& data = pass->getDefaultShaderData();
+    const ShaderProgramPtr& program = pass->getShaderProgram();
+
+    const UniformList& list = data->getUniformList();
+    for (auto& uniform : list)
+    {
+        const CShaderUniform::EUniformData type = uniform.second->getData();
+        const s32 id = uniform.second->getID();
+        switch (type)
+        {
+        case CShaderUniform::eCurrentTime:
+            {
+                u32 time = (u32)utils::CTimer::getCurrentTime();
+                program->setUniformInt(id, time);
+            }
+            break;
+
+        default:
+            break;
+        }
     }
 }
