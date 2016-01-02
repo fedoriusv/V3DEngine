@@ -1,4 +1,4 @@
-<technique name="texture" version="100">
+<technique name="default" version="100">
     <pass name="pass0">
         <uniforms>
             <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
@@ -6,7 +6,7 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
@@ -31,7 +31,7 @@
                     #define NORMAL      2
                     #define TEXCOORD0   5
 
-                    layout (location = POSITION)  in vec3 positions;
+                    layout (location = POSITION)  in vec3 position;
                     layout (location = TEXCOORD0) in vec2 texture0;
 
                     struct Transform
@@ -50,7 +50,7 @@
 
                     void main()
                     {
-                        vec4 vertex   = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex   = transform.modelMatrix * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
 
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;

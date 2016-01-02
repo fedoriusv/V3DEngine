@@ -68,7 +68,8 @@ void BufferGL::deleteBuffer(u32& buffer)
 {
     if (buffer != 0)
     {
-        ASSERT(glIsShader(buffer), "Invalid Index Buffer");
+        //TODO: some times return false for shader id
+        /*ASSERT(glIsShader(buffer), "Invalid Index Buffer");*/
         glDeleteBuffers(1, &buffer);
         buffer = 0;
     }

@@ -6,7 +6,7 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
             <var name="texture0" type="vec2" val="mesh.texture0"/>
             <var name="offsets" type="vec3" div="1"/>
         </attributes>
@@ -35,7 +35,7 @@
                     #define TEXCOORD0   5
                     #define OFFSET      9
 
-                    layout (location = POSITION)  in vec3 positions;
+                    layout (location = POSITION)  in vec3 position;
                     layout (location = TEXCOORD0) in vec2 texture0;
                     layout (location = OFFSET)    in vec3 offsets;
                     
@@ -58,7 +58,7 @@
                         mat4 model = transform.modelMatrix;
                         model[3] = vec4(offsets, 1.0);
 
-                        vec4 vertex = model * vec4(positions, 1.0);
+                        vec4 vertex = model * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
 
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;

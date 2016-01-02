@@ -215,10 +215,12 @@ void CGeometryGL::free()
         return;
     }
 
+    BufferGL::deleteBuffer(m_indicesId);
+    BufferGL::deleteBuffer(m_verticesId);
+
     BufferGL::deleteVertexArray(m_arrayId);
 
-    BufferGL::deleteBuffer(m_verticesId);
-    BufferGL::deleteBuffer(m_indicesId);
+    RENDERER->checkForErrors("GeometryGL: Delete buffers Error");
 }
 
 void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)

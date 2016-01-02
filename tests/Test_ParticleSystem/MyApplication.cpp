@@ -19,7 +19,7 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    MyApplication::switchModel(2);
+    MyApplication::switchModel(0);
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectGamepadEvent(std::bind(&MyApplication::onGamepad, this, std::placeholders::_1));
