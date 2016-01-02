@@ -1,7 +1,9 @@
 #include "Geometry.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CGeometry::CGeometry(const CRenderTechnique* technique)
     : m_drawMode(EDrawMode::eTriangleStrip)
@@ -21,7 +23,7 @@ SVertexData& CGeometry::getData()
     return m_data;
 }
 
-CGeometry::EDrawMode CGeometry::getDrawMode() const
+EDrawMode CGeometry::getDrawMode() const
 {
     return m_drawMode;
 }
@@ -100,4 +102,7 @@ bool CGeometry::updated() const
 
     return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
 }
+
+} //namespace v3d
+} //namespace renderer
 

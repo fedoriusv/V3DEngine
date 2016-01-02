@@ -10,6 +10,9 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Inherited class for geometry management. GL render only.
+    */
     class CGeometryGL : public CGeometry
     {
     public:
@@ -24,44 +27,19 @@ namespace renderer
 
     private:
 
+        s32                 computeVertexSize(const ShaderDataList& shaderDataList);
+        void                initBufferData(const ShaderDataList& shaderDataList);
+
         u32                 m_arrayId;
         u32                 m_verticesId;
         u32                 m_indicesId;
 
-        s32                 computeVertexSize(const ShaderDataList& shaderDataList);
-        void                initBufferData(const ShaderDataList& shaderDataList);
-
-        static void         genBuffers(u32& buffer);
-        static void         bindBuffers(EGeometryTarget target, u32 buffer);
-        static void         deleteBuffers(u32& buffer);
-
-        static void         bufferData(EGeometryTarget target, EGeomertyType type, u32 size, void* data);
-        static void         bufferSubData(EGeometryTarget target, u32 offset, u32 size, void* data);
-
-        static void*        mapBuffer(EGeometryTarget target, u32 access);
-        static bool         unmapBuffer(EGeometryTarget target);
-        static void*        mapBufferRange(EGeometryTarget target, u32 offset, u32 size, u32 flags);
-
-        static void         getBufferPointer(EGeometryTarget target, u32 pname, void** params);
-
-        static void         genVertexArray(u32& buffer);
-        static void         bindVertexArray(u32 buffer);
-        static void         deleteVertexArray(u32& buffer);
-
-        static void         initVertexAttribPointer(u32 attrib, EDataType type, u32 count, u32 size = 0, u32 offset = 0);
-        static void         vertexAttribArray(u32 attrib, bool enable);
-        static void         vertexAttribDivisior(u32 attrib, u32 value);
-
-        static void         drawElements(EDrawMode mode, u32 count, u32 primCount);
-        static void         drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount);
-
-        static u32          s_currentBuffer[eTargetCount];
-        static u32          s_currentArray;
-
+        bool                m_initialized;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_GEOMETRY_GL_H_

@@ -2,6 +2,7 @@
 #define _V3D_GEOMETRY_H_
 
 #include "Vertex.h"
+#include "GeometryTypes.h"
 #include "renderer/RenderTechnique.h"
 
 namespace v3d
@@ -13,33 +14,6 @@ namespace renderer
     class CGeometry
     {
     public:
-
-        enum EDrawMode
-        {
-            eTriangles,
-            eTriangleStrip,
-            eLines,
-            eLinesStrip,
-            ePoints,
-
-            eDrawModeCount
-        };
-
-        enum EGeometryTarget
-        {
-            eArrayBuffer,
-            eArrayElementBuffer,
-
-            eArrayTargetCount
-        };
-
-        enum EGeomertyType
-        {
-            eGeomertyStatic,
-            eGeomertyDynamic,
-
-            eGeometryTypeCount
-        };
 
         struct SInterval
         {
