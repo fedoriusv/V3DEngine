@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 2.8.9)
 
 option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." ON)
 
+option(BUILD_TEST_PROJECT_0 "Build Test_CreateWindow" ON)
+option(BUILD_TEST_PROJECT_1 "Build Test_Font." OFF)
+option(BUILD_TEST_PROJECT_2 "Build Test_RenderTarget." OFF)
+option(BUILD_TEST_PROJECT_3 "Build Test_Billboard." ON)
+option(BUILD_TEST_PROJECT_4 "Build Test_Light." OFF)
+option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." ON)
+option(BUILD_TEST_PROJECT_6 "Build Test_Texture." OFF)
+option(BUILD_TEST_PROJECT_7 "Build Test_ParticleSystem." ON)
+
 set(SOLUTION_NAME Valera3D)
 set(ENGINE_NAME Valera3DEngine)
 set(GLEW_PLOJECT glew_static)
@@ -11,14 +20,41 @@ if(BUILD_USE_RESIL_LIB)
     set(RESIL_PROJECT ResIL)
 endif(BUILD_USE_RESIL_LIB)
 
-set(TEST_PROJECT_0 Test_CreateWindow)
-#set(TEST_PROJECT_1 Test_Font)
-#set(TEST_PROJECT_2 Test_RenderTarget)
-#set(TEST_PROJECT_3 Test_Billboard)
-#set(TEST_PROJECT_4 Test_Light)
-set(TEST_PROJECT_5 Test_CreateContext)
-set(TEST_PROJECT_6 Test_Texture)
-set(TEST_PROJECT_7 Test_ParticleSystem)
+################################
+
+if (BUILD_TEST_PROJECT_0)
+    set(TEST_PROJECT_0 Test_CreateWindow)
+endif (BUILD_TEST_PROJECT_0)
+
+if (BUILD_TEST_PROJECT_1)
+    set(TEST_PROJECT_1 Test_Font)
+endif (BUILD_TEST_PROJECT_1)
+
+if (BUILD_TEST_PROJECT_2)
+    set(TEST_PROJECT_2 Test_RenderTarget)
+endif (BUILD_TEST_PROJECT_2)
+
+if (BUILD_TEST_PROJECT_3)
+    set(TEST_PROJECT_3 Test_Billboard)
+endif (BUILD_TEST_PROJECT_3)
+
+if (BUILD_TEST_PROJECT_4)
+    set(TEST_PROJECT_4 Test_Light)
+endif (BUILD_TEST_PROJECT_4)
+
+if (BUILD_TEST_PROJECT_5)
+    set(TEST_PROJECT_5 Test_CreateContext)
+endif (BUILD_TEST_PROJECT_5)
+
+if (BUILD_TEST_PROJECT_6)
+   set(TEST_PROJECT_6 Test_Texture)
+endif (BUILD_TEST_PROJECT_6)
+
+if (BUILD_TEST_PROJECT_7)
+    set(TEST_PROJECT_7 Test_ParticleSystem)
+endif (BUILD_TEST_PROJECT_7)
+
+################################
 
 if(COMPILER_MSVC)
     message("-- Configuring MSVC Compiler")
@@ -294,14 +330,39 @@ if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
     add_subdirectory(libs/ResIL)
 endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
-add_subdirectory(tests/${TEST_PROJECT_0})
-#add_subdirectory(tests/${TEST_PROJECT_1})
-#add_subdirectory(tests/${TEST_PROJECT_2})
-#add_subdirectory(tests/${TEST_PROJECT_3})
-#add_subdirectory(tests/${TEST_PROJECT_4})
-add_subdirectory(tests/${TEST_PROJECT_5})
-add_subdirectory(tests/${TEST_PROJECT_6})
-add_subdirectory(tests/${TEST_PROJECT_7})
+################################
+
+if (BUILD_TEST_PROJECT_0)
+    add_subdirectory(tests/${TEST_PROJECT_0})
+endif (BUILD_TEST_PROJECT_0)
+
+if (BUILD_TEST_PROJECT_1)
+    add_subdirectory(tests/${TEST_PROJECT_1})
+endif (BUILD_TEST_PROJECT_1)
+
+if (BUILD_TEST_PROJECT_2)
+    add_subdirectory(tests/${TEST_PROJECT_2})
+endif (BUILD_TEST_PROJECT_2)
+
+if (BUILD_TEST_PROJECT_3)
+    add_subdirectory(tests/${TEST_PROJECT_3})
+endif (BUILD_TEST_PROJECT_3)
+
+if (BUILD_TEST_PROJECT_4)
+    add_subdirectory(tests/${TEST_PROJECT_4})
+endif (BUILD_TEST_PROJECT_4)
+
+if (BUILD_TEST_PROJECT_5)
+    add_subdirectory(tests/${TEST_PROJECT_5})
+endif (BUILD_TEST_PROJECT_5)
+
+if (BUILD_TEST_PROJECT_6)
+    add_subdirectory(tests/${TEST_PROJECT_6})
+endif (BUILD_TEST_PROJECT_6)
+
+if (BUILD_TEST_PROJECT_7)
+    add_subdirectory(tests/${TEST_PROJECT_7})
+endif (BUILD_TEST_PROJECT_7)
 
 ################################
 #Dependencies

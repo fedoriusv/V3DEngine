@@ -8,7 +8,7 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
         </attributes>
         <samplers>
             <var name="sampler0"/>
@@ -31,11 +31,11 @@
                     #version 330
                     #define POSITION    0
                     
-                    layout (location = POSITION) in vec3 positions;
+                    layout (location = POSITION) in vec3 position;
                     
                     void main()
                     {
-                        gl_Position = vec4(positions, 1.0);
+                        gl_Position = vec4(position, 1.0);
                     }
                 ]]>
             </var>
@@ -44,8 +44,7 @@
                     #version 330
                     
                     layout(points) in;
-                    layout(triangle_strip) out;
-                    layout(max_vertices = 4) out;
+                    layout(triangle_strip, max_vertices = 4) out;
                     
                     struct Transform
                     {
