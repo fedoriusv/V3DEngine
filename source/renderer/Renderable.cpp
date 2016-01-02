@@ -48,6 +48,6 @@ const GeometryPtr& CRenderable::getGeometry() const
 
 void CRenderable::render()
 {
-    ASSERT(CRenderable::getRenderJob() && "CRenderable: Render job nullptr");
+    ASSERT(CRenderable::getRenderJob(), "CRenderable: Render job nullptr");
     RENDERER->draw(CRenderable::getRenderJob());
 }

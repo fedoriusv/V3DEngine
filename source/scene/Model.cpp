@@ -223,7 +223,7 @@ CModel* CModel::clone()
     if (!model->load())
     {
         LOG_ERROR("CModel: Can't load model stream");
-        ASSERT(false && "CModel: Can't load model stream");
+        ASSERT(false, "CModel: Can't load model stream");
 
         delete model;
         model = nullptr;

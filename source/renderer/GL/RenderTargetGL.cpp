@@ -11,8 +11,11 @@
 #   pragma clang diagnostic ignored "-Wswitch"
 #endif  //_PLATFORM_WIN_
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace scene;
 using namespace core;
 
@@ -26,22 +29,30 @@ u32 CRenderTargetGL::s_currentFBO[] = { 0 };
 u32 CRenderTargetGL::s_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
-    : m_frameBufferID(0U)
-    , m_renderBufferID(0U)
+    : m_frameBufferId(0U)
+    , m_renderBufferId(0U)
 
     , m_lastFrameIndex(1U)
 
     , m_hasClearColor(true)
     , m_hasClearDepth(true)
     , m_hasClearStencil(false)
+
+    , m_initialized(false)
 {
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&m_frameBufferID);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&m_frameBufferId);
+    LOG_DEBUG("CRenderTargetGL: CRenderTargetGL constructor %x", this);
 }
 
 CRenderTargetGL::~CRenderTargetGL()
 {
     CRenderTargetGL::destroy();
     m_attachBuffers.clear();
+
+    ASSERT(m_frameBufferId == 0, "Framebuffer doesn't deleted");
+    ASSERT(m_renderBufferId == 0, "Renderbuffer doesn't deleted");
+
+    LOG_DEBUG("CRenderTargetGL: CRenderTargetGL destructor %x", this);
 }
 
 bool CRenderTargetGL::hasClearColorTarget() const
@@ -61,7 +72,7 @@ bool CRenderTargetGL::hasClearStencilTarget() const
 
 void CRenderTargetGL::bind()
 {
-    bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferID);
+    bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferId);
     if (chaned)
     {
         RENDERER->setCurrentRenderTarget(shared_from_this());
@@ -74,7 +85,7 @@ void CRenderTargetGL::bind()
         }
         else
         {
-            glDrawBuffer(m_frameBufferID ? GL_NONE : GL_BACK);
+            glDrawBuffer(m_frameBufferId ? GL_NONE : GL_BACK);
         }
     }
 
@@ -139,6 +150,11 @@ void CRenderTargetGL::unbind()
 
 bool CRenderTargetGL::create()
 {
+    if (m_initialized)
+    {
+        return false;
+    }
+
     const Rect32& rect = getViewport();
     u32 width = rect.getWidth();
     u32 height = rect.getHeight();
@@ -164,8 +180,8 @@ bool CRenderTargetGL::create()
 
     CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
 
-    CRenderTargetGL::genFramebuffer(m_frameBufferID);
-    CRenderTargetGL::bindFramebuffer(m_frameBufferID);
+    CRenderTargetGL::genFramebuffer(m_frameBufferId);
+    CRenderTargetGL::bindFramebuffer(m_frameBufferId);
 
     for (auto& attach : m_attachmentsList)
     {
@@ -213,7 +229,7 @@ bool CRenderTargetGL::create()
         break;
     };
 
-    ASSERT((result == GL_FRAMEBUFFER_COMPLETE) && "CRenderTarget: Create render target Error");
+    ASSERT((result == GL_FRAMEBUFFER_COMPLETE), "CRenderTarget: Create render target Error");
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
     if (originalRBO >= 0)
@@ -225,11 +241,18 @@ bool CRenderTargetGL::create()
         CRenderTargetGL::bindFramebuffer(originalFBO);
     }
 
+    m_initialized = true;
+
     return result == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void CRenderTargetGL::destroy()
 {
+    if (!m_initialized)
+    {
+        return;
+    }
+
     for (auto& attach : m_attachmentsList)
     {
         switch (attach._type)
@@ -270,10 +293,8 @@ void CRenderTargetGL::destroy()
     }
     //TODO: Have gl error GL_INVALID_OPERATION after call glFramebufferTexture2D
 
-    CRenderTargetGL::deleteRenderbuffers(m_renderBufferID);
-    CRenderTargetGL::deleteFramebuffers(m_frameBufferID);
-    m_frameBufferID = 0;
-    m_renderBufferID = 0;
+    CRenderTargetGL::deleteRenderbuffers(m_renderBufferId);
+    CRenderTargetGL::deleteFramebuffers(m_frameBufferId);
 }
 
 void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rect)
@@ -318,7 +339,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
             if (attach._index >= (u32)maxColorAttachments)
             {
                 LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
-                ASSERT("CRenderTarget: Range out Color attachment" && false);
+                ASSERT(false, "CRenderTarget: Range out Color attachment");
                 return;
             }
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
@@ -336,11 +357,11 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eDepthAttach:
         {
-            if (!m_renderBufferID)
+            if (!m_renderBufferId)
             {
-                CRenderTargetGL::genRenderbuffer(m_renderBufferID);
+                CRenderTargetGL::genRenderbuffer(m_renderBufferId);
             }
-            attach._rboID = m_renderBufferID;
+            attach._rboID = m_renderBufferId;
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
             CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
@@ -353,11 +374,11 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eStencilAttach:
         {
-            if (!m_renderBufferID)
+            if (!m_renderBufferId)
             {
-                CRenderTargetGL::genRenderbuffer(m_renderBufferID);
+                CRenderTargetGL::genRenderbuffer(m_renderBufferId);
             }
-            attach._rboID = m_renderBufferID;
+            attach._rboID = m_renderBufferId;
 
             CRenderTargetGL::bindRenderbuffer(attach._rboID);
             CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
@@ -372,7 +393,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
         default:
         {
             LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
-            ASSERT("CRenderTarget: Not supported attach" && false);
+            ASSERT(false, "CRenderTarget: Not supported attach");
         }
     }
 }
@@ -423,7 +444,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             if (attach._index >= (u32)maxColorAttachments)
             {
                 LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
-                ASSERT("CRenderTarget: Range out Color attachment" && false);
+                ASSERT(false, "CRenderTarget: Range out Color attachment");
                 return;
             }
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
@@ -482,7 +503,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
         default:
         {
             LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
-            ASSERT("CRenderTarget: Not supported attach" && false);
+            ASSERT(false, "CRenderTarget: Not supported attach");
         }
     }
 }
@@ -490,10 +511,10 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 void CRenderTargetGL::copyToRenderbuffer(const RenderTargetPtr& dst)
 {
     
-    u32 dstBuffer = std::static_pointer_cast<CRenderTargetGL>(dst)->m_frameBufferID;
+    u32 dstBuffer = std::static_pointer_cast<CRenderTargetGL>(dst)->m_frameBufferId;
     CRenderTargetGL::bindFramebuffer(dstBuffer);
 
-    CRenderTargetGL::bindFramebuffer(m_frameBufferID, eFBTargetRead);
+    CRenderTargetGL::bindFramebuffer(m_frameBufferId, eFBTargetRead);
     for (u32 i = 0; i < m_attachBuffers.size(); ++i)
     {
         glReadBuffer(m_attachBuffers[i]);
@@ -521,7 +542,7 @@ bool CRenderTargetGL::bindFramebuffer(u32 buffer, EFramebufferTarget target)
     if (s_currentFBO[target] != buffer)
     {
         glBindFramebuffer(ERenderbufferTargetGL[target], buffer);
-        ASSERT((glIsFramebuffer(buffer) || buffer == 0) && "Invalid FBO index");
+        ASSERT((glIsFramebuffer(buffer) || buffer == 0), "Invalid FBO index");
         s_currentFBO[target] = buffer;
 
         return true;
@@ -534,8 +555,9 @@ void CRenderTargetGL::deleteFramebuffers(u32& buffer)
 {
     if (buffer != 0)
     {
-        ASSERT(glIsFramebuffer(buffer) && "Invalid Index FBO");
+        ASSERT(glIsFramebuffer(buffer), "Invalid Index FBO");
         glDeleteFramebuffers(1, &buffer);
+        buffer = 0;
     }
 }
 
@@ -549,7 +571,7 @@ bool CRenderTargetGL::bindRenderbuffer(u32 buffer)
     if (s_currentRBO != buffer)
     {
         glBindRenderbuffer(GL_RENDERBUFFER, buffer);
-        ASSERT((glIsRenderbuffer(buffer) || buffer == 0) && "Invalid RBO index");
+        ASSERT((glIsRenderbuffer(buffer) || buffer == 0), "Invalid RBO index");
         s_currentRBO = buffer;
 
         return true;
@@ -562,20 +584,21 @@ void CRenderTargetGL::deleteRenderbuffers(u32& buffer)
 {
     if (buffer != 0)
     {
-        ASSERT(glIsRenderbuffer(buffer) && "Invalid Index RBO");
+        ASSERT(glIsRenderbuffer(buffer), "Invalid Index RBO");
         glDeleteRenderbuffers(1, &buffer);
+        buffer = 0;
     }
 }
 
 void CRenderTargetGL::framebufferTexture2D(s32 attachment, s32 target, u32 texture)
 {
-    ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Index Texture");
+    ASSERT((glIsTexture(texture) || texture == 0), "Invalid Index Texture");
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, texture, 0);
 }
 
 void CRenderTargetGL::framebufferRenderbuffer(s32 attachment, u32 buffer)
 {
-    ASSERT((glIsRenderbuffer(buffer) || buffer == 0) && "Invalid Index Renderbuffer");
+    ASSERT((glIsRenderbuffer(buffer) || buffer == 0), "Invalid Index Renderbuffer");
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, buffer);
 }
 
@@ -596,5 +619,8 @@ void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect32& size
         glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, size.getWidth(), size.getHeight());
     }
 }
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_OPENGL_DRIVER_

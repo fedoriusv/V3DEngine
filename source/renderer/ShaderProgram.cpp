@@ -79,7 +79,7 @@ bool CShaderProgram::create(const std::string& vertex, const std::string& fragme
 {
     if (vertex.empty() || fragment.empty())
     {
-        ASSERT(false && "Empty Shader file name");
+        ASSERT(false, "Empty Shader file name");
         return false;
     }
 

@@ -33,8 +33,8 @@ namespace renderer
         const CTexture*                 getDepthTexture() const;
         CTexture*                       getDepthTexture();
 
-        const CTexture*                getStencilTexture() const;
-        CTexture*                      getStencilTexture();
+        const CTexture*                 getStencilTexture() const;
+        CTexture*                       getStencilTexture();
 
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;

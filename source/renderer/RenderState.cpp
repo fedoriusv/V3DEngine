@@ -119,7 +119,7 @@ CRenderState::~CRenderState()
 {
 }
 
-bool CRenderState::getCulling() const
+bool CRenderState::isCulling() const
 {
     return m_culling;
 }
@@ -154,7 +154,7 @@ void CRenderState::setBlend(bool enable)
     m_blend = enable;
 }
 
-bool CRenderState::getBlend() const
+bool CRenderState::isBlend() const
 {
     return m_blend;
 }

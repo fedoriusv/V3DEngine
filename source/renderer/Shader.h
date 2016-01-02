@@ -45,19 +45,16 @@ namespace renderer
         static const std::string&   getShaderTypeNameByType(EShaderType type);
         static EShaderType          getShaderTypeByName(const std::string& name);
 
-        const std::string           getName() const;
+        const std::string&          getName() const;
         void                        setName(const std::string& name);
 
     protected:
 
-        void                        clear();
-
-        u32                         m_shaderID;
-
         EShaderType                 m_type;
         std::string                 m_name;
-        void*                       m_data;
+        std::string                 m_data;
 
+        u32                         m_shaderId;
         bool                        m_compileStatus;
 
     private:

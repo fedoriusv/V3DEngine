@@ -126,7 +126,7 @@ const CTexture* CMaterial::getTexture(u32 layer) const
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "CMaterial::getTexture: Invalid texture layer") ;
+        ASSERT(false, "CMaterial::getTexture: Invalid texture layer");
     }
 
     return m_texture.at(layer);
@@ -136,7 +136,7 @@ CTexture* CMaterial::getTexture(u32 layer)
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "CMaterial::getTexture: Invalid texture layer");
+        ASSERT(false, "CMaterial::getTexture: Invalid texture layer");
     }
 
     return const_cast<CTexture*>(m_texture.at(layer));
@@ -151,7 +151,7 @@ bool CMaterial::setTexture(u32 layer, const std::string& file)
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
         return false;
     }
 
@@ -171,7 +171,7 @@ bool CMaterial::setTexture(u32 layer, const std::string files[6])
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
         return false;
     }
 
@@ -191,7 +191,7 @@ void CMaterial::setTexture(u32 layer, const CTexture* texture)
 {
     if (layer >= ETextureLayer::eLayerMax)
     {
-        ASSERT(false && "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
         return;
     }
 
@@ -309,7 +309,7 @@ CMaterial* CMaterial::clone()
     if (!material->load())
     {
         LOG_ERROR("CMaterial: Can't load material stream");
-        ASSERT(false && "CMaterial: Can't load material stream");
+        ASSERT(false, "CMaterial: Can't load material stream");
     }
     return material;
 }

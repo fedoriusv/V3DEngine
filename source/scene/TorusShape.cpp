@@ -36,7 +36,7 @@ void CTorusShape::init()
     CShape::init();
 
     CTorusShape::build();
-    CShape::setGeometryDrawMode(CGeometry::eTriangleStrip);
+    CShape::setGeometryDrawMode(eTriangleStrip);
 
     CRenderable::getGeometry()->init();
     m_initialiazed = true;

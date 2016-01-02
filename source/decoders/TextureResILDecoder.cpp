@@ -45,7 +45,7 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     ilBindImage(texid);
 
     ILboolean success = ilLoadImage(charToWChar(file.c_str()));
-    ASSERT(success == IL_TRUE && "CTextureResILDecoder: Invalid Texture");
+    ASSERT(success == IL_TRUE, "CTextureResILDecoder: Invalid Texture");
     if (!success)
     {
         ilDeleteImages(1, &texid);
@@ -115,7 +115,7 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
         return EImageFormat::eLuminanceAlpha;
 
     default:
-        ASSERT(false && "CTextureResILDecoder: Invalid IL Format");
+        ASSERT(false, "CTextureResILDecoder: Invalid IL Format");
         return EImageFormat::eRGB;
     }
 #endif //USE_DEVIL
@@ -156,7 +156,7 @@ EImageType CTextureResILDecoder::convertILType(u32 type)
         return EImageType::eHalf;
 
     default:
-        ASSERT(false && "CTextureResILDecoder: Invalid IL Type");
+        ASSERT(false, "CTextureResILDecoder: Invalid IL Type");
         return EImageType::eUnsignedByte;
     }
 #endif //USE_DEVIL

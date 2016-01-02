@@ -43,11 +43,11 @@ namespace scene
 
     protected:
 
-        EShapeType                      m_shapeType;
+        EShapeType                     m_shapeType;
 
         SVertexData&                   getGeometryData();
-        renderer::CGeometry::EDrawMode getGeometryDrawMode() const;
-        void                           setGeometryDrawMode(renderer::CGeometry::EDrawMode mode);
+        renderer::EDrawMode            getGeometryDrawMode() const;
+        void                           setGeometryDrawMode(renderer::EDrawMode mode);
 
     };
 

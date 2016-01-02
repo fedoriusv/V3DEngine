@@ -27,7 +27,7 @@ void CSkybox::load(const std::string files[6])
     if (!texure)
     {
         LOG_ERROR("CSkybox: Texture didn't load");
-        ASSERT(false && "CSkybox: Texture didn't load");
+        ASSERT(false, "CSkybox: Texture didn't load");
         return;
     }
 
@@ -79,8 +79,8 @@ void CSkybox::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CSkybox: RenderTechique Doesn't exist");
-        ASSERT(false && "CSkybox: RenderTechique Doesn't exist");
+        LOG_ERROR("CSkybox: RenderTechique doesn't exist");
+        ASSERT(false, "CSkybox: RenderTechique doesn't exist");
         return;
     }
 
@@ -88,7 +88,7 @@ void CSkybox::init()
     CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
 
     CSkybox::build();
-    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRenderable::getGeometry()->setDrawMode(eTriangles);
 
     CRenderable::getGeometry()->init();
     m_initialiazed = true;

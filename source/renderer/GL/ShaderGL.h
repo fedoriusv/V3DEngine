@@ -9,6 +9,9 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Inherited class for shader management. GL render only.
+    */
     class CShaderGL : public CShader
     {
     public:
@@ -22,16 +25,17 @@ namespace renderer
 
     private:
 
-        static bool     initShader(u32& shader, const EShaderType type, const std::string& name, void* body);
+        static bool     initShader(u32& shader, const EShaderType type, const std::string& name, const std::string& body);
 
         static u32      createShader(EShaderType type);
-        static void     deleteShader(u32 shader);
-        static void     sourceShader(u32 shader, void* body);
+        static void     deleteShader(u32& shader);
+        static void     sourceShader(u32 shader, const std::string& body);
         static void     compileShader(u32 shader);
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_GL_H_

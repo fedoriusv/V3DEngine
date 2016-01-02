@@ -37,7 +37,7 @@ void CRectangleShape::init()
     CShape::init();
 
     CRectangleShape::build();
-    CShape::setGeometryDrawMode(CGeometry::eTriangles);
+    CShape::setGeometryDrawMode(eTriangles);
 
     CRenderable::getGeometry()->init();
     m_initialiazed = true;

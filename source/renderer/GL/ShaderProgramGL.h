@@ -9,6 +9,9 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Inherited class for shader program management. GL render only.
+    */
     class CShaderProgramGL : public CShaderProgram
     {
     public:
@@ -56,7 +59,8 @@ namespace renderer
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_PROGRAM_GL_H_

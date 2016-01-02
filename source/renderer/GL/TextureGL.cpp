@@ -5,9 +5,12 @@
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace core;
-using namespace renderer;
 
 #define TEXTURE_CUBE_MAP_COUNT 6
 
@@ -252,7 +255,7 @@ bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
     if (s_currentTextureID[target] != texture)
     {
         glBindTexture(ETextureTargetGL[target], texture);
-        ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
+        ASSERT((glIsTexture(texture) || texture == 0), "Invalid Texture index");
         s_currentTextureID[target] = texture;
 
         return true;
@@ -265,7 +268,7 @@ bool CTextureGL::activeTextureLayer(u32 layer)
 {
     if (s_currentLayerID != layer)
     {
-        ASSERT(ETextureLayer::eLayerMax >= layer && "Not supported count texture units");
+        ASSERT(ETextureLayer::eLayerMax >= layer, "Not supported count texture units");
         glActiveTexture(GL_TEXTURE0 + layer);
         s_currentLayerID = layer;
 
@@ -284,14 +287,14 @@ void CTextureGL::deleteTexture(u32 texture)
 {
     if (texture > 0)
     {
-        ASSERT(glIsTexture(texture) && "Invalid Texture index");
+        ASSERT(glIsTexture(texture), "Invalid Texture index");
         glDeleteTextures(1, &texture);
     }
 }
 
 void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
 {
-    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler), "Invalid Sampler index");
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, EWrapTypeGL[wrap]);
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, EWrapTypeGL[wrap]);
     glSamplerParameteri(sampler, GL_TEXTURE_WRAP_R, EWrapTypeGL[wrap]);
@@ -299,7 +302,7 @@ void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
 
 void CTextureGL::filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag)
 {
-    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler), "Invalid Sampler index");
     glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, ETextureFilterGL[mag]);
     glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, ETextureFilterGL[min]);
 }
@@ -307,9 +310,9 @@ void CTextureGL::filterSampler(u32 sampler, ETextureFilter min, ETextureFilter m
 void CTextureGL::anisotropicSampler(u32 sampler, u32 level)
 {
     GLfloat largest = DRIVER_CONTEXT->getMaxAnisotropySize();
-    ASSERT(largest >= level && "Anisotropy level out the range");
+    ASSERT(largest >= level, "Anisotropy level out the range");
 
-    ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+    ASSERT(glIsSampler(sampler), "Invalid Sampler index");
     glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLfloat)level);
 }
 
@@ -322,9 +325,9 @@ bool CTextureGL::bindSampler(u32 texture, u32 sampler)
 {
     if (s_currentSamplerID != sampler)
     {
-        ASSERT((glIsSampler(sampler) || sampler == 0) && "Invalid Sampler index");
-        ASSERT((glIsTexture(texture) || texture == 0) && "Invalid Texture index");
         glBindSampler(texture, sampler);
+        ASSERT((glIsSampler(sampler) || sampler == 0), "Invalid Sampler index");
+        ASSERT((glIsTexture(texture) || texture == 0), "Invalid Texture index");
         s_currentSamplerID = sampler;
 
         return true;
@@ -337,7 +340,7 @@ void CTextureGL::deleteSampler(u32 sampler)
 {
     if (sampler > 0)
     {
-        ASSERT(glIsSampler(sampler) && "Invalid Sampler index");
+        ASSERT(glIsSampler(sampler), "Invalid Sampler index");
         glDeleteSamplers(1, &sampler);
     }
 }
@@ -475,7 +478,7 @@ void CTextureGL::initTexture2DMSAA(u32 texture)
 
     GLint maxSize;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-    ASSERT((m_data[0]._width < maxSize && m_data[0]._height < maxSize) && "Size greater than max value");
+    ASSERT((m_data[0]._width < maxSize && m_data[0]._height < maxSize), "Size greater than max value");
 
     u32 samplersSize = DRIVER_CONTEXT->getSamplersCount();
 
@@ -620,5 +623,8 @@ void CTextureGL::initTextureCubeMap(u32 texture)
             0, format, type, m_data[i]._data);
     }
 }
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_OPENGL_DRIVER_

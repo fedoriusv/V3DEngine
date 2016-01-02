@@ -52,8 +52,8 @@ void CBillboard::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CBillboard: Do not exist RenderTechique");
-        ASSERT(false && "CBillboard: Do not exist RenderTechique");
+        LOG_ERROR("CBillboard: RenderTechique doesn't exist");
+        ASSERT(false, "CBillboard: RenderTechique doesn't exist");
         return;
     }
 
@@ -62,7 +62,7 @@ void CBillboard::init()
 
 
     CBillboard::build();
-    CRenderable::getGeometry()->setDrawMode(CGeometry::ePoints);
+    CRenderable::getGeometry()->setDrawMode(ePoints);
 
     CRenderable::getGeometry()->init();
     m_initialiazed = true;

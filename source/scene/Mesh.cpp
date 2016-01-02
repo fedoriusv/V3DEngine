@@ -64,8 +64,8 @@ void CMesh::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CMesh: Do not exist RenderTechique");
-        ASSERT(false && "CMesh: Do not exist RenderTechique");
+        LOG_ERROR("CMesh: RenderTechique doesn't exist");
+        ASSERT(false, "CMesh: RenderTechique doesn't exist");
         return;
     }
 
@@ -75,11 +75,11 @@ void CMesh::init()
     if (!CMesh::load())
     {
         LOG_ERROR("CMesh: Can't load mesh stream");
-        ASSERT(false && "CMesh: Can't load mesh stream");
+        ASSERT(false, "CMesh: Can't load mesh stream");
         return;
     }
 
-    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRenderable::getGeometry()->setDrawMode(eTriangles);
     CRenderable::getGeometry()->init();
     m_initialiazed = true;
 }

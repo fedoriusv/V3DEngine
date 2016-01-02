@@ -79,8 +79,8 @@ namespace renderer
         virtual                   ~CRenderState();
 
         ECullFace                 getCullface()       const;
-        bool                      getCulling()        const;
-        bool                      getBlend()          const;
+        bool                      isCulling()        const;
+        bool                      isBlend()          const;
         EWinding                  getWinding()        const;
         EPolygonMode              getPolygonMode()    const;
         EBlendFactor              getBlendFactorSrc() const;

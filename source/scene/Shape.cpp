@@ -22,8 +22,8 @@ void CShape::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CShape: RenderTechique does not exist for shape [%s]", CNode::getName().c_str());
-        ASSERT(false && "CShape: RenderTechique does not exist");
+        LOG_ERROR("CShape: RenderTechique doesn't exist for shape [%s]", CNode::getName().c_str());
+        ASSERT(false, "CShape: RenderTechique doesn't exist");
         return;
     }
 
@@ -44,19 +44,19 @@ EShapeType CShape::getShapeType() const
 
 SVertexData& CShape::getGeometryData()
 {
-    ASSERT(CRenderable::getGeometry() && "CShape: Geomery data nullptr");
+    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
     return CRenderable::getGeometry()->getData();
 }
 
-CGeometry::EDrawMode CShape::getGeometryDrawMode() const
+EDrawMode CShape::getGeometryDrawMode() const
 {
-    ASSERT(CRenderable::getGeometry() && "CShape: Geomery data nullptr");
+    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
     return CRenderable::getGeometry()->getDrawMode();
 }
 
-void CShape::setGeometryDrawMode(CGeometry::EDrawMode mode)
+void CShape::setGeometryDrawMode(EDrawMode mode)
 {
-    ASSERT(CRenderable::getGeometry() && "CShape: Geomery data nullptr");
+    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
     CRenderable::getGeometry()->setDrawMode(mode);
 }
 

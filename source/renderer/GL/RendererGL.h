@@ -9,6 +9,9 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    /**
+    * Inherited class for general render management. GL render only.
+    */
     class CRendererGL : public CRenderer
     {
     public:
@@ -38,7 +41,8 @@ namespace renderer
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDERER_GL_H_

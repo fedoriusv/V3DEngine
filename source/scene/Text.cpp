@@ -75,8 +75,8 @@ void CText::init()
     const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
     if (!technique)
     {
-        LOG_ERROR("CText: Do not exist RenderTechique");
-        ASSERT(false && "CText: Do not exist RenderTechique");
+        LOG_ERROR("CText: RenderTechique doesn't exist");
+        ASSERT(false, "CText: RenderTechique doesn't exist");
         return;
     }
 
@@ -93,7 +93,7 @@ void CText::init()
     if (!m_data)
     {
         LOG_ERROR("CText: Can not load font: %s", m_font.c_str());
-        ASSERT(false && "CText: Can not load font");
+        ASSERT(false, "CText: Can not load font");
         return;
     }
 
@@ -102,7 +102,7 @@ void CText::init()
 
     CText::build();
 
-    CRenderable::getGeometry()->setDrawMode(CGeometry::eTriangles);
+    CRenderable::getGeometry()->setDrawMode(eTriangles);
     CRenderable::getGeometry()->init();
 
     //TODO: Need more texture maps

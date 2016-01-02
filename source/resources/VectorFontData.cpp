@@ -88,20 +88,20 @@ bool CVectorFontData::loadFont(const std::string& resource)
 
     if (resource.empty())
     {
-        ASSERT(false && "FreeTypeFont: empty name");
+        ASSERT(false, "FreeTypeFont: empty name");
         return false;
     }
 
     if (m_loaded)
     {
-        ASSERT(false && "FreeTypeFont: Already loaded");
+        ASSERT(false, "FreeTypeFont: Already loaded");
         return false;
     }
 
     FT_Error error = FT_Init_FreeType(&m_Library);
     if (error)
     {
-        ASSERT(false && "FreeTypeFont: Error Init Free Type");
+        ASSERT(false, "FreeTypeFont: Error Init Free Type");
         return false;
     }
 
@@ -127,7 +127,7 @@ bool CVectorFontData::loadFont(const std::string& resource)
         };
         LOG_ERROR("FreeTypeFont: Font Error : %s", strError(error));
 
-        ASSERT(false && "FreeTypeFont:: Font Error");
+        ASSERT(false, "FreeTypeFont:: Font Error");
         return false;
     }
 

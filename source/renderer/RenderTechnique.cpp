@@ -28,7 +28,7 @@ const std::string& CRenderTechnique::getName() const
 
 const RenderPassPtr& CRenderTechnique::getRenderPass(u32 id) const
 {
-    ASSERT(id <= m_renderPassList.size() || "RenderPass id error");
+    ASSERT(id <= m_renderPassList.size(), "RenderPass id error");
 
     return m_renderPassList[id];
 }
@@ -208,8 +208,8 @@ bool CRenderTechnique::load()
     tinyxml2::XMLError success = doc.Parse(data.c_str());
     if (success)
     {
-        LOG_ERROR("CRenderTechnique: Error Parse Stream name [%s]", CResource::getResourseName().c_str());
-        ASSERT("Error Parse Stream" && false);
+        LOG_ERROR("CRenderTechnique: Stream parse error name [%s]", CResource::getResourseName().c_str());
+        ASSERT(false, "Stream parse error");
         return false;
     }
 
@@ -217,7 +217,7 @@ bool CRenderTechnique::load()
     if (!rootElement)
     {
         LOG_ERROR("CRenderTechnique: Can't find technique in Stream name [%s]", CResource::getResourseName().c_str());
-        ASSERT("Can't find technique in Stream" && false);
+        ASSERT(false, "Can't find technique in Stream");
         return false;
     }
 

@@ -289,7 +289,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         if (!shader->parse(shaderElement))
         {
             LOG_ERROR("CRenderPass: Shader parse error");
-            ASSERT("Shader parse error" && false);
+            ASSERT(false, "Shader parse error");
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
@@ -441,7 +441,7 @@ bool CRenderPass::parseRenderAdvanced(const tinyxml2::XMLElement* root)
 
 void CRenderPass::bind(u32 target)
 {
-    ASSERT(m_renderTargets.size() > target && "Invalid target index");
+    ASSERT(m_renderTargets.size() > target, "Invalid target index");
     m_renderTargets[target]->bind();
 
     m_renderState->bind();
@@ -471,7 +471,7 @@ void CRenderPass::unbind(u32 target)
 {
     //m_program->unbind();
 
-    ASSERT(m_renderTargets.size() > target && "Invalid target index");
+    ASSERT(m_renderTargets.size() > target, "Invalid target index");
     m_renderTargets[target]->unbind();
 
 }
@@ -512,7 +512,7 @@ void CRenderPass::setRenderAdvanced(const RenderAdvancedPtr& advanced)
 
 const RenderTargetPtr& CRenderPass::getRenderTarget(u32 index) const
 {
-    ASSERT(m_renderTargets.size() > index && "Invalid Render Target index");
+    ASSERT(m_renderTargets.size() > index, "Invalid Render Target index");
     return m_renderTargets[index];
 }
 
@@ -533,7 +533,7 @@ void CRenderPass::addRenderTarget(const RenderTargetPtr& target)
 
 void CRenderPass::setRenderTarget(u32 index, const RenderTargetPtr& target)
 {
-    ASSERT(m_renderTargets.size() > index && "Invalid Render Target index");
+    ASSERT(m_renderTargets.size() > index, "Invalid Render Target index");
     m_renderTargets[index] = target;
 }
 

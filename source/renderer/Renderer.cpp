@@ -51,7 +51,7 @@ void CRenderer::updateCamera(CCamera* camera)
 
 const core::Rect32& CRenderer::getViewportSize() const
 {
-    ASSERT(m_currentRenderTarget && "CRenderer: Current Render Target in null");
+    ASSERT(m_currentRenderTarget, "CRenderer: Current Render Target in null");
     if (m_currentRenderTarget)
     {
         return m_currentRenderTarget->getViewport();
@@ -181,7 +181,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
                 if (!m_camera)
                 {
-                    ASSERT("Camera not exist" && false);
+                    ASSERT(false, "Camera doesn't exist");
                     break;
                 }
                 program->setUniformMatrix4(id, m_camera->getProjectionMatrix());
@@ -201,7 +201,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
                 if (!m_camera)
                 {
-                    ASSERT("Camera not exist" && false);
+                    ASSERT(false, "Camera doesn't exist");
                     break;
                 }
                 program->setUniformMatrix4(id, m_camera->getViewMatrix());
@@ -212,7 +212,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
                 if (!m_camera)
                 {
-                    ASSERT("Camera not exist" && false);
+                    ASSERT(false, "Camera doesn't exist");
                     break;
                 }
                 program->setUniformVector3(id, m_camera->getPosition());
@@ -222,7 +222,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
                 if (!m_camera)
                 {
-                    ASSERT("Camera not exist" && false);
+                    ASSERT(false, "Camera doesn't exist");
                     break;
                 }
                 program->setUniformVector3(id, m_camera->getUpVector());

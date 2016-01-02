@@ -40,19 +40,22 @@ namespace v3d
 #include <stdlib.h>
 
 #ifdef _DEBUG
-#   define ASSERT(x) assert(x)
-#else
-#   define ASSERT(x)
-#endif
+#   define ASSERT(x, message) assert(x && message)
+#else //_DEBUG
+#   define ASSERT(x, message)
+#endif //_DEBUG
 
 #ifdef __GNUC__
-#define DEPRECATED __attribute__((deprecated))
+#   define DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
-#define DEPRECATED __declspec(deprecated)
-#else
-#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-#define DEPRECATED
-#endif
+#   if defined(DEPRECATED)
+#       undef DEPRECATED
+#   endif //defined(DEPRECATED)
+#   define DEPRECATED __declspec(deprecated)
+#else //defined(_MSC_VER)
+#   pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+#   define DEPRECATED
+#endif //__GNUC__
 
 #include "core/Math.h"
 #include "core/Vector2D.h"

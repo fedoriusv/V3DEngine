@@ -1,7 +1,7 @@
 #include "MemoryStream.h"
 
 using namespace v3d;
-using namespace v3d::stream;
+using namespace stream;
 
 MemoryStream::MemoryStream()
     : m_stream(nullptr)
@@ -36,7 +36,7 @@ void MemoryStream::close()
 
 u32 MemoryStream::read(void* buffer, const u32 size, const u32 count)
 {
-    ASSERT(m_pos + size * count <= m_length);
+    ASSERT(m_pos + size * count <= m_length, "Invalid memory size");
 
     memcpy(buffer, m_stream + m_pos, size * count);
     m_pos += size * count;
@@ -46,7 +46,7 @@ u32 MemoryStream::read(void* buffer, const u32 size, const u32 count)
 
 u32 MemoryStream::read(u8& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(u8));
+    ASSERT(m_length - m_pos >= sizeof(u8), "Invalid memory size");
 
     value = m_stream[m_pos++];
 
@@ -55,7 +55,7 @@ u32 MemoryStream::read(u8& value)
 
 u32 MemoryStream::read(s8& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(s8));
+    ASSERT(m_length - m_pos >= sizeof(s8), "Invalid memory size");
 
     value = m_stream[m_pos++];
 
@@ -64,7 +64,7 @@ u32 MemoryStream::read(s8& value)
 
 u32 MemoryStream::read(u16& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(u16));
+    ASSERT(m_length - m_pos >= sizeof(u16), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFF) << 8;
     value |= m_stream[m_pos++] & 0xFF;
@@ -74,7 +74,7 @@ u32 MemoryStream::read(u16& value)
 
 u32 MemoryStream::read(s16& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(s16));
+    ASSERT(m_length - m_pos >= sizeof(s16), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFF) << 8;
     value |= m_stream[m_pos++] & 0xFF;
@@ -84,7 +84,7 @@ u32 MemoryStream::read(s16& value)
 
 u32 MemoryStream::read(u32& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(u32));
+    ASSERT(m_length - m_pos >= sizeof(u32), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFF) << 24;
     value |= (m_stream[m_pos++] & 0xFF) << 16;
@@ -96,7 +96,7 @@ u32 MemoryStream::read(u32& value)
 
 u32 MemoryStream::read(s32& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(s32));
+    ASSERT(m_length - m_pos >= sizeof(s32), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFF) << 24;
     value |= (m_stream[m_pos++] & 0xFF) << 16;
@@ -108,7 +108,7 @@ u32 MemoryStream::read(s32& value)
 
 u32 MemoryStream::read(u64& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(u64));
+    ASSERT(m_length - m_pos >= sizeof(u64), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFFLL) << 56;
     value |= (m_stream[m_pos++] & 0xFFLL) << 48;
@@ -125,7 +125,7 @@ u32 MemoryStream::read(u64& value)
 
 u32 MemoryStream::read(s64& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(s64));
+    ASSERT(m_length - m_pos >= sizeof(s64), "Invalid memory size");
 
     value = (m_stream[m_pos++] & 0xFFLL) << 56;
     value |= (m_stream[m_pos++] & 0xFFLL) << 48;
@@ -142,7 +142,7 @@ u32 MemoryStream::read(s64& value)
 
 u32 MemoryStream::read(f32& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(f32));
+    ASSERT(m_length - m_pos >= sizeof(f32), "Invalid memory size");
 
     s32& ival = *((s32*)&value);
 
@@ -156,7 +156,7 @@ u32 MemoryStream::read(f32& value)
 
 u32 MemoryStream::read(f64& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(f64));
+    ASSERT(m_length - m_pos >= sizeof(f64), "Invalid memory size");
 
     s64& ival = *((s64*)&value);
 
@@ -175,7 +175,7 @@ u32 MemoryStream::read(f64& value)
 
 u32 MemoryStream::read(f80& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(f80));
+    ASSERT(m_length - m_pos >= sizeof(f80), "Invalid memory size");
 
     s64& ival = *((s64*)&value);
 
@@ -194,7 +194,7 @@ u32 MemoryStream::read(f80& value)
 
 u32 MemoryStream::read(bool& value)
 {
-    ASSERT(m_length - m_pos >= sizeof(bool));
+    ASSERT(m_length - m_pos >= sizeof(bool), "Invalid memory size");
     value = m_stream[m_pos++] != 0;
 
     return m_pos;
@@ -209,7 +209,7 @@ u32 MemoryStream::read(std::string& value)
     {
         return m_pos;
     }
-    ASSERT(m_length - m_pos >= size);
+    ASSERT(m_length - m_pos >= size, "Invalid memory size");
 
     value.resize(size);
     memcpy(&value[0], &m_stream[m_pos], size);
@@ -487,19 +487,19 @@ u32 MemoryStream::write(const std::string value)
 
 void MemoryStream::seekBeg(const u32 offset)
 {
-    ASSERT(offset <= m_length);
+    ASSERT(offset <= m_length, "Invalid memory size");
     m_pos = offset;
 }
 
 void MemoryStream::seekEnd(const u32 offset)
 {
-    ASSERT(offset <= m_length);
+    ASSERT(offset <= m_length, "Invalid memory size");
     m_pos = m_length + offset;
 }
 
 void MemoryStream::seekCur(const u32 offset)
 {
-    ASSERT(offset <= m_length);
+    ASSERT(offset <= m_length, "Invalid memory size");
     m_pos += offset;
 }
 
@@ -517,14 +517,14 @@ u8* MemoryStream::map(const u32 size)
 {
     u8* res = 0;
 
-    ASSERT(size > 0 && m_pos + size <= m_length);
+    ASSERT(size > 0 && m_pos + size <= m_length, "Invalid memory size");
 
     if (m_stream)
     {
         res = &m_stream[m_pos];
     }
 
-    ASSERT(!m_mapped);
+    ASSERT(!m_mapped, "Memory not mapped");
     m_mapped = true;
 
     return res;
@@ -532,13 +532,13 @@ u8* MemoryStream::map(const u32 size)
 
 void MemoryStream::unmap()
 {
-    ASSERT(m_mapped);
+    ASSERT(m_mapped, "Memory mapped");
     m_mapped = false;
 }
 
 u8* MemoryStream::getData() const
 {
-    ASSERT(!m_mapped);
+    ASSERT(!m_mapped, "Memory not mapped");
     return m_stream;
 }
 

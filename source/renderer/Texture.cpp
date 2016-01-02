@@ -53,7 +53,7 @@ bool CTexture::load()
         case ETextureTarget::eTextureUnknown:
         default:
 
-            ASSERT(true && "Invalid Select Texture target");
+            ASSERT(true, "Invalid Select Texture target");
             return false;
     }
 

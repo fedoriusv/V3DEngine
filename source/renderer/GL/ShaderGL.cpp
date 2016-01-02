@@ -5,21 +5,28 @@
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CShaderGL::CShaderGL()
 {
+    LOG_DEBUG("CShaderGL: CShaderGL constructor %x", this);
 }
 
 CShaderGL::~CShaderGL()
 {
     CShaderGL::destroy();
+
+    ASSERT(m_shaderId == 0, "Shader doesn't deleted");
+
+    LOG_DEBUG("CShaderGL: CShaderGL destructor %x", this);
 }
 
 bool CShaderGL::create()
 {
-    if (!m_data)
+    if (m_data.empty())
     {
         LOG_ERROR("Shader: Empty Shader Body");
         return false;
@@ -31,8 +38,10 @@ bool CShaderGL::create()
         return false;
     }
 
-    m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_name, m_data);
-    CShaderGL::clear();
+    m_compileStatus = CShaderGL::initShader(m_shaderId, m_type, m_name, m_data);
+#ifndef _DEBUG
+    m_data.clear();
+#endif //_DEBUG
 
     if (!m_compileStatus)
     {
@@ -44,11 +53,11 @@ bool CShaderGL::create()
 
 void CShaderGL::destroy()
 {
-    CShaderGL::deleteShader(m_shaderID);
-    m_shaderID = 0;
+    CShaderGL::deleteShader(m_shaderId);
+    m_data.clear();
 }
 
-bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::string& name, void* body)
+bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::string& name, const std::string& body)
 {
 
     shader = CShaderGL::createShader(type);
@@ -132,43 +141,44 @@ u32 CShaderGL::createShader(EShaderType type)
         break;
     }
 
-    ASSERT(glIsShader(shader) && "Shader Index Invalid");
+    ASSERT(glIsShader(shader), "Shader Index Invalid");
     return shader;
 }
 
-void CShaderGL::deleteShader(u32 shader)
+void CShaderGL::deleteShader(u32& shader)
 {
     if (shader > 0)
     {
-        ASSERT(glIsShader(shader) && "Shader Index Invalid");
+        ASSERT(glIsShader(shader), "Shader Index Invalid");
         glDeleteShader(shader);
+        shader = 0;
     }
 }
 
-void CShaderGL::sourceShader(u32 shader, void* body)
+void CShaderGL::sourceShader(u32 shader, const std::string& body)
 {
-    ASSERT(glIsShader(shader) && "Shader Index Invalid");
+    ASSERT(glIsShader(shader), "Shader Index Invalid");
 
     GLchar* stringPtr[1];
-    stringPtr[0] = (GLchar*)body;
+    stringPtr[0] = (GLchar*)body.c_str();
     glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
 }
 
 void CShaderGL::compileShader(u32 shader)
 {
-    ASSERT(glIsShader(shader) && "Shader Index Invalid");
+    ASSERT(glIsShader(shader), "Shader Index Invalid");
     glCompileShader(shader);
 }
 
 bool CShaderGL::create(const std::string& shader, EShaderType type)
 {
-    c8* data = (c8*)malloc(shader.size() + 1);
-    memcpy(data, shader.data(), shader.size());
-    data[shader.size()] = '\0';
-    m_data = reinterpret_cast<void*>(data);
+    m_data = shader;
     m_type = type;
 
     return CShaderGL::create();
 }
+
+} //namespace v3d
+} //namespace renderer
 
 #endif //_OPENGL_DRIVER_

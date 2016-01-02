@@ -152,9 +152,9 @@ bool SVertexData::empty() const
 
 void SVertexData::computeTangentBasis()
 {
-    ASSERT(!_vertices.empty() && "Vertex array empty");
-    ASSERT(!_normals.empty() && "Normal array empty");
-    ASSERT(!_texCoords.empty() && !_texCoords[0].empty() && "Texture array empty");
+    ASSERT(!_vertices.empty(), "Vertex array empty");
+    ASSERT(!_normals.empty(), "Normal array empty");
+    ASSERT(!_texCoords.empty() && !_texCoords[0].empty(), "Texture array empty");
 
     _binormals.clear();
     _tangents.clear();

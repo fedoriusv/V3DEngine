@@ -12,8 +12,10 @@
 
 #include "GL/glew.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CRendererGL::CRendererGL(const DriverContextPtr& context)
     : CRenderer(context)
@@ -52,7 +54,7 @@ void CRendererGL::init()
 
     CRenderStateGL::blendFunc(eBlendSrcAlpha, eBlendInvSrcAlpha);
 
-    ASSERT(m_context->getTextureUnits() > 0 && "Texture units not supported");
+    ASSERT(m_context->getTextureUnits() > 0, "Texture units not supported");
     CTextureGL::activeTextureLayer(0);
 
     glDisable(GL_DITHER);
@@ -133,5 +135,8 @@ void CRendererGL::resetTexture()
 {
     CTextureGL::reset();
 }
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_OPENGL_DRIVER_

@@ -110,7 +110,7 @@ bool FileStream::isOpen() const
 
 u32 FileStream::read(void* buffer, const u32 size, const u32 count)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     const u32 ret = (u32)fread(buffer, size, count, m_fileHandler);
     return ret;
 }
@@ -189,7 +189,7 @@ u32 FileStream::read(bool& value)
 
 u32 FileStream::read(std::string& value)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
 
     FileStream::seekEnd(0);
     m_fileSize = FileStream::tell();
@@ -204,7 +204,7 @@ u32 FileStream::read(std::string& value)
 
 u32 FileStream::write(const void* buffer, const u32 size, const u32 count)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     const u32 ret = (u32)fwrite(buffer, size, count, m_fileHandler);
     return ret;
 }
@@ -291,32 +291,32 @@ u32 FileStream::write(const std::string value)
 
 void FileStream::seekBeg(const u32 offset)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     fseek(m_fileHandler, offset, SEEK_SET);
 }
 
 void FileStream::seekEnd(const u32 offset)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     fseek(m_fileHandler, offset, SEEK_END);
 }
 
 void FileStream::seekCur(const u32 offset)
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     fseek(m_fileHandler, offset, SEEK_CUR);
 }
 
 u32 FileStream::tell()
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     u32 tell = ftell(m_fileHandler);
     return tell;
 }
 
 u32 FileStream::size()
 {
-    ASSERT(m_fileHandler && "File Handler nullptr");
+    ASSERT(m_fileHandler, "File Handler nullptr");
     if (m_fileSize == 0)
     {
         u32 currentPos = tell();
@@ -329,7 +329,7 @@ u32 FileStream::size()
 
 u8* FileStream::map(const u32 size)
 {
-    ASSERT(size > 0 && tell() + size <= FileStream::size());
+    ASSERT(size > 0 && tell() + size <= FileStream::size(), "Invalid file size");
     u8* address = 0;
 
      m_mappedMemory = new u8[size];
@@ -337,7 +337,7 @@ u8* FileStream::map(const u32 size)
 
     read(address, size);
 
-    ASSERT(!m_mapped);
+    ASSERT(!m_mapped, "Memory not mapped");
     m_mapped = true;
 
     return address;
@@ -350,7 +350,7 @@ void FileStream::unmap()
         delete[] m_mappedMemory;
         m_mappedMemory = nullptr;
     }
-    ASSERT(m_mapped);
+    ASSERT(m_mapped, "Memory not mapped");
     m_mapped = false;
 }
 
