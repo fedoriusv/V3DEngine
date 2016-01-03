@@ -46,7 +46,6 @@ namespace renderer
         };
 
         u32             m_frameBufferId;
-        u32             m_renderBufferId;
 
         u32             m_lastFrameIndex;
 

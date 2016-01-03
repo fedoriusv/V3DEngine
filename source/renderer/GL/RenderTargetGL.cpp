@@ -30,7 +30,6 @@ u32 CRenderTargetGL::s_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferId(0U)
-    , m_renderBufferId(0U)
 
     , m_lastFrameIndex(1U)
 
@@ -50,7 +49,6 @@ CRenderTargetGL::~CRenderTargetGL()
     m_attachBuffers.clear();
 
     ASSERT(m_frameBufferId == 0, "Framebuffer doesn't deleted");
-    ASSERT(m_renderBufferId == 0, "Renderbuffer doesn't deleted");
 
     LOG_DEBUG("CRenderTargetGL: CRenderTargetGL destructor %x", this);
 }
@@ -265,6 +263,7 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, 0);
+                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
 
@@ -276,6 +275,7 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, 0);
+                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
 
@@ -287,13 +287,13 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, 0);
+                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
         }
     }
     //TODO: Have gl error GL_INVALID_OPERATION after call glFramebufferTexture2D
 
-    CRenderTargetGL::deleteRenderbuffers(m_renderBufferId);
     CRenderTargetGL::deleteFramebuffers(m_frameBufferId);
 }
 
@@ -344,12 +344,12 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
             }
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
-            CRenderTargetGL::genRenderbuffer(attach._rboID);
-            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            CRenderTargetGL::genRenderbuffer(attach._bufferId);
+            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
             CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, attach._bufferId);
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
         }
@@ -357,16 +357,12 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eDepthAttach:
         {
-            if (!m_renderBufferId)
-            {
-                CRenderTargetGL::genRenderbuffer(m_renderBufferId);
-            }
-            attach._rboID = m_renderBufferId;
-            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            CRenderTargetGL::genRenderbuffer(attach._bufferId);
+            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
             CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, attach._bufferId);
 
             RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
         }
@@ -374,17 +370,12 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eStencilAttach:
         {
-            if (!m_renderBufferId)
-            {
-                CRenderTargetGL::genRenderbuffer(m_renderBufferId);
-            }
-            attach._rboID = m_renderBufferId;
-
-            CRenderTargetGL::bindRenderbuffer(attach._rboID);
+            CRenderTargetGL::genRenderbuffer(attach._bufferId);
+            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
             CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
             CRenderTargetGL::bindRenderbuffer(0);
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, attach._rboID);
+            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, attach._bufferId);
 
             RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
         }

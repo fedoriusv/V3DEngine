@@ -5,9 +5,12 @@
 #include "scene/Camera.h"
 #include "utils/Timer.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace core;
-using namespace renderer;
 using namespace scene;
 
 CRenderer::CRenderer(const DriverContextPtr& context)
@@ -476,3 +479,6 @@ void CRenderer::updateAdvanced(const RenderPassPtr & pass)
         }
     }
 }
+
+} //namespace renderer
+} //namespace v3d
