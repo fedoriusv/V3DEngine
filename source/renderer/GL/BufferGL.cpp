@@ -1,4 +1,5 @@
 #include "BufferGL.h"
+#include "utils/Logger.h"
 
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
@@ -10,194 +11,119 @@ namespace renderer
 namespace gl
 {
 
-GLenum EDrawModeGL[EDrawMode::eDrawModeCount] =
-{
-    GL_TRIANGLES,
-    GL_TRIANGLE_STRIP,
-    GL_LINES,
-    GL_LINE_STRIP,
-    GL_POINTS
-};
-
-GLenum EGeometryTargetGL[EGeometryTarget::eArrayTargetCount] =
+GLenum EBufferTargetGL[EBufferTarget::eBufferTargetCount] =
 {
     GL_ARRAY_BUFFER,
     GL_ELEMENT_ARRAY_BUFFER,
     GL_TRANSFORM_FEEDBACK_BUFFER,
 };
 
-GLenum EGeometryTypeGL[EGeomertyType::eGeometryTypeCount] =
+GLenum EDataUsageTypeGL[EDataUsageType::eDataUsageTypeCount] =
 {
     GL_STATIC_DRAW,
     GL_DYNAMIC_DRAW,
 };
 
-u32 BufferGL::s_currentArray = 0;
-u32 BufferGL::s_currentBuffer[eTargetCount] = { 0 };
+u32 BufferGL::s_currentBuffer[EBufferTarget::eBufferTargetCount] = { 0 };
 
-void BufferGL::genBuffer(u32& buffer)
+BufferGL::BufferGL(EBufferTarget target)
+    : Buffer(target)
+    , m_id(0)
+    , m_lock(false)
 {
-    glGenBuffers(1, &buffer);
+    LOG_DEBUG("BufferGL: BufferGL constructor %x", this);
+
+    glGenBuffers(1, &m_id);
 }
 
-void BufferGL::bindBuffer(EGeometryTarget target, u32 buffer)
+BufferGL::~BufferGL()
 {
-    if (s_currentBuffer[target] != buffer)
-    {
-        glBindBuffer(EGeometryTargetGL[target], buffer);
-        ASSERT(glIsBuffer(buffer) || buffer == 0, "Invalid VBO index");
-        s_currentBuffer[target] = buffer;
-    }
-}
+    ASSERT(!m_lock, "Map buffer used");
 
-void BufferGL::bindBufferTarget(EGeometryTarget target, u32 buffer, u32 size, u32 offset)
-{
-    ASSERT(EGeometryTargetGL[target] == GL_TRANSFORM_FEEDBACK_BUFFER, "Invalid GL Target");
-    if (size == 0U && offset == 0U)
-    {
-        glBindBufferBase(EGeometryTargetGL[target], 0, buffer);
-    }
-    else
-    {
-        glBindBufferRange(EGeometryTargetGL[target], 0, buffer, size, offset);
-    }
-    ASSERT(glIsBuffer(buffer), "Invalid VBO index");
-}
-
-void BufferGL::deleteBuffer(u32& buffer)
-{
-    if (buffer != 0)
+    BufferGL::unbind();
+    if (m_id != 0)
     {
         //TODO: some times return false for shader id
-        /*ASSERT(glIsShader(buffer), "Invalid Index Buffer");*/
-        glDeleteBuffers(1, &buffer);
-        buffer = 0;
+        /*ASSERT(glIsShader(m_id), "Invalid Index Buffer");*/
+        glDeleteBuffers(1, &m_id);
+        m_id = 0;
+    }
+
+    ASSERT(m_id == 0, "IAO doesn't deleted");
+    LOG_DEBUG("BufferGL: BufferGL destructor %x", this);
+}
+
+void BufferGL::bind()
+{
+    if (s_currentBuffer[m_target] != m_id)
+    {
+        glBindBuffer(EBufferTargetGL[m_target], m_id);
+        ASSERT(glIsBuffer(m_id), "Invalid VBO index");
+        s_currentBuffer[m_target] = m_id;
     }
 }
 
-void BufferGL::bufferData(EGeometryTarget target, EGeomertyType type, u32 size, void* data)
+void BufferGL::bindToBuffer(const Buffer* buffer, u32 offset, u32 size)
 {
-    glBufferData(EGeometryTargetGL[target], size, data, EGeometryTypeGL[type]);
-}
+    BufferGL::bind();
+    ASSERT(buffer, "Target Buffer nullptr");
+    ASSERT(glIsBuffer(static_cast<const BufferGL*>(buffer)->m_id), "Invalid VBO index");
 
-void BufferGL::bufferSubData(EGeometryTarget target, u32 offset, u32 size, void* data)
-{
-    glBufferSubData(EGeometryTargetGL[target], offset, size, data);
-}
-
-void* BufferGL::mapBuffer(EGeometryTarget target, u32 access)
-{
-    return glMapBuffer(EGeometryTargetGL[target], access);
-}
-
-void* BufferGL::mapBufferRange(EGeometryTarget target, u32 offset, u32 size, u32 flags)
-{
-    return glMapBufferRange(EGeometryTargetGL[target], offset, size, flags);
-}
-
-bool BufferGL::unmapBuffer(EGeometryTarget target)
-{
-    return glUnmapBuffer(EGeometryTargetGL[target]) != 0;
-}
-
-void BufferGL::getBufferPointer(EGeometryTarget target, u32 pname, void** params)
-{
-    glGetBufferPointerv(EGeometryTargetGL[target], pname, params);
-}
-
-void BufferGL::genVertexArray(u32& buffer)
-{
-    glGenVertexArrays(1, &buffer);
-}
-
-void BufferGL::bindVertexArray(u32 buffer)
-{
-    if (s_currentArray != buffer)
+    if (size == 0 && offset == 0)
     {
-        glBindVertexArray(buffer);
-        ASSERT(glIsVertexArray(buffer) || buffer == 0, "Invalid VAO index");
-        s_currentArray = buffer;
-    }
-}
-
-void BufferGL::deleteVertexArray(u32& buffer)
-{
-    if (buffer != 0)
-    {
-        ASSERT(glIsVertexArray(buffer), "Invalid VAO index");
-        glDeleteVertexArrays(1, &buffer);
-        buffer = 0;
-    }
-}
-
-void BufferGL::initVertexAttribPointer(u32 attrib, EDataType type, u32 count, u32 size, u32 offset)
-{
-    std::function<u32(EDataType)> format = [](EDataType type) -> u32
-    {
-        switch (type)
-        {
-        case EDataType::eTypeInt:
-            return GL_INT;
-
-        case EDataType::eTypeFloat:
-        case EDataType::eTypeVector2:
-        case EDataType::eTypeVector3:
-        case EDataType::eTypeVector4:
-        case EDataType::eTypeMatrix3:
-        case EDataType::eTypeMatrix4:
-            return GL_FLOAT;
-
-        case EDataType::ETypeDouble:
-            return GL_DOUBLE;
-
-        default:
-            return GL_FLOAT;
-        }
-    };
-
-    glVertexAttribPointer(attrib, count, format(type), GL_FALSE, size, (const GLvoid*)offset);
-}
-
-void BufferGL::vertexAttribArray(u32 attrib, bool enable)
-{
-    if (enable)
-    {
-        glEnableVertexAttribArray(attrib);
+        glBindBufferBase(EBufferTargetGL[buffer->getTarget()], 0, static_cast<const BufferGL*>(buffer)->m_id);
     }
     else
     {
-        glDisableVertexAttribArray(attrib);
+        glBindBufferRange(EBufferTargetGL[buffer->getTarget()], 0, static_cast<const BufferGL*>(buffer)->m_id, size, offset);
     }
 }
 
-void BufferGL::vertexAttribDivisior(u32 attrib, u32 value)
+void BufferGL::unbind()
 {
-    glVertexAttribDivisor(attrib, value);
-}
-
-void BufferGL::drawElements(EDrawMode mode, u32 count, u32 primCount)
-{
-    if (primCount > 0)
+    if (s_currentBuffer[m_target] != 0)
     {
-        glDrawElementsInstanced(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL, primCount);
-    }
-    else
-    {
-        glDrawElements(EDrawModeGL[mode], count, GL_UNSIGNED_INT, NULL);
+        glBindBuffer(EBufferTargetGL[m_target], 0);
+        s_currentBuffer[m_target] = 0;
     }
 }
 
-void BufferGL::drawArrays(EDrawMode mode, u32 first, u32 count, u32 primCount)
+void BufferGL::setData(EDataUsageType type, u32 size, void* data)
 {
-    if (primCount > 0)
+    if (m_lock)
     {
-        glDrawArraysInstanced(EDrawModeGL[mode], first, count, primCount);
+        return;
     }
-    else
-    {
-        glDrawArrays(EDrawModeGL[mode], first, count);
-    }
+
+    BufferGL::bind();
+    glBufferData(EBufferTargetGL[m_target], size, data, EDataUsageTypeGL[type]);
 }
+
+void BufferGL::updateData(u32 offset, u32 size, void* data)
+{
+    if (m_lock)
+    {
+        return;
+    }
+
+    BufferGL::bind();
+    glBufferSubData(EBufferTargetGL[m_target], offset, size, data);
+}
+
+void * BufferGL::map(u32 access)
+{
+    BufferGL::bind();
+
+    m_lock = true;
+    return glMapBuffer(EBufferTargetGL[m_target], access);
+}
+
+bool BufferGL::unmap()
+{
+    m_lock = false;
+    return glUnmapBuffer(EBufferTargetGL[m_target]) != 0;
+}
+
 
 } //namespace gl
 } //namespace renderer

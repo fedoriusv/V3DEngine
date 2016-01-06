@@ -1,14 +1,25 @@
 #include "Geometry.h"
+#include "Buffer.h"
 
 namespace v3d
 {
 namespace renderer
 {
 
+CGeometry::SInterval::SInterval()
+    : _begin(0)
+    , _count(0)
+{
+}
+
 CGeometry::CGeometry(const CRenderTechnique* technique)
-    : m_drawMode(EDrawMode::eTriangleStrip)
-    , m_geometyType(EGeomertyType::eGeomertyStatic)
+    : m_drawMode(EPrimitivesMode::eTriangles)
+    , m_geometyType(EDataUsageType::eGeomertyStatic)
     , m_technique(technique)
+
+    , m_vertexBuffer(nullptr)
+    , m_indexBuffer(nullptr)
+
     , m_currentVertexMask(0U)
 {
 }
@@ -23,12 +34,12 @@ SVertexData& CGeometry::getData()
     return m_data;
 }
 
-EDrawMode CGeometry::getDrawMode() const
+EPrimitivesMode CGeometry::getDrawMode() const
 {
     return m_drawMode;
 }
 
-void CGeometry::setDrawMode(EDrawMode mode)
+void CGeometry::setDrawMode(EPrimitivesMode mode)
 {
     m_drawMode = mode;
 }
@@ -105,4 +116,3 @@ bool CGeometry::updated() const
 
 } //namespace v3d
 } //namespace renderer
-

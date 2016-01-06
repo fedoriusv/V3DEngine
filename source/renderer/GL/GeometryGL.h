@@ -8,6 +8,9 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -31,14 +34,28 @@ namespace renderer
         void                initBufferData(const ShaderDataList& shaderDataList);
 
         u32                 m_arrayId;
-        u32                 m_verticesId;
-        u32                 m_indicesId;
 
         bool                m_initialized;
+
+    private:
+
+        static void         genVertexArray(u32& buffer);
+        static void         bindVertexArray(u32 buffer);
+        static void         deleteVertexArray(u32& buffer);
+
+        static void         initVertexAttribPointer(u32 attrib, EDataType type, u32 count, u32 size = 0, u32 offset = 0);
+        static void         vertexAttribArray(u32 attrib, bool enable);
+        static void         vertexAttribDivisior(u32 attrib, u32 value);
+
+        static void         drawElements(EPrimitivesMode mode, u32 count, u32 primCount);
+        static void         drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 primCount);
+
+        static u32          s_currentArray;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

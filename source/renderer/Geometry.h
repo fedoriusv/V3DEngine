@@ -11,16 +11,15 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class Buffer;
+
     class CGeometry
     {
     public:
 
         struct SInterval
         {
-            SInterval()
-                : _begin(0)
-                , _count(0)
-            {}
+            SInterval();
 
             u32 _begin;
             u32 _count;
@@ -38,8 +37,8 @@ namespace renderer
 
         SVertexData&            getData();
 
-        EDrawMode               getDrawMode() const;
-        void                    setDrawMode(EDrawMode mode);
+        EPrimitivesMode         getDrawMode() const;
+        void                    setDrawMode(EPrimitivesMode mode);
 
         void                    setInterval(u32 begin, u32 count);
         const SInterval&        getInterval() const;
@@ -56,10 +55,13 @@ namespace renderer
 
         void                    setVertexMask(u32 mask);
 
-        EDrawMode               m_drawMode;
-        EGeomertyType           m_geometyType;
+        EPrimitivesMode         m_drawMode;
+        EDataUsageType          m_geometyType;
         SVertexData             m_data;
         const CRenderTechnique* m_technique;
+
+        Buffer*                 m_vertexBuffer;
+        Buffer*                 m_indexBuffer;
 
     private:
 

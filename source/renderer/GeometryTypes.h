@@ -9,7 +9,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EDrawMode
+    enum EPrimitivesMode
     {
         eTriangles,
         eTriangleStrip,
@@ -17,28 +17,28 @@ namespace renderer
         eLinesStrip,
         ePoints,
 
-        eDrawModeCount
+        ePrimitivesModeCount
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EGeometryTarget
+    enum EBufferTarget
     {
         eVertexBuffer,
         eIndexBuffer,
         eTransformFeedbackBuffer,
 
-        eArrayTargetCount
+        eBufferTargetCount
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EGeomertyType
+    enum EDataUsageType
     {
         eGeomertyStatic,
         eGeomertyDynamic,
 
-        eGeometryTypeCount
+        eDataUsageTypeCount
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
