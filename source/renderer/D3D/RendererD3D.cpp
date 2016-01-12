@@ -114,7 +114,7 @@ GeometryPtr CRendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
     return std::make_shared<CGeometryD3D>(technique);
 }
 
-CTexture* CRendererD3D::makeSharedTexture()
+CTexture* CRendererD3D::createTexture()
 {
     return new CTextureD3D();
 }
@@ -129,6 +129,11 @@ RenderTargetPtr CRendererD3D::makeSharedRenderTarget()
 {
     return nullptr;
     //return std::make_shared<CRenderTargetGL>();
+}
+
+GeometryTargetPtr CRendererD3D::makeSharedGeometryTarget()
+{
+    return nullptr;
 }
 
 bool CRendererD3D::isLocked() const

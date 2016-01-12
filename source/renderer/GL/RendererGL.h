@@ -7,6 +7,9 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /**
@@ -27,9 +30,11 @@ namespace renderer
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
         GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
-        CTexture*           makeSharedTexture()                                                     override;
+        CTexture*           createTexture()                                                         override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
+
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
+        GeometryTargetPtr   makeSharedGeometryTarget()                                              override;
 
         bool                isLocked() const;
 
@@ -42,6 +47,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

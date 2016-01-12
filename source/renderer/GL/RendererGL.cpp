@@ -9,12 +9,15 @@
 #include "TextureGL.h"
 #include "RenderStateGL.h"
 #include "RenderTargetGL.h"
+#include "GeometryTargetGL.h"
 
 #include "GL/glew.h"
 
 namespace v3d
 {
 namespace renderer
+{
+namespace gl
 {
 
 CRendererGL::CRendererGL(const DriverContextPtr& context)
@@ -111,7 +114,7 @@ GeometryPtr CRendererGL::makeSharedGeometry(const CRenderTechnique* technique)
     return std::make_shared<CGeometryGL>(technique);
 }
 
-CTexture* CRendererGL::makeSharedTexture()
+CTexture* CRendererGL::createTexture()
 {
     return new CTextureGL();
 }
@@ -126,6 +129,11 @@ RenderTargetPtr CRendererGL::makeSharedRenderTarget()
     return std::make_shared<CRenderTargetGL>();
 }
 
+GeometryTargetPtr CRendererGL::makeSharedGeometryTarget()
+{
+    return std::make_shared<CGeometryTargetGL>();
+}
+
 bool CRendererGL::isLocked() const
 {
     return m_isLocked;
@@ -136,6 +144,7 @@ void CRendererGL::resetTexture()
     CTextureGL::reset();
 }
 
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

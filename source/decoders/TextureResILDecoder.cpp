@@ -52,7 +52,7 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
         return nullptr;
     }
 
-    CTexture* texture = RENDERER->makeSharedTexture();
+    CTexture* texture = RENDERER->createTexture();
 
     stream::IStreamPtr data = CStreamManager::createMemoryStream();
     data->seekBeg(0);

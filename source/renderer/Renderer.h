@@ -8,6 +8,9 @@
 #include "Texture.h"
 #include "RenderJob.h"
 
+#include "RenderTarget.h"
+#include "GeometryTarget.h"
+
 namespace v3d
 {
 namespace scene
@@ -22,6 +25,9 @@ namespace renderer
 
     class CMaterial;
 
+    /**
+    * Interface for general render management.
+    */
     class CRenderer
     {
     public:
@@ -42,12 +48,15 @@ namespace renderer
 
         void                        checkForErrors(const std::string& location = "");
 
+        virtual CTexture*           createTexture() = 0;
+
         virtual ShaderPtr           makeSharedShader()                                                      = 0;
         virtual ShaderProgramPtr    makeSharedProgram()                                                     = 0;
         virtual GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   = 0;
-        virtual CTexture*           makeSharedTexture()                                                     = 0;
         virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;
+
         virtual RenderTargetPtr     makeSharedRenderTarget()                                                = 0;
+        virtual GeometryTargetPtr   makeSharedGeometryTarget()                                              = 0;
 #ifdef _DEBUG
         void                        setDebugMode(bool active);
         bool                        isDebugMode() const;
@@ -92,10 +101,11 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderer>	RendererPtr;
+    typedef std::shared_ptr<CRenderer>  RendererPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDERER_H_

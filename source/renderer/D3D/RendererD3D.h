@@ -21,12 +21,15 @@ namespace renderer
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
 
+        CTexture*           createTexture()                                                         override;
+
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
         GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
-        CTexture*           makeSharedTexture()                                                     override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
+
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
+        GeometryTargetPtr   makeSharedGeometryTarget()                                              override;
 
         bool                isLocked() const;
 

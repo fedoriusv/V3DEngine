@@ -62,7 +62,7 @@ CTexture* CTextureManager::load(const std::string files[6], const std::string& a
     }
     else
     {
-        CTexture* cubeTexture = RENDERER->makeSharedTexture();
+        CTexture* cubeTexture = RENDERER->createTexture();
         cubeTexture->setStream(stream::CStreamManager::createMemoryStream());
 
         bool wasFound = false;
@@ -237,7 +237,7 @@ CTexture* CTextureManager::load(const std::string& file, const std::string& alia
 
 CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
 {
-    renderer::CTexture* texture = RENDERER->makeSharedTexture();
+    renderer::CTexture* texture = RENDERER->createTexture();
 
     texture->m_target = ETextureTarget::eTexture2D;
 
@@ -256,7 +256,7 @@ CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EIma
 
 CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFormat format, EImageType type)
 {
-    renderer::CTexture* texture = RENDERER->makeSharedTexture();
+    renderer::CTexture* texture = RENDERER->createTexture();
 
     texture->m_target = ETextureTarget::eTexture2DMSAA;
 

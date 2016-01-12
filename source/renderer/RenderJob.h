@@ -2,7 +2,6 @@
 #define _V3D_RENDERJOB_H_
 
 #include "Geometry.h"
-#include "RenderTarget.h"
 #include "Material.h"
 
 namespace v3d
