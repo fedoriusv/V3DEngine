@@ -14,7 +14,7 @@ CGeometry::SInterval::SInterval()
 
 CGeometry::CGeometry(const CRenderTechnique* technique)
     : m_drawMode(EPrimitivesMode::eTriangles)
-    , m_geometyType(EDataUsageType::eGeomertyStatic)
+    , m_geometyType(EDataUsageType::eDrawStatic)
     , m_technique(technique)
 
     , m_vertexBuffer(nullptr)

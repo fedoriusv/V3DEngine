@@ -48,13 +48,13 @@ SVertexData& CShape::getGeometryData()
     return CRenderable::getGeometry()->getData();
 }
 
-EDrawMode CShape::getGeometryDrawMode() const
+EPrimitivesMode CShape::getGeometryDrawMode() const
 {
     ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
     return CRenderable::getGeometry()->getDrawMode();
 }
 
-void CShape::setGeometryDrawMode(EDrawMode mode)
+void CShape::setGeometryDrawMode(EPrimitivesMode mode)
 {
     ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
     CRenderable::getGeometry()->setDrawMode(mode);

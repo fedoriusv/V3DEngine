@@ -196,7 +196,7 @@ EDataType CShaderAttribute::getType() const
     return m_type;
 }
 
-u32 CShaderAttribute::getID() const
+s32 CShaderAttribute::getID() const
 {
     return m_id;
 }

@@ -46,8 +46,8 @@ namespace scene
         EShapeType                     m_shapeType;
 
         SVertexData&                   getGeometryData();
-        renderer::EDrawMode            getGeometryDrawMode() const;
-        void                           setGeometryDrawMode(renderer::EDrawMode mode);
+        renderer::EPrimitivesMode      getGeometryDrawMode() const;
+        void                           setGeometryDrawMode(renderer::EPrimitivesMode mode);
 
     };
 

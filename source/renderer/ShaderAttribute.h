@@ -56,7 +56,7 @@ namespace renderer
         u32                             getDivisor()        const;
         EDataType                       getType()           const;
         EShaderAttribute                getData()           const;
-        u32                             getID()             const;
+        s32                             getID()             const;
 
         void*                           getUserData()       const;
         u32                             getUserDataSize()   const;
@@ -78,7 +78,7 @@ namespace renderer
         EShaderAttribute                m_data;
         std::string                     m_name;
         u32                             m_divisor;
-        u32                             m_id;
+        s32                             m_id;
 
         struct SUserData
         {

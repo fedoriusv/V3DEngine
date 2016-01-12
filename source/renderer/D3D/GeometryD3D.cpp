@@ -8,7 +8,7 @@
 using namespace v3d;
 using namespace renderer;
 
-D3D_PRIMITIVE_TOPOLOGY EDrawModeD3D[CGeometry::eDrawModeCount] =
+D3D_PRIMITIVE_TOPOLOGY EDrawModeD3D[EPrimitivesMode::ePrimitivesModeCount] =
 {
     D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
     D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,

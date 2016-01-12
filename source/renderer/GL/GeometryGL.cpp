@@ -19,7 +19,7 @@ namespace renderer
 namespace gl
 {
 
-GLenum EPrimitivesModeGL[EPrimitivesMode::ePrimitivesModeCount] =
+const GLenum EPrimitivesModeGL[EPrimitivesMode::ePrimitivesModeCount] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
@@ -173,14 +173,14 @@ void CGeometryGL::draw()
     const AttributeList& attributesDefault = pass->getDefaultShaderData()->getAttributeList();
     for (const AttributePair& attr : attributesDefault)
     {
-        u32 attribute = attr.second->getID();
+        s32 attribute = attr.second->getID();
         CGeometryGL::vertexAttribArray(attribute, true);
     }
 
     const AttributeList& attributesUser = pass->getUserShaderData()->getAttributeList();
     for (const AttributePair& attr : attributesUser)
     {
-        u32 attribute = attr.second->getID();
+        s32 attribute = attr.second->getID();
         CGeometryGL::vertexAttribArray(attribute, true);
     }
 
@@ -196,13 +196,13 @@ void CGeometryGL::draw()
 
     for (const AttributePair& attr : attributesDefault)
     {
-        u32 attribute = attr.second->getID();
+        s32 attribute = attr.second->getID();
         CGeometryGL::vertexAttribArray(attribute, false);
     }
 
     for (const AttributePair& attr : attributesUser)
     {
-        u32 attribute = attr.second->getID();
+        s32 attribute = attr.second->getID();
         CGeometryGL::vertexAttribArray(attribute, false);
     }
 
@@ -257,6 +257,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     m_vertexBuffer->updateData(offset, size, m_data._vertices.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexPosition Error");
                 }
                 break;
 
@@ -266,6 +268,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     m_vertexBuffer->updateData(offset, size, m_data._normals.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexNormal Error");
                 }
                 break;
 
@@ -275,6 +279,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     m_vertexBuffer->updateData(offset, size, m_data._colors.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexColor Error");
                 }
                 break;
 
@@ -284,6 +290,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     m_vertexBuffer->updateData(offset, size, m_data._binormals.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexBinormal Error");
                 }
                 break;
 
@@ -293,6 +301,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     m_vertexBuffer->updateData(offset, size, m_data._tangents.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexTangent Error");
                 }
                 break;
 
@@ -306,6 +316,8 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector2, 2, sizeof(GLfloat) * 2, offset);
                     offset += size;
                     ++layer;
+
+                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexTexture Error");
                 }
                 break;
 
@@ -352,10 +364,12 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                             }
                         };
 
-                        u32 userLayer = attr.second->getID();
+                        s32 userLayer = attr.second->getID();
                         EDataType type = attr.second->getType();
                         CGeometryGL::initVertexAttribPointer(userLayer, type, componentsCount(type), attr.second->getUserDataSize(), offset);
                         offset += size;
+
+                        RENDERER->checkForErrors("GeometryGL: init eAttribUser Error");
 
                         u32 divisor = attr.second->getDivisor();
                         if (divisor > 0)
@@ -439,7 +453,7 @@ void CGeometryGL::deleteVertexArray(u32& buffer)
     }
 }
 
-void CGeometryGL::initVertexAttribPointer(u32 attrib, EDataType type, u32 count, u32 size, u32 offset)
+void CGeometryGL::initVertexAttribPointer(s32 attrib, EDataType type, u32 count, u32 size, u32 offset)
 {
     std::function<u32(EDataType)> format = [](EDataType type) -> u32
     {
@@ -467,7 +481,7 @@ void CGeometryGL::initVertexAttribPointer(u32 attrib, EDataType type, u32 count,
     glVertexAttribPointer(attrib, count, format(type), GL_FALSE, size, (const GLvoid*)offset);
 }
 
-void CGeometryGL::vertexAttribArray(u32 attrib, bool enable)
+void CGeometryGL::vertexAttribArray(s32 attrib, bool enable)
 {
     if (enable)
     {
@@ -479,7 +493,7 @@ void CGeometryGL::vertexAttribArray(u32 attrib, bool enable)
     }
 }
 
-void CGeometryGL::vertexAttribDivisior(u32 attrib, u32 value)
+void CGeometryGL::vertexAttribDivisior(s32 attrib, u32 value)
 {
     glVertexAttribDivisor(attrib, value);
 }
@@ -494,6 +508,8 @@ void CGeometryGL::drawElements(EPrimitivesMode mode, u32 count, u32 primCount)
     {
         glDrawElements(EPrimitivesModeGL[mode], count, GL_UNSIGNED_INT, NULL);
     }
+
+    RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawElements Error");
 }
 
 void CGeometryGL::drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 primCount)
@@ -506,6 +522,8 @@ void CGeometryGL::drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 pri
     {
         glDrawArrays(EPrimitivesModeGL[mode], first, count);
     }
+
+    RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawArrays Error");
 }
 
 } //namespace gl

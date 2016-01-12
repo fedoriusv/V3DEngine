@@ -255,7 +255,7 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
     for (auto& uniform : list)
     {
         const CShaderUniform::EUniformData type = uniform.second->getData();
-        const s32 id = uniform.second->getID();
+        s32 id = uniform.second->getID();
         switch (type)
         {
         case CShaderUniform::eMaterialAmbient:
@@ -334,7 +334,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         for (auto& uniform : list)
         {
             const CShaderUniform::EUniformData type = uniform.second->getData();
-            const s32 id = uniform.second->getID();
+            s32 id = uniform.second->getID();
             switch (type)
             {
             case CShaderUniform::eLightsCount:
@@ -464,7 +464,7 @@ void CRenderer::updateAdvanced(const RenderPassPtr & pass)
     for (auto& uniform : list)
     {
         const CShaderUniform::EUniformData type = uniform.second->getData();
-        const s32 id = uniform.second->getID();
+        s32 id = uniform.second->getID();
         switch (type)
         {
         case CShaderUniform::eCurrentTime:
