@@ -3,8 +3,10 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CShaderProgram::CShaderProgram()
     : m_shaderProgID(0)
@@ -16,6 +18,7 @@ CShaderProgram::~CShaderProgram()
 {
     m_shaderList.clear();
     m_shaderDataList.clear();
+    m_varyingsList.clear();
 }
 
 u32 CShaderProgram::getShaderID() const
@@ -75,6 +78,14 @@ void CShaderProgram::addShaderData(const ShaderDataPtr& data)
     }
 }
 
+void CShaderProgram::addVaryingsAttibutes(const std::vector<const c8*>& list)
+{
+    if (!list.empty())
+    {
+        m_varyingsList = list;
+    }
+}
+
 bool CShaderProgram::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
 {
     if (vertex.empty() || fragment.empty())
@@ -108,3 +119,6 @@ bool CShaderProgram::create(const std::string& vertex, const std::string& fragme
 
     return status;
 }
+
+} //namespace renderer
+} //namespace v3d

@@ -1,5 +1,5 @@
 #include "ShaderSampler.h"
-#include "scene/RenderTargetManager.h"
+#include "scene/TargetManager.h"
 #include "scene/TextureManager.h"
 #include "utils/Logger.h"
 
@@ -79,11 +79,18 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
     if (root->Attribute("val"))
     {
         const std::string varVal = root->Attribute("val");
-        const RenderTargetPtr target = CRenderTargetManager::getInstance()->get(varVal);
+        const TargetPtr target = CTargetManager::getInstance()->get(varVal);
         if (target)
         {
+            if (target->getTagetType() != ITarget::ETagetType::eRenderTarget)
+            {
+                LOG_ERROR("CRenderPass: Target not supported");
+                return false;
+            }
+            const RenderTargetPtr& rendertarget = std::static_pointer_cast<CRenderTarget>(target);
+
             m_type = eRenderTargetSampler;
-            m_target = target;
+            m_target = rendertarget;
             if (!root->Attribute("attachment") || std::string(root->Attribute("attachment")).empty())
             {
                 m_texture = m_target.lock()->getColorTexture(0);
@@ -151,7 +158,12 @@ CTexture* CShaderSampler::getTexture()
     return const_cast<CTexture*>(m_texture);
 }
 
-const RenderTargetWPtr& CShaderSampler::getTarget() const
+const RenderTargetPtr CShaderSampler::getTarget() const
 {
-    return m_target;
+    if (m_target.expired())
+    {
+        return nullptr;
+    }
+
+    return m_target.lock();
 }

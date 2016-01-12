@@ -6,7 +6,7 @@
 #include "scene/TextureManager.h"
 #include "scene/FontManager.h"
 #include "scene/ModelManager.h"
-#include "scene/RenderTargetManager.h"
+#include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
 
 using namespace v3d;
@@ -36,7 +36,7 @@ CEngine::~CEngine()
     CFontManager::freeInstance();
     CModelManager::freeInstance();
     CEventManager::freeInstance();
-    CRenderTargetManager::freeInstance();
+    CTargetManager::freeInstance();
     CShaderManager::freeInstance();
 }
 

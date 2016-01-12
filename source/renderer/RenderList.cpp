@@ -9,8 +9,11 @@
 #include "scene/Camera.h"
 #include "scene/Model.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace scene;
 
 CRenderList::SNodeList::SNodeList(scene::CNode* node, CRenderable* draw, u32 target, u32 pass)
@@ -21,7 +24,7 @@ CRenderList::SNodeList::SNodeList(scene::CNode* node, CRenderable* draw, u32 tar
 {
 }
 
-CRenderList::CRenderList(const RenderTargetPtr& target)
+CRenderList::CRenderList(const TargetPtr& target)
     : m_enable(false)
     , m_target(target)
     , m_camera(nullptr)
@@ -68,6 +71,7 @@ void CRenderList::clear()
 
     m_drawStatic.clear();
     m_drawAlpha.clear();
+    m_drawTransparency.clear();
 }
 
 bool CRenderList::contain(scene::CNode* node)
@@ -91,7 +95,7 @@ bool CRenderList::contain(scene::CNode* node)
      return false;
 }
 
-const RenderTargetPtr& CRenderList::getRenderTarget() const
+const TargetPtr CRenderList::getTarget() const
 {
     return m_target;
 }
@@ -142,97 +146,133 @@ void CRenderList::refresh()
 
     m_drawAlpha.clear();
     m_drawStatic.clear();
+    m_drawTransparency.clear();
 
     u32 size = (u32)m_list.size();
     m_drawAlpha.reserve(size);
     m_drawStatic.reserve(size);
+    m_drawTransparency.reserve(size);
 
     for (std::vector<SNodeList>::iterator iter = m_list.begin(); iter < m_list.end(); ++iter)
     {
         CNode* node = (*iter)._node;
         switch (node->getNodeType())
         {
-        case ENodeType::eShape:
-        case ENodeType::eMesh:
-        case ENodeType::eBillboard:
-        {
-            f32 priority = 0.0f;
-            CMesh* mesh = static_cast<CMesh*>(node);
-            if (mesh->getMaterial()->getTransparency() < 1.0f)
+            case ENodeType::eShape:
+            case ENodeType::eMesh:
+            case ENodeType::eBillboard:
+            case ENodeType::eParticleSystem:
             {
-                if (m_camera)
+                f32 priority = 0.0f;
+                CMesh* mesh = static_cast<CMesh*>(node);
+                const MaterialPtr& material = mesh->getMaterial();
+                if (material->getTransparency() < 1.0f)
                 {
-                    priority = (node->getAbsPosition() - m_camera->getAbsPosition()).length();
+                    if (m_camera)
+                    {
+                        priority = (node->getAbsPosition() - m_camera->getAbsPosition()).length();
+                    }
+                    else
+                    {
+                        priority = node->getAbsPosition().z;
+                    }
+                    node->setPriority(priority);
+
+                    if (checkDistance(node, priority))
+                    {
+                        m_drawTransparency.push_back((*iter));
+                    }
+                }
+                else if (material->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
+                {
+                    if (m_camera)
+                    {
+                        priority = (node->getAbsPosition() - m_camera->getAbsPosition()).length();
+                    }
+                    else
+                    {
+                        priority = node->getAbsPosition().z;
+                    }
+                    node->setPriority(priority);
+
+                    if (checkDistance(node, priority))
+                    {
+                        m_drawAlpha.push_back((*iter));
+                    }
                 }
                 else
                 {
-                    priority = node->getAbsPosition().z;
+                    if (checkDistance(node, priority))
+                    {
+                        m_drawStatic.push_back((*iter));
+                    }
                 }
-                node->setPriority(priority);
+            }
+                break;
 
-                if (checkDistance(node, priority))
+            case ENodeType::eCamera:
+            {
+                /*node->setPriority(k_maxPriority);
+                if (static_cast<CCamera*>(node)->isActive())
+                {
+                    m_update.push_back(node);
+                }*/
+            }
+                break;
+
+            case ENodeType::eSkyBox:
+            {
+                node->setPriority(k_maxPriority);
+                m_drawStatic.push_back((*iter));
+            }
+                break;
+
+            case ENodeType::eLight:
+            case ENodeType::eFog:
+            {
+                node->setPriority(-k_maxPriority);
+            }
+                break;
+
+            case ENodeType::eText:
+            {
+                node->setPriority(0.0f);
+
+                CText* text = static_cast<CText*>(node);
+                const MaterialPtr& material = text->getMaterial();
+                if (material->getTransparency() < 1.0f)
+                {
+                    m_drawTransparency.push_back((*iter));
+                }
+                else if (material->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
                 {
                     m_drawAlpha.push_back((*iter));
                 }
-            }
-            else if (mesh->getMaterial()->getTransparency() == 1.0f)
-            {
-                if (checkDistance(node, priority))
+                else
                 {
                     m_drawStatic.push_back((*iter));
                 }
             }
-        }
-            break;
+                break;
 
-        case ENodeType::eCamera:
-        {
-            /*node->setPriority(k_maxPriority);
-            if (static_cast<CCamera*>(node)->isActive())
-            {
-                m_update.push_back(node);
-            }*/
-        }
-            break;
-
-        case ENodeType::eSkyBox:
-        {
-            node->setPriority(k_maxPriority);
-            m_drawStatic.push_back((*iter));
-        }
-            break;
-
-        case ENodeType::eLight:
-        case ENodeType::eFog:
-        {
-            node->setPriority(-k_maxPriority);
-        }
-            break;
-
-        case ENodeType::eText:
-        {
-            node->setPriority(0.0f);
-
-            CText* text = static_cast<CText*>(node);
-            if (text->getMaterial()->getTransparency() < 1.0f)
-            {
-                m_drawAlpha.push_back((*iter));
-            }
-            else if (text->getMaterial()->getTransparency() == 1.0f)
-            {
-                m_drawStatic.push_back((*iter));
-            }
-        }
-            break;
-
-        case ENodeType::eModel:
-        default:
-            break;
+            case ENodeType::eModel:
+            default:
+                break;
         }
     }
 
     m_drawStatic.shrink_to_fit();
     m_draw.insert(m_draw.begin(), m_drawStatic.begin(), m_drawStatic.end());
+
+    if (!m_drawTransparency.empty())
+    {
+        m_drawTransparency.shrink_to_fit();
+        std::sort(m_drawTransparency.begin(), m_drawTransparency.end(), [](const SNodeList& node0, const SNodeList& node1) -> bool
+        {
+            return  (node0._node->getPriority() > node1._node->getPriority());
+        });
+        m_drawAlpha.insert(m_drawAlpha.end(), m_drawTransparency.begin(), m_drawTransparency.end());
+    }
 
     if (!m_drawAlpha.empty())
     {
@@ -262,3 +302,6 @@ bool CRenderList::checkDistance(const CNode* node, const f32 distance)
 
     return true;
 }
+
+} //namespace renderer
+} //namespace v3d

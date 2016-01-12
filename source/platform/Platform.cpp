@@ -170,7 +170,7 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
         case EDriverType::eDriverOpenGL:
         {
 #ifdef _OPENGL_DRIVER_
-            renderer = std::make_shared<CRendererGL>(context);
+            renderer = std::make_shared<gl::CRendererGL>(context);
 #else //_OPENGL_DRIVER_
             LOG_ERROR("CPlatform::createRenderer: _OPENGL_DRIVER_ not defined");
 #endif //_OPENGL_DRIVER_

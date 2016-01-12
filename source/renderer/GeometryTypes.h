@@ -35,8 +35,12 @@ namespace renderer
 
     enum EDataUsageType
     {
-        eGeomertyStatic,
-        eGeomertyDynamic,
+        eDrawStatic,
+        eDrawDynamic,
+        eReadStatic,
+        eReadDynamic,
+        eCopyStatic,
+        eCopyDynamic,
 
         eDataUsageTypeCount
     };

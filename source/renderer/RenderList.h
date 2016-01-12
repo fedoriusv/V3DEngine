@@ -17,11 +17,15 @@ namespace renderer
 
     class CRenderable;
 
+    /**
+    * Module which controlled render lists.
+    * Provides update and render for nodes from sorted lists by target entities.
+    */
     class CRenderList
     {
     public:
 
-        explicit CRenderList(const RenderTargetPtr& target);
+        explicit CRenderList(const TargetPtr& target);
         ~CRenderList();
 
         void                            refresh();
@@ -39,7 +43,7 @@ namespace renderer
 
         bool                            contain(scene::CNode* node);
 
-        const RenderTargetPtr&          getRenderTarget() const;
+        const TargetPtr                 getTarget() const;
         const std::string&              getTargetName() const;
 
     private:
@@ -58,13 +62,14 @@ namespace renderer
 
         bool                            m_enable;
 
-        RenderTargetPtr                 m_target;
+        TargetPtr                       m_target;
 
         std::vector<SNodeList>          m_list;
 
         std::vector<SNodeList>          m_draw;
         std::vector<SNodeList>          m_drawStatic;
         std::vector<SNodeList>          m_drawAlpha;
+        std::vector<SNodeList>          m_drawTransparency;
 
         scene::CCamera*                 m_camera;
 
@@ -72,7 +77,8 @@ namespace renderer
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_LIST_H_

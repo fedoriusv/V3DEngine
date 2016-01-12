@@ -1,13 +1,16 @@
 #include "RenderTechnique.h"
-#include "scene/RenderTargetManager.h"
+#include "scene/TargetManager.h"
 #include "scene/TextureManager.h"
 #include "utils/Logger.h"
 #include "Engine.h"
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace scene;
 
 CRenderTechnique::CRenderTechnique()
@@ -84,6 +87,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
     tinyxml2::XMLElement* rendertargetsElement = root->FirstChildElement("rendertargets");
     if (rendertargetsElement)
     {
+        //Targets
         tinyxml2::XMLElement* targetElement = rendertargetsElement->FirstChildElement("target");
         while (targetElement)
         {
@@ -94,7 +98,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 continue;
             }
             std::string targetName = targetElement->Attribute("name");
-            if (CRenderTargetManager::getInstance()->get(targetName))
+            if (CTargetManager::getInstance()->get(targetName))
             {
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
@@ -114,9 +118,45 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
             }
-            CRenderTargetManager::getInstance()->add(target);
+            CTargetManager::getInstance()->add(target);
 
             targetElement = targetElement->NextSiblingElement("target");
+        }
+
+        //Transformfeedbacks
+        tinyxml2::XMLElement* transformfeedbackElement = rendertargetsElement->FirstChildElement("transformfeedback");
+        while (transformfeedbackElement)
+        {
+            if (!transformfeedbackElement->Attribute("name"))
+            {
+                LOG_ERROR("CRenderTechnique: Transformfeedback target have't name");
+                transformfeedbackElement = transformfeedbackElement->NextSiblingElement("transformfeedback");
+                continue;
+            }
+            std::string targetName = transformfeedbackElement->Attribute("name");
+            if (CTargetManager::getInstance()->get(targetName))
+            {
+                transformfeedbackElement = transformfeedbackElement->NextSiblingElement("transformfeedback");
+                continue;
+            }
+
+            GeometryTargetPtr target = RENDERER->makeSharedGeometryTarget();
+            if (!target->parse(transformfeedbackElement))
+            {
+                LOG_ERROR("CRenderTechnique: Transformfeedback target parse error");
+                transformfeedbackElement = transformfeedbackElement->NextSiblingElement("target");
+                continue;
+            }
+
+            if (!target->create())
+            {
+                LOG_ERROR("CRenderPass: Can't create render transformfeedback target");
+                transformfeedbackElement = transformfeedbackElement->NextSiblingElement("target");
+                continue;
+            }
+            CTargetManager::getInstance()->add(target);
+
+            transformfeedbackElement = transformfeedbackElement->NextSiblingElement("target");
         }
     }
 
@@ -229,3 +269,6 @@ void CRenderTechnique::refresh()
 {
     //TODO: refresh
 }
+
+} //namespace renderer
+} //namespace v3d

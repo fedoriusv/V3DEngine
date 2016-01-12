@@ -1,6 +1,7 @@
 #ifndef _V3D_RENDER_TARGET_H_
 #define _V3D_RENDER_TARGET_H_
 
+#include "Target.h"
 #include "Texture.h"
 
 namespace tinyxml2
@@ -17,15 +18,17 @@ namespace renderer
     class CRenderPass;
     class CRenderTechnique;
 
-    class CRenderTarget
+    /**
+    * Inherited class for render target management.
+    * Used output to texture or renderbuffer
+    * Next attachmens supported: color, depth and stencil
+    */
+    class CRenderTarget : public ITarget
     {
     public:
 
         CRenderTarget();
         virtual                         ~CRenderTarget();
-
-        virtual void                    bind()   = 0;
-        virtual void                    unbind() = 0;
 
         const CTexture*                 getColorTexture(u32 index) const;
         CTexture*                       getColorTexture(u32 index);
@@ -49,8 +52,6 @@ namespace renderer
         void                            setClearColorBuffer(bool clear);
         void                            setClearDepthBuffer(bool clear);
         void                            setClearStencilBuffer(bool clear);
-
-        const std::string&              getName() const;
 
         enum EAttachmentsType
         {
@@ -78,7 +79,7 @@ namespace renderer
             u32                 _format;
 
             CTexture*           _texture;
-            u32                 _rboID;
+            u32                 _bufferId; //TODO: need rework to object
         };
 
     protected:
@@ -86,21 +87,16 @@ namespace renderer
         friend                      CRenderPass;
         friend                      CRenderTechnique;
 
-        virtual bool                create()    = 0;
-        virtual void                destroy()   = 0;
-
         bool                        parse(const tinyxml2::XMLElement* root);
 
-        std::deque<SAttachments>    m_attachmentsList;
-
         void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt, EAttachmentsOutput output);
+
+        std::deque<SAttachments>    m_attachmentsList;
 
         core::Vector4D              m_color;
         core::Rect32                m_viewport;
 
         bool                        m_MSAA;
-
-        std::string                 m_name;
 
         bool                        m_clearColorBuffer;
         bool                        m_clearDepthBuffer;
@@ -111,14 +107,10 @@ namespace renderer
 
     typedef std::shared_ptr<CRenderTarget>          RenderTargetPtr;
     typedef std::weak_ptr<CRenderTarget>            RenderTargetWPtr;
-    typedef std::map<std::string, RenderTargetPtr>  RenderTargetMap;
-    typedef std::vector<RenderTargetPtr>            RenderTargetList;
-
-    typedef RenderTargetMap::iterator               RenderTargetIter;
-    typedef RenderTargetMap::const_iterator         RenderTargetCIter;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_TARGET_H_

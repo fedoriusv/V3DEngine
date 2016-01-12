@@ -4,18 +4,21 @@
 
 #include "tinyxml2.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace core;
-using namespace renderer;
 
 CRenderTarget::SAttachments::SAttachments()
 : _index(0U)
 , _type(eEmptyAttach)
-, _output(eTextureOutput)
+, _output(eEmptyOutput)
 , _format(8888)
 
 , _texture(nullptr)
-, _rboID(0U)
+, _bufferId(0U) //TODO: will need replace to current render module
 {
 }
 
@@ -26,19 +29,22 @@ CRenderTarget::SAttachments::~SAttachments()
         delete _texture;
         _texture = nullptr;
     }
+
+    ASSERT(_bufferId == 0, "Buffer doesn't deleted");
 }
 
 CRenderTarget::CRenderTarget()
-: m_color(core::Vector4D(0.0f))
-, m_viewport(0, 0, 0, 0)
-, m_MSAA(false)
+    : m_color(core::Vector4D(0.0f))
+    , m_viewport(0U, 0U, 0U, 0U)
+    , m_MSAA(false)
 
-, m_name("default")
-
-, m_clearColorBuffer(true)
-, m_clearDepthBuffer(true)
-, m_clearStencilBuffer(false)
+    , m_clearColorBuffer(true)
+    , m_clearDepthBuffer(true)
+    , m_clearStencilBuffer(false)
 {
+    m_targetType = ITarget::ETagetType::eRenderTarget;
+    m_name = "default";
+
     u32 width = (u32)(WINDOW->getSize().width);
     u32 height = (u32)(WINDOW->getSize().height);
     CRenderTarget::setViewport(Rect32(0, 0, width, height));
@@ -51,92 +57,128 @@ CRenderTarget::~CRenderTarget()
 
 const CTexture* CRenderTarget::getColorTexture(u32 index) const
 {
-    std::deque<SAttachments>::const_iterator attach;
-    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    auto findPred = [index](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eColorAttach && (*item)._index == index)
+        if (attach._type == eColorAttach && attach._index == index)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::const_iterator item = std::find_if(m_attachmentsList.cbegin(), m_attachmentsList.cend(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 CTexture* CRenderTarget::getColorTexture(u32 index)
 {
-    std::deque<SAttachments>::iterator attach;
-    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    auto findPred = [index](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eColorAttach && (*item)._index == index)
+        if (attach._type == eColorAttach && attach._index == index)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::iterator item = std::find_if(m_attachmentsList.begin(), m_attachmentsList.end(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 const CTexture* CRenderTarget::getDepthTexture() const
 {
-    std::deque<SAttachments>::const_iterator attach;
-    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    auto findPred = [](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eDepthAttach)
+        if (attach._type == eDepthAttach)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::const_iterator item = std::find_if(m_attachmentsList.cbegin(), m_attachmentsList.cend(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 CTexture* CRenderTarget::getDepthTexture()
 {
-    std::deque<SAttachments>::iterator attach;
-    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    auto findPred = [](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eDepthAttach)
+        if (attach._type == eDepthAttach)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::iterator item = std::find_if(m_attachmentsList.begin(), m_attachmentsList.end(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 const CTexture* CRenderTarget::getStencilTexture() const
 {
-    std::deque<SAttachments>::const_iterator attach;
-    for (std::deque<SAttachments>::const_iterator item = m_attachmentsList.cbegin(); item < m_attachmentsList.cend(); ++item)
+    auto findPred = [](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eStencilAttach)
+        if (attach._type == eStencilAttach)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::const_iterator item = std::find_if(m_attachmentsList.cbegin(), m_attachmentsList.cend(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 CTexture* CRenderTarget::getStencilTexture()
 {
-    std::deque<SAttachments>::iterator attach;
-    for (std::deque<SAttachments>::iterator item = m_attachmentsList.begin(); item < m_attachmentsList.end(); ++item)
+    auto findPred = [](const SAttachments& attach) -> bool
     {
-        if ((*item)._type == eStencilAttach)
+        if (attach._type == eStencilAttach)
         {
-            attach = item;
-            break;
+            return true;
         }
+
+        return false;
+    };
+
+    std::deque<SAttachments>::iterator item = std::find_if(m_attachmentsList.begin(), m_attachmentsList.end(), findPred);
+    if (item != m_attachmentsList.cend())
+    {
+        return (*item)._texture;
     }
 
-    return (*attach)._texture;
+    return nullptr;
 }
 
 void CRenderTarget::setClearColor(const core::Vector4D& color)
@@ -187,11 +229,6 @@ bool CRenderTarget::getClearDepthBuffer() const
 bool CRenderTarget::getClearStencilBuffer() const
 {
     return m_clearStencilBuffer;
-}
-
-const std::string& CRenderTarget::getName() const
-{
-    return m_name;
 }
 
 bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
@@ -415,3 +452,6 @@ void CRenderTarget::attachTarget(EAttachmentsType type, u32 index, u32 format, E
         m_attachmentsList.push_front(target);
     }
 }
+
+} //namespace renderer
+} //namespace v3d

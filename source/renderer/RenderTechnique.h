@@ -55,7 +55,8 @@ namespace renderer
     typedef std::map<std::string, RenderTechniquePtr>    RenderTechniqueMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_TECHNIQUE_H_
