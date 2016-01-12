@@ -9,6 +9,9 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Inherited class for render states management. GL render only.
+    */
     class CRenderStateGL : public CRenderState
     {
     public:
@@ -16,7 +19,7 @@ namespace renderer
         CRenderStateGL();
         ~CRenderStateGL();
 
-        void        bind() override;
+        void         bind() override;
 
     public:
 
@@ -31,6 +34,7 @@ namespace renderer
         static bool  depthWrite(bool enable);
         static bool  stencilWrite(bool enable);
         static bool  pointSize(bool enable);
+        static bool  rasterizerEnable(bool enable);
 
     private:
 
@@ -50,6 +54,7 @@ namespace renderer
         static u32  s_currentBlendSrc;
 
         static bool s_pointSize;
+        static bool s_rasterizerEnable;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

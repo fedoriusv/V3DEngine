@@ -4,8 +4,10 @@
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 GLenum EWindingGL[] =
 {
@@ -70,10 +72,12 @@ u32 CRenderStateGL::s_currentBlendDst = -1;
 u32 CRenderStateGL::s_currentBlendSrc = -1;
 
 bool CRenderStateGL::s_pointSize = false;
+bool CRenderStateGL::s_rasterizerEnable = true;
 
 CRenderStateGL::CRenderStateGL()
 {
     CRenderStateGL::pointSize(false);
+    CRenderStateGL::rasterizerEnable(true);
 }
 
 CRenderStateGL::~CRenderStateGL()
@@ -241,5 +245,21 @@ bool CRenderStateGL::depthTest(bool enable)
 
     return false;
 }
+
+bool CRenderStateGL::rasterizerEnable(bool enable)
+{
+    if (enable != s_rasterizerEnable)
+    {
+        enable ? glDisable(GL_RASTERIZER_DISCARD) : glEnable(GL_RASTERIZER_DISCARD);
+        s_rasterizerEnable = enable;
+
+        return true;
+    }
+
+    return false;
+}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_OPENGL_DRIVER_
