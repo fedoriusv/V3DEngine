@@ -6,7 +6,7 @@
 #include "RenderState.h"
 #include "RenderLOD.h"
 #include "RenderAdvanced.h"
-#include "RenderTarget.h"
+#include "Target.h"
 
 namespace tinyxml2
 {
@@ -22,6 +22,10 @@ namespace renderer
     class CRenderer;
     class CRenderTechnique;
 
+    /**
+    * Render pass class.
+    * Parse and stored all shaders info and targets
+    */
     class CRenderPass
     {
     public:
@@ -47,9 +51,9 @@ namespace renderer
         const RenderAdvancedPtr& getRenderAdvanced() const;
         void                    setRenderAdvanced(const RenderAdvancedPtr& advanced);
 
-        const RenderTargetPtr&  getRenderTarget(u32 index) const;
-        void                    setRenderTarget(u32 index, const RenderTargetPtr& target);
-        void                    addRenderTarget(const RenderTargetPtr& target);
+        const TargetPtr&        getRenderTarget(u32 index) const;
+        void                    setRenderTarget(u32 index, const TargetPtr& target);
+        void                    addRenderTarget(const TargetPtr& target);
         u32                     getRenderTargetCount() const;
 
         void                    bind(u32 target = 0);
@@ -81,7 +85,7 @@ namespace renderer
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
         RenderAdvancedPtr       m_advanced;
-        RenderTargetList        m_renderTargets;
+        TargetList              m_targetList;
 
         bool                    m_enable;
         std::string             m_name;
@@ -94,7 +98,8 @@ namespace renderer
     typedef  std::vector<RenderPassPtr>     RenderPassList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_PASS_H_

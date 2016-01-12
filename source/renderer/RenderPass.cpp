@@ -2,12 +2,16 @@
 
 #include "Engine.h"
 #include "utils/Logger.h"
-#include "scene/RenderTargetManager.h"
+#include "scene/TargetManager.h"
+#include "GeometryTarget.h"
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace scene;
 
 CRenderPass::CRenderPass()
@@ -25,7 +29,7 @@ CRenderPass::CRenderPass()
 
 CRenderPass::~CRenderPass()
 {
-    m_renderTargets.clear();
+    m_targetList.clear();
 }
 
 const ShaderProgramPtr& CRenderPass::getShaderProgram() const
@@ -115,21 +119,21 @@ bool CRenderPass::parse(const tinyxml2::XMLElement* root)
         }
     }
 
-    //shaders
-    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
-    if (shadersElement)
-    {
-        if (!parseShaders(shadersElement))
-        {
-            return false;
-        }
-    }
-
     //rendertarget
     const tinyxml2::XMLElement*  rendertargetElement = root->FirstChildElement("rendertarget");
     if (rendertargetElement)
     {
         if (!parseRenderTarget(rendertargetElement))
+        {
+            return false;
+        }
+    }
+
+    //shaders
+    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
+    if (shadersElement)
+    {
+        if (!parseShaders(shadersElement))
         {
             return false;
         }
@@ -223,7 +227,7 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (attribute->getType() != CShaderAttribute::eAttribUser);
+        bool isDefault = (attribute->getData() != CShaderAttribute::eAttribUser);
         if (isDefault)
         {
             m_defaultShaderData->addAttribute(attribute);
@@ -363,7 +367,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         }
         else
         {
-            const RenderTargetPtr target = CRenderTargetManager::getInstance()->get(name);
+            const TargetPtr target = CTargetManager::getInstance()->get(name);
             if (!target)
             {
                 LOG_WARNING("CRenderTarget: Render target not found with name '%s', set default", name.c_str());
@@ -373,6 +377,20 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
             {
                 LOG_INFO("CRenderTarget: Set target with name '%s'", name.c_str());
                 CRenderPass::addRenderTarget(target);
+
+                if (target->getTagetType() == ITarget::ETagetType::eGeometryTarget)
+                {
+                    const GeometryTargetPtr& geomtarget = std::static_pointer_cast<CGeometryTarget>(target);
+
+                    if (geomtarget->getBufferStrings().empty())
+                    {
+                        LOG_WARNING("CRenderTarget: Varyings list is empty in target '%s'", name.c_str());
+                    }
+                    else
+                    {
+                        m_program->addVaryingsAttibutes(geomtarget->getBufferStrings());
+                    }
+                }
             }
         }
 
@@ -441,9 +459,6 @@ bool CRenderPass::parseRenderAdvanced(const tinyxml2::XMLElement* root)
 
 void CRenderPass::bind(u32 target)
 {
-    ASSERT(m_renderTargets.size() > target, "Invalid target index");
-    m_renderTargets[target]->bind();
-
     m_renderState->bind();
 
     if (!m_enable || !m_program->isEnable())
@@ -465,14 +480,17 @@ void CRenderPass::bind(u32 target)
 
         m_program->setUniform(uniform->second);
     }
+
+    ASSERT(m_targetList.size() > target, "Invalid target index");
+    m_targetList[target]->bind();
 }
 
 void CRenderPass::unbind(u32 target)
 {
     //m_program->unbind();
 
-    ASSERT(m_renderTargets.size() > target, "Invalid target index");
-    m_renderTargets[target]->unbind();
+    ASSERT(m_targetList.size() > target, "Invalid target index");
+    m_targetList[target]->unbind();
 
 }
 
@@ -510,34 +528,37 @@ void CRenderPass::setRenderAdvanced(const RenderAdvancedPtr& advanced)
     m_advanced = advanced;
 }
 
-const RenderTargetPtr& CRenderPass::getRenderTarget(u32 index) const
+const TargetPtr& CRenderPass::getRenderTarget(u32 index) const
 {
-    ASSERT(m_renderTargets.size() > index, "Invalid Render Target index");
-    return m_renderTargets[index];
+    ASSERT(m_targetList.size() > index, "Invalid Render Target index");
+    return m_targetList[index];
 }
 
-void CRenderPass::addRenderTarget(const RenderTargetPtr& target)
+void CRenderPass::addRenderTarget(const TargetPtr& target)
 {
     if (target)
     {
-        RenderTargetList ::const_iterator iter = std::find(m_renderTargets.begin(), m_renderTargets.end(), target);
-        if (iter != m_renderTargets.end())
+        TargetList ::const_iterator iter = std::find(m_targetList.begin(), m_targetList.end(), target);
+        if (iter != m_targetList.end())
         {
             LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter)->getName().c_str());
             return;
         }
 
-        m_renderTargets.push_back(target);
+        m_targetList.push_back(target);
     }
 }
 
-void CRenderPass::setRenderTarget(u32 index, const RenderTargetPtr& target)
+void CRenderPass::setRenderTarget(u32 index, const TargetPtr& target)
 {
-    ASSERT(m_renderTargets.size() > index, "Invalid Render Target index");
-    m_renderTargets[index] = target;
+    ASSERT(m_targetList.size() > index, "Invalid Render Target index");
+    m_targetList[index] = target;
 }
 
 u32 CRenderPass::getRenderTargetCount() const
 {
-    return (u32)m_renderTargets.size();
+    return (u32)m_targetList.size();
 }
+
+} //namespace renderer
+} //namespace v3d
