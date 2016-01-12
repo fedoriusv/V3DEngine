@@ -21,7 +21,7 @@
 *.unsuccessfulbuild
 ipch/
 obj/
-project/win32/*
+project/win/*
 project/xcode/*
 [Dd]ebug*/
 [Rr]elease*/
