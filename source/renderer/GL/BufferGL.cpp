@@ -1,5 +1,6 @@
 #include "BufferGL.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 #ifdef _OPENGL_DRIVER_
 #include "GL/glew.h"
@@ -15,13 +16,17 @@ GLenum EBufferTargetGL[EBufferTarget::eBufferTargetCount] =
 {
     GL_ARRAY_BUFFER,
     GL_ELEMENT_ARRAY_BUFFER,
-    GL_TRANSFORM_FEEDBACK_BUFFER,
+    GL_TRANSFORM_FEEDBACK_BUFFER
 };
 
 GLenum EDataUsageTypeGL[EDataUsageType::eDataUsageTypeCount] =
 {
     GL_STATIC_DRAW,
     GL_DYNAMIC_DRAW,
+    GL_STATIC_READ,
+    GL_DYNAMIC_READ,
+    GL_STATIC_COPY,
+    GL_DYNAMIC_COPY
 };
 
 u32 BufferGL::s_currentBuffer[EBufferTarget::eBufferTargetCount] = { 0 };
@@ -63,20 +68,19 @@ void BufferGL::bind()
     }
 }
 
-void BufferGL::bindToBuffer(const Buffer* buffer, u32 offset, u32 size)
+void BufferGL::bindToTarget(EBufferTarget target, u32 offset, u32 size)
 {
     BufferGL::bind();
-    ASSERT(buffer, "Target Buffer nullptr");
-    ASSERT(glIsBuffer(static_cast<const BufferGL*>(buffer)->m_id), "Invalid VBO index");
-
     if (size == 0 && offset == 0)
     {
-        glBindBufferBase(EBufferTargetGL[buffer->getTarget()], 0, static_cast<const BufferGL*>(buffer)->m_id);
+        glBindBufferBase(EBufferTargetGL[target], 0, m_id);
     }
     else
     {
-        glBindBufferRange(EBufferTargetGL[buffer->getTarget()], 0, static_cast<const BufferGL*>(buffer)->m_id, size, offset);
+        glBindBufferRange(EBufferTargetGL[target], 0, m_id, size, offset);
     }
+
+    RENDERER->checkForErrors("BufferGL::bindToBuffer Error");
 }
 
 void BufferGL::unbind()
@@ -97,6 +101,8 @@ void BufferGL::setData(EDataUsageType type, u32 size, void* data)
 
     BufferGL::bind();
     glBufferData(EBufferTargetGL[m_target], size, data, EDataUsageTypeGL[type]);
+
+    RENDERER->checkForErrors("BufferGL::setData Error");
 }
 
 void BufferGL::updateData(u32 offset, u32 size, void* data)
@@ -108,6 +114,21 @@ void BufferGL::updateData(u32 offset, u32 size, void* data)
 
     BufferGL::bind();
     glBufferSubData(EBufferTargetGL[m_target], offset, size, data);
+
+    RENDERER->checkForErrors("BufferGL::updateData Error");
+}
+
+void BufferGL::readData(u32 offset, u32 size, void* data)
+{
+    if (m_lock)
+    {
+        return;
+    }
+
+    BufferGL::bind();
+    glGetBufferSubData(EBufferTargetGL[m_target], offset, size, data);
+
+    RENDERER->checkForErrors("BufferGL::readData Error");
 }
 
 void * BufferGL::map(u32 access)

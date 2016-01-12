@@ -22,12 +22,13 @@ namespace gl
                     ~BufferGL();
 
         void        bind()                                                              override;
-        void        bindToBuffer(const Buffer* buffer, u32 offset = 0, u32 size = 0)    override;
+        void        bindToTarget(EBufferTarget target, u32 offset = 0, u32 size = 0)    override;
 
         void        unbind()                                                            override;
 
         void        setData(EDataUsageType type, u32 size, void* data)                  override;
         void        updateData(u32 offset, u32 size, void* data)                        override;
+        void        readData(u32 offset, u32 size, void* data)                          override;
 
         void*       map(u32 access)                                                     override;
         bool        unmap()                                                             override;
