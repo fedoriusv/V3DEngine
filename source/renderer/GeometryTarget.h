@@ -3,6 +3,7 @@
 
 #include "Target.h"
 #include "DataTypes.h"
+#include "GeometryTypes.h"
 
 namespace tinyxml2
 {
@@ -54,11 +55,14 @@ namespace renderer
         friend                          CRenderPass;
         friend                          CRenderTechnique;
 
-        void                            addBuffer(const std::string& name, EDataType type);
+        void                            addBuffer(const std::string& name, EDataType type, u32 amount);
         bool                            parse(const tinyxml2::XMLElement* root);
 
         std::vector<const c8*>          m_bufferStrings;
         std::vector<SBufferData>        m_bufferList;
+
+        EPrimitivesMode                 m_mode;
+        bool                            m_separated;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

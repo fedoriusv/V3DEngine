@@ -2,7 +2,7 @@
 
     <!-- Render Targets -->
     <rendertargets>
-        <transformfeedback name="targetCalc" type="interleaved" mode="triangles">
+        <transformfeedback name="targetCalc" type="interleaved" primitive="triangles">
                 <var name="outValue" type="float" size="15"/>
         </transformfeedback>
     </rendertargets>
@@ -26,7 +26,7 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <advanced>
-            <instanced val="25"/>
+            <primitive val ="points"/>
         </advanced>
         <shaders>
             <var type="vertex" name="vtarget_transformfeedback">

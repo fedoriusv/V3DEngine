@@ -24,7 +24,9 @@ namespace renderer
         eDataTypeCount
     };
 
-    class CDataType
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class DataType
     {
     public:
 
@@ -33,7 +35,7 @@ namespace renderer
 
     private:
 
-        static const std::string    s_typeName[eDataTypeCount];
+        static const std::string    s_typeName[EDataType::eDataTypeCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

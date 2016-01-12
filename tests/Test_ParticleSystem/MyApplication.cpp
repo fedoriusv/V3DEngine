@@ -19,6 +19,8 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
+    MyApplication::calcThroughNode();
+
     MyApplication::switchModel(0);
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
@@ -36,6 +38,36 @@ void MyApplication::onMouse(const event::MouseInputEventPtr& event)
 
 void MyApplication::onGamepad(const event::GamepadInputEventPtr& event)
 {
+}
+
+void MyApplication::calcThroughNode()
+{
+    std::vector<f32> m = { 1, 2, 3, 4, 5 };
+
+    CSampleShape* node = new CSampleShape();
+    node->getMaterial()->setRenderTechnique("shaders/target_transformfeedback.xml");
+    node->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setAttribute("inValue", 0, m);
+
+    node->init();
+
+    node->getGeometry()->setInterval(0, (u32)m.size());
+    node->getRenderJob()->addRenderPassIndex(0);
+
+    node->render();
+
+    std::vector<f32> out;
+
+    const TargetPtr& target = node->getMaterial()->getRenderTechique()->getRenderPass(0)->getRenderTarget(0);
+    const GeometryTargetPtr& geomTarget = std::static_pointer_cast<CGeometryTarget>(target);
+    const CGeometryTarget::SBufferData* result = geomTarget->getBuffer("outValue");
+    if (result && result->_result > 0)
+    {
+        out.resize(result->_size);
+        result->_buffer->readData(0, sizeof(float) * result->_size, out.data());
+    }
+
+
+    delete node;
 }
 
 void MyApplication::useSimpleArray()

@@ -39,7 +39,9 @@ CGeometryTarget::SBufferData& CGeometryTarget::SBufferData::operator=(const SBuf
     _name = data._name;
     _type = data._type;
     _size = data._size;
-    _buffer = data._buffer; //TODO need owner
+
+    ASSERT(!_buffer, "Buffer Lvalue exist");
+    _buffer = data._buffer;
 
     _result = data._result;
 
@@ -48,6 +50,8 @@ CGeometryTarget::SBufferData& CGeometryTarget::SBufferData::operator=(const SBuf
 
 CGeometryTarget::CGeometryTarget()
     : ITarget()
+    , m_separated(false)
+    , m_mode(EPrimitivesMode::eTriangles)
 {
     m_targetType = ITarget::ETagetType::eGeometryTarget;
     m_name = "";
@@ -89,7 +93,7 @@ const CGeometryTarget::SBufferData* CGeometryTarget::getBuffer(const std::string
     return nullptr;
 }
 
-void CGeometryTarget::addBuffer(const std::string& name, EDataType type)
+void CGeometryTarget::addBuffer(const std::string& name, EDataType type, u32 amount)
 {
     auto findPred = [name](const SBufferData& item) -> bool
     {
@@ -106,6 +110,7 @@ void CGeometryTarget::addBuffer(const std::string& name, EDataType type)
         SBufferData data;
         data._name = name;
         data._type = type;
+        data._size = amount;
         
         m_bufferList.push_back(data);
 
@@ -131,6 +136,29 @@ bool CGeometryTarget::parse(const tinyxml2::XMLElement* root)
     }
     m_name = root->Attribute("name");
 
+    if (root->Attribute("type"))
+    {
+        if (root->Attribute("type") == "interleaved")
+        {
+            m_separated = false;
+        }
+        else if (root->Attribute("type") == "separated")
+        {
+            m_separated = true;
+        }
+    }
+
+    if (root->Attribute("primitive"))
+    {
+        std::string mode = root->Attribute("primitive");
+        m_mode = GeometryType::getPrimitivesModeByString(mode);
+        if (m_mode == EPrimitivesMode::ePrimitivesNone)
+        {
+            LOG_WARNING("CGeometryTarget: Transformfeedback have invalid primitive mode. Set Triangles primitive");
+            m_mode = EPrimitivesMode::eTriangles;
+        }
+    }
+
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
@@ -146,16 +174,20 @@ bool CGeometryTarget::parse(const tinyxml2::XMLElement* root)
             LOG_ERROR("CGeometryTarget: Attribute '%s' have not type", name.c_str());
             return false;
         }
-        EDataType type = CDataType::getDataTypeByString(varElement->Attribute("type"));
+        EDataType type = DataType::getDataTypeByString(varElement->Attribute("type"));
         if (type == EDataType::eTypeNone)
         {
             LOG_ERROR("CGeometryTarget: Attribute '%s' have invalid type", name.c_str());
             return false;
         }
 
-        //TODO: add separate mode, amount output, draw mode, Flush force mode
-
-        CGeometryTarget::addBuffer(name, type);
+        s32 size = varElement->IntAttribute("size");
+        if (size <= 0)
+        {
+            LOG_ERROR("CGeometryTarget: Attribute '%s' have not size output", name.c_str());
+            return false;
+        }
+        CGeometryTarget::addBuffer(name, type, size);
 
         varElement = varElement->NextSiblingElement("var");
     }

@@ -19,9 +19,7 @@ using namespace gl;
 CGeometryTargetGL::CGeometryTargetGL()
     : m_transformfeedback(nullptr)
     , m_queryId(0U)
-    , m_mode(EPrimitivesMode::eTriangles) //TODO: replace to GeometryTarget
 
-    , m_separated(false) //TODO: replace to GeometryTarget
     , m_initialized(false)
 {
     LOG_DEBUG("CGeometryTargetGL: CGeometryTargetGL constructor %x", this);
@@ -124,7 +122,7 @@ bool CGeometryTargetGL::create()
                 buff._buffer = new BufferGL(EBufferTarget::eTransformFeedbackBuffer);
             }
 
-            std::function<u32(EDataType)> componentSize = [](EDataType type) -> u32
+            auto componentSize = [](EDataType type) -> u32
             {
                 switch (type)
                 {

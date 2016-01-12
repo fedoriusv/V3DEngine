@@ -90,6 +90,20 @@ void CGeometryGL::init()
     RENDERER->checkForErrors("GeometryGL: Init Error");
 
     CGeometryGL::bindVertexArray(0);
+
+    m_instanceAmount = pass->getRenderAdvanced()->getCountInstance();
+
+    if (pass->getRenderAdvanced()->getPrimitiveMode() != EPrimitivesMode::ePrimitivesNone)
+    {
+        m_drawMode = pass->getRenderAdvanced()->getPrimitiveMode();
+    }
+
+    const CGeometry::SInterval& interval = pass->getRenderAdvanced()->getDrawInterval();
+    if (interval._begin != 0 || interval._count != 0)
+    {
+        CGeometry::setInterval(interval._begin, interval._count);
+    }
+
     m_initialized = true;
 }
 
@@ -184,14 +198,13 @@ void CGeometryGL::draw()
         CGeometryGL::vertexAttribArray(attribute, true);
     }
 
-    u32 instanceAmount = pass->getRenderAdvanced()->getCountInstance();
     if (m_data.indicesSize() > 0)
     {
-        CGeometryGL::drawElements(m_drawMode, m_data.indicesSize(), instanceAmount);
+        CGeometryGL::drawElements(m_drawMode, m_data.indicesSize(), m_instanceAmount);
     }
     else
     {
-        CGeometryGL::drawArrays(m_drawMode, CGeometry::getInterval()._begin, CGeometry::getInterval()._count, instanceAmount);
+        CGeometryGL::drawArrays(m_drawMode, CGeometry::getInterval()._begin, CGeometry::getInterval()._count, m_instanceAmount);
     }
 
     for (const AttributePair& attr : attributesDefault)
@@ -339,7 +352,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     {
                         m_vertexBuffer->updateData(offset, size, attr.second->getUserData());
 
-                        std::function<u32(EDataType)> componentsCount = [](EDataType type) -> u32
+                       auto componentsCount = [](EDataType type) -> u32
                         {
                             switch (type)
                             {
@@ -455,7 +468,7 @@ void CGeometryGL::deleteVertexArray(u32& buffer)
 
 void CGeometryGL::initVertexAttribPointer(s32 attrib, EDataType type, u32 count, u32 size, u32 offset)
 {
-    std::function<u32(EDataType)> format = [](EDataType type) -> u32
+    auto format = [](EDataType type) -> u32
     {
         switch (type)
         {

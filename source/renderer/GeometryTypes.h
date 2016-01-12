@@ -11,6 +11,8 @@ namespace renderer
 
     enum EPrimitivesMode
     {
+        ePrimitivesNone = -1,
+
         eTriangles,
         eTriangleStrip,
         eLines,
@@ -46,6 +48,18 @@ namespace renderer
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class GeometryType
+    {
+    public:
+
+        static const std::string&   getStringByPrimitivesMode(EPrimitivesMode type);
+        static EPrimitivesMode      getPrimitivesModeByString(const std::string& name);
+
+    private:
+
+        static const std::string    s_typeName[EPrimitivesMode::ePrimitivesModeCount];
+    };
 
 } //namespace renderer
 } //namespace v3d

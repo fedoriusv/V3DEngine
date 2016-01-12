@@ -3,6 +3,7 @@
 
 #include "renderer/Geometry.h"
 #include "renderer/DataTypes.h"
+#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
@@ -34,6 +35,7 @@ namespace gl
         void                initBufferData(const ShaderDataList& shaderDataList);
 
         u32                 m_arrayId;
+        u32                 m_instanceAmount;
 
         bool                m_initialized;
 

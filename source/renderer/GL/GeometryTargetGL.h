@@ -2,7 +2,6 @@
 #define _V3D_GEOMETRY_TARGET_GL_H_
 
 #include "renderer/GeometryTarget.h"
-#include "renderer/GeometryTypes.h"
 
 namespace v3d
 {
@@ -36,9 +35,6 @@ namespace gl
 
         gl::TransformFeedbackGL*    m_transformfeedback;
         u32                         m_queryId;
-        EPrimitivesMode             m_mode;
-
-        bool                        m_separated;
 
         bool                        m_initialized;
     };

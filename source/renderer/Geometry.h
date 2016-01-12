@@ -3,7 +3,6 @@
 
 #include "Vertex.h"
 #include "GeometryTypes.h"
-#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
@@ -12,6 +11,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class Buffer;
+    class CRenderTechnique;
 
     class CGeometry
     {
@@ -74,7 +74,8 @@ namespace renderer
     typedef std::shared_ptr<CGeometry> GeometryPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_GEOMETRY_H_

@@ -1,10 +1,12 @@
 #include "DataTypes.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
-const std::string CDataType::s_typeName[eDataTypeCount] = {
-
+const std::string DataType::s_typeName[EDataType::eDataTypeCount] = 
+{
     "int",
     "float",
     "double",
@@ -16,14 +18,14 @@ const std::string CDataType::s_typeName[eDataTypeCount] = {
 };
 
 
-const std::string& CDataType::getStringByDataType(EDataType type)
+const std::string& DataType::getStringByDataType(EDataType type)
 {
     return s_typeName[type];
 }
 
-EDataType CDataType::getDataTypeByString(const std::string& name)
+EDataType DataType::getDataTypeByString(const std::string& name)
 {
-    for (int i = 0; i < eDataTypeCount; ++i)
+    for (u32 i = 0; i < EDataType::eDataTypeCount; ++i)
     {
         if (s_typeName[i].compare(name) == 0)
         {
@@ -31,5 +33,8 @@ EDataType CDataType::getDataTypeByString(const std::string& name)
         }
     }
 
-    return eTypeNone;
+    return EDataType::eTypeNone;
 }
+
+} //namespace renderer
+} //namespace v3d

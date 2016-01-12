@@ -245,7 +245,7 @@ bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        EDataType attributeType = CDataType::getDataTypeByString(varType);
+        EDataType attributeType = DataType::getDataTypeByString(varType);
         if (attributeType == EDataType::eTypeNone)
         {
             LOG_ERROR("CRenderPass: Cannot find attribute type in '%s'", varName.c_str());

@@ -19,6 +19,8 @@ public:
 
 private:
 
+    void    calcThroughNode();
+
     void    useSimpleArray();
     void    useInstancedObject();
     void    useInstancedAttrObject();

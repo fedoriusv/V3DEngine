@@ -55,12 +55,17 @@ void CTargetManager::unload(const renderer::TargetPtr& target)
     auto it = std::find_if(m_renderTargets.begin(), m_renderTargets.end(), predDelete);
     if (it != m_renderTargets.end())
     {
+        (*it).second->destroy();
         m_renderTargets.erase(it);
     }
 }
 
 void CTargetManager::unloadAll()
 {
+    for (auto& target : m_renderTargets)
+    {
+        target.second->destroy();
+    }
     m_renderTargets.clear();
 }
 

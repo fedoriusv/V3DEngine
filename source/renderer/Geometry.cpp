@@ -1,5 +1,6 @@
 #include "Geometry.h"
 #include "Buffer.h"
+#include "renderer/RenderTechnique.h"
 
 namespace v3d
 {
@@ -114,5 +115,5 @@ bool CGeometry::updated() const
     return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
 }
 
-} //namespace v3d
 } //namespace renderer
+} //namespace v3d

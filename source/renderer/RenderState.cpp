@@ -3,8 +3,10 @@
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 const std::string CRenderState::s_renderPolygonMode[eModeCount] =
 {
@@ -309,3 +311,6 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
 
     return true;
 }
+
+} //namespace renderer
+} //namespace v3d

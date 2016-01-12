@@ -71,6 +71,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class CRenderPass;
+
     class CRenderState
     {
     public:
@@ -101,8 +103,6 @@ namespace renderer
 
         virtual void              bind() = 0;
 
-        bool                      parse(const tinyxml2::XMLElement* root);
-
         static EPolygonMode       getPolygonModeByName(const std::string& name);
         static EBlendFactor       getBlendFactorByName(const std::string& name);
         static ECullFace          getCullFaceByName(const std::string& name);
@@ -125,6 +125,10 @@ namespace renderer
 
     private:
 
+        friend                    CRenderPass;
+
+        bool                      parse(const tinyxml2::XMLElement* root);
+
         static const std::string  s_renderPolygonMode[EPolygonMode::eModeCount];
         static const std::string  s_blendFactor[EBlendFactor::eBlendCount];
         static const std::string  s_cullface[ECullFace::eCullfaceCount];
@@ -136,7 +140,8 @@ namespace renderer
     typedef std::shared_ptr<CRenderState> RenderStatePtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_STATE_H_

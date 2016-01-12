@@ -308,7 +308,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        uniformType = ::CDataType::getDataTypeByString(varType);
+        uniformType = ::DataType::getDataTypeByString(varType);
         if (uniformType == EDataType::eTypeNone)
         {
             LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());

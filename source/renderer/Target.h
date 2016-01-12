@@ -5,6 +5,11 @@
 
 namespace v3d
 {
+namespace scene
+{
+    class CTargetManager;
+}
+
 namespace renderer
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +37,8 @@ namespace renderer
         ETagetType                  getTagetType() const;
 
     protected:
+
+        friend                      scene::CTargetManager;
 
         virtual bool                create()  = 0;
         virtual void                destroy() = 0;
