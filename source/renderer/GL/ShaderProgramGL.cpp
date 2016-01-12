@@ -4,6 +4,7 @@
 
 #ifdef _OPENGL_DRIVER_
 #include "renderer/GL/ShaderGL.h"
+#include "renderer/GL/TransformFeedbackGL.h"
 #include "GL/glew.h"
 
 namespace v3d
@@ -68,6 +69,12 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     for (u32 i = 0; i < shaders.size(); ++i)
     {
         CShaderProgramGL::attachShader(m_shaderProgID, shaders[i]);
+    }
+
+    if (!m_varyingsList.empty())
+    {
+        gl::TransformFeedbackGL::transformFeedbackVaryings(m_shaderProgID, m_varyingsList);
+        RENDERER->checkForErrors("CShaderProgramGL: Add Varyings to program error");
     }
 
     if (!CShaderProgramGL::linkProgram(m_shaderProgID))
