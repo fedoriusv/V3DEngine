@@ -17,7 +17,7 @@ namespace utils
 
     protected:
 
-        TSingleton();
+                    TSingleton();
         virtual     ~TSingleton();
 
     private:
@@ -63,6 +63,8 @@ namespace utils
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace utils
+} //namespace v3d
+
 #endif //_V3D_SINGLETON_H_

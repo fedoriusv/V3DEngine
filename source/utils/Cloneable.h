@@ -13,13 +13,14 @@ namespace utils
     public:
 
         TCloneable() {};
-        virtual ~TCloneable() {};
+        virtual     ~TCloneable() {};
 
-        virtual T clone() = 0;
+        virtual T   clone() = 0;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace utils
+} //namespace v3d
 
 #endif //_V3D_CLONEABLE_H_

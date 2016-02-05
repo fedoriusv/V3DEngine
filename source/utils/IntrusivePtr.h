@@ -88,13 +88,6 @@ namespace utils
         }
     }
 
-    //template <class T>
-    //TIntrusivePtr<T>::TIntrusivePtr(TIntrusivePtr<U> const& rhs)
-    //     : m_px(rhs.get())
-    // {
-    //         if (px != 0) intrusive_ptr_add_ref(px);
-    // }
-
     template <class T>
     TIntrusivePtr<T>& TIntrusivePtr<T>::operator=(TIntrusivePtr const& rhs)
     {
@@ -228,7 +221,8 @@ namespace utils
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace utils
+} //namespace v3d
 
 #endif //_V3D_INTRUSIVE_PTR_H_

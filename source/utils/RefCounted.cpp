@@ -1,7 +1,9 @@
 #include "RefCounted.h"
 
-using namespace v3d;
-using namespace utils;
+namespace v3d
+{
+namespace utils
+{
 
 CRefCounted::CRefCounted(s32 refCount)
 : m_refCount(refCount)
@@ -12,18 +14,18 @@ CRefCounted::~CRefCounted()
 {
 }
 
-s32 CRefCounted::GetCount() const
+s32 CRefCounted::getCount() const
 {
     return m_refCount;
 }
 
 
-void CRefCounted::Grab() const
+void CRefCounted::grab() const
 {
     ++m_refCount;
 }
 
-void CRefCounted::Drop() const
+void CRefCounted::drop() const
 {
     --m_refCount;
     if (m_refCount == 0)
@@ -31,3 +33,6 @@ void CRefCounted::Drop() const
         delete this;
     }
 }
+
+} //namespace utils
+} //namespace v3d

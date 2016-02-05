@@ -5,8 +5,10 @@
 #   include <sys/time.h>  
 #endif //_PLATFORM_WIN_
 
-using namespace v3d;
-using namespace utils;
+namespace v3d
+{
+namespace utils
+{
 
 s64 CTimer::getTicks()
 {
@@ -95,3 +97,6 @@ bool CTimer::isStopped() const
 {
     return m_isStopped;
 }
+
+} //namespace utils
+} //namespace v3d

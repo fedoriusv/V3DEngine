@@ -1,7 +1,9 @@
 #include "Logger.h"
 
-using namespace v3d;
-using namespace v3d::utils;
+namespace v3d
+{
+namespace utils
+{
 
 const std::string k_loggerType[ELoggerType::eLoggerCount] =
 {
@@ -119,3 +121,6 @@ void CLogger::logToFile(const std::string& message, ELoggerType type)
 
     m_file.close();
 }
+
+} //namespace utils
+} //namespace v3d

@@ -13,15 +13,15 @@ namespace utils
     {
     public:
 
-        explicit CRefCounted(s32 refCount = 0);
-        virtual ~CRefCounted();
+        explicit    CRefCounted(s32 refCount = 0);
+        virtual     ~CRefCounted();
 
-        s32 GetCount() const;
+        s32         getCount() const;
 
     private:
 
-        void Grab() const;
-        void Drop() const;
+        void        grab() const;
+        void        drop() const;
 
         friend void intrusivePtrAddRef(const CRefCounted* obj);
         friend void intrusivePtrRelease(const CRefCounted* obj);
@@ -33,15 +33,16 @@ namespace utils
 
     inline void intrusivePtrAddRef(const CRefCounted* obj)
     {
-        obj->Grab();
+        obj->grab();
     }
     inline void intrusivePtrRelease(const CRefCounted* obj)
     {
-        obj->Drop();
+        obj->drop();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace utils
+} //namespace v3d
 
 #endif //_V3D_REF_COUNTED_H_
