@@ -7,7 +7,11 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
     //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class BufferGL;
 
     /**
     * Inherited class for texture management. GL render only.
@@ -16,7 +20,7 @@ namespace renderer
     {
     public:
 
-        CTextureGL();
+        explicit CTextureGL(bool useTextureBuffer = false);
         ~CTextureGL();
 
         void            bind(u32 layer, u32 sampler)    override;
@@ -24,37 +28,48 @@ namespace renderer
         bool            create()                        override;
         void            destroy()                       override;
 
+        bool            isValid()                       override;
+
+        void            setData(u32 size, void* data)                                           override;
+        void            setData(const core::Vector2DU& size, void* data, u32 cubemapSide = 0)   override;
+        void            setData(const core::Vector3DU& size, void* data)                        override;
+
+        void            updateData(u32 offset, u32 size, void* data)                                                            override;
+        void            updateData(const core::Vector2DU& offset, const core::Vector2DU& size, void* data, u32 cubemapSide = 0) override;
+        void            updateData(const core::Vector3DU& offset, const core::Vector3DU& size, void* data)                      override;
+
+        void            readData(void* data, u32 cubemapSide = 0) override;
+
+        u32             getTextureID()                  const;
+        u32             getSamplerID()                  const;
+
+        void            setFilterType(ETextureFilter min, ETextureFilter mag)   override;
+        void            setWrap(EWrapType wrap)                                 override;
+        void            setAnisotropicLevel(EAnisotropic level)                 override;
+
         static void     reset();
 
     public:
 
         void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
 
-        void            initTexture1D(u32 texture);
-        void            initTexture2D(u32 texture);
-        void            initTexture2DMSAA(u32 texture);
-        void            initTexture3D(u32 texture);
-        void            initTexture3DMSAA(u32 texture);
-        void            initTextureCubeMap(u32 texture);
-
-        static void     genTexture(u32& texture);
-        static void     deleteTexture(u32 texture);
         static bool     bindTexture(ETextureTarget target, u32 texture);
         static bool     activeTextureLayer(u32 layer);
 
-        static void     genSampler(u32& sampler);
-        static void     deleteSampler(u32 sampler);
         static bool     bindSampler(u32 texture, u32 sampler);
         static void     wrapSampler(u32 sampler, EWrapType wrap);
         static void     filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag);
         static void     anisotropicSampler(u32 sampler, u32 level);
-        static void     generateMipmap(ETextureTarget target);
 
     private:
 
+        u32             m_textureID;
         u32             m_samplerID;
 
+        BufferGL*       m_textureBuffer;
+
         bool            m_initialized;
+        const u32       m_mipmapLevel;
 
         static u32      s_currentTextureID[eTargetCount];
         static u32      s_currentLayerID;
@@ -63,6 +78,7 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

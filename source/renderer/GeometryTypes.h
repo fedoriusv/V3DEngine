@@ -29,6 +29,7 @@ namespace renderer
         eVertexBuffer,
         eIndexBuffer,
         eTransformFeedbackBuffer,
+        eTextureStoreBuffer,
 
         eBufferTargetCount
     };

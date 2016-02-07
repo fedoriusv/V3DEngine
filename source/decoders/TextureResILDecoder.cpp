@@ -10,6 +10,7 @@ using namespace v3d;
 using namespace stream;
 using namespace decoders;
 using namespace renderer;
+using namespace core;
 
 CTextureResILDecoder::CTextureResILDecoder()
     : CResourceDecoder()
@@ -57,11 +58,10 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     stream::IStreamPtr data = CStreamManager::createMemoryStream();
     data->seekBeg(0);
     u16 width = ilGetInteger(IL_IMAGE_WIDTH);
-    data->write(width);
     u16 height = ilGetInteger(IL_IMAGE_HEIGHT);
-    data->write(height);
     u16 depth = ilGetInteger(IL_IMAGE_DEPTH);
-    data->write(depth);
+    Vector3DU sizeImage(width, height, depth);
+    data->write(&sizeImage, sizeof(Vector3DU), 1);
     ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
     data->write((s32)convertILFormat(format));
     ILenum type = ilGetInteger(IL_IMAGE_TYPE);
@@ -148,12 +148,6 @@ EImageType CTextureResILDecoder::convertILType(u32 type)
 
     case IL_FLOAT:
         return EImageType::eFloat;
-
-    case IL_DOUBLE:
-        return EImageType::eDouble;
-
-    case IL_HALF:
-        return EImageType::eHalf;
 
     default:
         ASSERT(false, "CTextureResILDecoder: Invalid IL Type");

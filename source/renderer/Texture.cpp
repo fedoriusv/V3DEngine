@@ -1,12 +1,84 @@
 #include "Texture.h"
 #include "utils/Logger.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
+using namespace core;
+
+CTexture::STextureData::STextureData()
+    : _size(Vector3DU(1, 1, 1))
+    , _format(eColorIndex)
+    , _type(eByte)
+    , _data(nullptr)
+{
+}
+
+CTexture::STextureData::~STextureData()
+{
+    STextureData::free();
+}
+
+void CTexture::STextureData::free()
+{
+    if (_data)
+    {
+        delete _data;
+        _data = nullptr;
+    }
+}
+
+void CTexture::STextureData::copy(const Vector3DU& size, EImageType type, void* data)
+{
+    if (_data == data)
+    {
+        return;
+    }
+
+    STextureData::free();
+
+    auto typeSize = [](EImageType type) -> s32
+    {
+        switch (type)
+        {
+        case EImageType::eByte:
+            return sizeof(s8);
+
+        case EImageType::eUnsignedByte:
+            return sizeof(u8);
+
+        case EImageType::eShort:
+            return sizeof(s16);
+
+        case EImageType::eUnsignedShort:
+        case EImageType::eUnsignedShort_565:
+        case EImageType::eUnsignedShort_4444:
+            return sizeof(u16);
+
+        case EImageType::eInt:
+            return sizeof(s32);
+
+        case EImageType::eUnsignedInt:
+            return sizeof(u32);
+
+        case EImageType::eFloat:
+            return sizeof(f32);
+
+        default:
+            return 0;
+        }
+    };
+
+    _size = size;
+    _type = type;
+    _data = malloc(_size.x * _size.y * _size.z * typeSize(_type));
+    memcpy(_data, data, _size.x * _size.y * _size.z * typeSize(_type));
+}
 
 CTexture::CTexture()
     : CResource()
-    , m_textureID(0)
     , m_target(eTextureUnknown)
     , m_enable(false)
     , m_minFilter(eLinearMipmapLinear)
@@ -19,7 +91,6 @@ CTexture::CTexture()
 CTexture::~CTexture()
 {
     CTexture::clear();
-    m_data.clear();
 }
 
 void CTexture::init(const stream::IStreamPtr& stream)
@@ -60,10 +131,8 @@ bool CTexture::load()
     stream->seekBeg(0);
     for (u32 i = 0; i < m_data.size(); ++i)
     {
-        stream->read(m_data[i]._width);
-        stream->read(m_data[i]._height);
-        stream->read(m_data[i]._depth);
-        
+        stream->read(&m_data[i], sizeof(core::Vector3DU), 1);
+
         s32 format = 0;
         stream->read(format);
         m_data[i]._format = (EImageFormat)format;
@@ -83,19 +152,8 @@ bool CTexture::load()
 
 void CTexture::clear()
 {
-    for (TextureData::iterator i = m_data.begin(); i < m_data.end(); ++i)
-    {
-        if ((*i)._data != nullptr)
-        {
-            free((*i)._data);
-            (*i)._data = nullptr;
-        }
-    }
-}
-
-u32 CTexture::getTextureID() const
-{
-    return m_textureID;
+    m_data.clear();
+    m_data.resize(0);
 }
 
 ETextureTarget CTexture::getTarget() const
@@ -143,3 +201,6 @@ bool CTexture::isEnable() const
 {
     return m_enable;
 }
+
+} //namespace renderer
+} //namespace v3d

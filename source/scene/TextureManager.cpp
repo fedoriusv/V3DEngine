@@ -4,7 +4,8 @@
 #include "Engine.h"
 #include "decoders/TextureResILDecoder.h"
 
-using namespace v3d;
+namespace v3d
+{
 using namespace core;
 using namespace scene;
 using namespace renderer;
@@ -242,9 +243,7 @@ CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EIma
     texture->m_target = ETextureTarget::eTexture2D;
 
     texture->m_data.resize(1);
-    texture->m_data[0]._width = size.width;
-    texture->m_data[0]._height = size.height;
-    texture->m_data[0]._depth = 1;
+    texture->m_data[0]._size = Vector3DU(size.width, size.height, 1);
     texture->m_data[0]._format = format;
     texture->m_data[0]._type = type;
     texture->m_data[0]._data = data;
@@ -261,9 +260,7 @@ CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFo
     texture->m_target = ETextureTarget::eTexture2DMSAA;
 
     texture->m_data.resize(1);
-    texture->m_data[0]._width = size.width;
-    texture->m_data[0]._height = size.height;
-    texture->m_data[0]._depth = 1;
+    texture->m_data[0]._size = Vector3DU(size.width, size.height, 1);
     texture->m_data[0]._format = format;
     texture->m_data[0]._type = type;
     texture->m_data[0]._data = nullptr;
@@ -275,7 +272,7 @@ CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFo
 
 void CTextureManager::copyToTexture2D(CTexture* texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
 {
-    if (!texture || texture->getTextureID() <= 0)
+    if (!texture || !texture->isValid())
     {
         LOG_ERROR("TextureManager: Invalid Texture");
         return;
@@ -312,3 +309,5 @@ std::string v3d::scene::CTextureManager::getFileExtension(const std::string& ful
 
     return fileExtension;
 }
+
+} //namespace v3d

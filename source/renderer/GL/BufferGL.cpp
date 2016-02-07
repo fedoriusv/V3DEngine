@@ -16,7 +16,8 @@ GLenum EBufferTargetGL[EBufferTarget::eBufferTargetCount] =
 {
     GL_ARRAY_BUFFER,
     GL_ELEMENT_ARRAY_BUFFER,
-    GL_TRANSFORM_FEEDBACK_BUFFER
+    GL_TRANSFORM_FEEDBACK_BUFFER,
+    GL_TEXTURE_BUFFER
 };
 
 GLenum EDataUsageTypeGL[EDataUsageType::eDataUsageTypeCount] =
@@ -48,8 +49,10 @@ BufferGL::~BufferGL()
     BufferGL::unbind();
     if (m_id != 0)
     {
+#ifdef _DEBUG_GL
         //TODO: some times return false for shader id
         /*ASSERT(glIsShader(m_id), "Invalid Index Buffer");*/
+#endif //_DEBUG_GL
         glDeleteBuffers(1, &m_id);
         m_id = 0;
     }
@@ -63,7 +66,9 @@ void BufferGL::bind()
     if (s_currentBuffer[m_target] != m_id)
     {
         glBindBuffer(EBufferTargetGL[m_target], m_id);
+#ifdef _DEBUG_GL
         ASSERT(glIsBuffer(m_id), "Invalid VBO index");
+#endif //_DEBUG_GL
         s_currentBuffer[m_target] = m_id;
     }
 }
@@ -145,6 +150,10 @@ bool BufferGL::unmap()
     return glUnmapBuffer(EBufferTargetGL[m_target]) != 0;
 }
 
+u32 BufferGL::getID() const
+{
+    return m_id;
+}
 
 } //namespace gl
 } //namespace renderer

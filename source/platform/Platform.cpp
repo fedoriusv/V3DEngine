@@ -180,7 +180,7 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
         case EDriverType::eDriverDirect3D:
         {
 #ifdef _DIRECT3D_DRIVER_
-            renderer = std::make_shared<CRendererD3D>(context);
+            renderer = std::make_shared<d3d::CRendererD3D>(context);
 #else //_DIRECT3D_DRIVER_
             LOG_ERROR("CPlatform::createRenderer: _DIRECT3D_DRIVER_ not defined");
 #endif //_DIRECT3D_DRIVER_

@@ -33,6 +33,8 @@ namespace gl
         void*       map(u32 access)                                                     override;
         bool        unmap()                                                             override;
 
+        u32         getID() const;
+
     private:
 
         u32         m_id;

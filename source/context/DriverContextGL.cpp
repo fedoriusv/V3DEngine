@@ -558,14 +558,14 @@ void CDriverContextGL::driverInfo()
     glewIsSupported("GL_ARB_vertex_array_object");
     glewIsSupported("GL_ARB_sampler_objects");*/
 
-#ifdef _DEBUG
+#ifdef _DEBUG_GL
     CDriverContextGL::printExtensionList();
-#endif
+#endif //_DEBUG_GL
 }
 
 void CDriverContextGL::checkForErrors(const std::string& location)
 {
-#ifdef _DEBUG
+#ifdef _DEBUG_GL
     GLenum glError = glGetError();
     if (glError != GL_NO_ERROR)
     {
@@ -589,7 +589,7 @@ void CDriverContextGL::checkForErrors(const std::string& location)
             LOG_ERROR("GL %s: %s. Discription %s", location.c_str(), error.c_str(), glewGetErrorString(glError));
         }
     }
-#endif
+#endif //_DEBUG_GL
 }
 
 bool CDriverContextGL::setVSync(bool use)

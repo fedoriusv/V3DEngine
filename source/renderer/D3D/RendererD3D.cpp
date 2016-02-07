@@ -8,8 +8,12 @@
 
 #include <d3d11.h>
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+namespace d3d
+{
 
 CRendererD3D::CRendererD3D(const DriverContextPtr& context)
     : CRenderer(context)
@@ -145,5 +149,9 @@ void CRendererD3D::resetTexture()
 {
     //CTextureGL::reset();
 }
+
+} //namespace d3d
+} //namespace renderer
+} //namespace v3d
 
 #endif //_DIRECT3D_DRIVER_

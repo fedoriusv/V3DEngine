@@ -25,6 +25,7 @@ namespace renderer
         eTexture3D,
         eTexture3DMSAA,
         eTextureCubeMap,
+        eTextureBuffer,
 
         eTargetCount
     };
@@ -78,8 +79,6 @@ namespace renderer
         eInt,
         eUnsignedInt,
         eFloat,
-        eDouble,
-        eHalf,
 
         eImageTypeCount
     };
@@ -115,6 +114,9 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Base Interface for texture entity.
+    */
     class CTexture : public stream::CResource
     {
     public:
@@ -127,35 +129,53 @@ namespace renderer
         virtual bool    create()                            = 0;
         virtual void    destroy()                           = 0;
 
+        virtual bool    isValid()                           = 0;
+
+        virtual void    setData(u32 size, void* data) = 0;
+        virtual void    setData(const core::Vector2DU& size, void* data, u32 cubemapSide = 0) = 0;
+        virtual void    setData(const core::Vector3DU& size, void* data) = 0;
+
+        virtual void    updateData(u32 offset, u32 size, void* data) = 0;
+        virtual void    updateData(const core::Vector2DU& offset, const core::Vector2DU& size, void* data, u32 cubemapSide = 0) = 0;
+        virtual void    updateData(const core::Vector3DU& offset, const core::Vector3DU& size, void* data) = 0;
+
+
+        virtual void    readData(void* data, u32 cubemapSide = 0) = 0;
+
         void            init(const stream::IStreamPtr& stream)  override;
         bool            load()                                  override;
 
         bool            isEnable()      const;
 
-        u32             getTextureID()  const;
         ETextureTarget  getTarget()     const;
         ETextureFilter  getMinFiler()   const;
         ETextureFilter  getMagFiler()   const;
         EWrapType       getWrap()       const;
         EAnisotropic    getAnisotropic()const;
 
-        void            setFilterType(ETextureFilter min, ETextureFilter mag);
-        void            setWrap(EWrapType wrap);
-        void            setAnisotropicLevel(EAnisotropic level);
+        virtual void    setFilterType(ETextureFilter min, ETextureFilter mag);
+        virtual void    setWrap(EWrapType wrap);
+        virtual void    setAnisotropicLevel(EAnisotropic level);
 
     private:
 
         struct STextureData
         {
-            u16             _width;
-            u16             _height;
-            u16             _depth;
+            STextureData();
+            ~STextureData();
+
+            STextureData& operator=(const STextureData&) = delete;
+
+            void            free();
+            void            copy(const core::Vector3DU& size, EImageType type, void* data);
+
+            core::Vector3DU _size;
             EImageFormat    _format;
             EImageType      _type;
             void*           _data;
         };
 
-        typedef std::vector<STextureData>  TextureData;
+        using TextureData = std::vector<STextureData>;
 
     protected:
 
@@ -164,8 +184,6 @@ namespace renderer
         void            clear();
 
         virtual void    copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) = 0;
-
-        u32             m_textureID;
 
         ETextureTarget  m_target;
         TextureData     m_data;
@@ -189,7 +207,8 @@ namespace renderer
     typedef std::map<const u32, const CTexture*>    TextureLayers;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_TEXTURE_H_

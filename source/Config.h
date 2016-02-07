@@ -1,4 +1,4 @@
-// Valera3D Engine (c) 2014 Fedor Nekrasov
+// V3D Engine (c) 2016 Fred Nekrasov
 
 #ifndef _V3D_CONFIG_H_
 #define _V3D_CONFIG_H_
@@ -17,7 +17,7 @@
 
 #if USED_LOGGER
 #   define USE_LOGGER
-//#   define USE_DEBUG_LOG
+#   define USE_DEBUG_LOG
 #endif //USED_LOGGER
 
 #if USED_DEVIL
@@ -78,10 +78,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _OPENGL_DRIVER_
-#   define OPENGL_VERSION_MAJOR 3
-#   define OPENGL_VERSION_MINOR 3
+#   define OPENGL_VERSION_MAJOR 4
+#   define OPENGL_VERSION_MINOR 4
 
 #   define GLEW_STATIC
+//#   define _DEBUG_GL
 #endif //_OPENGL_DRIVER_
 
 #ifdef _DIRECT3D_DRIVER_
