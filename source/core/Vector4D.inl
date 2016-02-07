@@ -353,5 +353,5 @@ namespace core
         return *this;
     }
 
-}
-}
+} //namespace core
+} //namespace v3d

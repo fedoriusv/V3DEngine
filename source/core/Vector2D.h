@@ -44,8 +44,8 @@ namespace core
         bool            operator >  (const TVector2D<T>&other)     const;
         bool            operator == (const TVector2D<T>& other)    const;
         bool            operator != (const TVector2D<T>& other)    const;
-        T	            operator [] (u32 index)                    const;
-        T&	            operator [] (u32 index);
+        T               operator [] (u32 index)                    const;
+        T&              operator [] (u32 index);
 
         TVector2D<T>&   set(const T nx, const T ny);
         TVector2D<T>&   set(const TVector2D<T>& other);
@@ -70,7 +70,8 @@ namespace core
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef TVector2D<f32> Vector2D;
+    using Vector2D  = TVector2D<f32>;
+    using Vector2DU = TVector2D<u32>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -105,8 +106,9 @@ namespace core
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace core
+} //namespace v3d
 
 #include "Vector2D.inl"
 

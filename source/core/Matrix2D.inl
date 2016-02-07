@@ -356,5 +356,5 @@ namespace core
         return mat * scalar;
     }
 
-}
-}
+} //namespace core
+} //namespace v3d

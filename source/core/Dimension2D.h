@@ -2,7 +2,6 @@
 #define _V3D_DIMENSION_2D_H_
 
 #include "Math.h"
-//#include "Point2D.h"
 
 namespace v3d
 {
@@ -18,12 +17,9 @@ namespace core
         TDimension2D();
         TDimension2D(const T& width, const T& height);
         TDimension2D(const TDimension2D<T>& other);
-        //TDimension2D(const TPoint2D<T>& other);
 
         bool                operator == (const TDimension2D<T>& other)  const;
         bool                operator != (const TDimension2D<T>& other)  const;
-        //bool                operator == (const TPoint2D<T>& other)      const;
-        //bool                operator != (const TPoint2D<T>& other)      const;
 
         TDimension2D<T>&    operator = (const TDimension2D<T>& other);
         TDimension2D<T>&    operator /= (const T& scale);
@@ -44,13 +40,13 @@ namespace core
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef TDimension2D<u32> Dimension2D;
+    using Dimension2D = TDimension2D<u32>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace core
+} //namespace v3d
 
 #include "Dimension2D.inl"
 
 #endif //_V3D_DIMENSION_2D_H_
-

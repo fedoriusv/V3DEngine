@@ -9,26 +9,26 @@ namespace core
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const f32 k_tolerance32 = 0.00005f;
-    const f64 k_tolerance64 = 0.000005;
+    constexpr f32 k_tolerance32 = 0.00005f;
+    constexpr f64 k_tolerance64 = 0.000005;
 
-    const f32 k_pi = 3.14159265359f;
-    const f32 k_rcpPi = 1.0f / k_pi;
-    const f32 k_pi2 = k_pi / 2.0f;
-    const f32 k_2pi = k_pi * 2.0f;
-    const f32 k_degToRad = k_pi / 180.0f;
-    const f32 k_radToDeg = 180.0f / k_pi;
+    constexpr f32 k_pi       = 3.14159265359f;
+    constexpr f32 k_rcpPi    = 1.0f / k_pi;
+    constexpr f32 k_pi2      = k_pi / 2.0f;
+    constexpr f32 k_2pi      = k_pi * 2.0f;
+    constexpr f32 k_degToRad = k_pi / 180.0f;
+    constexpr f32 k_radToDeg = 180.0f / k_pi;
 
-    const f32 k_cos1 = 0.99984769515f;
-    const f32 k_cos5 = 0.99619469809f;
-    const f32 k_cos10 = 0.98480775301f;
-    const f32 k_cos15 = 0.96592582628f;
-    const f32 k_cos30 = 0.86602540378f;
-    const f32 k_cos45 = 0.70710678118f;
-    const f32 k_cos60 = 0.5f;
-    const f32 k_cos75 = 0.25881904510f;
-    const f32 k_cos80 = 0.17364817766f;
-    const f32 k_cos85 = 0.08715574274f;
+    constexpr f32 k_cos1  = 0.99984769515f;
+    constexpr f32 k_cos5  = 0.99619469809f;
+    constexpr f32 k_cos10 = 0.98480775301f;
+    constexpr f32 k_cos15 = 0.96592582628f;
+    constexpr f32 k_cos30 = 0.86602540378f;
+    constexpr f32 k_cos45 = 0.70710678118f;
+    constexpr f32 k_cos60 = 0.5f;
+    constexpr f32 k_cos75 = 0.25881904510f;
+    constexpr f32 k_cos80 = 0.17364817766f;
+    constexpr f32 k_cos85 = 0.08715574274f;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,7 +182,8 @@ namespace core
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace core
+} //namespace v3d
 
 #endif //_V3D_MATH_H_

@@ -139,5 +139,5 @@ namespace core
         return TPoint2D<T>(x - other.x, y - other.y);
     }
 
-}
-}
+} //namespace core
+} //namespace v3d
