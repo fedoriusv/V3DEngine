@@ -131,6 +131,11 @@ void BufferGL::readData(u32 offset, u32 size, void* data)
     }
 
     BufferGL::bind();
+#ifdef _DEBUG_GL
+    GLint sizeBuff = 0;
+    glGetBufferParameteriv(EBufferTargetGL[m_target], GL_BUFFER_SIZE, &sizeBuff);
+    ASSERT(sizeBuff > size, "Get buffer size out the range");
+#endif //_DEBUG_GL
     glGetBufferSubData(EBufferTargetGL[m_target], offset, size, data);
 
     RENDERER->checkForErrors("BufferGL::readData Error");

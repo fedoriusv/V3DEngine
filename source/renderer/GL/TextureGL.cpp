@@ -95,52 +95,135 @@ GLenum EImageTypeGL[EImageType::eImageTypeCount] =
 
 auto internalFormat = [](u32 format, u32 type) -> u32
 {
-    switch (format)
+    switch (type)
     {
-    case GL_RGB:
-    case GL_BGR:
-        switch (type)
+
+    //BYTE
+    case GL_BYTE:
+    case GL_UNSIGNED_BYTE:
+    {
+        switch (format)
         {
-        case GL_UNSIGNED_SHORT_5_6_5:
-            return GL_RGB565;
-
-        case GL_UNSIGNED_SHORT_4_4_4_4:
-            return GL_RGB4;
-
-        default:
+        case GL_R:
+        case GL_RED:
+            return GL_R8;
+        case GL_RG:
+            return GL_RG8;
+        case GL_RGB:
+        case GL_BGR:
             return GL_RGB8;
-        }
-
-    case GL_RGBA:
-        switch (type)
-        {
-        case GL_UNSIGNED_SHORT_4_4_4_4:
-            return GL_RGBA4;
-
-        default:
+        case GL_RGBA:
+        case GL_BGRA:
             return GL_RGBA8;
-        }
-
-    case GL_RED:
-        return GL_R8;
-
-    case GL_DEPTH_COMPONENT:
-        switch (type)
-        {
-        case GL_FLOAT:
-            return GL_DEPTH_COMPONENT32F;
-
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX8;
         default:
+            return format;
+        };
+    }
+
+    //SHORT
+    case GL_SHORT:
+    case GL_UNSIGNED_SHORT:
+    {
+        switch (format)
+        {
+        case GL_R:
+        case GL_RED:
+            return GL_R16;
+        case GL_RG:
+            return GL_RG16;
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB16;
+        case GL_RGBA:
+        case GL_BGRA:
+            return GL_RGBA16;
+        case GL_DEPTH_COMPONENT:
             return GL_DEPTH_COMPONENT16;
-        }
+        case GL_STENCIL:
+            return GL_STENCIL_INDEX16;
+        default:
+            return format;
+        };
+    }
 
-    case GL_STENCIL:
-        return GL_STENCIL_INDEX8;
+    //UNSIGNED_SHORT_5_6_5
+    case GL_UNSIGNED_SHORT_5_6_5:
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB565;
+        default:
+            return format;
+        };
+    }
 
-    default:
-        return format;
+    //UNSIGNED_SHORT_4_4_4_4
+    case GL_UNSIGNED_SHORT_4_4_4_4:
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB4;
+        case GL_RGBA:
+        case GL_BGRA:
+            return GL_RGBA4;
+        default:
+            return format;
+        };
+    }
+
+    //INT
+    case GL_INT:
+    case GL_UNSIGNED_INT:
+    {
+        switch (format)
+        {
+        case GL_R:
+        case GL_RED:
+            return GL_R32I;
+        case GL_RG:
+            return GL_RG32I;
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB32I;
+        case GL_RGBA:
+        case GL_BGRA:
+            return GL_RGBA32I;
+        case GL_DEPTH_COMPONENT:
+            return GL_DEPTH_COMPONENT32;
+        default:
+            return format;
+        };
+    }
+
+    //FLOAT
+    case GL_FLOAT:
+    {
+        switch (format)
+        {
+        case GL_R:
+        case GL_RED:
+            return GL_R32F;
+        case GL_RG:
+            return GL_RG32F;
+        case GL_RGB:
+        case GL_BGR:
+            return GL_RGB32F;
+        case GL_RGBA:
+        case GL_BGRA:
+            return GL_RGBA32F;
+        case GL_DEPTH_COMPONENT:
+            return GL_DEPTH_COMPONENT32F;
+        default:
+            return format;
+        };
+    }
     };
-
     return format;
 };
 
@@ -173,6 +256,30 @@ auto typeSize = [](u32 type) -> s32
 
     default:
         return 0;
+    }
+};
+
+auto componentCount = [](u32 format) -> u32
+{
+    switch (format)
+    {
+    case GL_R:
+    case GL_RED:
+        return 1U;
+
+    case GL_RG:
+        return 2U;
+
+    case GL_RGB:
+    case GL_BGR:
+        return 3U;
+
+    case GL_RGBA:
+    case GL_BGRA:
+        return 4U;
+
+    default:
+        return 0U;
     }
 };
 
@@ -228,15 +335,12 @@ void CTextureGL::bind(u32 layer, u32 sampler)
         u32 format = EImageFormatGL[m_data[0]._format];
         u32 type = EImageTypeGL[m_data[0]._type];
 
-        CTextureGL::bindTexture(ETextureTarget::eTextureBuffer, m_textureID);
-        glTexBuffer(ETextureTargetGL[ETextureTarget::eTextureBuffer], GL_RGB32UI/*internalFormat(format, type)*/, m_textureBuffer->getID());
-
+        CTextureGL::bindTexBuffer(internalFormat(format, type), m_textureID, m_textureBuffer->getID());
         RENDERER->checkForErrors("CTextureGL: Bind Texture Buffer Error");
     }
     else
     {
         CTextureGL::bindTexture(m_target, m_textureID);
-
         RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
     }
 }
@@ -335,8 +439,10 @@ bool CTextureGL::create()
             return success;
     }
 
-    if (m_target != eTexture2DMSAA || 
-        m_target != eTexture3DMSAA)
+    if (m_target == ETextureTarget::eTexture1D ||
+        m_target == ETextureTarget::eTexture2D ||
+        m_target == ETextureTarget::eTexture3D ||
+        m_target == ETextureTarget::eTextureCubeMap)
     {
         glGenSamplers(1, &m_samplerID);
         CTextureGL::wrapSampler(m_samplerID, m_wrap);
@@ -419,8 +525,10 @@ void CTextureGL::setData(u32 size, void* data)
 
     case ETextureTarget::eTextureBuffer:
     {
+        u32 format = EImageFormatGL[m_data.front()._format];
         u32 type = EImageTypeGL[m_data.front()._type];
-        s32 dataSize = size * typeSize(type);
+
+        s32 dataSize = size * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
         GLint maxSize;
@@ -451,6 +559,7 @@ void CTextureGL::setData(const core::Vector2DU& size, void* data, u32 cubemapSid
             u32 type = EImageTypeGL[m_data.front()._type];
 
             glTexStorage2D(ETextureTargetGL[eTexture2D], m_mipmapLevel, internalFormat(format, type), size.x, size.y);
+            RENDERER->checkForErrors("CTextureGL::setData eTexture2D Error");
             CTextureGL::updateData(0, size, data);
             m_data.front().copy(Vector3DU(size.x, size.y, 1), m_data.front()._type, data);
 
@@ -495,8 +604,10 @@ void CTextureGL::setData(const core::Vector2DU& size, void* data, u32 cubemapSid
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
-            s32 dataSize = size.x * size.y * typeSize(type);
+
+            s32 dataSize = size.x * size.y * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -556,8 +667,10 @@ void CTextureGL::setData(const core::Vector3DU& size, void* data)
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
-            s32 dataSize = size.x * size.y * size.z * typeSize(type);
+
+            s32 dataSize = size.x * size.y * size.z * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -597,9 +710,11 @@ void CTextureGL::updateData(u32 offset, u32 size, void* data)
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
-            s32 dataSize = size * typeSize(type);
-            s32 dataOffset = offset * typeSize(type);
+
+            s32 dataSize = size * typeSize(type) * componentCount(format);
+            s32 dataOffset = offset * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -633,7 +748,7 @@ void CTextureGL::updateData(const Vector2DU& offset, const Vector2DU& size, void
             glTexSubImage2D(ETextureTargetGL[eTexture2D], 0, offset.x, offset.y, size.x, size.y, format, type, data);
             m_data.front().copy(Vector3DU(size.x, size.y, 1), m_data.front()._type, data);
 
-            RENDERER->checkForErrors("CTextureGL::updateData eTexture1D Error");
+            RENDERER->checkForErrors("CTextureGL::updateData eTexture2D Error");
             return;
         }
 
@@ -658,9 +773,11 @@ void CTextureGL::updateData(const Vector2DU& offset, const Vector2DU& size, void
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
-            s32 dataSize = size.x * size.y * typeSize(type);
-            s32 dataOffset = offset.x * offset.y * typeSize(type);
+
+            s32 dataSize = size.x * size.y * typeSize(type) * componentCount(format);
+            s32 dataOffset = offset.x * offset.y * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -706,9 +823,11 @@ void CTextureGL::updateData(const Vector3DU& offset, const Vector3DU& size, void
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data[0]._type];
-            s32 dataSize = size.x * size.y * size.z * typeSize(type);
-            s32 dataOffset = offset.x * offset.y * offset.z * typeSize(type);
+
+            s32 dataSize = size.x * size.y * size.z * typeSize(type) * componentCount(format);
+            s32 dataOffset = offset.x * offset.y * offset.z * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -766,8 +885,10 @@ void CTextureGL::readData(void* data, u32 cubemapSide)
 
         case ETextureTarget::eTextureBuffer:
         {
+            u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data[0]._type];
-            s32 dataSize = m_data.front()._size.x * m_data.front()._size.y * m_data.front()._size.z * typeSize(type);
+
+            s32 dataSize = m_data.front()._size.x * m_data.front()._size.y * m_data.front()._size.z * typeSize(type) * componentCount(format);
 
 #ifdef _DEBUG_GL
             GLint maxSize;
@@ -847,6 +968,21 @@ bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
     }
 
     return false;
+}
+
+void CTextureGL::bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset, u32 size)
+{
+    CTextureGL::bindTexture(ETextureTarget::eTextureBuffer, texture);
+    if (offset != 0 || size != 0)
+    {
+        glTexBufferRange(ETextureTargetGL[ETextureTarget::eTextureBuffer], format, buffer, offset, size);
+    }
+    else
+    {
+        glTexBuffer(ETextureTargetGL[ETextureTarget::eTextureBuffer], format, buffer);
+    }
+
+    RENDERER->checkForErrors("CTextureGL::bindTexBuffer Error");
 }
 
 bool CTextureGL::activeTextureLayer(u32 layer)

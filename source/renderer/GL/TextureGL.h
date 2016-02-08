@@ -54,6 +54,7 @@ namespace gl
         void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
 
         static bool     bindTexture(ETextureTarget target, u32 texture);
+        static void     bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset = 0, u32 size = 0);
         static bool     activeTextureLayer(u32 layer);
 
         static bool     bindSampler(u32 texture, u32 sampler);

@@ -1,7 +1,7 @@
 <technique name="texture_without_light" version="100">
 
     <textures>
-        <texture name="box" file="textures/box.jpg"/>
+        <texture name="box" file="textures/test_basetex.jpg"/>
     </textures>
 
     <pass name="pass0">
@@ -65,7 +65,8 @@
                 <![CDATA[
                     #version 330
                     
-                    uniform sampler2D sampler0;
+                    uniform samplerBuffer sampler0;
+                    //uniform sampler2D sampler0;
                     
                     struct Vertex
                     {
@@ -74,9 +75,19 @@
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
                     
+                     const ivec2 samplerSize = ivec2(512, 512);
+                    
+                    int valueIndex(ivec2 pos)
+                    {
+                        int size = textureSize(sampler0);
+                        return ((samplerSize.y - pos.y) * samplerSize.x) + pos.x;
+                    }
+                    
                     void main()
                     {
-                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                        ivec2 texPos = ivec2(fragVertex.texCoord0 * vec2(samplerSize));
+                        fragColor = texelFetch(sampler0, valueIndex(texPos));
+                        //fragColor = texture(sampler0, fragVertex.texCoord0, 0);
                     }
                 ]]>
             </var>

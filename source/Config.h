@@ -82,7 +82,7 @@
 #   define OPENGL_VERSION_MINOR 4
 
 #   define GLEW_STATIC
-//#   define _DEBUG_GL
+#   define _DEBUG_GL
 #endif //_OPENGL_DRIVER_
 
 #ifdef _DIRECT3D_DRIVER_

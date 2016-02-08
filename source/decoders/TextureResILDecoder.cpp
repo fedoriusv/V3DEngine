@@ -53,17 +53,32 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
         return nullptr;
     }
 
+    //Convert specific formats
+    EImageFormat oldFormat = convertILFormat(ilGetInteger(IL_IMAGE_FORMAT));
+    EImageType oldType = convertILType(ilGetInteger(IL_IMAGE_TYPE));
+    if (oldFormat == EImageFormat::eRGB && (oldType == EImageType::eByte || oldType == EImageType::eUnsignedByte))
+    {
+        ilConvertImage(IL_RGBA, ilGetInteger(IL_IMAGE_TYPE));
+    }
+    else if (oldFormat == EImageFormat::eRGB && (oldType == EImageType::eByte || oldType == EImageType::eUnsignedByte))
+    {
+        ilConvertImage(IL_BGRA, ilGetInteger(IL_IMAGE_TYPE));
+    }
+
     CTexture* texture = RENDERER->createTexture();
 
     stream::IStreamPtr data = CStreamManager::createMemoryStream();
     data->seekBeg(0);
+
     u16 width = ilGetInteger(IL_IMAGE_WIDTH);
     u16 height = ilGetInteger(IL_IMAGE_HEIGHT);
     u16 depth = ilGetInteger(IL_IMAGE_DEPTH);
     Vector3DU sizeImage(width, height, depth);
     data->write(&sizeImage, sizeof(Vector3DU), 1);
+
     ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
     data->write((s32)convertILFormat(format));
+
     ILenum type = ilGetInteger(IL_IMAGE_TYPE);
     data->write((s32)convertILType(type));
 
