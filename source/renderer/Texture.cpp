@@ -9,7 +9,7 @@ namespace renderer
 using namespace core;
 
 CTexture::STextureData::STextureData()
-    : _size(Vector3DU(1, 1, 1))
+    : _size(Dimension3D(1U, 1U, 1U))
     , _format(eColorIndex)
     , _type(eByte)
     , _data(nullptr)
@@ -30,7 +30,7 @@ void CTexture::STextureData::free()
     }
 }
 
-void CTexture::STextureData::copy(const Vector3DU& size, EImageType type, void* data)
+void CTexture::STextureData::copy(const Dimension3D& size, EImageType type, void* data)
 {
     if (_data == data)
     {
@@ -73,8 +73,8 @@ void CTexture::STextureData::copy(const Vector3DU& size, EImageType type, void* 
 
     _size = size;
     _type = type;
-    _data = malloc(_size.x * _size.y * _size.z * typeSize(_type));
-    memcpy(_data, data, _size.x * _size.y * _size.z * typeSize(_type));
+    _data = malloc(_size.width * _size.height * _size.depth * typeSize(_type));
+    memcpy(_data, data, _size.width * _size.height * _size.depth * typeSize(_type));
 }
 
 CTexture::CTexture()

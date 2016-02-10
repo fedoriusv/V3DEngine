@@ -27,16 +27,24 @@ namespace core
     template <class T>
     TDimension2D<T>& TDimension2D<T>::operator = (const TDimension2D<T>& other)
     {
+        if (this == &other)
+        {
+            return *this;
+        }
+
         width = other.width;
         height = other.height;
+
         return *this;
     }
 
     template <class T>
     bool TDimension2D<T>::operator == (const TDimension2D<T>& other) const
     {
-        const bool isEquals = core::isEquals(width, other.width) &&
+        const bool isEquals = 
+            core::isEquals(width, other.width) &&
             core::isEquals(height, other.height);
+
         return isEquals;
     }
 
@@ -51,6 +59,7 @@ namespace core
     {
         width = nWidth;
         height = nHeight;
+
         return *this;
     }
 
@@ -59,6 +68,7 @@ namespace core
     {
         width /= scale;
         height /= scale;
+
         return *this;
     }
 
@@ -73,6 +83,7 @@ namespace core
     {
         width *= scale;
         height *= scale;
+
         return *this;
     }
 
@@ -87,14 +98,16 @@ namespace core
     {
         width += other.width;
         height += other.height;
+
         return *this;
     }
 
     template <class T>
     TDimension2D<T>& TDimension2D<T>::operator -= (const TDimension2D<T>& other)
     {
-        width -= other.Width;
-        height -= other.Height;
+        width -= other.width;
+        height -= other.height;
+
         return *this;
     }
 

@@ -6,8 +6,10 @@
 
 namespace v3d
 {
+namespace scene
+{
+
 using namespace core;
-using namespace scene;
 using namespace renderer;
 using namespace decoders;
 using namespace stream;
@@ -236,14 +238,29 @@ CTexture* CTextureManager::load(const std::string& file, const std::string& alia
     return nullptr;
 }
 
+renderer::CTexture * CTextureManager::createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void * data)
+{
+    renderer::CTexture* texture = RENDERER->createTexture();
+
+    texture->m_target = ETextureTarget::eTexture1D;
+    texture->m_data.resize(1);
+    texture->m_data[0]._size = Dimension3D(size, 1, 1);
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+    texture->m_data[0]._data = data;
+
+    texture->create();
+
+    return texture;
+}
+
 CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
 {
     renderer::CTexture* texture = RENDERER->createTexture();
 
     texture->m_target = ETextureTarget::eTexture2D;
-
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Vector3DU(size.width, size.height, 1);
+    texture->m_data[0]._size = Dimension3D(size.width, size.height, 1);
     texture->m_data[0]._format = format;
     texture->m_data[0]._type = type;
     texture->m_data[0]._data = data;
@@ -258,9 +275,56 @@ CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFo
     renderer::CTexture* texture = RENDERER->createTexture();
 
     texture->m_target = ETextureTarget::eTexture2DMSAA;
-
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Vector3DU(size.width, size.height, 1);
+    texture->m_data[0]._size = Dimension3D(size.width, size.height, 1);
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+    texture->m_data[0]._data = nullptr;
+
+    texture->create();
+
+    return texture;
+}
+
+CTexture* CTextureManager::createTexture3DFromData(const Dimension3D& size, EImageFormat format, EImageType type, void* data)
+{
+    renderer::CTexture* texture = RENDERER->createTexture();
+
+    texture->m_target = ETextureTarget::eTexture3D;
+    texture->m_data.resize(1);
+    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+    texture->m_data[0]._data = nullptr;
+
+    texture->create();
+
+    return texture;
+}
+
+CTexture* CTextureManager::createTexture3DMSAA(const Dimension3D& size, EImageFormat format, EImageType type)
+{
+    renderer::CTexture* texture = RENDERER->createTexture();
+
+    texture->m_target = ETextureTarget::eTexture3DMSAA;
+    texture->m_data.resize(1);
+    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
+    texture->m_data[0]._format = format;
+    texture->m_data[0]._type = type;
+    texture->m_data[0]._data = nullptr;
+
+    texture->create();
+
+    return texture;
+}
+
+CTexture * CTextureManager::createTextureBufferFromData(const Dimension3D& size, EImageFormat format, EImageType type, void* data)
+{
+    renderer::CTexture* texture = RENDERER->createTexture();
+
+    texture->m_target = ETextureTarget::eTextureBuffer;
+    texture->m_data.resize(1);
+    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
     texture->m_data[0]._format = format;
     texture->m_data[0]._type = type;
     texture->m_data[0]._data = nullptr;
@@ -287,7 +351,7 @@ void CTextureManager::copyToTexture2D(CTexture* texture, const Dimension2D& offs
     texture->copyToTexture2D(offset, size, format, data);
 }
 
-void v3d::scene::CTextureManager::addStreamToCubeTexture(renderer::CTexture* texture, const stream::IStreamPtr& stream)
+void v3d::scene::CTextureManager::addStreamToCubeTexture(CTexture* texture, const stream::IStreamPtr& stream)
 {
     const IStreamPtr& streamData = texture->getStream();
     stream->seekBeg(0);
@@ -310,4 +374,5 @@ std::string v3d::scene::CTextureManager::getFileExtension(const std::string& ful
     return fileExtension;
 }
 
+} //namespace scene
 } //namespace v3d

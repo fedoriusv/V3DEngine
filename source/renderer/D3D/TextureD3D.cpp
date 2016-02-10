@@ -43,11 +43,11 @@ void CTextureD3D::setData(u32 size, void* data)
 {
 }
 
-void CTextureD3D::setData(const Vector2DU& size, void* data, u32 cubemapSide)
+void CTextureD3D::setData(const Dimension2D& size, void* data, u32 cubemapSide)
 {
 }
 
-void CTextureD3D::setData(const Vector3DU& size, void* data)
+void CTextureD3D::setData(const Dimension3D& size, void* data)
 {
 }
 
@@ -55,11 +55,11 @@ void CTextureD3D::updateData(u32 offset, u32 size, void* data)
 {
 }
 
-void CTextureD3D::updateData(const Vector2DU& offset, const Vector2DU& size, void* data, u32 cubemapSide)
+void CTextureD3D::updateData(const Dimension2D& offset, const Dimension2D& size, void* data, u32 cubemapSide)
 {
 }
 
-void CTextureD3D::updateData(const Vector3DU& offset, const Vector3DU& size, void* data)
+void CTextureD3D::updateData(const Dimension3D& offset, const Dimension3D& size, void* data)
 {
 }
 

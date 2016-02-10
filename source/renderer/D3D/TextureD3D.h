@@ -28,12 +28,12 @@ namespace d3d
         bool            isValid()                       override;
 
         void            setData(u32 size, void* data)                                           override;
-        void            setData(const core::Vector2DU& size, void* data, u32 cubemapSide = 0)   override;
-        void            setData(const core::Vector3DU& size, void* data)                        override;
+        void            setData(const core::Dimension2D& size, void* data, u32 cubemapSide = 0) override;
+        void            setData(const core::Dimension3D& size, void* data)                      override;
 
-        void            updateData(u32 offset, u32 size, void* data)                                                            override;
-        void            updateData(const core::Vector2DU& offset, const core::Vector2DU& size, void* data, u32 cubemapSide = 0) override;
-        void            updateData(const core::Vector3DU& offset, const core::Vector3DU& size, void* data)                      override;
+        void            updateData(u32 offset, u32 size, void* data)                                                                override;
+        void            updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) override;
+        void            updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data)                      override;
 
         void            readData(void* data, u32 cubemapSide = 0) override;
 

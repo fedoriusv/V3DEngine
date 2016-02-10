@@ -114,7 +114,7 @@ namespace stream
     template <class T>
     const decoders::DecoderPtr TResourceLoader<T>::findDecoder(const std::string& extension)
     {
-        auto predCanDecode = [extension](const DecoderPtr& decoder) -> bool
+        auto predCanDecode = [extension](const decoders::DecoderPtr& decoder) -> bool
         {
             return decoder->isExtensionSupported(extension);
         };
@@ -128,5 +128,5 @@ namespace stream
         return (*iter);
     }
 
-}
-}
+} //namespace stream
+} //namespace v3d

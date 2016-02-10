@@ -132,12 +132,12 @@ namespace renderer
         virtual bool    isValid()                           = 0;
 
         virtual void    setData(u32 size, void* data) = 0;
-        virtual void    setData(const core::Vector2DU& size, void* data, u32 cubemapSide = 0) = 0;
-        virtual void    setData(const core::Vector3DU& size, void* data) = 0;
+        virtual void    setData(const core::Dimension2D& size, void* data, u32 cubemapSide = 0) = 0;
+        virtual void    setData(const core::Dimension3D& size, void* data) = 0;
 
         virtual void    updateData(u32 offset, u32 size, void* data) = 0;
-        virtual void    updateData(const core::Vector2DU& offset, const core::Vector2DU& size, void* data, u32 cubemapSide = 0) = 0;
-        virtual void    updateData(const core::Vector3DU& offset, const core::Vector3DU& size, void* data) = 0;
+        virtual void    updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) = 0;
+        virtual void    updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data) = 0;
 
 
         virtual void    readData(void* data, u32 cubemapSide = 0) = 0;
@@ -167,12 +167,12 @@ namespace renderer
             STextureData& operator=(const STextureData&) = delete;
 
             void            free();
-            void            copy(const core::Vector3DU& size, EImageType type, void* data);
+            void            copy(const core::Dimension3D& size, EImageType type, void* data);
 
-            core::Vector3DU _size;
-            EImageFormat    _format;
-            EImageType      _type;
-            void*           _data;
+            core::Dimension3D   _size;
+            EImageFormat        _format;
+            EImageType          _type;
+            void*               _data;
         };
 
         using TextureData = std::vector<STextureData>;
