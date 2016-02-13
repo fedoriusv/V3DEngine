@@ -31,14 +31,12 @@ namespace scene
         renderer::CTexture*         load(const std::string& file, const std::string& alias = "") override;
         renderer::CTexture*         load(const std::string files[6], const std::string& alias = "");
 
-        renderer::CTexture*         createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void* data);
-        renderer::CTexture*         createTexture2DFromData(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::CTexture*         createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
+        renderer::CTexture*         createTexture2DFromData(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
         renderer::CTexture*         createTexture2DMSAA(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
-        renderer::CTexture*         createTexture3DFromData(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::CTexture*         createTexture3DFromData(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
         renderer::CTexture*         createTexture3DMSAA(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type);
         renderer::CTexture*         createTextureBufferFromData(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
-
-        void                        copyToTexture2D(renderer::CTexture* texture, const core::Dimension2D& offset, const core::Dimension2D& size, renderer::EImageFormat format, void* data);
 
     private:
 

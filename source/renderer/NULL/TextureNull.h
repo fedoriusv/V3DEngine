@@ -21,13 +21,11 @@ namespace renderer
         bool            create()                        override;
         void            destroy()                       override;
 
-    private:
-
-        void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_TEXTURE_NULL_H_

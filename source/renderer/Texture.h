@@ -148,10 +148,12 @@ namespace renderer
         ETextureFilter  getMagFiler()   const;
         EWrapType       getWrap()       const;
         EAnisotropic    getAnisotropic()const;
+        u32             getMipmapLevel()const;
 
         virtual void    setFilterType(ETextureFilter min, ETextureFilter mag);
         virtual void    setWrap(EWrapType wrap);
         virtual void    setAnisotropicLevel(EAnisotropic level);
+        virtual void    setMipmapLevel(u32 level);
 
     private:
 
@@ -179,8 +181,6 @@ namespace renderer
 
         void            clear();
 
-        DEPRECATED virtual void copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) = 0;
-
         ETextureTarget  m_target;
         TextureData     m_data;
 
@@ -190,6 +190,7 @@ namespace renderer
         ETextureFilter  m_magFilter;
         EAnisotropic    m_anisotropicLevel;
         EWrapType       m_wrap;
+        u32             m_mipmapLevel;
 
     };
 

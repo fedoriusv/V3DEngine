@@ -88,6 +88,7 @@ CTexture::CTexture()
     , m_magFilter(eLinear)
     , m_anisotropicLevel(eAnisotropic16x)
     , m_wrap(eClampToEdge)
+    , m_mipmapLevel(8U)
 {
 }
 
@@ -186,9 +187,19 @@ void CTexture::setAnisotropicLevel(EAnisotropic level)
     m_anisotropicLevel = level;
 }
 
+void CTexture::setMipmapLevel(u32 level)
+{
+    m_mipmapLevel = level;
+}
+
 EAnisotropic CTexture::getAnisotropic()const
 {
     return m_anisotropicLevel;
+}
+
+u32 CTexture::getMipmapLevel() const
+{
+    return m_mipmapLevel;
 }
 
 void CTexture::setWrap(EWrapType wrap)

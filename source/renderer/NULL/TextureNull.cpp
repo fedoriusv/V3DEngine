@@ -1,7 +1,9 @@
 #include "TextureNull.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CTextureNull::CTextureNull()
 {
@@ -28,6 +30,5 @@ void CTextureNull::destroy()
 {
 }
 
-void CTextureNull::copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data)
-{
-}
+} //namespace renderer
+} //namespace v3d

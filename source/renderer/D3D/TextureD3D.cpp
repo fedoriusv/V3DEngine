@@ -67,10 +67,6 @@ void CTextureD3D::fill(const Dimension3D& offset, const Dimension3D& size, void*
 {
 }
 
-void CTextureD3D::copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
-{
-}
-
 } //namespace d3d
 } //namespace renderer
 } //namespace v3d

@@ -44,14 +44,14 @@ namespace gl
         void            fill(const core::Dimension2D& offset = core::Dimension2D(0U, 0U), const core::Dimension2D& size = core::Dimension2D(0U, 0U), void* data = nullptr)           override;
         void            fill(const core::Dimension3D& offset = core::Dimension3D(0U, 0U, 0U), const core::Dimension3D& size = core::Dimension3D(0U, 0U, 0U), void* data = nullptr)   override;
 
+        void            freeTexture(u32 texture);
+
         u32             getTextureID() const;
         u32             getSamplerID() const;
 
         static void     reset();
 
     public:
-
-        DEPRECATED void copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
 
         static bool     bindTexture(ETextureTarget target, u32 texture);
         static void     bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset = 0, u32 size = 0);
@@ -70,7 +70,6 @@ namespace gl
         BufferGL*       m_textureBuffer;
 
         bool            m_initialized;
-        const u32       m_mipmapLevel;
 
         static u32      s_currentTextureID[eTargetCount];
         static u32      s_currentLayerID;

@@ -238,7 +238,7 @@ CTexture* CTextureManager::load(const std::string& file, const std::string& alia
     return nullptr;
 }
 
-renderer::CTexture * CTextureManager::createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void * data)
+renderer::CTexture * CTextureManager::createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void * data, u32 mipmap)
 {
     renderer::CTexture* texture = RENDERER->createTexture();
 
@@ -248,13 +248,14 @@ renderer::CTexture * CTextureManager::createTexture1DFromData(u32 size, renderer
     texture->m_data.front()._format = format;
     texture->m_data.front()._type = type;
     texture->m_data.front()._data = data;
+    texture->setMipmapLevel(mipmap);
 
     texture->create();
 
     return texture;
 }
 
-CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data)
+CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EImageFormat format, EImageType type, void* data, u32 mipmap)
 {
     renderer::CTexture* texture = RENDERER->createTexture();
 
@@ -264,6 +265,7 @@ CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EIma
     texture->m_data.front()._format = format;
     texture->m_data.front()._type = type;
     texture->m_data.front()._data = data;
+    texture->setMipmapLevel(mipmap);
 
     texture->create();
 
@@ -286,7 +288,7 @@ CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFo
     return texture;
 }
 
-CTexture* CTextureManager::createTexture3DFromData(const Dimension3D& size, EImageFormat format, EImageType type, void* data)
+CTexture* CTextureManager::createTexture3DFromData(const Dimension3D& size, EImageFormat format, EImageType type, void* data, u32 mipmap)
 {
     renderer::CTexture* texture = RENDERER->createTexture();
 
@@ -296,6 +298,7 @@ CTexture* CTextureManager::createTexture3DFromData(const Dimension3D& size, EIma
     texture->m_data.front()._format = format;
     texture->m_data.front()._type = type;
     texture->m_data.front()._data = nullptr;
+    texture->setMipmapLevel(mipmap);
 
     texture->create();
 
@@ -332,23 +335,6 @@ CTexture * CTextureManager::createTextureBufferFromData(const Dimension3D& size,
     texture->create();
 
     return texture;
-}
-
-void CTextureManager::copyToTexture2D(CTexture* texture, const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
-{
-    if (!texture || !texture->isValid())
-    {
-        LOG_ERROR("TextureManager: Invalid Texture");
-        return;
-    }
-
-    if (texture->getTarget() != ETextureTarget::eTexture2D)
-    {
-        LOG_ERROR("TextureManager: Invalid Target Texture. Only Texture2D");
-        return;
-    }
-
-    texture->copyToTexture2D(offset, size, format, data);
 }
 
 void v3d::scene::CTextureManager::addStreamToCubeTexture(CTexture* texture, const stream::IStreamPtr& stream)

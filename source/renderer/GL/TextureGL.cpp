@@ -291,7 +291,6 @@ CTextureGL::CTextureGL(bool useTextureBuffer)
 
     , m_textureBuffer(nullptr)
     , m_initialized(false)
-    , m_mipmapLevel(5U)
 {
     LOG_DEBUG("CTextureGL::CTextureGL constructor %x", this);
 }
@@ -323,8 +322,8 @@ void CTextureGL::bind(u32 layer, u32 sampler)
 
     if (m_textureBuffer)
     {
-        u32 format = EImageFormatGL[m_data[0]._format];
-        u32 type = EImageTypeGL[m_data[0]._type];
+        u32 format = EImageFormatGL[m_data.front()._format];
+        u32 type = EImageTypeGL[m_data.front()._type];
 
         CTextureGL::bindTexBuffer(internalFormat(format, type), m_textureID, m_textureBuffer->getID());
         RENDERER->checkForErrors("CTextureGL: Bind Texture Buffer Error");
@@ -380,7 +379,7 @@ bool CTextureGL::create()
             u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
 
-            glTexStorage1D(ETextureTargetGL[eTexture1D], m_mipmapLevel, internalFormat(format, type), m_data.front()._size.width);
+            glTexStorage1D(ETextureTargetGL[eTexture1D], m_mipmapLevel + 1, internalFormat(format, type), m_data.front()._size.width);
             RENDERER->checkForErrors("CTextureGL::setData eTexture1D Error");
 
             if (m_data.front()._data)
@@ -398,8 +397,11 @@ bool CTextureGL::create()
             u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
 
-            //glTexImage2D(ETextureTargetGL[eTexture2D], 0, internalFormat(format, type), size.width, size.height, 0, format, type, data);
-            glTexStorage2D(ETextureTargetGL[eTexture2D], m_mipmapLevel, internalFormat(format, type), m_data.front()._size.width, m_data.front()._size.height);
+           /* glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+
+            glTexImage2D(ETextureTargetGL[eTexture2D], 0, GL_RGBA, m_data.front()._size.width, m_data.front()._size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);*/
+            glTexStorage2D(ETextureTargetGL[eTexture2D], m_mipmapLevel + 1, internalFormat(format, type), m_data.front()._size.width, m_data.front()._size.height);
             RENDERER->checkForErrors("CTextureGL::setData eTexture2D Error");
 
             if (m_data.front()._data)
@@ -440,7 +442,7 @@ bool CTextureGL::create()
             u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
 
-            glTexStorage3D(ETextureTargetGL[eTexture3D], m_mipmapLevel, internalFormat(format, type), 
+            glTexStorage3D(ETextureTargetGL[eTexture3D], m_mipmapLevel + 1, internalFormat(format, type),
                 m_data.front()._size.width, m_data.front()._size.height, m_data.front()._size.depth);
             RENDERER->checkForErrors("CTextureGL::setData eTexture3D Error");
 
@@ -737,7 +739,7 @@ void CTextureGL::updateData(const Dimension3D& offset, const Dimension3D& size, 
         case ETextureTarget::eTextureBuffer:
         {
             u32 format = EImageFormatGL[m_data.front()._format];
-            u32 type = EImageTypeGL[m_data[0]._type];
+            u32 type = EImageTypeGL[m_data.front()._type];
 
             s32 dataSize = size.getArea() * typeSize(type) * componentCount(format);
             s32 dataOffset = offset.getArea() * typeSize(type) * componentCount(format);
@@ -797,7 +799,7 @@ void CTextureGL::readData(void* data, u32 cubemapSide)
         case ETextureTarget::eTextureBuffer:
         {
             u32 format = EImageFormatGL[m_data.front()._format];
-            u32 type = EImageTypeGL[m_data[0]._type];
+            u32 type = EImageTypeGL[m_data.front()._type];
 
             s32 dataSize = m_data.front()._size.getArea() * typeSize(type) * componentCount(format);
 
@@ -865,13 +867,17 @@ void CTextureGL::fill(u32 offset, u32 size, void* data)
     ASSERT(glIsTexture(m_textureID), "Invalid Texture index");
 #endif //_DEBUG_GL
     ASSERT(offset < size || size <= m_data.front()._size.width, "Invalid Size");
+
+    u32 format = EImageFormatGL[m_data.front()._format];
+    u32 type = EImageTypeGL[m_data.front()._type];
+
     if (offset > 0 || size > 0)
     {
-        glClearTexSubImage(m_textureID, 0, offset, 0, 0, size, 1, 1, m_data.front()._format, m_data.front()._type, data);
+        glClearTexSubImage(m_textureID, 0, offset, 0, 0, size, 1, 1, format, type, data);
     }
     else
     {
-        glClearTexImage(m_textureID, 0, m_data.front()._format, m_data.front()._type, data);
+        glClearTexImage(m_textureID, 0, format, type, data);
     }
 
     RENDERER->checkForErrors("CTextureGL::fillTexture 1D Error");
@@ -885,10 +891,13 @@ void CTextureGL::fill(const Dimension2D& offset, const Dimension2D& size, void* 
     ASSERT(offset.width < size.width || offset.height < size.height ||
         size.width <= m_data.front()._size.width || size.height <= m_data.front()._size.height, "Invalid Size");
 
+    u32 format = EImageFormatGL[m_data.front()._format];
+    u32 type = EImageTypeGL[m_data.front()._type];
+
     if (m_target == ETextureTarget::eTextureCubeMap)
     {
         glClearTexSubImage(m_textureID, 0, offset.width, offset.height, 0,
-            size.width, size.height, TEXTURE_CUBE_MAP_COUNT, m_data.front()._format, m_data.front()._type, data);
+            size.width, size.height, TEXTURE_CUBE_MAP_COUNT, format, type, data);
 
         RENDERER->checkForErrors("CTextureGL::fillTexture CubeMap Error");
         return;
@@ -897,11 +906,11 @@ void CTextureGL::fill(const Dimension2D& offset, const Dimension2D& size, void* 
     if (offset.width > 0 || offset.height > 0 || size.width > 0 || size.height > 0)
     {
         glClearTexSubImage(m_textureID, 0, offset.width, offset.height, 0,
-            size.width, size.height, 1, m_data.front()._format, m_data.front()._type, data);
+            size.width, size.height, 1, format, type, data);
     }
     else
     {
-        glClearTexImage(m_textureID, 0, m_data.front()._format, m_data.front()._type, data);
+        glClearTexImage(m_textureID, 0, format, type, data);
     }
 
     RENDERER->checkForErrors("CTextureGL::fillTexture 2D Error");
@@ -912,31 +921,26 @@ void CTextureGL::fill(const Dimension3D& offset, const Dimension3D& size, void* 
 #ifdef _DEBUG_GL
     ASSERT(glIsTexture(m_textureID), "Invalid Texture index");
 #endif //_DEBUG_GL
+
     //TODO: will need to add operator<, operator> for Dimension class
     ASSERT(offset.width < size.width || offset.height < size.height || offset.depth < size.depth ||
         size.width <= m_data.front()._size.width || size.height <= m_data.front()._size.height || size.depth <= m_data.front()._size.depth, "Invalid Size");
+
+    u32 format = EImageFormatGL[m_data.front()._format];
+    u32 type = EImageTypeGL[m_data.front()._type];
 
     if (offset.width > 0 || offset.height > 0 || offset.depth > 0 
         || size.width > 0 || size.height > 0 || size.depth > 0)
     {
         glClearTexSubImage(m_textureID, 0, offset.width, offset.height, offset.depth,
-            size.width, size.height, size.depth, m_data.front()._format, m_data.front()._type, data);
+            size.width, size.height, size.depth, format, type, data);
     }
     else
     {
-        glClearTexImage(m_textureID, 0, m_data.front()._format, m_data.front()._type, data);
+        glClearTexImage(m_textureID, 0, format, type, data);
     }
 
     RENDERER->checkForErrors("CTextureGL::fillTexture 3D Error");
-}
-
-void CTextureGL::copyToTexture2D(const Dimension2D& offset, const Dimension2D& size, EImageFormat format, void* data)
-{
-    CTextureGL::bindTexture(eTexture2D, m_textureID);
-    glTexSubImage2D(ETextureTargetGL[eTexture2D], 0, offset.width, offset.height, size.width, size.height, EImageFormatGL[format], EImageTypeGL[eUnsignedByte], data);
-    CTextureGL::bindTexture(eTexture2D, 0);
-
-    RENDERER->checkForErrors("CTextureGL: Copy Texture Error");
 }
 
 bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
@@ -984,6 +988,36 @@ bool CTextureGL::activeTextureLayer(u32 layer)
     }
 
     return false;
+}
+
+void CTextureGL::freeTexture(u32 texture)
+{
+#ifdef _DEBUG_GL
+    ASSERT(glIsTexture(texture), "Invalid Texture index");
+#endif //_DEBUG_GL
+    switch (m_target)
+    {
+    case ETextureTarget::eTexture2DMSAA:
+    case ETextureTarget::eTexture3DMSAA:
+    case ETextureTarget::eTextureBuffer:
+    case ETextureTarget::eTextureCubeMap:
+
+        glInvalidateTexImage(texture, 0);
+        return;
+
+    case ETextureTarget::eTexture1D:
+    case ETextureTarget::eTexture2D:
+    case ETextureTarget::eTexture3D:
+
+        for (u32 i = 0; i < m_mipmapLevel; ++i)
+        {
+            glInvalidateTexImage(texture, i);
+            return;
+        }
+
+    default:
+        ASSERT(false, "Invalid target");
+    }
 }
 
 void CTextureGL::wrapSampler(u32 sampler, EWrapType wrap)
