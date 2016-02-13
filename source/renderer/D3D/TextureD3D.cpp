@@ -39,18 +39,6 @@ bool CTextureD3D::isValid()
     return false;
 }
 
-void CTextureD3D::setData(u32 size, void* data)
-{
-}
-
-void CTextureD3D::setData(const Dimension2D& size, void* data, u32 cubemapSide)
-{
-}
-
-void CTextureD3D::setData(const Dimension3D& size, void* data)
-{
-}
-
 void CTextureD3D::updateData(u32 offset, u32 size, void* data)
 {
 }
@@ -64,6 +52,18 @@ void CTextureD3D::updateData(const Dimension3D& offset, const Dimension3D& size,
 }
 
 void CTextureD3D::readData(void * data, u32 cubemapSide)
+{
+}
+
+void CTextureD3D::fill(u32 offset, u32 size, void* data)
+{
+}
+
+void CTextureD3D::fill(const Dimension2D& offset, const Dimension2D& size, void* data)
+{
+}
+
+void CTextureD3D::fill(const Dimension3D& offset, const Dimension3D& size, void* data)
 {
 }
 

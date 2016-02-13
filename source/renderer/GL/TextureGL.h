@@ -23,35 +23,35 @@ namespace gl
         explicit CTextureGL(bool useTextureBuffer = false);
         ~CTextureGL();
 
-        void            bind(u32 layer, u32 sampler)    override;
-        void            unbind(u32 layer, u32 sampler)  override;
-        bool            create()                        override;
-        void            destroy()                       override;
+        void            bind(u32 layer, u32 sampler)                                                                                override;
+        void            unbind(u32 layer, u32 sampler)                                                                              override;
+        bool            create()                                                                                                    override;
+        void            destroy()                                                                                                   override;
 
-        bool            isValid()                       override;
-
-        void            setData(u32 size, void* data)                                           override;
-        void            setData(const core::Dimension2D& size, void* data, u32 cubemapSide = 0) override;
-        void            setData(const core::Dimension3D& size, void* data)                      override;
+        bool            isValid()                                                                                                   override;
 
         void            updateData(u32 offset, u32 size, void* data)                                                                override;
         void            updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) override;
         void            updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data)                      override;
 
-        void            readData(void* data, u32 cubemapSide = 0) override;
+        void            readData(void* data, u32 cubemapSide = 0)                                                                   override;
 
-        u32             getTextureID()                  const;
-        u32             getSamplerID()                  const;
+        void            setFilterType(ETextureFilter min, ETextureFilter mag)                                                       override;
+        void            setWrap(EWrapType wrap)                                                                                     override;
+        void            setAnisotropicLevel(EAnisotropic level)                                                                     override;
 
-        void            setFilterType(ETextureFilter min, ETextureFilter mag)   override;
-        void            setWrap(EWrapType wrap)                                 override;
-        void            setAnisotropicLevel(EAnisotropic level)                 override;
+        void            fill(u32 offset = 0U, u32 size = 0U, void* data = nullptr)                                                                                                   override;
+        void            fill(const core::Dimension2D& offset = core::Dimension2D(0U, 0U), const core::Dimension2D& size = core::Dimension2D(0U, 0U), void* data = nullptr)           override;
+        void            fill(const core::Dimension3D& offset = core::Dimension3D(0U, 0U, 0U), const core::Dimension3D& size = core::Dimension3D(0U, 0U, 0U), void* data = nullptr)   override;
+
+        u32             getTextureID() const;
+        u32             getSamplerID() const;
 
         static void     reset();
 
     public:
 
-        void            copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
+        DEPRECATED void copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) override;
 
         static bool     bindTexture(ETextureTarget target, u32 texture);
         static void     bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset = 0, u32 size = 0);

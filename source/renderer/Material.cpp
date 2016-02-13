@@ -195,7 +195,8 @@ void CMaterial::setTexture(u32 layer, const CTexture* texture)
         return;
     }
 
-    scene::CTextureManager::getInstance()->add(texture);
+    //TODO: other owner
+    //scene::CTextureManager::getInstance()->add(texture);
     m_texture[layer] = texture;
 
 }

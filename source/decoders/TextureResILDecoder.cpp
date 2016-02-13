@@ -105,12 +105,6 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
 #ifdef USE_DEVIL
     switch (format)
     {
-    case IL_COLOR_INDEX:
-        return EImageFormat::eColorIndex;
-
-    case IL_ALPHA:
-        return EImageFormat::eAlpha;
-
     case IL_RGB:
         return EImageFormat::eRGB;
 
@@ -123,14 +117,15 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
     case IL_BGRA:
         return EImageFormat::eBGRA;
 
+    case IL_COLOR_INDEX:
+    case IL_ALPHA:
     case IL_LUMINANCE:
-        return EImageFormat::eLuminance;
-
     case IL_LUMINANCE_ALPHA:
-        return EImageFormat::eLuminanceAlpha;
+        ASSERT(false, "CTextureResILDecoder: deprecated formats");
+        return EImageFormat::eRGB;
 
     default:
-        ASSERT(false, "CTextureResILDecoder: Invalid IL Format");
+        ASSERT(false, "CTextureResILDecoder: Invalid IL format");
         return EImageFormat::eRGB;
     }
 #endif //USE_DEVIL

@@ -64,9 +64,12 @@
             <var type="fragment" name="fdefault">
                 <![CDATA[
                     #version 330
-                    
+                    #define USE_BUFFER_TEXTRE 0
+                    #if USE_BUFFER_TEXTRE
                     uniform samplerBuffer sampler0;
-                    //uniform sampler2D sampler0;
+                    #else //USE_BUFFER_TEXTRE
+                    uniform sampler2D sampler0;
+                    #endif //USE_BUFFER_TEXTRE
                     
                     struct Vertex
                     {
@@ -75,19 +78,24 @@
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
                     
-                     const ivec2 samplerSize = ivec2(512, 512);
+                    #if USE_BUFFER_TEXTRE
+                    const ivec2 samplerSize = ivec2(512, 512);
                     
                     int valueIndex(ivec2 pos)
                     {
                         int size = textureSize(sampler0);
-                        return ((samplerSize.y - pos.y) * samplerSize.x) + pos.x;
+                        return ((samplerSize.y - pos.y) * samplerSize.y) + pos.x;
                     }
+                    #endif //USE_BUFFER_TEXTRE
                     
                     void main()
                     {
+                    #if USE_BUFFER_TEXTRE
                         ivec2 texPos = ivec2(fragVertex.texCoord0 * vec2(samplerSize));
                         fragColor = texelFetch(sampler0, valueIndex(texPos));
-                        //fragColor = texture(sampler0, fragVertex.texCoord0, 0);
+                    #else //USE_BUFFER_TEXTRE
+                         fragColor = texture(sampler0, fragVertex.texCoord0, 0);
+                    #endif //USE_BUFFER_TEXTRE
                     }
                 ]]>
             </var>

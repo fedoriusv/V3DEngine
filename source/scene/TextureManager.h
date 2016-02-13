@@ -44,6 +44,8 @@ namespace scene
 
         void                        addStreamToCubeTexture(renderer::CTexture* texture, const stream::IStreamPtr& stream);
         std::string                 getFileExtension(const std::string& fullFileName);
+
+        const bool                  k_useTextureBuffer = false;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

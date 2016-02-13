@@ -200,7 +200,7 @@ CTexture* CTextureManager::load(const std::string& file, const std::string& alia
 
                     CTexture* texture = static_cast<CTexture*>(resource);
 
-                    texture->m_target = ETextureTarget::eTexture2D;
+                    texture->m_target = k_useTextureBuffer ? ETextureTarget::eTextureBuffer :ETextureTarget::eTexture2D;
                     texture->setResourseName(fullName);
 
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
@@ -244,10 +244,10 @@ renderer::CTexture * CTextureManager::createTexture1DFromData(u32 size, renderer
 
     texture->m_target = ETextureTarget::eTexture1D;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size, 1, 1);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = data;
+    texture->m_data.front()._size = Dimension3D(size, 1, 1);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = data;
 
     texture->create();
 
@@ -260,10 +260,10 @@ CTexture* CTextureManager::createTexture2DFromData(const Dimension2D& size, EIma
 
     texture->m_target = ETextureTarget::eTexture2D;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size.width, size.height, 1);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = data;
+    texture->m_data.front()._size = Dimension3D(size.width, size.height, 1);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = data;
 
     texture->create();
 
@@ -276,10 +276,10 @@ CTexture* CTextureManager::createTexture2DMSAA(const Dimension2D& size, EImageFo
 
     texture->m_target = ETextureTarget::eTexture2DMSAA;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size.width, size.height, 1);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = nullptr;
+    texture->m_data.front()._size = Dimension3D(size.width, size.height, 1);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = nullptr;
 
     texture->create();
 
@@ -292,10 +292,10 @@ CTexture* CTextureManager::createTexture3DFromData(const Dimension3D& size, EIma
 
     texture->m_target = ETextureTarget::eTexture3D;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = nullptr;
+    texture->m_data.front()._size = Dimension3D(size.width, size.height, size.depth);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = nullptr;
 
     texture->create();
 
@@ -308,10 +308,10 @@ CTexture* CTextureManager::createTexture3DMSAA(const Dimension3D& size, EImageFo
 
     texture->m_target = ETextureTarget::eTexture3DMSAA;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = nullptr;
+    texture->m_data.front()._size = Dimension3D(size.width, size.height, size.depth);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = nullptr;
 
     texture->create();
 
@@ -324,10 +324,10 @@ CTexture * CTextureManager::createTextureBufferFromData(const Dimension3D& size,
 
     texture->m_target = ETextureTarget::eTextureBuffer;
     texture->m_data.resize(1);
-    texture->m_data[0]._size = Dimension3D(size.width, size.height, size.depth);
-    texture->m_data[0]._format = format;
-    texture->m_data[0]._type = type;
-    texture->m_data[0]._data = nullptr;
+    texture->m_data.front()._size = Dimension3D(size.width, size.height, size.depth);
+    texture->m_data.front()._format = format;
+    texture->m_data.front()._type = type;
+    texture->m_data.front()._data = nullptr;
 
     texture->create();
 

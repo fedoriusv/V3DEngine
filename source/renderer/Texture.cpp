@@ -10,8 +10,8 @@ using namespace core;
 
 CTexture::STextureData::STextureData()
     : _size(Dimension3D(1U, 1U, 1U))
-    , _format(eColorIndex)
-    , _type(eByte)
+    , _format(EImageFormat::eRGB)
+    , _type(EImageType::eByte)
     , _data(nullptr)
 {
 }
@@ -73,8 +73,11 @@ void CTexture::STextureData::copy(const Dimension3D& size, EImageType type, void
 
     _size = size;
     _type = type;
-    _data = malloc(_size.width * _size.height * _size.depth * typeSize(_type));
-    memcpy(_data, data, _size.width * _size.height * _size.depth * typeSize(_type));
+    if (data)
+    {
+        _data = malloc(_size.width * _size.height * _size.depth * typeSize(_type));
+        memcpy(_data, data, _size.width * _size.height * _size.depth * typeSize(_type));
+    }
 }
 
 CTexture::CTexture()
@@ -112,6 +115,7 @@ bool CTexture::load()
         case ETextureTarget::eTexture1D:
         case ETextureTarget::eTexture2D:
         case ETextureTarget::eTexture3D:
+        case ETextureTarget::eTextureBuffer:
 
             m_data.resize(1);
             break;
@@ -124,7 +128,7 @@ bool CTexture::load()
         case ETextureTarget::eTextureUnknown:
         default:
 
-            ASSERT(true, "Invalid Select Texture target");
+            ASSERT(false, "Invalid Select Texture target");
             return false;
     }
 

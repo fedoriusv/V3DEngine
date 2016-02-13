@@ -87,14 +87,12 @@ namespace renderer
 
     enum EImageFormat
     {
-        eColorIndex,
-        eAlpha,
+        eRed,
+        eRG,
         eRGB,
         eRGBA,
         eBGR,
         eBGRA,
-        eLuminance,
-        eLuminanceAlpha,
         eDepthComponent,
 
         eFormatCount
@@ -124,23 +122,21 @@ namespace renderer
         CTexture();
         virtual         ~CTexture();
 
-        virtual void    bind(u32 layer, u32 sampler)        = 0;
-        virtual void    unbind(u32 layer, u32 sampler)      = 0;
-        virtual bool    create()                            = 0;
-        virtual void    destroy()                           = 0;
+        virtual void    bind(u32 layer, u32 sampler)                                                                                = 0;
+        virtual void    unbind(u32 layer, u32 sampler)                                                                              = 0;
+        virtual bool    create()                                                                                                    = 0;
+        virtual void    destroy()                                                                                                   = 0;
+        virtual bool    isValid()                                                                                                   = 0;
 
-        virtual bool    isValid()                           = 0;
-
-        virtual void    setData(u32 size, void* data) = 0;
-        virtual void    setData(const core::Dimension2D& size, void* data, u32 cubemapSide = 0) = 0;
-        virtual void    setData(const core::Dimension3D& size, void* data) = 0;
-
-        virtual void    updateData(u32 offset, u32 size, void* data) = 0;
+        virtual void    updateData(u32 offset, u32 size, void* data)                                                                = 0;
         virtual void    updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) = 0;
         virtual void    updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data) = 0;
 
+        virtual void    readData(void* data, u32 cubemapSide = 0)                                                                   = 0;
 
-        virtual void    readData(void* data, u32 cubemapSide = 0) = 0;
+        virtual void    fill(u32 offset = 0U, u32 size = 0U, void* data = nullptr)                                                                                                   = 0;
+        virtual void    fill(const core::Dimension2D& offset = core::Dimension2D(0U, 0U), const core::Dimension2D& size = core::Dimension2D(0U, 0U), void* data = nullptr)           = 0;
+        virtual void    fill(const core::Dimension3D& offset = core::Dimension3D(0U, 0U, 0U), const core::Dimension3D& size = core::Dimension3D(0U, 0U, 0U), void* data = nullptr)   = 0;
 
         void            init(const stream::IStreamPtr& stream)  override;
         bool            load()                                  override;
@@ -183,7 +179,7 @@ namespace renderer
 
         void            clear();
 
-        virtual void    copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) = 0;
+        DEPRECATED virtual void copyToTexture2D(const core::Dimension2D& offset, const core::Dimension2D& size, EImageFormat format, void* data) = 0;
 
         ETextureTarget  m_target;
         TextureData     m_data;
