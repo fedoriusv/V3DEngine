@@ -193,7 +193,7 @@ void CText::build()
     {
         x -= textwidth / 2;
     }
-    else if (m_align == EAlignMode::eFontAlignRight)
+    else if (m_align == EAlignMode::eFontAlignLeft)
     {
         x -= textwidth;
     }
@@ -256,5 +256,6 @@ void CText::build()
         x += adjustForKerningPairs(info, *chr);
     }
 
+    //TODO: maybe need to fix texture coord position
     CNode::setRotation(Vector3D(180.0f, 0.0f, 0.0f));
 }

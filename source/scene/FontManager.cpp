@@ -4,8 +4,11 @@
 #include "resources/VectorFontData.h"
 #include "stream/StreamManager.h"
 
-using namespace v3d;
-using namespace scene;
+namespace v3d
+{
+namespace scene
+{
+
 using namespace resources;
 
 CFontManager::CFontManager()
@@ -21,7 +24,7 @@ CFontManager::~CFontManager()
 
 void CFontManager::add(const CFontData* font)
 {
-    std::string name = font->getResourseName();
+    const std::string& name = font->getResourseName();
     TResourceLoader::insert(font, name);
 }
 
@@ -52,9 +55,9 @@ const CFontData* CFontManager::load(const std::string& name, const std::string& 
             if (isFileExist)
             {
                 stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
-
                 if (stream->isOpen())
                 {
+                    //TODO: Will need to create decoders
                     CFontData* font = nullptr;
                     if (fileExtension == ".fnt")
                     {
@@ -80,13 +83,13 @@ const CFontData* CFontManager::load(const std::string& name, const std::string& 
 
                     font->init(stream);
                     font->setResourseName(fullName);
-                    stream->close();
 
                     if (!font->load())
                     {
                         LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
                         return nullptr;
                     }
+                    stream->close();
 
                     TResourceLoader::insert(font, alias.empty() ? nameStr : alias);
                     LOG_INFO("CFontManager: File [%s] success loaded", fullName.c_str());
@@ -104,3 +107,6 @@ const CFontData* CFontManager::load(const std::string& name, const std::string& 
 
     return nullptr;
 }
+
+} //namespace scene
+} //namespace v3d

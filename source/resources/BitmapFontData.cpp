@@ -3,8 +3,11 @@
 #include "scene/TextureManager.h"
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace resources;
+namespace v3d
+{
+namespace resources
+{
+
 using namespace renderer;
 
 CBitmapFontData::CBitmapFontData(const std::string& font)
@@ -24,7 +27,7 @@ void CBitmapFontData::init(const stream::IStreamPtr& stream)
 
 bool CBitmapFontData::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr stream = CResource::getStream();
     if (!stream)
     {
         LOG_ERROR("Empty Stream with name [%s] form Bitmap Font", CResource::getResourseName().c_str());
@@ -325,3 +328,6 @@ bool CBitmapFontData::addCharsToMap(const std::string& text)
 {
     return true;
 }
+
+} //namespace resources
+} //namespace v3d

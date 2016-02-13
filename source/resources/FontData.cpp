@@ -1,7 +1,9 @@
 #include "FontData.h"
 
-using namespace v3d;
-using namespace resources;
+namespace v3d
+{
+namespace resources
+{
 
 CFontData::CFontData(const std::string& font)
     : m_fontType(EFontType::eUnknownFont)
@@ -13,12 +15,8 @@ CFontData::CFontData(const std::string& font)
 
 CFontData::~CFontData()
 {
-    for (auto& texure : m_charTexture)
-    {
-        delete texure;
-        texure = nullptr;
-    }
-    m_charTexture.clear();
+    m_charTexture.clear(); //Texture deleted form texture manager
+    m_charInfo.clear();
 }
 
 CFontData::EFontType CFontData::getFontType() const
@@ -31,7 +29,7 @@ void CFontData::setFontType(EFontType type)
     m_fontType = type;
 }
 
-const CFontData::SCharDesc* CFontData::getCharInfo(const s32 charCode) const
+const CFontData::SCharDesc* CFontData::getCharInfo(s32 charCode) const
 {
     std::map<s32, SCharDesc>::const_iterator it = m_charInfo.find(charCode);
     if (it == m_charInfo.end())
@@ -47,7 +45,7 @@ const std::string& CFontData::getFontName() const
     return m_font;
 }
 
-void CFontData::setFontSize(const u32 size)
+void CFontData::setFontSize(u32 size)
 {
     m_fontSize = size;
 }
@@ -56,3 +54,6 @@ const u32 CFontData::getFontSize() const
 {
     return m_fontSize;
 }
+
+} //namespace resources
+} //namespace v3d

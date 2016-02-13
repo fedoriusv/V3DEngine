@@ -14,20 +14,23 @@ namespace resources
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Bitmap Font data realization.
+    */
     class CBitmapFontData : public CFontData
     {
     public:
 
         CBitmapFontData(const std::string& font);
-        virtual ~CBitmapFontData();
+        ~CBitmapFontData();
 
         void    init(const stream::IStreamPtr& stream)  override;
         bool    load()                                  override;
 
     private:
 
-        bool    addCharsToMap(const std::string& text)  override;
-        bool    loadFont(const std::string& resource)   override;
+        bool    addCharsToMap(const std::string& text)  override final;
+        bool    loadFont(const std::string& resource)   override final;
 
         bool    parse(tinyxml2::XMLElement* root);
         bool    parseInfo(tinyxml2::XMLElement* root);
@@ -38,7 +41,8 @@ namespace resources
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace resources
+} //namespace v3d
 
 #endif //_V3D_BITMAP_FONT_DATA_H_

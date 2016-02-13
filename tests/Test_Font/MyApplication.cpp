@@ -24,6 +24,7 @@ void MyApplication::init()
 
     CText* bitmap = BaseApplication::getSceneManager()->addText(0, "Hello world! Bitmap Font", "fonts/arial.fnt", core::Vector3D(0, 0, -10));
     bitmap->getMaterial()->setRenderTechnique("shaders/bitmap_font.xml");
+    bitmap->setAlignMode(CText::EAlignMode::eFontAlignRight);
   
     CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -1.0f));
     camera->setName("camera");

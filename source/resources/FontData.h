@@ -15,10 +15,9 @@ namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const u32 k_fontMapSize = 256U;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+    * Font data interface.
+    */
     class CFontData : public stream::CResource
     {
     public:
@@ -63,9 +62,9 @@ namespace resources
         EFontType                           getFontType() const;
         const std::string&                  getFontName() const;
 
-        const SCharDesc*                    getCharInfo(const s32 charCode) const;
+        const SCharDesc*                    getCharInfo(s32 charCode) const;
 
-        void                                setFontSize(const u32 size);
+        void                                setFontSize(u32 size);
         const u32                           getFontSize() const;
 
     protected:
@@ -87,6 +86,8 @@ namespace resources
         std::string                         m_font;
         u32                                 m_fontSize;
 
+        static constexpr u32                k_fontMapSize = 256U;
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +96,8 @@ namespace resources
     typedef std::map<std::string, FontDataPtr> FontDataList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace scene
+} //namespace resources
 
 #endif //_V3D_FONT_DATA_H_
