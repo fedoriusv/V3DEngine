@@ -2,10 +2,13 @@
 #include "utils/Logger.h"
 #include "scene/TextureManager.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace resources
+{
+
 using namespace core;
 using namespace scene;
-using namespace resources;
 using namespace renderer;
 
 inline int next_p2(int n)
@@ -22,8 +25,7 @@ inline int next_p2(int n)
 
 CVectorFontData::CVectorFontData(const std::string& font)
     : CFontData(font)
-    , m_xOffTextures(0U)
-    , m_yOffTextures(0U)
+    , m_offetTextures(0U, 0U)
     , m_currentTextureIndex(0U)
     , m_loaded(false)
 {
@@ -70,7 +72,7 @@ void CVectorFontData::init(const stream::IStreamPtr& stream)
 
 bool CVectorFontData::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr stream = CResource::getStream();
     if (!stream)
     {
         LOG_ERROR("Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
@@ -224,26 +226,42 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
 {
     const f32 scale = 1.0f;
     const f32 fontHeight = 1.0f;
+    const FT_Bitmap& bitmap = btGlyph->bitmap;
 
-    charDesc._advY = static_cast<s32>((glSlot->advance.y + fixed) / 64.f * scale);
-    charDesc._advX = static_cast<s32>((glSlot->advance.x + fixed) / 64.f * scale);
-    charDesc._offX = static_cast<s32>(btGlyph->left * scale);
-    charDesc._offY = static_cast<s32>(fontHeight / 1.2f - btGlyph->top * scale);
+    charDesc._advY = (s32)((glSlot->advance.y + fixed) / 64.f * scale);
+    charDesc._advX = (s32)((glSlot->advance.x + fixed) / 64.f * scale);
+    charDesc._offX = (s32)(btGlyph->left * scale);
+    charDesc._offY = (s32)(fontHeight / 1.2f - btGlyph->top * scale);
 
-    /*u32 width = next_p2(btGlyph->bitmap.width);
-    u32 height = next_p2(btGlyph->bitmap.rows);*/
-    u32 width = btGlyph->bitmap.width;
-    u32 height = btGlyph->bitmap.rows;
-    u8* data = new u8[2 * width * height];
+    u32 width = next_p2(btGlyph->bitmap.width);
+    u32 height = next_p2(btGlyph->bitmap.rows);
+    //u32 width = btGlyph->bitmap.width;
+    //u32 height = btGlyph->bitmap.rows;
 
+    u8* data = new u8[2 *width * height];
+    memset(data, 0U, 2 * width * height);
+
+    //TODO: incorrect fill data, need rework
     for (u32 j = 0; j < height; j++)
+    {
+        for (u32 i = 0; i < width; i++)
+        {
+            if (j < (u32)bitmap.width && i < (u32)bitmap.rows)
+            {
+                data[2 * (i + j * width)] = bitmap.buffer[i + (u32)bitmap.width * j];
+                data[2 * (i + j * width) + 1] = bitmap.buffer[i + (u32)bitmap.width * j];
+            }
+        }
+    }
+
+   /* for (u32 j = 0; j < height; j++)
     {
         for (u32 i = 0; i < width; i++)
         {
             data[2 * (i + j * width)] = data[2 * (i + j * width) + 1] =
                (i >= (u32)btGlyph->bitmap.width) || (j  >= (u32)btGlyph->bitmap.rows) ? 0 : btGlyph->bitmap.buffer[i + (u32)btGlyph->bitmap.width * j];
         }
-    }
+    }*/
 
     static u32 lineHeight;
     if (lineHeight < height)
@@ -251,37 +269,43 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
         lineHeight = height;
     }
 
-    if (m_xOffTextures + width >= k_fontMapSize)
+    if (m_offetTextures.width + width >= k_fontMapSize)
     {
-        m_xOffTextures = 0;
-        m_yOffTextures += lineHeight + 1;
+        m_offetTextures.width = 0;
+        m_offetTextures.height += lineHeight + 1;
     }
 
-    if (m_yOffTextures + lineHeight >= k_fontMapSize)
+    if (m_offetTextures.height + lineHeight >= k_fontMapSize)
     {
-        m_yOffTextures = 0;
+        m_offetTextures.height = 0;
         m_currentTextureIndex++;
     }
 
-    charDesc._srcX = m_xOffTextures;
-    charDesc._srcY = m_yOffTextures;
+    charDesc._srcX = m_offetTextures.width;
+    charDesc._srcY = m_offetTextures.height;
     charDesc._width = width;
     charDesc._height = height;
     charDesc._page = m_currentTextureIndex;
 
     if (m_currentTextureIndex >= m_charTexture.size())
     {
-        CTexture* texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), eDepthComponent, eUnsignedByte, nullptr);
+        CTexture* texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), EImageFormat::eRed, EImageType::eUnsignedByte, nullptr);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
+
+        u32 value = 0U;
+        texture->fill(Dimension2D(0U, 0U), Dimension2D(0U, 0U), (void*)&value);
 
         m_charTexture.push_back(texture);
     }
 
-    CTextureManager::getInstance()->copyToTexture2D(m_charTexture[m_currentTextureIndex], Dimension2D(m_xOffTextures, m_yOffTextures), Dimension2D(width, height), eLuminanceAlpha, data);
+    m_charTexture[m_currentTextureIndex]->updateData(m_offetTextures, Dimension2D(width, height * 2), data);
 
-    m_xOffTextures += width + 1;
+    m_offetTextures.width += width + 1;
 
     delete[] data;
     data = nullptr;
 }
+
+} //namespace resources
+} //namespace v3d

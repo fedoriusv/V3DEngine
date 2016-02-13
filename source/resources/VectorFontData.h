@@ -13,6 +13,9 @@ namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Vector Font data realization.
+    */
     class CVectorFontData : public CFontData
     {
     public:
@@ -25,8 +28,8 @@ namespace resources
 
     private:
 
-        bool                        addCharsToMap(const std::string& text)  override;
-        bool                        loadFont(const std::string& resource)   override;
+        bool                        addCharsToMap(const std::string& text)  override final;
+        bool                        loadFont(const std::string& resource)   override final;
 
         bool                        loadCharToMap(u32 charId);
         bool                        loadCharList();
@@ -37,8 +40,7 @@ namespace resources
 
         bool                        m_charList[k_fontMapSize];
 
-        u32                         m_xOffTextures;
-        u32                         m_yOffTextures;
+        core::Dimension2D           m_offetTextures;
         u32                         m_currentTextureIndex;
 
         bool                        m_loaded;
@@ -46,7 +48,8 @@ namespace resources
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace resources
+} //namespace v3d
 
 #endif //_V3D_FREETYPE_DATA_H_
