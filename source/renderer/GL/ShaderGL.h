@@ -23,14 +23,13 @@ namespace renderer
         bool            create(const std::string& shader, EShaderType type) override;
         void            destroy()                                           override;
 
+        u32             getShaderID() const;
+
     private:
 
         static bool     initShader(u32& shader, const EShaderType type, const std::string& name, const std::string& body);
 
-        static u32      createShader(EShaderType type);
-        static void     deleteShader(u32& shader);
-        static void     sourceShader(u32 shader, const std::string& body);
-        static void     compileShader(u32 shader);
+        u32             m_shaderID;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

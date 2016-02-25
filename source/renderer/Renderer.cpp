@@ -187,7 +187,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                     ASSERT(false, "Camera doesn't exist");
                     break;
                 }
-                program->setUniformMatrix4(id, m_camera->getProjectionMatrix());
+                program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
 
                 break;
 
@@ -196,7 +196,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                 core::Matrix4D modelMatrix(transform);
                 modelMatrix.makeTransposed();
 
-                program->setUniformMatrix4(id, modelMatrix);
+                program->applyUniformMatrix4(id, modelMatrix);
             }
                 break;
 
@@ -207,7 +207,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                     ASSERT(false, "Camera doesn't exist");
                     break;
                 }
-                program->setUniformMatrix4(id, m_camera->getViewMatrix());
+                program->applyUniformMatrix4(id, m_camera->getViewMatrix());
 
                 break;
 
@@ -218,7 +218,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                     ASSERT(false, "Camera doesn't exist");
                     break;
                 }
-                program->setUniformVector3(id, m_camera->getPosition());
+                program->applyUniformVector3(id, m_camera->getPosition());
                 break;
 
             case CShaderUniform::eTransformViewUpVector:
@@ -228,7 +228,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                     ASSERT(false, "Camera doesn't exist");
                     break;
                 }
-                program->setUniformVector3(id, m_camera->getUpVector());
+                program->applyUniformVector3(id, m_camera->getUpVector());
                 break;
 
             case CShaderUniform::eTransformNormalMatrix:
@@ -236,7 +236,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
                 core::Matrix4D normalMatrix;
                 transform.getInverse(normalMatrix);
 
-                program->setUniformMatrix4(id, normalMatrix);
+                program->applyUniformMatrix4(id, normalMatrix);
             }
                 break;
 
@@ -260,32 +260,32 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
         {
         case CShaderUniform::eMaterialAmbient:
     
-            program->setUniformVector4(id, material->getAmbientColor());
+            program->applyUniformVector4(id, material->getAmbientColor());
             break;
 
         case CShaderUniform::eMaterialDiffuse:
 
-            program->setUniformVector4(id, material->getDiffuseColor());
+            program->applyUniformVector4(id, material->getDiffuseColor());
             break;
 
         case CShaderUniform::eMaterialSpecular:
 
-            program->setUniformVector4(id, material->getSpecularColor());
+            program->applyUniformVector4(id, material->getSpecularColor());
             break;
 
         case CShaderUniform::eMaterialEmission:
 
-            program->setUniformVector4(id, material->getEmissionColor());
+            program->applyUniformVector4(id, material->getEmissionColor());
             break;
 
         case CShaderUniform::eMaterialShininess:
 
-            program->setUniformFloat(id, material->getShininess());
+            program->applyUniformFloat(id, material->getShininess());
             break;
 
         case CShaderUniform::eMaterialTransparency:
 
-            program->setUniformFloat(id, material->getTransparency());
+            program->applyUniformFloat(id, material->getTransparency());
             break;
 
         default:
@@ -339,42 +339,42 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
             {
             case CShaderUniform::eLightsCount:
 
-                program->setUniformInt(id, (s32)lights.size());
+                program->applyUniformInt(id, (s32)lights.size());
                 break;
 
             case CShaderUniform::eLightPosition:
 
-                program->setUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
+                program->applyUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
                 break;
 
             case CShaderUniform::eLightAmbient:
 
-                program->setUniformVector4(id, (*light)->getAmbient());
+                program->applyUniformVector4(id, (*light)->getAmbient());
                 break;
 
             case CShaderUniform::eLightDiffuse:
 
-                program->setUniformVector4(id, (*light)->getDiffuse());
+                program->applyUniformVector4(id, (*light)->getDiffuse());
                 break;
 
             case CShaderUniform::eLightSpecular:
 
-                program->setUniformVector4(id, (*light)->getSpecular());
+                program->applyUniformVector4(id, (*light)->getSpecular());
                 break;
 
             case CShaderUniform::eLightDirection:
 
-                program->setUniformVector3(id, (*light)->getDirection());
+                program->applyUniformVector3(id, (*light)->getDirection());
                 break;
 
             case CShaderUniform::eLightAttenuation:
 
-                program->setUniformVector3(id, (*light)->getAttenuation());
+                program->applyUniformVector3(id, (*light)->getAttenuation());
                 break;
 
             case CShaderUniform::eLightRadius:
 
-                program->setUniformFloat(id, (*light)->getRadius());
+                program->applyUniformFloat(id, (*light)->getRadius());
                 break;
 
             default:
@@ -470,7 +470,7 @@ void CRenderer::updateAdvanced(const RenderPassPtr & pass)
         case CShaderUniform::eCurrentTime:
             {
                 u32 time = (u32)utils::CTimer::getCurrentTime();
-                program->setUniformInt(id, time);
+                program->applyUniformInt(id, time);
             }
             break;
 

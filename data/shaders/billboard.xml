@@ -29,7 +29,7 @@
             <var type="vertex" name="vbillboard">
                 <![CDATA[
                     #version 330
-                    #define POSITION    0
+                    #define POSITION 0
                     
                     layout (location = POSITION) in vec3 position;
                     

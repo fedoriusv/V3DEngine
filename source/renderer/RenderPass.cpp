@@ -109,6 +109,16 @@ bool CRenderPass::parse(const tinyxml2::XMLElement* root)
         }
     }
 
+    //fragData
+    const tinyxml2::XMLElement* fragdataElement = root->FirstChildElement("fragdata");
+    if (fragdataElement)
+    {
+        if (!parseFragdata(fragdataElement))
+        {
+            return false;
+        }
+    }
+
     //samplers
     const tinyxml2::XMLElement* samplersElement = root->FirstChildElement("samplers");
     if (samplersElement)
@@ -183,10 +193,13 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         if (!uniform->parse(varElement))
         {
+            delete uniform;
+            uniform = nullptr;
+
             LOG_ERROR("CRenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -219,9 +232,12 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
         if (!attribute->parse(varElement))
         {
+            delete attribute;
+            attribute = nullptr;
+
             LOG_ERROR("CRenderPass: Parse error attribute element");
             varElement = varElement->NextSiblingElement("var");
             continue;
@@ -235,6 +251,43 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
         else
         {
             m_userShaderData->addAttribute(attribute);
+        }
+
+        varElement = varElement->NextSiblingElement("var");
+    }
+
+    return true;
+}
+
+bool CRenderPass::parseFragdata(const tinyxml2::XMLElement* root)
+{
+    if (!root)
+    {
+        return true;
+    }
+
+    const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
+    while (varElement)
+    {
+        CShaderAttribute* fragData = new CShaderAttribute();
+        if (!fragData->parse(varElement))
+        {
+            delete fragData;
+            fragData = nullptr;
+
+            LOG_ERROR("CRenderPass: Parse error fragData element");
+            varElement = varElement->NextSiblingElement("var");
+            continue;
+        }
+
+        bool isDefault = (fragData->getData() != CShaderAttribute::eAttribUser);
+        if (isDefault)
+        {
+            m_defaultShaderData->addFragData(fragData);
+        }
+        else
+        {
+            m_userShaderData->addFragData(fragData);
         }
 
         varElement = varElement->NextSiblingElement("var");
@@ -305,7 +358,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
         }
-        m_program->addShader(shader);
+        m_program->attachShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("var");
     }
@@ -478,7 +531,7 @@ void CRenderPass::bind(u32 target)
             continue;
         }
 
-        m_program->setUniform(uniform->second);
+        m_program->applyUniform(uniform->second);
     }
 
     ASSERT(m_targetList.size() > target, "Invalid target index");

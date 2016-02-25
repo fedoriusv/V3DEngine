@@ -96,9 +96,8 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderUniform>         UniformPtr;
-    typedef std::pair<std::string, UniformPtr>      UniformPair;
-    typedef std::map<std::string, UniformPtr>       UniformList;
+    typedef std::pair<const std::string, CShaderUniform*>   UniformPair;
+    typedef std::map<const std::string, CShaderUniform*>    UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

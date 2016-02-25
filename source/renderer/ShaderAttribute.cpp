@@ -20,12 +20,14 @@ const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttribCou
     "mesh.texture2",
     "mesh.texture3",
 
-    "partical.position"
-    "partical.velocity",
+    "partical.position",
     "partical.color",
+    "partical.velocity",
     "particals.lifetime",
     "partical.size",
-    "partical.type"
+    "partical.type",
+
+    "attachment.color",
 };
 
 
@@ -259,7 +261,7 @@ bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
     return true;
 }
 
-void CShaderAttribute::setAttribute(const std::string & name, EShaderAttribute data)
+void CShaderAttribute::setAttribute(const std::string& name, EShaderAttribute data)
 {
     m_name = name;
     m_data = data;

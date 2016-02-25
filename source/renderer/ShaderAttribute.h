@@ -42,6 +42,8 @@ namespace renderer
             eAttribParticalSize,
             eAttribParticalType,
 
+            eAttribColorAttachment,
+
             eAttribCount,
         };
 
@@ -103,9 +105,8 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderAttribute>       AttributePtr;
-    typedef std::pair<std::string, AttributePtr>    AttributePair;
-    typedef std::map<std::string, AttributePtr>     AttributeList;
+    typedef std::pair<const std::string, CShaderAttribute*> AttributePair;
+    typedef std::map<const std::string, CShaderAttribute*>  AttributeList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 }

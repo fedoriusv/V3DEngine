@@ -337,7 +337,7 @@ void CTextureGL::bind(u32 layer, u32 sampler)
 
 void CTextureGL::unbind(u32 layer, u32 sampler)
 {
-    CTextureGL::bindSampler(sampler, 0);
+    //CTextureGL::bindSampler(sampler, 0);
     if (m_textureBuffer)
     {
         CTextureGL::bindTexture(ETextureTarget::eTextureBuffer, 0);

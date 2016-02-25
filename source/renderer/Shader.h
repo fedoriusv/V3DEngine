@@ -14,6 +14,9 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Base class for shader management.
+    */
     class CShader
     {
     public:
@@ -38,7 +41,6 @@ namespace renderer
 
         bool                        parse(const tinyxml2::XMLElement* root);
 
-        u32                         getShaderID()       const;
         EShaderType                 getShaderType()     const;
         bool                        getCompileStatus()  const;
 
@@ -54,7 +56,6 @@ namespace renderer
         std::string                 m_name;
         std::string                 m_data;
 
-        u32                         m_shaderId;
         bool                        m_compileStatus;
 
     private:
@@ -70,7 +71,8 @@ namespace renderer
     typedef std::map<std::string, ShaderPtr>    ShaderMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_H_

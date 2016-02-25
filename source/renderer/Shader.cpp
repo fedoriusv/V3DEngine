@@ -5,8 +5,11 @@
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace stream;
 using namespace scene;
 using namespace resources;
@@ -42,8 +45,7 @@ CShader::EShaderType CShader::getShaderTypeByName(const std::string& name)
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CShader::CShader()
-    : m_shaderId(0)
-    , m_type(eShaderUnknown)
+    : m_type(eShaderUnknown)
     , m_name("")
     , m_data("")
 
@@ -53,11 +55,6 @@ CShader::CShader()
 
 CShader::~CShader()
 {
-}
-
-u32 CShader::getShaderID() const
-{
-    return m_shaderId;
 }
 
 CShader::EShaderType CShader::getShaderType() const
@@ -144,3 +141,6 @@ bool CShader::parse(const tinyxml2::XMLElement* root)
 
     return true;
 }
+
+} //namespace renderer
+} //namespace v3d

@@ -24,35 +24,28 @@ namespace renderer
         void                bind()      override;
         void                unbind()    override;
 
-    public:
-
-        static void         createProgram(u32& shaderProgram);
-        static void         deleteProgram(u32 shaderProgram);
-        static bool         useProgram(u32 shaderProgram);
-        static bool         linkProgram(u32 shaderProgram);
-        static bool         validateProgram(u32 shaderProgram);
-
-        static void         attachShader(u32 shaderProgram, u32 shader);
-        static void         detachShader(u32 shaderProgram, u32 shader);
-
-        static void         bindAttrib(u32 shaderProgram, u32 type, const std::string& name);
-        static s32          getAttribLocation(u32 shaderProgram, const std::string& name);
-
-        static s32          getUniformLocation(u32 shaderProgram, const std::string& name);
+        u32                 getShaderProgramID()   const;
 
     private:
 
+        bool                useProgram(u32 shaderProgram);
+
         bool                init(const std::vector<u32>& shaders);
+        bool                link();
+        bool                validate();
 
-        bool                setUniform(const UniformPtr& uniform) override;
+        void                getShaderIDArray(std::vector<u32>& shaders);
 
-        void                setUniformInt    (s32 location, s32 value)                    override;
-        void                setUniformFloat  (s32 location, f32 value)                    override;
-        void                setUniformVector2(s32 location, const core::Vector2D& vector) override;
-        void                setUniformVector3(s32 location, const core::Vector3D& vector) override;
-        void                setUniformVector4(s32 location, const core::Vector4D& vector) override;
-        void                setUniformMatrix3(s32 location, const core::Matrix3D& matrix) override;
-        void                setUniformMatrix4(s32 location, const core::Matrix4D& matrix) override;
+        bool                applyUniform       (CShaderUniform* uniform)                    override;
+        void                applyUniformInt    (s32 location, s32 value)                    override;
+        void                applyUniformFloat  (s32 location, f32 value)                    override;
+        void                applyUniformVector2(s32 location, const core::Vector2D& vector) override;
+        void                applyUniformVector3(s32 location, const core::Vector3D& vector) override;
+        void                applyUniformVector4(s32 location, const core::Vector4D& vector) override;
+        void                applyUniformMatrix3(s32 location, const core::Matrix3D& matrix) override;
+        void                applyUniformMatrix4(s32 location, const core::Matrix4D& matrix) override;
+
+        u32                 m_shaderProgramID;
 
         static u32          s_currentShader;
 

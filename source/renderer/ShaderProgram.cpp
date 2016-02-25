@@ -9,8 +9,8 @@ namespace renderer
 {
 
 CShaderProgram::CShaderProgram()
-    : m_shaderProgID(0)
-    , m_enable(true)
+    : m_enable(true)
+    , m_compileStatus(false)
 {
 }
 
@@ -19,11 +19,6 @@ CShaderProgram::~CShaderProgram()
     m_shaderList.clear();
     m_shaderDataList.clear();
     m_varyingsList.clear();
-}
-
-u32 CShaderProgram::getShaderID() const
-{
-    return m_shaderProgID;
 }
 
 bool CShaderProgram::isEnable() const
@@ -36,15 +31,21 @@ void CShaderProgram::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CShaderProgram::addShader(const ShaderPtr& shader)
+bool CShaderProgram::getCompileStatus() const
+{
+    return m_compileStatus;
+}
+
+void CShaderProgram::attachShader(const ShaderPtr& shader)
 {
     if (shader)
     {
         m_shaderList.push_back(shader);
+        m_compileStatus = false;
     }
 }
 
-void CShaderProgram::destroyShader(const ShaderPtr& shader)
+void CShaderProgram::detachShader(const ShaderPtr& shader)
 {
     if (shader)
     {
@@ -56,17 +57,7 @@ void CShaderProgram::destroyShader(const ShaderPtr& shader)
         }
 
         m_shaderList.erase(current);
-    }
-}
-
-void CShaderProgram::getShaderIDArray(std::vector<u32>& shaders)
-{
-    for (u32 i = 0; i < m_shaderList.size(); ++i)
-    {
-        if (m_shaderList[i]->getCompileStatus())
-        {
-            shaders.push_back(m_shaderList[i]->getShaderID());
-        }
+        m_compileStatus = false;
     }
 }
 
@@ -75,6 +66,7 @@ void CShaderProgram::addShaderData(const ShaderDataPtr& data)
     if (data)
     {
         m_shaderDataList.push_back(data);
+        m_compileStatus = false;
     }
 }
 
@@ -83,6 +75,7 @@ void CShaderProgram::addVaryingsAttibutes(const std::vector<const c8*>& list)
     if (!list.empty())
     {
         m_varyingsList = list;
+        m_compileStatus = false;
     }
 }
 
@@ -96,11 +89,11 @@ bool CShaderProgram::create(const std::string& vertex, const std::string& fragme
 
     ShaderPtr vshader = RENDERER->makeSharedShader();
     vshader->create(vertex, CShader::eVertex);
-    CShaderProgram::addShader(vshader);
+    CShaderProgram::attachShader(vshader);
 
     ShaderPtr fshader = RENDERER->makeSharedShader();
     fshader->create(fragment, CShader::eFragment);
-    CShaderProgram::addShader(fshader);
+    CShaderProgram::attachShader(fshader);
 
     va_list argList;
     va_start(argList, arg);
@@ -111,13 +104,13 @@ bool CShaderProgram::create(const std::string& vertex, const std::string& fragme
 
         ShaderPtr shader = RENDERER->makeSharedShader();
         shader->create(strName, (CShader::EShaderType)type);
-        CShaderProgram::addShader(shader);
+        CShaderProgram::attachShader(shader);
     }
     va_end(argList);
 
-    bool status = create();
+    m_compileStatus = create();
 
-    return status;
+    return m_compileStatus;
 }
 
 } //namespace renderer

@@ -70,6 +70,7 @@ namespace renderer
 
         bool                    parseUniforms    (const tinyxml2::XMLElement* root);
         bool                    parseAttributes  (const tinyxml2::XMLElement* root);
+        bool                    parseFragdata    (const tinyxml2::XMLElement* root);
         bool                    parseSamplers    (const tinyxml2::XMLElement* root);
         bool                    parseShaders     (const tinyxml2::XMLElement* root);
         bool                    parseRenderTarget(const tinyxml2::XMLElement* root);

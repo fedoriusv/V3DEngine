@@ -1,7 +1,9 @@
 #include "ShaderData.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CShaderData::CShaderData()
 : m_vertexFormatMask(0U)
@@ -10,10 +12,29 @@ CShaderData::CShaderData()
 
 CShaderData::~CShaderData()
 {
-    m_attributeList.clear();
+    for (UniformPair& item : m_uniformList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
     m_uniformList.clear();
-    m_samplerList.clear();
+
+    for (AttributePair& item : m_attributeList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
+    m_attributeList.clear();
     m_vertexFormatMask = 0U;
+
+    for (AttributePair& item : m_fragDataList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
+    m_fragDataList.clear();
+
+    m_samplerList.clear();
 }
 
 u32 CShaderData::getVertexFormatMask() const
@@ -54,6 +75,17 @@ bool CShaderData::isExistAttribute(const std::string& name)
     return false;
 }
 
+bool CShaderData::isExistFragData(const std::string& name)
+{
+    AttributeList::const_iterator iter = m_fragDataList.find(name);
+    if (iter != m_fragDataList.end())
+    {
+        return true;
+    }
+
+    return false;
+}
+
 bool CShaderData::isExistSampler(const std::string& name)
 {
     SamplerList::const_iterator iter = std::find_if(m_samplerList.begin(), m_samplerList.end(), [name](const SamplerPtr& sampler) -> bool
@@ -77,7 +109,7 @@ void CShaderData::setUniform(const std::string& name, const s32 value)
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeInt, name, (void*)(&value));
         m_uniformList[name] = uniform;
@@ -92,7 +124,7 @@ void CShaderData::setUniform(const std::string& name, const f32 value)
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeFloat, name, (void*)(&value));
         m_uniformList[name] = uniform;
@@ -107,7 +139,7 @@ void CShaderData::setUniform(const std::string& name, const core::Vector2D& vect
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeVector2, name, (void*)(&vector));
         m_uniformList[name] = uniform;
@@ -122,7 +154,7 @@ void CShaderData::setUniform(const std::string& name, const core::Vector3D& vect
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeVector3, name, (void*)(&vector));
         m_uniformList[name] = uniform;
@@ -137,7 +169,7 @@ void CShaderData::setUniform(const std::string& name, const core::Vector4D& vect
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeVector4, name, (void*)(&vector));
         m_uniformList[name] = uniform;
@@ -152,7 +184,7 @@ void CShaderData::setUniform(const std::string& name, const core::Matrix3D& matr
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeMatrix3, name, (void*)(&matrix));
         m_uniformList[name] = uniform;
@@ -167,7 +199,7 @@ void CShaderData::setUniform(const std::string& name, const core::Matrix4D& matr
     }
     else
     {
-        UniformPtr uniform = std::make_shared<CShaderUniform>();
+        CShaderUniform* uniform = new CShaderUniform();
 
         uniform->setUniform(EDataType::eTypeMatrix4, name, (void*)(&matrix));
         m_uniformList[name] = uniform;
@@ -182,7 +214,7 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
     }
     else
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
 
         attribute->setAttribute(EDataType::eTypeInt, name, divisor, sizeof(s32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
@@ -197,7 +229,7 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
     }
     else
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
 
         attribute->setAttribute(EDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
@@ -212,7 +244,7 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
     }
     else
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
 
         attribute->setAttribute(EDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
@@ -227,7 +259,7 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
     }
     else
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
 
         attribute->setAttribute(EDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
@@ -242,28 +274,28 @@ void CShaderData::setAttribute(const std::string& name, u32 divisor, const std::
     }
     else
     {
-        AttributePtr attribute = std::make_shared<CShaderAttribute>();
+        CShaderAttribute* attribute = new CShaderAttribute();
 
         attribute->setAttribute(EDataType::eTypeVector4, name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
 
-void CShaderData::addUniform(const UniformPtr& uniform)
+void CShaderData::addUniform(const CShaderUniform* uniform)
 {
     const std::string& name = uniform->getName();
     if (!isExistUniform(name))
     {
-        m_uniformList[name] = uniform;
+        m_uniformList[name] = const_cast<CShaderUniform*>(uniform);
     }
 }
 
-void CShaderData::addAttribute(const AttributePtr& attribute)
+void CShaderData::addAttribute(const CShaderAttribute* attribute)
 {
     const std::string& name = attribute->getName();
     if (!isExistAttribute(name))
     {
-        m_attributeList[name] = attribute;
+        m_attributeList[name] = const_cast<CShaderAttribute*>(attribute);
         m_vertexFormatMask |= 1 << (attribute->getType() + 1);
     }
 }
@@ -276,9 +308,23 @@ void CShaderData::addSampler(const SamplerPtr& sampler)
     }
 }
 
+void CShaderData::addFragData(const CShaderAttribute* fragData)
+{
+    const std::string& name = fragData->getName();
+    if (!isExistFragData(name))
+    {
+        m_fragDataList[name] = const_cast<CShaderAttribute*>(fragData);
+    }
+}
+
 const AttributeList& CShaderData::getAttributeList() const
 {
     return m_attributeList;
+}
+
+const AttributeList& CShaderData::getFragDataList() const
+{
+    return m_fragDataList;
 }
 
 const UniformList& CShaderData::getUniformList() const
@@ -296,6 +342,11 @@ AttributeList& CShaderData::getAttributeList()
     return m_attributeList;
 }
 
+AttributeList & CShaderData::getFragDataList()
+{
+    return m_fragDataList;
+}
+
 UniformList& CShaderData::getUniformList()
 {
     return m_uniformList;
@@ -305,3 +356,6 @@ SamplerList& CShaderData::getSamplerList()
 {
     return m_samplerList;
 }
+
+} //namespace renderer
+} //namespace v3d

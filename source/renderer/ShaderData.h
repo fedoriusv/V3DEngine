@@ -14,9 +14,6 @@ namespace renderer
 
     class CRenderPass;
 
-    class CDebugGeometry;
-    class CDebugLight;
-
     class CShaderData
     {
     public:
@@ -39,10 +36,12 @@ namespace renderer
         void                        setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector4D>& data);
 
         const AttributeList&        getAttributeList() const;
+        const AttributeList&        getFragDataList() const;
         const UniformList&          getUniformList() const;
         const SamplerList&          getSamplerList() const;
 
         AttributeList&              getAttributeList();
+        AttributeList&              getFragDataList();
         UniformList&                getUniformList();
         SamplerList&                getSamplerList();
 
@@ -50,21 +49,22 @@ namespace renderer
         bool                        isExistUniform(CShaderUniform::EUniformData type);
         bool                        isExistAttribute(const std::string& name);
         bool                        isExistSampler(const std::string& name);
+        bool                        isExistFragData(const std::string& name);
 
         u32                         getVertexFormatMask() const;
 
     protected:
 
         friend                      CRenderPass;
-        friend                      CDebugGeometry;
-        friend                      CDebugLight;
 
-        void                        addUniform(const UniformPtr& uniform);
-        void                        addAttribute(const AttributePtr& attribute);
+        void                        addUniform(const CShaderUniform* uniform);
+        void                        addAttribute(const CShaderAttribute* attribute);
         void                        addSampler(const SamplerPtr& sampler);
+        void                        addFragData(const CShaderAttribute* fragData);
 
         UniformList                 m_uniformList;
         AttributeList               m_attributeList;
+        AttributeList               m_fragDataList;
         SamplerList                 m_samplerList;
         u32                         m_vertexFormatMask;
     };
@@ -76,7 +76,8 @@ namespace renderer
     typedef std::vector<ShaderDataWPtr>     ShaderDataList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_DATA_H_
