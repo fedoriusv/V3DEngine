@@ -318,7 +318,7 @@ void CTextureGL::bind(u32 layer, u32 sampler)
     }
 
     CTextureGL::activeTextureLayer(layer);
-    CTextureGL::bindSampler(sampler, m_samplerID);
+    //CTextureGL::bindSampler(sampler, m_samplerID);
 
     if (m_textureBuffer)
     {
@@ -363,6 +363,11 @@ void CTextureGL::reset()
 
 bool CTextureGL::create()
 {
+    if (m_initialized)
+    {
+        return true;
+    }
+
     bool success = false;
 
     glGenTextures(1, &m_textureID);
@@ -379,6 +384,11 @@ bool CTextureGL::create()
             u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
 
+#ifdef _DEBUG_GL
+            GLint maxSize;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+            ASSERT((s32)m_data.front()._size.width <= maxSize, "Size greater than max value");
+#endif //_DEBUG_GL
             glTexStorage1D(ETextureTargetGL[eTexture1D], m_mipmapLevel + 1, internalFormat(format, type), m_data.front()._size.width);
             RENDERER->checkForErrors("CTextureGL::setData eTexture1D Error");
 
@@ -401,6 +411,12 @@ bool CTextureGL::create()
             RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
 
             glTexImage2D(ETextureTargetGL[eTexture2D], 0, GL_RGBA, m_data.front()._size.width, m_data.front()._size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);*/
+
+#ifdef _DEBUG_GL
+            GLint maxSize;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+            ASSERT((s32)m_data.front()._size.width <= maxSize && (s32)m_data.front()._size.height <= maxSize, "Size greater than max value");
+#endif //_DEBUG_GL
             glTexStorage2D(ETextureTargetGL[eTexture2D], m_mipmapLevel + 1, internalFormat(format, type), m_data.front()._size.width, m_data.front()._size.height);
             RENDERER->checkForErrors("CTextureGL::setData eTexture2D Error");
 
@@ -423,12 +439,16 @@ bool CTextureGL::create()
 #ifdef _DEBUG_GL
             GLint maxSize;
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-            ASSERT(s32(m_data.front()._size.getArea()) <= maxSize, "Size greater than max value");
+            ASSERT((s32)m_data.front()._size.width <= maxSize && (s32)m_data.front()._size.height <= maxSize, "Size greater than max value");
 #endif //_DEBUG_GL
 
-            u32 samplersSize = DRIVER_CONTEXT->getSamplersCount(); //TODO: maybe need set fixed value
-
-            glTexStorage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplersSize, internalFormat(format, type), 
+            u32 samplesSize = DRIVER_CONTEXT->getSamplesCount(); //TODO: maybe need set fixed value
+#ifdef _DEBUG_GL
+            GLint maxSamples;
+            glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+            ASSERT((s32)samplesSize <= maxSamples, "Invalid Samples count");
+#endif //_DEBUG_GL
+            glTexStorage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplesSize, internalFormat(format, type),
                 m_data.front()._size.width, m_data.front()._size.height, GL_TRUE);
             RENDERER->checkForErrors("CTextureGL::setData eTexture2DMSAA Error");
 
@@ -442,6 +462,12 @@ bool CTextureGL::create()
             u32 format = EImageFormatGL[m_data.front()._format];
             u32 type = EImageTypeGL[m_data.front()._type];
 
+#ifdef _DEBUG_GL
+            GLint maxSize;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+            ASSERT((s32)m_data.front()._size.width <= maxSize && (s32)m_data.front()._size.height <= maxSize &&
+                (s32)m_data.front()._size.depth <= maxSize, "Size greater than max value");
+#endif //_DEBUG_GL
             glTexStorage3D(ETextureTargetGL[eTexture3D], m_mipmapLevel + 1, internalFormat(format, type),
                 m_data.front()._size.width, m_data.front()._size.height, m_data.front()._size.depth);
             RENDERER->checkForErrors("CTextureGL::setData eTexture3D Error");
@@ -465,12 +491,17 @@ bool CTextureGL::create()
 #ifdef _DEBUG_GL
             GLint maxSize;
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-            ASSERT(s32(m_data.front()._size.getArea()) <= maxSize, "Size greater than max value");
+            ASSERT((s32)m_data.front()._size.width <= maxSize && (s32)m_data.front()._size.height <= maxSize && 
+                (s32)m_data.front()._size.depth <= maxSize, "Size greater than max value");
 #endif //_DEBUG_GL
 
-            u32 samplersSize = DRIVER_CONTEXT->getSamplersCount(); //TODO: maybe need set fixed value
-
-            glTexStorage3DMultisample(ETextureTargetGL[eTexture3DMSAA], samplersSize, internalFormat(format, type), 
+            u32 samplesSize = DRIVER_CONTEXT->getSamplesCount(); //TODO: maybe need set fixed value
+#ifdef _DEBUG_GL
+            GLint maxSamples;
+            glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+            ASSERT((s32)samplesSize <= maxSamples, "Invalid Samples count");
+#endif //_DEBUG_GL
+            glTexStorage3DMultisample(ETextureTargetGL[eTexture3DMSAA], samplesSize, internalFormat(format, type),
                 m_data.front()._size.width, m_data.front()._size.height, m_data.front()._size.depth, GL_TRUE);
             RENDERER->checkForErrors("CTextureGL::initTexture3DMSAA error");
 
@@ -489,7 +520,8 @@ bool CTextureGL::create()
                 glPixelStorei(GL_UNPACK_ALIGNMENT, typeSize(type));
                 RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
 
-                glTexImage2D(ECubeMapGL[cubemapSide], 0, internalFormat(format, type), m_data[cubemapSide]._size.width, m_data[cubemapSide]._size.height, 0, format, type, m_data[cubemapSide]._data);
+                glTexImage2D(ECubeMapGL[cubemapSide], 0, internalFormat(format, type), m_data[cubemapSide]._size.width, m_data[cubemapSide]._size.height, 
+                    0, format, type, m_data[cubemapSide]._data);
                 RENDERER->checkForErrors("CTextureGL::setData eTextureCubeMap Error");
                 m_data[cubemapSide].free();
             }
@@ -532,6 +564,7 @@ bool CTextureGL::create()
     }
 
     glGenSamplers(1, &m_samplerID);
+    CTextureGL::bindSampler(m_textureID, m_samplerID);
     CTextureGL::wrapSampler(m_samplerID, m_wrap);
     CTextureGL::anisotropicSampler(m_samplerID, m_anisotropicLevel);
 
@@ -576,7 +609,7 @@ bool CTextureGL::create()
 
 void CTextureGL::destroy()
 {
-    CTextureGL::bindSampler(0, m_samplerID);
+    CTextureGL::bindSampler(m_target, 0);
     if (m_samplerID > 0)
     {
 #ifdef _DEBUG_GL

@@ -28,7 +28,7 @@ namespace renderer
         const core::Dimension2D&    getWindowSize() const;
         const platform::WindowPtr&  getWindow()     const;
 
-        u32                         getSamplersCount()      const;
+        u32                         getSamplesCount()       const;
         s32                         getTextureUnits()       const;
         f32                         getMaxAnisotropySize()  const;
 
@@ -36,7 +36,7 @@ namespace renderer
 
         const platform::WindowPtr   m_window;
 
-        u32                         m_samplersCount;
+        u32                         m_samplesCount;
         s32                         m_maxTextureUnits;
         f32                         m_maxAnisotropy;
 
@@ -47,7 +47,8 @@ namespace renderer
     typedef std::shared_ptr<CDriverContext> DriverContextPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_DRIVER_CONTEXT_H_

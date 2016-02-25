@@ -23,8 +23,10 @@
 #   include "platform/WindowMacOSX.h"
 #endif
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 CDriverContextGL::CDriverContextGL(const platform::WindowPtr& window)
     : CDriverContext(window)
@@ -540,7 +542,7 @@ void CDriverContextGL::driverInfo()
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
 
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropy);
-    glGetIntegerv(GL_SAMPLES, (GLint*)&m_samplersCount);
+    glGetIntegerv(GL_SAMPLES, (GLint*)&m_samplesCount);
     
     LOG_INFO("OpenGL config info:");
     LOG("Render: %s", renderer);
@@ -551,7 +553,7 @@ void CDriverContextGL::driverInfo()
     LOG("Max Texure Layers: %d", maxTextureLayers);
     LOG("Max Anisotropy: %f", m_maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
-    LOG("MSAA x%d", m_samplersCount);
+    LOG("MSAA x%d", m_samplesCount);
 
     /*glewIsSupported("GL_ARB_multitexture");
     glewIsSupported("GL_ARB_vertex_buffer_object");
@@ -625,4 +627,8 @@ void CDriverContextGL::flushBuffers()
 {
     glFlush();
 }
+
+} //namespace renderer
+} //namespace v3d
+
 #endif //_OPENGL_DRIVER_
