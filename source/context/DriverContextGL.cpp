@@ -535,8 +535,8 @@ void CDriverContextGL::driverInfo()
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
 
-    GLint maxTextureLayers;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureLayers);
+    GLint maxTextureSamplers;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureSamplers);
 
     GLint maxDrawBuffers;
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
@@ -550,15 +550,10 @@ void CDriverContextGL::driverInfo()
     LOG("GLSL: %s", GLSL);
     LOG("GL Version: %s", version);
     LOG("Max Texure Units: %d", m_maxTextureUnits);
-    LOG("Max Texure Layers: %d", maxTextureLayers);
+    LOG("Max Texure Samplers: %d", maxTextureSamplers);
     LOG("Max Anisotropy: %f", m_maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
     LOG("MSAA x%d", m_samplesCount);
-
-    /*glewIsSupported("GL_ARB_multitexture");
-    glewIsSupported("GL_ARB_vertex_buffer_object");
-    glewIsSupported("GL_ARB_vertex_array_object");
-    glewIsSupported("GL_ARB_sampler_objects");*/
 
 #ifdef _DEBUG_GL
     CDriverContextGL::printExtensionList();

@@ -155,6 +155,8 @@ namespace renderer
         virtual void    setAnisotropicLevel(EAnisotropic level);
         virtual void    setMipmapLevel(u32 level);
 
+        const core::Dimension3D& getSize(u32 cubemapSide = 0U) const;
+
     private:
 
         struct STextureData

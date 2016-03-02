@@ -396,6 +396,7 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
         u32 samplerID = 0;
         for (u32 layer = 0; layer < layersCount; ++layer)
         {
+            samplerID = layer;
             CTexture* texture = material->getTexture(layer);
             if (texture->isEnable())
             {
@@ -405,7 +406,6 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
             {
                 texture->unbind(layer, samplerID);
             }
-            samplerID++;
         }
     }
     else if (!samplerList.empty())

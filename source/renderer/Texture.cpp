@@ -192,6 +192,12 @@ void CTexture::setMipmapLevel(u32 level)
     m_mipmapLevel = level;
 }
 
+const Dimension3D& CTexture::getSize(u32 cubemapSide) const
+{
+    ASSERT(cubemapSide < m_data.size(), "Invalid size");
+    return m_data[cubemapSide]._size;
+}
+
 EAnisotropic CTexture::getAnisotropic()const
 {
     return m_anisotropicLevel;

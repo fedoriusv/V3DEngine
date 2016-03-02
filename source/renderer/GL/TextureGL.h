@@ -12,6 +12,8 @@ namespace gl
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class BufferGL;
+    class SamplerGL;
+    class CRendererGL;
 
     /**
     * Inherited class for texture management. GL render only.
@@ -47,33 +49,32 @@ namespace gl
         void            freeTexture(u32 texture);
 
         u32             getTextureID() const;
-        u32             getSamplerID() const;
 
         static void     reset();
 
-    public:
+    private:
+
+        friend          CRendererGL;
+
+        void            setSampler(SamplerGL* sampler);
 
         static bool     bindTexture(ETextureTarget target, u32 texture);
         static void     bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset = 0, u32 size = 0);
-        static bool     activeTextureLayer(u32 layer);
+        static bool     bindTextureLayer(u32 layer);
 
-        static bool     bindSampler(u32 texture, u32 sampler);
-        static void     wrapSampler(u32 sampler, EWrapType wrap);
-        static void     filterSampler(u32 sampler, ETextureFilter min, ETextureFilter mag);
-        static void     anisotropicSampler(u32 sampler, u32 level);
+        static s32      getActiveTexture(u32 target);
+        static s32      getActiveTextureLayer();
 
     private:
 
-        u32             m_textureID;
-        u32             m_samplerID;
-
+        SamplerGL*      m_sampler;
         BufferGL*       m_textureBuffer;
 
         bool            m_initialized;
 
+        u32             m_textureID;
         static u32      s_currentTextureID[eTargetCount];
         static u32      s_currentLayerID;
-        static u32      s_currentSamplerID;
    };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

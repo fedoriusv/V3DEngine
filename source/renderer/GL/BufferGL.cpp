@@ -141,7 +141,7 @@ void BufferGL::readData(u32 offset, u32 size, void* data)
     RENDERER->checkForErrors("BufferGL::readData Error");
 }
 
-void * BufferGL::map(u32 access)
+void* BufferGL::map(u32 access)
 {
     BufferGL::bind();
 
