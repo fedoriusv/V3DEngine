@@ -79,7 +79,7 @@ void CRenderTargetGL::bind()
         const Rect32& rect = getViewport();
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
-        if (m_attachBuffers.size() > 0)
+        if (!m_attachBuffers.empty())
         {
             glDrawBuffers((GLsizei)m_attachBuffers.size(), &m_attachBuffers[0]);
         }
@@ -100,12 +100,15 @@ void CRenderTargetGL::bind()
             flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
             CRenderStateGL::depthWrite(true);
 
+            glClearDepthf(CRenderTarget::getClearDepth());
         }
-
+        
         if (CRenderTargetGL::hasClearStencilTarget())
         {
             flags = CRenderTarget::getClearStencilBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
             CRenderStateGL::stencilWrite(true);
+
+            //glClearStencil();
         }
 
         if (CRenderTargetGL::hasClearColorTarget() && CRenderTarget::getClearColorBuffer())
@@ -152,7 +155,7 @@ bool CRenderTargetGL::create()
 {
     if (m_initialized)
     {
-        return false;
+        return true;
     }
 
     const Rect32& rect = getViewport();
@@ -180,7 +183,7 @@ bool CRenderTargetGL::create()
 
     CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
 
-    CRenderTargetGL::genFramebuffer(m_frameBufferId);
+    glGenFramebuffers(1, &m_frameBufferId);
     CRenderTargetGL::bindFramebuffer(m_frameBufferId);
 
     for (auto& attach : m_attachmentsList)
@@ -232,11 +235,11 @@ bool CRenderTargetGL::create()
     ASSERT((result == GL_FRAMEBUFFER_COMPLETE), "CRenderTarget: Create render target Error");
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
-    if (originalRBO >= 0)
+    if (originalRBO > 0)
     {
         CRenderTargetGL::bindRenderbuffer(originalRBO);
     }
-    if (originalFBO >= 0)
+    if (originalFBO > 0)
     {
         CRenderTargetGL::bindFramebuffer(originalFBO);
     }
@@ -255,7 +258,7 @@ void CRenderTargetGL::destroy()
 
     for (auto& attach : m_attachmentsList)
     {
-        switch (attach._type)
+        switch (attach._attachmentType)
         {
         case eColorAttach:
             if (attach._output == eTextureOutput)
@@ -296,7 +299,14 @@ void CRenderTargetGL::destroy()
     }
     //TODO: Have gl error GL_INVALID_OPERATION after call glFramebufferTexture2D
 
-    CRenderTargetGL::deleteFramebuffers(m_frameBufferId);
+    if (m_frameBufferId > 0)
+    {
+#ifdef _DEBUG_GL
+        ASSERT(glIsFramebuffer(m_frameBufferId), "Invalid Index FBO");
+#endif //_DEBUG_GL
+        glDeleteFramebuffers(1, &m_frameBufferId);
+        m_frameBufferId = 0;
+    }
 }
 
 void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rect)
@@ -329,9 +339,9 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
         return GL_RGBA8;
     };
 
-    u32 samplerSize = DRIVER_CONTEXT->getSamplersCount();
+    u32 samplerSize = DRIVER_CONTEXT->getSamplesCount();
 
-    switch (attach._type)
+    switch (attach._attachmentType)
     {
         case eColorAttach:
         {
@@ -385,7 +395,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         default:
         {
-            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
+            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
             ASSERT(false, "CRenderTarget: Not supported attach");
         }
     }
@@ -393,41 +403,7 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
 void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& rect)
 {
-    EImageFormat imageFormat = eRGBA;
-    EImageType imageType = eUnsignedShort;
-    std::function<void(u32)> formatColor = [&imageFormat, &imageType](u32 format)
-    {
-        switch (format)
-        {
-        case 8888:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort;
-            break;
-
-        case 888:
-            imageFormat = eRGB;
-            imageType = eUnsignedShort;
-            break;
-
-        case 565:
-            imageFormat = eRGB;
-            imageType = eUnsignedShort_565;
-            break;
-
-        case 4444:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort_4444;
-            break;
-
-        default:
-            imageFormat = eRGBA;
-            imageType = eUnsignedShort;
-            LOG_WARNING("CRenderTarget: Color format unknown %d. Set defaut: 8888", format);
-            break;
-        }
-    };
-
-    switch (attach._type)
+    switch (attach._attachmentType)
     {
         case eColorAttach:
         {
@@ -442,15 +418,14 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             }
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
-            formatColor(attach._format);
             if (m_MSAA)
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType);
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), attach._format, attach._type);
                 CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
             else
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), imageFormat, imageType, nullptr);
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), attach._format, attach._type, nullptr, 8);
                 CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
 
@@ -460,14 +435,15 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 
         case eDepthAttach:
         {
+            ASSERT(attach._format == EImageFormat::eDepthComponent, "Depth must have only depth format");
             if (m_MSAA)
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
                 CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
             else
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
                 CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
 
@@ -477,15 +453,15 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 
         case eStencilAttach:
         {
-            //TODO: need rework
+            //TODO: will need to rework
             if (m_MSAA)
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt);
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
                 CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
             else
             {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, eUnsignedInt, nullptr);
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
                 CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
             }
 
@@ -493,9 +469,26 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
         }
             break;
 
+        case eDepthStencilAttach:
+        {
+            if (m_MSAA)
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
+            }
+            else
+            {
+                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
+                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
+            }
+
+            RENDERER->checkForErrors("CRenderTargetGL: DepthStencil attachment error");
+        }
+        break;
+
         default:
         {
-            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._type);
+            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
             ASSERT(false, "CRenderTarget: Not supported attach");
         }
     }
@@ -525,11 +518,6 @@ void CRenderTargetGL::copyToRenderbuffer(const RenderTargetPtr& dst)
     }
 }
 
-void CRenderTargetGL::genFramebuffer(u32& buffer)
-{
-    glGenFramebuffers(1, &buffer);
-}
-
 bool CRenderTargetGL::bindFramebuffer(u32 buffer, EFramebufferTarget target)
 {
     if (s_currentFBO[target] != buffer)
@@ -542,16 +530,6 @@ bool CRenderTargetGL::bindFramebuffer(u32 buffer, EFramebufferTarget target)
     }
 
     return false;
-}
-
-void CRenderTargetGL::deleteFramebuffers(u32& buffer)
-{
-    if (buffer != 0)
-    {
-        ASSERT(glIsFramebuffer(buffer), "Invalid Index FBO");
-        glDeleteFramebuffers(1, &buffer);
-        buffer = 0;
-    }
 }
 
 void CRenderTargetGL::genRenderbuffer(u32& buffer)

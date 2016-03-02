@@ -1,97 +1,101 @@
 <technique name="screen2DMSAA" version="100">
-	
-	<!-- Textures -->
-	<textures>
-    	<texture name="wall" file="textures/wall.bmp"/>
-    	<texture name="box" file="textures/box.jpg"/>
-	</textures>
-	
-	<!-- Render Targets -->
+    
+    <!-- Textures -->
+    <textures>
+        <texture name="box" file="textures/box.jpg"/>
+    </textures>
+    
+    <!-- Render Targets -->
     <rendertargets>
-        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" color="0xffff0000" aa="msaa">
-            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
-            <depth active="true" clear="true" format="16" output="texture"/>
+        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" aa="msaa">
+            <color color="0x00ff0000" clear="true">
+                <attach active="true" val="0" format="rgba32u" output="texture"/>
+            </color>
+            <depth active="true" value="1.0" clear="true" format="depth24u" output="texture"/>
         </target>
     </rendertargets>
-
+    
     <!-- Render Passes -->
-	<pass name="pass0">
-		<uniforms>
-			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
-		</uniforms>
-		<attributes>
-			<var name="positions" type="vec3" val="mesh.positions"/>
-			<var name="texture0" type="vec2" val="mesh.texture0"/>
-		</attributes>
-		<samplers>
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+        </uniforms>
+        <attributes>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="texture0" type="vec2" val="mesh.texture0"/>
+        </attributes>
+        <samplers>
             <var name="sampler0" val="targetTestMSAA" attachment="c0"/>
-		</samplers>
-		<renderstate>
+        </samplers>
+        <renderstate>
             <polygonmode val="fill"/>
+            <winding val="ccw"/>
+            <culling val="false"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
         </renderstate>
-		<rendertarget>
-			<var val="default"/>
-		</rendertarget>
+        <rendertarget>
+            <var val="default"/>
+        </rendertarget>
         <lod geometry="0.0"/>
-		<shaders>
-			<var name="vscreen2DMSAA" type="vertex">
-				<![CDATA[
-					#version 330
-					#define POSITION 	0
-					#define NORMAL 		2
-					#define TEXCOORD0 	5
-
-					layout (location = POSITION)  in vec3 positions;
-					layout (location = TEXCOORD0) in vec2 texture0;
-
-					struct Transform
-					{
-						mat4 modelMatrix;
-					};
-					uniform Transform transform;
-					
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					out Vertex fragVertex;
-
-					void main()
+        <shaders>
+            <var name="vscreen2DMSAA" type="vertex">
+                <![CDATA[
+                    #version 330
+                    #define POSITION    0
+                    #define NORMAL      1
+                    #define TEXCOORD0   2
+                    
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = TEXCOORD0) in vec2 texture0;
+                    
+                    struct Transform
                     {
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
-						fragVertex.texCoord0 = texture0;
+                        mat4 modelMatrix;
+                    };
+                    uniform Transform transform;
+                    
+                    struct Vertex
+                    {
+                        vec2  texCoord0;
+                    };
+                    out Vertex fragVertex;
+                    
+                    void main()
+                    {
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
+                        fragVertex.texCoord0 = texture0;
                         gl_Position = vertex;
-					}
-				]]>
-			</var>
-			<var name="fscreen2DMSAA" type="fragment">
-				<![CDATA[
-					#version 330
-					
-					uniform sampler2DMS sampler0;
+                    }
+                ]]>
+            </var>
+            <var name="fscreen2DMSAA" type="fragment">
+                <![CDATA[
+                    #version 330
+                    
+                    uniform sampler2DMS sampler0;
                     const int samplerSize = 16;
-
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					in 	Vertex 	fragVertex;
-					out vec4 	fragColor;
-
-					void main()
-					{
+                    
+                    struct Vertex
+                    {
+                        vec2  texCoord0;
+                    };
+                    in  Vertex  fragVertex;
+                    out vec4    fragColor;
+                    
+                    void main()
+                    {
                         ivec2 size = textureSize(sampler0);
                         vec2 texPos = size * fragVertex.texCoord0;
                         
-						vec4 color = vec4(0.0,0.0,0.0,1.0);
-						for(int i = 0; i < samplerSize; ++i)
-						{
-							color = color + texelFetch(sampler0, ivec2(texPos), i);
-						}
-						fragColor = vec4(color/samplerSize);
-					}
-				]]>
-			</var>
-		</shaders>
-	</pass>
+                        vec4 color = vec4(0.0,0.0,0.0,1.0);
+                        for(int i = 0; i < samplerSize; ++i)
+                        {
+                            color = color + texelFetch(sampler0, ivec2(texPos), i);
+                        }
+                        fragColor = vec4(color/samplerSize);
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
 </technique>

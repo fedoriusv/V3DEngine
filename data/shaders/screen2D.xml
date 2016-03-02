@@ -1,101 +1,102 @@
 <technique name="screen2D" version="100">
-	
-	<!-- Textures -->
-	<textures>
-    	<texture name="wall" file="textures/wall.bmp"/>
-    	<texture name="box" file="textures/box.jpg"/>
-	</textures>
-	
-	<!-- Render Targets -->
+
+    <!-- Render Targets -->
     <rendertargets>
-        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0" color="0xffff0000">
-            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
-            <depth active="true" clear="true" format="16" output="texture"/>
+        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0">
+            <color color="0x00000000" clear="true">
+                <attach active="true" val="0" format="rgba32u" output="texture"/>
+                <attach active="false" val="1" format="rgba32f" output="texture"/>
+                <attach active="false" val="2" format="r32f" output="texture"/>
+            </color>
+            <depth active="true" value="1.0" clear="true" format="depth24u" output="texture"/>
         </target>
     </rendertargets>
-
+    
     <!-- Render Passes -->
-	<pass name="pass0">
-		<uniforms>
-			<var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
-		</uniforms>
-		<attributes>
-			<var name="positions" type="vec3" val="mesh.positions"/>
-			<var name="texture0" type="vec2" val="mesh.texture0"/>
-		</attributes>
-		<samplers>
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+        </uniforms>
+        <attributes>
+            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="texture0" type="vec2" val="mesh.texture0"/>
+        </attributes>
+        <samplers>
             <var name="sampler0" val="targetTest" attachment="c0"/>
-		</samplers>
-		<renderstate>
-            <polygonmode val="fill"/>
+        </samplers>
+        <renderstate>
+            <polygonmode val="line"/>
+            <winding val="ccw"/>
+            <culling val="false"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
         </renderstate>
-		<rendertarget>
-			<var val="default"/>
-		</rendertarget>
+        <rendertarget>
+            <var val="default"/>
+        </rendertarget>
         <lod geometry="0.0"/>
-		<shaders>
-			<var name="vscreen2D" type="vertex">
-				<![CDATA[
-					#version 330
-					#define POSITION 	0
-					#define NORMAL 		2
-					#define TEXCOORD0 	5
-
-					layout (location = POSITION)  in vec3 positions;
-					layout (location = TEXCOORD0) in vec2 texture0;
-
-					struct Transform
-					{
-						mat4 modelMatrix;
-					};
-					uniform Transform transform;
-					
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					out Vertex fragVertex;
-
-					void main()
+        <shaders>
+            <var name="vscreen2D" type="vertex">
+                <![CDATA[
+                    #version 330
+                    #define POSITION    0
+                    #define NORMAL      1
+                    #define TEXCOORD0   2
+                    
+                    layout (location = POSITION)  in vec3 position;
+                    layout (location = TEXCOORD0) in vec2 texture0;
+                    
+                    struct Transform
                     {
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
-						fragVertex.texCoord0 = texture0;
+                        mat4 modelMatrix;
+                    };
+                    uniform Transform transform;
+                    
+                    struct Vertex 
+                    {
+                        vec2  texCoord0;
+                    };
+                    out Vertex fragVertex;
+                    
+                    void main()
+                    {
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
+                        fragVertex.texCoord0 = texture0;
                         gl_Position = vertex;
-					}
-				]]>
-			</var>
+                    }
+                ]]>
+            </var>
             <var name="target_effects" type="fragment" file="target_effects_fsh.glsl"/>
-			<var name="ffxaa" type="fragment" file="fxaa_fsh.glsl"/>
-			<var name="fscreen2D" type="fragment">
-				<![CDATA[
-					#version 330
-					#define USE_FXAA 0
-				
-					uniform sampler2D sampler0;
-
-					struct Vertex 
-					{
-						vec2  texCoord0;
-					};
-					in 	Vertex 	fragVertex;
-					out vec4 	fragColor;
-					
-					vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
-					vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fxaaQualitySubpix,
-						float fxaaQualityEdgeThreshold, float fxaaQualityEdgeThresholdMin);
-
-					void main()
-					{
-					#if USE_FXAA
-						ivec2 size = textureSize(sampler0, 0);
-						fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
-					#else //USE_FXAA
-						//fragColor = blur(sampler0, fragVertex.texCoord0);
-						fragColor = texture(sampler0, fragVertex.texCoord0);
-					#endif //USE_FXAA
-					}
-				]]>
-			</var>
-		</shaders>
-	</pass>
+            <var name="ffxaa" type="fragment" file="fxaa_fsh.glsl"/>
+            <var name="fscreen2D" type="fragment">
+                <![CDATA[
+                    #version 330
+                    #define USE_FXAA 0
+                    
+                    uniform sampler2D sampler0;
+                    
+                    struct Vertex
+                    {
+                        vec2  texCoord0;
+                    };
+                    in  Vertex  fragVertex;
+                    out vec4    fragColor;
+                    
+                    vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
+                    vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fxaaQualitySubpix,
+                        float fxaaQualityEdgeThreshold, float fxaaQualityEdgeThresholdMin);
+                    
+                    void main()
+                    {
+                    #if USE_FXAA
+                        ivec2 size = textureSize(sampler0, 0);
+                        fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+                    #else //USE_FXAA
+                        //fragColor = blur(sampler0, fragVertex.texCoord0);
+                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                    #endif //USE_FXAA
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
 </technique>

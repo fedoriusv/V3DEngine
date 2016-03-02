@@ -153,6 +153,7 @@ void CRenderer::draw(const RenderJobPtr& job)
         geometry->draw();
 
         pass->unbind(targetIndex);
+        resetTexture();
     }
 }
 

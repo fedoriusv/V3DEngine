@@ -27,7 +27,7 @@ CGeometryTargetGL::CGeometryTargetGL()
 
 CGeometryTargetGL::~CGeometryTargetGL()
 {
-    ASSERT(m_transformfeedback, "Transformfedback doesn't deleted");
+    ASSERT(!m_transformfeedback, "Transformfedback doesn't deleted");
     ASSERT(m_queryId == 0, "Query doesn't deleted");
 
     LOG_DEBUG("CGeometryTargetGL: CGeometryTargetGL destructor %x", this);

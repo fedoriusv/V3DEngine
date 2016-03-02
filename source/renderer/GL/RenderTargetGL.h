@@ -57,9 +57,7 @@ namespace renderer
 
         bool            m_initialized;
 
-        static void     genFramebuffer(u32& buffer);
         static bool     bindFramebuffer(u32 buffer, EFramebufferTarget target = eFBTargetWrite);
-        static void     deleteFramebuffers(u32& buffer);
 
         static void     genRenderbuffer(u32& buffer);
         static bool     bindRenderbuffer(u32 buffer);

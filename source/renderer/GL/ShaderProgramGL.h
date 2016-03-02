@@ -28,11 +28,11 @@ namespace renderer
 
     private:
 
-        bool                useProgram(u32 shaderProgram);
-
         bool                init(const std::vector<u32>& shaders);
         bool                link();
         bool                validate();
+
+        static bool         useProgram(u32 shaderProgram);
 
         void                getShaderIDArray(std::vector<u32>& shaders);
 

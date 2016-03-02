@@ -1,13 +1,14 @@
 #include "MyApplication.h"
 #include "Valera3D.h"
 
-#include "stream/StreamManager.h"
+#include "scene/TargetManager.h"
 
 using namespace v3d;
 using namespace core;
 using namespace scene;
 using namespace stream;
 using namespace event;
+using namespace renderer;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
@@ -24,7 +25,6 @@ void MyApplication::init()
     CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 512, 384));
     screen1->setName("screen1");
     screen1->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
-
     CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 384, 1024, 768));
     screen2->setName("screen2");
     screen2->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
@@ -36,12 +36,13 @@ void MyApplication::init()
     CShape* cube2 = BaseApplication::getSceneManager()->addCube(0, Vector3D(2, 0, -5));
     cube2->setName("cube2");
     cube2->getMaterial()->setRenderTechnique("shaders/texture_target.xml");
+    cube2->getMaterial()->setTexture(0, "textures/wall.jpg");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");
     CNode* camera = BaseApplication::getSceneManager()->addCamera(0, Vector3D(0, 0, 1), Vector3D(0.0f, 0, -1.0f));
     camera->setName("camera");
-    
+
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectGamepadEvent(std::bind(&MyApplication::onGamepad, this, std::placeholders::_1));
@@ -50,6 +51,33 @@ void MyApplication::init()
 void MyApplication::run()
 {
     //Main loop
+    const RenderTargetPtr target = std::static_pointer_cast<CRenderTarget>(CTargetManager::getInstance()->get("targetTest"));
+    CTexture* texture = target ? target->getColorTexture(2) : nullptr;
+    if (texture)
+    {
+        using typeId = f32;
+        u32 size = texture->getSize().getArea();
+        void* data = malloc(size * sizeof(typeId));
+        texture->readData(data);
+
+        typeId* castData = (typeId*)data;
+        typeId min = castData[0];
+        typeId max = castData[0];
+        for (u32 i = 0; i < size; ++i)
+        {
+            if (min > castData[i])
+            {
+                min = castData[i];
+            }
+
+            if (max < castData[i])
+            {
+                max = castData[i];
+            }
+        }
+
+        free(data);
+    }
 }
 
 void MyApplication::onMouse(const event::MouseInputEventPtr& event)

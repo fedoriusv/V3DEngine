@@ -42,6 +42,9 @@ namespace renderer
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;
 
+        void                            setClearDepth(f32 depth);
+        f32                             getClearDepth() const;
+
         void                            setViewport(const core::Rect32& size);
         const core::Rect32&             getViewport() const;
 
@@ -59,6 +62,7 @@ namespace renderer
             eColorAttach,
             eDepthAttach,
             eStencilAttach,
+            eDepthStencilAttach,
         };
 
         enum EAttachmentsOutput
@@ -74,9 +78,11 @@ namespace renderer
             ~SAttachments();
 
             u32                 _index;
-            EAttachmentsType    _type;
+            EAttachmentsType    _attachmentType;
             EAttachmentsOutput  _output;
-            u32                 _format;
+            
+            EImageFormat        _format;
+            EImageType          _type;
 
             CTexture*           _texture;
             u32                 _bufferId; //TODO: need rework to object
@@ -88,12 +94,14 @@ namespace renderer
         friend                      CRenderTechnique;
 
         bool                        parse(const tinyxml2::XMLElement* root);
+        bool                        formatParser(const std::string& str, EImageFormat& format, EImageType& type);
 
-        void                        attachTarget(EAttachmentsType type, u32 index, u32 foramt, EAttachmentsOutput output);
+        void                        attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output);
 
         std::deque<SAttachments>    m_attachmentsList;
 
         core::Vector4D              m_color;
+        f32                         m_depth;
         core::Rect32                m_viewport;
 
         bool                        m_MSAA;
