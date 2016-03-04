@@ -131,18 +131,18 @@ void CRenderTargetGL::bind()
 
 void CRenderTargetGL::unbind()
 {
-    /*bool chaned = CRenderTargetGL::bindFramebuffer(0);
+    bool chaned = CRenderTargetGL::bindFramebuffer(0);
     if (chaned)
     {
         glReadBuffer(GL_BACK);
         glDrawBuffer(GL_BACK);
 
         const RenderTargetPtr& target = RENDERER->getDefaultRenderTarget();
-        const Rect& rect = target->getViewport();
+        const Rect32& rect = target->getViewport();
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
         RENDERER->setCurrentRenderTarget(target);
-    }*/
+    }
 
     //TODO: test blit renderbuffers
     /*if (m_frameBufferID != 0 && m_attachBuffers.size() > 0)

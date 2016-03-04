@@ -10,7 +10,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::vector<u32>::const_iterator PassIndexIterConst;
+    using PassIndexIterConst = std::vector<u32>::const_iterator;
 
     class CRenderJob
     {
@@ -56,7 +56,8 @@ namespace renderer
     typedef std::shared_ptr<CRenderJob> RenderJobPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDERJOB_H_

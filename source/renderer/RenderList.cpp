@@ -1,4 +1,5 @@
 #include "RenderList.h"
+#include "Engine.h"
 #include "Material.h"
 #include "scene/Node.h"
 #include "scene/Shape.h"
@@ -126,6 +127,7 @@ void CRenderList::update(u32 delta)
 
 void CRenderList::render()
 {
+    m_target->bind();
 
     for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
@@ -135,8 +137,13 @@ void CRenderList::render()
             continue;
         }
 
+        ASSERT(item->getRenderJob(), "Invalid Render job");
+        item->getRenderJob()->setRenderTarget((*iter)._targetIndex);
+
         item->render();
     }
+
+    m_target->unbind();
 }
 
 

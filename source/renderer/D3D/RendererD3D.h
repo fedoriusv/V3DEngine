@@ -37,7 +37,7 @@ namespace d3d
 
     private:
 
-        void                resetTexture()                                                          override;
+        void                resetTextures()                                                         override;
 
         bool                m_isLocked;
     };

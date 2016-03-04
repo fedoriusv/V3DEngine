@@ -76,7 +76,7 @@ namespace renderer
 
         friend                      scene::CSceneManager;
 
-        virtual void                resetTexture()  = 0;
+        virtual void                resetTextures()     = 0;
 
         void                        updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass);
         void                        updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass);

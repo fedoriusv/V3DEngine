@@ -3,7 +3,7 @@
     <!-- Render Targets -->
     <rendertargets>
         <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0">
-            <color color="0x00000000" clear="true">
+            <color color="0x0000ff00" clear="true">
                 <attach active="true" val="0" format="rgba32u" output="texture"/>
                 <attach active="false" val="1" format="rgba32f" output="texture"/>
                 <attach active="false" val="2" format="r32f" output="texture"/>
@@ -25,7 +25,7 @@
             <var name="sampler0" val="targetTest" attachment="c0"/>
         </samplers>
         <renderstate>
-            <polygonmode val="line"/>
+            <polygonmode val="fill"/>
             <winding val="ccw"/>
             <culling val="false"/>
             <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
@@ -70,7 +70,7 @@
             <var name="fscreen2D" type="fragment">
                 <![CDATA[
                     #version 330
-                    #define USE_FXAA 0
+                    #define USE_FXAA 1
                     
                     uniform sampler2D sampler0;
                     
@@ -89,7 +89,15 @@
                     {
                     #if USE_FXAA
                         ivec2 size = textureSize(sampler0, 0);
-                        fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+                        if (fragVertex.texCoord0.x > 0.5)
+                        {
+                            fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+                        }
+                        else
+                        {
+                            fragColor = texture(sampler0, fragVertex.texCoord0);
+                        }
+                        //fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
                     #else //USE_FXAA
                         //fragColor = blur(sampler0, fragVertex.texCoord0);
                         fragColor = texture(sampler0, fragVertex.texCoord0);

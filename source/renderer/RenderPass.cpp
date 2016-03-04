@@ -534,16 +534,16 @@ void CRenderPass::bind(u32 target)
         m_program->applyUniform(uniform->second);
     }
 
-    ASSERT(m_targetList.size() > target, "Invalid target index");
-    m_targetList[target]->bind();
+    /*ASSERT(m_targetList.size() > target, "Invalid target index");
+    m_targetList[target]->bind();*/
 }
 
 void CRenderPass::unbind(u32 target)
 {
     //m_program->unbind();
 
-    ASSERT(m_targetList.size() > target, "Invalid target index");
-    m_targetList[target]->unbind();
+    /*ASSERT(m_targetList.size() > target, "Invalid target index");
+    m_targetList[target]->unbind();*/
 
 }
 

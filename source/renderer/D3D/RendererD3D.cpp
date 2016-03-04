@@ -145,7 +145,7 @@ bool CRendererD3D::isLocked() const
     return m_isLocked;
 }
 
-void CRendererD3D::resetTexture()
+void CRendererD3D::resetTextures()
 {
     //CTextureGL::reset();
 }

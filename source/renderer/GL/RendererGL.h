@@ -40,7 +40,7 @@ namespace gl
 
     private:
 
-        void                resetTexture()                                                          override;
+        void                resetTextures()                                                          override;
 
         bool                m_isLocked;
     };

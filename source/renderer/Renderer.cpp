@@ -153,7 +153,7 @@ void CRenderer::draw(const RenderJobPtr& job)
         geometry->draw();
 
         pass->unbind(targetIndex);
-        resetTexture();
+        resetTextures();
     }
 }
 
@@ -452,7 +452,7 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     }
     else
     {
-        resetTexture();
+        resetTextures();
     }
 }
 

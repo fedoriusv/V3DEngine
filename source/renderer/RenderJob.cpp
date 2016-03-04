@@ -2,9 +2,12 @@
 #include "Material.h"
 #include "Engine.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace core;
-using namespace renderer;
 
 CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
     : m_material(material)
@@ -80,5 +83,11 @@ u32 CRenderJob::getRenderTarget() const
 
 void CRenderJob::addRenderPassIndex(u32 pass)
 {
-    m_passIndexList.push_back(pass);
+    if (std::find(m_passIndexList.cbegin(), m_passIndexList.cend(), pass) == m_passIndexList.cend())
+    {
+        m_passIndexList.push_back(pass);
+    }
 }
+
+} //namespace renderer
+} //namespace v3d
