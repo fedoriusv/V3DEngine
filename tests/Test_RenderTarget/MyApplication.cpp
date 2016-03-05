@@ -25,6 +25,9 @@ void MyApplication::init()
     CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 512, 384));
     screen1->setName("screen1");
     screen1->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
+    screen1->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("FXAAEnable", 1);
+
+
     CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 384, 1024, 768));
     screen2->setName("screen2");
     screen2->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
@@ -131,6 +134,20 @@ void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)
             }
 
         }
+
+        if (event->_key == EKeyCode::eKeyKey_F)
+        {
+            CNode* screen1 = getSceneManager()->getObjectByName("screen1");
+            if (!screen1)
+            {
+                return;
+            }
+
+            static int enable = 1;
+            enable = (enable == 1) ? 0 : 1;
+            static_cast<CRectangleShape*>(screen1)->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("FXAAEnable", enable);
+        }
+
 
         ///
         CNode* node = getSceneManager()->getObjectByName("cube");

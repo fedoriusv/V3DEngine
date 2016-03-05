@@ -51,9 +51,9 @@
                     };
                     uniform Transform transform;
                     
-                    struct Vertex 
+                    struct Vertex
                     {
-                        vec2  texCoord0;
+                        vec2 texCoord0;
                     };
                     out Vertex fragVertex;
                     
@@ -61,6 +61,7 @@
                     {
                         vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
+                        
                         gl_Position = vertex;
                     }
                 ]]>
@@ -73,31 +74,37 @@
                     #define USE_FXAA 1
                     
                     uniform sampler2D sampler0;
+                    uniform int FXAAEnable;
                     
                     struct Vertex
                     {
-                        vec2  texCoord0;
+                        vec2 texCoord0;
                     };
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
                     
                     vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
-                    vec4 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 fxaaQualityRcpFrame, float fxaaQualitySubpix,
-                        float fxaaQualityEdgeThreshold, float fxaaQualityEdgeThresholdMin);
+                    vec4 fxaaPixelShader(vec4 posPos, sampler2D tex, vec2 rcpFrame);
                     
                     void main()
                     {
                     #if USE_FXAA
                         ivec2 size = textureSize(sampler0, 0);
-                        if (fragVertex.texCoord0.x > 0.5)
+                        if (FXAAEnable == 1)
                         {
-                            fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
+                            const float FXAA_SUBPIX_SHIFT = 0.0;
+                            vec2 rcpFrame = 1.0 / size;
+                            
+                            vec4 posPos;
+                            posPos.xy = fragVertex.texCoord0;
+                            posPos.zw = fragVertex.texCoord0 - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));
+                            
+                            fragColor = fxaaPixelShader(posPos, sampler0, 1.0/size);
                         }
                         else
                         {
                             fragColor = texture(sampler0, fragVertex.texCoord0);
                         }
-                        //fragColor = FxaaPixelShader(fragVertex.texCoord0, sampler0, 1.0/size, 0.75, 0.166, 0.0625);
                     #else //USE_FXAA
                         //fragColor = blur(sampler0, fragVertex.texCoord0);
                         fragColor = texture(sampler0, fragVertex.texCoord0);
