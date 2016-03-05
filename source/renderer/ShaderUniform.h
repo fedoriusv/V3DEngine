@@ -49,6 +49,7 @@ namespace renderer
             eLightRadius,
 
             eCurrentTime,
+            eViewportSize,
 
             eUniformsCount,
         };

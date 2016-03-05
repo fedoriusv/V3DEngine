@@ -40,6 +40,7 @@ const std::string CShaderUniform::s_uniformName[EUniformData::eUniformsCount] = 
     "light.radius",
 
     "currentTime",
+    "viewportSize"
 };
 
 

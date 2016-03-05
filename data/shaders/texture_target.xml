@@ -11,6 +11,7 @@
             <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
             <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+            <var name="viewportSize" type="mat4" val="viewportSize"/>
         </uniforms>
         <attributes>
             <var name="position" type="vec3" val="mesh.position"/>
@@ -75,12 +76,16 @@
                     #version 330
                     
                     uniform sampler2D sampler0;
+                    uniform vec2 viewportSize;
                     
                     struct Vertex
                     {
                         vec2  texCoord0;
                     };
                     in  Vertex fragVertex;
+                    
+                    layout(origin_upper_left) in vec4 gl_FragCoord;
+                    
                     layout (location = 0) out vec4 fragColor;
                     layout (location = 1) out vec4 halfColor;
                     layout (location = 2) out float rColor;
@@ -88,7 +93,7 @@
                     void main()
                     {
                         fragColor = texture(sampler0, fragVertex.texCoord0);
-                        if(gl_FragCoord.x < 256)
+                        if(gl_FragCoord.x < viewportSize.x / 2)
                         {
                             halfColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
                         }
