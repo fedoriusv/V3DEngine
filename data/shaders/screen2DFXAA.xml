@@ -5,8 +5,8 @@
         <target name="targetTestRight" x="512" y="0" width="1024" height="384" ratio="0.0">
             <color color="0x00ffff00" clear="true">
                 <attach active="true" val="0" format="rgba32u" output="texture"/>
-                <attach active="true" val="1" format="rgba32f" output="texture"/>
-                <attach active="true" val="2" format="r16s" output="texture"/>
+                <attach active="false" val="1" format="rgba32f" output="texture"/>
+                <attach active="true" val="2" format="r32f" output="texture"/>
             </color>
             <depth active="true" value="1.0" clear="true" format="depth24u" output="texture"/>
         </target>
