@@ -1,4 +1,4 @@
-// Valera Engine (c) 2015
+// Valera Engine (c) 2016
 
 #ifndef _V3D_VALERA_3D_H_
 #define _V3D_VALERA_3D_H_
@@ -10,6 +10,9 @@
 #include "utils/Timer.h"
 
 #include "stream/StreamManager.h"
+
+#include "renderer/Buffer.h"
+#include "renderer/RenderPass.h"
 
 #include "scene/Node.h"
 #include "scene/SampleShape.h"
@@ -28,6 +31,7 @@
 #include "scene/Text.h"
 #include "scene/Mesh.h"
 #include "scene/Model.h"
+#include "scene/ParticleSystem.h"
 #include "scene/Light.h"
 
 #endif //_V3D_VALERA_3D_H_

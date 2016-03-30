@@ -25,6 +25,7 @@ namespace scene
         eSkyBox,
         eText,
         eBillboard,
+        eParticleSystem,
 
         eCount
      };

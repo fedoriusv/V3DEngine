@@ -8,6 +8,7 @@
 #include "PlaneShape.h"
 #include "RectangleShape.h"
 #include "Billboard.h"
+#include "ParticleSystem.h"
 #include "Camera.h"
 #include "Skybox.h"
 #include "Light.h"
@@ -258,6 +259,18 @@ CFPSCamera* CSceneManager::addFPSCamera(CNode* parent, const core::Vector3D& pos
     node->setSpeed(speed);
 
     m_scene->setActiveCamera(node);
+
+    CSceneManager::addNode(node);
+
+    return node;
+}
+
+CParticleSystem* CSceneManager::addParticleSystem(const std::string& texture, CNode* parent, Vector3D& pos, u32 amout)
+{
+    CParticleSystem* node = new CParticleSystem(texture);
+    node->setParent(parent);
+    node->setPosition(pos);
+    node->setAmountOfParticles(amout);
 
     CSceneManager::addNode(node);
 

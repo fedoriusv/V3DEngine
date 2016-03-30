@@ -9,12 +9,15 @@
 #include "Skybox.h"
 #include "Camera.h"
 #include "Model.h"
+#include "ParticleSystem.h"
 #include "renderer/Renderer.h"
 #include "renderer/Material.h"
-#include "RenderTargetManager.h"
+#include "TargetManager.h"
 
-using namespace v3d;
-using namespace scene;
+namespace v3d
+{
+namespace scene
+{
 using namespace renderer;
 
 CScene::CScene()
@@ -182,6 +185,7 @@ void CScene::initRenderLists()
             case ENodeType::eSkyBox:
             case ENodeType::eText:
             case ENodeType::eBillboard:
+            case ENodeType::eParticleSystem:
             {
                 CScene::attachToRenderList(node);
             }
@@ -229,39 +233,46 @@ void CScene::attachToRenderList(CNode* node)
     switch (node->getNodeType())
     {
         case ENodeType::eShape:
-            {
-                draw = static_cast<CShape*>(node);
-                techniqe = draw->getMaterial()->getRenderTechique();
-            }
-                break;
+        {
+            draw = static_cast<CShape*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
 
         case ENodeType::eMesh:
-            {
-                draw = static_cast<CMesh*>(node);
-                techniqe = draw->getMaterial()->getRenderTechique();
-            }
-                break;
+        {
+            draw = static_cast<CMesh*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
 
         case ENodeType::eSkyBox:
-            {
-                draw = static_cast<CSkybox*>(node);
-                techniqe = draw->getMaterial()->getRenderTechique();
-            }
-                break;
+        {
+            draw = static_cast<CSkybox*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
 
         case ENodeType::eText:
-            {
-                draw = static_cast<CText*>(node);
-                techniqe = draw->getMaterial()->getRenderTechique();
-            }
-                break;
+        {
+            draw = static_cast<CText*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
 
         case ENodeType::eBillboard:
-            {
-                draw = static_cast<CBillboard*>(node);
-                techniqe = draw->getMaterial()->getRenderTechique();
-            }
-                break;
+        {
+            draw = static_cast<CBillboard*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
+
+        case ENodeType::eParticleSystem:
+        {
+            draw = static_cast<CParticleSystem*>(node);
+            techniqe = draw->getMaterial()->getRenderTechique();
+        }
+            break;
 
         case ENodeType::eModel:
         default:
@@ -282,7 +293,7 @@ void CScene::attachToRenderList(CNode* node)
 
         for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
         {
-            const RenderTargetPtr& target = pass->getRenderTarget(targetIndex);
+            const TargetPtr& target = pass->getRenderTarget(targetIndex);
             auto findPred = [target](const CRenderList& list) -> bool
             {
                 if (list.getTargetName() == target->getName())
@@ -335,3 +346,6 @@ void CScene::needRefresh()
 {
     m_refresh = true;
 }
+
+} //namespace scene
+} //namespace v3d

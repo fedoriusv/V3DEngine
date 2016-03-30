@@ -27,6 +27,7 @@ namespace scene
     class CSkybox;
     class CText;
     class CBillboard;
+    class CParticleSystem;
     class CLight;
 
     class CSceneManager
@@ -60,6 +61,8 @@ namespace scene
 
         CCamera*                addCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.f), const core::Vector3D& target = core::Vector3D(0.f, 0.f, -1.f), const core::Vector3D& up = core::Vector3D(0.f, 1.f, 0.f));
         CFPSCamera*             addFPSCamera(CNode* parent = nullptr, const core::Vector3D& pos = core::Vector3D(0.f), const core::Vector3D& target = core::Vector3D(0.f, 0.f, -1.f), f32 speed = 0.001f);
+
+        CParticleSystem*        addParticleSystem(const std::string& texture, CNode* parent = nullptr, core::Vector3D& pos = core::Vector3D(0.f), u32 amout = 10U);
 
         CNode*                  getObjectByID(s32 id);
         CNode*                  getObjectByName(const std::string& name);
