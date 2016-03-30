@@ -1,15 +1,12 @@
-<technique name="screen2DMSAA" version="100">
-    
-    <!-- Textures -->
-    <textures>
-        <texture name="box" file="textures/box.jpg"/>
-    </textures>
-    
+<technique name="screen2DFXAA" version="100">
+
     <!-- Render Targets -->
     <rendertargets>
-        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" aa="msaa">
-            <color color="0x00ff0000" clear="true">
+        <target name="targetTestRight" x="512" y="0" width="1024" height="384" ratio="0.0">
+            <color color="0x00ffff00" clear="true">
                 <attach active="true" val="0" format="rgba32u" output="texture"/>
+                <attach active="true" val="1" format="rgba32f" output="texture"/>
+                <attach active="true" val="2" format="r16s" output="texture"/>
             </color>
             <depth active="true" value="1.0" clear="true" format="depth24u" output="texture"/>
         </target>
@@ -25,7 +22,7 @@
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
-            <var name="sampler0" val="targetTestMSAA" attachment="c0"/>
+            <var name="sampler0" val="targetTestRight" attachment="c0"/>
         </samplers>
         <renderstate>
             <polygonmode val="fill"/>
@@ -38,7 +35,7 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var name="vscreen2DMSAA" type="vertex">
+            <var name="vscreen2DFXAA" type="vertex">
                 <![CDATA[
                     #version 330
                     #define POSITION    0
@@ -56,7 +53,7 @@
                     
                     struct Vertex
                     {
-                        vec2  texCoord0;
+                        vec2 texCoord0;
                     };
                     out Vertex fragVertex;
                     
@@ -64,44 +61,54 @@
                     {
                         vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
+                        
                         gl_Position = vertex;
                     }
                 ]]>
             </var>
-            <var name="fscreen2DMSAA" type="fragment">
+            <var name="target_effects" type="fragment" file="target_effects_fsh.glsl"/>
+            <var name="ffxaa" type="fragment" file="fxaa_fsh.glsl"/>
+            <var name="fscreen2DFXAA" type="fragment">
                 <![CDATA[
                     #version 330
+                    #define USE_FXAA 1
                     
-                    uniform sampler2DMS sampler0;
-                    uniform int MSAAEnable;
-                    
-                    const int samplerSize = 16;
+                    uniform sampler2D sampler0;
+                    uniform int FXAAEnable;
                     
                     struct Vertex
                     {
-                        vec2  texCoord0;
+                        vec2 texCoord0;
                     };
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
                     
+                    vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
+                    vec4 fxaaPixelShader(vec4 posPos, sampler2D tex, vec2 rcpFrame);
+                    
                     void main()
                     {
-                        ivec2 size = textureSize(sampler0);
-                        vec2 texPos = size * fragVertex.texCoord0;
-                        
-                        if (MSAAEnable == 1)
+                    #if USE_FXAA
+                        ivec2 size = textureSize(sampler0, 0);
+                        if (FXAAEnable == 1)
                         {
-                            vec4 color = vec4(0.0,0.0,0.0,1.0);
-                            for(int i = 0; i < samplerSize; ++i)
-                            {
-                                color = color + texelFetch(sampler0, ivec2(texPos), i);
-                            }
-                            fragColor = vec4(color/samplerSize);
+                            const float FXAA_SUBPIX_SHIFT = 0.0;
+                            vec2 rcpFrame = 1.0 / size;
+                            
+                            vec4 posPos;
+                            posPos.xy = fragVertex.texCoord0;
+                            posPos.zw = fragVertex.texCoord0 - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));
+                            
+                            fragColor = fxaaPixelShader(posPos, sampler0, 1.0/size);
                         }
                         else
                         {
-                            fragColor = texelFetch(sampler0, ivec2(texPos), 0);
+                            fragColor = texture(sampler0, fragVertex.texCoord0);
                         }
+                    #else //USE_FXAA
+                        //fragColor = blur(sampler0, fragVertex.texCoord0);
+                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                    #endif //USE_FXAA
                     }
                 ]]>
             </var>

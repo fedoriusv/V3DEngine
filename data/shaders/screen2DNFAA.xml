@@ -1,12 +1,10 @@
-<technique name="screen2D" version="100">
+<technique name="screen2DNFAA" version="100">
 
     <!-- Render Targets -->
     <rendertargets>
-        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0">
+        <target name="targetTestLeft" x="0" y="0" width="512" height="384" ratio="0.0">
             <color color="0x0000ff00" clear="true">
                 <attach active="true" val="0" format="rgba32u" output="texture"/>
-                <attach active="false" val="1" format="rgba32f" output="texture"/>
-                <attach active="false" val="2" format="r32f" output="texture"/>
             </color>
             <depth active="true" value="1.0" clear="true" format="depth24u" output="texture"/>
         </target>
@@ -22,7 +20,7 @@
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
-            <var name="sampler0" val="targetTest" attachment="c0"/>
+            <var name="sampler0" val="targetTestLeft" attachment="c0"/>
         </samplers>
         <renderstate>
             <polygonmode val="fill"/>
@@ -35,7 +33,7 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var name="vscreen2D" type="vertex">
+            <var name="vscreen2DNFAA" type="vertex">
                 <![CDATA[
                     #version 330
                     #define POSITION    0
@@ -66,15 +64,14 @@
                     }
                 ]]>
             </var>
-            <var name="target_effects" type="fragment" file="target_effects_fsh.glsl"/>
-            <var name="ffxaa" type="fragment" file="fxaa_fsh.glsl"/>
-            <var name="fscreen2D" type="fragment">
+            <var name="ffxaa" type="fragment" file="nfaa_fsh.glsl"/>
+            <var name="fscreen2DNFAA" type="fragment">
                 <![CDATA[
                     #version 330
-                    #define USE_FXAA 1
+                    #define USE_NFAA 1
                     
                     uniform sampler2D sampler0;
-                    uniform int FXAAEnable;
+                    uniform int NFAAEnable;
                     
                     struct Vertex
                     {
@@ -83,32 +80,24 @@
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
                     
-                    vec4 blur(sampler2D sampler, vec2 coord, float blurSizeH = 1.0 / 300.0, float blurSizeV = 1.0 / 200.0);
-                    vec4 fxaaPixelShader(vec4 posPos, sampler2D tex, vec2 rcpFrame);
+                    vec4 nsaaPixelShader(vec2 posPos, sampler2D tex, vec2 rcpFrame);
                     
                     void main()
                     {
-                    #if USE_FXAA
+                    #if USE_NFAA
                         ivec2 size = textureSize(sampler0, 0);
-                        if (FXAAEnable == 1)
+                        if (NFAAEnable == 1)
                         {
-                            const float FXAA_SUBPIX_SHIFT = 0.0;
                             vec2 rcpFrame = 1.0 / size;
-                            
-                            vec4 posPos;
-                            posPos.xy = fragVertex.texCoord0;
-                            posPos.zw = fragVertex.texCoord0 - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));
-                            
-                            fragColor = fxaaPixelShader(posPos, sampler0, 1.0/size);
+                            fragColor = nsaaPixelShader(fragVertex.texCoord0, sampler0, rcpFrame);
                         }
                         else
                         {
                             fragColor = texture(sampler0, fragVertex.texCoord0);
                         }
-                    #else //USE_FXAA
-                        //fragColor = blur(sampler0, fragVertex.texCoord0);
+                    #else //USE_NFAA
                         fragColor = texture(sampler0, fragVertex.texCoord0);
-                    #endif //USE_FXAA
+                    #endif //USE_NFAA
                     }
                 ]]>
             </var>

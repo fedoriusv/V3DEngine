@@ -32,7 +32,8 @@
             <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
         </renderstate>
         <rendertarget>
-            <var val="targetTest"/>
+            <var val="targetTestLeft"/>
+            <var val="targetTestRight"/>
             <var val="targetTestMSAA"/>
         </rendertarget>
         <lod geometry="0.0"/>
@@ -101,7 +102,7 @@
                         {
                             halfColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
                         }
-                        rColor = -1000.54321;
+                        rColor = -1000.15689;
                     }
                 ]]>
             </var>

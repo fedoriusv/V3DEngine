@@ -214,7 +214,7 @@ bool CDriverContextGL::createWin32Context()
         WGL_COLOR_BITS_ARB, 24,
         WGL_ALPHA_BITS_ARB, 8,
         WGL_DEPTH_BITS_ARB, 24,
-        WGL_STENCIL_BITS_ARB, 0,
+        WGL_STENCIL_BITS_ARB, 8,
         WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
         WGL_STEREO_ARB, 0,
         WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
