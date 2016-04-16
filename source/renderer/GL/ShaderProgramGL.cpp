@@ -244,13 +244,18 @@ bool CShaderProgramGL::link()
     GLint charsWritten;
     glGetProgramiv(m_shaderProgramID, GL_INFO_LOG_LENGTH, &length);
 
-    GLchar* buffer = new GLchar[length];
-    glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
-    if (strlen(buffer) > 0)
+    if (length > 0)
     {
-        LOG_ERROR("CShaderProgramGL: Shader Program [%d] Link Logs:\n %s", m_shaderProgramID, buffer);
+        GLchar* buffer = new GLchar[length];
+
+        glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
+        if (strlen(buffer) > 0)
+        {
+            LOG_ERROR("CShaderProgramGL: Shader Program [%d] Link Logs:\n %s", m_shaderProgramID, buffer);
+        }
+
+        delete[] buffer;
     }
-    delete[] buffer;
 #endif //_DEBUG_GL
 
     return (linkStatus == GL_TRUE) ? true : false;
@@ -273,13 +278,18 @@ bool CShaderProgramGL::validate()
    GLint charsWritten;
    glGetProgramiv(m_shaderProgramID, GL_INFO_LOG_LENGTH, &length);
 
-   GLchar* buffer = new GLchar[length];
-   glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
-   if (strlen(buffer) > 0)
+   if (length > 0)
    {
-       LOG_ERROR("CShaderProgramGL: Shader Program [%d] Validate Logs:\n %s", m_shaderProgramID, buffer);
+       GLchar* buffer = new GLchar[length];
+
+       glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
+       if (strlen(buffer) > 0)
+       {
+           LOG_ERROR("CShaderProgramGL: Shader Program [%d] Validate Logs:\n %s", m_shaderProgramID, buffer);
+       }
+
+       delete[] buffer;
    }
-   delete[] buffer;
 #endif //_DEBUG_GL
 
     return (validateStatus == GL_TRUE) ? true : false;

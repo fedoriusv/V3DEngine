@@ -131,32 +131,37 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
 #ifdef _DEBUG_GL
     GLint length;
     GLint charsWritten;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
-    GLchar* buffer = new GLchar[length];
-    glGetShaderInfoLog(shader, length, &charsWritten, buffer);
-    if (strlen(buffer) > 0)
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+    if (length > 0)
     {
-        std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
+        GLchar* buffer = new GLchar[length];
+
+        glGetShaderInfoLog(shader, length, &charsWritten, buffer);
+        if (strlen(buffer) > 0)
         {
-            switch (type)
+            std::function<const char*(EShaderType)> strFunc = [](EShaderType type)
             {
-            case EShaderType::eVertex:
-                return "Vertex";
-            case EShaderType::eFragment:
-                return "Fragment";
-            case EShaderType::eGeometry:
-                return "Geometry";
-            case EShaderType::eCompute:
-                return "Compute";
-            default:
+                switch (type)
+                {
+                case EShaderType::eVertex:
+                    return "Vertex";
+                case EShaderType::eFragment:
+                    return "Fragment";
+                case EShaderType::eGeometry:
+                    return "Geometry";
+                case EShaderType::eCompute:
+                    return "Compute";
+                default:
+                    return "Unknown";
+                }
                 return "Unknown";
-            }
-            return "Unknown";
-        };
-        LOG_INFO("CShaderGL: Shader [%s] Name [%s] Compile Logs:\n%s", strFunc(type), name.c_str(), buffer);
+            };
+            LOG_INFO("CShaderGL: Shader [%s] Name [%s] Compile Logs:\n%s", strFunc(type), name.c_str(), buffer);
+        }
+
+        delete[] buffer;
     }
-    delete[] buffer;
 #endif //_DEBUG_GL
 
     RENDERER->checkForErrors("Init Shader Error");
