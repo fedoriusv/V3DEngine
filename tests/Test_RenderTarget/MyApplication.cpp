@@ -12,6 +12,7 @@ using namespace renderer;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
+    , m_activeTarget(true)
 {
     BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768));
 }
@@ -22,20 +23,29 @@ MyApplication::~MyApplication()
 
 void MyApplication::init()
 {
-    CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 512, 384));
-    screen1->setName("screen1");
-    screen1->getMaterial()->setRenderTechnique("shaders/screen2DNFAA.xml");
-    screen1->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("NFAAEnable", 1);
+    if (!m_activeTarget)
+    {
+        CRectangleShape* screen = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 1024, 768));
+        screen->setName("screen");
+        screen->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
+    }
+    else
+    {
+        CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 512, 384));
+        screen1->setName("screen1");
+        screen1->getMaterial()->setRenderTechnique("shaders/screen2DNFAA.xml");
+        screen1->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("NFAAEnable", 1);
 
-    CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 0, 1024, 384));
-    screen2->setName("screen2");
-    screen2->getMaterial()->setRenderTechnique("shaders/screen2DFXAA.xml");
-    screen2->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("FXAAEnable", 1);
+        CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 0, 1024, 384));
+        screen2->setName("screen2");
+        screen2->getMaterial()->setRenderTechnique("shaders/screen2DFXAA.xml");
+        screen2->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("FXAAEnable", 1);
 
-    CRectangleShape* screen3 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 384, 1024, 768));
-    screen3->setName("screen3");
-    screen3->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
-    screen3->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("MSAAEnable", 1);
+        CRectangleShape* screen3 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 384, 1024, 768));
+        screen3->setName("screen3");
+        screen3->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
+        screen3->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("MSAAEnable", 1);
+    }
 
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -3));
     cube->setName("cube");
@@ -59,7 +69,7 @@ void MyApplication::init()
 void MyApplication::run()
 {
     //Main loop
-    const RenderTargetPtr target = std::static_pointer_cast<CRenderTarget>(CTargetManager::getInstance()->get("targetTestRight"));
+    /*const RenderTargetPtr target = std::static_pointer_cast<CRenderTarget>(CTargetManager::getInstance()->get("targetTestRight"));
     CTexture* texture = target ? target->getColorTexture(2) : nullptr;
     if (texture)
     {
@@ -78,7 +88,7 @@ void MyApplication::run()
         }
 
         free(data);
-    }
+    }*/
 }
 
 void MyApplication::onMouse(const event::MouseInputEventPtr& event)

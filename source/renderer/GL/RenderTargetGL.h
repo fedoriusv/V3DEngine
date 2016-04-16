@@ -33,7 +33,7 @@ namespace renderer
         bool            create()    override;
         void            destroy()   override;
 
-        void            createRenderbuffer(SAttachments& attach, const core::Rect32& rect);
+        void            createRenderToRenderbuffer(SAttachments& attach, const core::Rect32& rect);
         void            createRenderToTexture(SAttachments& attach, const core::Rect32& rect);
         void            copyToRenderbuffer(const RenderTargetPtr& dst);
 
@@ -59,10 +59,6 @@ namespace renderer
 
         static bool     bindFramebuffer(u32 buffer, EFramebufferTarget target = eFBTargetWrite);
 
-        static void     genRenderbuffer(u32& buffer);
-        static bool     bindRenderbuffer(u32 buffer);
-        static void     deleteRenderbuffers(u32& buffer);
-
         static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
         static void     framebufferRenderbuffer(s32 attachment, u32 buffer);
         static void     renderbufferStorage(u32 internalFormat, const core::Rect32& size, u32 samplers = 0);
@@ -70,7 +66,6 @@ namespace renderer
         static void     blitFramebuffer(const core::Rect32& src, const core::Rect32& dst, u32 mask, u32 filter);
 
         static u32      s_currentFBO[eFBTargetCount];
-        static u32      s_currentRBO;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

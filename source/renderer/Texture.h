@@ -2,6 +2,7 @@
 #define _V3D_TEXTURE_H_
 
 #include "stream/Resource.h"
+#include "ImageFormats.h"
 
 namespace v3d
 {
@@ -64,38 +65,6 @@ namespace renderer
         eClampToBorder,
 
         eWrapCount
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum EImageType
-    {
-        eByte,
-        eUnsignedByte,
-        eShort,
-        eUnsignedShort,
-        eUnsignedShort_565,
-        eUnsignedShort_4444,
-        eInt,
-        eUnsignedInt,
-        eFloat,
-
-        eImageTypeCount
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum EImageFormat
-    {
-        eRed,
-        eRG,
-        eRGB,
-        eRGBA,
-        eBGR,
-        eBGRA,
-        eDepthComponent,
-
-        eFormatCount
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,10 +133,10 @@ namespace renderer
             STextureData();
             ~STextureData();
 
-            STextureData& operator=(const STextureData&) = delete;
+            STextureData&       operator=(const STextureData&) = delete;
 
-            void            free();
-            void            copy(const core::Dimension3D& size, EImageType type, void* data);
+            void                free();
+            void                copy(const core::Dimension3D& size, EImageType type, void* data);
 
             core::Dimension3D   _size;
             EImageFormat        _format;

@@ -5,6 +5,7 @@
 
 #ifdef _OPENGL_DRIVER_
 #include "RenderStateGL.h"
+#include "RenderBufferGL.h"
 #include "TextureGL.h"
 #include "GL/glew.h"
 
@@ -28,7 +29,6 @@ GLenum ERenderbufferTargetGL[] =
 };
 
 u32 CRenderTargetGL::s_currentFBO[] = { 0 };
-u32 CRenderTargetGL::s_currentRBO = 0;
 
 CRenderTargetGL::CRenderTargetGL()
     : m_frameBufferId(0U)
@@ -178,8 +178,6 @@ bool CRenderTargetGL::create()
 
     GLint originalFBO = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &originalFBO);
-    GLint originalRBO = 0;
-    glGetIntegerv(GL_RENDERBUFFER_BINDING, &originalRBO);
 
     CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
 
@@ -195,7 +193,7 @@ bool CRenderTargetGL::create()
                 break;
 
             case eRenderOutput:
-                CRenderTargetGL::createRenderbuffer(attach, rect);
+                CRenderTargetGL::createRenderToRenderbuffer(attach, rect);
                 break;
         }
     }
@@ -235,10 +233,6 @@ bool CRenderTargetGL::create()
     ASSERT((result == GL_FRAMEBUFFER_COMPLETE), "CRenderTarget: Create render target Error");
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
-    if (originalRBO > 0)
-    {
-        CRenderTargetGL::bindRenderbuffer(originalRBO);
-    }
     if (originalFBO > 0)
     {
         CRenderTargetGL::bindFramebuffer(originalFBO);
@@ -268,7 +262,6 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, 0);
-                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
 
@@ -280,7 +273,6 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, 0);
-                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
 
@@ -292,7 +284,6 @@ void CRenderTargetGL::destroy()
             else if (attach._output == eRenderOutput)
             {
                 framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, 0);
-                CRenderTargetGL::deleteRenderbuffers(attach._bufferId);
             }
             break;
         }
@@ -309,7 +300,7 @@ void CRenderTargetGL::destroy()
     }
 }
 
-void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rect)
+void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rect32& rect)
 {
     std::function<GLenum(u32)> internalFormat = [](u32 format) -> GLenum
     {
@@ -356,12 +347,13 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
             }
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
-            CRenderTargetGL::genRenderbuffer(attach._bufferId);
-            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
-            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
-            CRenderTargetGL::bindRenderbuffer(0);
+            ASSERT(!attach._buffer, "Renderbuffer already exist");
+            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, attach._bufferId);
+            attach._buffer->bind();
+            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+            attach._buffer->unbind();
 
             RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
         }
@@ -369,12 +361,13 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eDepthAttach:
         {
-            CRenderTargetGL::genRenderbuffer(attach._bufferId);
-            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
-            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
-            CRenderTargetGL::bindRenderbuffer(0);
+            ASSERT(!attach._buffer, "Renderbuffer already exist");
+            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, attach._bufferId);
+            attach._buffer->bind();
+            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+            attach._buffer->unbind();
 
             RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
         }
@@ -382,12 +375,13 @@ void CRenderTargetGL::createRenderbuffer(SAttachments& attach, const Rect32& rec
 
         case eStencilAttach:
         {
-            CRenderTargetGL::genRenderbuffer(attach._bufferId);
-            CRenderTargetGL::bindRenderbuffer(attach._bufferId);
-            CRenderTargetGL::renderbufferStorage(internalFormat(attach._format), rect, m_MSAA ? samplerSize : 0);
-            CRenderTargetGL::bindRenderbuffer(0);
+            ASSERT(!attach._buffer, "Renderbuffer already exist");
+            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
 
-            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, attach._bufferId);
+            attach._buffer->bind();
+            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+            attach._buffer->unbind();
 
             RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
         }
@@ -532,35 +526,6 @@ bool CRenderTargetGL::bindFramebuffer(u32 buffer, EFramebufferTarget target)
     return false;
 }
 
-void CRenderTargetGL::genRenderbuffer(u32& buffer)
-{
-    glGenRenderbuffers(1, &buffer);
-}
-
-bool CRenderTargetGL::bindRenderbuffer(u32 buffer)
-{
-    if (s_currentRBO != buffer)
-    {
-        glBindRenderbuffer(GL_RENDERBUFFER, buffer);
-        ASSERT((glIsRenderbuffer(buffer) || buffer == 0), "Invalid RBO index");
-        s_currentRBO = buffer;
-
-        return true;
-    }
-
-    return false;
-}
-
-void CRenderTargetGL::deleteRenderbuffers(u32& buffer)
-{
-    if (buffer != 0)
-    {
-        ASSERT(glIsRenderbuffer(buffer), "Invalid Index RBO");
-        glDeleteRenderbuffers(1, &buffer);
-        buffer = 0;
-    }
-}
-
 void CRenderTargetGL::framebufferTexture2D(s32 attachment, s32 target, u32 texture)
 {
     ASSERT((glIsTexture(texture) || texture == 0), "Invalid Index Texture");
@@ -577,18 +542,6 @@ void CRenderTargetGL::blitFramebuffer(const Rect32& src, const Rect32& dst, u32 
 {
     glBlitFramebuffer(src.getLeftX(), src.getBottomY(), src.getRightX(), src.getTopY(),
         dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
-}
-
-void CRenderTargetGL::renderbufferStorage(u32 internalFormat, const Rect32& size, u32 samplers)
-{
-    if (samplers > 0)
-    {
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samplers, internalFormat, size.getWidth(), size.getHeight());
-    }
-    else
-    {
-        glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, size.getWidth(), size.getHeight());
-    }
 }
 
 } //namespace renderer

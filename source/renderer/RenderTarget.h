@@ -2,7 +2,7 @@
 #define _V3D_RENDER_TARGET_H_
 
 #include "Target.h"
-#include "Texture.h"
+#include "ImageFormats.h"
 
 namespace tinyxml2
 {
@@ -17,6 +17,8 @@ namespace renderer
 
     class CRenderPass;
     class CRenderTechnique;
+    class CTexture;
+    class CRenderBuffer;
 
     /**
     * Inherited class for render target management.
@@ -85,7 +87,7 @@ namespace renderer
             EImageType          _type;
 
             CTexture*           _texture;
-            u32                 _bufferId; //TODO: need rework to object
+            CRenderBuffer*      _buffer;
         };
 
     protected:

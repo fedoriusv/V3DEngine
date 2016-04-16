@@ -12,14 +12,14 @@ namespace renderer
 using namespace core;
 
 CRenderTarget::SAttachments::SAttachments()
-: _index(0U)
-, _attachmentType(EAttachmentsType::eEmptyAttach)
-, _output(EAttachmentsOutput::eEmptyOutput)
-, _format(EImageFormat::eBGRA)
-, _type(EImageType::eUnsignedByte)
+    : _index(0U)
+    , _attachmentType(EAttachmentsType::eEmptyAttach)
+    , _output(EAttachmentsOutput::eEmptyOutput)
+    , _format(EImageFormat::eBGRA)
+    , _type(EImageType::eUnsignedByte)
 
-, _texture(nullptr)
-, _bufferId(0U) //TODO: will need replace to current render module
+    , _texture(nullptr)
+    , _buffer(nullptr)
 {
 }
 
@@ -31,7 +31,11 @@ CRenderTarget::SAttachments::~SAttachments()
         _texture = nullptr;
     }
 
-    ASSERT(_bufferId == 0, "Buffer doesn't deleted");
+    if (_buffer)
+    {
+        delete _buffer;
+        _buffer = nullptr;
+    }
 }
 
 CRenderTarget::CRenderTarget()
@@ -621,6 +625,7 @@ void CRenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageForma
     target._type = type;
     target._output = output;
     target._texture = nullptr;
+    target._buffer = nullptr;
 
     if (type == eColorAttach)
     {

@@ -35,6 +35,7 @@
             <var val="targetTestLeft"/>
             <var val="targetTestRight"/>
             <var val="targetTestMSAA"/>
+            <var val="target"/>
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
