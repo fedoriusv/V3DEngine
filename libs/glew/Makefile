@@ -40,10 +40,15 @@ else
 $(error "Platform '$(SYSTEM)' not supported")
 endif
 
+GLEW_PREFIX ?= /usr
 GLEW_DEST ?= /usr
 BINDIR    ?= $(GLEW_DEST)/bin
 LIBDIR    ?= $(GLEW_DEST)/lib
 INCDIR    ?= $(GLEW_DEST)/include/GL
+
+ifneq ($(GLEW_NO_GLU), -DGLEW_NO_GLU)
+LIBGLU = glu
+endif
 
 DIST_NAME     ?= glew-$(GLEW_VERSION)
 DIST_SRC_ZIP ?= $(shell pwd)/$(DIST_NAME).zip
@@ -60,12 +65,13 @@ DIST_DIR := $(shell mktemp -d /tmp/glew.XXXXXX)/$(DIST_NAME)
 #   - use LN= on gmake command-line
 
 AR      ?= ar
+ARFLAGS ?= cr
 INSTALL ?= install
 STRIP   ?= strip
 RM      ?= rm -f
 LN      ?= ln -sf
 
-ifeq ($(MAKECMDGOALS), debug)
+ifneq (,$(filter debug,$(MAKECMDGOALS)))
 OPT = -g
 else
 OPT = $(POPT)
@@ -99,7 +105,11 @@ lib:
 	mkdir lib
 
 lib/$(LIB.STATIC): $(LIB.OBJS)
-	$(AR) cr $@ $^
+ifneq ($(AR),)
+	$(AR) $(ARFLAGS) $@ $^
+else ifneq ($(LIBTOOL),)
+	$(LIBTOOL) $@ $^
+endif
 ifneq ($(STRIP),)
 	$(STRIP) -x $@
 endif
@@ -120,7 +130,7 @@ tmp/$(SYSTEM)/default/static/glew.o: src/glew.c include/GL/glew.h include/GL/wgl
 
 tmp/$(SYSTEM)/default/shared/glew.o: src/glew.c include/GL/glew.h include/GL/wglew.h include/GL/glxew.h
 	@mkdir -p $(dir $@)
-	$(CC) -DGLEW_NO_GLU $(CFLAGS) $(CFLAGS.SO) -o $@ -c $<
+	$(CC) -DGLEW_NO_GLU -DGLEW_BUILD $(CFLAGS) $(CFLAGS.SO) -o $@ -c $<
 
 # Force re-write of glew.pc, GLEW_DEST can vary
 
@@ -128,13 +138,14 @@ tmp/$(SYSTEM)/default/shared/glew.o: src/glew.c include/GL/glew.h include/GL/wgl
 
 glew.pc: glew.pc.in
 	sed \
-		-e "s|@prefix@|$(GLEW_DEST)|g" \
+		-e "s|@prefix@|$(GLEW_PREFIX)|g" \
 		-e "s|@libdir@|$(LIBDIR)|g" \
 		-e "s|@exec_prefix@|$(BINDIR)|g" \
 		-e "s|@includedir@|$(INCDIR)|g" \
 		-e "s|@version@|$(GLEW_VERSION)|g" \
 		-e "s|@cflags@||g" \
-		-e "s|@libname@|GLEW|g" \
+		-e "s|@libname@|$(NAME)|g" \
+		-e "s|@requireslib@|$(LIBGLU)|g" \
 		< $< > $@
 
 # GLEW MX static and shared libraries
@@ -142,7 +153,14 @@ glew.pc: glew.pc.in
 glew.lib.mx:  lib lib/$(LIB.SHARED.MX) lib/$(LIB.STATIC.MX) glewmx.pc
 
 lib/$(LIB.STATIC.MX): $(LIB.OBJS.MX)
-	$(AR) cr $@ $^
+ifneq ($(AR),)
+	$(AR) $(ARFLAGS) $@ $^
+else ifneq ($(LIBTOOL),)
+	$(LIBTOOL) $@ $^
+endif
+ifneq ($(STRIP),)
+	$(STRIP) -x $@
+endif
 
 lib/$(LIB.SHARED.MX): $(LIB.SOBJS.MX)
 	$(LD) $(LDFLAGS.SO.MX) -o $@ $^ $(LIB.LDFLAGS) $(LIB.LIBS)
@@ -160,7 +178,7 @@ tmp/$(SYSTEM)/mx/static/glew.o: src/glew.c include/GL/glew.h include/GL/wglew.h 
 
 tmp/$(SYSTEM)/mx/shared/glew.o: src/glew.c include/GL/glew.h include/GL/wglew.h include/GL/glxew.h
 	@mkdir -p $(dir $@)
-	$(CC) -DGLEW_NO_GLU -DGLEW_MX $(CFLAGS) $(CFLAGS.SO) -o $@ -c $<
+	$(CC) -DGLEW_NO_GLU -DGLEW_MX -DGLEW_BUILD $(CFLAGS) $(CFLAGS.SO) -o $@ -c $<
 
 # Force re-write of glewmx.pc, GLEW_DEST can vary
 
@@ -168,13 +186,14 @@ tmp/$(SYSTEM)/mx/shared/glew.o: src/glew.c include/GL/glew.h include/GL/wglew.h 
 
 glewmx.pc: glew.pc.in
 	sed \
-		-e "s|@prefix@|$(GLEW_DEST)|g" \
+		-e "s|@prefix@|$(GLEW_PREFIX)|g" \
 		-e "s|@libdir@|$(LIBDIR)|g" \
 		-e "s|@exec_prefix@|$(BINDIR)|g" \
 		-e "s|@includedir@|$(INCDIR)|g" \
 		-e "s|@version@|$(GLEW_VERSION)|g" \
 		-e "s|@cflags@|-DGLEW_MX|g" \
-		-e "s|@libname@|GLEWmx|g" \
+		-e "s|@libname@|$(NAME)mx|g" \
+		-e "s|@requireslib@|$(LIBGLU)|g" \
 		< $< > $@
 
 # GLEW utility programs
