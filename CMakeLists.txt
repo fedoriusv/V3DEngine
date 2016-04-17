@@ -271,6 +271,7 @@ set (ENGINE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
 
 include_directories(
     ${SOURCE_DIR}
+    ${SOURCE_DIR}/ThirdParty
     libs/glew/include
     libs/tinyxml2
     libs/freetype2/include

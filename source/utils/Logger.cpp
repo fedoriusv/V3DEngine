@@ -1,5 +1,12 @@
 #include "Logger.h"
 
+#if HIGHLIGHTING_LOGS
+#include "termcolor/termcolor.hpp"
+
+using namespace termcolor;
+
+#endif //HIGHLIGHTING_LOGS
+
 namespace v3d
 {
 namespace utils
@@ -14,6 +21,21 @@ const std::string k_loggerType[ELoggerType::eLoggerCount] =
     "ERROR"
 };
 
+#if HIGHLIGHTING_LOGS
+
+using colorFunc = std::ostream& (*)(std::ostream& stream);
+
+const colorFunc k_colorList[ELoggerType::eLoggerCount] =
+{
+    green,
+    white,
+    green,
+    yellow,
+    red
+};
+
+
+#endif //HIGHLIGHTING_LOGS
 
 CLogger::CLogger()
     : m_logFilename("logfile.log")
@@ -95,12 +117,20 @@ void CLogger::logToConsole(const std::string& message, ELoggerType type)
     if (type == ELoggerType::eLoggerDebug)
     {
 #if (defined(_DEBUG) || defined(DEBUG)) && defined(USE_DEBUG_LOG)
+#   if HIGHLIGHTING_LOGS
+        std::cout << k_colorList[type] << k_loggerType[eLoggerDebug] << ": " << message << reset << std::endl;
+#   else //HIGHLIGHTING_LOGS
         std::cout << k_loggerType[eLoggerDebug] << ": " << message << std::endl;
-#endif
+#   endif //HIGHLIGHTING_LOGS
+#endif //_DEBUG
     }
     else
     {
+#if HIGHLIGHTING_LOGS
+        std::cout << k_colorList[type] << k_loggerType[type] << ": " << message << reset << std::endl;
+#else //HIGHLIGHTING_LOGS
         std::cout << k_loggerType[type] << ": " << message << std::endl;
+#endif //HIGHLIGHTING_LOGS
     }
 }
 

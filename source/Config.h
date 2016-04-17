@@ -18,6 +18,7 @@
 #if USED_LOGGER
 #   define USE_LOGGER
 #   define USE_DEBUG_LOG
+#   define HIGHLIGHTING_LOGS 1
 #endif //USED_LOGGER
 
 #if USED_DEVIL
