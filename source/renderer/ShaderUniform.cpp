@@ -8,9 +8,12 @@
 #   pragma clang diagnostic ignored "-Wswitch"
 #endif  //_PLATFORM_WIN_
 
-using namespace v3d;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace core;
-using namespace renderer;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -309,7 +312,7 @@ bool CShaderUniform::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        uniformType = ::DataType::getDataTypeByString(varType);
+        uniformType = DataType::getDataTypeByString(varType);
         if (uniformType == EDataType::eTypeNone)
         {
             LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());
@@ -469,3 +472,6 @@ void CShaderUniform::parseArrayValue(const std::string& valueStr, f32* array, u3
 
     array[count - 1] = ::std::stof(str);
 }
+
+} //namespace renderer
+} //namespace v3d

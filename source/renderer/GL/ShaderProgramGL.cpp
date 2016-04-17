@@ -207,7 +207,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         }
         RENDERER->checkForErrors("CShaderProgramGL: Bind sampler error");
 
-        std::remove_if(samplerList.begin(), samplerList.end(), [](const SamplerPtr item) -> bool
+        std::remove_if(samplerList.begin(), samplerList.end(), [](const CShaderSampler* item) -> bool
         {
             return (item->getID() == -1);
         });

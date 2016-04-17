@@ -307,9 +307,12 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        SamplerPtr sampler = std::make_shared<CShaderSampler>();
+        CShaderSampler* sampler = new CShaderSampler();
         if (!sampler->parse(varElement))
         {
+            delete sampler;
+            sampler = nullptr;
+
             LOG_ERROR("CRenderPass: Parse error samplers element");
             varElement = varElement->NextSiblingElement("var");
             continue;

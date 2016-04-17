@@ -18,6 +18,9 @@ namespace renderer
 
     class CRenderer;
     
+    /**
+    * Shader Sampler.
+    */
     class CShaderSampler
     {
     public:
@@ -63,11 +66,11 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderSampler>    SamplerPtr;
-    typedef std::vector<SamplerPtr>            SamplerList;
+    typedef std::vector<CShaderSampler*>    SamplerList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_SAMPLER_H_

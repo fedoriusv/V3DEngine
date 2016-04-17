@@ -3,8 +3,10 @@
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -319,3 +321,6 @@ void CShaderAttribute::setAttribute(EDataType type, const std::string & name, u3
         m_userData = new SUserData(size, count, data);
     }
 }
+
+} //namespace renderer
+} //namespace v3d

@@ -6,20 +6,20 @@ namespace renderer
 {
 
 CShaderData::CShaderData()
-: m_vertexFormatMask(0U)
+    : m_vertexFormatMask(0U)
 {
 }
 
 CShaderData::~CShaderData()
 {
-    for (UniformPair& item : m_uniformList)
+    for (auto& item : m_uniformList)
     {
         delete item.second;
         item.second = nullptr;
     }
     m_uniformList.clear();
 
-    for (AttributePair& item : m_attributeList)
+    for (auto& item : m_attributeList)
     {
         delete item.second;
         item.second = nullptr;
@@ -27,13 +27,18 @@ CShaderData::~CShaderData()
     m_attributeList.clear();
     m_vertexFormatMask = 0U;
 
-    for (AttributePair& item : m_fragDataList)
+    for (auto& item : m_fragDataList)
     {
         delete item.second;
         item.second = nullptr;
     }
     m_fragDataList.clear();
 
+    for (auto& item : m_samplerList)
+    {
+        delete item;;
+        item = nullptr;
+    }
     m_samplerList.clear();
 }
 
@@ -88,7 +93,7 @@ bool CShaderData::isExistFragData(const std::string& name)
 
 bool CShaderData::isExistSampler(const std::string& name)
 {
-    SamplerList::const_iterator iter = std::find_if(m_samplerList.begin(), m_samplerList.end(), [name](const SamplerPtr& sampler) -> bool
+    SamplerList::const_iterator iter = std::find_if(m_samplerList.begin(), m_samplerList.end(), [name](const CShaderSampler* sampler) -> bool
     {
         if (sampler->getAttribute() == name)
         {
@@ -300,11 +305,11 @@ void CShaderData::addAttribute(const CShaderAttribute* attribute)
     }
 }
 
-void CShaderData::addSampler(const SamplerPtr& sampler)
+void CShaderData::addSampler(const CShaderSampler* sampler)
 {
     if (!isExistSampler(sampler->getAttribute()))
     {
-        m_samplerList.push_back(sampler);
+        m_samplerList.push_back(const_cast<CShaderSampler*>(sampler));
     }
 }
 

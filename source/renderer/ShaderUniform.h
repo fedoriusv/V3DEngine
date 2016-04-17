@@ -17,6 +17,10 @@ namespace renderer
 
     class CShaderData;
 
+
+    /**
+    * Shader Uniform.
+    */
     class CShaderUniform
     {
     public:
@@ -101,7 +105,8 @@ namespace renderer
     typedef std::map<const std::string, CShaderUniform*>    UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_UNIFORM_H_

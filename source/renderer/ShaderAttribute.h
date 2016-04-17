@@ -17,6 +17,9 @@ namespace renderer
 
     class CShaderData;
 
+    /**
+    * Shader Attribute.
+    */
     class CShaderAttribute
     {
     public:
@@ -109,7 +112,8 @@ namespace renderer
     typedef std::map<const std::string, CShaderAttribute*>  AttributeList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_SHADER_ATTRIBUTE_H_

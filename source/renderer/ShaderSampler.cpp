@@ -5,8 +5,11 @@
 
 #include "tinyxml2.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
+
 using namespace scene;
 
 CShaderSampler::CShaderSampler()
@@ -167,3 +170,6 @@ const RenderTargetPtr CShaderSampler::getTarget() const
 
     return m_target.lock();
 }
+
+} //namespace renderer
+} //namespace v3d
