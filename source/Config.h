@@ -27,8 +27,8 @@
 //Compiler
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(_MSC_VER) && (_MSC_VER < 1700)
-#   error "Only Microsoft Visual Studio 11.0 and later are supported."
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+#   error "Only Microsoft Visual Studio 14.0 and later are supported."
 #endif
 
 //PLatform
