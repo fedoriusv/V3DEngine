@@ -2,9 +2,13 @@
 
     <!-- Render Targets -->
     <rendertargets>
-        <target name="target" x="0" y="0" width="1024" height="768" ratio="0.0">
+        <target name="MRTtarget" x="0" y="0" width="1024" height="768" ratio="0.0">
             <color color="0x00000000" clear="true">
                 <attach active="true" val="0" format="rgba8u" output="texture"/>
+                <attach active="false" val="1" format="rgba32f" output="texture"/>
+                <attach active="false" val="2" format="rgba32f" output="texture"/>
+                <attach active="true" val="3" format="rgba32f" output="texture"/>
+                <attach active="true" val="4" format="r32f" output="texture"/>
             </color>
             <depth active="true" value="1.0" clear="true" format="depth24u" output="render"/>
         </target>
@@ -20,7 +24,7 @@
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
-            <var name="sampler0" val="target" attachment="c0"/>
+            <var name="sampler0" val="MRTtarget" attachment="c0"/>
         </samplers>
         <renderstate>
             <polygonmode val="fill"/>

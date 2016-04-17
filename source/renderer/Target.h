@@ -38,6 +38,9 @@ namespace renderer
 
     protected:
 
+        void                        setName(const std::string& name);
+        void                        setTargetType(ETagetType type);
+
         friend                      scene::CTargetManager;
 
         virtual bool                create()  = 0;

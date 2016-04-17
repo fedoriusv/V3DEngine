@@ -20,6 +20,8 @@
         <fragdata>
             <var name="fragColor" type="vec4" val="attachment.color"/>
             <var name="halfColor" type="vec4" val="attachment.color"/>
+            <var name="solidColor0" type="vec4" val="attachment.color"/>
+            <var name="solidColor1" type="vec4" val="attachment.color"/>
             <var name="rColor" type="float" val="attachment.color"/>
         </fragdata>
         <samplers>
@@ -35,7 +37,7 @@
             <var val="targetTestLeft"/>
             <var val="targetTestRight"/>
             <var val="targetTestMSAA"/>
-            <var val="target"/>
+            <var val="MRTtarget"/>
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
@@ -90,7 +92,9 @@
                     
                     layout (location = 0) out vec4 fragColor;
                     layout (location = 1) out vec4 halfColor;
-                    layout (location = 2) out float rColor;
+                    layout (location = 2) out vec4 solidColor0;
+                    layout (location = 3) out vec4 solidColor1;
+                    layout (location = 4) out float rColor;
                     
                     void main()
                     {
@@ -103,6 +107,8 @@
                         {
                             halfColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
                         }
+                        solidColor0 = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+                        solidColor1 = vec4(0.0f, 1.0f, 1.0f, 1.0f);
                         rColor = -1000.15689;
                     }
                 ]]>

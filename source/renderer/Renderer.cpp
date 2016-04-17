@@ -478,7 +478,7 @@ void CRenderer::updateAdvanced(const RenderPassPtr & pass)
         case CShaderUniform::eViewportSize:
         {
             const core::Rect32& rect = CRenderer::getCurrentRenderTarget()->getViewport();
-            program->applyUniformVector2(id, core::Vector2D(rect.getWidth(), rect.getHeight()));
+            program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
         }
         break;
 

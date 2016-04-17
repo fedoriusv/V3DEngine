@@ -1,6 +1,7 @@
 #include "RenderTarget.h"
 #include "utils/Logger.h"
 #include "Engine.h"
+#include "RenderBuffer.h"
 
 #include "tinyxml2.h"
 
@@ -13,6 +14,7 @@ using namespace core;
 
 CRenderTarget::SAttachments::SAttachments()
     : _index(0U)
+    , _active(true)
     , _attachmentType(EAttachmentsType::eEmptyAttach)
     , _output(EAttachmentsOutput::eEmptyOutput)
     , _format(EImageFormat::eBGRA)
@@ -21,6 +23,21 @@ CRenderTarget::SAttachments::SAttachments()
     , _texture(nullptr)
     , _buffer(nullptr)
 {
+}
+
+CRenderTarget::SAttachments::SAttachments(const SAttachments&& attach)
+{
+    _index = attach._index;
+    _active = attach._active;
+
+    _attachmentType = attach._attachmentType;
+    _output = attach._output;
+
+    _format = attach._format;
+    _type = attach._type;
+
+    _texture = attach._texture;
+    _buffer = attach._buffer;
 }
 
 CRenderTarget::SAttachments::~SAttachments()
@@ -38,6 +55,30 @@ CRenderTarget::SAttachments::~SAttachments()
     }
 }
 
+CRenderTarget::SAttachments& CRenderTarget::SAttachments::operator=(const SAttachments&& attach)
+{
+    if (this == &attach)
+    {
+        return *this;
+    }
+
+    _index = attach._index;
+    _active = attach._active;
+
+    _attachmentType = attach._attachmentType;
+    _output = attach._output;
+
+    _format = attach._format;
+    _type = attach._type;
+
+    _texture = attach._texture;
+    _buffer = attach._buffer;
+
+    return *this;
+}
+
+const std::string CRenderTarget::k_defaultName = "default";
+
 CRenderTarget::CRenderTarget()
     : m_color(core::Vector4D(0.0f))
     , m_depth(1.0f)
@@ -48,8 +89,8 @@ CRenderTarget::CRenderTarget()
     , m_clearDepthBuffer(true)
     , m_clearStencilBuffer(false)
 {
-    m_targetType = ITarget::ETagetType::eRenderTarget;
-    m_name = "default";
+    ITarget::setTargetType(ITarget::ETagetType::eRenderTarget);
+    ITarget::setName(k_defaultName);
 
     u32 width = (u32)(WINDOW->getSize().width);
     u32 height = (u32)(WINDOW->getSize().height);
@@ -311,56 +352,54 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         const tinyxml2::XMLElement* attachElement = colorElement->FirstChildElement("attach");
         while (attachElement)
         {
-            bool hasClearColor = attachElement->BoolAttribute("active");
-            if (hasClearColor)
+            bool hasActiveColor = attachElement->BoolAttribute("active");
+            
+            u32 attachIndex = attachElement->UnsignedAttribute("val");
+            EImageFormat format = EImageFormat::eRGBA;
+            EImageType type = EImageType::eUnsignedByte;
+            if (attachElement->Attribute("format"))
             {
-                u32 attachIndex = attachElement->UnsignedAttribute("val");
-                EImageFormat format = EImageFormat::eRGBA;
-                EImageType type = EImageType::eUnsignedByte;
-                if (attachElement->Attribute("format"))
+                std::string formatStr = attachElement->Attribute("format");
+                if (!formatParser(formatStr, format, type))
                 {
-                    std::string formatStr = attachElement->Attribute("format");
-                    if (!formatParser(formatStr, format, type))
-                    {
-                        LOG_ERROR("CRenderTarget: Color format [%s] unknown in [%s]. Skip", formatStr.c_str(), m_name.c_str());
-
-                        attachElement = attachElement->NextSiblingElement("attach");
-                        continue;
-                    }
-                }
-                else
-                {
-                    LOG_ERROR("CRenderTarget: Color format don't exist in %s. Skip", m_name.c_str());
+                    LOG_ERROR("CRenderTarget: Color format [%s] unknown in [%s]. Skip", formatStr.c_str(), m_name.c_str());
 
                     attachElement = attachElement->NextSiblingElement("attach");
                     continue;
                 }
-
-                EAttachmentsOutput output = eTextureOutput;
-                if (attachElement->Attribute("output"))
-                {
-                    std::string outputStr = attachElement->Attribute("output");
-
-                    std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str)->EAttachmentsOutput
-                    {
-                        if (str == "texture")
-                        {
-                            return eTextureOutput;
-                        }
-                        else if (str == "render")
-                        {
-                            return eRenderOutput;
-                        }
-
-                        LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
-                        return eTextureOutput;
-                    };
-
-                    output = getAttachmentOutput(outputStr);
-                }
-
-                CRenderTarget::attachTarget(eColorAttach, attachIndex, format, type, output);
             }
+            else
+            {
+                LOG_ERROR("CRenderTarget: Color format don't exist in %s. Skip", m_name.c_str());
+
+                attachElement = attachElement->NextSiblingElement("attach");
+                continue;
+            }
+
+            EAttachmentsOutput output = eTextureOutput;
+            if (attachElement->Attribute("output"))
+            {
+                std::string outputStr = attachElement->Attribute("output");
+
+                std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str)->EAttachmentsOutput
+                {
+                    if (str == "texture")
+                    {
+                        return eTextureOutput;
+                    }
+                    else if (str == "render")
+                    {
+                        return eRenderOutput;
+                    }
+
+                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                    return eTextureOutput;
+                };
+
+                output = getAttachmentOutput(outputStr);
+            }
+
+            CRenderTarget::attachTarget(eColorAttach, attachIndex, format, type, output, hasActiveColor);
 
             attachElement = attachElement->NextSiblingElement("attach");
         }
@@ -370,106 +409,102 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* depthElement = root->FirstChildElement("depth");
     if (depthElement)
     {
-        bool hasClearDepth = depthElement->BoolAttribute("active");
-        if (hasClearDepth)
+        bool hasActiveDepth = depthElement->BoolAttribute("active");
+
+        bool clearDepthBuffer = depthElement->BoolAttribute("clear");
+        CRenderTarget::setClearDepthBuffer(clearDepthBuffer);
+
+        f32 clearValue = depthElement->FloatAttribute("value");
+        CRenderTarget::setClearDepth(clearValue);
+
+        EImageFormat format = EImageFormat::eDepthComponent;
+        EImageType type = EImageType::eFloat;
+        if (depthElement->Attribute("format"))
         {
-            bool clearDepthBuffer = depthElement->BoolAttribute("clear");
-            CRenderTarget::setClearDepthBuffer(clearDepthBuffer);
-
-            f32 clearValue = depthElement->FloatAttribute("value");
-            CRenderTarget::setClearDepth(clearValue);
-
-            EImageFormat format = EImageFormat::eDepthComponent;
-            EImageType type = EImageType::eFloat;
-            if (depthElement->Attribute("format"))
+            std::string formatStr = depthElement->Attribute("format");
+            if (!formatParser(formatStr, format, type))
             {
-                std::string formatStr = depthElement->Attribute("format");
-                if (!formatParser(formatStr, format, type))
-                {
-                    LOG_WARNING("CRenderTarget: Depth format [%s] unknown in [%s]", formatStr.c_str(), m_name.c_str());
-                }
+                LOG_WARNING("CRenderTarget: Depth format [%s] unknown in [%s]", formatStr.c_str(), m_name.c_str());
             }
-            else
-            {
-                LOG_WARNING("CRenderTarget: Depth format don't exist in %s", m_name.c_str());
-            }
-
-            EAttachmentsOutput output = eTextureOutput;
-            if (depthElement->Attribute("output"))
-            {
-                std::string outputStr = depthElement->Attribute("output");
-
-                std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
-                {
-                    if (str == "texture")
-                    {
-                        return eTextureOutput;
-                    }
-                    else if (str == "render")
-                    {
-                        return eRenderOutput;
-                    }
-
-                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
-                    return eTextureOutput;
-                };
-
-                output = getAttachmentOutput(outputStr);
-            }
-
-            CRenderTarget::attachTarget(eDepthAttach, 0, format, type, output);
         }
+        else
+        {
+            LOG_WARNING("CRenderTarget: Depth format don't exist in %s", m_name.c_str());
+        }
+
+        EAttachmentsOutput output = eTextureOutput;
+        if (depthElement->Attribute("output"))
+        {
+            std::string outputStr = depthElement->Attribute("output");
+
+            std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
+            {
+                if (str == "texture")
+                {
+                    return eTextureOutput;
+                }
+                else if (str == "render")
+                {
+                    return eRenderOutput;
+                }
+
+                LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                return eTextureOutput;
+            };
+
+            output = getAttachmentOutput(outputStr);
+        }
+
+        CRenderTarget::attachTarget(eDepthAttach, 0, format, type, output, hasActiveDepth);
     }
 
     //stencil
     const tinyxml2::XMLElement* stencilElement = root->FirstChildElement("stencil");
     if (stencilElement)
     {
-        bool hasClearDepth = stencilElement->BoolAttribute("active");
-        if (hasClearDepth)
+        bool hasActiveStencil = stencilElement->BoolAttribute("active");
+
+        bool clearStencilBuffer = stencilElement->BoolAttribute("clear");
+        CRenderTarget::setClearStencilBuffer(clearStencilBuffer);
+
+        s32 size = stencilElement->IntAttribute("format");
+        if (size)
         {
-            bool clearStencilBuffer = stencilElement->BoolAttribute("clear");
-            CRenderTarget::setClearStencilBuffer(clearStencilBuffer);
-
-            s32 size = stencilElement->IntAttribute("format");
-            if (size)
+            if (core::isPowerOf2(size) || size > 32)
             {
-                if (core::isPowerOf2(size) || size > 32)
-                {
-                    LOG_ERROR("CRenderTarget: Stencil component size must be 16, 24 or 32 - %d", size);
-                }
+                LOG_ERROR("CRenderTarget: Stencil component size must be 16, 24 or 32 - %d", size);
             }
-            else
-            {
-                LOG_WARNING("CRenderTarget: Stencil component size not found. Set default 16");
-                size = 16;
-            }
-
-            EAttachmentsOutput output = eTextureOutput;
-            if (colorElement->Attribute("output"))
-            {
-                std::string outputStr = colorElement->Attribute("output");
-
-                std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
-                {
-                    if (str == "texture")
-                    {
-                        return eTextureOutput;
-                    }
-                    else if (str == "render")
-                    {
-                        return eRenderOutput;
-                    }
-
-                    LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
-                    return eTextureOutput;
-                };
-
-                output = getAttachmentOutput(outputStr);
-            }
-
-            //CRenderTarget::attachTarget(eStencilAttach, 0, size, output);
         }
+        else
+        {
+            LOG_WARNING("CRenderTarget: Stencil component size not found. Set default 16");
+            size = 16;
+        }
+
+        EAttachmentsOutput output = eTextureOutput;
+        if (colorElement->Attribute("output"))
+        {
+            std::string outputStr = colorElement->Attribute("output");
+
+            std::function<EAttachmentsOutput(std::string&)> getAttachmentOutput = [](std::string& str) -> EAttachmentsOutput
+            {
+                if (str == "texture")
+                {
+                    return eTextureOutput;
+                }
+                else if (str == "render")
+                {
+                    return eRenderOutput;
+                }
+
+                LOG_ERROR("CRenderTarget: output format %s unknown. Set render to texure", str.c_str());
+                return eTextureOutput;
+            };
+
+            output = getAttachmentOutput(outputStr);
+        }
+
+        //CRenderTarget::attachTarget(eStencilAttach, 0, format, type, output, hasActiveStencil);
     }
 
     //TODO: eDepthStencilAttach
@@ -615,12 +650,29 @@ bool CRenderTarget::formatParser(const std::string& str, EImageFormat& format, E
     return success;
 }
 
-void CRenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output)
+void CRenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output, bool active)
 {
+    std::deque<SAttachments>::const_iterator iter = std::find_if(m_attachmentsList.cbegin(), m_attachmentsList.cend(), [index, attach](const SAttachments& attachment) -> bool
+    {
+        if (attachment._index == index && attachment._attachmentType == attach)
+        {
+            return true;
+        }
+
+        return false;
+    });
+
+    if (iter != m_attachmentsList.cend())
+    {
+        LOG_WARNING("Attach [%d] alredy present in RenderTarget", index);
+        return;
+    }
+
     SAttachments target;
 
     target._attachmentType = attach;
     target._index = index;
+    target._active = active;
     target._format = format;
     target._type = type;
     target._output = output;
@@ -629,11 +681,11 @@ void CRenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageForma
 
     if (type == eColorAttach)
     {
-        m_attachmentsList.push_front(target);
+        m_attachmentsList.push_front(std::move(target));
     }
     else
     {
-        m_attachmentsList.push_back(target);
+        m_attachmentsList.push_back(std::move(target));
     }
 }
 

@@ -345,6 +345,13 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
                 ASSERT(false, "CRenderTarget: Range out Color attachment");
                 return;
             }
+
+            if (!attach._active)
+            {
+                m_attachBuffers.push_back(GL_NONE);
+                return;
+            }
+
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             ASSERT(!attach._buffer, "Renderbuffer already exist");
@@ -361,6 +368,11 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
 
         case eDepthAttach:
         {
+            if (!attach._active)
+            {
+                return;
+            }
+
             ASSERT(!attach._buffer, "Renderbuffer already exist");
             attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
             attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
@@ -375,6 +387,11 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
 
         case eStencilAttach:
         {
+            if (!attach._active)
+            {
+                return;
+            }
+
             ASSERT(!attach._buffer, "Renderbuffer already exist");
             attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
             attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
@@ -410,6 +427,13 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
                 ASSERT(false, "CRenderTarget: Range out Color attachment");
                 return;
             }
+
+            if (!attach._active)
+            {
+                m_attachBuffers.push_back(GL_NONE);
+                return;
+            }
+
             m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
 
             if (m_MSAA)
@@ -429,6 +453,11 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 
         case eDepthAttach:
         {
+            if (!attach._active)
+            {
+                return;
+            }
+
             ASSERT(attach._format == EImageFormat::eDepthComponent, "Depth must have only depth format");
             if (m_MSAA)
             {
@@ -447,6 +476,11 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 
         case eStencilAttach:
         {
+            if (!attach._active)
+            {
+                return;
+            }
+
             //TODO: will need to rework
             if (m_MSAA)
             {
@@ -465,6 +499,11 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 
         case eDepthStencilAttach:
         {
+            if (!attach._active)
+            {
+                return;
+            }
+
             if (m_MSAA)
             {
                 attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);

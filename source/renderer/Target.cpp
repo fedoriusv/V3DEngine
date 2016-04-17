@@ -24,5 +24,15 @@ ITarget::ETagetType ITarget::getTagetType() const
     return m_targetType;
 }
 
+void ITarget::setName(const std::string& name)
+{
+    m_name = name;
+}
+
+void ITarget::setTargetType(ETagetType type)
+{
+    m_targetType = type;
+}
+
 } //namespace renderer
 } //namespace v3d

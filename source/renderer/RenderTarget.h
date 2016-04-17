@@ -77,9 +77,15 @@ namespace renderer
         struct SAttachments
         {
             SAttachments();
+            SAttachments(const SAttachments& attach) = delete;
+            SAttachments(const SAttachments&&);
             ~SAttachments();
 
+            SAttachments&       operator=(const SAttachments&) = delete;
+            SAttachments&       operator=(const SAttachments&&);
+
             u32                 _index;
+            bool                _active;
             EAttachmentsType    _attachmentType;
             EAttachmentsOutput  _output;
             
@@ -98,7 +104,7 @@ namespace renderer
         bool                        parse(const tinyxml2::XMLElement* root);
         bool                        formatParser(const std::string& str, EImageFormat& format, EImageType& type);
 
-        void                        attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output);
+        void                        attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output, bool active = true);
 
         std::deque<SAttachments>    m_attachmentsList;
 
@@ -111,6 +117,10 @@ namespace renderer
         bool                        m_clearColorBuffer;
         bool                        m_clearDepthBuffer;
         bool                        m_clearStencilBuffer;
+
+    private:
+
+        static const std::string    k_defaultName;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
