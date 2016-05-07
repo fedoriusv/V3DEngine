@@ -24,12 +24,12 @@ CText::CText(const std::string& font)
     m_nodeType = ENodeType::eText;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
+    Renderable::setMaterial(new CMaterial());
 }
 
 CText::~CText()
 {
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 void CText::setText(const std::string& text)
@@ -72,7 +72,7 @@ void CText::init()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CText: RenderTechique doesn't exist");
@@ -80,8 +80,8 @@ void CText::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
     if (m_font.empty())
     {
@@ -102,11 +102,11 @@ void CText::init()
 
     CText::build();
 
-    CRenderable::getGeometry()->setDrawMode(eTriangles);
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->setDrawMode(eTriangles);
+    Renderable::getGeometry()->init();
 
     //TODO: Need more texture maps
-    CRenderable::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
+    Renderable::getMaterial()->setTexture(0, m_data->m_charTexture[0]);
     m_initialiazed = true;
 }
 
@@ -118,7 +118,7 @@ void CText::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CText::render()
@@ -128,7 +128,7 @@ void CText::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }
 
 void CText::refresh()
@@ -143,7 +143,7 @@ void CText::refresh()
 
     CText::build();
 
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }
 
 f32 CText::getTextWidth()
@@ -198,7 +198,7 @@ void CText::build()
         x -= textwidth;
     }
 
-    SVertexData& data = CRenderable::getGeometry()->getData();
+    SVertexData& data = Renderable::getGeometry()->getData();
     data.malloc((u32)m_text.size() * 6);
 
     u32 index = 0;

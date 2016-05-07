@@ -200,7 +200,7 @@ bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
         switch (node->getNodeType())
         {
             case eMesh:
-                static_cast<CMesh*>(node)->getMaterial()->setRenderTechnique(technique);
+                static_cast<CMesh*>(node)->setRenderTechnique(technique);
                 break;
 
             default:

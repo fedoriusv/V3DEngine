@@ -40,7 +40,7 @@ void LightAnimator::createLight(const v3d::core::Vector3D& pos, v3d::f32 radius,
 
     CShape* cube = m_scene->addCube(m_light, Vector3D(0, 0, 0));
     cube->setName("debug_light");
-    cube->getMaterial()->setRenderTechnique("shaders/simple.xml");
+    cube->setRenderTechnique("shaders/simple.xml");
     cube->setScale(Vector3D(0.05f));
 
     LightAnimator::calcAnimatorPoints();

@@ -39,7 +39,7 @@ void CSphereShape::init()
     CSphereShape::build();
     CShape::setGeometryDrawMode(eTriangleStrip);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -158,5 +158,5 @@ void CSphereShape::refresh()
     }
 
     CSphereShape::build();
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }

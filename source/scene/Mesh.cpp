@@ -15,7 +15,7 @@ CMesh::CMesh()
     m_nodeType = ENodeType::eMesh;
     LOG_INFO("CMesh: Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
+    Renderable::setMaterial(new CMaterial());
 }
 
 CMesh::CMesh(const CMesh& mesh)
@@ -24,13 +24,13 @@ CMesh::CMesh(const CMesh& mesh)
     m_nodeType = mesh.m_nodeType;
     LOG_INFO("CMesh: Clone node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
+    Renderable::setMaterial(new CMaterial());
 }
 
 CMesh::~CMesh()
 {
     LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 void CMesh::render()
@@ -40,7 +40,7 @@ void CMesh::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }
 
 void CMesh::update(s32 dt)
@@ -51,7 +51,7 @@ void CMesh::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CMesh::init()
@@ -61,7 +61,7 @@ void CMesh::init()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CMesh: RenderTechique doesn't exist");
@@ -69,8 +69,8 @@ void CMesh::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
     if (!CMesh::load())
     {
@@ -79,8 +79,8 @@ void CMesh::init()
         return;
     }
 
-    CRenderable::getGeometry()->setDrawMode(eTriangles);
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->setDrawMode(eTriangles);
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -117,7 +117,7 @@ bool CMesh::load()
 
 void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 {
-    SVertexData& data = CRenderable::getGeometry()->getData();
+    SVertexData& data = Renderable::getGeometry()->getData();
 
     u32 countIndices = 0;
     stream->read(countIndices);
@@ -187,7 +187,7 @@ void CMesh::loadGeometry(const stream::IStreamPtr& stream)
 
 void CMesh::loadMaterial(const stream::IStreamPtr& stream)
 {
-    const MaterialPtr& material = CRenderable::getMaterial();
+    const MaterialPtr& material = Renderable::getMaterial();
     if (material)
     {
         if (!material->load())
@@ -197,7 +197,6 @@ void CMesh::loadMaterial(const stream::IStreamPtr& stream)
         }
     }
 }
-
 
 CMesh* CMesh::clone()
 {

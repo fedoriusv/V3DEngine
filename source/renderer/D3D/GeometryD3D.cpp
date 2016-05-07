@@ -1,5 +1,6 @@
 #include "GeometryD3D.h"
 #include "utils/Logger.h"
+#include "renderer/RenderTechnique.h"
 #include "Engine.h"
 
 #ifdef _DIRECT3D_DRIVER_

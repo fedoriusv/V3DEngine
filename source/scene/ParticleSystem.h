@@ -8,7 +8,7 @@ namespace v3d
 {
 namespace scene
 {
-    class CParticleSystem : public CNode, public renderer::CRenderable
+    class CParticleSystem : public CNode, public renderer::Renderable
     {
     public:
 

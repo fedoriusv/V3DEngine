@@ -10,7 +10,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CBillboard : public CNode, public renderer::CRenderable
+    class CBillboard : public CNode, public renderer::Renderable
     {
     public:
 

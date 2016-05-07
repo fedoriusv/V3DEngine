@@ -12,6 +12,7 @@
 #include "ParticleSystem.h"
 #include "renderer/Renderer.h"
 #include "renderer/Material.h"
+#include "renderer/RenderTechnique.h"
 #include "TargetManager.h"
 
 namespace v3d
@@ -228,49 +229,49 @@ void CScene::initRenderLists()
 void CScene::attachToRenderList(CNode* node)
 {
     const CRenderTechnique* techniqe = nullptr;
-    CRenderable* draw = nullptr;
+    Renderable* draw = nullptr;
 
     switch (node->getNodeType())
     {
         case ENodeType::eShape:
         {
             draw = static_cast<CShape*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 
         case ENodeType::eMesh:
         {
             draw = static_cast<CMesh*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 
         case ENodeType::eSkyBox:
         {
             draw = static_cast<CSkybox*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 
         case ENodeType::eText:
         {
             draw = static_cast<CText*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 
         case ENodeType::eBillboard:
         {
             draw = static_cast<CBillboard*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 
         case ENodeType::eParticleSystem:
         {
             draw = static_cast<CParticleSystem*>(node);
-            techniqe = draw->getMaterial()->getRenderTechique();
+            techniqe = draw->getRenderTechique();
         }
             break;
 

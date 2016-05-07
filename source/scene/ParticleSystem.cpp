@@ -20,13 +20,13 @@ CParticleSystem::CParticleSystem(const std::string& texture)
     m_nodeType = ENodeType::eParticleSystem;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
-    CRenderable::getMaterial()->setTexture(0, texture);
+    Renderable::setMaterial(new CMaterial());
+    Renderable::getMaterial()->setTexture(0, texture);
 }
 
 CParticleSystem::~CParticleSystem()
 {
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 void CParticleSystem::init()
@@ -36,7 +36,7 @@ void CParticleSystem::init()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CParticalSystem: RenderTechique doesn't exist");
@@ -44,14 +44,14 @@ void CParticleSystem::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
 
     CParticleSystem::build();
-    CRenderable::getGeometry()->setDrawMode(ePoints);
+    Renderable::getGeometry()->setDrawMode(ePoints);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
 
    /* technique->getRenderPass(0)->getUserShaderData()->setUniform("fTimePassed", fTimePassed);
     technique->getRenderPass(0)->getUserShaderData()->setUniform("vGenPosition", vGenPosition);
@@ -75,13 +75,13 @@ void CParticleSystem::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 
     /*fElapsedTime += dt;
 
     if (fElapsedTime > fNextGenerationTime)
     {
-        const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+        const CRenderTechnique* technique = Renderable::getMaterial()->getRenderTechique();
         ASSERT(technique && "RenderTechnique don't exist");
 
         technique->getRenderPass(0)->getUserShaderData()->setUniform("iNumToGenerate", iNumToGenerate);
@@ -99,7 +99,7 @@ void CParticleSystem::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }
 
 void CParticleSystem::setVelocityRange(const core::Vector3D & min, const core::Vector3D & max)
@@ -123,7 +123,7 @@ void CParticleSystem::setAmountOfParticles(u32 amount)
 
 void CParticleSystem::build()
 {
-    SVertexData& data = CRenderable::getGeometry()->getData();
+    SVertexData& data = Renderable::getGeometry()->getData();
     data._vertices =
     {
         { 0.0f, 0.0f, 0.0f }
@@ -137,7 +137,7 @@ void CParticleSystem::refresh()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     ASSERT(technique, "RenderTechique doesn't exist");
 
     /*technique->getRenderPass(0)->getUserShaderData()->setUniform("fTimePassed", fTimePassed);
@@ -150,7 +150,7 @@ void CParticleSystem::refresh()
     technique->getRenderPass(0)->getUserShaderData()->setUniform("fGenLifeRange", fGenLifeRange);
     technique->getRenderPass(0)->getUserShaderData()->setUniform("fGenSize", fGenSize);
     technique->getRenderPass(0)->getUserShaderData()->setUniform("iNumToGenerate", 0);
-*/
+    */
     //CParticleSystem::build();
-    //CRenderable::getGeometry()->refresh();
+    //Renderable::getGeometry()->refresh();
 }

@@ -39,7 +39,7 @@ void CRectangleShape::init()
     CRectangleShape::build();
     CShape::setGeometryDrawMode(eTriangles);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -51,7 +51,7 @@ void CRectangleShape::refresh()
     }
 
     CRectangleShape::build();
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }
 
 void CRectangleShape::build()

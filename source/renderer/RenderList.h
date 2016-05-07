@@ -15,7 +15,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderable;
+    class Renderable;
 
     /**
     * Module which controlled render lists.
@@ -38,7 +38,7 @@ namespace renderer
         bool                            isEnable() const;
         void                            setEnable(bool enable);
 
-        void                            add(scene::CNode* node, CRenderable* draw, u32 target, u32 pass);
+        void                            add(scene::CNode* node, Renderable* draw, u32 target, u32 pass);
         void                            clear();
 
         bool                            contain(scene::CNode* node);
@@ -50,10 +50,10 @@ namespace renderer
 
         struct SNodeList
         {
-            SNodeList(scene::CNode* node, CRenderable* draw, u32 target, u32 pass);
+            SNodeList(scene::CNode* node, Renderable* draw, u32 target, u32 pass);
 
             scene::CNode*   _node;
-            CRenderable*    _draw;
+            Renderable*     _draw;
             u32             _targetIndex;
             u32             _passIndex;
         };

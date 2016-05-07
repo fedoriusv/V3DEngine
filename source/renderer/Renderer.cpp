@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Material.h"
+#include "RenderTechnique.h"
 #include "context/DriverContext.h"
 #include "scene/Light.h"
 #include "scene/Camera.h"
@@ -123,7 +124,7 @@ void CRenderer::draw(const RenderJobPtr& job)
     MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
-    CRenderTechnique* techique = material->getRenderTechique();
+    CRenderTechnique* techique = job->getRenderTechique();
 
     u32 targetIndex = job->getRenderTarget();
     u32 passCount = techique->getRenderPassCount();

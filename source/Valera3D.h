@@ -13,6 +13,7 @@
 
 #include "renderer/Buffer.h"
 #include "renderer/RenderPass.h"
+#include "renderer/RenderTechnique.h"
 
 #include "scene/Node.h"
 #include "scene/SampleShape.h"

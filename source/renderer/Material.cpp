@@ -2,14 +2,15 @@
 #include "stream/StreamManager.h"
 #include "utils/Logger.h"
 #include "stream/FileStream.h"
-#include "scene/RenderTechniqueManager.h"
 #include "scene/TextureManager.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 using namespace scene;
 
-CMaterial::SMaterialData& CMaterial::SMaterialData::operator = (const SMaterialData& material)
+CMaterial::SMaterialData& CMaterial::SMaterialData::operator=(const SMaterialData& material)
 {
     if (this == &material)
     {
@@ -30,7 +31,6 @@ CMaterial::SMaterialData& CMaterial::SMaterialData::operator = (const SMaterialD
 CMaterial::CMaterial()
     : m_needUpdate(true)
     , m_name("")
-    , m_renderTechnique(nullptr)
 {
     m_materialData._ambient      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
     m_materialData._diffuse      = core::Vector4D(0.2f, 0.2f, 0.2f, 1.0f);
@@ -47,7 +47,6 @@ CMaterial::CMaterial(const CMaterial& material)
 {
     m_materialData = material.m_materialData;
     m_texture = material.m_texture;
-    m_renderTechnique = material.m_renderTechnique;
 }
 
 CMaterial::~CMaterial()
@@ -211,51 +210,6 @@ float CMaterial::getTransparency() const
     return m_materialData._transparency;
 }
 
-const CRenderTechnique* CMaterial::getRenderTechique() const
-{
-    return m_renderTechnique;
-}
-
-CRenderTechnique* CMaterial::getRenderTechique()
-{
-    return const_cast<CRenderTechnique*>(m_renderTechnique);
-}
-
-bool CMaterial::setRenderTechnique(const std::string& file)
-{
-    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
-    if (!technique)
-    {
-        LOG_ERROR("CMaterial: Error read file [%s]", file.c_str());
-        return false;
-    }
-
-    m_renderTechnique = technique;
-
-    return true;
-}
-
-bool CMaterial::setRenderTechnique(const stream::IStreamPtr& stream)
-{
-    CRenderTechnique* technique = new CRenderTechnique();
-    technique->init(stream);
-    if (!technique->load())
-    {
-        LOG_ERROR("CMaterial: Streaming error read");
-        return false;
-    }
-
-    scene::CRenderTechniqueManager::getInstance()->add(technique);
-    m_renderTechnique = technique;
-
-    return true;
-}
-
-void CMaterial::setRenderTechnique(const CRenderTechnique* technique)
-{
-    m_renderTechnique = technique;
-}
-
 void CMaterial::init(const stream::IStreamPtr& stream)
 {
     CResource::setStream(stream);
@@ -314,3 +268,6 @@ CMaterial* CMaterial::clone()
     }
     return material;
 }
+
+} //namespace renderer
+} //namespace v3d

@@ -11,35 +11,53 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderable
+    class CRenderTechnique;
+
+    /**
+    * Renderable property class
+    */
+    class Renderable
     {
     public:
 
-        CRenderable();
-        virtual             ~CRenderable();
+        Renderable();
+        Renderable(const Renderable&) = delete;
+        Renderable& operator=(const Renderable&) = delete;
 
-        virtual void        render() = 0;
+        virtual                 ~Renderable();
 
-        void                setMaterial(const MaterialPtr& material);
-        const MaterialPtr&  getMaterial() const;
+        virtual void            render() = 0;
 
-        const RenderJobPtr& getRenderJob() const;
-        const GeometryPtr&  getGeometry() const;
+        void                    setMaterial(const MaterialPtr& material);
+        const MaterialPtr&      getMaterial() const;
+        MaterialPtr&            getMaterial();
+
+        const RenderJobPtr&     getRenderJob() const;
+        const GeometryPtr&      getGeometry() const;
+
+        bool                    setRenderTechnique(const std::string& file);
+        bool                    setRenderTechnique(const stream::IStreamPtr& stream);
+
+        void                    setRenderTechnique(const CRenderTechnique* technique);
+        const CRenderTechnique* getRenderTechique() const;
+        CRenderTechnique*       getRenderTechique();
 
     protected:
 
-        void                setRenderJob(const RenderJobPtr& job);
-        void                setGeometry(const GeometryPtr& geometry);
+        void                    setRenderJob(const RenderJobPtr& job);
+        void                    setGeometry(const GeometryPtr& geometry);
 
     private:
 
-        MaterialPtr         m_material;
-        GeometryPtr         m_geometry;
-        RenderJobPtr        m_renderJob;
+        const CRenderTechnique* m_renderTechnique;
+        MaterialPtr             m_material;
+        GeometryPtr             m_geometry;
+        RenderJobPtr            m_renderJob;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDEREBLE_H_

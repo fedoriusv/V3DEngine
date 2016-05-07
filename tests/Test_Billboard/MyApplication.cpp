@@ -22,20 +22,20 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     CBillboard* billboard0 = BaseApplication::getSceneManager()->addBillboard("textures/tree01.jpg", 0, Vector3D(0, 0, -6));
-    billboard0->getMaterial()->setRenderTechnique("shaders/billboard.xml");
-    billboard0->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
+    billboard0->setRenderTechnique("shaders/billboard.xml");
+    billboard0->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
 
     CBillboard* billboard1 = BaseApplication::getSceneManager()->addBillboard("textures/tree02.jpg", 0, Vector3D(2, 0, -6));
-    billboard1->getMaterial()->setRenderTechnique("shaders/billboard.xml");
-    billboard1->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
+    billboard1->setRenderTechnique("shaders/billboard.xml");
+    billboard1->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
 
     CBillboard* billboard2 = BaseApplication::getSceneManager()->addBillboard("textures/tree03.jpg", 0, Vector3D(-2, 0, -6));
-    billboard2->getMaterial()->setRenderTechnique("shaders/billboard.xml");
-    billboard2->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
+    billboard2->setRenderTechnique("shaders/billboard.xml");
+    billboard2->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setUniform("billboardSize", Vector2D(1., 2.));
 
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/texture_without_light.xml");
+    cube->setRenderTechnique("shaders/texture_without_light.xml");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
     fpsCamera->setName("fpsCamera");

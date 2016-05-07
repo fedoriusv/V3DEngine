@@ -14,12 +14,12 @@ CShape::CShape()
     m_nodeType = ENodeType::eShape;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
+    Renderable::setMaterial(new CMaterial());
 }
 
 void CShape::init()
 {
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CShape: RenderTechique doesn't exist for shape [%s]", CNode::getName().c_str());
@@ -27,14 +27,14 @@ void CShape::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 }
 
 CShape::~CShape()
 {
     LOG_INFO("Delete node type: %s", getNodeNameByType(m_nodeType).c_str());
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 EShapeType CShape::getShapeType() const
@@ -44,20 +44,20 @@ EShapeType CShape::getShapeType() const
 
 SVertexData& CShape::getGeometryData()
 {
-    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
-    return CRenderable::getGeometry()->getData();
+    ASSERT(Renderable::getGeometry(), "CShape: Geomery data nullptr");
+    return Renderable::getGeometry()->getData();
 }
 
 EPrimitivesMode CShape::getGeometryDrawMode() const
 {
-    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
-    return CRenderable::getGeometry()->getDrawMode();
+    ASSERT(Renderable::getGeometry(), "CShape: Geomery data nullptr");
+    return Renderable::getGeometry()->getDrawMode();
 }
 
 void CShape::setGeometryDrawMode(EPrimitivesMode mode)
 {
-    ASSERT(CRenderable::getGeometry(), "CShape: Geomery data nullptr");
-    CRenderable::getGeometry()->setDrawMode(mode);
+    ASSERT(Renderable::getGeometry(), "CShape: Geomery data nullptr");
+    Renderable::getGeometry()->setDrawMode(mode);
 }
 
 void CShape::update(s32 dt)
@@ -68,7 +68,7 @@ void CShape::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CShape::render()
@@ -78,5 +78,5 @@ void CShape::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }

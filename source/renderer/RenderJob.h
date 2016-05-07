@@ -1,8 +1,9 @@
 #ifndef _V3D_RENDERJOB_H_
 #define _V3D_RENDERJOB_H_
 
-#include "Geometry.h"
+#include "common.h"
 #include "Material.h"
+#include "Geometry.h"
 
 namespace v3d
 {
@@ -12,15 +13,23 @@ namespace renderer
 
     using PassIndexIterConst = std::vector<u32>::const_iterator;
 
+    class Renderable;
+
+    /**
+    * Render job class
+    */
     class CRenderJob
     {
     public:
 
-        CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const core::Matrix4D& transform);
+        CRenderJob(const Renderable* renderable, const core::Matrix4D& transform);
         ~CRenderJob();
 
         const MaterialPtr&      getMaterial() const;
         MaterialPtr&            getMaterial();
+
+        const CRenderTechnique* getRenderTechique() const;
+        CRenderTechnique*       getRenderTechique();
 
         const GeometryPtr&      getGeometry() const;
 
@@ -37,16 +46,12 @@ namespace renderer
 
         void                    setTransform(const core::Matrix4D& transform);
 
-    protected:
-
-        void                    setMaterial(const MaterialPtr& material);
-        void                    setGeometry(const GeometryPtr& geometry);
-
     private:
 
-        MaterialPtr             m_material;
-        GeometryPtr             m_geometry;
+        const Renderable*       m_renderable;
+
         core::Matrix4D          m_transform;
+
         u32                     m_targetIndex;
         std::vector<u32>        m_passIndexList;
     };

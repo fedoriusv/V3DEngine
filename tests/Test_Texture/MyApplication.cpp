@@ -48,7 +48,7 @@ void MyApplication::init()
     CSkybox* skybox = BaseApplication::getSceneManager()->addSkyBox(
     "textures/skybox/jajlands_ft.jpg", "textures/skybox/jajlands_rt.jpg", "textures/skybox/jajlands_lf.jpg",
     "textures/skybox/jajlands_bk.jpg", "textures/skybox/jajlands_up.jpg", "textures/skybox/jajlands_dn.jpg");
-    skybox->getMaterial()->setRenderTechnique("shaders/skybox.xml");
+    skybox->setRenderTechnique("shaders/skybox.xml");
 
 
     m_fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0.0f), Vector3D(0.7f, 0.0f, 0.7f));

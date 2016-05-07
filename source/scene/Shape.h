@@ -28,7 +28,7 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShape : public CNode, public renderer::CRenderable
+    class CShape : public CNode, public renderer::Renderable
     {
     public:
 

@@ -38,7 +38,7 @@ void CCylinderShape::init()
     CCylinderShape::build();
     CShape::setGeometryDrawMode(eTriangleStrip);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -72,7 +72,7 @@ void CCylinderShape::refresh()
     }
 
     CCylinderShape::build();
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }
 
 void CCylinderShape::build()

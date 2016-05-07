@@ -13,12 +13,12 @@ CSkybox::CSkybox()
     m_nodeType = ENodeType::eSkyBox;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
+    Renderable::setMaterial(new CMaterial());
 }
 
 CSkybox::~CSkybox()
 {
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 void CSkybox::load(const std::string files[6])
@@ -34,7 +34,7 @@ void CSkybox::load(const std::string files[6])
     texure->setFilterType(eLinear, eLinear);
     texure->setWrap(eClampToEdge);
 
-    const MaterialPtr& material = CRenderable::getMaterial();
+    const MaterialPtr& material = Renderable::getMaterial();
     material->setTexture(0, texure);
 
 }
@@ -56,7 +56,7 @@ void CSkybox::load(const std::string& front, const std::string& back, const std:
 void CSkybox::build()
 {
     f32 s = k_extend;
-    SVertexData& data = CRenderable::getGeometry()->getData();
+    SVertexData& data = Renderable::getGeometry()->getData();
 
     data._vertices =
     {
@@ -76,7 +76,7 @@ void CSkybox::init()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CSkybox: RenderTechique doesn't exist");
@@ -84,13 +84,13 @@ void CSkybox::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
     CSkybox::build();
-    CRenderable::getGeometry()->setDrawMode(eTriangles);
+    Renderable::getGeometry()->setDrawMode(eTriangles);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -102,7 +102,7 @@ void CSkybox::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CSkybox::render()
@@ -112,5 +112,5 @@ void CSkybox::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }

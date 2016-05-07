@@ -1,53 +1,111 @@
 #include "Renderable.h"
 #include "Material.h"
 #include "Engine.h"
+#include "utils/Logger.h"
+#include "RenderTechnique.h"
+#include "scene/RenderTechniqueManager.h"
 
-using namespace v3d;
-using namespace renderer;
+namespace v3d
+{
+namespace renderer
+{
 
-CRenderable::CRenderable()
-: m_material(nullptr)
-, m_renderJob(nullptr)
+Renderable::Renderable()
+    : m_material(nullptr)
+    , m_renderJob(nullptr)
+    , m_renderTechnique(nullptr)
 {
 }
 
-CRenderable::~CRenderable()
+Renderable::~Renderable()
 {
 }
 
-void CRenderable::setMaterial(const MaterialPtr& material)
+void Renderable::setMaterial(const MaterialPtr& material)
 {
     m_material = material;
 }
 
-void CRenderable::setRenderJob(const RenderJobPtr& job)
+void Renderable::setRenderJob(const RenderJobPtr& job)
 {
     m_renderJob = job;
 }
 
-void CRenderable::setGeometry(const GeometryPtr& geometry)
+void Renderable::setGeometry(const GeometryPtr& geometry)
 {
     m_geometry = geometry;
 }
 
-
-const MaterialPtr& CRenderable::getMaterial() const
+const MaterialPtr& Renderable::getMaterial() const
 {
     return m_material;
 }
 
-const RenderJobPtr& CRenderable::getRenderJob() const
+MaterialPtr& Renderable::getMaterial()
+{
+    return m_material;
+}
+
+const RenderJobPtr& Renderable::getRenderJob() const
 {
     return m_renderJob;
 }
 
-const GeometryPtr& CRenderable::getGeometry() const
+const GeometryPtr& Renderable::getGeometry() const
 {
     return m_geometry;
 }
 
-void CRenderable::render()
+void Renderable::render()
 {
-    ASSERT(CRenderable::getRenderJob(), "CRenderable: Render job nullptr");
-    RENDERER->draw(CRenderable::getRenderJob());
+    ASSERT(Renderable::getRenderJob(), "Renderable: Render job nullptr");
+    RENDERER->draw(Renderable::getRenderJob());
 }
+
+const CRenderTechnique* Renderable::getRenderTechique() const
+{
+    return m_renderTechnique;
+}
+
+CRenderTechnique* Renderable::getRenderTechique()
+{
+    return const_cast<CRenderTechnique*>(m_renderTechnique);
+}
+
+bool Renderable::setRenderTechnique(const std::string& file)
+{
+    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    if (!technique)
+    {
+        LOG_ERROR("CMaterial: Error read file [%s]", file.c_str());
+        return false;
+    }
+
+    m_renderTechnique = technique;
+
+    return true;
+}
+
+bool Renderable::setRenderTechnique(const stream::IStreamPtr& stream)
+{
+    CRenderTechnique* technique = new CRenderTechnique();
+    technique->init(stream);
+    if (!technique->load())
+    {
+        LOG_ERROR("CMaterial: Streaming error read");
+        return false;
+    }
+
+    scene::CRenderTechniqueManager::getInstance()->add(technique);
+    m_renderTechnique = technique;
+
+    return true;
+}
+
+void Renderable::setRenderTechnique(const CRenderTechnique* technique)
+{
+    m_renderTechnique = technique;
+}
+
+} //namespace renderer
+} //namespace v3d

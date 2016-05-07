@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CText : public CNode, public renderer::CRenderable
+    class CText : public CNode, public renderer::Renderable
     {
     public:
 

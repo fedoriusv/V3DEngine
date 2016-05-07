@@ -37,7 +37,7 @@ void CSampleShape::init()
     CSampleShape::build();
     CShape::setGeometryDrawMode(eTriangles);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -76,5 +76,5 @@ void CSampleShape::refresh()
     }
 
     CSampleShape::build();
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }

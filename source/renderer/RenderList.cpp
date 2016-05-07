@@ -9,6 +9,7 @@
 #include "scene/Billboard.h"
 #include "scene/Camera.h"
 #include "scene/Model.h"
+#include "RenderTechnique.h"
 
 namespace v3d
 {
@@ -17,7 +18,7 @@ namespace renderer
 
 using namespace scene;
 
-CRenderList::SNodeList::SNodeList(scene::CNode* node, CRenderable* draw, u32 target, u32 pass)
+CRenderList::SNodeList::SNodeList(scene::CNode* node, Renderable* draw, u32 target, u32 pass)
     : _node(node)
     , _draw(draw)
     , _targetIndex(target)
@@ -57,7 +58,7 @@ void CRenderList::setEnable(bool enable)
     m_enable = enable;
 }
 
-void CRenderList::add(CNode* node, CRenderable* draw, u32 target, u32 pass)
+void CRenderList::add(CNode* node, Renderable* draw, u32 target, u32 pass)
 {
     if (node && draw)
     {
@@ -131,7 +132,7 @@ void CRenderList::render()
 
     for (std::vector<SNodeList>::const_iterator iter = m_draw.begin(); iter < m_draw.end(); ++iter)
     {
-        CRenderable* item = (*iter)._draw;
+        Renderable* item = (*iter)._draw;
         if (!item)
         {
             continue;
@@ -190,7 +191,7 @@ void CRenderList::refresh()
                         m_drawTransparency.push_back((*iter));
                     }
                 }
-                else if (material->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
+                else if (mesh->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
                 {
                     if (m_camera)
                     {
@@ -251,7 +252,7 @@ void CRenderList::refresh()
                 {
                     m_drawTransparency.push_back((*iter));
                 }
-                else if (material->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
+                else if (text->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
                 {
                     m_drawAlpha.push_back((*iter));
                 }
@@ -296,7 +297,7 @@ bool CRenderList::checkDistance(const CNode* node, const f32 distance)
 {
     if (node->getNodeType() == ENodeType::eShape || node->getNodeType() == ENodeType::eMesh)
     {
-        const CRenderTechnique* technique = static_cast<const CShape*>(node)->getMaterial()->getRenderTechique();
+        const CRenderTechnique* technique = static_cast<const CShape*>(node)->getRenderTechique();
         for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
         {
             const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();

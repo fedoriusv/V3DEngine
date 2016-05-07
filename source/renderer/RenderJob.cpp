@@ -1,5 +1,5 @@
 #include "RenderJob.h"
-#include "Material.h"
+#include "Renderable.h"
 #include "Engine.h"
 
 namespace v3d
@@ -9,9 +9,8 @@ namespace renderer
 
 using namespace core;
 
-CRenderJob::CRenderJob(const MaterialPtr& material, const GeometryPtr& geometry, const Matrix4D& transform)
-    : m_material(material)
-    , m_geometry(geometry)
+CRenderJob::CRenderJob(const Renderable* renderable, const Matrix4D& transform)
+    : m_renderable(renderable)
     , m_transform(transform)
     , m_targetIndex(0U)
 {
@@ -22,29 +21,22 @@ CRenderJob::~CRenderJob()
     CRenderJob::clearRenderPassIndexList();
 }
 
-void CRenderJob::setMaterial(const MaterialPtr& material)
-{
-   m_material = material;
-}
-
 const MaterialPtr& CRenderJob::getMaterial() const
 {
-    return m_material;
+    ASSERT(m_renderable, "Renderable is nullptr");
+    return m_renderable->getMaterial();
 }
 
 MaterialPtr& CRenderJob::getMaterial()
 {
-    return m_material;
-}
-
-void CRenderJob::setGeometry(const GeometryPtr& geometry)
-{
-    m_geometry = geometry;
+    ASSERT(m_renderable, "Renderable is nullptr");
+    return const_cast<Renderable*>(m_renderable)->getMaterial();
 }
 
 const GeometryPtr& CRenderJob::getGeometry() const
 {
-    return m_geometry;
+    ASSERT(m_renderable, "Renderable is nullptr");
+    return m_renderable->getGeometry();
 }
 
 void CRenderJob::clearRenderPassIndexList()
@@ -60,6 +52,18 @@ PassIndexIterConst CRenderJob::renderPassIndexBegin() const
 PassIndexIterConst CRenderJob::renderPassIndexEnd() const
 {
     return m_passIndexList.cend();
+}
+
+const CRenderTechnique* CRenderJob::getRenderTechique() const
+{
+    ASSERT(m_renderable, "Renderable is nullptr");
+    return m_renderable->getRenderTechique();
+}
+
+CRenderTechnique* CRenderJob::getRenderTechique()
+{
+    ASSERT(m_renderable, "Renderable is nullptr");
+    return const_cast<Renderable*>(m_renderable)->getRenderTechique();
 }
 
 void CRenderJob::setTransform(const Matrix4D& transform)

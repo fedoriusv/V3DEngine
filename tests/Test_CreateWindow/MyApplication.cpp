@@ -22,7 +22,7 @@ void MyApplication::init()
 
     CShape* cube = scene->addSphere(0, Vector3D(0, 1, -5));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/texture_debug.xml");
+    cube->setRenderTechnique("shaders/texture_debug.xml");
     //cube->getMaterial()->setTexture(0, "textures/box.jpg");
 
     CLight* light = BaseApplication::getSceneManager()->addLight(0, Vector3D(0, 1, 0));

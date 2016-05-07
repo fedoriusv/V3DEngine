@@ -27,32 +27,32 @@ void MyApplication::init()
     {
         CRectangleShape* screen = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 1024, 768));
         screen->setName("screen");
-        screen->getMaterial()->setRenderTechnique("shaders/screen2D.xml");
+        screen->setRenderTechnique("shaders/screen2D.xml");
     }
     else
     {
         CRectangleShape* screen1 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(0, 0, 512, 384));
         screen1->setName("screen1");
-        screen1->getMaterial()->setRenderTechnique("shaders/screen2DNFAA.xml");
-        screen1->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_NFAA");
+        screen1->setRenderTechnique("shaders/screen2DNFAA.xml");
+        screen1->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_NFAA");
 
         CRectangleShape* screen2 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 0, 1024, 384));
         screen2->setName("screen2");
-        screen2->getMaterial()->setRenderTechnique("shaders/screen2DFXAA.xml");
-        screen2->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_FXAA");
+        screen2->setRenderTechnique("shaders/screen2DFXAA.xml");
+        screen2->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_FXAA");
 
         CRectangleShape* screen3 = BaseApplication::getSceneManager()->addRectangle(0, Rect32(512, 384, 1024, 768));
         screen3->setName("screen3");
-        screen3->getMaterial()->setRenderTechnique("shaders/screen2DMSAA.xml");
+        screen3->setRenderTechnique("shaders/screen2DMSAA.xml");
     }
 
     CShape* cube = BaseApplication::getSceneManager()->addCube(0, Vector3D(0, 1, -3));
     cube->setName("cube");
-    cube->getMaterial()->setRenderTechnique("shaders/texture_target.xml");
+    cube->setRenderTechnique("shaders/texture_target.xml");
 
     CShape* cube2 = BaseApplication::getSceneManager()->addCube(0, Vector3D(2, 0, -5));
     cube2->setName("cube2");
-    cube2->getMaterial()->setRenderTechnique("shaders/texture_target.xml");
+    cube2->setRenderTechnique("shaders/texture_target.xml");
     cube2->getMaterial()->setTexture(0, "textures/wall.jpg");
 
     CNode* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
@@ -152,11 +152,11 @@ void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)
             {
                 if (enable)
                 {
-                    static_cast<CRectangleShape*>(screen1)->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_NFAA");
+                    static_cast<CRectangleShape*>(screen1)->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_NFAA");
                 }
                 else
                 {
-                    static_cast<CRectangleShape*>(screen1)->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("USE_NFAA");
+                    static_cast<CRectangleShape*>(screen1)->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("USE_NFAA");
                 }
             }
 
@@ -165,18 +165,18 @@ void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)
             {
                 if (enable)
                 {
-                    static_cast<CRectangleShape*>(screen2)->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_FXAA");
+                    static_cast<CRectangleShape*>(screen2)->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_FXAA");
                 }
                 else
                 {
-                    static_cast<CRectangleShape*>(screen2)->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("USE_FXAA");
+                    static_cast<CRectangleShape*>(screen2)->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("USE_FXAA");
                 }
             }
 
             CNode* screen3 = getSceneManager()->getObjectByName("screen3");
             if (screen3)
             {
-                static_cast<CRectangleShape*>(screen3)->getMaterial()->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_MSAA", enable ? "1" : "0");
+                static_cast<CRectangleShape*>(screen3)->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setDefine("USE_MSAA", enable ? "1" : "0");
             }
         }
 

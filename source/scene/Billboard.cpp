@@ -12,13 +12,13 @@ CBillboard::CBillboard(const std::string& texture)
     m_nodeType = ENodeType::eBillboard;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    CRenderable::setMaterial(new CMaterial());
-    CRenderable::getMaterial()->setTexture(0, texture);
+    Renderable::setMaterial(new CMaterial());
+    Renderable::getMaterial()->setTexture(0, texture);
 }
 
 CBillboard::~CBillboard()
 {
-    CRenderable::getGeometry()->free();
+    Renderable::getGeometry()->free();
 }
 
 void CBillboard::render()
@@ -28,7 +28,7 @@ void CBillboard::render()
         return;
     }
 
-    CRenderable::render();
+    Renderable::render();
 }
 
 void CBillboard::update(s32 dt)
@@ -39,7 +39,7 @@ void CBillboard::update(s32 dt)
     }
 
     CNode::update(dt);
-    CRenderable::getRenderJob()->setTransform(CNode::getAbsTransform());
+    Renderable::getRenderJob()->setTransform(CNode::getAbsTransform());
 }
 
 void CBillboard::init()
@@ -49,7 +49,7 @@ void CBillboard::init()
         return;
     }
 
-    const CRenderTechnique* technique = CRenderable::getMaterial()->getRenderTechique();
+    const CRenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CBillboard: RenderTechique doesn't exist");
@@ -57,20 +57,20 @@ void CBillboard::init()
         return;
     }
 
-    CRenderable::setGeometry(RENDERER->makeSharedGeometry(technique));
-    CRenderable::setRenderJob(std::make_shared<CRenderJob>(CRenderable::getMaterial(), CRenderable::getGeometry(), CNode::getAbsTransform()));
+    Renderable::setGeometry(RENDERER->makeSharedGeometry(technique));
+    Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
 
     CBillboard::build();
-    CRenderable::getGeometry()->setDrawMode(ePoints);
+    Renderable::getGeometry()->setDrawMode(ePoints);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
 void CBillboard::build()
 {
-    SVertexData& data = CRenderable::getGeometry()->getData();
+    SVertexData& data = Renderable::getGeometry()->getData();
     data._vertices =
     {
         {0.0f, 0.0f, 0.0f}

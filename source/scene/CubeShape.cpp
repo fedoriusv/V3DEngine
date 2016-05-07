@@ -37,7 +37,7 @@ void CCubeShape::init()
     CCubeShape::build();
     CShape::setGeometryDrawMode(eTriangles);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 

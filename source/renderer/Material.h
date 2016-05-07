@@ -7,7 +7,6 @@
 #include "utils/RefCounted.h"
 #include "utils/IntrusivePtr.h"
 #include "ShaderProgram.h"
-#include "RenderTechnique.h"
 
 namespace v3d
 {
@@ -17,6 +16,9 @@ namespace renderer
 
     class CRenderer;
 
+    /**
+    * Matrial class
+    */
     class CMaterial : public stream::CResource, public utils::TCloneable<CMaterial*>, public utils::CRefCounted
     {
     public:
@@ -49,13 +51,6 @@ namespace renderer
         CTexture*                   getTexture(u32 layer);
         u32                         getTextureCount()           const;
 
-        bool                        setRenderTechnique(const std::string& file);
-        bool                        setRenderTechnique(const stream::IStreamPtr& stream);
-
-        void                        setRenderTechnique(const CRenderTechnique* technique);
-        const CRenderTechnique*     getRenderTechique() const;
-        CRenderTechnique*           getRenderTechique();
-
         const std::string&          getName() const;
 
         void                        init(const stream::IStreamPtr& stream)  override;
@@ -85,7 +80,6 @@ namespace renderer
         SMaterialData               m_materialData;
         
         TextureLayers               m_texture;
-        const CRenderTechnique*     m_renderTechnique;
 
         bool                        m_needUpdate;
         std::string                 m_name;

@@ -45,8 +45,8 @@ void MyApplication::calcThroughNode()
     std::vector<f32> m = { 1, 2, 3, 4, 5 };
 
     CSampleShape* node = new CSampleShape();
-    node->getMaterial()->setRenderTechnique("shaders/target_transformfeedback.xml");
-    node->getMaterial()->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setAttribute("inValue", 0, m);
+    node->setRenderTechnique("shaders/target_transformfeedback.xml");
+    node->getRenderTechique()->getRenderPass(0)->getUserShaderData()->setAttribute("inValue", 0, m);
 
     node->init();
 
@@ -57,7 +57,7 @@ void MyApplication::calcThroughNode()
 
     std::vector<f32> out;
 
-    const TargetPtr& target = node->getMaterial()->getRenderTechique()->getRenderPass(0)->getRenderTarget(0);
+    const TargetPtr& target = node->getRenderTechique()->getRenderPass(0)->getRenderTarget(0);
     const GeometryTargetPtr& geomTarget = std::static_pointer_cast<CGeometryTarget>(target);
     const CGeometryTarget::SBufferData* result = geomTarget->getBuffer("outValue");
     if (result && result->_result > 0)
@@ -86,7 +86,7 @@ void MyApplication::useSimpleArray()
                 {
                     model->setName("cube_" + std::to_string(col) + "_" + std::to_string(row));
                     model->setScale(Vector3D(0.5f));
-                    model->getMaterial()->setRenderTechnique("shaders/default.xml");
+                    model->setRenderTechnique("shaders/default.xml");
                     model->getMaterial()->setTexture(0, "textures/box.jpg");
                 }
             }
@@ -111,9 +111,9 @@ void MyApplication::useInstancedObject()
     {
         model->setName("cube");
         model->setScale(Vector3D(0.5f));
-        model->getMaterial()->setRenderTechnique("shaders/default_instancing.xml");
+        model->setRenderTechnique("shaders/default_instancing.xml");
         model->getMaterial()->setTexture(0, "textures/box.jpg");
-        const RenderPassPtr& pass = model->getMaterial()->getRenderTechique()->getRenderPass(0);
+        const RenderPassPtr& pass = model->getRenderTechique()->getRenderPass(0);
         u32 index = 0;
         for (s32 col = -2; col < 3; ++col)
         {
@@ -147,9 +147,9 @@ void MyApplication::useInstancedAttrObject()
     {
         model->setName("cube");
         model->setScale(Vector3D(0.5f));
-        model->getMaterial()->setRenderTechnique("shaders/default_instancing_attr.xml");
+        model->setRenderTechnique("shaders/default_instancing_attr.xml");
         model->getMaterial()->setTexture(0, "textures/box.jpg");
-        const RenderPassPtr& pass = model->getMaterial()->getRenderTechique()->getRenderPass(0);
+        const RenderPassPtr& pass = model->getRenderTechique()->getRenderPass(0);
         
         std::vector<Vector3D> offset;
         for (s32 col = -2; col < 3; ++col)

@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CSkybox : public CNode, public renderer::CRenderable
+    class CSkybox : public CNode, public renderer::Renderable
     {
     public:
 

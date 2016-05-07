@@ -37,7 +37,7 @@ void CPlaneShape::init()
     CPlaneShape::build();
     CShape::setGeometryDrawMode(eTriangleStrip);
 
-    CRenderable::getGeometry()->init();
+    Renderable::getGeometry()->init();
     m_initialiazed = true;
 }
 
@@ -106,5 +106,5 @@ void CPlaneShape::refresh()
     }
 
     CPlaneShape::build();
-    CRenderable::getGeometry()->refresh();
+    Renderable::getGeometry()->refresh();
 }

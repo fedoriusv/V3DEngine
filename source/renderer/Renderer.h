@@ -7,6 +7,8 @@
 #include "Geometry.h"
 #include "Texture.h"
 #include "RenderJob.h"
+#include "RenderState.h"
+#include "RenderPass.h"
 
 #include "RenderTarget.h"
 #include "GeometryTarget.h"
