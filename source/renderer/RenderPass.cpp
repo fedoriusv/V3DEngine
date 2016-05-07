@@ -372,8 +372,8 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
-        CShaderSource* shaderData = IShader::parse(shaderElement);
-        if (!shaderData)
+        CShaderSource shaderData;
+        if (!IShader::parse(shaderElement, shaderData))
         {
             LOG_ERROR("CRenderPass: Shader parse error");
             ASSERT(false, "Shader parse error");
@@ -384,16 +384,16 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
         if (!definesList.empty())
         {
-            shaderData->setDefines(definesList);
+            shaderData.setDefines(definesList);
         }
 
-        ShaderWPtr shader = CShaderManager::getInstance()->get(shaderData->getHash());
+        ShaderWPtr shader = CShaderManager::getInstance()->get(shaderData.getHash());
         if (shader.expired())
         {
             ShaderPtr newShader = RENDERER->makeSharedShader();
             newShader->setFlag(IShader::eLoaded);
 
-            if (!newShader->create(shaderData))
+            if (!newShader->create(std::move(shaderData)))
             {
                 LOG_ERROR("CRenderPass: Error create shader");
                 shaderElement = shaderElement->NextSiblingElement("var");

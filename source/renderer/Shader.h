@@ -67,7 +67,7 @@ namespace renderer
         void                        setFlag(EShaderFlags flag);
         void                        addFlag(EShaderFlags flag);
 
-        CShaderSource*              m_data;
+        CShaderSource               m_data;
         u16                         m_flags;
 
     private:
@@ -76,11 +76,11 @@ namespace renderer
         friend                      IShaderProgram;
         friend                      CRenderPass;
 
-        const CShaderSource*        getShaderSource() const;
+        const CShaderSource&        getShaderSource() const;
 
-        virtual bool                create(CShaderSource* data) = 0;
+        virtual bool                create(CShaderSource&& data) = 0;
 
-        static CShaderSource*       parse(const tinyxml2::XMLElement* root);
+        static bool                 parse(const tinyxml2::XMLElement* root, CShaderSource& data);
 
     };
 

@@ -138,11 +138,11 @@ bool IShaderProgram::updateShaderList()
     {
         if (!(*iter).expired())
         {
-            const CShaderSource* data = (*iter).lock()->getShaderSource();
-            std::string header = CShaderSource::buildHeader(m_defines, data->getBody());
-            std::size_t hash =  CShaderSource::calculateHash(header, data->getBody());
+            const CShaderSource& data = (*iter).lock()->getShaderSource();
+            std::string header = CShaderSource::buildHeader(m_defines, data.getBody());
+            std::size_t hash =  CShaderSource::calculateHash(header, data.getBody());
 
-            if (hash == data->getHash())
+            if (hash == data.getHash())
             {
                 iter++;
                 continue;
@@ -160,7 +160,7 @@ bool IShaderProgram::updateShaderList()
             else
             {
                 ShaderPtr newShader = shader.lock()->clone();
-                if (!newShader->create(data->getType(), data->getBody(), m_defines))
+                if (!newShader->create(data.getType(), data.getBody(), m_defines))
                 {
                     LOG_ERROR("IShaderProgram::updateShaderList: Error Create Shader Program");
                     return false;

@@ -29,23 +29,16 @@ u32 CShaderGL::getShaderID() const
     return m_id;
 }
 
-bool CShaderGL::create(CShaderSource* data)
+bool CShaderGL::create(CShaderSource&& data)
 {
-    ASSERT(data, "Shader data is nullptr");
-    if (m_data)
-    {
-        delete m_data;
-        m_data = nullptr;
-    }
-
-    m_data = data;
-    if (m_data->getBody().empty())
+    m_data = std::move(data);
+    if (m_data.getBody().empty())
     {
         LOG_ERROR("CShaderGL::create: Empty Shader Body");
         return false;
     }
 
-    if (m_data->getType() == EShaderType::eShaderUnknown)
+    if (m_data.getType() == EShaderType::eShaderUnknown)
     {
         LOG_ERROR("CShaderGL::create: Invalid Shader Type");
         return false;
@@ -55,7 +48,7 @@ bool CShaderGL::create(CShaderSource* data)
     {
         ASSERT(!m_id, "Shader id exist");
 
-        m_id = CShaderGL::createShader(m_data->getType());
+        m_id = CShaderGL::createShader(m_data.getType());
 #ifdef _DEBUG_GL
         ASSERT(glIsShader(m_id), "Shader Index Invalid");
 #endif //_DEBUG_GL
@@ -78,13 +71,13 @@ bool CShaderGL::create(CShaderSource* data)
         shaderSource.append(version);
         shaderSource.append("\n");
 
-        shaderSource.append(m_data->getHeader());
+        shaderSource.append(m_data.getHeader());
         shaderSource.append("\n");
 
-        shaderSource.append(m_data->getBody());
+        shaderSource.append(m_data.getBody());
         shaderSource.append("\n");
 
-        if (!CShaderGL::compileShader(m_id, shaderSource, m_data->getType()))
+        if (!CShaderGL::compileShader(m_id, shaderSource, m_data.getType()))
         {
             IShader::setFlag(IShader::eInvalid);
             return false;
@@ -195,7 +188,7 @@ bool CShaderGL::compileShader(u32 shader, const std::string& body, EShaderType t
                 }
                 return "Unknown";
             };
-            LOG_ERROR("CShaderGL: Shader[%s] Id: %d, Name: %s. Compile Logs:\n%s", strFunc(type), m_id, m_data->getName().c_str(), buffer);
+            LOG_ERROR("CShaderGL: Shader[%s] Id: %d, Name: %s. Compile Logs:\n%s", strFunc(type), m_id, m_data.getName().c_str(), buffer);
         }
 
         delete[] buffer;

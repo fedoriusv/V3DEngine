@@ -25,7 +25,7 @@ namespace renderer
 
     private:
 
-        bool            create(CShaderSource* data) override;
+        bool            create(CShaderSource&& data) override;
 
         u32             createShader(EShaderType type);
         bool            compileShader(u32 shader, const std::string& body, EShaderType type);

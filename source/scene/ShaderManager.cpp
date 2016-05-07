@@ -88,7 +88,7 @@ const CShaderSourceData* CShaderManager::load(const std::string& name, const std
 
 void CShaderManager::add(const ShaderPtr shader)
 {
-    std::size_t hash = shader->m_data->getHash();
+    std::size_t hash = shader->m_data.getHash();
     if (m_shaderList.find(hash) == m_shaderList.cend())
     {
         m_shaderList.insert(std::map<std::size_t, ShaderPtr>::value_type(hash, shader));
@@ -97,7 +97,7 @@ void CShaderManager::add(const ShaderPtr shader)
 
 const ShaderWPtr CShaderManager::get(const ShaderPtr shader) const
 {
-    std::size_t hash = shader->m_data->getHash();
+    std::size_t hash = shader->m_data.getHash();
     ShaderHashMap::const_iterator iter = m_shaderList.find(hash);
     if (iter != m_shaderList.cend())
     {

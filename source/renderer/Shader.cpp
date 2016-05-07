@@ -17,18 +17,11 @@ using namespace resources;
 
 IShader::IShader()
     : m_flags(IShader::eInvalid)
-    , m_data(new CShaderSource())
 {
 }
 
 IShader::~IShader()
 {
-    if (m_data)
-    {
-        delete m_data;
-        m_data = nullptr;
-    }
-
     if (!IShader::isFlagPresent(IShader::eDeleted))
     {
         ASSERT(false, "Shader incorrect deleted");
@@ -37,21 +30,17 @@ IShader::~IShader()
 
 const std::string& IShader::getName() const
 {
-    ASSERT(m_data, "Shader data is nullptr");
-    return m_data->getName();
+    return m_data.getName();
 }
 
 ShaderPtr IShader::clone()
 {
     ShaderPtr shader = RENDERER->makeSharedShader();
 
-    CShaderSource* data = shader->m_data;
-    ASSERT(data, "Shader data is nullptr");
-
-    ASSERT(m_data, "Shader data is nullptr");
-    data->setBody(m_data->getBody());
-    data->setType(IShader::getType());
-    data->setName(IShader::getName());
+    CShaderSource& data = shader->m_data;
+    data.setBody(m_data.getBody());
+    data.setType(IShader::getType());
+    data.setName(IShader::getName());
 
     shader->setFlag(IShader::eLoaded);
 
@@ -60,14 +49,12 @@ ShaderPtr IShader::clone()
 
 void IShader::setName(const std::string& name)
 {
-    ASSERT(m_data, "Shader data is nullptr");
-    m_data->setName(name);
+    m_data.setName(name);
 }
 
 void IShader::setType(EShaderType type)
 {
-    ASSERT(m_data, "Shader data is nullptr");
-    m_data->setType(type);
+    m_data.setType(type);
 }
 
 void IShader::setFlag(EShaderFlags flag)
@@ -80,24 +67,23 @@ void IShader::addFlag(EShaderFlags flag)
     m_flags |= flag;
 }
 
-const CShaderSource* IShader::getShaderSource() const
+const CShaderSource& IShader::getShaderSource() const
 {
-    ASSERT(m_data, "Shader data is nullptr");
     return m_data;
 }
 
-CShaderSource* IShader::parse(const tinyxml2::XMLElement* root)
+bool IShader::parse(const tinyxml2::XMLElement* root, CShaderSource& data)
 {
     if (!root)
     {
         LOG_ERROR("IShader: Not exist xml shader element");
-        return nullptr;
+        return false;
     }
 
     if (!root->Attribute("name"))
     {
         LOG_ERROR("IShader: Empty shader name");
-        return nullptr;
+        return false;
     }
     const std::string shaderName(root->Attribute("name"));
 
@@ -105,7 +91,7 @@ CShaderSource* IShader::parse(const tinyxml2::XMLElement* root)
     if (!root->Attribute("type"))
     {
         LOG_ERROR("IShader: Empty shader type");
-        return nullptr;
+        return false;
     }
     const std::string shaderType(root->Attribute("type"));
 
@@ -116,16 +102,14 @@ CShaderSource* IShader::parse(const tinyxml2::XMLElement* root)
         if (shaderBody.empty())
         {
             LOG_ERROR("IShader: Empty shader body");
-            return nullptr;
+            return false;
         }
 
-        CShaderSource* shaderData = new CShaderSource();
+        data.setBody(shaderBody);
+        data.setType(CShaderSource::getShaderTypeByName(shaderType));
+        data.setName(shaderName);
 
-        shaderData->setBody(shaderBody);
-        shaderData->setType(CShaderSource::getShaderTypeByName(shaderType));
-        shaderData->setName(shaderName);
-
-        return shaderData;
+        return true;
     }
     else
     {
@@ -136,32 +120,29 @@ CShaderSource* IShader::parse(const tinyxml2::XMLElement* root)
         if (!source)
         {
             LOG_ERROR("IShader: Error load shader %s", shaderPath.c_str());
-            return nullptr;
+            return false;
         }
 
         std::string shaderBody(source->getBody());
         if (shaderBody.empty())
         {
             LOG_ERROR("IShader: Error load shader %s", shaderPath.c_str());
-            return nullptr;
+            return false;
         }
 
-        CShaderSource* shaderData = new CShaderSource();
+        data.setBody(shaderBody);
+        data.setType(CShaderSource::getShaderTypeByName(shaderType));
+        data.setName(shaderName);
 
-        shaderData->setBody(shaderBody);
-        shaderData->setType(CShaderSource::getShaderTypeByName(shaderType));
-        shaderData->setName(shaderName);
-
-        return shaderData;
+        return true;
     }
 
-    return nullptr;
+    return false;
 }
 
 EShaderType IShader::getType() const
 {
-    ASSERT(m_data, "Shader data is nullptr");
-    return m_data->getType();
+    return m_data.getType();
 }
 
 u16 IShader::getFlags() const
@@ -177,13 +158,13 @@ bool IShader::isFlagPresent(EShaderFlags flag)
 bool IShader::create(EShaderType type, const std::string& body, const ShaderDefinesList& defines)
 {
      std::string tempHeader = CShaderSource::buildHeader(defines, body);
-    if (m_data->getType() == type && m_data->getHeader() == tempHeader && m_data->getBody() == body)
+    if (m_data.getType() == type && m_data.getHeader() == tempHeader && m_data.getBody() == body)
     {
         LOG_WARNING("CShaderGL::create: Shader already created");
         return false;
     }
 
-    if (m_data->getType() != type && IShader::isFlagPresent(IShader::eCreated))
+    if (m_data.getType() != type && IShader::isFlagPresent(IShader::eCreated))
     {
         destroy();
         IShader::setType(type);
@@ -191,19 +172,19 @@ bool IShader::create(EShaderType type, const std::string& body, const ShaderDefi
         IShader::setFlag(IShader::eLoaded);
     }
 
-    if (m_data->getHeader() != tempHeader || m_data->getBody() != body)
+    if (m_data.getHeader() != tempHeader || m_data.getBody() != body)
     {
         m_flags &= ~IShader::eCompiled;
     }
 
-    CShaderSource* shaderData = new CShaderSource();
+    CShaderSource shaderData;
 
-    shaderData->setHeader(tempHeader);
-    shaderData->setBody(body);
-    shaderData->setType(type);
-    shaderData->setName("");
+    shaderData.setHeader(tempHeader);
+    shaderData.setBody(body);
+    shaderData.setType(type);
+    shaderData.setName("");
 
-    return create(shaderData);
+    return create(std::move(shaderData));
 }
 
 } //namespace renderer
