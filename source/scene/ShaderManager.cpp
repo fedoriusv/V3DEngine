@@ -2,10 +2,14 @@
 #include "utils/Logger.h"
 #include "stream/StreamManager.h"
 
-using namespace v3d;
-using namespace scene;
+namespace v3d
+{
+namespace scene
+{
+
 using namespace stream;
 using namespace resources;
+using namespace renderer;
 
 CShaderManager::CShaderManager()
 {
@@ -81,3 +85,38 @@ const CShaderSourceData* CShaderManager::load(const std::string& name, const std
     LOG_WARNING("CShaderManager::load: File [%s] not found", name.c_str());
     return nullptr;
 }
+
+void CShaderManager::add(const ShaderPtr shader)
+{
+    std::size_t hash = shader->m_data->getHash();
+    if (m_shaderList.find(hash) == m_shaderList.cend())
+    {
+        m_shaderList.insert(std::map<std::size_t, ShaderPtr>::value_type(hash, shader));
+    }
+}
+
+const ShaderWPtr CShaderManager::get(const ShaderPtr shader) const
+{
+    std::size_t hash = shader->m_data->getHash();
+    ShaderHashMap::const_iterator iter = m_shaderList.find(hash);
+    if (iter != m_shaderList.cend())
+    {
+        return (*iter).second;
+    }
+
+    return ShaderWPtr();
+}
+
+renderer::ShaderWPtr CShaderManager::get(std::size_t hash) const
+{
+    ShaderHashMap::const_iterator iter = m_shaderList.find(hash);
+    if (iter != m_shaderList.cend())
+    {
+        return (*iter).second;
+    }
+
+    return ShaderWPtr();
+}
+
+} //namespace scene
+} //namespace v3d

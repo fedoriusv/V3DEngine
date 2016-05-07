@@ -35,7 +35,6 @@
         <shaders>
             <var name="vscreen2DNFAA" type="vertex">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      1
                     #define TEXCOORD0   2
@@ -67,11 +66,7 @@
             <var name="ffxaa" type="fragment" file="nfaa_fsh.glsl"/>
             <var name="fscreen2DNFAA" type="fragment">
                 <![CDATA[
-                    #version 330
-                    #define USE_NFAA 1
-                    
                     uniform sampler2D sampler0;
-                    uniform int NFAAEnable;
                     
                     struct Vertex
                     {
@@ -84,17 +79,10 @@
                     
                     void main()
                     {
-                    #if USE_NFAA
+                    #ifdef USE_NFAA
                         ivec2 size = textureSize(sampler0, 0);
-                        if (NFAAEnable == 1)
-                        {
-                            vec2 rcpFrame = 1.0 / size;
-                            fragColor = nsaaPixelShader(fragVertex.texCoord0, sampler0, rcpFrame);
-                        }
-                        else
-                        {
-                            fragColor = texture(sampler0, fragVertex.texCoord0);
-                        }
+                        vec2 rcpFrame = 1.0 / size;
+                        fragColor = nsaaPixelShader(fragVertex.texCoord0, sampler0, rcpFrame);
                     #else //USE_NFAA
                         fragColor = texture(sampler0, fragVertex.texCoord0);
                     #endif //USE_NFAA

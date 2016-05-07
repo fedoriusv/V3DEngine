@@ -13,63 +13,85 @@ namespace renderer
     class CRenderPass;
     class CRenderer;
 
-    class CDebugGeometry;
-    class CDebugLight;
-
     /**
     * Shader Program Interface.
     */
-    class CShaderProgram
+    class IShaderProgram
     {
     public:
 
-        CShaderProgram();
-        virtual                     ~CShaderProgram();
+        enum EProgramFlags
+        {
+            eInvalid   = 1 << 1,
+            eCreated   = 1 << 2,
+            eLinked    = 1 << 3,
+            eValidated = 1 << 4, 
+            eDeleted   = 1 << 5
+        };
 
-        bool                        isEnable()      const;
-        void                        setEnable(bool enable);
+        IShaderProgram();
+        virtual                             ~IShaderProgram();
 
-        bool                        getCompileStatus() const;
+        bool                                isEnable() const;
+        void                                setEnable(bool enable);
 
-        virtual bool                create()    = 0;
-        virtual void                destroy()   = 0;
-        virtual void                bind()      = 0;
-        virtual void                unbind()    = 0;
+        bool                                getCompileStatus() const;
+
+        bool                                setDefine(const std::string& name, const std::string& value = "");
+        bool                                setUndefine(const std::string& name);
+
+        virtual bool                        create()    = 0;
+        virtual void                        destroy()   = 0;
+        virtual void                        bind()      = 0;
+        virtual void                        unbind()    = 0;
+
+        bool                                create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
+        bool                                create(const std::string& compute);
+
+        u16                                 getFlags() const;
+
+        bool                                isFlagPresent(EProgramFlags flag);
 
     protected:
 
-        friend                      CRenderPass;
-        friend                      CRenderer;
+        void                                setFlag(EProgramFlags flag);
+        void                                addFlag(EProgramFlags flag);
 
-        void                        attachShader(const ShaderPtr& shader);
-        void                        detachShader(const ShaderPtr& shader);
+        friend                              CRenderPass;
+        friend                              CRenderer;
 
-        void                        addShaderData(const ShaderDataPtr& data);
-        void                        addVaryingsAttibutes(const std::vector<const c8*>& list);
+        void                                attachShader(const ShaderWPtr& shader);
+        void                                detachShader(const ShaderWPtr& shader);
 
-        void                        getShaderIDArray(std::vector<u32>& shaders);
-        bool                        create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
+        void                                addShaderData(const ShaderDataPtr& data);
+        void                                addVaryingsAttibutes(const std::vector<const c8*>& list);
+        void                                addDefines(const ShaderDefinesList& list = {});
 
-        virtual bool                applyUniform       (CShaderUniform* uniform)                    = 0;
-        virtual void                applyUniformInt    (s32 location, s32 value)                    = 0;
-        virtual void                applyUniformFloat  (s32 location, f32 value)                    = 0;
-        virtual void                applyUniformVector2(s32 location, const core::Vector2D& vector) = 0;
-        virtual void                applyUniformVector3(s32 location, const core::Vector3D& vector) = 0;
-        virtual void                applyUniformVector4(s32 location, const core::Vector4D& vector) = 0;
-        virtual void                applyUniformMatrix3(s32 location, const core::Matrix3D& matrix) = 0;
-        virtual void                applyUniformMatrix4(s32 location, const core::Matrix4D& matrix) = 0;
+        bool                                updateShaderList();
 
-        bool                        m_enable;
-        bool                        m_compileStatus;
+        virtual bool                        applyUniform       (CShaderUniform* uniform)                    = 0;
+        virtual void                        applyUniformInt    (s32 location, s32 value)                    = 0;
+        virtual void                        applyUniformFloat  (s32 location, f32 value)                    = 0;
+        virtual void                        applyUniformVector2(s32 location, const core::Vector2D& vector) = 0;
+        virtual void                        applyUniformVector3(s32 location, const core::Vector3D& vector) = 0;
+        virtual void                        applyUniformVector4(s32 location, const core::Vector4D& vector) = 0;
+        virtual void                        applyUniformMatrix3(s32 location, const core::Matrix3D& matrix) = 0;
+        virtual void                        applyUniformMatrix4(s32 location, const core::Matrix4D& matrix) = 0;
 
-        ShaderDataList              m_shaderDataList;
-        ShaderList                  m_shaderList;
-        std::vector<const c8*>      m_varyingsList;
+        void                                clear();
+
+        bool                                m_enable;
+        u16                                 m_flags;
+
+        ShaderDataList                      m_shaderDataList;
+        ShaderList                          m_shaderList;
+        ShaderDefinesList                   m_defines;
+        std::vector<const c8*>              m_varyingsList;
 };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderProgram> ShaderProgramPtr;
+    typedef std::shared_ptr<IShaderProgram> ShaderProgramPtr;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

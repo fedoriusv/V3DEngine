@@ -27,8 +27,6 @@
         <shaders>
             <var type="vertex" name="vfont">
                 <![CDATA[
-                    #version 330
-                    
                     #define POSITION    0
                     #define TEXCOORD0   1
                     
@@ -60,8 +58,6 @@
             </var>
             <var type="fragment" name="ffont">
                 <![CDATA[
-                    #version 330
-                    
                     uniform sampler2D sampler0;
                     uniform vec4 color;
                     

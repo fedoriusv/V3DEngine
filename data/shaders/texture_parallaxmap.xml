@@ -47,14 +47,12 @@
             <var name="shading_models" type="fragment" file="shading_models_fsh.glsl"/>
             <var type="fragment" name="fparallaxmap">
                 <![CDATA[
-                    #version 330
-
                     struct Material
                     {
                         sampler2D   diffuseMap;
                         sampler2D   normalMap;
                         sampler2D   heightMap;
-
+                        
                         vec4        ambient;
                         vec4        diffuse;
                         vec4        specular;
@@ -73,7 +71,7 @@
                         vec4    specular;
                     };
                     uniform Light light[1];
-
+                    
                     struct Vertex 
                     {
                         vec2 texCoord0;
@@ -85,7 +83,7 @@
                         vec3 lightDir0;
                     };
                     in Vertex fragVertex;
-
+                    
                     struct TangentSpcae
                     {
                         vec3 tangentLightPos0;
@@ -93,12 +91,12 @@
                         vec3 tangentFragPos;
                     };
                     in TangentSpcae fragTangentSpace;
-
+                    
                     out vec4 fragColor;
-
+                    
                     vec4 blinn(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
                     vec4 phong(vec3 normal, vec3 lightDir, vec3 viewDir, vec4 diffuseColor, vec4 specularColor, float specPower);
-
+                    
                     vec2 parallaxMappingOcclusion(vec2 texCoords, vec3 viewDir)
                     {
                         // number of depth layers

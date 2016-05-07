@@ -40,7 +40,6 @@
         <shaders>
             <var type="vertex" name="vexploding_effect">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
@@ -91,8 +90,6 @@
             </var>
              <var type="geometry" name="gexploding_effect">
                 <![CDATA[
-                    #version 330
-                    
                     layout (triangles) in;
                     layout (triangle_strip, max_vertices = 3) out;
                     
@@ -140,8 +137,6 @@
             <var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
             <var type="fragment" name="fexploding_effect">
                 <![CDATA[
-                    #version 330
-                    
                     uniform sampler2D sampler0;
                     
                     struct Material

@@ -1,5 +1,3 @@
-#version 330
-
 float GetColorLuminance( vec3 color )
 {
     return dot( color, vec3( 0.2126, 0.7152, 0.0722 ) );

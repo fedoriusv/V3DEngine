@@ -29,12 +29,10 @@
         <shaders>
             <var type="vertex" name="vdefault_instance_attr">
                 <![CDATA[
-                    #version 330
-
                     #define POSITION    0
                     #define TEXCOORD0   5
                     #define OFFSET      9
-
+                    
                     layout (location = POSITION)  in vec3 position;
                     layout (location = TEXCOORD0) in vec2 texture0;
                     layout (location = OFFSET)    in vec3 offsets;
@@ -46,37 +44,36 @@
                         mat4 projectionMatrix;
                     };
                     uniform Transform   transform;
-
-                    struct Vertex 
+                    
+                    struct Vertex
                     {
                         vec2  texCoord0;
                     };
                     out Vertex fragVertex;
-
+                    
                     void main()
                     {
                         mat4 model = transform.modelMatrix;
                         model[3] = vec4(offsets, 1.0);
-
+                        
                         vec4 vertex = model * vec4(position, 1.0);
                         fragVertex.texCoord0 = texture0;
-
+                        
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                     }
                 ]]>
             </var>
             <var type="fragment" name="fdefault_instance_attr">
                 <![CDATA[
-                    #version 330
                     uniform sampler2D sampler0;
-
-                    struct Vertex 
+                    
+                    struct Vertex
                     {
                         vec2  texCoord0;
                     };
                     in  Vertex  fragVertex;
                     out vec4    fragColor;
-
+                    
                     void main()
                     {
                         fragColor = texture(sampler0, fragVertex.texCoord0);

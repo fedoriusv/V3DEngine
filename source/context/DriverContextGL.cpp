@@ -1,4 +1,4 @@
-#include "DriverContextGL.h"
+﻿#include "DriverContextGL.h"
 #include "utils/Logger.h"
 
 #ifdef _OPENGL_DRIVER_
@@ -97,11 +97,11 @@ bool CDriverContextGL::createWin32Context()
     RECT clientSize;
     clientSize.top = 0;
     clientSize.left = 0;
-    clientSize.right = m_window->getSize().width;
-    clientSize.bottom = m_window->getSize().height;
+    clientSize.right = getWindow()->getSize().width;
+    clientSize.bottom = getWindow()->getSize().height;
 
     DWORD style = WS_POPUP;
-    if (!m_window->isFullscreen())
+    if (!getWindow()->isFullscreen())
     {
         style = WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     }
@@ -257,7 +257,7 @@ bool CDriverContextGL::createWin32Context()
     UnregisterClass(className, hInstance);
 
     // Get HWND
-    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(m_window)->getHandleWindow();
+    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(getWindow())->getHandleWindow();
 
     HDC hDC = GetDC(window);
     if (!hDC)
@@ -533,7 +533,23 @@ void CDriverContextGL::driverInfo()
     const GLubyte* GLSL = glGetString(GL_SHADING_LANGUAGE_VERSION);
     const GLubyte* version = glGetString(GL_VERSION);
 
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_maxTextureUnits);
+    GLint glslVersionsNum;
+    glGetIntegerv(GL_NUM_SHADING_LANGUAGE_VERSIONS, &glslVersionsNum);
+    std::vector<const GLubyte*> glslVersionList;
+    for (s32 i = 0; i < glslVersionsNum; ++i)
+    {
+        const GLubyte* versionStr = glGetStringi(GL_SHADING_LANGUAGE_VERSION, i);
+        glslVersionList.push_back(versionStr);
+    }
+    GLubyte* ver = const_cast<GLubyte*>(glslVersionList.front());
+    m_shaderVersion = reinterpret_cast<c8*>(ver);
+
+    glGetIntegerv(GL_MAJOR_VERSION, &m_renderMajorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &m_renderMinorVersion);
+
+    GLint maxTextureUnits;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+    CDriverContext::setTextureUnitsCount(maxTextureUnits);
 
     GLint maxTextureSamplers;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureSamplers);
@@ -541,19 +557,24 @@ void CDriverContextGL::driverInfo()
     GLint maxDrawBuffers;
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
 
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropy);
-    glGetIntegerv(GL_SAMPLES, (GLint*)&m_samplesCount);
-    
+    GLfloat maxAnisotropy;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+    CDriverContext::setMaxAnisotropySize(maxAnisotropy);
+
+    GLint samplesCount;
+    glGetIntegerv(GL_SAMPLES, &samplesCount);
+    CDriverContext::setSamplesCount(samplesCount);
+
     LOG_INFO("OpenGL config info:");
     LOG("Render: %s", renderer);
     LOG("Vendor: %s", vendor);
     LOG("GLSL: %s", GLSL);
     LOG("GL Version: %s", version);
-    LOG("Max Texure Units: %d", m_maxTextureUnits);
+    LOG("Max Texure Units: %d", maxTextureUnits);
     LOG("Max Texure Samplers: %d", maxTextureSamplers);
-    LOG("Max Anisotropy: %f", m_maxAnisotropy);
+    LOG("Max Anisotropy: %f", maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
-    LOG("MSAA x%d", m_samplesCount);
+    LOG("MSAA x%d", samplesCount);
 
 #ifdef _DEBUG_GL
     CDriverContextGL::printExtensionList();

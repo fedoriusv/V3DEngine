@@ -3,7 +3,9 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 #include "scene/TargetManager.h"
+#include "scene/ShaderManager.h"
 #include "GeometryTarget.h"
+#include "resources/ShaderSouceData.h"
 
 #include "tinyxml2.h"
 
@@ -13,6 +15,7 @@ namespace renderer
 {
 
 using namespace scene;
+using namespace resources;
 
 CRenderPass::CRenderPass()
     : m_program(nullptr)
@@ -342,11 +345,35 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    const tinyxml2::XMLElement*  shaderElement = root->FirstChildElement("var");
+    ShaderDefinesList definesList;
+    const tinyxml2::XMLElement*  definesElement = root->FirstChildElement("defines");
+    if (definesElement)
+    {
+        const tinyxml2::XMLElement*  defineElement = definesElement->FirstChildElement("var");
+        while (defineElement)
+        {
+            if (defineElement->Attribute("name"))
+            {
+                std::string name = defineElement->Attribute("name");
+                std::string value = (defineElement->Attribute("value")) ? defineElement->Attribute("value") : "";
+
+                definesList.insert(std::map<std::string, std::string>::value_type(name, value));
+            }
+
+            defineElement = defineElement->NextSiblingElement("var");
+        }
+
+        if (!definesList.empty())
+        {
+            m_program->addDefines(definesList);
+        }
+    }
+
+    const tinyxml2::XMLElement* shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
-        ShaderPtr shader = RENDERER->makeSharedShader();
-        if (!shader->parse(shaderElement))
+        CShaderSource* shaderData = IShader::parse(shaderElement);
+        if (!shaderData)
         {
             LOG_ERROR("CRenderPass: Shader parse error");
             ASSERT(false, "Shader parse error");
@@ -355,12 +382,28 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        if (!shader->create())
+        if (!definesList.empty())
         {
-            LOG_ERROR("CRenderPass: Error create shader");
-            shaderElement = shaderElement->NextSiblingElement("var");
-            continue;
+            shaderData->setDefines(definesList);
         }
+
+        ShaderWPtr shader = CShaderManager::getInstance()->get(shaderData->getHash());
+        if (shader.expired())
+        {
+            ShaderPtr newShader = RENDERER->makeSharedShader();
+            newShader->setFlag(IShader::eLoaded);
+
+            if (!newShader->create(shaderData))
+            {
+                LOG_ERROR("CRenderPass: Error create shader");
+                shaderElement = shaderElement->NextSiblingElement("var");
+                continue;
+            }
+
+            CShaderManager::getInstance()->add(newShader);
+            shader = newShader;
+        }
+
         m_program->attachShader(shader);
 
         shaderElement = shaderElement->NextSiblingElement("var");
@@ -525,6 +568,15 @@ void CRenderPass::bind(u32 target)
     {
         m_program->unbind();
         return;
+    }
+
+    if (!m_program->isFlagPresent(IShaderProgram::eLinked))
+    {
+        if (!m_program->create())
+        {
+            LOG_ERROR("CRenderPass: Error Create Shader Program");
+            return;
+        }
     }
 
     m_program->bind();

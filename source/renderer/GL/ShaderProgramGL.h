@@ -12,7 +12,7 @@ namespace renderer
     /**
     * Inherited class for shader program management. GL render only.
     */
-    class CShaderProgramGL : public CShaderProgram
+    class CShaderProgramGL : public IShaderProgram
     {
     public:
 
@@ -28,9 +28,9 @@ namespace renderer
 
     private:
 
-        bool                init(const std::vector<u32>& shaders);
-        bool                link();
-        bool                validate();
+        bool                createProgram(const std::vector<u32>& shaders);
+        bool                linkProgram();
+        bool                validateProgram();
 
         static bool         useProgram(u32 shaderProgram);
 
@@ -45,7 +45,7 @@ namespace renderer
         void                applyUniformMatrix3(s32 location, const core::Matrix3D& matrix) override;
         void                applyUniformMatrix4(s32 location, const core::Matrix4D& matrix) override;
 
-        u32                 m_shaderProgramID;
+        u32                 m_id;
 
         static u32          s_currentShader;
 

@@ -117,9 +117,9 @@ bool CDriverContextD3D::createWin32Context()
     u32 numerator = 0, denominator = 1;
     for (u32 i = 0; i < numModes; ++i)
     {
-        if (displayModeList[i].Width == m_window->getSize().width)
+        if (displayModeList[i].Width == getWindow()->getSize().width)
         {
-            if (displayModeList[i].Height == m_window->getSize().height)
+            if (displayModeList[i].Height == getWindow()->getSize().height)
             {
                 numerator = displayModeList[i].RefreshRate.Numerator;
                 denominator = displayModeList[i].RefreshRate.Denominator;
@@ -164,14 +164,14 @@ bool CDriverContextD3D::createWin32Context()
     factory = nullptr;
 
     // Get HWND
-    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(m_window)->getHandleWindow();
+    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(getWindow())->getHandleWindow();
 
     // Initialize the swap chain description.
     DXGI_SWAP_CHAIN_DESC swapChainDesc;
     ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
     swapChainDesc.BufferCount = 1;                                  // Set to a single back buffer.
-    swapChainDesc.BufferDesc.Width = m_window->getSize().width;     // Set the width and height of the back buffer.
-    swapChainDesc.BufferDesc.Height = m_window->getSize().height;
+    swapChainDesc.BufferDesc.Width = getWindow()->getSize().width;     // Set the width and height of the back buffer.
+    swapChainDesc.BufferDesc.Height = getWindow()->getSize().height;
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;   // Set regular 32-bit surface for the back buffer.
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;    // Set the usage of the back buffer.
     swapChainDesc.OutputWindow = window;                            // Set the handle for the window to render to.
@@ -179,7 +179,7 @@ bool CDriverContextD3D::createWin32Context()
     swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
     swapChainDesc.SampleDesc.Count = 1;                             // Turn multisampling off.
     swapChainDesc.SampleDesc.Quality = 0;
-    swapChainDesc.Windowed = !m_window->isFullscreen();             // Set to full screen or windowed mode.
+    swapChainDesc.Windowed = !getWindow()->isFullscreen();           // Set to full screen or windowed mode.
     swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // Set the scan line ordering and scaling to unspecified.
     swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;             // Discard the back buffer contents after presenting.

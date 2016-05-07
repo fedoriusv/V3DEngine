@@ -24,8 +24,6 @@
         <shaders>
             <var type="vertex" name="vskybox">
                 <![CDATA[
-                    #version 330
-                    
                     #define POSITION    0
                     
                     layout (location = POSITION) in vec3 position;
@@ -59,8 +57,6 @@
             </var>
             <var type="fragment" name="fskybox">
                 <![CDATA[
-                    #version 330
-                    
                     uniform samplerCube sampler0;
                     
                     struct Vertex

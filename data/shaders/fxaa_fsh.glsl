@@ -1,5 +1,3 @@
-#version 330
-
 vec4 fxaaPixelShader(
   vec4 posPos,       // Output of FxaaVertexShader interpolated across screen.
   sampler2D tex,     // Input texture.

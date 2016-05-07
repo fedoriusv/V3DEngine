@@ -31,8 +31,6 @@
         <shaders>
             <var type="vertex" name="vtarget_transformfeedback">
                 <![CDATA[
-                    #version 330
-                    
                     layout (location = 0) in float inValue;
                     out float geoValue;
                     
@@ -44,8 +42,6 @@
             </var>
             <var type="geometry" name="gtarget_transformfeedback">
                 <![CDATA[
-                    #version 330
-                    
                     layout(points) in;
                     layout(triangle_strip, max_vertices = 3) out;
                     

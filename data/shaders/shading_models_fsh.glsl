@@ -1,5 +1,3 @@
-#version 330
-
 vec4 lambert(vec3 normal, vec3 lightDir, vec4 diffuseColor)
 {
 	return diffuseColor * max(dot(normal, lightDir), 0.0);

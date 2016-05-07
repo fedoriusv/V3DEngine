@@ -1,12 +1,14 @@
 #include "ShaderSouceData.h"
 #include "utils/Logger.h"
 
-using namespace v3d;
-using namespace resources;
+namespace v3d
+{
+namespace resources
+{
 
 CShaderSourceData::CShaderSourceData()
-: m_body("")
-, m_name("")
+    : m_body("")
+    , m_name("")
 {
 }
 
@@ -46,3 +48,6 @@ const std::string& CShaderSourceData::getBody() const
 {
     return m_body;
 }
+
+} //namespace resources
+} //namespace v3d

@@ -11,7 +11,7 @@ namespace renderer
 {
 
 CShaderGL::CShaderGL()
-    : m_shaderID(0U)
+    : m_id(0U)
 {
     LOG_DEBUG("CShaderGL: CShaderGL constructor %x", this);
 }
@@ -19,100 +19,135 @@ CShaderGL::CShaderGL()
 CShaderGL::~CShaderGL()
 {
     CShaderGL::destroy();
-    ASSERT(m_shaderID == 0, "Shader doesn't deleted");
+    ASSERT(m_id == 0, "Shader doesn't deleted");
 
     LOG_DEBUG("CShaderGL: CShaderGL destructor %x", this);
 }
 
 u32 CShaderGL::getShaderID() const
 {
-    return m_shaderID;
+    return m_id;
 }
 
-bool CShaderGL::create()
+bool CShaderGL::create(CShaderSource* data)
 {
-    if (m_data.empty())
+    ASSERT(data, "Shader data is nullptr");
+    if (m_data)
     {
-        LOG_ERROR("Shader: Empty Shader Body");
+        delete m_data;
+        m_data = nullptr;
+    }
+
+    m_data = data;
+    if (m_data->getBody().empty())
+    {
+        LOG_ERROR("CShaderGL::create: Empty Shader Body");
         return false;
     }
 
-    if (m_type == eShaderUnknown)
+    if (m_data->getType() == EShaderType::eShaderUnknown)
     {
-        LOG_ERROR("Shader: Invalid Shader Type");
+        LOG_ERROR("CShaderGL::create: Invalid Shader Type");
         return false;
     }
 
-    m_compileStatus = CShaderGL::initShader(m_shaderID, m_type, m_name, m_data);
-#ifndef _DEBUG
-    m_data.clear();
-#endif //_DEBUG
-
-    if (!m_compileStatus)
+    if (!IShader::isFlagPresent(IShader::eCreated))
     {
-        CShaderGL::destroy();
-    }
+        ASSERT(!m_id, "Shader id exist");
 
-    return m_compileStatus;
-}
-
-void CShaderGL::destroy()
-{
-    if (m_shaderID > 0)
-    {
-        ASSERT(glIsShader(m_shaderID), "Shader Index Invalid");
-        glDeleteShader(m_shaderID);
-
-        m_shaderID = 0;
-    }
-
-    m_data.clear();
-}
-
-bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::string& name, const std::string& body)
-{
-    std::function<u32(EShaderType)> createShader = [](EShaderType type) -> u32
-    {
-        u32 shader = 0;
-
-        switch (type)
+        m_id = CShaderGL::createShader(m_data->getType());
+#ifdef _DEBUG_GL
+        ASSERT(glIsShader(m_id), "Shader Index Invalid");
+#endif //_DEBUG_GL
+        if (!m_id)
         {
-        case EShaderType::eVertex:
-        {
-            shader = glCreateShader(GL_VERTEX_SHADER);
-        }
-        break;
-
-        case EShaderType::eFragment:
-        {
-            shader = glCreateShader(GL_FRAGMENT_SHADER);
-        }
-        break;
-
-        case EShaderType::eGeometry:
-        {
-            shader = glCreateShader(GL_GEOMETRY_SHADER);
-        }
-        break;
-
-        case EShaderType::eCompute:
-        {
-            shader = glCreateShader(GL_COMPUTE_SHADER);
-        }
-        break;
-
-        default:
-            ASSERT(false, "Invalid Type");
-            break;
+            IShader::setFlag(IShader::eInvalid);
+            return false;
         }
 
-        ASSERT(glIsShader(shader), "Shader Index Invalid");
-        return shader;
+        IShader::addFlag(IShader::eCreated);
     };
 
-    shader = createShader(type);
-    ASSERT(glIsShader(shader), "Shader Index Invalid");
+    if (!IShader::isFlagPresent(IShader::eCompiled))
+    {
+        ASSERT(m_id, "Shader id doesn't exist");
 
+        const std::string& version = DRIVER_CONTEXT->getShaderVersion();
+
+        std::string shaderSource = "#version ";
+        shaderSource.append(version);
+        shaderSource.append("\n");
+
+        shaderSource.append(m_data->getHeader());
+        shaderSource.append("\n");
+
+        shaderSource.append(m_data->getBody());
+        shaderSource.append("\n");
+
+        if (!CShaderGL::compileShader(m_id, shaderSource, m_data->getType()))
+        {
+            IShader::setFlag(IShader::eInvalid);
+            return false;
+        }
+
+        IShader::addFlag(IShader::eCompiled);
+    }
+
+    return true;
+}
+
+u32 CShaderGL::createShader(EShaderType type)
+{
+    u32 shader = 0;
+
+    switch (type)
+    {
+    case EShaderType::eVertex:
+    {
+        shader = glCreateShader(GL_VERTEX_SHADER);
+    }
+    break;
+
+    case EShaderType::eFragment:
+    {
+        shader = glCreateShader(GL_FRAGMENT_SHADER);
+    }
+    break;
+
+    case EShaderType::eGeometry:
+    {
+        shader = glCreateShader(GL_GEOMETRY_SHADER);
+    }
+    break;
+
+    case EShaderType::eTessellationControl:
+    {
+        shader = glCreateShader(GL_TESS_CONTROL_SHADER);
+    }
+    break;
+
+    case EShaderType::eTessellationEvaluation:
+    {
+        shader = glCreateShader(GL_TESS_EVALUATION_SHADER);
+    }
+    break;
+
+    case EShaderType::eCompute:
+    {
+        shader = glCreateShader(GL_COMPUTE_SHADER);
+    }
+    break;
+
+    default:
+        ASSERT(false, "Invalid Type");
+        break;
+    }
+
+    return shader;
+}
+
+bool CShaderGL::compileShader(u32 shader, const std::string& body, EShaderType type)
+{
     GLchar* stringPtr[1];
     stringPtr[0] = (GLchar*)body.c_str();
     glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
@@ -120,7 +155,6 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
 
     glCompileShader(shader);
     RENDERER->checkForErrors("Compile Shader Error");
-
 
     GLint isCompiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
@@ -150,6 +184,10 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
                     return "Fragment";
                 case EShaderType::eGeometry:
                     return "Geometry";
+                case EShaderType::eTessellationControl:
+                    return "TessellationControl";
+                case EShaderType::eTessellationEvaluation:
+                    return "TessellationEvaluation";
                 case EShaderType::eCompute:
                     return "Compute";
                 default:
@@ -157,7 +195,7 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
                 }
                 return "Unknown";
             };
-            LOG_INFO("CShaderGL: Shader [%s] Name [%s] Compile Logs:\n%s", strFunc(type), name.c_str(), buffer);
+            LOG_ERROR("CShaderGL: Shader[%s] Id: %d, Name: %s. Compile Logs:\n%s", strFunc(type), m_id, m_data->getName().c_str(), buffer);
         }
 
         delete[] buffer;
@@ -169,12 +207,18 @@ bool CShaderGL::initShader(u32& shader, const EShaderType type, const std::strin
     return (isCompiled == GL_TRUE) ? true : false;
 }
 
-bool CShaderGL::create(const std::string& shader, EShaderType type)
+void CShaderGL::destroy()
 {
-    m_data = shader;
-    m_type = type;
+    if (m_id > 0)
+    {
+#ifdef _DEBUG_GL
+        ASSERT(glIsShader(m_id), "Shader Index Invalid");
+#endif //_DEBUG_GL
+        glDeleteShader(m_id);
+        m_id = 0;
 
-    return CShaderGL::create();
+        IShader::addFlag(IShader::eDeleted);
+    }
 }
 
 } //namespace v3d

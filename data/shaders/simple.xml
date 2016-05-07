@@ -27,11 +27,10 @@
         <shaders>
             <var type="vertex" name="vsimple">
                 <![CDATA[
-                    #version 330
-                    #define POSITION    2
-
+                    #define POSITION    0
+                    
                     layout (location = POSITION) in vec3 position;
-
+                    
                     struct Transform
                     {
                         mat4 projectionMatrix;
@@ -39,7 +38,7 @@
                         mat4 viewMatrix;
                     };
                     uniform Transform transform;
-
+                    
                     void main()
                     {
                         vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
@@ -49,9 +48,8 @@
             </var>
             <var type="fragment" name="fsimple">
                 <![CDATA[
-                    #version 330
                     out vec4 fragColor;
-
+                    
                     void main()
                     {
                         fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);

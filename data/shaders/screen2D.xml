@@ -39,7 +39,6 @@
         <shaders>
             <var name="vscreen2D" type="vertex">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      1
                     #define TEXCOORD0   2
@@ -70,8 +69,6 @@
             </var>
             <var name="fscreen2D" type="fragment">
                 <![CDATA[
-                    #version 330
-                   
                     uniform sampler2D sampler0;
                      
                     struct Vertex

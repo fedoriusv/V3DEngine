@@ -38,9 +38,11 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
+            <defines>
+                <var name="USE_MSAA" value="1"/>
+            </defines>
             <var name="vscreen2DMSAA" type="vertex">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      1
                     #define TEXCOORD0   2
@@ -70,10 +72,7 @@
             </var>
             <var name="fscreen2DMSAA" type="fragment">
                 <![CDATA[
-                    #version 330
-                    
                     uniform sampler2DMS sampler0;
-                    uniform int MSAAEnable;
                     
                     const int samplerSize = 16;
                     
@@ -89,19 +88,16 @@
                         ivec2 size = textureSize(sampler0);
                         vec2 texPos = size * fragVertex.texCoord0;
                         
-                        if (MSAAEnable == 1)
+                    #if USE_MSAA
+                        vec4 color = vec4(0.0,0.0,0.0,1.0);
+                        for(int i = 0; i < samplerSize; ++i)
                         {
-                            vec4 color = vec4(0.0,0.0,0.0,1.0);
-                            for(int i = 0; i < samplerSize; ++i)
-                            {
-                                color = color + texelFetch(sampler0, ivec2(texPos), i);
-                            }
-                            fragColor = vec4(color/samplerSize);
+                            color = color + texelFetch(sampler0, ivec2(texPos), i);
                         }
-                        else
-                        {
-                            fragColor = texelFetch(sampler0, ivec2(texPos), 0);
-                        }
+                        fragColor = vec4(color/samplerSize);
+                    #else //USE_MSAA
+                        fragColor = texelFetch(sampler0, ivec2(texPos), 0);
+                    #endif //USE_MSAA
                     }
                 ]]>
             </var>

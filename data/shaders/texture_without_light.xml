@@ -30,7 +30,6 @@
         <shaders>
             <var type="vertex" name="vdefault">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
@@ -63,7 +62,6 @@
             </var>
             <var type="fragment" name="fdefault">
                 <![CDATA[
-                    #version 330
                     #define USE_BUFFER_TEXTRE 0
                     #if USE_BUFFER_TEXTRE
                     uniform samplerBuffer sampler0;

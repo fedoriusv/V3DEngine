@@ -38,7 +38,6 @@
         <shaders>
             <var type="vertex" name="vtexture_debug_0">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
@@ -90,8 +89,6 @@
             <var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
             <var type="fragment" name="ftexture_debug_0">
                 <![CDATA[
-                    #version 330
-                    
                     uniform sampler2D sampler0;
                     
                     struct Material
@@ -155,8 +152,6 @@
         <shaders>
             <var type="vertex" name="vtexture_debug_1">
                 <![CDATA[
-                    #version 330
-                    
                     #define POSITION    0
                     #define NORMAL      2
                     
@@ -193,8 +188,6 @@
             </var>
             <var type="geometry" name="gtexture_debug_1">
                 <![CDATA[
-                    #version 330
-                    
                     layout (triangles) in;
                     layout (line_strip, max_vertices = 6) out;
                     
@@ -228,8 +221,6 @@
             </var>
             <var type="fragment" name="ftexture_debug_1">
                 <![CDATA[
-                    #version 330
-                    
                     out vec4 fragColor;
                     
                     void main()

@@ -22,6 +22,7 @@ namespace resources
 
         const std::string&  getName() const;
         const std::string&  getBody() const;
+
     private:
 
         std::string         m_body;
@@ -31,11 +32,7 @@ namespace resources
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderSourceData>         ShaderSourceDataPtr;
-    typedef std::map<std::string, ShaderSourceDataPtr> ShaderSourceDataMap;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+} //namespace resources
+} //namespace v3d
 
 #endif //_V3D_SHADER_SOURCE_DATA_H_

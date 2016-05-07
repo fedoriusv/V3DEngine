@@ -1,5 +1,3 @@
-#version 330
-
 //inverted color
 vec4 invColor(vec4 color)
 {

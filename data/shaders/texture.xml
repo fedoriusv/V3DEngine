@@ -40,7 +40,6 @@
         <shaders>
             <var type="vertex" name="vtexture">
                 <![CDATA[
-                    #version 330
                     #define POSITION    0
                     #define NORMAL      2
                     #define TEXCOORD0   5
@@ -96,8 +95,6 @@
             <var name="shading_models_fsh" type="fragment" file="shading_models_fsh.glsl"/>
             <var type="fragment" name="ftexture">
                 <![CDATA[
-                    #version 330
-                    
                     uniform sampler2D sampler0;
                     
                     struct Material

@@ -18,7 +18,7 @@ using namespace core;
 u32 CShaderProgramGL::s_currentShader = 0;
 
 CShaderProgramGL::CShaderProgramGL()
-    : m_shaderProgramID(0U)
+    : m_id(0)
 {
     LOG_DEBUG("CShaderProgramGL: CShaderProgramGL constructor %x", this);
 }
@@ -26,46 +26,47 @@ CShaderProgramGL::CShaderProgramGL()
 CShaderProgramGL::~CShaderProgramGL()
 {
     CShaderProgramGL::destroy();
-    ASSERT(m_shaderProgramID == 0, "Shader doesn't deleted");
+    ASSERT(m_id == 0, "Shader doesn't deleted");
 
     LOG_DEBUG("CShaderProgramGL: CShaderProgramGL destructor %x", this);
 }
 
 bool CShaderProgramGL::create()
 {
-    if (CShaderProgram::getCompileStatus())
-    {
-        return true;
-    }
+    updateShaderList();
 
     std::vector<u32> shadersId;
     CShaderProgramGL::getShaderIDArray(shadersId);
+    ASSERT(!shadersId.empty(), "Empty shader list");
 
-    m_compileStatus = CShaderProgramGL::init(shadersId);
+    bool status = CShaderProgramGL::createProgram(shadersId);
     shadersId.clear();
 
-    return m_compileStatus;
+    return status;
 }
 
 void CShaderProgramGL::getShaderIDArray(std::vector<u32>& shaders)
 {
     for (u32 i = 0; i < m_shaderList.size(); ++i)
     {
-        if (m_shaderList[i]->getCompileStatus())
+        if (!m_shaderList[i].expired() && m_shaderList[i].lock()->isFlagPresent(IShader::eCompiled))
         {
-            shaders.push_back(std::static_pointer_cast<CShaderGL>(m_shaderList[i])->getShaderID());
+            shaders.push_back(std::static_pointer_cast<CShaderGL>(m_shaderList[i].lock())->getShaderID());
         }
     }
 }
 
 void CShaderProgramGL::destroy()
 {
-    if (m_shaderProgramID > 0)
+    if (m_id > 0)
     {
-        ASSERT(glIsProgram(m_shaderProgramID), "Invalid Index delete Shader program");
-        glDeleteProgram(m_shaderProgramID);
+#ifdef _DEBUG_GL
+        ASSERT(glIsProgram(m_id), "Invalid Index delete Shader program");
+#endif //_DEBUG_GL
+        glDeleteProgram(m_id);
+        m_id = 0;
 
-        m_shaderProgramID = 0;
+        CShaderProgramGL::addFlag(CShaderProgramGL::eDeleted);
     }
 }
 
@@ -73,61 +74,92 @@ void CShaderProgramGL::bind()
 {
     if (m_enable)
     {
-        CShaderProgramGL::useProgram(m_shaderProgramID);
+        CShaderProgramGL::useProgram(m_id);
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
+#endif //_DEBUG_GL
     }
 }
 
 void CShaderProgramGL::unbind()
 {
     CShaderProgramGL::useProgram(0);
+#ifdef _DEBUG_GL
     RENDERER->checkForErrors("CShaderProgramGL: Unbind ShaderProgram Error");
+#endif //_DEBUG_GL
 }
 
 u32 CShaderProgramGL::getShaderProgramID() const
 {
-    return m_shaderProgramID;
+    return m_id;
 }
 
-bool CShaderProgramGL::init(const std::vector<u32>& shaders)
+bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
 {
-    GLint originalProgram = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+    if (!IShaderProgram::isFlagPresent(IShaderProgram::eCreated))
+    {
+        ASSERT(!m_id, "Shader id exist");
 
-    CShaderProgramGL::destroy();
+        m_id = glCreateProgram();
+#ifdef _DEBUG_GL
+        ASSERT(glIsProgram(m_id), "Invalid Index Created Shader program");
+#endif //_DEBUG_GL
+        if (!m_id)
+        {
+            IShaderProgram::setFlag(IShaderProgram::eInvalid);
+            return false;
+        }
 
-    m_shaderProgramID = glCreateProgram();
-    ASSERT(glIsProgram(m_shaderProgramID), "Invalid Index Created Shader program");
-
+        IShaderProgram::addFlag(IShaderProgram::eCreated);
+    }
+   
     for (u32 i = 0; i < shaders.size(); ++i)
     {
         ASSERT(glIsShader(shaders[i]), "Invalid Index Attached Shader program");
-        glAttachShader(m_shaderProgramID, shaders[i]);
+        glAttachShader(m_id, shaders[i]);
     }
-    RENDERER->checkForErrors("CShaderProgramGL: Create Program error");
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: Attach Program error");
+#endif //_DEBUG_GL
 
-    //Varyings list
     if (!m_varyingsList.empty())
     {
-        gl::TransformFeedbackGL::transformFeedbackVaryings(m_shaderProgramID, m_varyingsList);
+        gl::TransformFeedbackGL::transformFeedbackVaryings(m_id, m_varyingsList);
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Add Varyings to program error");
+#endif //_DEBUG_GL
     }
 
-    if (!CShaderProgramGL::link())
+    if (!IShaderProgram::isFlagPresent(IShaderProgram::eLinked))
     {
-        LOG_ERROR("CShaderProgramGL: Program didn't linked: %d", m_shaderProgramID);
-        CShaderProgramGL::destroy();
-        return false;
+        if (!CShaderProgramGL::linkProgram())
+        {
+            LOG_ERROR("CShaderProgramGL: Program didn't linked: %d", m_id);
+            CShaderProgramGL::destroy();
+
+            IShaderProgram::setFlag(IShaderProgram::eInvalid);
+            return false;
+        }
+
+        LOG_DEBUG("CShaderProgramGL::create: Shader Program [%d] linked successful", m_id);
+        IShaderProgram::addFlag(IShaderProgram::eLinked);
+
+        if (!CShaderProgramGL::validateProgram())
+        {
+            LOG_ERROR("CShaderProgramGL: Program didn't validate: %d", m_id);
+            CShaderProgramGL::destroy();
+
+            IShaderProgram::setFlag(IShaderProgram::eInvalid);
+            return false;
+        }
+        IShaderProgram::addFlag(IShaderProgram::eValidated);
     }
 
-    if (!CShaderProgramGL::validate())
-    {
-        LOG_ERROR("CShaderProgramGL: Program didn't validate: %d", m_shaderProgramID);
-        CShaderProgramGL::destroy();
-        return false;
-    }
 
-    CShaderProgramGL::useProgram(m_shaderProgramID);
+    GLint originalProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &originalProgram);
+
+    CShaderProgramGL::useProgram(m_id);
 
     //Shader data
     s32 samplerCount = 0;
@@ -137,7 +169,7 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
         for (AttributeList::iterator attribute = attributeList.begin(), end = attributeList.end(); attribute != end;)
         {
             const std::string& name = (*attribute).second->getName();
-            s32 id = glGetAttribLocation(m_shaderProgramID, name.c_str());
+            s32 id = glGetAttribLocation(m_id, name.c_str());
             if (id < 0)
             {
                 LOG_WARNING("CShaderProgramGL: Attribute not found: %s", name.c_str());
@@ -149,13 +181,14 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
                 ++attribute;
             }
         }
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind attribute error");
-
+#endif //_DEBUG_GL
         AttributeList& fragDataList = shaderData.lock()->getFragDataList();
         for (AttributeList::iterator fragData = fragDataList.begin(), end = fragDataList.end(); fragData != end;)
         {
             const std::string& name = (*fragData).second->getName();
-            s32 id = glGetFragDataLocation(m_shaderProgramID, name.c_str());
+            s32 id = glGetFragDataLocation(m_id, name.c_str());
             if (id < 0)
             {
                 LOG_WARNING("CShaderProgramGL: Frag data not found: %s", name.c_str());
@@ -167,13 +200,14 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
                 ++fragData;
             }
         }
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind frag data error");
-
+#endif //_DEBUG_GL
         UniformList& uniformList = shaderData.lock()->getUniformList();
         for (UniformList::iterator uniform = uniformList.begin(), end = uniformList.end(); uniform != end;)
         {
             const std::string& name = (*uniform).second->getName();
-            s32 id = glGetUniformLocation(m_shaderProgramID, name.c_str());
+            s32 id = glGetUniformLocation(m_id, name.c_str());
 
             if (id < 0)
             {
@@ -186,13 +220,14 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
                 ++uniform;
             }
         }
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind uniform error");
-
+#endif //_DEBUG_GL
         SamplerList& samplerList = shaderData.lock()->getSamplerList();
         for (auto& sampler : samplerList)
         {
             const std::string& name = sampler->getAttribute();
-            s32 id = glGetUniformLocation(m_shaderProgramID, name.c_str());
+            s32 id = glGetUniformLocation(m_id, name.c_str());
             if (id < 0)
             {
                 LOG_WARNING("CShaderProgramGL: Sampler not found: %s", name.c_str());
@@ -205,15 +240,17 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
                 ++samplerCount;
             }
         }
+#ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind sampler error");
-
+#endif //_DEBUG_GL
         std::remove_if(samplerList.begin(), samplerList.end(), [](const CShaderSampler* item) -> bool
         {
             return (item->getID() == -1);
         });
     }
+#ifdef _DEBUG_GL
     RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
-
+#endif //_DEBUG_GL
     if (originalProgram >= 0)
     {
         CShaderProgramGL::useProgram(originalProgram);
@@ -222,36 +259,43 @@ bool CShaderProgramGL::init(const std::vector<u32>& shaders)
     for (u32 i = 0; i < shaders.size(); ++i)
     {
         ASSERT(glIsShader(shaders[i]), "Invalid Index Detached Shader program");
-        glDetachShader(m_shaderProgramID, shaders[i]);
+        glDetachShader(m_id, shaders[i]);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: Detach ShaderProgram Error");
+#endif //_DEBUG_GL
 
     return true;
 }
 
-bool CShaderProgramGL::link()
+bool CShaderProgramGL::linkProgram()
 {
-    ASSERT(glIsProgram(m_shaderProgramID), "Invalid Index Link Shader program");
-    glLinkProgram(m_shaderProgramID);
+#ifdef _DEBUG_GL
+    ASSERT(glIsProgram(m_id), "Invalid Index Link Shader program");
+#endif //_DEBUG_GL
+    glLinkProgram(m_id);
+
+    RENDERER->checkForErrors("CShaderProgramGL: link");
 
     GLint linkStatus;
-    glGetProgramiv(m_shaderProgramID, GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(m_id, GL_LINK_STATUS, &linkStatus);
     if (!linkStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not linked id: %d", m_shaderProgramID);
+        LOG_ERROR("CShaderProgramGL: Shader program not linked id: %d", m_id);
     }
 #ifdef _DEBUG_GL
     GLint length;
     GLint charsWritten;
-    glGetProgramiv(m_shaderProgramID, GL_INFO_LOG_LENGTH, &length);
+    glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &length);
 
     if (length > 0)
     {
         GLchar* buffer = new GLchar[length];
 
-        glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
+        glGetProgramInfoLog(m_id, length, &charsWritten, buffer);
         if (strlen(buffer) > 0)
         {
-            LOG_ERROR("CShaderProgramGL: Shader Program [%d] Link Logs:\n %s", m_shaderProgramID, buffer);
+            LOG_ERROR("CShaderProgramGL: Shader Program [%d] Link Logs:\n %s", m_id, buffer);
         }
 
         delete[] buffer;
@@ -261,31 +305,32 @@ bool CShaderProgramGL::link()
     return (linkStatus == GL_TRUE) ? true : false;
 }
 
-bool CShaderProgramGL::validate()
+bool CShaderProgramGL::validateProgram()
 {
-    ASSERT(glIsProgram(m_shaderProgramID), "Invalid Index Validate Shader program");
-    glValidateProgram(m_shaderProgramID);
+#ifdef _DEBUG_GL
+    ASSERT(glIsProgram(m_id), "Invalid Index Validate Shader program");
+#endif //_DEBUG_GL
+    glValidateProgram(m_id);
 
     GLint validateStatus;
-    glGetProgramiv(m_shaderProgramID, GL_VALIDATE_STATUS, &validateStatus);
+    glGetProgramiv(m_id, GL_VALIDATE_STATUS, &validateStatus);
     if (!validateStatus)
     {
-        LOG_ERROR("CShaderProgramGL: Shader program not validate id: %d", m_shaderProgramID);
+        LOG_ERROR("CShaderProgramGL: Shader program not validate id: %d", m_id);
     }
 #ifdef _DEBUG_GL
-
    GLint length;
    GLint charsWritten;
-   glGetProgramiv(m_shaderProgramID, GL_INFO_LOG_LENGTH, &length);
+   glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &length);
 
    if (length > 0)
    {
        GLchar* buffer = new GLchar[length];
 
-       glGetProgramInfoLog(m_shaderProgramID, length, &charsWritten, buffer);
+       glGetProgramInfoLog(m_id, length, &charsWritten, buffer);
        if (strlen(buffer) > 0)
        {
-           LOG_ERROR("CShaderProgramGL: Shader Program [%d] Validate Logs:\n %s", m_shaderProgramID, buffer);
+           LOG_ERROR("CShaderProgramGL: Shader Program [%d] Validate Logs:\n %s", m_id, buffer);
        }
 
        delete[] buffer;
@@ -299,7 +344,9 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
 {
     if (s_currentShader != shaderProgram)
     {
+#ifdef _DEBUG_GL
         ASSERT((glIsProgram(shaderProgram) || shaderProgram == 0), "Invalid Index bind Shader program");
+#endif //_DEBUG_GL
         glUseProgram(shaderProgram);
         s_currentShader = shaderProgram;
 
@@ -311,7 +358,7 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
 
 bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
 {
-    if (m_shaderProgramID <= 0)
+    if (m_id <= 0)
     {
         return false;
     }
@@ -319,7 +366,7 @@ bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
     GLint location = uniform->getID();
     if (location < 0)
     {
-        location = glGetUniformLocation(m_shaderProgramID, uniform->getName().c_str());
+        location = glGetUniformLocation(m_id, uniform->getName().c_str());
         if (location > -1)
         {
             uniform->setID(location);
@@ -393,13 +440,14 @@ bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
         }
     }
 
+#ifdef _DEBUG_GL
     if (location == -1)
     {
-        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getName().c_str(), m_shaderProgramID);
+        LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getName().c_str(), m_id);
     }
 
     RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getName());
-
+#endif //_DEBUG_GL
     return (location != -1);
 }
 

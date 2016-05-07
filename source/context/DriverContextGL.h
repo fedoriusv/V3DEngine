@@ -22,7 +22,6 @@ namespace renderer
         CDriverContextGL(const platform::WindowPtr& window);
         ~CDriverContextGL();
 
-        void                driverInfo()                                     override;
         void                checkForErrors(const std::string& location = "") override;
         bool                createContext()                                  override;
         void                destroyContext()                                 override;
@@ -31,6 +30,8 @@ namespace renderer
         bool                setVSync(bool use)                               override;
 
     protected:
+
+        void                driverInfo()                                     override;
 
         void                printExtensionList() const;
 

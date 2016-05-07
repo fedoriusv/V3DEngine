@@ -28,7 +28,6 @@
         <shaders>
             <var type="vertex" name="vbillboard">
                 <![CDATA[
-                    #version 330
                     #define POSITION 0
                     
                     layout (location = POSITION) in vec3 position;
@@ -41,8 +40,6 @@
             </var>
             <var type="geometry" name="gbillboard">
                 <![CDATA[
-                    #version 330
-                    
                     layout(points) in;
                     layout(triangle_strip, max_vertices = 4) out;
                     
@@ -102,7 +99,6 @@
             </var>
             <var type="fragment" name="fbillboard">
                 <![CDATA[
-                    #version 330
                     uniform sampler2D sampler0;
                     in vec2 textureCoord;
                     out vec4 fragColor;
