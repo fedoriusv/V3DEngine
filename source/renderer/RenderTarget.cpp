@@ -316,7 +316,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         width = (u32)(WINDOW->getSize().width * ratio);
         height = (u32)(WINDOW->getSize().height * ratio);
     }
-    CRenderTarget::setViewport(Rect32(x, y, x + width, y + height));
+    CRenderTarget::setViewport(Rect32(x, y, width, height));
 
     if (root->Attribute("aa"))
     {
