@@ -428,13 +428,20 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
                 return;
             }
 
-            if (!attach._active)
+            if (m_attachBuffers.size() < attach._index + 1)
             {
-                m_attachBuffers.push_back(GL_NONE);
-                return;
+                m_attachBuffers.resize(attach._index + 1, GL_NONE);
             }
 
-            m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
+            if (!attach._active)
+            {
+                m_attachBuffers[attach._index] = GL_NONE;
+                return;
+            }
+            else
+            {
+                m_attachBuffers[attach._index] = GL_COLOR_ATTACHMENT0 + attach._index;
+            }
 
             if (m_MSAA)
             {
