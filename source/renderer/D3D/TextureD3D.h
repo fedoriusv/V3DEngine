@@ -18,24 +18,49 @@ namespace d3d
     {
     public:
 
-        CTextureD3D();
+        CTextureD3D(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level = 0U);
+        CTextureD3D(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
         ~CTextureD3D();
 
-        void            bind(u32 layer, u32 sampler)                                                                                override;
-        void            unbind(u32 layer, u32 sampler)                                                                              override;
-        bool            create()                                                                                                    override;
-        void            destroy()                                                                                                   override;
-        bool            isValid()                                                                                                   override;
+        void                        bind(u32 unit)   override;
+        void                        unbind()         override;
 
-        void            updateData(u32 offset, u32 size, void* data)                                                                override;
-        void            updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) override;
-        void            updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data)                      override;
+        bool                        isValid()  const override;
+        bool                        isEnable() const override;
 
-        void            readData(void* data, u32 cubemapSide = 0)                                                                   override;
+        void                        update(u32 offset, u32 size, const void* data, u32 level = 0U)                                                              override;
+        void                        update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U)                    override;
+        void                        update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 level = 0U)                    override;
+        void                        update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U)   override;
 
-        void            fill(u32 offset = 0U, u32 size = 0U, void* data = nullptr)                                                                                                   override;
-        void            fill(const core::Dimension2D& offset = core::Dimension2D(0U, 0U), const core::Dimension2D& size = core::Dimension2D(0U, 0U), void* data = nullptr)           override;
-        void            fill(const core::Dimension3D& offset = core::Dimension3D(0U, 0U, 0U), const core::Dimension3D& size = core::Dimension3D(0U, 0U, 0U), void* data = nullptr)   override;
+        void                        read(void* data, u32 level = 0U) const                  override;
+        void                        read(u32 cubemapSide, void* data, u32 level = 0U) const override;
+
+        void                        setFilterType(ETextureFilter min, ETextureFilter mag)   override;
+        void                        setWrap(EWrapType wrap)                                 override;
+        void                        setAnisotropicLevel(EAnisotropic level)                 override;
+
+        void                        fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 level = 0U)                                                                             override;
+        void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 level = 0U) override;
+        void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 level = 0U) override;
+
+    private:
+
+        ETextureTarget              m_target;
+
+        EImageFormat                m_format;
+        EImageType                  m_type;
+        core::Dimension3D           m_size;
+
+        bool                        m_enable;
+
+        ETextureFilter              m_minFilter;
+        ETextureFilter              m_magFilter;
+        EAnisotropic                m_anisotropicLevel;
+        EWrapType                   m_wrap;
+        u32                         m_mipmapLevel;
+
+        bool                        m_initialized;
 
     };
 

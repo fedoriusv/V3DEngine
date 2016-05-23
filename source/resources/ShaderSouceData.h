@@ -9,7 +9,7 @@ namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderSourceData : public stream::CResource
+    class CShaderSourceData : public stream::IResource
     {
 
     public:

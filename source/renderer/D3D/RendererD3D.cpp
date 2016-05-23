@@ -118,11 +118,6 @@ GeometryPtr CRendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
     return std::make_shared<CGeometryD3D>(technique);
 }
 
-CTexture* CRendererD3D::createTexture()
-{
-    return new CTextureD3D();
-}
-
 RenderStatePtr CRendererD3D::makeSharedRenderState()
 {
     return nullptr;

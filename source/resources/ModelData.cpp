@@ -20,7 +20,7 @@ CModelData::~CModelData()
 
 void CModelData::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 u32 CModelData::getCountNodes() const
@@ -45,10 +45,10 @@ const std::vector<CModelData::SNodeData>& CModelData::getNodesList() const
 
 bool CModelData::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CModelData::load: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CModelData::load: Empty Stream with name [%s]", IResource::getResourseName().c_str());
         return false;
     }
 

@@ -1,15 +1,20 @@
 #include "TextureResILDecoder.h"
 #include "stream/StreamManager.h"
+#include "resources/Image.h"
 #include "Engine.h"
 #ifdef USE_DEVIL
 #   include "IL/il.h"
 #   pragma comment(lib, "ResIL.lib")
 #endif //USE_DEVIL
 
-using namespace v3d;
+namespace v3d
+{
+namespace decoders
+{
+
 using namespace stream;
-using namespace decoders;
 using namespace renderer;
+using namespace resources;
 using namespace core;
 
 CTextureResILDecoder::CTextureResILDecoder()
@@ -26,15 +31,22 @@ CTextureResILDecoder::~CTextureResILDecoder()
 {
 }
 
-stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream)
+stream::IResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream)
 {
-    std::function<wchar_t*(const char*)> charToWChar = [](const char* text)
+#ifdef _UNICODE
+    auto charToChar = [](const char* text) -> const wchar_t*
     {
         size_t size = strlen(text) + 1;
         wchar_t* wa = new wchar_t[size];
         mbstowcs(wa, text, size);
         return wa;
     };
+#else //_UNICODE
+    auto charToChar = [](const char* text) -> const char*
+    {
+        return text;
+    };
+#endif //_UNICODE
 
     std::string file = std::static_pointer_cast<FileStream>(stream)->getName();
 
@@ -45,7 +57,7 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     ilGenImages(1, &texid);
     ilBindImage(texid);
 
-    ILboolean success = ilLoadImage(charToWChar(file.c_str()));
+    ILboolean success = ilLoadImage(charToChar(file.c_str()));
     ASSERT(success == IL_TRUE, "CTextureResILDecoder: Invalid Texture");
     if (!success)
     {
@@ -65,24 +77,22 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
         ilConvertImage(IL_BGRA, ilGetInteger(IL_IMAGE_TYPE));
     }
 
-    CTexture* texture = RENDERER->createTexture();
-
     stream::IStreamPtr data = CStreamManager::createMemoryStream();
     data->seekBeg(0);
 
-    u16 width = ilGetInteger(IL_IMAGE_WIDTH);
-    u16 height = ilGetInteger(IL_IMAGE_HEIGHT);
-    u16 depth = ilGetInteger(IL_IMAGE_DEPTH);
-    Vector3DU sizeImage(width, height, depth);
-    data->write(&sizeImage, sizeof(Vector3DU), 1);
-
     ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
-    data->write((s32)convertILFormat(format));
+    data->write((u32)convertILFormat(format));
 
     ILenum type = ilGetInteger(IL_IMAGE_TYPE);
-    data->write((s32)convertILType(type));
+    data->write((u32)convertILType(type));
 
     ilConvertImage(format, type);
+
+    ILint width = ilGetInteger(IL_IMAGE_WIDTH);
+    ILint height = ilGetInteger(IL_IMAGE_HEIGHT);
+    ILint depth = ilGetInteger(IL_IMAGE_DEPTH);
+    Dimension3D sizeImage(width, height, depth);
+    data->write(&sizeImage, sizeof(Dimension3D), 1);
 
     u32 size = ilGetInteger(IL_IMAGE_SIZE_OF_DATA);
     void* bytes = (ILubyte*)malloc(size);
@@ -90,11 +100,12 @@ stream::CResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     data->write(size);
     data->write(bytes, size);
 
-    texture->init(data);
+    CImage* image = new CImage();
+    image->init(data);
 
     ilDeleteImages(1, &texid);
 
-    return texture;
+    return image;
 #endif //USE_DEVIL
 
     return nullptr;
@@ -106,19 +117,17 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
     switch (format)
     {
     case IL_RGB:
+    case IL_BGR:
         return EImageFormat::eRGB;
 
     case IL_RGBA:
+    case IL_BGRA:
         return EImageFormat::eRGBA;
 
-    case IL_BGR:
-        return EImageFormat::eBGR;
-
-    case IL_BGRA:
-        return EImageFormat::eBGRA;
-
-    case IL_COLOR_INDEX:
     case IL_ALPHA:
+    case IL_COLOR_INDEX:
+        return EImageFormat::eRed;
+
     case IL_LUMINANCE:
     case IL_LUMINANCE_ALPHA:
         ASSERT(false, "CTextureResILDecoder: deprecated formats");
@@ -156,6 +165,9 @@ EImageType CTextureResILDecoder::convertILType(u32 type)
     case IL_UNSIGNED_INT:
         return EImageType::eUnsignedInt;
 
+    case IL_HALF:
+        return EImageType::eHalfFloat;
+
     case IL_FLOAT:
         return EImageType::eFloat;
 
@@ -167,3 +179,6 @@ EImageType CTextureResILDecoder::convertILType(u32 type)
 
     return EImageType::eUnsignedByte;
 }
+
+} //namespace decoders
+} //namespace v3d

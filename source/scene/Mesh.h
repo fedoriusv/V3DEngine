@@ -14,7 +14,7 @@ namespace scene
 
     class CModelManager;
 
-    class CMesh : public CNode, public renderer::Renderable, public stream::CResource, public utils::TCloneable<CMesh*>
+    class CMesh : public CNode, public renderer::Renderable, public stream::IResource, public utils::TCloneable<CMesh*>
     {
     public:
 

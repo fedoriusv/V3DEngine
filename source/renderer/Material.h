@@ -15,11 +15,14 @@ namespace renderer
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderer;
+    class CMaterial;
+
+    typedef utils::TIntrusivePtr<CMaterial> MaterialPtr;
 
     /**
     * Matrial class
     */
-    class CMaterial : public stream::CResource, public utils::TCloneable<CMaterial*>, public utils::CRefCounted
+    class CMaterial : public stream::IResource, public utils::TCloneable<MaterialPtr>, public utils::CRefCounted
     {
     public:
 
@@ -43,12 +46,12 @@ namespace renderer
         f32                         getGlossiness()    const;
         f32                         getTransparency()  const;
 
-        bool                        setTexture(u32 layer, const std::string& file);
-        bool                        setTexture(u32 layer, const std::string files[6]);
-        void                        setTexture(u32 layer, const CTexture* texture);
+        bool                        setTexture(u32 unit, const std::string& file);
+        bool                        setTexture(u32 unit, const std::string files[6]);
+        void                        setTexture(u32 unit, const TexturePtr& texture);
         
-        const CTexture*             getTexture(u32 layer) const;
-        CTexture*                   getTexture(u32 layer);
+        const TexturePtr            getTexture(u32 unit) const;
+        TexturePtr                  getTexture(u32 unit);
         u32                         getTextureCount()           const;
 
         const std::string&          getName() const;
@@ -56,7 +59,7 @@ namespace renderer
         void                        init(const stream::IStreamPtr& stream)  override;
         bool                        load()                                  override;
 
-        CMaterial*                  clone()                                 override;
+        MaterialPtr                 clone()                                 override;
 
     private:
 
@@ -79,19 +82,14 @@ namespace renderer
 
         SMaterialData               m_materialData;
         
-        TextureLayers               m_texture;
+        TextureUnits                m_texture;
 
         bool                        m_needUpdate;
         std::string                 m_name;
 
     };
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef utils::TIntrusivePtr<CMaterial> MaterialPtr;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 #endif //_V3D_MATERIAL_H_

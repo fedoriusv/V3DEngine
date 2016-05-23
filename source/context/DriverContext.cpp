@@ -36,7 +36,7 @@ u32 CDriverContext::getSamplesCount() const
     return m_samplesCount;
 }
 
-s32 CDriverContext::getTextureUnitsCount() const
+u32 CDriverContext::getTextureUnitsCount() const
 {
     return m_maxTextureUnits;
 }

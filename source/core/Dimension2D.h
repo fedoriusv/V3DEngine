@@ -34,6 +34,8 @@ namespace core
 
         T                   getArea() const;
 
+        bool                isNull() const;
+
         T                   width;
         T                   height;
     };

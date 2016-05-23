@@ -335,6 +335,16 @@ bool CDriverContextD3D::setVSync(bool use)
     return true;
 }
 
+TexturePtr v3d::renderer::CDriverContextD3D::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)
+{
+    return TexturePtr();
+}
+
+TexturePtr v3d::renderer::CDriverContextD3D::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D & size, const void * data[6], u32 level)
+{
+    return TexturePtr();
+}
+
 void CDriverContextD3D::printExtensionList() const
 {
     LOG_INFO("DirectD3D Extentions List:");

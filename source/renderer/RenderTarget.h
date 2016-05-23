@@ -3,6 +3,7 @@
 
 #include "Target.h"
 #include "ImageFormats.h"
+#include "Texture.h"
 
 namespace tinyxml2
 {
@@ -32,14 +33,14 @@ namespace renderer
         CRenderTarget();
         virtual                         ~CRenderTarget();
 
-        const CTexture*                 getColorTexture(u32 index) const;
-        CTexture*                       getColorTexture(u32 index);
+        const TexturePtr                getColorTexture(u32 index) const;
+        TexturePtr                      getColorTexture(u32 index);
         
-        const CTexture*                 getDepthTexture() const;
-        CTexture*                       getDepthTexture();
+        const TexturePtr                getDepthTexture() const;
+        TexturePtr                      getDepthTexture();
 
-        const CTexture*                 getStencilTexture() const;
-        CTexture*                       getStencilTexture();
+        const TexturePtr                getStencilTexture() const;
+        TexturePtr                      getStencilTexture();
 
         void                            setClearColor(const core::Vector4D& color);
         const core::Vector4D&           getClearColor() const;
@@ -58,7 +59,7 @@ namespace renderer
         void                            setClearDepthBuffer(bool clear);
         void                            setClearStencilBuffer(bool clear);
 
-        enum EAttachmentsType
+        enum class EAttachmentsType
         {
             eEmptyAttach = -1,
             eColorAttach,
@@ -67,7 +68,7 @@ namespace renderer
             eDepthStencilAttach,
         };
 
-        enum EAttachmentsOutput
+        enum class EAttachmentsOutput
         {
             eEmptyOutput = -1,
             eTextureOutput,
@@ -92,7 +93,7 @@ namespace renderer
             EImageFormat        _format;
             EImageType          _type;
 
-            CTexture*           _texture;
+            TexturePtr          _texture;
             CRenderBuffer*      _buffer;
         };
 

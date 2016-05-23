@@ -28,14 +28,15 @@ namespace utils
             if (px != 0) intrusive_ptr_add_ref(px);
         }
 
-        template<class U> TIntrusivePtr& operator=(TIntrusivePtr<U> const& rhs)
+        template<class U>
+        TIntrusivePtr& operator=(TIntrusivePtr<U> const& rhs)
         {
             this_type(rhs).swap(*this);
             return *this;
         }
 
         TIntrusivePtr&  operator=(TIntrusivePtr const& rhs);
-        TIntrusivePtr&  operator=(T * rhs);
+        TIntrusivePtr&  operator=(T* rhs);
         T&              operator*()  const;
         T*              operator->() const;
         T*              get()        const;

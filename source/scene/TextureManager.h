@@ -8,6 +8,12 @@
 
 namespace v3d
 {
+
+namespace resources
+{
+    class CImage;
+} //namespace resources
+
 namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15,7 +21,7 @@ namespace scene
     /**
     * Texture manager. Provide access to all registered textures in application.
     */
-    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::CTexture>
+    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::TexturePtr>
     {
     private:
 
@@ -26,21 +32,14 @@ namespace scene
 
     public:
 
-        void                        add(renderer::CTexture* texture);
-        void                        add(const renderer::CTexture* texture);
-        renderer::CTexture*         load(const std::string& file, const std::string& alias = "") override;
-        renderer::CTexture*         load(const std::string files[6], const std::string& alias = "");
+        renderer::TexturePtr         load(const std::string& file, const std::string& alias = "") override;
+        renderer::TexturePtr         load(const std::string files[6], const std::string& alias = "");
 
-        renderer::CTexture*         createTexture1DFromData(u32 size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
-        renderer::CTexture*         createTexture2DFromData(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
-        renderer::CTexture*         createTexture2DMSAA(const core::Dimension2D& size, renderer::EImageFormat format, renderer::EImageType type);
-        renderer::CTexture*         createTexture3DFromData(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, void* data, u32 mipmap = 0);
-        renderer::CTexture*         createTexture3DMSAA(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type);
-        renderer::CTexture*         createTextureBufferFromData(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, void* data);
+        renderer::TexturePtr         createTextureFromImage(const resources::CImage* image);
+        renderer::TexturePtr         createCubeTextureFromImages(const resources::CImage* image[6]);
 
     private:
 
-        void                        addStreamToCubeTexture(renderer::CTexture* texture, const stream::IStreamPtr& stream);
         std::string                 getFileExtension(const std::string& fullFileName);
 
         const bool                  k_useTextureBuffer = false;

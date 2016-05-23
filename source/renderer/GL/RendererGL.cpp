@@ -58,7 +58,7 @@ void CRendererGL::init()
     CRenderStateGL::blendFunc(eBlendSrcAlpha, eBlendInvSrcAlpha);
 
     ASSERT(m_context->getTextureUnitsCount() > 0, "Texture units not supported");
-    CTextureGL::bindTextureLayer(0);
+    CTextureGL::bindTextureUnit(0);
 
     glDisable(GL_DITHER);
 
@@ -112,11 +112,6 @@ ShaderProgramPtr CRendererGL::makeSharedProgram()
 GeometryPtr CRendererGL::makeSharedGeometry(const CRenderTechnique* technique)
 {
     return std::make_shared<CGeometryGL>(technique);
-}
-
-CTexture* CRendererGL::createTexture()
-{
-    return new CTextureGL();
 }
 
 RenderStatePtr CRendererGL::makeSharedRenderState()

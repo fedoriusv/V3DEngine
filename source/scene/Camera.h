@@ -12,7 +12,7 @@ namespace scene
 
     class CScene;
 
-    class CCamera : public CNode, stream::CResource
+    class CCamera : public CNode, stream::IResource
     {
     public:
 

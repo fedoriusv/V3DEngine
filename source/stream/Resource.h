@@ -9,12 +9,15 @@ namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CResource
+    /**
+    * Base Interface for Resource class.
+    */
+    class IResource
     {
     public:
 
-        CResource();
-        virtual             ~CResource();
+        IResource();
+        virtual             ~IResource();
 
         virtual void        init(const IStreamPtr& stream) = 0;
         virtual bool        load()                         = 0;
@@ -30,11 +33,11 @@ namespace stream
 
     protected:
         
-        CResource(const CResource& other);
-        CResource&          operator=(const CResource& other);
+        IResource(const IResource& other);
+        IResource&          operator=(const IResource& other);
 
         void                setStream(const IStreamPtr& stream);
-        void                swapContent(CResource& other);
+        void                swapContent(IResource& other);
         void                setLoaded(bool loaded);
 
     private:
@@ -47,7 +50,7 @@ namespace stream
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-}
-}
+} //namespace stream
+} //namespace v3d
 
 #endif //_V3D_RESOURCE_H_

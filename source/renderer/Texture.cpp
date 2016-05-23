@@ -1,5 +1,7 @@
 #include "Texture.h"
 #include "utils/Logger.h"
+#include "resources/Image.h"
+#include "Engine.h"
 
 namespace v3d
 {
@@ -8,219 +10,270 @@ namespace renderer
 
 using namespace core;
 
-CTexture::STextureData::STextureData()
-    : _size(Dimension3D(1U, 1U, 1U))
-    , _format(EImageFormat::eRGB)
-    , _type(EImageType::eByte)
-    , _data(nullptr)
-{
-}
-
-CTexture::STextureData::~STextureData()
-{
-    STextureData::free();
-}
-
-void CTexture::STextureData::free()
-{
-    if (_data)
-    {
-        delete _data;
-        _data = nullptr;
-    }
-}
-
-void CTexture::STextureData::copy(const Dimension3D& size, EImageType type, void* data)
-{
-    if (_data == data)
-    {
-        return;
-    }
-
-    STextureData::free();
-
-    auto typeSize = [](EImageType type) -> s32
-    {
-        switch (type)
-        {
-        case EImageType::eByte:
-            return sizeof(s8);
-
-        case EImageType::eUnsignedByte:
-            return sizeof(u8);
-
-        case EImageType::eShort:
-            return sizeof(s16);
-
-        case EImageType::eUnsignedShort:
-        case EImageType::eUnsignedShort_565:
-        case EImageType::eUnsignedShort_4444:
-            return sizeof(u16);
-
-        case EImageType::eInt:
-            return sizeof(s32);
-
-        case EImageType::eUnsignedInt:
-            return sizeof(u32);
-
-        case EImageType::eFloat:
-            return sizeof(f32);
-
-        default:
-            return 0;
-        }
-    };
-
-    _size = size;
-    _type = type;
-    if (data)
-    {
-        _data = malloc(_size.width * _size.height * _size.depth * typeSize(_type));
-        memcpy(_data, data, _size.width * _size.height * _size.depth * typeSize(_type));
-    }
-}
-
 CTexture::CTexture()
-    : CResource()
-    , m_target(eTextureUnknown)
-    , m_enable(false)
-    , m_minFilter(eLinearMipmapLinear)
-    , m_magFilter(eLinear)
-    , m_anisotropicLevel(eAnisotropic16x)
-    , m_wrap(eClampToEdge)
-    , m_mipmapLevel(8U)
+    : m_impl(nullptr)
 {
+}
+
+CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data, u32 level)
+    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, level))
+{
+    if (m_impl)
+    {
+        ASSERT(m_impl->getTarget() == eTexture1D || m_impl->getTarget() == eTextureBuffer, "Invalid target");
+
+        ASSERT(m_impl->getTarget() == eTextureBuffer
+            && m_impl->getMipmapLevel() > 0, "Unsupported mipmap target");
+    }
+}
+
+CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data, u32 level)
+    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, Dimension3D(size.width, size.height, 1), data, level))
+{
+    if (m_impl)
+    {
+        ASSERT(m_impl->getTarget() == eTexture1DArray || m_impl->getTarget() == eTexture2D
+            || m_impl->getTarget() == eTextureRectangle || m_impl->getTarget() == eTexture2DMSAA, "Invalid target");
+
+        if ((m_impl->getTarget() == eTextureRectangle || m_impl->getTarget() == eTexture2DMSAA))
+        {
+            ASSERT(m_impl->getMipmapLevel() == 0, "Unsupported mipmap target");
+        }
+
+    }
+}
+
+CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
+    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, size, data, level))
+{
+    if (m_impl)
+    {
+        ASSERT(m_impl->getTarget() == eTexture2DArray || m_impl->getTarget() == eTexture3D
+            || m_impl->getTarget() == eTexture3DMSAA, "Invalid target");
+
+        ASSERT(m_impl->getTarget() == eTexture3DMSAA
+            && m_impl->getMipmapLevel() > 0, "Unsupported mipmap target");
+    }
+}
+
+CTexture::CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
+    : m_impl(DRIVER_CONTEXT->createCubeTexture(format, type, size, data, level))
+{
+    if (m_impl)
+    {
+        ASSERT(m_impl->getTarget() == eTextureCubeMap, "Invalid target");
+    }
 }
 
 CTexture::~CTexture()
 {
-    CTexture::clear();
 }
 
-void CTexture::init(const stream::IStreamPtr& stream)
+void CTexture::bind(u32 unit)
 {
-    CResource::setStream(stream);
+    if (m_impl)
+    {
+        m_impl->bind(unit);
+    }
 }
 
-bool CTexture::load()
+void CTexture::unbind()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
-    if (!stream)
+    if (m_impl)
     {
-        LOG_ERROR("CTexture: Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
-        return false;
+        m_impl->unbind();
     }
-
-    switch (m_target)
-    {
-        case ETextureTarget::eTexture1D:
-        case ETextureTarget::eTexture2D:
-        case ETextureTarget::eTexture3D:
-        case ETextureTarget::eTextureBuffer:
-
-            m_data.resize(1);
-            break;
-
-        case ETextureTarget::eTextureCubeMap:
-
-            m_data.resize(6);
-            break;
-
-        case ETextureTarget::eTextureUnknown:
-        default:
-
-            ASSERT(false, "Invalid Select Texture target");
-            return false;
-    }
-
-    stream->seekBeg(0);
-    for (u32 i = 0; i < m_data.size(); ++i)
-    {
-        stream->read(&m_data[i], sizeof(core::Vector3DU), 1);
-
-        s32 format = 0;
-        stream->read(format);
-        m_data[i]._format = (EImageFormat)format;
-
-        s32 type = 0;
-        stream->read(type);
-        m_data[i]._type = (EImageType)type;
-
-        u32 size = 0;
-        stream->read(size);
-        m_data[i]._data = (u8*)malloc(size);
-        stream->read(m_data[i]._data, size);
-    }
-
-    return true;
 }
 
-void CTexture::clear()
+bool CTexture::isValid() const
 {
-    m_data.clear();
-    m_data.resize(0);
+    if (m_impl)
+    {
+        m_impl->isValid();
+    }
+
+    return false;
+}
+
+void CTexture::update(u32 offset, u32 size, const void* data, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->update(offset, size, data, level);
+    }
+}
+
+void CTexture::update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->update(offset, size, data, level);
+    }
+}
+
+void CTexture::update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->update(offset, size, data, level);
+    }
+}
+
+void CTexture::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->update(cubemapSide, offset, size, data, level);
+    }
+}
+
+void CTexture::read(void* data, u32 level) const
+{
+    if (m_impl)
+    {
+        m_impl->read(data, level);
+    }
+}
+
+void CTexture::read(u32 cubemapSide, void* data, u32 level) const
+{
+    if (m_impl)
+    {
+        m_impl->read(cubemapSide, data, level);
+    }
+}
+
+void CTexture::fill(const void* data, u32 offset, u32 size, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->fill(data, offset, size, level);
+    }
+}
+
+void CTexture::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->fill(data, offset, size, level);
+    }
+}
+
+void CTexture::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 level)
+{
+    if (m_impl)
+    {
+        m_impl->fill(data, offset, size, level);
+    }
 }
 
 ETextureTarget CTexture::getTarget() const
 {
-    return m_target;
+    if (m_impl)
+    {
+        return m_impl->getTarget();
+    }
+
+    return ETextureTarget::eTextureNull;
 }
 
 ETextureFilter CTexture::getMinFiler() const
 {
-    return m_minFilter;
+    if (m_impl)
+    {
+        return m_impl->getMinFiler();
+    }
+
+    return ETextureFilter::eNearest;
 }
 
 ETextureFilter CTexture::getMagFiler() const
 {
-    return m_magFilter;
-}
+    if (m_impl)
+    {
+        return m_impl->getMagFiler();
+    }
 
-void CTexture::setFilterType(ETextureFilter min, ETextureFilter mag)
-{
-    m_minFilter = min;
-    m_magFilter = mag;
-}
-
-void CTexture::setAnisotropicLevel(EAnisotropic level)
-{
-    m_anisotropicLevel = level;
-}
-
-void CTexture::setMipmapLevel(u32 level)
-{
-    m_mipmapLevel = level;
-}
-
-const Dimension3D& CTexture::getSize(u32 cubemapSide) const
-{
-    ASSERT(cubemapSide < m_data.size(), "Invalid size");
-    return m_data[cubemapSide]._size;
-}
-
-EAnisotropic CTexture::getAnisotropic()const
-{
-    return m_anisotropicLevel;
-}
-
-u32 CTexture::getMipmapLevel() const
-{
-    return m_mipmapLevel;
-}
-
-void CTexture::setWrap(EWrapType wrap)
-{
-    m_wrap = wrap;
+    return ETextureFilter::eNearest;
 }
 
 EWrapType CTexture::getWrap() const
 {
-    return m_wrap;
+    if (m_impl)
+    {
+        return m_impl->getWrap();
+    }
+
+    return EWrapType::eRepeat;
+}
+
+EAnisotropic CTexture::getAnisotropic()const
+{
+    if (m_impl)
+    {
+        return m_impl->getAnisotropic();
+    }
+
+    return EAnisotropic::eAnisotropicNone;
+}
+
+u32 CTexture::getMipmapLevel() const
+{
+    if (m_impl)
+    {
+        return m_impl->getMipmapLevel();
+    }
+
+    return 0;
+}
+
+const Dimension3D& CTexture::getSize() const
+{
+    if (m_impl)
+    {
+        return m_impl->getSize();
+    }
+
+    return Dimension3D(0, 0, 0);
+}
+
+void CTexture::setFilterType(ETextureFilter min, ETextureFilter mag)
+{
+    if (m_impl)
+    {
+        return m_impl->setFilterType(min, mag);
+    }
+}
+
+void CTexture::setAnisotropicLevel(EAnisotropic level)
+{
+    if (m_impl)
+    {
+        return m_impl->setAnisotropicLevel(level);
+    }
+}
+
+TexturePtr CTexture::getImpl() const
+{
+    return m_impl;
+}
+
+void CTexture::setWrap(EWrapType wrap)
+{
+    if (m_impl)
+    {
+        return m_impl->setWrap(wrap);
+    }
 }
 
 bool CTexture::isEnable() const
 {
-    return m_enable;
+    if (m_impl)
+    {
+        return m_impl->isEnable();
+    }
+
+    return false;
 }
 
 } //namespace renderer

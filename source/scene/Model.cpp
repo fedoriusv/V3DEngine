@@ -68,15 +68,15 @@ void CModel::update(s32 dt)
 
 void CModel::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CModel::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CModel: Empty Stream with name [%s] form File", CResource::getResourseName().c_str());
+        LOG_ERROR("CModel: Empty Stream with name [%s] form File", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -219,7 +219,7 @@ const NodeList& CModel::getNodeList() const
 CModel* CModel::clone()
 {
     CModel* model = new CModel(*this);
-    model->init(CResource::getStream());
+    model->init(IResource::getStream());
     if (!model->load())
     {
         LOG_ERROR("CModel: Can't load model stream");

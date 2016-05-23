@@ -15,7 +15,7 @@ CFontData::CFontData(const std::string& font)
 
 CFontData::~CFontData()
 {
-    m_charTexture.clear(); //Texture deleted form texture manager
+    m_charTexture.clear();
     m_charInfo.clear();
 }
 

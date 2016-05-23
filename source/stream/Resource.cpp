@@ -4,7 +4,7 @@
 using namespace v3d;
 using namespace v3d::stream;
 
-CResource::CResource()
+IResource::IResource()
     : m_stream(nullptr)
     , m_resourceName("")
     , m_resourceFolder("")
@@ -12,11 +12,11 @@ CResource::CResource()
 {
 }
 
-CResource::~CResource()
+IResource::~IResource()
 {
 }
 
-CResource::CResource(const CResource& other)
+IResource::IResource(const IResource& other)
     : m_stream(nullptr)
 {
     m_resourceName = other.m_resourceName;
@@ -24,7 +24,7 @@ CResource::CResource(const CResource& other)
     m_isLoaded = other.m_isLoaded;
 }
 
-CResource& CResource::operator=(const CResource& other)
+IResource& IResource::operator=(const IResource& other)
 {
     if (this == &other)
     {
@@ -39,42 +39,42 @@ CResource& CResource::operator=(const CResource& other)
     return *this;
 }
 
-const IStreamPtr& CResource::getStream() const
+const IStreamPtr& IResource::getStream() const
 {
     return m_stream;
 }
 
-bool CResource::isLoaded() const
+bool IResource::isLoaded() const
 {
     return m_isLoaded;
 }
 
-const std::string& CResource::getResourseName() const
+const std::string& IResource::getResourseName() const
 {
     return m_resourceName;
 }
 
-void CResource::setResourseName(const std::string& name)
+void IResource::setResourseName(const std::string& name)
 {
     m_resourceName = name;
 }
 
-const std::string& CResource::getResourseFolder() const
+const std::string& IResource::getResourseFolder() const
 {
     return m_resourceFolder;
 }
 
-void CResource::setResourseFolder(const std::string& folder)
+void IResource::setResourseFolder(const std::string& folder)
 {
     m_resourceFolder = folder;
 }
 
-void CResource::setStream(const stream::IStreamPtr& stream)
+void IResource::setStream(const stream::IStreamPtr& stream)
 {
     m_stream = stream;
 }
 
-void CResource::swapContent(CResource& other)
+void IResource::swapContent(IResource& other)
 {
     std::swap(m_resourceName, other.m_resourceName);
     std::swap(m_resourceFolder, other.m_resourceFolder);
@@ -82,7 +82,7 @@ void CResource::swapContent(CResource& other)
     std::swap(m_isLoaded, other.m_isLoaded);
 }
 
-void CResource::setLoaded(bool loaded)
+void IResource::setLoaded(bool loaded)
 {
     m_isLoaded = loaded;
 }

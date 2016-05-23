@@ -23,8 +23,8 @@ namespace gl
         SamplerGL();
         ~SamplerGL();
 
-        bool            bind(u32 unit);
-        bool            unbind(u32 unit);
+        bool            bind(u32 texture);
+        bool            unbind(u32 texture);
 
         void            setFilterType(u32 min, u32 mag);
         void            setWrap(u32 wrap);

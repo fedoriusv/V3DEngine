@@ -38,6 +38,9 @@ namespace renderer
 
     protected:
 
+        TexturePtr              createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)  override;
+        TexturePtr              createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)                  override;
+
         void                    printExtensionList() const;
 
 #if defined(_DIRECT3D_DRIVER_)

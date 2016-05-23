@@ -18,11 +18,11 @@ namespace decoders
 
         virtual                 ~CModelF3DDecoder();
 
-        stream::CResource*      decode(const stream::IStreamPtr& stream) override;
+        stream::IResource*      decode(const stream::IStreamPtr& stream) override;
 
     private:
 
-        stream::CResource*     decode100(const stream::IStreamPtr& stream);
+        stream::IResource*     decode100(const stream::IStreamPtr& stream);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

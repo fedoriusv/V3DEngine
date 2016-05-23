@@ -77,14 +77,14 @@ void CGeometryGL::init()
     //Vertices
     u32 vertexSize = CGeometryGL::computeVertexSize(shaderData);
     m_vertexBuffer = new BufferGL(eVertexBuffer);
-    m_vertexBuffer->setData(m_geometyType, vertexSize, nullptr);
+    m_vertexBuffer->set(m_geometyType, vertexSize, nullptr);
     CGeometryGL::initBufferData(shaderData);
 
     //Indices
     if (m_data.indicesSize() > 0)
     {
         m_indexBuffer = new BufferGL(eIndexBuffer);
-        m_indexBuffer->setData(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
+        m_indexBuffer->set(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
     }
 
     RENDERER->checkForErrors("GeometryGL: Init Error");
@@ -267,7 +267,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexPosition:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                    m_vertexBuffer->updateData(offset, size, m_data._vertices.data());
+                    m_vertexBuffer->update(offset, size, m_data._vertices.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
@@ -278,7 +278,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexNormal:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                    m_vertexBuffer->updateData(offset, size, m_data._normals.data());
+                    m_vertexBuffer->update(offset, size, m_data._normals.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
@@ -289,7 +289,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexColor:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                    m_vertexBuffer->updateData(offset, size, m_data._colors.data());
+                    m_vertexBuffer->update(offset, size, m_data._colors.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
@@ -300,7 +300,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexBinormal:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                    m_vertexBuffer->updateData(offset, size, m_data._binormals.data());
+                    m_vertexBuffer->update(offset, size, m_data._binormals.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
@@ -311,7 +311,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexTangent:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
-                    m_vertexBuffer->updateData(offset, size, m_data._tangents.data());
+                    m_vertexBuffer->update(offset, size, m_data._tangents.data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
@@ -325,7 +325,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 case CShaderAttribute::eAttribVertexTexture3:
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 2;
-                    m_vertexBuffer->updateData(offset, size, m_data._texCoords.at(layer).data());
+                    m_vertexBuffer->update(offset, size, m_data._texCoords.at(layer).data());
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector2, 2, sizeof(GLfloat) * 2, offset);
                     offset += size;
                     ++layer;
@@ -350,7 +350,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     size = attr.second->getUserDataSize() * attr.second->getUserDataCount();
                     if (size > 0)
                     {
-                        m_vertexBuffer->updateData(offset, size, attr.second->getUserData());
+                        m_vertexBuffer->update(offset, size, attr.second->getUserData());
 
                        auto componentsCount = [](EDataType type) -> u32
                         {
@@ -425,13 +425,13 @@ void CGeometryGL::refresh()
 
     //Vertices
     s32 vertexSize = CGeometryGL::computeVertexSize(shaderData);
-    m_vertexBuffer->setData(m_geometyType, vertexSize, nullptr);
+    m_vertexBuffer->set(m_geometyType, vertexSize, nullptr);
     CGeometryGL::initBufferData(shaderData);
 
     //Indices
     if (m_data.indicesSize() > 0)
     {
-        m_indexBuffer->setData(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
+        m_indexBuffer->set(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
     }
 
     RENDERER->checkForErrors("GeometryGL: Refresh Error");

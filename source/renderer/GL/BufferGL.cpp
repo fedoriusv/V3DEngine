@@ -34,12 +34,12 @@ u32 BufferGL::s_currentBuffer[EBufferTarget::eBufferTargetCount] = { 0 };
 
 BufferGL::BufferGL(EBufferTarget target)
     : Buffer(target)
-    , m_id(0)
+    , m_bufferID(0)
     , m_lock(false)
 {
     LOG_DEBUG("BufferGL: BufferGL constructor %x", this);
 
-    glGenBuffers(1, &m_id);
+    glGenBuffers(1, &m_bufferID);
 }
 
 BufferGL::~BufferGL()
@@ -47,48 +47,47 @@ BufferGL::~BufferGL()
     ASSERT(!m_lock, "Map buffer used");
 
     BufferGL::unbind();
-    if (m_id != 0)
+    if (m_bufferID != 0)
     {
 #ifdef _DEBUG_GL
-        //TODO: some times return false for shader id
-        /*ASSERT(glIsShader(m_id), "Invalid Index Buffer");*/
+        ASSERT(glIsBuffer(m_bufferID), "Invalid Index Buffer");
 #endif //_DEBUG_GL
-        glDeleteBuffers(1, &m_id);
-        m_id = 0;
+        glDeleteBuffers(1, &m_bufferID);
+        m_bufferID = 0;
     }
 
-    ASSERT(m_id == 0, "IAO doesn't deleted");
+    ASSERT(m_bufferID == 0, "IAO doesn't deleted");
     LOG_DEBUG("BufferGL: BufferGL destructor %x", this);
 }
 
-void BufferGL::bind()
+void BufferGL::bind() const
 {
-    if (s_currentBuffer[m_target] != m_id)
+    if (s_currentBuffer[m_target] != m_bufferID)
     {
-        glBindBuffer(EBufferTargetGL[m_target], m_id);
+        glBindBuffer(EBufferTargetGL[m_target], m_bufferID);
 #ifdef _DEBUG_GL
-        ASSERT(glIsBuffer(m_id), "Invalid VBO index");
+        ASSERT(glIsBuffer(m_bufferID), "Invalid VBO index");
 #endif //_DEBUG_GL
-        s_currentBuffer[m_target] = m_id;
+        s_currentBuffer[m_target] = m_bufferID;
     }
 }
 
-void BufferGL::bindToTarget(EBufferTarget target, u32 offset, u32 size)
+void BufferGL::bindToTarget(EBufferTarget target, u32 offset, u32 size) const
 {
     BufferGL::bind();
     if (size == 0 && offset == 0)
     {
-        glBindBufferBase(EBufferTargetGL[target], 0, m_id);
+        glBindBufferBase(EBufferTargetGL[target], 0, m_bufferID);
     }
     else
     {
-        glBindBufferRange(EBufferTargetGL[target], 0, m_id, size, offset);
+        glBindBufferRange(EBufferTargetGL[target], 0, m_bufferID, size, offset);
     }
 
     RENDERER->checkForErrors("BufferGL::bindToBuffer Error");
 }
 
-void BufferGL::unbind()
+void BufferGL::unbind() const
 {
     if (s_currentBuffer[m_target] != 0)
     {
@@ -97,7 +96,7 @@ void BufferGL::unbind()
     }
 }
 
-void BufferGL::setData(EDataUsageType type, u32 size, void* data)
+void BufferGL::set(EDataUsageType type, u32 size, const void* data)
 {
     if (m_lock)
     {
@@ -110,7 +109,7 @@ void BufferGL::setData(EDataUsageType type, u32 size, void* data)
     RENDERER->checkForErrors("BufferGL::setData Error");
 }
 
-void BufferGL::updateData(u32 offset, u32 size, void* data)
+void BufferGL::update(u32 offset, u32 size, const void* data)
 {
     if (m_lock)
     {
@@ -123,7 +122,7 @@ void BufferGL::updateData(u32 offset, u32 size, void* data)
     RENDERER->checkForErrors("BufferGL::updateData Error");
 }
 
-void BufferGL::readData(u32 offset, u32 size, void* data)
+void BufferGL::read(u32 offset, u32 size, void* data) const
 {
     if (m_lock)
     {
@@ -157,7 +156,7 @@ bool BufferGL::unmap()
 
 u32 BufferGL::getID() const
 {
-    return m_id;
+    return m_bufferID;
 }
 
 } //namespace gl

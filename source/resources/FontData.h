@@ -18,7 +18,7 @@ namespace resources
     /**
     * Font data interface.
     */
-    class CFontData : public stream::CResource
+    class CFontData : public stream::IResource
     {
     public:
 

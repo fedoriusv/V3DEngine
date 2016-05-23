@@ -23,8 +23,6 @@ namespace d3d
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
 
-        CTexture*           createTexture()                                                         override;
-
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
         GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;

@@ -25,7 +25,7 @@ CModelF3DDecoder::~CModelF3DDecoder()
 {
 }
 
-stream::CResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
+stream::IResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
 {
     if (!stream)
     {
@@ -58,7 +58,7 @@ stream::CResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
     return nullptr;
 }
 
-stream::CResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
+stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
 {
     CModel* model = new CModel();
     s32 id;

@@ -10,16 +10,16 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EImageType
+    enum class EImageType : u32
     {
         eByte,
         eUnsignedByte,
         eShort,
         eUnsignedShort,
-        eUnsignedShort_565,
-        eUnsignedShort_4444,
         eInt,
         eUnsignedInt,
+        eUnsignedInt24_8,
+        eHalfFloat,
         eFloat,
 
         eImageTypeCount
@@ -27,18 +27,89 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EImageFormat
+    enum class EImageFormat : u32
     {
         eRed,
         eRG,
         eRGB,
         eRGBA,
-        eBGR,
-        eBGRA,
         eDepthComponent,
+        eStencilIndex,
 
         eFormatCount
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class ImageFormat
+    {
+    public:
+
+        static u32 typeSize(EImageType type)
+        {
+            switch (type)
+            {
+            case EImageType::eByte:
+                return sizeof(s8);
+
+            case EImageType::eUnsignedByte:
+                return sizeof(u8);
+
+            case EImageType::eShort:
+                return sizeof(s16);
+
+            case EImageType::eUnsignedShort:
+                return sizeof(u16);
+
+            case EImageType::eInt:
+                return sizeof(s32);
+
+            case EImageType::eUnsignedInt:
+            case EImageType::eUnsignedInt24_8:
+                return sizeof(u32);
+
+            case EImageType::eHalfFloat:
+                return sizeof(f32) / 2;
+
+            case EImageType::eFloat:
+                return sizeof(f32);
+
+            default:
+                ASSERT(false, "Unkouwn type size");
+                return 0;
+            };
+        }
+
+        static u32 componentCount(EImageFormat format)
+        {
+            switch (format)
+            {
+            case EImageFormat::eRed:
+            case EImageFormat::eStencilIndex:
+            case EImageFormat::eDepthComponent:
+                return 1;
+
+            case EImageFormat::eRG:
+                return 2;
+
+            case EImageFormat::eRGB:
+                return 3;
+
+            case EImageFormat::eRGBA:
+                return 4;
+
+            default:
+                ASSERT(false, "Unkouwn format component count");
+                return 0;
+            };
+        }
+    };
+
+    template<typename E>
+    constexpr auto toEnumType(E enumerator) noexcept
+    {
+        return static_cast<std::underlying_type_t<E>>(enumerator);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

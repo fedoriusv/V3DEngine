@@ -67,19 +67,19 @@ bool CVectorFontData::addCharsToMap(const std::string& text)
 
 void CVectorFontData::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CVectorFontData::load()
 {
-    const stream::IStreamPtr stream = CResource::getStream();
+    const stream::IStreamPtr stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("Empty Stream with name [%s] form Texture", CResource::getResourseName().c_str());
+        LOG_ERROR("Empty Stream with name [%s] form Texture", IResource::getResourseName().c_str());
         return false;
     }
 
-    bool success = loadFont(CResource::getResourseName());
+    bool success = loadFont(IResource::getResourseName());
     stream->close();
 
     return success;
@@ -289,17 +289,17 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
 
     if (m_currentTextureIndex >= m_charTexture.size())
     {
-        CTexture* texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(k_fontMapSize, k_fontMapSize), EImageFormat::eRed, EImageType::eUnsignedByte, nullptr);
+        CTexture* texture = new CTexture(ETextureTarget::eTexture2D, EImageFormat::eRed, EImageType::eUnsignedByte, Dimension2D(k_fontMapSize, k_fontMapSize), nullptr);
         texture->setFilterType(ETextureFilter::eLinear, ETextureFilter::eLinear);
         texture->setWrap(EWrapType::eClampToEdge);
 
         u32 value = 0U;
-        texture->fill(Dimension2D(0U, 0U), Dimension2D(0U, 0U), (void*)&value);
+        texture->fill((void*)&value,Dimension2D(0U, 0U), Dimension2D(0U, 0U));
 
         m_charTexture.push_back(texture);
     }
 
-    m_charTexture[m_currentTextureIndex]->updateData(m_offetTextures, Dimension2D(width, height * 2), data);
+    m_charTexture[m_currentTextureIndex]->update(m_offetTextures, Dimension2D(width, height * 2), data);
 
     m_offetTextures.width += width + 1;
 

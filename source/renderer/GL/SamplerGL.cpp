@@ -37,11 +37,11 @@ SamplerGL::~SamplerGL()
     LOG_DEBUG("SamplerGL::SamplerGL destructor %x", this);
 }
 
-bool SamplerGL::bind(u32 unit)
+bool SamplerGL::bind(u32 texture)
 {
     if (s_currentSamplerID != m_samplerID)
     {
-        glBindSampler(unit, m_samplerID);
+        glBindSampler(texture, m_samplerID);
 #ifdef _DEBUG_GL
         ASSERT((glIsSampler(m_samplerID)), "Invalid Sampler index");
 #endif //_DEBUG_GL
@@ -55,11 +55,11 @@ bool SamplerGL::bind(u32 unit)
     return false;
 }
 
-bool SamplerGL::unbind(u32 unit)
+bool SamplerGL::unbind(u32 texture)
 {
     if (s_currentSamplerID != 0)
     {
-        glBindSampler(unit, 0);
+        glBindSampler(texture, 0);
         s_currentSamplerID = 0;
 
         RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
@@ -73,7 +73,7 @@ bool SamplerGL::unbind(u32 unit)
 void SamplerGL::setFilterType(u32 min, u32 mag)
 {
 #ifdef _DEBUG_GL
-    //ASSERT(glIsSampler(m_samplerID), "Invalid Sampler index");
+    ASSERT(glIsSampler(m_samplerID), "Invalid Sampler index");
 #endif //_DEBUG_GL
     glSamplerParameteri(m_samplerID, GL_TEXTURE_MIN_FILTER, min);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_MAG_FILTER, mag);
@@ -84,7 +84,7 @@ void SamplerGL::setFilterType(u32 min, u32 mag)
 void SamplerGL::setWrap(u32 wrap)
 {
 #ifdef _DEBUG_GL
-    //ASSERT(glIsSampler(m_samplerID), "Invalid Sampler index");
+    ASSERT(glIsSampler(m_samplerID), "Invalid Sampler index");
 #endif //_DEBUG_GL
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_S, wrap);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_T, wrap);
