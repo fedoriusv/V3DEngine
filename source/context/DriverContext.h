@@ -3,10 +3,10 @@
 
 #include "common.h"
 #include "platform/Window.h"
+#include "renderer/Texture.h"
 
 namespace v3d
 {
-
 namespace platform
 {
     class CPlatform;
@@ -17,7 +17,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Interface DriverContext stored all information about device context.
+    * Interface Context stored all information about device context.
     */
     class CDriverContext
     {
@@ -37,7 +37,7 @@ namespace renderer
         const platform::WindowPtr&  getWindow()     const;
 
         u32                         getSamplesCount()       const;
-        s32                         getTextureUnitsCount()  const;
+        u32                         getTextureUnitsCount()  const;
         f32                         getMaxAnisotropySize()  const;
 
         const std::string&          getShaderVersion() const;
@@ -45,6 +45,11 @@ namespace renderer
         s32                         getRenderMinorrVersion() const;
 
     protected:
+
+        friend                      CTexture;
+
+        virtual TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
+        virtual TexturePtr          createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)                 = 0;
 
         friend                      platform::CPlatform;
 
@@ -63,7 +68,7 @@ namespace renderer
         const platform::WindowPtr   m_window;
 
         u32                         m_samplesCount;
-        s32                         m_maxTextureUnits;
+        u32                         m_maxTextureUnits;
         f32                         m_maxAnisotropy;
 
 

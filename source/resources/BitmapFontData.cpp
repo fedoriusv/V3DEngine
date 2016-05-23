@@ -22,15 +22,15 @@ CBitmapFontData::~CBitmapFontData()
 
 void CBitmapFontData::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CBitmapFontData::load()
 {
-    const stream::IStreamPtr stream = CResource::getStream();
+    const stream::IStreamPtr stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("Empty Stream with name [%s] form Bitmap Font", CResource::getResourseName().c_str());
+        LOG_ERROR("Empty Stream with name [%s] form Bitmap Font", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -54,7 +54,7 @@ bool CBitmapFontData::loadFont(const std::string& resource)
 {
     if (resource.empty())
     {
-        LOG_ERROR("Empty Data from Stream with name [%s] form Bitmap Font", CResource::getResourseName().c_str());
+        LOG_ERROR("Empty Data from Stream with name [%s] form Bitmap Font", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -63,14 +63,14 @@ bool CBitmapFontData::loadFont(const std::string& resource)
 
     if (success)
     {
-        LOG_ERROR("Error Parse Stream name [%s] form  Bitmap Font", CResource::getResourseName().c_str());
+        LOG_ERROR("Error Parse Stream name [%s] form  Bitmap Font", IResource::getResourseName().c_str());
         return false;
     }
 
     tinyxml2::XMLElement* fontElement = doc.FirstChildElement("font");
     if (!fontElement)
     {
-        LOG_ERROR("Can not find font in Stream name [%s] form Bitmap Font", CResource::getResourseName().c_str());
+        LOG_ERROR("Can not find font in Stream name [%s] form Bitmap Font", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -237,7 +237,7 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
     const std::string& folder = getResourseFolder();
     scene::CTextureManager::getInstance()->registerPath(folder);
 
-    const CTexture* texture = scene::CTextureManager::getInstance()->load(file);
+    const TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
     if (!texture)
     {
         LOG_ERROR("BitmapFontData Error parse. Load file %s", file.c_str());
@@ -250,7 +250,7 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
         return false;
     }
 
-    m_charTexture[pageId] = const_cast<CTexture*>(texture);
+    m_charTexture[pageId] = utils::const_pointer_cast<CTexture>(texture);
 
     return true;
 }

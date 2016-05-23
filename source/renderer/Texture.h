@@ -1,8 +1,10 @@
 #ifndef _V3D_TEXTURE_H_
 #define _V3D_TEXTURE_H_
 
-#include "stream/Resource.h"
 #include "ImageFormats.h"
+#include "stream/Resource.h"
+#include "utils/RefCounted.h"
+#include "utils/IntrusivePtr.h"
 
 namespace v3d
 {
@@ -12,17 +14,25 @@ namespace scene
     class CTextureManager;
 }
 
+namespace resources
+{
+    class CImage;
+}
+
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum ETextureTarget
     {
-        eTextureUnknown = - 1,
+        eTextureNull = -1,
 
         eTexture1D,
+        eTexture1DArray,
+        eTextureRectangle,
         eTexture2D,
         eTexture2DMSAA,
+        eTexture2DArray,
         eTexture3D,
         eTexture3DMSAA,
         eTextureCubeMap,
@@ -45,6 +55,8 @@ namespace renderer
 
         eFilterCount
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum EAnisotropic
     {
@@ -69,110 +81,76 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum ETextureLayer
-    {
-        eLayer0 = 0,
-        eLayer1,
-        eLayer2,
-        eLayer3,
+    class CTexture;
 
-        eLayerMax,
-    };
+    typedef utils::TIntrusivePtr<CTexture> TexturePtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Base Interface for texture entity.
     */
-    class CTexture : public stream::CResource
+    class CTexture : public utils::CRefCounted
     {
     public:
 
-        CTexture();
-        virtual         ~CTexture();
+        CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data = nullptr, u32 level = 0U);
+        CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data = nullptr, u32 level = 0U);
+        CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 level = 0U);
+        CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
+        //CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = nullptr) {};
 
-        virtual void    bind(u32 layer, u32 sampler)                                                                                = 0;
-        virtual void    unbind(u32 layer, u32 sampler)                                                                              = 0;
-        virtual bool    create()                                                                                                    = 0;
-        virtual void    destroy()                                                                                                   = 0;
-        virtual bool    isValid()                                                                                                   = 0;
+        CTexture(const CTexture&)               = delete;
+        CTexture& operator=(const CTexture&)    = delete;
 
-        virtual void    updateData(u32 offset, u32 size, void* data)                                                                = 0;
-        virtual void    updateData(const core::Dimension2D& offset, const core::Dimension2D& size, void* data, u32 cubemapSide = 0) = 0;
-        virtual void    updateData(const core::Dimension3D& offset, const core::Dimension3D& size, void* data) = 0;
+        virtual ~CTexture();
 
-        virtual void    readData(void* data, u32 cubemapSide = 0)                                                                   = 0;
+        virtual void                        bind(u32 unit);
+        virtual void                        unbind();
 
-        virtual void    fill(u32 offset = 0U, u32 size = 0U, void* data = nullptr)                                                                                                   = 0;
-        virtual void    fill(const core::Dimension2D& offset = core::Dimension2D(0U, 0U), const core::Dimension2D& size = core::Dimension2D(0U, 0U), void* data = nullptr)           = 0;
-        virtual void    fill(const core::Dimension3D& offset = core::Dimension3D(0U, 0U, 0U), const core::Dimension3D& size = core::Dimension3D(0U, 0U, 0U), void* data = nullptr)   = 0;
+        virtual bool                        isValid()  const;
+        virtual bool                        isEnable() const;
 
-        void            init(const stream::IStreamPtr& stream)  override;
-        bool            load()                                  override;
+        virtual void                        update(u32 offset, u32 size, const void* data, u32 level = 0U);
+        virtual void                        update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U);
+        virtual void                        update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 level = 0U);
+        virtual void                        update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U);
 
-        bool            isEnable()      const;
+        virtual void                        read(void* data, u32 level = 0U) const;
+        virtual void                        read(u32 cubemapSide, void* data, u32 level = 0U) const;
 
-        ETextureTarget  getTarget()     const;
-        ETextureFilter  getMinFiler()   const;
-        ETextureFilter  getMagFiler()   const;
-        EWrapType       getWrap()       const;
-        EAnisotropic    getAnisotropic()const;
-        u32             getMipmapLevel()const;
+        virtual void                        fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 level = 0U);
+        virtual void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 level = 0U);
+        virtual void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 level = 0U);
 
-        virtual void    setFilterType(ETextureFilter min, ETextureFilter mag);
-        virtual void    setWrap(EWrapType wrap);
-        virtual void    setAnisotropicLevel(EAnisotropic level);
-        virtual void    setMipmapLevel(u32 level);
+        virtual ETextureTarget              getTarget()      const;
+        virtual ETextureFilter              getMinFiler()    const;
+        virtual ETextureFilter              getMagFiler()    const;
+        virtual EWrapType                   getWrap()        const;
+        virtual EAnisotropic                getAnisotropic() const;
+        virtual u32                         getMipmapLevel() const;
+        virtual const core::Dimension3D&    getSize()        const;
+        
+        virtual void                        setFilterType(ETextureFilter min, ETextureFilter mag);
+        virtual void                        setWrap(EWrapType wrap);
+        virtual void                        setAnisotropicLevel(EAnisotropic level);
 
-        const core::Dimension3D& getSize(u32 cubemapSide = 0U) const;
-
-    private:
-
-        struct STextureData
-        {
-            STextureData();
-            ~STextureData();
-
-            STextureData&       operator=(const STextureData&) = delete;
-
-            void                free();
-            void                copy(const core::Dimension3D& size, EImageType type, void* data);
-
-            core::Dimension3D   _size;
-            EImageFormat        _format;
-            EImageType          _type;
-            void*               _data;
-        };
-
-        using TextureData = std::vector<STextureData>;
+        TexturePtr                          getImpl() const;
 
     protected:
 
-        friend          v3d::scene::CTextureManager;
+        CTexture();
 
-        void            clear();
+    private:
 
-        ETextureTarget  m_target;
-        TextureData     m_data;
-
-        bool            m_enable;
-
-        ETextureFilter  m_minFilter;
-        ETextureFilter  m_magFilter;
-        EAnisotropic    m_anisotropicLevel;
-        EWrapType       m_wrap;
-        u32             m_mipmapLevel;
-
+        TexturePtr const                    m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CTexture>               TexturePtr;
-    typedef std::weak_ptr<CTexture>                 TextureWPtr;
-    typedef std::map<std::string, TexturePtr>       TextureMap;
-    typedef std::vector<CTexture*>                  TextureList;
-    typedef std::vector<const CTexture*>            KTextureList;
-    typedef std::map<const u32, const CTexture*>    TextureLayers;
+    typedef std::map<std::string, TexturePtr>      TextureMap;
+    typedef std::map<const u32, TexturePtr>        TextureUnits;
+    typedef std::vector<TexturePtr>                TextureList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

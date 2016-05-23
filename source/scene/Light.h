@@ -23,7 +23,7 @@ namespace scene
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CLight : public CNode, public stream::CResource
+    class CLight : public CNode, public stream::IResource
     {
     public:
 

@@ -30,7 +30,6 @@ namespace gl
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
         GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
-        CTexture*           createTexture()                                                         override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
 
         RenderTargetPtr     makeSharedRenderTarget()                                                override;

@@ -394,25 +394,23 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
     if (isUserSamplers)
     {
-        u32 layersCount = material->getTextureCount();
+        u32 textureCount = material->getTextureCount();
         u32 samplerID = 0;
-        for (u32 layer = 0; layer < layersCount; ++layer)
+        for (u32 unit = 0; unit < textureCount; ++unit)
         {
-            samplerID = layer;
-            CTexture* texture = material->getTexture(layer);
+            TexturePtr texture = material->getTexture(unit);
             if (texture->isEnable())
             {
-                texture->bind(layer, samplerID);
+                texture->bind(unit);
             }
             else
             {
-                texture->unbind(layer, samplerID);
+                texture->unbind();
             }
         }
     }
     else if (!samplerList.empty())
     {
-        u32 layersCount = 0;
         for (auto& sampler : samplerList)
         {
             if (sampler->getID() < 0)
@@ -433,18 +431,17 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
                 case CShaderSampler::eTextureSampler:
                 case CShaderSampler::eRenderTargetSampler:
                 {
-                    CTexture* texture = sampler->getTexture();
+                    TexturePtr texture = sampler->getTexture();
                     if (texture)
                     {
                         if (texture->isEnable())
                         {
-                            texture->bind(layersCount, sampler->getID());
+                            texture->bind(sampler->getID());
                         }
                         else
                         {
-                            texture->unbind(layersCount, sampler->getID());
+                            texture->unbind();
                         }
-                        ++layersCount;
                     }
                 }
                 break;

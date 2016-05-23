@@ -134,7 +134,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             return true;
         }
 
-        const CTexture* texture = CTextureManager::getInstance()->get(varVal);
+        const TexturePtr texture = CTextureManager::getInstance()->get(varVal);
         if (texture)
         {
             m_type = eTextureSampler;
@@ -151,14 +151,14 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
     return true;
 }
 
-const CTexture* CShaderSampler::getTexture() const
+const TexturePtr CShaderSampler::getTexture() const
 {
     return m_texture;
 }
 
-CTexture* CShaderSampler::getTexture()
+TexturePtr CShaderSampler::getTexture()
 {
-    return const_cast<CTexture*>(m_texture);
+    return utils::const_pointer_cast<CTexture>(m_texture);
 }
 
 const RenderTargetPtr CShaderSampler::getTarget() const

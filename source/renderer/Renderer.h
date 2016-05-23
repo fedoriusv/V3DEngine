@@ -50,8 +50,6 @@ namespace renderer
 
         void                        checkForErrors(const std::string& location = "");
 
-        virtual CTexture*           createTexture() = 0;
-
         virtual ShaderPtr           makeSharedShader()                                                      = 0;
         virtual ShaderProgramPtr    makeSharedProgram()                                                     = 0;
         virtual GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   = 0;

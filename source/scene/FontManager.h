@@ -14,7 +14,7 @@ namespace scene
     /**
     * Font data manager. Provide access to all registered fonts in application.
     */
-    class CFontManager : public utils::TSingleton<CFontManager>, public stream::TResourceLoader<const resources::CFontData>
+    class CFontManager : public utils::TSingleton<CFontManager>, public stream::TResourceLoader<const resources::CFontData*>
     {
     public:
 

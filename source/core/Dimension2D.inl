@@ -1,3 +1,4 @@
+#include "Dimension2D.h"
 namespace v3d
 {
 namespace core
@@ -118,9 +119,15 @@ namespace core
     }
 
     template <class T>
-    T TDimension2D<T>::getArea() const
+    inline T TDimension2D<T>::getArea() const
     {
         return width * height;
+    }
+
+    template<class T>
+    inline bool TDimension2D<T>::isNull() const
+    {
+        return (width == 0 || height == 0);
     }
 
 } //namespace core

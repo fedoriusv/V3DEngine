@@ -63,7 +63,7 @@ void MyApplication::calcThroughNode()
     if (result && result->_result > 0)
     {
         out.resize(result->_size);
-        result->_buffer->readData(0, sizeof(f32) * result->_size, out.data());
+        result->_buffer->read(0, sizeof(f32) * result->_size, out.data());
     }
 
 

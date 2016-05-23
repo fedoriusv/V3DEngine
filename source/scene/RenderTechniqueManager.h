@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechniqueManager : public utils::TSingleton<CRenderTechniqueManager>, public stream::TResourceLoader<const renderer::CRenderTechnique>
+    class CRenderTechniqueManager : public utils::TSingleton<CRenderTechniqueManager>, public stream::TResourceLoader<const renderer::CRenderTechnique*>
     {
     private:
 

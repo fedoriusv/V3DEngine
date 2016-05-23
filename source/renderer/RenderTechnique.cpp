@@ -183,7 +183,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
             
             std::string nameStr = textureElement->Attribute("name");
             std::string fileStr = textureElement->Attribute("file");
-            const CTexture* texture = CTextureManager::getInstance()->load(fileStr, nameStr);
+            const TexturePtr texture = CTextureManager::getInstance()->load(fileStr, nameStr);
             if (!texture)
             {
                 LOG_WARNING("CRenderTechnique: File [%s] not found or not support format", fileStr.c_str());
@@ -220,15 +220,15 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
 void CRenderTechnique::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CRenderTechnique::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CRenderTechnique: Empty Stream with name [%s] form RenderTechique", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Empty Stream with name [%s] form RenderTechique", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -248,7 +248,7 @@ bool CRenderTechnique::load()
     tinyxml2::XMLError success = doc.Parse(data.c_str());
     if (success)
     {
-        LOG_ERROR("CRenderTechnique: Stream parse error name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Stream parse error name [%s]", IResource::getResourseName().c_str());
         ASSERT(false, "Stream parse error");
         return false;
     }
@@ -256,7 +256,7 @@ bool CRenderTechnique::load()
     tinyxml2::XMLElement* rootElement = doc.FirstChildElement("technique");
     if (!rootElement)
     {
-        LOG_ERROR("CRenderTechnique: Can't find technique in Stream name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CRenderTechnique: Can't find technique in Stream name [%s]", IResource::getResourseName().c_str());
         ASSERT(false, "Can't find technique in Stream");
         return false;
     }

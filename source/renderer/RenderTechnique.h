@@ -15,7 +15,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechnique : public stream::CResource
+    class CRenderTechnique : public stream::IResource
     {
     public:
 

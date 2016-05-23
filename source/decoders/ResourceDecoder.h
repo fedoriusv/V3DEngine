@@ -7,7 +7,7 @@ namespace v3d
 {
 namespace stream
 {
-    class CResource;
+    class IResource;
 }
 namespace decoders
 {
@@ -22,7 +22,7 @@ namespace decoders
 
         virtual                         ~CResourceDecoder();
 
-        virtual stream::CResource*      decode(const stream::IStreamPtr& stream) = 0;
+        virtual stream::IResource*      decode(const stream::IStreamPtr& stream) = 0;
 
         bool                            isExtensionSupported(const std::string& extension) const;
         void                            setSupportedExtensions(const std::string supportedExtensions[]);
@@ -39,7 +39,8 @@ namespace decoders
     typedef std::vector<DecoderPtr>             DecoderList;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace decoders
+} //namespace v3d
 
 #endif //_V3D_RESOURCE_DECODER_H_

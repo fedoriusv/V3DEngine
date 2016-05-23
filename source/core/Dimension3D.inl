@@ -1,3 +1,4 @@
+#include "Dimension3D.h"
 namespace v3d
 {
 namespace core
@@ -131,6 +132,12 @@ namespace core
     T TDimension3D<T>::getArea() const
     {
         return width * height * depth;
+    }
+
+    template<class T>
+    inline bool TDimension3D<T>::isNull() const
+    {
+        return (width == 0 || height == 0 || depth == 0);
     }
 
 } //namespace core

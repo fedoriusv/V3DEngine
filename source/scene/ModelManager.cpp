@@ -68,7 +68,7 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
                         return nullptr;
                     }
 
-                    CResource* resource = decoder->decode(stream);
+                    IResource* resource = decoder->decode(stream);
                     stream->close();
 
                     if (!resource)

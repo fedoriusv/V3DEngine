@@ -21,14 +21,14 @@ namespace renderer
         explicit        Buffer(EBufferTarget target);
         virtual         ~Buffer();
 
-        virtual void    bind() = 0;
-        virtual void    bindToTarget(EBufferTarget target, u32 offset, u32 size) = 0;
+        virtual void    bind() const = 0;
+        virtual void    bindToTarget(EBufferTarget target, u32 offset, u32 size) const  = 0;
 
-        virtual void    unbind() = 0;
+        virtual void    unbind() const  = 0;
 
-        virtual void    setData(EDataUsageType type, u32 size, void* data) = 0;
-        virtual void    updateData(u32 offset, u32 size, void* data) = 0;
-        virtual void    readData(u32 offset, u32 size, void* data) = 0;
+        virtual void    set(EDataUsageType type, u32 size, const void* data)    = 0;
+        virtual void    update(u32 offset, u32 size, const void* data)          = 0;
+        virtual void    read(u32 offset, u32 size, void* data) const            = 0;
 
         virtual void*   map(u32 access) = 0;
         virtual bool    unmap() = 0;
@@ -38,7 +38,6 @@ namespace renderer
     protected:
 
         EBufferTarget   m_target;
-
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

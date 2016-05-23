@@ -66,5 +66,4 @@ namespace v3d
 #include "core/Matrix4D.h"
 #include "core/Dimension2D.h"
 #include "core/Dimension3D.h"
-#include "core/Point2D.h"
 #include "core/Rect.h"

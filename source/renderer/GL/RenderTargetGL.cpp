@@ -131,6 +131,8 @@ void CRenderTargetGL::bind()
 
 void CRenderTargetGL::unbind()
 {
+    //TODO: add code for generate mipmap if need
+
     bool chaned = CRenderTargetGL::bindFramebuffer(0);
     if (chaned)
     {
@@ -188,11 +190,11 @@ bool CRenderTargetGL::create()
     {
         switch (attach._output)
         {
-            case eTextureOutput:
+        case EAttachmentsOutput::eTextureOutput:
                 CRenderTargetGL::createRenderToTexture(attach, rect);
                 break;
 
-            case eRenderOutput:
+        case EAttachmentsOutput::eRenderOutput:
                 CRenderTargetGL::createRenderToRenderbuffer(attach, rect);
                 break;
         }
@@ -254,34 +256,34 @@ void CRenderTargetGL::destroy()
     {
         switch (attach._attachmentType)
         {
-        case eColorAttach:
-            if (attach._output == eTextureOutput)
+        case EAttachmentsType::eColorAttach:
+            if (attach._output == EAttachmentsOutput::eTextureOutput)
             {
                 framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, 0);
             }
-            else if (attach._output == eRenderOutput)
+            else if (attach._output == EAttachmentsOutput::eRenderOutput)
             {
                 framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, 0);
             }
             break;
 
-        case eDepthAttach:
-            if (attach._output == eTextureOutput)
+        case EAttachmentsType::eDepthAttach:
+            if (attach._output == EAttachmentsOutput::eTextureOutput)
             {
                 framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0);
             }
-            else if (attach._output == eRenderOutput)
+            else if (attach._output == EAttachmentsOutput::eRenderOutput)
             {
                 framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, 0);
             }
             break;
 
-        case eStencilAttach:
-            if (attach._output == eTextureOutput)
+        case EAttachmentsType::eStencilAttach:
+            if (attach._output == EAttachmentsOutput::eTextureOutput)
             {
                 framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0);
             }
-            else if (attach._output == eRenderOutput)
+            else if (attach._output == EAttachmentsOutput::eRenderOutput)
             {
                 framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, 0);
             }
@@ -334,81 +336,81 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
 
     switch (attach._attachmentType)
     {
-        case eColorAttach:
+    case EAttachmentsType::eColorAttach:
+    {
+        GLint maxColorAttachments;
+        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+        if (attach._index >= (u32)maxColorAttachments)
         {
-            GLint maxColorAttachments;
-            glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-
-            if (attach._index >= (u32)maxColorAttachments)
-            {
-                LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
-                ASSERT(false, "CRenderTarget: Range out Color attachment");
-                return;
-            }
-
-            if (!attach._active)
-            {
-                m_attachBuffers.push_back(GL_NONE);
-                return;
-            }
-
-            m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
-
-            ASSERT(!attach._buffer, "Renderbuffer already exist");
-            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
-            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
-
-            attach._buffer->bind();
-            CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
-            attach._buffer->unbind();
-
-            RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+            LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
+            ASSERT(false, "CRenderTarget: Range out Color attachment");
+            return;
         }
-            break;
 
-        case eDepthAttach:
+        if (!attach._active)
         {
-            if (!attach._active)
-            {
-                return;
-            }
-
-            ASSERT(!attach._buffer, "Renderbuffer already exist");
-            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
-            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
-
-            attach._buffer->bind();
-            CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
-            attach._buffer->unbind();
-
-            RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+            m_attachBuffers.push_back(GL_NONE);
+            return;
         }
-            break;
 
-        case eStencilAttach:
+        m_attachBuffers.push_back(GL_COLOR_ATTACHMENT0 + attach._index);
+
+        ASSERT(!attach._buffer, "Renderbuffer already exist");
+        attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+        attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
+
+        attach._buffer->bind();
+        CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+        attach._buffer->unbind();
+
+        RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+    }
+    break;
+
+    case EAttachmentsType::eDepthAttach:
+    {
+        if (!attach._active)
         {
-            if (!attach._active)
-            {
-                return;
-            }
-
-            ASSERT(!attach._buffer, "Renderbuffer already exist");
-            attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
-            attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
-
-            attach._buffer->bind();
-            CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
-            attach._buffer->unbind();
-
-            RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+            return;
         }
-            break;
 
-        default:
+        ASSERT(!attach._buffer, "Renderbuffer already exist");
+        attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+        attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
+
+        attach._buffer->bind();
+        CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+        attach._buffer->unbind();
+
+        RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+    }
+    break;
+
+    case EAttachmentsType::eStencilAttach:
+    {
+        if (!attach._active)
         {
-            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
-            ASSERT(false, "CRenderTarget: Not supported attach");
+            return;
         }
+
+        ASSERT(!attach._buffer, "Renderbuffer already exist");
+        attach._buffer = new CRenderBufferGL(attach._format, attach._type, m_MSAA ? samplerSize : 0);
+        attach._buffer->setSize(Dimension2D(rect.getWidth(), rect.getHeight()));
+
+        attach._buffer->bind();
+        CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
+        attach._buffer->unbind();
+
+        RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+    }
+    break;
+
+    default:
+    {
+        LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
+        ASSERT(false, "CRenderTarget: Not supported attach");
+    }
     }
 }
 
@@ -416,121 +418,121 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
 {
     switch (attach._attachmentType)
     {
-        case eColorAttach:
+    case EAttachmentsType::eColorAttach:
+    {
+        GLint maxColorAttachments;
+        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
+
+        if (attach._index >= (u32)maxColorAttachments)
         {
-            GLint maxColorAttachments;
-            glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-
-            if (attach._index >= (u32)maxColorAttachments)
-            {
-                LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
-                ASSERT(false, "CRenderTarget: Range out Color attachment");
-                return;
-            }
-
-            if (m_attachBuffers.size() < attach._index + 1)
-            {
-                m_attachBuffers.resize(attach._index + 1, GL_NONE);
-            }
-
-            if (!attach._active)
-            {
-                m_attachBuffers[attach._index] = GL_NONE;
-                return;
-            }
-            else
-            {
-                m_attachBuffers[attach._index] = GL_COLOR_ATTACHMENT0 + attach._index;
-            }
-
-            if (m_MSAA)
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), attach._format, attach._type);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-            else
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), attach._format, attach._type, nullptr, 8);
-                CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-
-            RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+            LOG_ERROR("CRenderTarget: Range out Color attachment max %d index %d", maxColorAttachments, attach._index);
+            ASSERT(false, "CRenderTarget: Range out Color attachment");
+            return;
         }
-            break;
 
-        case eDepthAttach:
+        if (m_attachBuffers.size() < attach._index + 1)
         {
-            if (!attach._active)
-            {
-                return;
-            }
-
-            ASSERT(attach._format == EImageFormat::eDepthComponent, "Depth must have only depth format");
-            if (m_MSAA)
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-            else
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-
-            RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+            m_attachBuffers.resize(attach._index + 1, GL_NONE);
         }
-            break;
 
-        case eStencilAttach:
+        if (!attach._active)
         {
-            if (!attach._active)
-            {
-                return;
-            }
-
-            //TODO: will need to rework
-            if (m_MSAA)
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
-                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-            else
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
-                CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-
-            RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+            m_attachBuffers[attach._index] = GL_NONE;
+            return;
         }
-            break;
-
-        case eDepthStencilAttach:
+        else
         {
-            if (!attach._active)
-            {
-                return;
-            }
-
-            if (m_MSAA)
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DMSAA(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-            else
-            {
-                attach._texture = CTextureManager::getInstance()->createTexture2DFromData(Dimension2D(rect.getWidth(), rect.getHeight()), eDepthComponent, attach._type, nullptr, 8);
-                CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture)->getTextureID());
-            }
-
-            RENDERER->checkForErrors("CRenderTargetGL: DepthStencil attachment error");
+            m_attachBuffers[attach._index] = GL_COLOR_ATTACHMENT0 + attach._index;
         }
-        break;
 
-        default:
+        if (m_MSAA)
         {
-            LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
-            ASSERT(false, "CRenderTarget: Not supported attach");
+            attach._texture = new CTexture(ETextureTarget::eTexture2DMSAA, attach._format, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture->getImpl().get())->getTextureID());
         }
+        else
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2D, attach._format, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, utils::static_pointer_cast<CTextureGL>(attach._texture->getImpl())->getTextureID());
+        }
+
+        RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+    }
+    break;
+
+    case EAttachmentsType::eDepthAttach:
+    {
+        if (!attach._active)
+        {
+            return;
+        }
+
+        ASSERT(attach._format == EImageFormat::eDepthComponent, "Depth must have only depth format");
+        if (m_MSAA)
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2DMSAA, EImageFormat::eDepthComponent, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture->getImpl().get())->getTextureID());
+        }
+        else
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2D, EImageFormat::eDepthComponent, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture->getImpl().get())->getTextureID());
+        }
+
+        RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+    }
+    break;
+
+    case EAttachmentsType::eStencilAttach:
+    {
+        if (!attach._active)
+        {
+            return;
+        }
+
+        //TODO: will need to rework
+        if (m_MSAA)
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2DMSAA, EImageFormat::eStencilIndex, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
+        }
+        else
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2D, EImageFormat::eStencilIndex, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
+        }
+
+        RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+    }
+    break;
+
+    case EAttachmentsType::eDepthStencilAttach:
+    {
+        if (!attach._active)
+        {
+            return;
+        }
+
+        if (m_MSAA)
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2DMSAA, EImageFormat::eDepthComponent, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
+        }
+        else
+        {
+            attach._texture = new CTexture(ETextureTarget::eTexture2D, EImageFormat::eDepthComponent, attach._type, Dimension2D(rect.getWidth(), rect.getHeight()));
+            CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
+        }
+
+        RENDERER->checkForErrors("CRenderTargetGL: DepthStencil attachment error");
+    }
+    break;
+
+    default:
+    {
+        LOG_ERROR("CRenderTarget: Not supported attach type %d", attach._attachmentType);
+        ASSERT(false, "CRenderTarget: Not supported attach");
+    }
     }
 }
 

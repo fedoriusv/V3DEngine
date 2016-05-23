@@ -30,10 +30,8 @@ namespace gl
 
         void        renderbufferStorage(u32 internalFormat, const core::Dimension2D& size, u32 samplers);
         
-        u32         m_id;
+        u32         m_renderBufferID;
         u32         m_samplesCount;
-
-        static u32  internalFormat(u32 format, u32 type);
 
         static u32  s_currentBuffer;
     };

@@ -1,4 +1,5 @@
 ﻿#include "DriverContextGL.h"
+#include "renderer/GL/TextureGL.h"
 #include "utils/Logger.h"
 
 #ifdef _OPENGL_DRIVER_
@@ -6,9 +7,9 @@
 #pragma comment(lib, "OpenGL32.lib")
 #ifdef _DEBUG
 #   pragma comment(lib, "glew_static_d.lib")
-#else
+#else //_DEBUG
 #   pragma comment(lib, "glew_static.lib")
-#endif
+#endif //_DEBUG
 
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
@@ -21,7 +22,7 @@
 #elif defined(_PLATFORM_MACOSX_)
 #   import <Cocoa/Cocoa.h>
 #   include "platform/WindowMacOSX.h"
-#endif
+#endif //_PLATFORM_MACOSX_
 
 namespace v3d
 {
@@ -52,8 +53,7 @@ bool CDriverContextGL::createContext()
 
 #elif defined(_PLATFORM_MACOSX_)
     return createMacOSXContext();
-
-#endif
+#endif //_PLATFORM_MACOSX_
     return false;
 }
 
@@ -65,7 +65,7 @@ void CDriverContextGL::destroyContext()
     return createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)
     destroyMacOSXContext();
-#endif
+#endif //_PLATFORM_MACOSX_
 }
 
 #if defined(_PLATFORM_WIN_)
@@ -133,7 +133,7 @@ bool CDriverContextGL::createWin32Context()
         1,                                         // Version Number
         PFD_DRAW_TO_WINDOW |                       // Format Must Support Window
         PFD_SUPPORT_OPENGL |                       // Format Must Support OpenGL
-        PFD_DOUBLEBUFFER |                       // Must Support Double Buffering
+        PFD_DOUBLEBUFFER |                         // Must Support Double Buffering
         PFD_TYPE_RGBA,                             // Request An RGBA Format
         32,                                        // Select Our Color Depth
         0, 0, 0, 0, 0, 0,                          // Color Bits Ignored
@@ -523,7 +523,17 @@ void CDriverContextGL::destroyMacOSXContext()
         m_context._thread = 0;
     }
 }
-#endif
+#endif //_PLATFORM_MACOSX_
+
+TexturePtr CDriverContextGL::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
+{
+    return new gl::CTextureGL(target, format, type, size, data, level);
+}
+
+TexturePtr CDriverContextGL::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
+{
+    return new gl::CTextureGL(format, type, size, data, level);
+}
 
 void CDriverContextGL::driverInfo()
 {
@@ -549,7 +559,7 @@ void CDriverContextGL::driverInfo()
 
     GLint maxTextureUnits;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
-    CDriverContext::setTextureUnitsCount(maxTextureUnits);
+    CDriverContext::setTextureUnitsCount((u32)maxTextureUnits);
 
     GLint maxTextureSamplers;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureSamplers);
@@ -621,7 +631,7 @@ bool CDriverContextGL::setVSync(bool use)
 #elif defined(_PLATFORM_MACOSX_)
     GLint sync = use ? 1 : 0;
     [m_context._context setValues:&sync forParameter:NSOpenGLCPSwapInterval];
-#endif
+#endif //_PLATFORM_MACOSX_
     return succeed;
 }
 

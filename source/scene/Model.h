@@ -14,7 +14,7 @@ namespace scene
     class CModelManager;
     class CScene;
 
-    class CModel : public CNode, public stream::CResource, public utils::TCloneable<CModel*>
+    class CModel : public CNode, public stream::IResource, public utils::TCloneable<CModel*>
     {
     public:
 

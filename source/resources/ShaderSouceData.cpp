@@ -18,19 +18,19 @@ CShaderSourceData::~CShaderSourceData()
 
 void CShaderSourceData::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CShaderSourceData::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CShaderSourceData::load: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CShaderSourceData::load: Empty Stream with name [%s]", IResource::getResourseName().c_str());
         return false;
     }
 
-    m_name = CResource::getResourseName();
+    m_name = IResource::getResourseName();
     
     stream->seekBeg(0);
     stream->read(m_body);

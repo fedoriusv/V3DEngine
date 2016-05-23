@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelManager : public utils::TSingleton<CModelManager>, public stream::TResourceLoader<CModel>
+    class CModelManager : public utils::TSingleton<CModelManager>, public stream::TResourceLoader<CModel*>
     {
     private:
 

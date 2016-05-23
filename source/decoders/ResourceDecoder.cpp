@@ -1,7 +1,9 @@
 #include "ResourceDecoder.h"
 
-using namespace v3d;
-using namespace decoders;
+namespace v3d
+{
+namespace decoders
+{
 
 CResourceDecoder::CResourceDecoder()
 {
@@ -37,3 +39,6 @@ const std::vector<std::string>& CResourceDecoder::getSupportedExtensions() const
 {
     return m_supportedExtensions;
 }
+
+} //namespace decoders
+} //namespace v3d

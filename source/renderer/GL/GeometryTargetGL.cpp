@@ -151,7 +151,7 @@ bool CGeometryTargetGL::create()
                 }
             };
 
-            buff._buffer->setData(EDataUsageType::eReadStatic, componentSize(buff._type) * buff._size, nullptr);
+            buff._buffer->set(EDataUsageType::eReadStatic, componentSize(buff._type) * buff._size, nullptr);
         }
     }
 

@@ -3,6 +3,7 @@
 #include "utils/Logger.h"
 #include "stream/FileStream.h"
 #include "scene/TextureManager.h"
+#include "Engine.h"
 
 namespace v3d
 {
@@ -121,24 +122,26 @@ f32 CMaterial::getGlossiness() const
     return m_materialData._glossiness;
 }
 
-const CTexture* CMaterial::getTexture(u32 layer) const
+const TexturePtr CMaterial::getTexture(u32 unit) const
 {
-    if (layer >= ETextureLayer::eLayerMax)
+#ifdef _DEBUG
+    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
     {
-        ASSERT(false, "CMaterial::getTexture: Invalid texture layer");
+        ASSERT(false, "CMaterial::getTexture: Invalid texture unit");
     }
-
-    return m_texture.at(layer);
+#endif //_DEBUG
+    return m_texture.at(unit);
 }
 
-CTexture* CMaterial::getTexture(u32 layer)
+TexturePtr CMaterial::getTexture(u32 unit)
 {
-    if (layer >= ETextureLayer::eLayerMax)
+#ifdef _DEBUG
+    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
     {
-        ASSERT(false, "CMaterial::getTexture: Invalid texture layer");
+        ASSERT(false, "CMaterial::getTexture: Invalid texture unit");
     }
-
-    return const_cast<CTexture*>(m_texture.at(layer));
+#endif //_DEBUG
+    return utils::const_pointer_cast<CTexture>(m_texture.at(unit));
 }
 
 u32 CMaterial::getTextureCount() const
@@ -146,58 +149,55 @@ u32 CMaterial::getTextureCount() const
     return (u32)m_texture.size();
 }
 
-bool CMaterial::setTexture(u32 layer, const std::string& file)
+bool CMaterial::setTexture(u32 unit, const std::string& file)
 {
-    if (layer >= ETextureLayer::eLayerMax)
+    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
     {
-        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return false;
     }
 
-    const CTexture* texture = scene::CTextureManager::getInstance()->load(file);
+    const TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
     if (!texture)
     {
         LOG_ERROR("CMaterial::setTexture: Error read file [%s]", file.c_str());
         return false;
     }
 
-    m_texture[layer] = texture;
+    m_texture[unit] = texture;
 
     return true;
 }
 
-bool CMaterial::setTexture(u32 layer, const std::string files[6])
+bool CMaterial::setTexture(u32 unit, const std::string files[6])
 {
-    if (layer >= ETextureLayer::eLayerMax)
+    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
     {
-        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return false;
     }
 
-    const CTexture* texture = scene::CTextureManager::getInstance()->load(files);
+    const TexturePtr texture = scene::CTextureManager::getInstance()->load(files);
     if (!texture)
     {
         LOG_ERROR("CMaterial: Error read cubemap files");
         return false;
     }
 
-    m_texture[layer] = texture;
+    m_texture[unit] = texture;
 
     return true;
 }
 
-void CMaterial::setTexture(u32 layer, const CTexture* texture)
+void CMaterial::setTexture(u32 unit, const TexturePtr& texture)
 {
-    if (layer >= ETextureLayer::eLayerMax)
+    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
     {
-        ASSERT(false, "CMaterial::setTexture: Texture Layer range out");
+        ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return;
     }
 
-    //TODO: other owner
-    //scene::CTextureManager::getInstance()->add(texture);
-    m_texture[layer] = texture;
-
+    m_texture[unit] = texture;
 }
 
 void CMaterial::setTransparency(const f32 value)
@@ -212,15 +212,15 @@ float CMaterial::getTransparency() const
 
 void CMaterial::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CMaterial::load()
 {
-    const stream::IStreamPtr& stream = CResource::getStream();
+    const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CMaterial: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CMaterial: Empty Stream with name [%s]", IResource::getResourseName().c_str());
         return false;
     }
 
@@ -257,10 +257,10 @@ const std::string& CMaterial::getName() const
     return m_name;
 }
 
-CMaterial* CMaterial::clone()
+MaterialPtr CMaterial::clone()
 {
-    CMaterial* material = new CMaterial(*this);
-    material->init(CResource::getStream());
+    MaterialPtr material = new CMaterial(*this);
+    material->init(IResource::getStream());
     if (!material->load())
     {
         LOG_ERROR("CMaterial: Can't load material stream");

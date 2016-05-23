@@ -190,15 +190,15 @@ void CCamera::update(s32 dt)
 
 void CCamera::init(const stream::IStreamPtr& stream)
 {
-    CResource::setStream(stream);
+    IResource::setStream(stream);
 }
 
 bool CCamera::load()
 {
-    const IStreamPtr& stream = CResource::getStream();
+    const IStreamPtr& stream = IResource::getStream();
     if (!stream)
     {
-        LOG_ERROR("CCamera: Empty Stream with name [%s]", CResource::getResourseName().c_str());
+        LOG_ERROR("CCamera: Empty Stream with name [%s]", IResource::getResourseName().c_str());
         return false;
     }
 
