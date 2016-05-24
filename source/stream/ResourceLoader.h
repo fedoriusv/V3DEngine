@@ -6,6 +6,8 @@
 #include "utils/RefCounted.h"
 #include "utils/IntrusivePtr.h"
 
+#include <type_traits>
+
 namespace v3d
 {
 namespace stream
@@ -27,12 +29,6 @@ namespace stream
         void                            unload(T resource);
         
         void                            unloadAll();
-        /*template<class U = T>
-        void                            unloadAll();
-
-        template<T>
-        void                            unloadAll<utils::CRefCounted>();*/
-
 
         void                            registerDecoder(decoders::DecoderPtr decoder);
         void                            unregisterDecoder(decoders::DecoderPtr& decoder);
@@ -48,6 +44,17 @@ namespace stream
         std::map<std::string, T>        m_resources;
         decoders::DecoderList           m_decoders;
         std::vector<std::string>        m_pathes;
+
+    private:
+
+        void                            unload(const std::string& name, std::true_type);
+        void                            unload(const std::string& name, std::false_type);
+
+        void                            unload(T resource, std::true_type);
+        void                            unload(T resource, std::false_type);
+
+        void                            unloadAll(std::true_type);
+        void                            unloadAll(std::false_type);
 
     };
 
