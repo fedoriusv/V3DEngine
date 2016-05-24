@@ -1,3 +1,4 @@
+#include "ResourceLoader.h"
 
 namespace v3d
 {
@@ -14,6 +15,8 @@ TResourceLoader<T>::~TResourceLoader()
 {
     m_pathes.clear();
     m_decoders.clear();
+
+    unloadAll();
 }
 
 template <class T>
@@ -31,72 +34,19 @@ T TResourceLoader<T>::get(const std::string& name)
 template <class T>
 void TResourceLoader<T>::unload(const std::string& name)
 {
-    auto it = m_resources.find(name);
-    if (it != m_resources.end())
-    {
-        //if (std::integral_constant<bool, true>)
-        //if (!std::is_base_of<utils::CRefCounted, T>())
-        {
-           // delete it->second;
-            //it->second = nullptr;
-        }
-
-        m_resources.erase(it);
-    }
+    TResourceLoader::unload(name, std::integral_constant<bool, std::is_pointer<T>::value>::type());
 }
 
 template <class T>
 void TResourceLoader<T>::unload(T resource)
 {
-    auto predDelete = [resource](const std::pair<std::string, T>& pair) -> bool
-    {
-        return pair.second == texture;
-    };
-
-    auto it = std::find_if(m_resources.begin(), m_resources.end(), predDelete);
-    if (it != m_resources.end())
-    {
-        delete (*it);
-        (*it) = nullptr;
-
-        m_resources.erase(it);
-    }
+    TResourceLoader::unload(resource, std::integral_constant<bool, std::is_pointer<T>::value>::type());
 }
 
-/*template<class T>
-template<class U>
+template<class T>
 inline void TResourceLoader<T>::unloadAll()
 {
-    for (auto& it : m_resources)
-    {
-        delete it.second;
-        it.second = nullptr;
-    }
-    m_resources.clear();
-}
-
-template<class T>
-template<>
-void TResourceLoader<T>::unloadAll<utils::CRefCounted>()
-{
-    m_resources.clear();
-}
-*/
-template<class T>
-void TResourceLoader<T>::unloadAll()
-{
-    if (!std::is_base_of<utils::TIntrusivePtr, T>())
-    {
-        int a = 0;
-        //for (std::map<std::string, T>::iterator iter1 = m_resources.begin(), iter1 != m_resources.end(), ++iter1)
-        ////for (auto& it : m_resources)
-        //{
-        //    delete (*iter1);
-        //    //delete it.second;
-        //    //it.second = nullptr;
-        //}
-    }
-    m_resources.clear();
+    TResourceLoader::unloadAll(std::integral_constant<bool, std::is_pointer<T>::value>::type());
 }
 
 template <class T>
@@ -132,6 +82,79 @@ void TResourceLoader<T>::unregisterDecoder(decoders::DecoderPtr& decoder)
     {
         m_decoders.erase(std::remove(m_decoders.begin(), m_decoders.end(), *it), m_decoders.end());
     }
+}
+
+template<class T>
+void TResourceLoader<T>::unload(const std::string& name, std::true_type)
+{
+    auto it = m_resources.find(name);
+    if (it != m_resources.end())
+    {
+        delete it->second;
+        it->second = nullptr;
+
+        m_resources.erase(it);
+    }
+}
+
+template<class T>
+void TResourceLoader<T>::unload(const std::string& name, std::false_type)
+{
+    auto it = m_resources.find(name);
+    if (it != m_resources.end())
+    {
+        m_resources.erase(it);
+    }
+}
+
+template<class T>
+void TResourceLoader<T>::unload(T resource, std::true_type)
+{
+    auto predDelete = [resource](const std::pair<std::string, T>& pair) -> bool
+    {
+        return pair.second == texture;
+    };
+
+    auto it = std::find_if(m_resources.begin(), m_resources.end(), predDelete);
+    if (it != m_resources.end())
+    {
+        delete it->second;
+        it->second = nullptr;
+
+        m_resources.erase(it);
+    }
+}
+
+template<class T>
+void TResourceLoader<T>::unload(T resource, std::false_type)
+{
+    auto predDelete = [resource](const std::pair<std::string, T>& pair) -> bool
+    {
+        return pair.second == texture;
+    };
+
+    auto it = std::find_if(m_resources.begin(), m_resources.end(), predDelete);
+    if (it != m_resources.end())
+    {
+        m_resources.erase(it);
+    }
+}
+
+template<class T>
+void TResourceLoader<T>::unloadAll(std::true_type)
+{
+    for (auto& it : m_resources)
+    {
+        delete it.second;
+        it.second = nullptr;
+    }
+    m_resources.clear();
+}
+
+template<class T>
+void TResourceLoader<T>::unloadAll(std::false_type)
+{
+    m_resources.clear();
 }
 
 template <class T>
