@@ -1,6 +1,8 @@
 #ifndef _V3D_SINGLETON_H_
 #define _V3D_SINGLETON_H_
 
+#include "common.h"
+
 namespace v3d
 {
 namespace utils
@@ -22,13 +24,17 @@ namespace utils
 
     private:
 
-        static T*   s_instance;
+        static T*               s_instance;
+        static std::once_flag   s_onceFlag;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     template <class T>
     T* TSingleton<T>::s_instance = nullptr;
+
+    template <class T>
+    std::once_flag TSingleton<T>::s_onceFlag;
 
     template <class T>
     TSingleton<T>::TSingleton()
@@ -43,10 +49,10 @@ namespace utils
     template <class T>
     T *TSingleton<T>::getInstance()
     {
-        if (s_instance == nullptr)
+        std::call_once(TSingleton::s_onceFlag, []()
         {
             s_instance = new T;
-        }
+        });
 
         return s_instance;
     }

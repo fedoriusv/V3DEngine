@@ -26,6 +26,7 @@ namespace v3d
 #include <queue>
 #include <algorithm>
 #include <memory>
+#include <mutex>
 #include <fstream>
 #include <functional>
 #include <utility>
