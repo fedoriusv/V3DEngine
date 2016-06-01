@@ -121,7 +121,10 @@ bool CSceneManager::dropNode(CNode* node)
 
 void CSceneManager::addNode(CNode* node)
 {
-    m_scene->add(node);
+    if (node)
+    {
+        m_scene->add(node);
+    }
 }
 
 CNode* CSceneManager::getObjectByID(s32 id)
