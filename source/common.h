@@ -16,7 +16,7 @@ namespace v3d
     typedef float               f32;
     typedef double              f64;
     typedef long double         f80;
-}
+} //namespace v3d
 
 #include <string>
 #include <vector>
@@ -30,14 +30,15 @@ namespace v3d
 #include <functional>
 #include <utility>
 
+#include <type_traits>
+
 #include <assert.h>
 #include <time.h>
 #include <cstdarg>
 #include <cstring>
 #include <stdio.h>
-
-#include <iostream>
 #include <stdlib.h>
+#include <iostream>
 
 #ifdef _DEBUG
 #   define ASSERT(x, message) assert(x && message)

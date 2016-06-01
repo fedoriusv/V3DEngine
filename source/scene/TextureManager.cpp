@@ -28,7 +28,6 @@ CTextureManager::CTextureManager()
 
 CTextureManager::~CTextureManager()
 {
-    TResourceLoader::unloadAll();
 }
 
 TexturePtr CTextureManager::load(const std::string files[6], const std::string& alias)
@@ -227,8 +226,6 @@ TexturePtr CTextureManager::load(const std::string& file, const std::string& ali
 
 TexturePtr CTextureManager::createTextureFromImage(const CImage* image)
 {
-    CTextureManager::unload("dddd");
-
     if (image && image->isLoaded())
     {
         TexturePtr texure = new CTexture(k_useTextureBuffer ? ETextureTarget::eTextureBuffer : ETextureTarget::eTexture2D,
@@ -245,7 +242,7 @@ renderer::TexturePtr CTextureManager::createCubeTextureFromImages(const resource
     const u8* dataList[6];
     for (u32 i = 0; i < 6; ++i)
     {
-        if (!image || image[i]->isLoaded())
+        if (!image || !image[i]->isLoaded())
         {
             return nullptr;
         }

@@ -237,6 +237,26 @@ const Dimension3D& CTexture::getSize() const
     return Dimension3D(0, 0, 0);
 }
 
+EImageFormat CTexture::getFormat() const
+{
+    if (m_impl)
+    {
+        return m_impl->getFormat();
+    }
+
+    return EImageFormat::eFormatCount;
+}
+
+EImageType CTexture::getType() const
+{
+    if (m_impl)
+    {
+        return m_impl->getType();
+    }
+
+    return EImageType::eImageTypeCount;
+}
+
 void CTexture::setFilterType(ETextureFilter min, ETextureFilter mag)
 {
     if (m_impl)
@@ -258,6 +278,28 @@ TexturePtr CTexture::getImpl() const
     return m_impl;
 }
 
+TexturePtr CTexture::clone()
+{
+    if (!m_impl)
+    {
+        return nullptr;
+    }
+
+    TexturePtr texure;
+    if (CTexture::getTarget() == ETextureTarget::eTextureCubeMap)
+    {
+        texure = new CTexture(m_impl->getFormat(), m_impl->getType(), Dimension2D(m_impl->getSize().width, m_impl->getSize().height),
+            nullptr, m_impl->getMipmapLevel());
+    }
+    else
+    {
+        texure = new CTexture(m_impl->getTarget(), m_impl->getFormat(), m_impl->getType(), m_impl->getSize(), nullptr, m_impl->getMipmapLevel());
+    }
+    texure->copyData(this);
+
+    return texure;
+}
+
 void CTexture::setWrap(EWrapType wrap)
 {
     if (m_impl)
@@ -274,6 +316,14 @@ bool CTexture::isEnable() const
     }
 
     return false;
+}
+
+void CTexture::copyData(const TexturePtr& texture)
+{
+    if (m_impl)
+    {
+        m_impl->copyData(texture);
+    }
 }
 
 } //namespace renderer

@@ -221,6 +221,7 @@ CImage* CImage::copyRect(const core::Rect32& rect) const
     newImage->m_size.set(rect.getWidth(), rect.getHeight());
     newImage->m_data = new u8[newImage->getByteCount()];
 
+    //TODO:
    /* u32 index = 0;
     while (index < newImage->getByteCount())
     {

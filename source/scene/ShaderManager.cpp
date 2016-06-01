@@ -20,7 +20,6 @@ CShaderManager::CShaderManager()
 
 CShaderManager::~CShaderManager()
 {
-    TResourceLoader::unloadAll();
 }
 
 void CShaderManager::add(const CShaderSourceData* shader)

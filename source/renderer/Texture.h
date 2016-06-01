@@ -5,6 +5,7 @@
 #include "stream/Resource.h"
 #include "utils/RefCounted.h"
 #include "utils/IntrusivePtr.h"
+#include "utils/Cloneable.h"
 
 namespace v3d
 {
@@ -90,15 +91,14 @@ namespace renderer
     /**
     * Base Interface for texture entity.
     */
-    class CTexture : public utils::CRefCounted
+    class CTexture : public utils::CRefCounted, public utils::TCloneable<TexturePtr>
     {
     public:
 
         CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data = nullptr, u32 level = 0U);
         CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data = nullptr, u32 level = 0U);
         CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 level = 0U);
-        CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
-        //CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = nullptr) {};
+        CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = {}, u32 level = 0U);
 
         CTexture(const CTexture&)               = delete;
         CTexture& operator=(const CTexture&)    = delete;
@@ -130,6 +130,8 @@ namespace renderer
         virtual EAnisotropic                getAnisotropic() const;
         virtual u32                         getMipmapLevel() const;
         virtual const core::Dimension3D&    getSize()        const;
+        virtual EImageFormat                getFormat()      const;
+        virtual EImageType                  getType()        const;
         
         virtual void                        setFilterType(ETextureFilter min, ETextureFilter mag);
         virtual void                        setWrap(EWrapType wrap);
@@ -137,9 +139,13 @@ namespace renderer
 
         TexturePtr                          getImpl() const;
 
+        TexturePtr                          clone() override;
+        
     protected:
 
         CTexture();
+
+        virtual void                        copyData(const TexturePtr& texture);
 
     private:
 

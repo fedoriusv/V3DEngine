@@ -301,7 +301,7 @@ u32 CTextureGL::internalFormat(u32 format, u32 type)
     };
 
     return format;
-};
+}
 
 CTextureGL::CTextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
     : m_target(target)
@@ -384,7 +384,7 @@ CTextureGL::CTextureGL(EImageFormat format, EImageType type, const core::Dimensi
     {
         for (u32 cubemapSide = 0; cubemapSide < TEXTURE_CUBE_MAP_COUNT; ++cubemapSide)
         {
-            CTextureGL::update(cubemapSide, Dimension2D(0U, 0U), size, data, level);
+            CTextureGL::update(cubemapSide, Dimension2D(0U, 0U), size, data[cubemapSide], level);
         }
     }
 }
@@ -999,6 +999,16 @@ const core::Dimension3D& CTextureGL::getSize() const
     return m_size;
 }
 
+EImageFormat CTextureGL::getFormat() const
+{
+    return m_format;
+}
+
+EImageType CTextureGL::getType() const
+{
+    return m_type;
+}
+
 void CTextureGL::fill(const void* data, u32 offset, u32 size, u32 level)
 {
 #ifdef _DEBUG_GL
@@ -1198,6 +1208,18 @@ void CTextureGL::freeMemory(u32 texture)
     default:
         ASSERT(false, "Invalid target");
     }
+}
+
+void CTextureGL::copyData(const TexturePtr& texture)
+{
+    u32 id = static_cast<CTextureGL*>(texture->getImpl().get())->getTextureID();
+    for (u32 i = 0; i < m_mipmapLevel; ++i)
+    {
+        glCopyImageSubData(id, ETextureTargetGL[texture->getTarget()], i, 0, 0, 0, 
+            m_textureID, ETextureTargetGL[m_target], i, 0, 0, 0, m_size.width, m_size.height, m_size.depth);
+    }
+
+    RENDERER->checkForErrors("CTextureGL::copyData Error");
 }
 
 } //namespace gl

@@ -16,7 +16,6 @@ CTargetManager::CTargetManager()
 
 CTargetManager::~CTargetManager()
 {
-    CTargetManager::unloadAll();
 }
 
 void CTargetManager::add(const renderer::TargetPtr& target)
