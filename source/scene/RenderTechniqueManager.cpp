@@ -16,7 +16,6 @@ CRenderTechniqueManager::CRenderTechniqueManager()
 
 CRenderTechniqueManager::~CRenderTechniqueManager()
 {
-    TResourceLoader::unloadAll();
 }
 
 void CRenderTechniqueManager::add(const renderer::CRenderTechnique* technique)

@@ -120,7 +120,7 @@ const TexturePtr CRenderTarget::getColorTexture(u32 index) const
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 TexturePtr CRenderTarget::getColorTexture(u32 index)
@@ -141,7 +141,7 @@ TexturePtr CRenderTarget::getColorTexture(u32 index)
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 const TexturePtr CRenderTarget::getDepthTexture() const
@@ -162,7 +162,7 @@ const TexturePtr CRenderTarget::getDepthTexture() const
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 TexturePtr CRenderTarget::getDepthTexture()
@@ -183,7 +183,7 @@ TexturePtr CRenderTarget::getDepthTexture()
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 const TexturePtr CRenderTarget::getStencilTexture() const
@@ -204,7 +204,7 @@ const TexturePtr CRenderTarget::getStencilTexture() const
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 TexturePtr CRenderTarget::getStencilTexture()
@@ -225,7 +225,7 @@ TexturePtr CRenderTarget::getStencilTexture()
         return (*item)._texture;
     }
 
-    return TexturePtr();
+    return nullptr;
 }
 
 void CRenderTarget::setClearColor(const core::Vector4D& color)

@@ -51,6 +51,8 @@ namespace gl
         EAnisotropic                getAnisotropic() const override;
         u32                         getMipmapLevel() const override;
         const core::Dimension3D&    getSize()        const override;
+        EImageFormat                getFormat()      const override;
+        EImageType                  getType()        const override;
 
         void                        setFilterType(ETextureFilter min, ETextureFilter mag)   override;
         void                        setWrap(EWrapType wrap)                                 override;
@@ -62,6 +64,8 @@ namespace gl
 
         static void                 reset();
         static u32                  internalFormat(u32 format, u32 type);
+
+        void                        copyData(const TexturePtr& texture) override;
 
     private:
 

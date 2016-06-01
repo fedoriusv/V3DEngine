@@ -19,7 +19,6 @@ CFontManager::CFontManager()
 
 CFontManager::~CFontManager()
 {
-    TResourceLoader::unloadAll();
 }
 
 void CFontManager::add(const CFontData* font)

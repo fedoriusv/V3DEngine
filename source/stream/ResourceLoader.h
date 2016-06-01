@@ -6,14 +6,15 @@
 #include "utils/RefCounted.h"
 #include "utils/IntrusivePtr.h"
 
-#include <type_traits>
-
 namespace v3d
 {
 namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Interface of ResourceLoader
+    */
     template <class T>
     class TResourceLoader
     {
