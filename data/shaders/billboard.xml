@@ -93,7 +93,7 @@
                         textureCoord = vec2(0.0, 0.0);
                         EmitVertex();
                         
-                        EndPrimitive(); 
+                        EndPrimitive();
                     }
                     ]]>
             </var>

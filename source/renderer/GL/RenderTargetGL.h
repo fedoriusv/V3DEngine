@@ -7,6 +7,8 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -61,7 +63,6 @@ namespace renderer
 
         static void     framebufferTexture2D(s32 attachment, s32 target, u32 texture);
         static void     framebufferRenderbuffer(s32 attachment, u32 buffer);
-        static void     renderbufferStorage(u32 internalFormat, const core::Rect32& size, u32 samplers = 0);
 
         static void     blitFramebuffer(const core::Rect32& src, const core::Rect32& dst, u32 mask, u32 filter);
 
@@ -70,7 +71,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} //namespace v3d
+} //namespace gl
 } //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_TARGET_GL_H_
