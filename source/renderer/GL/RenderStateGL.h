@@ -7,6 +7,8 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -33,8 +35,10 @@ namespace renderer
         static bool  depthFunc(ECompareFunc mode);
         static bool  depthWrite(bool enable);
         static bool  stencilWrite(bool enable);
-        static bool  pointSize(bool enable);
+        static bool  pointSize(f32 value);
+        static bool  pointSizeProgram(bool enable);
         static bool  rasterizerEnable(bool enable);
+        static bool  patchLevel(u32 size, f32 inner, f32 outer);
 
     private:
 
@@ -53,12 +57,18 @@ namespace renderer
         static u32  s_currentBlendDst;
         static u32  s_currentBlendSrc;
 
-        static bool s_pointSize;
+        static f32  s_pointSize;
+        static bool s_pointSizeProgram;
         static bool s_rasterizerEnable;
+
+        static u32  s_patchesSize;
+        static f32  s_patchLevel[2];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace gl
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_STATE_GL_H_

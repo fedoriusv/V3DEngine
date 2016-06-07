@@ -1,6 +1,7 @@
 #include "RenderTechnique.h"
 #include "scene/TargetManager.h"
 #include "scene/TextureManager.h"
+#include "scene/RenderTechniqueManager.h"
 #include "utils/Logger.h"
 #include "Engine.h"
 
@@ -140,7 +141,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 continue;
             }
 
-            GeometryTargetPtr target = RENDERER->makeSharedGeometryTarget();
+            GeometryTargetPtr target = RENDERER->makeSharedGeometryTarget(0);
             if (!target->parse(transformfeedbackElement))
             {
                 LOG_ERROR("CRenderTechnique: Transformfeedback target parse error");
@@ -265,9 +266,44 @@ bool CRenderTechnique::load()
 
 }
 
-void CRenderTechnique::refresh()
+CRenderTechnique* CRenderTechnique::clone()
 {
-    //TODO: refresh
+    CRenderTechnique* technique = DRIVER_CONTEXT->createTechnique();
+    technique->operator=(*this);
+
+    CRenderTechniqueManager::getInstance()->add(technique);
+
+    return technique;
+}
+
+CRenderTechnique::CRenderTechnique(const CRenderTechnique& technique)
+    : IResource(technique)
+{
+    for (RenderPassList::const_iterator iter = technique.m_renderPassList.cbegin(); iter < technique.m_renderPassList.cend(); ++iter)
+    {
+        m_renderPassList.push_back((*iter)->clone());
+    }
+
+    m_currentPass = technique.m_currentPass;
+    m_name = technique.m_name + diff;
+}
+
+CRenderTechnique& CRenderTechnique::operator=(const CRenderTechnique& technique)
+{
+    if (&technique == this)
+    {
+        return *this;
+    }
+
+    IResource::operator=(technique);
+
+    for (RenderPassList::const_iterator iter = technique.m_renderPassList.cbegin(); iter < technique.m_renderPassList.cend(); ++iter)
+    {
+        m_renderPassList.push_back((*iter)->clone());
+    }
+
+    m_currentPass = technique.m_currentPass;
+    m_name = technique.m_name + diff;
 }
 
 } //namespace renderer

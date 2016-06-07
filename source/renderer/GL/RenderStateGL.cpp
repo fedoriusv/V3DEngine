@@ -8,6 +8,8 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
 
 GLenum EWindingGL[] =
 {
@@ -71,12 +73,17 @@ bool CRenderStateGL::s_currentBlend = false;
 u32 CRenderStateGL::s_currentBlendDst = -1;
 u32 CRenderStateGL::s_currentBlendSrc = -1;
 
-bool CRenderStateGL::s_pointSize = false;
+f32  CRenderStateGL::s_pointSize = 1.0f;
+bool CRenderStateGL::s_pointSizeProgram = false;
 bool CRenderStateGL::s_rasterizerEnable = true;
+
+u32 CRenderStateGL::s_patchesSize = 0;
+f32 CRenderStateGL::s_patchLevel[] = { 0.f, 0.f };
 
 CRenderStateGL::CRenderStateGL()
 {
-    CRenderStateGL::pointSize(false);
+    CRenderStateGL::pointSize(1.0f);
+    CRenderStateGL::pointSizeProgram(false);
     CRenderStateGL::rasterizerEnable(true);
 }
 
@@ -206,12 +213,34 @@ bool CRenderStateGL::stencilWrite(bool enable)
     return false;
 }
 
-bool CRenderStateGL::pointSize(bool enable)
+bool CRenderStateGL::pointSize(f32 value)
 {
-    if (enable != s_pointSize)
+    if (value != s_pointSize)
     {
-        enable ? glEnable(GL_PROGRAM_POINT_SIZE) : glDisable(GL_PROGRAM_POINT_SIZE);
-        s_pointSize = enable;
+        glPointSize(value); //less priority than pointSizeProgram
+        s_pointSize = value;
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors(" CRenderStateGL::pointSize error");
+#endif //_DEBUG_GL
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderStateGL::pointSizeProgram(bool enable)
+{
+    if (enable != s_pointSizeProgram)
+    {
+        CRenderStateGL::pointSize(1.0f);
+        enable ? glEnable(GL_PROGRAM_POINT_SIZE) : glDisable(GL_PROGRAM_POINT_SIZE); // use gl_PointSize in veratex shader to change size of pixel
+        s_pointSizeProgram = enable;
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderStateGL::pointSizeProgram error");
+#endif //_DEBUG_GL
 
         return true;
     }
@@ -259,6 +288,49 @@ bool CRenderStateGL::rasterizerEnable(bool enable)
     return false;
 }
 
+bool CRenderStateGL::patchLevel(u32 size, f32 inner, f32 outer)
+{
+    ASSERT(size <= 4U, "Invalid size");
+
+    bool changed = false;
+    if (size != s_patchesSize)
+    {
+        glPatchParameteri(GL_PATCH_VERTICES, size);
+        s_patchesSize = size;
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_VERTICES error");
+#endif //_DEBUG_GL
+        changed =  true;
+    }
+
+    if (inner != s_patchLevel[0] || outer != s_patchLevel[1])
+    {
+        std::array<f32, 2> innerArray;
+        innerArray.fill(inner);
+        glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, innerArray.data());
+        s_patchLevel[0] = inner;
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_INNER_LEVEL error");
+#endif //_DEBUG_GL
+
+        std::array<f32, 4> outerArray;
+        outerArray.fill(outer);
+        glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, outerArray.data());
+        s_patchLevel[1] = outer;
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_OUTER_LEVEL error");
+#endif //_DEBUG_GL
+
+        changed = true;
+    }
+
+    return changed;
+}
+
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

@@ -9,13 +9,25 @@ namespace renderer
 {
 
 CRenderAdvanced::CRenderAdvanced()
-    : m_instanced(0)
+    : m_instanced(0U)
+    , m_patches(0U)
     , m_mode(EPrimitivesMode::ePrimitivesNone)
 {
 }
 
 CRenderAdvanced::~CRenderAdvanced()
 {
+}
+
+void CRenderAdvanced::setCountPatches(u32 patches)
+{
+    m_patches = patches;
+}
+
+void CRenderAdvanced::setPatchLevel(f32 inner, f32 outer)
+{
+    m_patchInnerLevel = inner;
+    m_patchOuterLevel = outer;
 }
 
 void CRenderAdvanced::setCountInstance(u32 instanced)
@@ -32,6 +44,21 @@ void CRenderAdvanced::setDrawInterval(u32 offset, u32 amount)
 {
     m_interval._begin = offset;
     m_interval._count = amount;
+}
+
+u32 CRenderAdvanced::getCountPatches() const
+{
+    return m_patches;
+}
+
+f32 CRenderAdvanced::getPatchInnerLevel() const
+{
+    return m_patchInnerLevel;
+}
+
+f32 CRenderAdvanced::getPatchOuterLevel() const
+{
+    return m_patchOuterLevel;
 }
 
 u32 CRenderAdvanced::getCountInstance() const
@@ -68,13 +95,13 @@ bool CRenderAdvanced::parse(const tinyxml2::XMLElement* root)
     if (primitiveElement && primitiveElement->Attribute("val"))
     {
         std::string primitive = primitiveElement->Attribute("val");
-        m_mode = GeometryType::getPrimitivesModeByString(primitive);
-        if (m_mode == EPrimitivesMode::ePrimitivesNone)
+        EPrimitivesMode mode = GeometryType::getPrimitivesModeByString(primitive);
+        if (mode == EPrimitivesMode::ePrimitivesNone)
         {
             LOG_WARNING("CRenderAdvanced: Invalid primitive mode");
         }
 
-        CRenderAdvanced::setPrimitiveMode(m_mode);
+        CRenderAdvanced::setPrimitiveMode(mode);
     }
 
     const tinyxml2::XMLElement* drawintervalElement = root->FirstChildElement("drawinterval");
@@ -84,6 +111,26 @@ bool CRenderAdvanced::parse(const tinyxml2::XMLElement* root)
         u32 amount = drawintervalElement->UnsignedAttribute("amount");
 
         CRenderAdvanced::setDrawInterval(begin, amount);
+    }
+
+    const tinyxml2::XMLElement* patchesElement = root->FirstChildElement("patches");
+    if (patchesElement)
+    {
+        u32 patches = patchesElement->UnsignedAttribute("val");
+        if (patches > 0)
+        {
+            if (CRenderAdvanced::getPrimitiveMode() != EPrimitivesMode::ePatches)
+            {
+                LOG_WARNING("If used patches draw mode must be 'ePatches'");
+                CRenderAdvanced::setPrimitiveMode(EPrimitivesMode::ePatches);
+            }
+        }
+
+        CRenderAdvanced::setCountPatches(patches);
+
+        f32 inner = patchesElement->FloatAttribute("inner");
+        f32 outer = patchesElement->FloatAttribute("outer");
+        CRenderAdvanced::setPatchLevel(inner, outer);
     }
 
     return true;

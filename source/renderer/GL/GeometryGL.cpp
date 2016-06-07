@@ -10,6 +10,7 @@
 
 #ifdef _OPENGL_DRIVER_
 #include "BufferGL.h"
+#include "RenderStateGL.h"
 #include "GL/glew.h"
 
 namespace v3d
@@ -23,9 +24,12 @@ const GLenum EPrimitivesModeGL[EPrimitivesMode::ePrimitivesModeCount] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
+    GL_TRIANGLE_FAN,
     GL_LINES,
     GL_LINE_STRIP,
-    GL_POINTS
+    GL_LINE_LOOP,
+    GL_POINTS,
+    GL_PATCHES
 };
 
 u32 CGeometryGL::s_currentArray = 0;
@@ -102,6 +106,14 @@ void CGeometryGL::init()
     if (interval._begin != 0 || interval._count != 0)
     {
         CGeometry::setInterval(interval._begin, interval._count);
+    }
+
+    u32 patches = pass->getRenderAdvanced()->getCountPatches();
+    if (patches > 0)
+    {
+        f32 inner = pass->getRenderAdvanced()->getPatchInnerLevel();
+        f32 outer = pass->getRenderAdvanced()->getPatchOuterLevel();
+        CRenderStateGL::patchLevel(patches, inner, outer);
     }
 
     m_initialized = true;

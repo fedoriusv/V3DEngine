@@ -39,6 +39,7 @@ namespace renderer
         u32                         getSamplesCount()       const;
         u32                         getTextureUnitsCount()  const;
         f32                         getMaxAnisotropySize()  const;
+        u32                         getMaxPatchVertices()   const;
 
         const std::string&          getShaderVersion() const;
         s32                         getRenderMajorVersion() const;
@@ -58,6 +59,7 @@ namespace renderer
         void                        setSamplesCount(u32 count);
         void                        setTextureUnitsCount(u32 count);
         void                        setMaxAnisotropySize(f32 size);
+        void                        setMaxPatchVertices(u32 size);
 
         std::string                 m_shaderVersion;
         s32                         m_renderMajorVersion;
@@ -70,6 +72,7 @@ namespace renderer
         u32                         m_samplesCount;
         u32                         m_maxTextureUnits;
         f32                         m_maxAnisotropy;
+        u32                         m_maxPatchVertices;
 
 
 
