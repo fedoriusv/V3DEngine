@@ -10,6 +10,7 @@ option(BUILD_TEST_PROJECT_4 "Build Test_Light." OFF)
 option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." ON)
 option(BUILD_TEST_PROJECT_6 "Build Test_Texture." ON)
 option(BUILD_TEST_PROJECT_7 "Build Test_ParticleSystem." ON)
+option(BUILD_TEST_PROJECT_8 "Build Test_Tessellation." ON)
 
 set(SOLUTION_NAME Valera3D)
 set(ENGINE_NAME Valera3DEngine)
@@ -53,6 +54,10 @@ endif (BUILD_TEST_PROJECT_6)
 if (BUILD_TEST_PROJECT_7)
     set(TEST_PROJECT_7 Test_ParticleSystem)
 endif (BUILD_TEST_PROJECT_7)
+
+if (BUILD_TEST_PROJECT_8)
+    set(TEST_PROJECT_8 Test_Tessellation)
+endif (BUILD_TEST_PROJECT_8)
 
 ################################
 
@@ -364,6 +369,10 @@ endif (BUILD_TEST_PROJECT_6)
 if (BUILD_TEST_PROJECT_7)
     add_subdirectory(tests/${TEST_PROJECT_7})
 endif (BUILD_TEST_PROJECT_7)
+
+if (BUILD_TEST_PROJECT_8)
+    add_subdirectory(tests/${TEST_PROJECT_8})
+endif (BUILD_TEST_PROJECT_8)
 
 ################################
 #Dependencies

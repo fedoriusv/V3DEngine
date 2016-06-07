@@ -15,9 +15,12 @@ namespace renderer
 
         eTriangles,
         eTriangleStrip,
+        eTriangleFan,
         eLines,
         eLinesStrip,
+        eLinesLoop,
         ePoints,
+        ePatches,
 
         ePrimitivesModeCount
     };

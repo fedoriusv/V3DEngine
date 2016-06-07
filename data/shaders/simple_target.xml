@@ -1,17 +1,5 @@
 <technique name="simple_target" version="100">
 
-    <!-- Render Targets -->
-    <rendertargets>
-        <target name="targetTest" x="0" y="0" width="512" height="384" ratio="0.0" color="0xffff0000">
-            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
-            <depth active="true" clear="true" format="16" output="texture"/>
-        </target>
-        <target name="targetTestMSAA" x="512" y="384" width="512" height="384" ratio="0.0" color="0xffff0000" aa="msaa">
-            <color active="true" attach="1" clear="true" format="8888" output="texture"/>
-            <depth active="true" clear="true" format="16" output="texture"/>
-        </target>
-    </rendertargets>
-    
     <!-- Render Passes -->
     <pass name="pass0">
         <uniforms>
@@ -20,7 +8,7 @@
             <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
-            <var name="positions" type="vec3" val="mesh.positions"/>
+            <var name="position" type="vec3" val="mesh.position"/>
         </attributes>
         <samplers> 
         </samplers>
@@ -33,16 +21,15 @@
             <depthTest val="lequal"/>
         </renderstate>
         <rendertarget>
-            <var val="targetTest"/>
-            <var val="targetTestMSAA"/>
+            <var val="screen2DLeftTarget"/>
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <var type="vertex" name="vdefault">
+            <var type="vertex" name="vsimple_target">
                 <![CDATA[
                     #define POSITION 0
                     
-                    layout (location = POSITION) in vec3 positions;
+                    layout (location = POSITION) in vec3 position;
                     
                     struct Transform
                     {
@@ -55,18 +42,35 @@
                     
                     void main()
                     {
-                        vec4 vertex = transform.modelMatrix * vec4(positions, 1.0);
+                        vec4 vertex = transform.modelMatrix * vec4(position, 1.0);
                         gl_Position = transform.projectionMatrix * transform.viewMatrix * vertex;
                     }
                 ]]>
             </var>
-            <var type="fragment" name="fdefault">
+            <var type="geometry" name="gsimple_target">
+                <![CDATA[
+                    layout (triangles) in;
+                    layout (triangle_strip, max_vertices = 3) out;
+                    
+                    void main(void)
+                    {
+                        for (int i = 0; i < gl_in.length(); i++)
+                        {
+                            gl_Position = gl_in[i].gl_Position;
+                            EmitVertex();
+                        }
+                        
+                        EndPrimitive();
+                    }
+                ]]>
+            </var>
+            <var type="fragment" name="fsimple_target">
                 <![CDATA[
                     out vec4 fragColor;
                     
                     void main()
                     {
-                         fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                        fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
                     }
                 ]]>
             </var>

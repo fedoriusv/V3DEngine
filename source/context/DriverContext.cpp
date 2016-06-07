@@ -10,6 +10,7 @@ CDriverContext::CDriverContext(const platform::WindowPtr& window)
     , m_samplesCount(0U)
     , m_maxTextureUnits(0U)
     , m_maxAnisotropy(0U)
+    , m_maxPatchVertices(0U)
 
     , m_shaderVersion("")
     , m_renderMajorVersion(0)
@@ -46,6 +47,11 @@ f32 CDriverContext::getMaxAnisotropySize() const
     return m_maxAnisotropy;
 }
 
+u32 CDriverContext::getMaxPatchVertices() const
+{
+    return m_maxPatchVertices;
+}
+
 const std::string& CDriverContext::getShaderVersion() const
 {
     return m_shaderVersion;
@@ -74,6 +80,11 @@ void CDriverContext::setTextureUnitsCount(u32 count)
 void CDriverContext::setMaxAnisotropySize(f32 size)
 {
     m_maxAnisotropy = size;
+}
+
+void CDriverContext::setMaxPatchVertices(u32 size)
+{
+    m_maxPatchVertices = size;
 }
 
 } //namespace renderer

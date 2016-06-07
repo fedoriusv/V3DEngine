@@ -9,9 +9,12 @@ const std::string GeometryType::s_typeName[EPrimitivesMode::ePrimitivesModeCount
 {
     "triangles",
     "trianglestrip",
+    "trianglefan",
     "lines",
     "linesstrip",
-    "points"
+    "linesloop",
+    "points",
+    "patches"
 };
 
 const std::string& GeometryType::getStringByPrimitivesMode(EPrimitivesMode type)

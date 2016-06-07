@@ -16,6 +16,9 @@ namespace renderer
 
     class CRenderPass;
 
+    /**
+    * Advanced properties for render.
+    */
     class CRenderAdvanced
     {
     public:
@@ -27,19 +30,32 @@ namespace renderer
         EPrimitivesMode             getPrimitiveMode() const;
         const CGeometry::SInterval& getDrawInterval()  const;
 
+        u32                         getCountPatches()  const;
+        f32                         getPatchInnerLevel() const;
+        f32                         getPatchOuterLevel() const;
+
     private:
 
         friend                      CRenderPass;
 
         void                        setCountInstance(u32 lod);
+
         void                        setPrimitiveMode(EPrimitivesMode mode);
         void                        setDrawInterval(u32 offset, u32 amount);
+
+        void                        setCountPatches(u32 patches);
+        void                        setPatchLevel(f32 inner, f32 outer);
 
         bool                        parse(const tinyxml2::XMLElement* root);
 
         EPrimitivesMode             m_mode;
         u32                         m_instanced;
         CGeometry::SInterval        m_interval;
+
+        //patches
+        u32                         m_patches;
+        f32                         m_patchInnerLevel;
+        f32                         m_patchOuterLevel;
 
 
     };

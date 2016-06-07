@@ -1,0 +1,154 @@
+<technique name="simple_target_tessilation" version="100">
+
+    <!-- Render Passes -->
+    <pass name="pass0">
+        <uniforms>
+            <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
+            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
+            <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+            <var name="transform.viewPosition" type="vec3" val="transform.viewPosition"/>
+        </uniforms>
+        <attributes>
+            <var name="position" type="vec3" val="mesh.position"/>
+        </attributes>
+        <samplers>
+        </samplers>
+        <renderstate>
+            <polygonmode val="line"/>
+            <winding val="cw"/>
+            <culling val="false"/>
+            <blending val="false" src="srcAlpha" dst="invSrcAlpha"/>
+            <depthWrite val="true"/>
+            <depthTest val="lequal"/>
+        </renderstate>
+        <rendertarget>
+            <!--  <var val="screen2DLeftTarget"/> -->
+            <var val="screen2DRightTarget"/>
+        </rendertarget>
+        <lod geometry="0.0"/>
+        <advanced>
+            <primitive val="patches"/>
+            <!--  <patches val="3" inner="5.0" outer="5.0"/> -->
+        </advanced>
+        <shaders>
+            <defines>
+                <var name="STATIC_LEVEL1"/>
+            </defines>
+            <var type="vertex" name="vsimple_target_tessilation">
+                <![CDATA[
+                    #define POSITION 0
+                    
+                    layout (location = POSITION) in vec3 position;
+                    
+                    struct Transform
+                    {
+                        mat4 projectionMatrix;
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        vec3 viewPosition;
+                    };
+                    uniform Transform transform;
+                    
+                    void main()
+                    {
+                        gl_Position = transform.modelMatrix * vec4(position, 1.0);
+                    }
+                ]]>
+            </var>
+            <var type="control" name="csimple_target_tessilation">
+                <![CDATA[
+                    layout (vertices = 3) out;
+                    
+                    struct Transform
+                    {
+                        mat4 projectionMatrix;
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        vec3 viewPosition;
+                    };
+                    uniform Transform transform;
+                    
+                    float GetTessLevel(float Distance0, float Distance1)
+                    {
+                        float AvgDistance = (Distance0 + Distance1) / 2.0;
+                        
+                        if (AvgDistance <= 2.0)
+                        {
+                            return 10.0;
+                        }
+                        else if (AvgDistance <= 5.0)
+                        {
+                            return 7.0;
+                        }
+                        else
+                        {
+                            return 3.0;
+                        }
+                    }
+                    
+                    void main(void)
+                    {
+                    
+                        if (gl_InvocationID == 0)
+                        {
+                    #ifdef STATIC_LEVEL
+                            gl_TessLevelOuter[0] = 5.0;
+                            gl_TessLevelOuter[1] = 5.0;
+                            gl_TessLevelOuter[2] = 5.0;
+                            
+                            gl_TessLevelInner[0] = 5.0;
+                    #else //STATIC_LEVEL
+                            vec4 cameraPosition = vec4(transform.viewPosition, 1.0);
+                            float EyeToVertexDistance0 = distance(cameraPosition, gl_in[0].gl_Position);
+                            float EyeToVertexDistance1 = distance(cameraPosition, gl_in[1].gl_Position);
+                            float EyeToVertexDistance2 = distance(cameraPosition, gl_in[2].gl_Position);
+                            
+                            gl_TessLevelOuter[0] = GetTessLevel(EyeToVertexDistance1, EyeToVertexDistance2);
+                            gl_TessLevelOuter[1] = GetTessLevel(EyeToVertexDistance2, EyeToVertexDistance0);
+                            gl_TessLevelOuter[2] = GetTessLevel(EyeToVertexDistance0, EyeToVertexDistance1);
+                            
+                            gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+                    #endif //STATIC_LEVEL
+                        }
+                        
+                        gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+                    }
+                ]]>
+            </var>
+            <var type="evaluation" name="esimple_target_tessilation">
+                <![CDATA[
+                    layout (triangles, equal_spacing, cw) in;
+                    
+                    struct Transform
+                    {
+                        mat4 projectionMatrix;
+                        mat4 modelMatrix;
+                        mat4 viewMatrix;
+                        vec3 viewPosition;
+                    };
+                    uniform Transform transform;
+                    
+                    void main(void)
+                    {
+                        vec4 p0 = gl_TessCoord.x * gl_in[0].gl_Position;
+                        vec4 p1 = gl_TessCoord.y * gl_in[1].gl_Position;
+                        vec4 p2 = gl_TessCoord.z * gl_in[2].gl_Position;
+                        
+                        vec4 position = normalize(p0 + p1 + p2);
+                        gl_Position = transform.projectionMatrix * transform.viewMatrix * position;
+                    }
+                ]]>
+            </var>
+            <var type="fragment" name="fsimple_target_tessilation">
+                <![CDATA[
+                    out vec4 fragColor;
+                    
+                    void main()
+                    {
+                        fragColor = vec4(0.0f, 1.0f, 1.0f, 1.0f);
+                    }
+                ]]>
+            </var>
+        </shaders>
+    </pass>
+</technique>

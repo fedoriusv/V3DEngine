@@ -2,6 +2,7 @@
 #define _V3D_RENDER_TECHNIQUE_H_
 
 #include "stream/Resource.h"
+#include "utils/Cloneable.h"
 #include "RenderPass.h"
 
 namespace tinyxml2
@@ -15,7 +16,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechnique : public stream::IResource
+    class CRenderTechnique : public stream::IResource, public utils::TCloneable<CRenderTechnique*>
     {
     public:
 
@@ -36,7 +37,12 @@ namespace renderer
         void                    init(const stream::IStreamPtr& stream) override;
         bool                    load()                                 override;
 
-        void                    refresh();
+        CRenderTechnique*       clone() override;
+
+    protected:
+
+        CRenderTechnique(const CRenderTechnique& technique);
+        CRenderTechnique&       operator=(const CRenderTechnique& technique);
 
     private:
 

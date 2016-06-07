@@ -24,6 +24,7 @@ namespace v3d
 #include <set>
 #include <map>
 #include <queue>
+#include <array>
 #include <algorithm>
 #include <memory>
 #include <mutex>

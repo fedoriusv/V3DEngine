@@ -575,6 +575,10 @@ void CDriverContextGL::driverInfo()
     glGetIntegerv(GL_SAMPLES, &samplesCount);
     CDriverContext::setSamplesCount(samplesCount);
 
+    GLint maxPatchVertices = 0;
+    glGetIntegerv(GL_MAX_PATCH_VERTICES, &maxPatchVertices);
+    CDriverContext::setMaxPatchVertices(maxPatchVertices);
+
     LOG_INFO("OpenGL config info:");
     LOG("Render: %s", renderer);
     LOG("Vendor: %s", vendor);
@@ -585,6 +589,7 @@ void CDriverContextGL::driverInfo()
     LOG("Max Anisotropy: %f", maxAnisotropy);
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
     LOG("MSAA x%d", samplesCount);
+    LOG("Max supported patch vertices: %d", maxPatchVertices);
 
 #ifdef _DEBUG_GL
     CDriverContextGL::printExtensionList();

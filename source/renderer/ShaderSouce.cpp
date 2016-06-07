@@ -41,8 +41,8 @@ const std::string CShaderSource::s_shaderTypeName[eShaderCount] =
     "vertex",
     "fragment",
     "geometry",
-    "tessellation_control",
-    "tessellation_evaluation",
+    "control",
+    "evaluation",
     "compute"
 };
 
