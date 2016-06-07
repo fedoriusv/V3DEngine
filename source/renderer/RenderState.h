@@ -73,6 +73,10 @@ namespace renderer
 
     class CRenderPass;
 
+
+    /**
+    * RenderState class
+    */
     class CRenderState
     {
     public:
@@ -81,8 +85,8 @@ namespace renderer
         virtual                   ~CRenderState();
 
         ECullFace                 getCullface()       const;
-        bool                      isCulling()        const;
-        bool                      isBlend()          const;
+        bool                      isCulling()         const;
+        bool                      isBlend()           const;
         EWinding                  getWinding()        const;
         EPolygonMode              getPolygonMode()    const;
         EBlendFactor              getBlendFactorSrc() const;

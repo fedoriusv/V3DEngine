@@ -17,10 +17,11 @@ namespace v3d
 {
 namespace renderer
 {
+namespace gl
+{
 
 using namespace scene;
 using namespace core;
-using namespace gl;
 
 GLenum ERenderbufferTargetGL[] =
 {
@@ -72,6 +73,8 @@ bool CRenderTargetGL::hasClearStencilTarget() const
 
 void CRenderTargetGL::bind()
 {
+    //TODO: add code for generate mipmap for texture target if need
+
     bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferId);
     if (chaned)
     {
@@ -87,6 +90,10 @@ void CRenderTargetGL::bind()
         {
             glDrawBuffer(m_frameBufferId ? GL_NONE : GL_BACK);
         }
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderTargetGL: DrawBuffer Error");
+#endif //_DEBUG_GL
     }
 
     u32 frameIdx = RENDERER->getFrameIndex();
@@ -97,26 +104,40 @@ void CRenderTargetGL::bind()
         u32 flags = 0;
         if (CRenderTargetGL::hasClearDepthTarget())
         {
-            flags = CRenderTarget::getClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
+            flags = CRenderTarget::isClearDepthBuffer() ? GL_DEPTH_BUFFER_BIT : 0;
             CRenderStateGL::depthWrite(true);
 
-            glClearDepthf(CRenderTarget::getClearDepth());
+            f32 depth = CRenderTarget::getDepthValue();
+            glClearDepthf(depth);
+
+#ifdef _DEBUG_GL
+            RENDERER->checkForErrors("CRenderTargetGL: ClearDepth Error");
+#endif //_DEBUG_GL
         }
         
         if (CRenderTargetGL::hasClearStencilTarget())
         {
-            flags = CRenderTarget::getClearStencilBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
+            flags = CRenderTarget::isClearStencilBuffer() ? GL_STENCIL_BUFFER_BIT : 0;
             CRenderStateGL::stencilWrite(true);
 
-            //glClearStencil();
+            s32 stencil = CRenderTarget::getStencilValue();
+            glClearStencil(stencil);
+
+#ifdef _DEBUG_GL
+            RENDERER->checkForErrors("CRenderTargetGL: ClearStencil Error");
+#endif //_DEBUG_GL
         }
 
-        if (CRenderTargetGL::hasClearColorTarget() && CRenderTarget::getClearColorBuffer())
+        if (CRenderTargetGL::hasClearColorTarget() && CRenderTarget::isClearColorBuffer())
         {
             flags |= GL_COLOR_BUFFER_BIT;
 
-            const core::Vector4D& color = CRenderTarget::getClearColor();
-            glClearColor(color[0], color[1], color[2], color[3]);
+            const core::Vector4D& color = CRenderTarget::getColorValue();
+            glClearColor(color.x, color.y, color.z, color.w);
+
+#ifdef _DEBUG_GL
+            RENDERER->checkForErrors("CRenderTargetGL: ClearColor Error");
+#endif //_DEBUG_GL
         }
 
         if (flags)
@@ -125,14 +146,13 @@ void CRenderTargetGL::bind()
         }
     }
 
+#ifdef _DEBUG_GL
     RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
-
+#endif //_DEBUG_GL
 }
 
 void CRenderTargetGL::unbind()
 {
-    //TODO: add code for generate mipmap if need
-
     bool chaned = CRenderTargetGL::bindFramebuffer(0);
     if (chaned)
     {
@@ -144,6 +164,10 @@ void CRenderTargetGL::unbind()
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
         RENDERER->setCurrentRenderTarget(target);
+
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CRenderTargetGL:unbind target Error");
+#endif //_DEBUG_GL
     }
 
     //TODO: test blit renderbuffers
@@ -252,6 +276,11 @@ void CRenderTargetGL::destroy()
         return;
     }
 
+    GLint originalFBO = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &originalFBO);
+
+    CRenderTargetGL::bindFramebuffer(m_frameBufferId);
+
     for (auto& attach : m_attachmentsList)
     {
         switch (attach._attachmentType)
@@ -290,13 +319,15 @@ void CRenderTargetGL::destroy()
             break;
         }
     }
-    //TODO: Have gl error GL_INVALID_OPERATION after call glFramebufferTexture2D
+
+    RENDERER->checkForErrors("CRenderTargetGL: destroy Error");
 
     if (m_frameBufferId > 0)
     {
 #ifdef _DEBUG_GL
         ASSERT(glIsFramebuffer(m_frameBufferId), "Invalid Index FBO");
 #endif //_DEBUG_GL
+        CRenderTargetGL::bindFramebuffer(m_frameBufferId == originalFBO ? 0 : originalFBO);
         glDeleteFramebuffers(1, &m_frameBufferId);
         m_frameBufferId = 0;
     }
@@ -592,6 +623,7 @@ void CRenderTargetGL::blitFramebuffer(const Rect32& src, const Rect32& dst, u32 
         dst.getLeftX(), dst.getBottomY(), dst.getRightX(), dst.getTopY(), mask, filter);
 }
 
+} //namespace gl
 } //namespace renderer
 } //namespace v3d
 

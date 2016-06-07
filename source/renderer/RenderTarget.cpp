@@ -82,6 +82,8 @@ const std::string CRenderTarget::k_defaultName = "default";
 CRenderTarget::CRenderTarget()
     : m_color(core::Vector4D(0.0f))
     , m_depth(1.0f)
+    , m_stencil(0)
+
     , m_viewport(0U, 0U, 0U, 0U)
     , m_MSAA(false)
 
@@ -228,24 +230,34 @@ TexturePtr CRenderTarget::getStencilTexture()
     return nullptr;
 }
 
-void CRenderTarget::setClearColor(const core::Vector4D& color)
+void CRenderTarget::setColorValue(const core::Vector4D& color)
 {
     m_color = color;
 }
 
-const core::Vector4D& CRenderTarget::getClearColor() const
+const core::Vector4D& CRenderTarget::getColorValue() const
 {
     return m_color;
 }
 
-void CRenderTarget::setClearDepth(f32 depth)
+void CRenderTarget::setDepthValue(f32 depth)
 {
     m_depth = depth;
 }
 
-f32 CRenderTarget::getClearDepth() const
+f32 CRenderTarget::getDepthValue() const
 {
     return m_depth;
+}
+
+void CRenderTarget::setStencilValue(s32 stensil)
+{
+    m_stencil = stensil;
+}
+
+s32 CRenderTarget::getStencilValue() const
+{
+    return m_stencil;
 }
 
 void CRenderTarget::setViewport(const core::Rect32& size)
@@ -273,17 +285,17 @@ void CRenderTarget::setClearStencilBuffer(bool clear)
     m_clearStencilBuffer = clear;
 }
 
-bool CRenderTarget::getClearColorBuffer() const
+bool CRenderTarget::isClearColorBuffer() const
 {
     return m_clearColorBuffer;
 }
 
-bool CRenderTarget::getClearDepthBuffer() const
+bool CRenderTarget::isClearDepthBuffer() const
 {
     return m_clearDepthBuffer;
 }
 
-bool CRenderTarget::getClearStencilBuffer() const
+bool CRenderTarget::isClearStencilBuffer() const
 {
     return m_clearStencilBuffer;
 }
@@ -415,7 +427,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         CRenderTarget::setClearDepthBuffer(clearDepthBuffer);
 
         f32 clearValue = depthElement->FloatAttribute("value");
-        CRenderTarget::setClearDepth(clearValue);
+        CRenderTarget::setDepthValue(clearValue);
 
         EImageFormat format = EImageFormat::eDepthComponent;
         EImageType type = EImageType::eFloat;

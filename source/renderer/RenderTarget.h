@@ -42,18 +42,21 @@ namespace renderer
         const TexturePtr                getStencilTexture() const;
         TexturePtr                      getStencilTexture();
 
-        void                            setClearColor(const core::Vector4D& color);
-        const core::Vector4D&           getClearColor() const;
+        void                            setColorValue(const core::Vector4D& color);
+        const core::Vector4D&           getColorValue() const;
 
-        void                            setClearDepth(f32 depth);
-        f32                             getClearDepth() const;
+        void                            setDepthValue(f32 depth);
+        f32                             getDepthValue() const;
+
+        void                            setStencilValue(s32 stensil);
+        s32                             getStencilValue() const;
 
         void                            setViewport(const core::Rect32& size);
         const core::Rect32&             getViewport() const;
 
-        bool                            getClearColorBuffer()   const;
-        bool                            getClearDepthBuffer()   const;
-        bool                            getClearStencilBuffer() const;
+        bool                            isClearColorBuffer()   const;
+        bool                            isClearDepthBuffer()   const;
+        bool                            isClearStencilBuffer() const;
 
         void                            setClearColorBuffer(bool clear);
         void                            setClearDepthBuffer(bool clear);
@@ -111,6 +114,8 @@ namespace renderer
 
         core::Vector4D              m_color;
         f32                         m_depth;
+        s32                         m_stencil;
+
         core::Rect32                m_viewport;
 
         bool                        m_MSAA;

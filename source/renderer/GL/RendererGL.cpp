@@ -76,7 +76,12 @@ void CRendererGL::preRender(bool clear)
 
     if (clear)
     {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        const core::Vector4D& color = CRenderer::getCurrentRenderTarget()->getColorValue();
+        glClearColor(color[0], color[1], color[2], color[3]);
+
+        f32 depth = m_currentRenderTarget->getDepthValue();
+        glClearDepthf(depth);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
