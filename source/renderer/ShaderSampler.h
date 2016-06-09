@@ -21,42 +21,45 @@ namespace renderer
     /**
     * Shader Sampler.
     */
-    class CShaderSampler
+    class CShaderSampler final
     {
     public:
 
-        enum ESamplerType
+        enum class ESamplerType
         {
-            eUserSampler = -1,
+            eUserSampler,
             eTextureSampler,
             eRenderTargetSampler
         };
 
         CShaderSampler();
+        CShaderSampler(const CShaderSampler& sampler);
+        CShaderSampler& operator=(const CShaderSampler& sampler);
+
         ~CShaderSampler();
 
-        CShaderSampler&         operator=(const CShaderSampler& other);
-
-        void                    setAttribute(const std::string& attribute);
-        const std::string&      getAttribute() const;
-
-        void                    setID(s32 id);
+        const std::string&      getName() const;
         s32                     getID() const;
-
         ESamplerType            getType() const;
 
+        const TexturePtr        getTexture() const;
+        TexturePtr              getTexture();
+
+        const RenderTargetWPtr  getTarget() const;
+        RenderTargetWPtr        getTarget();
+
         bool                    parse(const tinyxml2::XMLElement* root);
+
+        void                    setID(s32 id);
 
     protected:
 
         friend                  CRenderer;
 
-        const TexturePtr        getTexture() const;
-        TexturePtr              getTexture();
-        const RenderTargetPtr   getTarget() const;
+        void                    setName(const std::string& name);
 
         ESamplerType            m_type;
-        std::string             m_attribute;
+        std::string             m_name;
 
         RenderTargetWPtr        m_target;
         TexturePtr              m_texture;

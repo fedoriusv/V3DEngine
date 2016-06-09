@@ -13,39 +13,64 @@ namespace renderer
 using namespace scene;
 
 CShaderSampler::CShaderSampler()
-    : m_type(eUserSampler)
-    , m_attribute("")
+    : m_type(ESamplerType::eUserSampler)
+    , m_name("")
+
+    //, m_target()
+    , m_texture(nullptr)
+
     , m_id(-1)
 {
+}
+
+CShaderSampler::CShaderSampler(const CShaderSampler& sampler)
+    : m_type(ESamplerType::eUserSampler)
+    , m_name("")
+
+    //, m_target()
+    , m_texture(nullptr)
+
+    , m_id(-1)
+{
+    m_name = sampler.m_name;
+    m_type = sampler.m_type;
+
+    m_target = sampler.m_target;
+    m_texture = sampler.m_texture;
+
+    m_id = sampler.m_id;
+}
+
+CShaderSampler& CShaderSampler::operator=(const CShaderSampler& sampler)
+{
+    if (this == &sampler)
+    {
+        return *this;
+    }
+
+    m_name = sampler.m_name;
+    m_type = sampler.m_type;
+
+    m_target = sampler.m_target;
+    m_texture = sampler.m_texture;
+
+    m_id = sampler.m_id;
+
+    return *this;
 }
 
 CShaderSampler::~CShaderSampler()
 {
 }
 
-CShaderSampler& CShaderSampler::operator=(const CShaderSampler& other)
+void CShaderSampler::setName(const std::string& name)
 {
-    if (this == &other)
-    {
-        return *this;
-    }
-
-    m_attribute = other.m_attribute;
-    m_type = other.m_type;
-    m_target = other.m_target;
-    m_texture = other.m_texture;
-
-    return *this;
+    m_name = name;
 }
 
-void CShaderSampler::setAttribute(const std::string& attribute)
+const std::string& CShaderSampler::getName() const
 {
-    m_attribute = attribute;
-}
-
-const std::string& CShaderSampler::getAttribute() const
-{
-    return m_attribute;
+    return m_name;
 }
 
 CShaderSampler::ESamplerType CShaderSampler::getType() const
@@ -77,7 +102,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
         return false;
     }
     const std::string varName = root->Attribute("name");
-    CShaderSampler::setAttribute(varName);
+    CShaderSampler::setName(varName);
 
     if (root->Attribute("val"))
     {
@@ -92,7 +117,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             }
             const RenderTargetPtr& rendertarget = std::static_pointer_cast<CRenderTarget>(target);
 
-            m_type = eRenderTargetSampler;
+            m_type = ESamplerType::eRenderTargetSampler;
             m_target = rendertarget;
             if (!root->Attribute("attachment") || std::string(root->Attribute("attachment")).empty())
             {
@@ -137,17 +162,17 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
         const TexturePtr texture = CTextureManager::getInstance()->get(varVal);
         if (texture)
         {
-            m_type = eTextureSampler;
+            m_type = ESamplerType::eTextureSampler;
             m_texture = texture;
             return true;
         }
 
         LOG_ERROR("CRenderPass: Texture with val '%s' not found", varVal.c_str());
-        m_type = eUserSampler;
+        m_type = ESamplerType::eUserSampler;
         return true;
     }
 
-    m_type = eUserSampler;
+    m_type = ESamplerType::eUserSampler;
     return true;
 }
 
@@ -161,14 +186,14 @@ TexturePtr CShaderSampler::getTexture()
     return utils::const_pointer_cast<CTexture>(m_texture);
 }
 
-const RenderTargetPtr CShaderSampler::getTarget() const
+const RenderTargetWPtr CShaderSampler::getTarget() const
 {
-    if (m_target.expired())
-    {
-        return nullptr;
-    }
+    return m_target;
+}
 
-    return m_target.lock();
+RenderTargetWPtr CShaderSampler::getTarget()
+{
+    return m_target;
 }
 
 } //namespace renderer

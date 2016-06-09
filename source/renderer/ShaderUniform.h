@@ -21,7 +21,7 @@ namespace renderer
     /**
     * Shader Uniform.
     */
-    class CShaderUniform
+    class CShaderUniform final
     {
     public:
 
@@ -59,9 +59,9 @@ namespace renderer
         };
 
         CShaderUniform();
+        CShaderUniform(const CShaderUniform& uniform);
+        CShaderUniform& operator=(const CShaderUniform& uniform);
         ~CShaderUniform();
-
-        void                        setID(s32 id);
 
         const std::string&          getName()       const;
         EDataType                   getType()       const;
@@ -71,6 +71,7 @@ namespace renderer
 
         bool                        parse(const tinyxml2::XMLElement* root);
 
+        void                        setID(s32 id);
 
         static const std::string&   getNameByValue(EUniformData type);
         static EUniformData         getValueByName(const std::string& name);

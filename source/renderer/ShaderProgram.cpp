@@ -17,6 +17,37 @@ IShaderProgram::IShaderProgram()
 {
 }
 
+IShaderProgram::IShaderProgram(const IShaderProgram& program)
+    : m_enable(program.m_enable)
+    , m_flags(IShaderProgram::eInvalid)
+{
+    m_shaderDataList = program.m_shaderDataList;
+    m_shaderList = program.m_shaderList;
+    m_defines = program.m_defines;
+
+    std::copy(program.m_varyingsList.cbegin(), program.m_varyingsList.cend(), m_varyingsList.begin());
+}
+
+IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
+{
+    if (&program == this)
+    {
+        return *this;
+    }
+
+    m_enable = program.m_enable;
+    m_flags = IShaderProgram::eInvalid;
+
+    m_shaderDataList = program.m_shaderDataList;
+    m_shaderList = program.m_shaderList;
+    m_defines = program.m_defines;
+
+    m_varyingsList.clear();
+    std::copy(program.m_varyingsList.cbegin(), program.m_varyingsList.cend(), m_varyingsList.begin());
+
+    return *this;
+}
+
 IShaderProgram::~IShaderProgram()
 {
     IShaderProgram::clear();

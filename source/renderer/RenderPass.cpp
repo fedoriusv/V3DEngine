@@ -18,16 +18,66 @@ using namespace scene;
 using namespace resources;
 
 CRenderPass::CRenderPass()
-    : m_program(nullptr)
-    , m_userShaderData(nullptr)
+    : m_userShaderData(nullptr)
     , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
     , m_lods(nullptr)
     , m_advanced(nullptr)
+    , m_program(nullptr)
+
     , m_enable(true)
     , m_name("")
 {
     CRenderPass::init();
+
+    m_program = RENDERER->makeSharedProgram();
+}
+
+CRenderPass::CRenderPass(const CRenderPass& pass)
+    : m_userShaderData(nullptr)
+    , m_defaultShaderData(nullptr)
+    , m_renderState(nullptr)
+    , m_lods(nullptr)
+    , m_advanced(nullptr)
+    , m_program(nullptr)
+
+    , m_enable(pass.m_enable)
+    , m_name(pass.m_name + diff)
+{
+    CRenderPass::init();
+
+    m_targetList = pass.m_targetList;
+
+    m_advanced->operator=(*pass.m_advanced);
+    m_lods->operator=(*pass.m_lods);
+    m_renderState->operator=(*pass.m_renderState);
+    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+    m_userShaderData->operator=(*pass.m_userShaderData);
+
+    m_program = pass.m_program->clone();
+}
+
+CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
+{
+    if (&pass == this)
+    {
+        return *this;
+    }
+
+    m_targetList = pass.m_targetList;
+
+    m_advanced->operator=(*pass.m_advanced);
+    m_lods->operator=(*pass.m_lods);
+    m_renderState->operator=(*pass.m_renderState);
+    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+    m_userShaderData->operator=(*pass.m_userShaderData);
+
+    m_program = pass.m_program->clone();
+
+    m_enable = pass.m_enable;
+    m_name = pass.m_name + diff;
+
+    return *this;
 }
 
 CRenderPass::~CRenderPass()
@@ -321,7 +371,7 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = sampler->getType() != CShaderSampler::eUserSampler;
+        bool isDefault = sampler->getType() != CShaderSampler::ESamplerType::eUserSampler;
         if (isDefault)
         {
             m_defaultShaderData->addSampler(sampler);
@@ -427,7 +477,6 @@ void CRenderPass::init()
     m_defaultShaderData = std::make_shared<CShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
     m_advanced = std::make_shared<CRenderAdvanced>();
-    m_program = RENDERER->makeSharedProgram();
     m_renderState = RENDERER->makeSharedRenderState();
 }
 
@@ -604,6 +653,14 @@ void CRenderPass::unbind(u32 target)
     /*ASSERT(m_targetList.size() > target, "Invalid target index");
     m_targetList[target]->unbind();*/
 
+}
+
+RenderPassPtr CRenderPass::clone() const
+{
+    RenderPassPtr pass = std::make_shared<CRenderPass>();
+    pass->operator=(*this);
+
+    return pass;
 }
 
 const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)

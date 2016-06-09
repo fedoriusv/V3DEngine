@@ -135,7 +135,7 @@ void CRenderer::draw(const RenderJobPtr& job)
             continue;
         }
 
-        const RenderPassPtr& pass = techique->getRenderPass((*passIter));
+        const RenderPassPtr pass = techique->getRenderPass((*passIter));
         pass->bind(targetIndex);
 
         techique->setCurrentPass((*passIter));
@@ -421,30 +421,32 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
             CShaderSampler::ESamplerType type = sampler->getType();
             switch (type)
             {
-                case CShaderSampler::eUserSampler:
-                {
-                    isUserSamplers = true;
-                    break;
-                }
-                break;
 
-                case CShaderSampler::eTextureSampler:
-                case CShaderSampler::eRenderTargetSampler:
+            case CShaderSampler::ESamplerType::eUserSampler:
+            {
+                isUserSamplers = true;
+                break;
+            }
+            break;
+
+            case CShaderSampler::ESamplerType::eTextureSampler:
+            case CShaderSampler::ESamplerType::eRenderTargetSampler:
+            {
+                TexturePtr texture = sampler->getTexture();
+                if (texture)
                 {
-                    TexturePtr texture = sampler->getTexture();
-                    if (texture)
+                    if (texture->isEnable())
                     {
-                        if (texture->isEnable())
-                        {
-                            texture->bind(sampler->getID());
-                        }
-                        else
-                        {
-                            texture->unbind();
-                        }
+                        texture->bind(sampler->getID());
+                    }
+                    else
+                    {
+                        texture->unbind();
                     }
                 }
-                break;
+            }
+            break;
+
             }
         }
     }

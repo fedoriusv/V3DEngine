@@ -9,10 +9,40 @@ namespace renderer
 {
 
 CRenderAdvanced::CRenderAdvanced()
-    : m_instanced(0U)
+    : m_mode(EPrimitivesMode::ePrimitivesNone)
+    , m_instanced(0U)
+    , m_interval(CGeometry::SInterval())
     , m_patches(0U)
-    , m_mode(EPrimitivesMode::ePrimitivesNone)
+    , m_patchInnerLevel(0U)
+    , m_patchOuterLevel(0U)
 {
+}
+
+CRenderAdvanced::CRenderAdvanced(const CRenderAdvanced& advanced)
+    : m_mode(advanced.m_mode)
+    , m_instanced(advanced.m_instanced)
+    , m_interval(advanced.m_interval)
+    , m_patches(advanced.m_patches)
+    , m_patchInnerLevel(advanced.m_patchInnerLevel)
+    , m_patchOuterLevel(advanced.m_patchOuterLevel)
+{
+}
+
+CRenderAdvanced& CRenderAdvanced::operator=(const CRenderAdvanced& advanced)
+{
+    if (&advanced == this)
+    {
+        return *this;
+    }
+
+    m_mode = advanced.m_mode;
+    m_instanced = advanced.m_instanced;
+    m_interval = advanced.m_interval;
+    m_patches = advanced.m_patches;
+    m_patchInnerLevel = advanced.m_patchInnerLevel;
+    m_patchOuterLevel = advanced.m_patchOuterLevel;
+
+    return *this;
 }
 
 CRenderAdvanced::~CRenderAdvanced()

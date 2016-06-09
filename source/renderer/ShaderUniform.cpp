@@ -69,12 +69,56 @@ CShaderUniform::EUniformData CShaderUniform::getValueByName(const std::string& n
 
 
 CShaderUniform::CShaderUniform()
-    : m_type(eTypeNone)
+    : m_type(EDataType::eTypeNone)
     , m_value(nullptr)
     , m_name("")
-    , m_data(eUserUniform)
+    , m_data(EUniformData::eUserUniform)
+
     , m_id(-1)
 {
+}
+
+CShaderUniform::CShaderUniform(const CShaderUniform& uniform)
+    : m_type(EDataType::eTypeNone)
+    , m_value(nullptr)
+    , m_name("")
+    , m_data(EUniformData::eUserUniform)
+
+    , m_id(-1)
+{
+    if (uniform.m_data != EUniformData::eUserUniform)
+    {
+        CShaderUniform::setUniform(uniform.m_name, uniform.m_data);
+    }
+    else
+    {
+        CShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
+    }
+
+    m_id = uniform.m_id;
+
+}
+
+CShaderUniform& CShaderUniform::operator=(const CShaderUniform& uniform)
+{
+    if (&uniform == this)
+    {
+        return *this;
+    }
+
+    deallocMemory();
+    if (uniform.m_data != EUniformData::eUserUniform)
+    {
+        CShaderUniform::setUniform(uniform.m_name, uniform.m_data);
+    }
+    else
+    {
+        CShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
+    }
+
+    m_id = uniform.m_id;
+
+    return *this;
 }
 
 CShaderUniform::~CShaderUniform()
@@ -82,19 +126,19 @@ CShaderUniform::~CShaderUniform()
     deallocMemory();
 }
 
-void CShaderUniform::setUniform(EDataType type, const std::string& attribute, void* value)
+void CShaderUniform::setUniform(EDataType type, const std::string& name, void* value)
 {
     m_type  = type;
-    m_name = attribute;
+    m_name = name;
     if (value)
     {
         allocMemory(type, value);
     }
 }
 
-void CShaderUniform::setUniform(const std::string& attribute, EUniformData data)
+void CShaderUniform::setUniform(const std::string& name, EUniformData data)
 {
-    m_name = attribute;
+    m_name = name;
     m_data = data;
 
     switch (m_data)

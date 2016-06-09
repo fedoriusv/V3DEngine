@@ -10,6 +10,34 @@ CShaderData::CShaderData()
 {
 }
 
+CShaderData::CShaderData(const CShaderData& data)
+    : m_vertexFormatMask(data.m_vertexFormatMask)
+{
+    //TODO[COPY]:
+    m_uniformList = data.m_uniformList;
+    m_attributeList = data.m_attributeList;
+    m_fragDataList = data.m_fragDataList;
+    m_samplerList = data.m_samplerList;
+}
+
+CShaderData& CShaderData::operator=(const CShaderData& data)
+{
+    if (&data == this)
+    {
+        return *this;
+    }
+
+    //TODO[COPY]:
+    m_uniformList = data.m_uniformList;
+    m_attributeList = data.m_attributeList;
+    m_fragDataList = data.m_fragDataList;
+    m_samplerList = data.m_samplerList;
+
+    m_vertexFormatMask = data.m_vertexFormatMask;
+
+    return *this;
+}
+
 CShaderData::~CShaderData()
 {
     for (auto& item : m_uniformList)
@@ -95,7 +123,7 @@ bool CShaderData::isExistSampler(const std::string& name)
 {
     SamplerList::const_iterator iter = std::find_if(m_samplerList.begin(), m_samplerList.end(), [name](const CShaderSampler* sampler) -> bool
     {
-        if (sampler->getAttribute() == name)
+        if (sampler->getName() == name)
         {
             return true;
         }
@@ -307,7 +335,7 @@ void CShaderData::addAttribute(const CShaderAttribute* attribute)
 
 void CShaderData::addSampler(const CShaderSampler* sampler)
 {
-    if (!isExistSampler(sampler->getAttribute()))
+    if (!isExistSampler(sampler->getName()))
     {
         m_samplerList.push_back(const_cast<CShaderSampler*>(sampler));
     }

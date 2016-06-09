@@ -20,7 +20,7 @@ namespace renderer
     /**
     * Shader Attribute.
     */
-    class CShaderAttribute
+    class CShaderAttribute final
     {
     public:
 
@@ -51,11 +51,9 @@ namespace renderer
         };
 
         CShaderAttribute();
+        CShaderAttribute(const CShaderAttribute& attribute);
+        CShaderAttribute& operator=(const CShaderAttribute& other);
         ~CShaderAttribute();
-
-        void                            setID(s32 id);
-
-        CShaderAttribute&               operator=(const CShaderAttribute& other);
 
         const std::string&              getName()           const;
         u32                             getDivisor()        const;
@@ -67,10 +65,12 @@ namespace renderer
         u32                             getUserDataSize()   const;
         u32                             getUserDataCount()  const;
 
+        bool                            parse(const tinyxml2::XMLElement* root);
+
+        void                            setID(s32 id);
+
         static const std::string&       getNameByValue(EShaderAttribute type);
         static const EShaderAttribute   getValueByName(const std::string& name);
-
-        bool                            parse(const tinyxml2::XMLElement* root);
 
     private:
 

@@ -16,16 +16,18 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechnique : public stream::IResource, public utils::TCloneable<CRenderTechnique*>
+    class CRenderTechnique final : public stream::IResource, public utils::TCloneable<CRenderTechnique*>
     {
     public:
 
         CRenderTechnique();
         virtual                 ~CRenderTechnique();
 
-        const RenderPassPtr&    getRenderPass(u32 id) const;
+        const RenderPassPtr     getRenderPass(u32 id) const;
+        RenderPassPtr           getRenderPass(u32 id);
+
         const RenderPassList&   getRenderPassList() const;
-        void                    addRenderPass(const RenderPassPtr& pass);
+        void                    addRenderPass(const RenderPassPtr pass);
         u32                     getRenderPassCount()  const;
 
         void                    setCurrentPass(u32 pass);
@@ -37,7 +39,7 @@ namespace renderer
         void                    init(const stream::IStreamPtr& stream) override;
         bool                    load()                                 override;
 
-        CRenderTechnique*       clone() override;
+        CRenderTechnique*       clone() const override;
 
     protected:
 

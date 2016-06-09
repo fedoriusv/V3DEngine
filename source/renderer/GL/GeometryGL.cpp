@@ -66,7 +66,7 @@ void CGeometryGL::init()
 
     CGeometry::setInterval(0, m_data.verticesSize());
 
-    const RenderPassPtr& pass = m_technique->getRenderPass(m_technique->getCurrentPass());
+    const RenderPassPtr pass = m_technique->getRenderPass(m_technique->getCurrentPass());
     u32 mask = pass->getDefaultShaderData()->getVertexFormatMask() | pass->getUserShaderData()->getVertexFormatMask();
     CGeometry::setVertexMask(mask);
 
@@ -190,7 +190,7 @@ void CGeometryGL::draw()
     }
 
     u32 passIdx = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
+    const RenderPassPtr pass = m_technique->getRenderPass(passIdx);
 
     CGeometry::draw();
 
@@ -426,7 +426,7 @@ void CGeometryGL::refresh()
     }
 
     u32 passIdx = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIdx);
+    const RenderPassPtr pass = m_technique->getRenderPass(passIdx);
 
     ShaderDataList shaderData;
     shaderData.push_back(pass->getDefaultShaderData());

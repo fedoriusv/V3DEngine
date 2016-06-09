@@ -19,11 +19,14 @@ namespace renderer
     /**
     * Advanced properties for render.
     */
-    class CRenderAdvanced
+    class CRenderAdvanced final
     {
     public:
 
         CRenderAdvanced();
+        CRenderAdvanced(const CRenderAdvanced& advanced);
+        CRenderAdvanced& operator=(const CRenderAdvanced& advanced);
+
         ~CRenderAdvanced();
 
         u32                         getCountInstance() const;

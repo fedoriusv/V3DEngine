@@ -18,9 +18,29 @@ using namespace core;
 u32 CShaderProgramGL::s_currentShader = 0;
 
 CShaderProgramGL::CShaderProgramGL()
-    : m_id(0)
+    : IShaderProgram()
+    , m_id(0)
 {
     LOG_DEBUG("CShaderProgramGL: CShaderProgramGL constructor %x", this);
+}
+
+CShaderProgramGL::CShaderProgramGL(const CShaderProgramGL& program)
+    : IShaderProgram()
+    , m_id(0)
+{
+    LOG_DEBUG("CShaderProgramGL: CShaderProgramGL constructor %x", this);
+}
+
+CShaderProgramGL& CShaderProgramGL::operator=(const CShaderProgramGL& program)
+{
+    if (&program == this)
+    {
+        return *this;
+    }
+
+    IShaderProgram::operator=(program);
+
+    return *this;
 }
 
 CShaderProgramGL::~CShaderProgramGL()
@@ -92,6 +112,20 @@ void CShaderProgramGL::unbind()
 u32 CShaderProgramGL::getShaderProgramID() const
 {
     return m_id;
+}
+
+ShaderProgramPtr CShaderProgramGL::clone() const
+{
+    ShaderProgramPtr program = RENDERER->makeSharedProgram();
+    std::static_pointer_cast<CShaderProgramGL>(program)->operator=(*this);
+    
+    if (program->create())
+    {
+        return program;
+    }
+
+    ASSERT(false, "CShaderProgramGL::clone fail");
+    return nullptr;
 }
 
 bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
@@ -226,7 +260,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
         SamplerList& samplerList = shaderData.lock()->getSamplerList();
         for (auto& sampler : samplerList)
         {
-            const std::string& name = sampler->getAttribute();
+            const std::string& name = sampler->getName();
             s32 id = glGetUniformLocation(m_id, name.c_str());
             if (id < 0)
             {

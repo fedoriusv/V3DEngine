@@ -82,6 +82,9 @@ namespace renderer
     public:
 
         CRenderState();
+        CRenderState(const CRenderState& state);
+        CRenderState& operator=(const CRenderState& state);
+        
         virtual                   ~CRenderState();
 
         ECullFace                 getCullface()       const;

@@ -23,11 +23,20 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
+    class IShader;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<IShader>            ShaderPtr;
+    typedef std::weak_ptr<IShader>              ShaderWPtr;
+    typedef std::vector<ShaderWPtr>             ShaderList;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Base class for shader interface.
     */
-    class IShader: public utils::TCloneable<std::shared_ptr<IShader>>
+    class IShader: public utils::TCloneable<ShaderPtr>
     {
     public:
 
@@ -57,7 +66,7 @@ namespace renderer
 
         const std::string&          getName() const;
 
-        std::shared_ptr<IShader>    clone() override;
+        ShaderPtr                   clone() const override;
 
     protected:
 
@@ -85,10 +94,6 @@ namespace renderer
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<IShader>            ShaderPtr;
-    typedef std::weak_ptr<IShader>              ShaderWPtr;
-    typedef std::vector<ShaderWPtr>             ShaderList;
 
     typedef std::pair<std::size_t, ShaderPtr>   ShaderHashPair;
     typedef std::map<std::size_t, ShaderPtr>    ShaderHashMap;

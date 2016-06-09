@@ -13,6 +13,30 @@ CGeometry::SInterval::SInterval()
 {
 }
 
+CGeometry::SInterval::SInterval(const CGeometry::SInterval& interval)
+    : _begin(interval._begin)
+    , _count(interval._count)
+{
+}
+
+CGeometry::SInterval& CGeometry::SInterval::operator=(const CGeometry::SInterval& interval)
+{
+    if (&interval == this)
+    {
+        return *this;
+    }
+
+    _begin = interval._begin;
+    _count = interval._count;
+
+    return *this;
+}
+
+bool CGeometry::SInterval::operator==(const CGeometry::SInterval& interval)
+{
+    return _begin == interval._begin && _count == interval._count;
+}
+
 CGeometry::CGeometry(const CRenderTechnique* technique)
     : m_drawMode(EPrimitivesMode::eTriangles)
     , m_geometyType(EDataUsageType::eDrawStatic)
@@ -102,7 +126,7 @@ const CGeometry::SInterval& CGeometry::getInterval() const
 void CGeometry::draw()
 {
     u32 passIndex = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIndex);
+    const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
     CGeometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
 }
@@ -110,7 +134,7 @@ void CGeometry::draw()
 bool CGeometry::updated() const
 {
     u32 passIndex = m_technique->getCurrentPass();
-    const RenderPassPtr& pass = m_technique->getRenderPass(passIndex);
+    const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
     return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
 }
