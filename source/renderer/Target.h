@@ -28,6 +28,9 @@ namespace renderer
         };
 
         ITarget();
+        ITarget(const ITarget&)            = delete;
+        ITarget& operator=(const ITarget&) = delete;
+
         virtual                     ~ITarget();
 
         virtual void                bind()   = 0;

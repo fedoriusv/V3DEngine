@@ -15,11 +15,14 @@ namespace gl
     * Inherited class for render target management. GL render only.
     * Used output to texture or renderbuffer
     */
-    class CRenderTargetGL : public CRenderTarget, public std::enable_shared_from_this<CRenderTargetGL>
+    class CRenderTargetGL final : public CRenderTarget, public std::enable_shared_from_this<CRenderTargetGL>
     {
     public:
 
         CRenderTargetGL();
+        CRenderTargetGL(const CRenderTargetGL&)             = delete;
+        CRenderTargetGL& operator=(const CRenderTargetGL&)  = delete;
+
         ~CRenderTargetGL();
 
         void            bind()      override;
