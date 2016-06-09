@@ -9,11 +9,14 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderLOD
+    class CRenderLOD final
     {
     public:
 
         CRenderLOD();
+        CRenderLOD(const CRenderLOD& lod);
+        CRenderLOD& operator=(const CRenderLOD& lod);
+
         ~CRenderLOD();
 
         void    setGeometryDistance(const f32 lod);
@@ -30,7 +33,8 @@ namespace renderer
     typedef std::shared_ptr<CRenderLOD> RenderLODPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace renderer
+} //namespace v3d
 
 #endif //_V3D_RENDER_LOD_H_

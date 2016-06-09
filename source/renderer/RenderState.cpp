@@ -117,6 +117,43 @@ CRenderState::CRenderState()
 {
 }
 
+CRenderState::CRenderState(const CRenderState& state)
+    : m_culling(state.m_culling)
+    , m_cullface(state.m_cullface)
+    , m_winding(state.m_winding)
+    , m_polygonMode(state.m_polygonMode)
+
+    , m_blendSrc(state.m_blendSrc)
+    , m_blendDst(state.m_blendDst)
+    , m_blend(state.m_blend)
+
+    , m_depthWrite(state.m_depthWrite)
+    , m_depthTest(state.m_depthTest)
+    , m_depthFunc(state.m_depthFunc)
+{
+}
+
+CRenderState& CRenderState::operator=(const CRenderState& state)
+{
+    if (&state == this)
+    {
+        return *this;
+    }
+
+    m_culling = state.m_culling;
+    m_cullface = state.m_cullface;
+    m_winding = state.m_winding;
+    m_polygonMode = state.m_polygonMode;
+
+    m_blendSrc = state.m_blendSrc;
+    m_blendDst = state.m_blendDst;
+    m_blend = state.m_blend;
+
+    m_depthWrite = state.m_depthWrite;
+    m_depthTest = state.m_depthTest;
+    m_depthFunc = state.m_depthFunc;
+}
+
 CRenderState::~CRenderState()
 {
 }

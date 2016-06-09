@@ -17,7 +17,7 @@ namespace gl
     /**
     * Inherited class for geometry management. GL render only.
     */
-    class CGeometryGL : public CGeometry
+    class CGeometryGL final : public CGeometry
     {
     public:
 

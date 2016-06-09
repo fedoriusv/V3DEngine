@@ -12,7 +12,7 @@ namespace renderer
     /**
     * Inherited class for shader program management. GL render only.
     */
-    class CShaderProgramGL : public IShaderProgram
+    class CShaderProgramGL final : public IShaderProgram
     {
     public:
 
@@ -26,7 +26,12 @@ namespace renderer
 
         u32                 getShaderProgramID()   const;
 
+        ShaderProgramPtr    clone() const override;
+
     private:
+
+        CShaderProgramGL(const CShaderProgramGL& program);
+        CShaderProgramGL&   operator=(const CShaderProgramGL& program);
 
         bool                createProgram(const std::vector<u32>& shaders);
         bool                linkProgram();

@@ -14,11 +14,14 @@ namespace renderer
 
     class CRenderPass;
 
-    class CShaderData
+    class CShaderData final
     {
     public:
 
         CShaderData();
+        CShaderData(const CShaderData& data);
+        CShaderData& operator=(const CShaderData& data);
+
         ~CShaderData();
 
         void                    setUniform(const std::string& name, const s32             value);

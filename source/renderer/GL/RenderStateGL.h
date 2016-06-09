@@ -14,11 +14,14 @@ namespace gl
     /**
     * Inherited class for render states management. GL render only.
     */
-    class CRenderStateGL : public CRenderState
+    class CRenderStateGL final : public CRenderState
     {
     public:
 
         CRenderStateGL();
+        CRenderStateGL(const CRenderStateGL& state)            = delete;
+        CRenderStateGL& operator=(const CRenderStateGL& state) = delete;
+
         ~CRenderStateGL();
 
         void         bind() override;

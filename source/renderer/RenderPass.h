@@ -7,6 +7,7 @@
 #include "RenderLOD.h"
 #include "RenderAdvanced.h"
 #include "Target.h"
+#include "utils/Cloneable.h"
 
 namespace tinyxml2
 {
@@ -21,12 +22,21 @@ namespace renderer
 
     class CRenderer;
     class CRenderTechnique;
+    class CRenderPass;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<CRenderPass>    RenderPassPtr;
+    typedef std::weak_ptr<CRenderPass>      RenderPassWPtr;
+    typedef std::vector<RenderPassPtr>      RenderPassList;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Render pass class.
     * Parse and stored all shaders info and targets
     */
-    class CRenderPass
+    class CRenderPass final : public utils::TCloneable<RenderPassPtr>
     {
     public:
 
@@ -59,6 +69,13 @@ namespace renderer
         void                    bind(u32 target = 0);
         void                    unbind(u32 target = 0);
 
+        RenderPassPtr           clone() const override;
+
+    protected:
+
+        CRenderPass(const CRenderPass& pass);
+        CRenderPass&            operator=(const CRenderPass& pass);
+
     private:
 
         friend                  CRenderer;
@@ -66,37 +83,32 @@ namespace renderer
 
         void                    init();
 
-        bool                    parse            (const tinyxml2::XMLElement* root);
-
-        bool                    parseUniforms    (const tinyxml2::XMLElement* root);
-        bool                    parseAttributes  (const tinyxml2::XMLElement* root);
-        bool                    parseFragdata    (const tinyxml2::XMLElement* root);
-        bool                    parseSamplers    (const tinyxml2::XMLElement* root);
-        bool                    parseShaders     (const tinyxml2::XMLElement* root);
-        bool                    parseRenderTarget(const tinyxml2::XMLElement* root);
-        bool                    parseRenderState (const tinyxml2::XMLElement* root);
-        bool                    parseRenderLOD   (const tinyxml2::XMLElement* root);
+        bool                    parse              (const tinyxml2::XMLElement* root);
+                                                   
+        bool                    parseUniforms      (const tinyxml2::XMLElement* root);
+        bool                    parseAttributes    (const tinyxml2::XMLElement* root);
+        bool                    parseFragdata      (const tinyxml2::XMLElement* root);
+        bool                    parseSamplers      (const tinyxml2::XMLElement* root);
+        bool                    parseShaders       (const tinyxml2::XMLElement* root);
+        bool                    parseRenderTarget  (const tinyxml2::XMLElement* root);
+        bool                    parseRenderState   (const tinyxml2::XMLElement* root);
+        bool                    parseRenderLOD     (const tinyxml2::XMLElement* root);
         bool                    parseRenderAdvanced(const tinyxml2::XMLElement* root);
 
         const std::string       attachIndexToUniform(const std::string& name, s32 idx);
 
-        ShaderProgramPtr        m_program;
         ShaderDataPtr           m_userShaderData;
         ShaderDataPtr           m_defaultShaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
         RenderAdvancedPtr       m_advanced;
         TargetList              m_targetList;
+        ShaderProgramPtr        m_program;
 
         bool                    m_enable;
         std::string             m_name;
 
     };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<CRenderPass>    RenderPassPtr;
-    typedef  std::vector<RenderPassPtr>     RenderPassList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

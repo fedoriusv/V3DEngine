@@ -121,6 +121,62 @@ CShaderAttribute::CShaderAttribute()
 {
 }
 
+CShaderAttribute::CShaderAttribute(const CShaderAttribute& attribute)
+    : m_type(eTypeNone)
+    , m_data(eAttribUser)
+    , m_name("")
+    , m_divisor(0U)
+    , m_userData(nullptr)
+
+    , m_id(-1)
+{
+    if (attribute.m_data != EShaderAttribute::eAttribUser)
+    {
+        CShaderAttribute::setAttribute(attribute.m_name, attribute.m_data);
+    }
+    else
+    {
+        if (attribute.m_userData)
+        {
+            CShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_divisor, 
+                attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
+        }
+    }
+
+    m_id = attribute.m_id;
+}
+
+CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& attribute)
+{
+    if (this == &attribute)
+    {
+        return *this;
+    }
+
+    if (m_userData)
+    {
+        delete m_userData;
+        m_userData = nullptr;
+    }
+
+    if (attribute.m_data != EShaderAttribute::eAttribUser)
+    {
+        CShaderAttribute::setAttribute(attribute.m_name, attribute.m_data);
+    }
+    else
+    {
+        if (attribute.m_userData)
+        {
+            CShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_divisor,
+                attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
+        }
+    }
+
+    m_id = attribute.m_id;
+
+    return *this;
+}
+
 CShaderAttribute::~CShaderAttribute()
 {
     if (m_userData)
@@ -133,21 +189,6 @@ CShaderAttribute::~CShaderAttribute()
 void CShaderAttribute::setID(s32 id)
 {
     m_id = id;
-}
-
-CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& other)
-{
-    if (this == &other)
-    {
-        return *this;
-    }
-
-    m_name = other.m_name;
-    m_type = other.m_type;
-    m_divisor = other.m_divisor;
-    m_userData = other.m_userData;
-
-    return *this;
 }
 
 const std::string& CShaderAttribute::getName() const

@@ -33,7 +33,7 @@ const std::string& IShader::getName() const
     return m_data.getName();
 }
 
-ShaderPtr IShader::clone()
+ShaderPtr IShader::clone() const
 {
     ShaderPtr shader = RENDERER->makeSharedShader();
 

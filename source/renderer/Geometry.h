@@ -20,6 +20,10 @@ namespace renderer
         struct SInterval
         {
             SInterval();
+            SInterval(const SInterval& interval);
+            SInterval& operator=(const SInterval& interval);
+
+            bool operator==(const SInterval& interval);
 
             u32 _begin;
             u32 _count;

@@ -300,7 +300,7 @@ bool CRenderList::checkDistance(const CNode* node, const f32 distance)
         const CRenderTechnique* technique = static_cast<const CShape*>(node)->getRenderTechique();
         for (u32 pass = 0; pass < technique->getRenderPassCount(); ++pass)
         {
-            const RenderLODPtr& lod = technique->getRenderPass(pass)->getRenderLOD();
+            const RenderLODPtr lod = technique->getRenderPass(pass)->getRenderLOD();
             if (lod->getGeometryDistance() < distance && lod->getGeometryDistance() > 0)
             {
                 return false;

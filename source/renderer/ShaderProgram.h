@@ -3,6 +3,7 @@
 
 #include "Shader.h"
 #include "ShaderData.h"
+#include "utils/Cloneable.h"
 
 namespace v3d
 {
@@ -12,11 +13,18 @@ namespace renderer
 
     class CRenderPass;
     class CRenderer;
+    class IShaderProgram;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    typedef std::shared_ptr<IShaderProgram> ShaderProgramPtr;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Shader Program Interface.
     */
-    class IShaderProgram
+    class IShaderProgram : public utils::TCloneable<ShaderProgramPtr>
     {
     public:
 
@@ -54,6 +62,9 @@ namespace renderer
 
     protected:
 
+        IShaderProgram(const IShaderProgram& program);
+        IShaderProgram& operator=(const IShaderProgram& program);
+
         void                                setFlag(EProgramFlags flag);
         void                                addFlag(EProgramFlags flag);
 
@@ -88,10 +99,6 @@ namespace renderer
         ShaderDefinesList                   m_defines;
         std::vector<const c8*>              m_varyingsList;
 };
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<IShaderProgram> ShaderProgramPtr;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
