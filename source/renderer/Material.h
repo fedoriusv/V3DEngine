@@ -59,7 +59,7 @@ namespace renderer
         void                        init(const stream::IStreamPtr& stream)  override;
         bool                        load()                                  override;
 
-        MaterialPtr                 clone()                                 override;
+        MaterialPtr                 clone() const                           override;
 
     private:
 

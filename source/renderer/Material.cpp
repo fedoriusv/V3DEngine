@@ -13,7 +13,7 @@ using namespace scene;
 
 CMaterial::SMaterialData& CMaterial::SMaterialData::operator=(const SMaterialData& material)
 {
-    if (this == &material)
+    if (&material == this)
     {
         return *this;
     }
@@ -257,7 +257,7 @@ const std::string& CMaterial::getName() const
     return m_name;
 }
 
-MaterialPtr CMaterial::clone()
+MaterialPtr CMaterial::clone() const
 {
     MaterialPtr material = new CMaterial(*this);
     material->init(IResource::getStream());

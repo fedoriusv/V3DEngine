@@ -290,7 +290,7 @@ void CScene::attachToRenderList(CNode* node)
 
     for (u32 passIndex = 0; passIndex < techniqe->getRenderPassCount(); ++passIndex)
     {
-        const RenderPassPtr& pass = techniqe->getRenderPass(passIndex);
+        const RenderPassPtr pass = techniqe->getRenderPass(passIndex);
 
         for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
         {
