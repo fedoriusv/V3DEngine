@@ -4,9 +4,12 @@
 #include "stream/StreamManager.h"
 #include "Engine.h"
 
-using namespace v3d;
+namespace v3d
+{
+namespace scene
+{
+
 using namespace core;
-using namespace scene;
 using namespace renderer;
 using namespace stream;
 
@@ -198,7 +201,7 @@ void CMesh::loadMaterial(const stream::IStreamPtr& stream)
     }
 }
 
-CMesh* CMesh::clone()
+CMesh* CMesh::clone() const
 {
     CMesh* mesh = new CMesh(*this);
     mesh->setMaterial(CMesh::getMaterial()->clone());
@@ -207,3 +210,6 @@ CMesh* CMesh::clone()
 
     return mesh;
 }
+
+} //namespace scene
+} //namespace v3d

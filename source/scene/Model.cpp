@@ -8,8 +8,10 @@
 #include "stream/StreamManager.h"
 #include "renderer/Material.h"
 
-using namespace v3d;
-using namespace scene;
+namespace v3d
+{
+namespace scene
+{
 using namespace renderer;
 using namespace stream;
 
@@ -216,7 +218,7 @@ const NodeList& CModel::getNodeList() const
     return m_nodeList;
 }
 
-CModel* CModel::clone()
+CModel* CModel::clone() const
 {
     CModel* model = new CModel(*this);
     model->init(IResource::getStream());
@@ -231,3 +233,6 @@ CModel* CModel::clone()
 
     return model;
 }
+
+} // namespace scene
+} //namespace v3d

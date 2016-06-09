@@ -12,10 +12,6 @@ IResource::IResource()
 {
 }
 
-IResource::~IResource()
-{
-}
-
 IResource::IResource(const IResource& other)
     : m_stream(nullptr)
 {
@@ -26,7 +22,7 @@ IResource::IResource(const IResource& other)
 
 IResource& IResource::operator=(const IResource& other)
 {
-    if (this == &other)
+    if (&other == this)
     {
         return *this;
     }
@@ -37,6 +33,10 @@ IResource& IResource::operator=(const IResource& other)
     m_isLoaded = other.m_isLoaded;
 
     return *this;
+}
+
+IResource::~IResource()
+{
 }
 
 const IStreamPtr& IResource::getStream() const

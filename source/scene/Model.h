@@ -31,7 +31,7 @@ namespace scene
 
         bool                setRenderTechniqueForAllMeshes(const std::string& file);
 
-        CModel*             clone() override;
+        CModel*             clone() const override;
 
     private:
 
@@ -44,6 +44,8 @@ namespace scene
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace scene
+} //namespace v3d
+
 #endif //_V3D_MODEL_H_

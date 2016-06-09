@@ -278,7 +278,7 @@ TexturePtr CTexture::getImpl() const
     return m_impl;
 }
 
-TexturePtr CTexture::clone()
+TexturePtr CTexture::clone() const
 {
     if (!m_impl)
     {
@@ -295,7 +295,7 @@ TexturePtr CTexture::clone()
     {
         texure = new CTexture(m_impl->getTarget(), m_impl->getFormat(), m_impl->getType(), m_impl->getSize(), nullptr, m_impl->getMipmapLevel());
     }
-    texure->copyData(this);
+    texure->copyData(m_impl);
 
     return texure;
 }

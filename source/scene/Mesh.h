@@ -28,7 +28,7 @@ namespace scene
         void        render()                                override;
         void        update(s32 dt)                          override;
 
-        CMesh*      clone()                                 override;
+        CMesh*      clone() const                           override;
 
     private:
 
@@ -36,10 +36,11 @@ namespace scene
 
         void        loadGeometry(const stream::IStreamPtr& stream);
         void        loadMaterial(const stream::IStreamPtr& stream);
-        void        build();
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
+
+} //namespace scene
+} //namespace v3d
+
 #endif //_V3D_MESH_H_

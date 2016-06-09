@@ -15,7 +15,7 @@ namespace utils
         TCloneable() {};
         virtual     ~TCloneable() {};
 
-        virtual T   clone() = 0;
+        virtual T   clone() const = 0;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
