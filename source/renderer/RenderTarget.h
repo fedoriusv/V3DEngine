@@ -31,7 +31,10 @@ namespace renderer
     public:
 
         CRenderTarget();
-        virtual                         ~CRenderTarget();
+        CRenderTarget(const CRenderTarget&)             = delete;
+        CRenderTarget& operator=(const CRenderTarget&)  = delete;
+
+        ~CRenderTarget();
 
         const TexturePtr                getColorTexture(u32 index) const;
         TexturePtr                      getColorTexture(u32 index);

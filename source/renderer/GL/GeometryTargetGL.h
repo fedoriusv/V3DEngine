@@ -18,11 +18,14 @@ namespace gl
     * Inherited class used transform feedback target. GL render only.
     * Used output to vertex buffer through transform feedback
     */
-    class CGeometryTargetGL : public CGeometryTarget
+    class CGeometryTargetGL final : public CGeometryTarget
     {
     public:
     
         CGeometryTargetGL();
+        CGeometryTargetGL(const CGeometryTargetGL&)            = delete;
+        CGeometryTargetGL& operator=(const CGeometryTargetGL&) = delete;
+
         ~CGeometryTargetGL();
 
         void                        bind()      override;

@@ -44,7 +44,10 @@ namespace renderer
         };
 
         CGeometryTarget();
-        virtual                         ~CGeometryTarget();
+        CGeometryTarget(const CGeometryTarget&)            = delete;
+        CGeometryTarget& operator=(const CGeometryTarget&) = delete;
+
+        ~CGeometryTarget();
 
         const std::vector<const c8*>&   getBufferStrings() const;
 
