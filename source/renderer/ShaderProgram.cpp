@@ -25,6 +25,7 @@ IShaderProgram::IShaderProgram(const IShaderProgram& program)
     m_shaderList = program.m_shaderList;
     m_defines = program.m_defines;
 
+    //TODO: maybe memory leak
     std::copy(program.m_varyingsList.cbegin(), program.m_varyingsList.cend(), m_varyingsList.begin());
 }
 
@@ -42,6 +43,7 @@ IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
     m_shaderList = program.m_shaderList;
     m_defines = program.m_defines;
 
+    //TODO: maybe memory leak
     m_varyingsList.clear();
     std::copy(program.m_varyingsList.cbegin(), program.m_varyingsList.cend(), m_varyingsList.begin());
 
@@ -180,13 +182,14 @@ bool IShaderProgram::updateShaderList()
             }
 
             ShaderWPtr shader = (*iter);
-            m_shaderList.erase(iter++);
+            //m_shaderList.erase(iter++);
             LOG_DEBUG("CIShaderProgram::updateShaderList: Shader Program must be relinked");
 
             ShaderWPtr hashedShader = CShaderManager::getInstance()->get(hash);
             if (!hashedShader.expired())
             {
-                IShaderProgram::attachShader(hashedShader);
+                //IShaderProgram::attachShader(hashedShader);
+                (*iter) = hashedShader;
             }
             else
             {
@@ -198,7 +201,8 @@ bool IShaderProgram::updateShaderList()
                 }
 
                 CShaderManager::getInstance()->add(newShader);
-                IShaderProgram::attachShader(newShader);
+                //IShaderProgram::attachShader(newShader);
+                (*iter) = newShader;
 
                 result = true;
             }
@@ -270,7 +274,7 @@ u16 IShaderProgram::getFlags() const
 
 bool IShaderProgram::isFlagPresent(EProgramFlags flag)
 {
-    return m_flags & flag;
+    return (m_flags & flag) != 0;
 }
 
 void IShaderProgram::setFlag(EProgramFlags flag)

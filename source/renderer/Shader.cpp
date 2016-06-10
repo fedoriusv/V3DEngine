@@ -38,6 +38,7 @@ ShaderPtr IShader::clone() const
     ShaderPtr shader = RENDERER->makeSharedShader();
 
     CShaderSource& data = shader->m_data;
+    data.setHeader(m_data.getHeader());
     data.setBody(m_data.getBody());
     data.setType(IShader::getType());
     data.setName(IShader::getName());
@@ -152,7 +153,7 @@ u16 IShader::getFlags() const
 
 bool IShader::isFlagPresent(EShaderFlags flag)
 {
-    return m_flags & flag;
+    return (m_flags & flag) != 0;
 }
 
 bool IShader::create(EShaderType type, const std::string& body, const ShaderDefinesList& defines)
