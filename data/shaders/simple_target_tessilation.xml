@@ -22,7 +22,7 @@
             <depthTest val="lequal"/>
         </renderstate>
         <rendertarget>
-            <!--  <var val="screen2DLeftTarget"/> -->
+            <var val="screen2DLeftTarget"/>
             <var val="screen2DRightTarget"/>
         </rendertarget>
         <lod geometry="0.0"/>
@@ -32,7 +32,7 @@
         </advanced>
         <shaders>
             <defines>
-                <var name="STATIC_LEVEL1"/>
+                <var name="STATIC_LEVEL"/>
             </defines>
             <var type="vertex" name="vsimple_target_tessilation">
                 <![CDATA[

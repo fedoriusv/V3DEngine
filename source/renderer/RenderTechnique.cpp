@@ -14,6 +14,8 @@ namespace renderer
 
 using namespace scene;
 
+static const std::string k_diff = "_copy";
+
 CRenderTechnique::CRenderTechnique()
     : m_name("")
     , m_currentPass(0U)
@@ -21,7 +23,7 @@ CRenderTechnique::CRenderTechnique()
 }
 
 CRenderTechnique::CRenderTechnique(const CRenderTechnique& technique)
-    : m_name(technique.m_name + diff)
+    : m_name(technique.m_name + k_diff)
     , m_currentPass(technique.m_currentPass)
 {
     for (RenderPassList::const_iterator iter = technique.m_renderPassList.cbegin(); iter < technique.m_renderPassList.cend(); ++iter)
@@ -43,9 +45,22 @@ CRenderTechnique& CRenderTechnique::operator=(const CRenderTechnique& technique)
     {
         m_renderPassList.push_back((*iter)->clone());
     }
-
     m_currentPass = technique.m_currentPass;
-    m_name = technique.m_name + diff;
+
+    bool finding = true;
+    u32 index = 0;
+    std::string generatedName = technique.m_name + k_diff;
+    while (finding)
+    {
+        if (!CRenderTechniqueManager::getInstance()->get(generatedName + std::to_string(index)))
+        {
+            finding = false;
+        }
+
+        ++index;
+    }
+
+    m_name = generatedName + std::to_string(index);
 
     return *this;
 }

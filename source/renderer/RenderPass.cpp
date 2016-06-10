@@ -42,7 +42,7 @@ CRenderPass::CRenderPass(const CRenderPass& pass)
     , m_program(nullptr)
 
     , m_enable(pass.m_enable)
-    , m_name(pass.m_name + diff)
+    , m_name(pass.m_name)
 {
     CRenderPass::init();
 
@@ -75,7 +75,7 @@ CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
     m_program = pass.m_program->clone();
 
     m_enable = pass.m_enable;
-    m_name = pass.m_name + diff;
+    m_name = pass.m_name;
 
     return *this;
 }
@@ -657,8 +657,8 @@ void CRenderPass::unbind(u32 target)
 
 RenderPassPtr CRenderPass::clone() const
 {
-    RenderPassPtr pass = std::make_shared<CRenderPass>();
-    pass->operator=(*this);
+    RenderPassPtr pass = std::make_shared<CRenderPass>(*this);
+    //pass->operator=(*this);
 
     return pass;
 }
