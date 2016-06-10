@@ -13,11 +13,29 @@ CShaderData::CShaderData()
 CShaderData::CShaderData(const CShaderData& data)
     : m_vertexFormatMask(data.m_vertexFormatMask)
 {
-    //TODO[COPY]:
-    m_uniformList = data.m_uniformList;
-    m_attributeList = data.m_attributeList;
-    m_fragDataList = data.m_fragDataList;
-    m_samplerList = data.m_samplerList;
+    std::for_each(data.m_uniformList.cbegin(), data.m_uniformList.cend(), [this](const UniformPair& item)
+    {
+        CShaderUniform* uniform = new CShaderUniform(*item.second);
+        m_uniformList.insert(UniformList::value_type(item.first, uniform));
+    });
+
+    std::for_each(data.m_attributeList.cbegin(), data.m_attributeList.cend(), [this](const AttributePair& item)
+    {
+        CShaderAttribute* attribute = new CShaderAttribute(*item.second);
+        m_attributeList.insert(AttributeList::value_type(item.first, attribute));
+    });
+
+    std::for_each(data.m_fragDataList.cbegin(), data.m_fragDataList.cend(), [this](const AttributePair& item)
+    {
+        CShaderAttribute* attribute = new CShaderAttribute(*item.second);
+        m_fragDataList.insert(AttributeList::value_type(item.first, attribute));
+    });
+
+    std::for_each(data.m_samplerList.cbegin(), data.m_samplerList.cend(), [this](const CShaderSampler* item)
+    {
+        CShaderSampler* sampler = new CShaderSampler(*item);
+        m_samplerList.push_back(sampler);
+    });
 }
 
 CShaderData& CShaderData::operator=(const CShaderData& data)
@@ -27,11 +45,31 @@ CShaderData& CShaderData::operator=(const CShaderData& data)
         return *this;
     }
 
-    //TODO[COPY]:
-    m_uniformList = data.m_uniformList;
-    m_attributeList = data.m_attributeList;
-    m_fragDataList = data.m_fragDataList;
-    m_samplerList = data.m_samplerList;
+    CShaderData::clear();
+
+    std::for_each(data.m_uniformList.cbegin(), data.m_uniformList.cend(), [this](const UniformPair& item)
+    {
+        CShaderUniform* uniform = new CShaderUniform(*item.second);
+        m_uniformList.insert(UniformList::value_type(item.first, uniform));
+    });
+
+    std::for_each(data.m_attributeList.cbegin(), data.m_attributeList.cend(), [this](const AttributePair& item)
+    {
+        CShaderAttribute* attribute = new CShaderAttribute(*item.second);
+        m_attributeList.insert(AttributeList::value_type(item.first, attribute));
+    });
+
+    std::for_each(data.m_fragDataList.cbegin(), data.m_fragDataList.cend(), [this](const AttributePair& item)
+    {
+        CShaderAttribute* attribute = new CShaderAttribute(*item.second);
+        m_fragDataList.insert(AttributeList::value_type(item.first, attribute));
+    });
+
+    std::for_each(data.m_samplerList.cbegin(), data.m_samplerList.cend(), [this](const CShaderSampler* item)
+    {
+        CShaderSampler* sampler = new CShaderSampler(*item);
+        m_samplerList.push_back(sampler);
+    });
 
     m_vertexFormatMask = data.m_vertexFormatMask;
 
@@ -40,34 +78,7 @@ CShaderData& CShaderData::operator=(const CShaderData& data)
 
 CShaderData::~CShaderData()
 {
-    for (auto& item : m_uniformList)
-    {
-        delete item.second;
-        item.second = nullptr;
-    }
-    m_uniformList.clear();
-
-    for (auto& item : m_attributeList)
-    {
-        delete item.second;
-        item.second = nullptr;
-    }
-    m_attributeList.clear();
-    m_vertexFormatMask = 0U;
-
-    for (auto& item : m_fragDataList)
-    {
-        delete item.second;
-        item.second = nullptr;
-    }
-    m_fragDataList.clear();
-
-    for (auto& item : m_samplerList)
-    {
-        delete item;;
-        item = nullptr;
-    }
-    m_samplerList.clear();
+    CShaderData::clear();
 }
 
 u32 CShaderData::getVertexFormatMask() const
@@ -348,6 +359,38 @@ void CShaderData::addFragData(const CShaderAttribute* fragData)
     {
         m_fragDataList[name] = const_cast<CShaderAttribute*>(fragData);
     }
+}
+
+void CShaderData::clear()
+{
+    for (auto& item : m_uniformList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
+    m_uniformList.clear();
+
+    for (auto& item : m_attributeList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
+    m_attributeList.clear();
+    m_vertexFormatMask = 0U;
+
+    for (auto& item : m_fragDataList)
+    {
+        delete item.second;
+        item.second = nullptr;
+    }
+    m_fragDataList.clear();
+
+    for (auto& item : m_samplerList)
+    {
+        delete item;;
+        item = nullptr;
+    }
+    m_samplerList.clear();
 }
 
 const AttributeList& CShaderData::getAttributeList() const

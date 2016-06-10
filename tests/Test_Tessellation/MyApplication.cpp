@@ -31,11 +31,13 @@ void MyApplication::init()
     CShape* sample0 = scene->addSample(0, Vector3D(0, 0, -3));
     sample0->setName("sample0");
     sample0->setRenderTechnique("shaders/simple_target_tessilation.xml");
+    //sample0->getRenderTechique()->getRenderPass(0)->addRenderTarget("screen2DRightTarget");
+    //sample0->getRenderTechique()->getRenderPass(0)->removeRenderTarget("screen2DRightTarget");
 
-    CShape* sample1 = scene->addSample(0, Vector3D(0, 0, -3));
-    sample1->setName("sample1");
+    //CShape* sample1 = scene->addSample(0, Vector3D(0, 0, -3));
+    //sample1->setName("sample1");
     //sample1->setRenderTechnique(sample0->getRenderTechique()->clone());
-    sample1->setRenderTechnique("shaders/simple_target.xml");
+    ////sample1->setRenderTechnique("shaders/simple_target.xml");
     //sample1->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("STATIC_LEVEL");
 
     CCamera* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));

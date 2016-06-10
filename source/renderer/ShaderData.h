@@ -65,6 +65,8 @@ namespace renderer
         void                    addSampler(const CShaderSampler* sampler);
         void                    addFragData(const CShaderAttribute* fragData);
 
+        void                    clear();
+
         UniformList             m_uniformList;
         AttributeList           m_attributeList;
         AttributeList           m_fragDataList;

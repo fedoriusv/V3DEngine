@@ -152,6 +152,8 @@ CRenderState& CRenderState::operator=(const CRenderState& state)
     m_depthWrite = state.m_depthWrite;
     m_depthTest = state.m_depthTest;
     m_depthFunc = state.m_depthFunc;
+
+    return *this;
 }
 
 CRenderState::~CRenderState()

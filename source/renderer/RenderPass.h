@@ -80,6 +80,7 @@ namespace renderer
 
         friend                  CRenderer;
         friend                  CRenderTechnique;
+        friend                  std::_Ref_count_obj<CRenderPass>;
 
         void                    init();
 
