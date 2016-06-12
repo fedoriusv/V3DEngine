@@ -37,8 +37,6 @@ CShaderSampler::CShaderSampler(const CShaderSampler& sampler)
 
     m_target = sampler.m_target;
     m_texture = sampler.m_texture;
-
-    m_id = sampler.m_id;
 }
 
 CShaderSampler& CShaderSampler::operator=(const CShaderSampler& sampler)
@@ -54,7 +52,7 @@ CShaderSampler& CShaderSampler::operator=(const CShaderSampler& sampler)
     m_target = sampler.m_target;
     m_texture = sampler.m_texture;
 
-    m_id = sampler.m_id;
+    m_id = -1;
 
     return *this;
 }

@@ -142,8 +142,6 @@ CShaderAttribute::CShaderAttribute(const CShaderAttribute& attribute)
                 attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
         }
     }
-
-    m_id = attribute.m_id;
 }
 
 CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& attribute)
@@ -172,7 +170,7 @@ CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& attribute)
         }
     }
 
-    m_id = attribute.m_id;
+    m_id = -1;
 
     return *this;
 }

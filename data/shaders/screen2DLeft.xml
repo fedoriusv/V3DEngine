@@ -20,7 +20,7 @@
             <var name="texture0" type="vec2" val="mesh.texture0"/>
         </attributes>
         <samplers>
-            <var name="sampler0" val="screen2DLeftTarget" attachment="c0"/>
+            <var name="leftScreen" val="screen2DLeftTarget" attachment="c0"/>
         </samplers>
         <renderstate>
             <polygonmode val="fill"/>
@@ -65,7 +65,7 @@
             </var>
             <var name="fscreen2DLeft" type="fragment">
                 <![CDATA[
-                    uniform sampler2D sampler0;
+                    uniform sampler2D leftScreen;
                      
                     struct Vertex
                     {
@@ -76,7 +76,7 @@
                     
                     void main()
                     {
-                        fragColor = texture(sampler0, fragVertex.texCoord0);
+                        fragColor = texture(leftScreen, fragVertex.texCoord0);
                     }
                 ]]>
             </var>

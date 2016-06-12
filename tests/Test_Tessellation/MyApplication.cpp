@@ -28,24 +28,25 @@ void MyApplication::init()
     screenRight->setName("screenRight");
     screenRight->setRenderTechnique("shaders/screen2DRight.xml");
 
-    CShape* sample0 = scene->addSample(0, Vector3D(0, 0, -3));
+    CShape* sample0 = scene->addSample(nullptr, Vector3D(0.f, 0.f, -3.f));
     sample0->setName("sample0");
+    sample0->setRotation(Vector3D(180.f, 0.f, 0.f));
     sample0->setRenderTechnique("shaders/simple_target_tessilation.xml");
-    //sample0->getRenderTechique()->getRenderPass(0)->addRenderTarget("screen2DRightTarget");
-    //sample0->getRenderTechique()->getRenderPass(0)->removeRenderTarget("screen2DRightTarget");
 
-    //CShape* sample1 = scene->addSample(0, Vector3D(0, 0, -3));
-    //sample1->setName("sample1");
-    //sample1->setRenderTechnique(sample0->getRenderTechique()->clone());
-    ////sample1->setRenderTechnique("shaders/simple_target.xml");
-    //sample1->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("STATIC_LEVEL");
+    CShape* sample1 = scene->addSample(nullptr, Vector3D(0.f, 0.f, -3.f));
+    sample1->setName("sample1");
+    sample1->setRenderTechnique(sample0->getRenderTechique()->clone());
+    sample1->getRenderTechique()->getRenderPass(0)->getShaderProgram()->setUndefine("STATIC_LEVEL");
 
-    CCamera* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(0, Vector3D(0, 0, 0), Vector3D(0.7f, 0, 0.7f));
+    sample0->getRenderTechique()->getRenderPass(0)->addTarget("screen2DLeftTarget");
+    sample1->getRenderTechique()->getRenderPass(0)->addTarget("screen2DRightTarget");
+
+    CCamera* fpsCamera = BaseApplication::getSceneManager()->addFPSCamera(nullptr, Vector3D(0, 0, 0), Vector3D(0.7f, 0.f, 0.7f));
     fpsCamera->setName("fpsCamera");
-    CCamera* camera = scene->addCamera(0, Vector3D(0, 0, 0), Vector3D(0.0f, 0, -5.0f));
+    CCamera* camera = scene->addCamera(nullptr, Vector3D(0, 0, 0), Vector3D(0.f, 0.f, -5.0f));
     camera->setName("camera");
 
-    BaseApplication::getSceneManager()->setActiveCamera(fpsCamera);
+    BaseApplication::getSceneManager()->setActiveCamera(camera);
 
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     BaseApplication::getInputEventHandler()->connectMouseEvent(std::bind(&MyApplication::onMouse, this, std::placeholders::_1));
