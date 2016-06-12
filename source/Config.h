@@ -84,6 +84,7 @@
 
 #   define GLEW_STATIC
 #   define _DEBUG_GL
+#   define _DEBUG_GL_ERROR_ASSERT 1
 #endif //_OPENGL_DRIVER_
 
 #ifdef _DIRECT3D_DRIVER_

@@ -616,10 +616,16 @@ void CDriverContextGL::checkForErrors(const std::string& location)
         if (location.empty())
         {
             LOG_ERROR("GL Error: %s. Discription %s", error.c_str(), glewGetErrorString(glError));
+#if _DEBUG_GL_ERROR_ASSERT
+            ASSERT(false, error.c_str());
+#endif //_DEBUG_GL_ERROR_ASSERT
         }
         else
         {
             LOG_ERROR("GL %s: %s. Discription %s", location.c_str(), error.c_str(), glewGetErrorString(glError));
+#if _DEBUG_GL_ERROR_ASSERT
+            ASSERT(false, error.c_str());
+#endif //_DEBUG_GL_ERROR_ASSERT
         }
     }
 #endif //_DEBUG_GL
