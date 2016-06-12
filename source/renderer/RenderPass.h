@@ -43,28 +43,34 @@ namespace renderer
         CRenderPass();
         ~CRenderPass();
 
-        const ShaderProgramPtr& getShaderProgram() const;
+        const ShaderProgramPtr  getShaderProgram() const;
         void                    setShaderProgram(const ShaderProgramPtr& program);
 
-        const ShaderDataPtr&    getUserShaderData() const;
+        const ShaderDataPtr     getUserShaderData() const;
         void                    setUserShaderData(const ShaderDataPtr& data);
 
-        const ShaderDataPtr&    getDefaultShaderData() const;
+        const ShaderDataPtr     getDefaultShaderData() const;
         void                    setDefaultShaderData(const ShaderDataPtr& data);
 
-        const RenderStatePtr&   getRenderState() const;
+        const RenderStatePtr    getRenderState() const;
         void                    setRenderState(const RenderStatePtr& state);
 
-        const RenderLODPtr&     getRenderLOD() const;
+        const RenderLODPtr      getRenderLOD() const;
         void                    setRenderLOD(const RenderLODPtr& lod);
 
-        const RenderAdvancedPtr& getRenderAdvanced() const;
+        const RenderAdvancedPtr getRenderAdvanced() const;
         void                    setRenderAdvanced(const RenderAdvancedPtr& advanced);
 
-        const TargetPtr&        getRenderTarget(u32 index) const;
-        void                    setRenderTarget(u32 index, const TargetPtr& target);
-        void                    addRenderTarget(const TargetPtr& target);
-        u32                     getRenderTargetCount() const;
+        const TargetPtr         getTarget(u32 index) const;
+        const TargetPtr         getTarget(const std::string& target) const;
+
+        bool                    addTarget(const TargetPtr& target);
+        bool                    removeTarget(const TargetPtr& target);
+
+        bool                    addTarget(const std::string& target);
+        bool                    removeTarget(const std::string& target);
+
+        u32                     getTargetCount() const;
 
         void                    bind(u32 target = 0);
         void                    unbind(u32 target = 0);

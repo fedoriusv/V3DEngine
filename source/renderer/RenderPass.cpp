@@ -85,7 +85,7 @@ CRenderPass::~CRenderPass()
     m_targetList.clear();
 }
 
-const ShaderProgramPtr& CRenderPass::getShaderProgram() const
+const ShaderProgramPtr CRenderPass::getShaderProgram() const
 {
     return m_program;
 }
@@ -95,7 +95,7 @@ void CRenderPass::setShaderProgram(const ShaderProgramPtr& program)
     m_program = program;
 }
 
-const ShaderDataPtr& CRenderPass::getUserShaderData() const
+const ShaderDataPtr CRenderPass::getUserShaderData() const
 {
     return m_userShaderData;
 }
@@ -105,7 +105,7 @@ void CRenderPass::setUserShaderData(const ShaderDataPtr& data)
     m_userShaderData = data;
 }
 
-const ShaderDataPtr& CRenderPass::getDefaultShaderData() const
+const ShaderDataPtr CRenderPass::getDefaultShaderData() const
 {
     return m_defaultShaderData;
 }
@@ -115,7 +115,7 @@ void CRenderPass::setDefaultShaderData(const ShaderDataPtr& data)
     m_defaultShaderData = data;
 }
 
-const RenderStatePtr& CRenderPass::getRenderState() const
+const RenderStatePtr CRenderPass::getRenderState() const
 {
     return m_renderState;
 }
@@ -405,7 +405,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
             if (defineElement->Attribute("name"))
             {
                 std::string name = defineElement->Attribute("name");
-                std::string value = (defineElement->Attribute("value")) ? defineElement->Attribute("value") : "";
+                std::string value = (defineElement->Attribute("val")) ? defineElement->Attribute("val") : "";
 
                 definesList.insert(std::map<std::string, std::string>::value_type(name, value));
             }
@@ -511,7 +511,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         if (isDefault)
         {
             LOG_INFO("CRenderTarget: Set default setting for render target");
-            CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
+            CRenderPass::addTarget(RENDERER->getDefaultRenderTarget());
         }
         else
         {
@@ -522,13 +522,11 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
                 varElement = varElement->NextSiblingElement("var");
 
                 continue;
-
-                //CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
             }
             else
             {
                 LOG_INFO("CRenderTarget: Set target with name '%s'", name.c_str());
-                CRenderPass::addRenderTarget(target);
+                CRenderPass::addTarget(target);
 
                 if (target->getTagetType() == ITarget::ETagetType::eGeometryTarget)
                 {
@@ -549,10 +547,9 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         varElement = varElement->NextSiblingElement("var");
     }
 
-    if (CRenderPass::getRenderTargetCount() == 0)
+    if (CRenderPass::getTargetCount() == 0)
     {
-        LOG_WARNING("CRenderTarget: Render target not found set default");
-        CRenderPass::addRenderTarget(RENDERER->getDefaultRenderTarget());
+        LOG_WARNING("CRenderTarget: Current pass hasn't no one of Target");
     }
 
     return true;
@@ -678,7 +675,7 @@ const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32
     return idxName;
 }
 
-const RenderLODPtr& CRenderPass::getRenderLOD() const
+const RenderLODPtr CRenderPass::getRenderLOD() const
 {
     return m_lods;
 }
@@ -688,7 +685,7 @@ void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
     m_lods = lod;
 }
 
-const RenderAdvancedPtr& CRenderPass::getRenderAdvanced() const
+const RenderAdvancedPtr CRenderPass::getRenderAdvanced() const
 {
     return m_advanced;
 }
@@ -697,34 +694,140 @@ void CRenderPass::setRenderAdvanced(const RenderAdvancedPtr& advanced)
     m_advanced = advanced;
 }
 
-const TargetPtr& CRenderPass::getRenderTarget(u32 index) const
+const TargetPtr CRenderPass::getTarget(u32 index) const
 {
     ASSERT(m_targetList.size() > index, "Invalid Render Target index");
-    return m_targetList[index];
+    if (m_targetList.size() <= index)
+    {
+        return nullptr;
+    }
+
+    if (m_targetList[index].expired())
+    {
+        return nullptr;
+    }
+
+    return m_targetList[index].lock();
 }
 
-void CRenderPass::addRenderTarget(const TargetPtr& target)
+const TargetPtr CRenderPass::getTarget(const std::string& target) const
+{
+    TargetList::const_iterator iter = std::find_if(m_targetList.begin(), m_targetList.end(), [&target](const TargetWPtr& item) -> bool
+    {
+        if (!item.expired() && item.lock()->getName() == target)
+        {
+            return true;
+        }
+
+        return false;
+    });
+
+    if (iter == m_targetList.end())
+    {
+        return nullptr;
+    }
+
+    if ((*iter).expired())
+    {
+        return nullptr;
+    }
+
+    return (*iter).lock();
+}
+
+bool CRenderPass::addTarget(const TargetPtr& target)
 {
     if (target)
     {
-        TargetList ::const_iterator iter = std::find(m_targetList.begin(), m_targetList.end(), target);
-        if (iter != m_targetList.end())
+        TargetList::const_iterator iter = std::find_if(m_targetList.cbegin(), m_targetList.cend(), [&target](const TargetWPtr& item) -> bool
         {
-            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter)->getName().c_str());
-            return;
+            return (!item.expired() && item.lock() == target);
+        });
+
+        if (iter != m_targetList.cend())
+        {
+            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter).lock()->getName().c_str());
+            return false;
         }
 
         m_targetList.push_back(target);
+
+        return true;
     }
+
+    return false;
 }
 
-void CRenderPass::setRenderTarget(u32 index, const TargetPtr& target)
+bool CRenderPass::removeTarget(const TargetPtr& target)
 {
-    ASSERT(m_targetList.size() > index, "Invalid Render Target index");
-    m_targetList[index] = target;
+    if (target)
+    {
+        TargetList::const_iterator iter = std::remove_if(m_targetList.begin(), m_targetList.end(), [&target](const TargetWPtr& item) -> bool
+        {
+            return (!item.expired() && item.lock() == target);
+        });
+
+        if (iter == m_targetList.end())
+        {
+            LOG_WARNING("CRenderPass: Romoved target not found '%s'", target->getName().c_str());
+            return false;
+        }
+        m_targetList.erase(iter, m_targetList.end());
+
+        return true;
+    }
+
+    return false;
 }
 
-u32 CRenderPass::getRenderTargetCount() const
+bool CRenderPass::addTarget(const std::string& target)
+{
+    if (!target.empty())
+    {
+        if (CRenderPass::getTarget(target))
+        {
+            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", target.c_str());
+            return false;
+        }
+
+        const TargetPtr newTarget = CTargetManager::getInstance()->get(target);
+        if (!newTarget)
+        {
+            LOG_WARNING("CRenderPass: Can't find target '%s' in manager", target.c_str());
+            return false;
+        }
+
+        m_targetList.push_back(newTarget);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CRenderPass::removeTarget(const std::string& target)
+{
+    if (!target.empty())
+    {
+        TargetList::const_iterator iter = std::remove_if(m_targetList.begin(), m_targetList.end(), [&target](const TargetWPtr& item) -> bool
+        {
+            return (!item.expired() && item.lock()->getName() == target);
+        });
+
+        if (iter == m_targetList.end())
+        {
+            LOG_WARNING("CRenderPass: Romoved target not found '%s'", target.c_str());
+            return false;
+        }
+        m_targetList.erase(iter, m_targetList.end());
+
+        return true;
+    }
+
+    return false;
+}
+
+u32 CRenderPass::getTargetCount() const
 {
     return (u32)m_targetList.size();
 }

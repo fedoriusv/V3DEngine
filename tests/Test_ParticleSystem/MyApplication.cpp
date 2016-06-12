@@ -57,7 +57,7 @@ void MyApplication::calcThroughNode()
 
     std::vector<f32> out;
 
-    const TargetPtr& target = node->getRenderTechique()->getRenderPass(0)->getRenderTarget(0);
+    const TargetPtr target = node->getRenderTechique()->getRenderPass(0)->getTarget(0);
     const GeometryTargetPtr& geomTarget = std::static_pointer_cast<CGeometryTarget>(target);
     const CGeometryTarget::SBufferData* result = geomTarget->getBuffer("outValue");
     if (result && result->_result > 0)

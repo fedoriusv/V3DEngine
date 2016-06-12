@@ -292,9 +292,9 @@ void CScene::attachToRenderList(CNode* node)
     {
         const RenderPassPtr pass = techniqe->getRenderPass(passIndex);
 
-        for (u32 targetIndex = 0; targetIndex < pass->getRenderTargetCount(); ++targetIndex)
+        for (u32 targetIndex = 0; targetIndex < pass->getTargetCount(); ++targetIndex)
         {
-            const TargetPtr& target = pass->getRenderTarget(targetIndex);
+            const TargetPtr target = pass->getTarget(targetIndex);
             auto findPred = [target](const CRenderList& list) -> bool
             {
                 if (list.getTargetName() == target->getName())
