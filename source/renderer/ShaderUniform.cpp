@@ -130,7 +130,7 @@ void CShaderUniform::setUniform(EDataType type, const std::string& name, void* v
 {
     m_type  = type;
     m_name = name;
-    if (value)
+    if (value && value != m_value)
     {
         allocMemory(type, value);
     }
@@ -140,6 +140,8 @@ void CShaderUniform::setUniform(const std::string& name, EUniformData data)
 {
     m_name = name;
     m_data = data;
+
+    CShaderUniform::deallocMemory();
 
     switch (m_data)
     {
@@ -286,7 +288,7 @@ void CShaderUniform::deallocMemory()
 {
     if (m_value != nullptr)
     {
-        free(m_value);
+        delete m_value;
         m_value = nullptr;
     }
 }

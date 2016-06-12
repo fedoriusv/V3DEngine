@@ -182,68 +182,72 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         s32 id = uniform.second->getID();
         switch (type)
         {
-            case CShaderUniform::eTransformProjectionMatrix:
-
-                if (!m_camera)
-                {
-                    ASSERT(false, "Camera doesn't exist");
-                    break;
-                }
-                program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
-
-                break;
-
-            case CShaderUniform::eTransformModelMatrix:
+        case CShaderUniform::eTransformProjectionMatrix:
+        {
+            if (!m_camera)
             {
-                core::Matrix4D modelMatrix(transform);
-                modelMatrix.makeTransposed();
-
-                program->applyUniformMatrix4(id, modelMatrix);
+                ASSERT(false, "Camera doesn't exist");
+                break;
             }
-                break;
+            program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
+        }
+        break;
 
-            case CShaderUniform::eTransformViewMatrix:
+        case CShaderUniform::eTransformModelMatrix:
+        {
+            core::Matrix4D modelMatrix(transform);
+            modelMatrix.makeTransposed();
 
-                if (!m_camera)
-                {
-                    ASSERT(false, "Camera doesn't exist");
-                    break;
-                }
-                program->applyUniformMatrix4(id, m_camera->getViewMatrix());
+            program->applyUniformMatrix4(id, modelMatrix);
+        }
+        break;
 
-                break;
-
-            case CShaderUniform::eTransformViewPosition:
-
-                if (!m_camera)
-                {
-                    ASSERT(false, "Camera doesn't exist");
-                    break;
-                }
-                program->applyUniformVector3(id, m_camera->getPosition());
-                break;
-
-            case CShaderUniform::eTransformViewUpVector:
-
-                if (!m_camera)
-                {
-                    ASSERT(false, "Camera doesn't exist");
-                    break;
-                }
-                program->applyUniformVector3(id, m_camera->getUpVector());
-                break;
-
-            case CShaderUniform::eTransformNormalMatrix:
+        case CShaderUniform::eTransformViewMatrix:
+        {
+            if (!m_camera)
             {
-                core::Matrix4D normalMatrix;
-                transform.getInverse(normalMatrix);
-
-                program->applyUniformMatrix4(id, normalMatrix);
+                ASSERT(false, "Camera doesn't exist");
+                break;
             }
-                break;
 
-            default:
+            program->applyUniformMatrix4(id, m_camera->getViewMatrix());
+        }
+        break;
+
+        case CShaderUniform::eTransformViewPosition:
+        {
+            if (!m_camera)
+            {
+                ASSERT(false, "Camera doesn't exist");
                 break;
+            }
+            program->applyUniformVector3(id, m_camera->getPosition());
+        }
+        break;
+
+        case CShaderUniform::eTransformViewUpVector:
+        {
+            if (!m_camera)
+            {
+                ASSERT(false, "Camera doesn't exist");
+                break;
+            }
+            program->applyUniformVector3(id, m_camera->getUpVector());
+        }
+        break;
+
+        case CShaderUniform::eTransformNormalMatrix:
+        {
+            core::Matrix4D normalMatrix;
+            transform.getInverse(normalMatrix);
+
+            program->applyUniformMatrix4(id, normalMatrix);
+        }
+        break;
+
+        case -1:
+        default:
+            break;
         }
     }
 }
@@ -290,6 +294,7 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
             program->applyUniformFloat(id, material->getTransparency());
             break;
 
+        case -1:
         default:
             break;
         }
@@ -306,7 +311,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     std::vector<scene::CLight*> lights = m_lightList;
     const Vector3D& pos = transform.getTranslation();
 
-    std::remove_if(lights.begin(), lights.end(), [&pos](scene::CLight* light) -> bool
+    lights.erase(std::remove_if(lights.begin(), lights.end(), [&pos](scene::CLight* light) -> bool
     {
         if (!light->isVisible())
         {
@@ -320,7 +325,8 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         }
 
         return true;
-    });
+    }), lights.end());
+
 
     if (lights.empty())
     {
@@ -379,6 +385,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
                 program->applyUniformFloat(id, (*light)->getRadius());
                 break;
 
+            case -1:
             default:
                 break;
             }

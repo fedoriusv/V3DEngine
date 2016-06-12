@@ -128,6 +128,10 @@ s32 CGeometryGL::computeVertexSize(const ShaderDataList& shaderDataList)
         for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
             CShaderAttribute::EShaderAttribute attribute = attr.second->getData();
+            if (attr.second->getID() < 0)
+            {
+                continue;
+            }
 
             switch (attribute)
             {
@@ -273,6 +277,10 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
         for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
             CShaderAttribute::EShaderAttribute attribute = attr.second->getData();
+            if (attr.second->getID() < 0)
+            {
+                continue;
+            }
 
             switch (attribute)
             {
@@ -508,6 +516,11 @@ void CGeometryGL::initVertexAttribPointer(s32 attrib, EDataType type, u32 count,
 
 void CGeometryGL::vertexAttribArray(s32 attrib, bool enable)
 {
+    if (attrib < 0)
+    {
+        return;
+    }
+
     if (enable)
     {
         glEnableVertexAttribArray(attrib);

@@ -631,22 +631,24 @@ void CRenderPass::bind(u32 target)
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
         CShaderUniform::EUniformData data = uniform->second->getData();
-        if (data != CShaderUniform::eUserUniform)
+        if (data != CShaderUniform::eUserUniform || uniform->second->getID() < 0)
         {
             continue;
         }
-
         m_program->applyUniform(uniform->second);
     }
 
+    //Replaced to render lists
     /*ASSERT(m_targetList.size() > target, "Invalid target index");
     m_targetList[target]->bind();*/
 }
 
 void CRenderPass::unbind(u32 target)
 {
+
     //m_program->unbind();
 
+    //Replaced to render lists
     /*ASSERT(m_targetList.size() > target, "Invalid target index");
     m_targetList[target]->unbind();*/
 
