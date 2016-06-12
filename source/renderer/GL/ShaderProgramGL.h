@@ -38,6 +38,7 @@ namespace renderer
         bool                validateProgram();
 
         static bool         useProgram(u32 shaderProgram);
+        static s32          getCurrentProgram();
 
         void                getShaderIDArray(std::vector<u32>& shaders);
 

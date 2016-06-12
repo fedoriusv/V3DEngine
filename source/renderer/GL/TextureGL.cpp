@@ -1121,6 +1121,7 @@ bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
         glBindTexture(ETextureTargetGL[target], texture);
 #ifdef _DEBUG_GL
         ASSERT((glIsTexture(texture) || texture == 0), "Invalid Texture index");
+        RENDERER->checkForErrors("CTextureGL: bindTexture Error");
 #endif //_DEBUG_GL
         s_currentTextureID[target] = texture;
 
@@ -1153,6 +1154,9 @@ bool CTextureGL::bindTextureUnit(u32 unit)
         ASSERT(unit < DRIVER_CONTEXT->getTextureUnitsCount(), "Not supported count texture units");
 #endif //_DEBUG_GL
         glActiveTexture(GL_TEXTURE0 + unit);
+#ifdef _DEBUG_GL
+        RENDERER->checkForErrors("CTextureGL: bindTextureUnit Error");
+#endif //_DEBUG_GL
         s_currentUnitID = unit;
 
         return true;

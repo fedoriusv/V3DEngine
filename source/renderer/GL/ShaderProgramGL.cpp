@@ -206,8 +206,10 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             s32 id = glGetAttribLocation(m_id, name.c_str());
             if (id < 0)
             {
-                LOG_WARNING("CShaderProgramGL: Attribute not found: %s", name.c_str());
-                attributeList.erase(attribute++);
+                LOG_WARNING("CShaderProgramGL: Attribute not found: %s in program %d", name.c_str(), m_id);
+                ++attribute;
+                // Not need delete more, maybe it will used after clone render technique
+                //attributeList.erase(attribute++);
             }
             else
             {
@@ -225,8 +227,10 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             s32 id = glGetFragDataLocation(m_id, name.c_str());
             if (id < 0)
             {
-                LOG_WARNING("CShaderProgramGL: Frag data not found: %s", name.c_str());
-                fragDataList.erase(fragData++);
+                LOG_WARNING("CShaderProgramGL: Frag data not found: %s in program %d", name.c_str(), m_id);
+                ++fragData;
+                // Not need delete more, maybe it will used after clone render technique
+                //fragDataList.erase(fragData++);
             }
             else
             {
@@ -245,8 +249,10 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
 
             if (id < 0)
             {
-                LOG_WARNING("CShaderProgramGL: Uniform not found: %s", name.c_str());
-                uniformList.erase(uniform++);
+                LOG_WARNING("CShaderProgramGL: Uniform not found: %s in program %d", name.c_str(), m_id);
+                ++uniform;
+                //Not need delete more, maybe it will used after clone render technique
+                //uniformList.erase(uniform++);
             }
             else
             {
@@ -264,7 +270,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             s32 id = glGetUniformLocation(m_id, name.c_str());
             if (id < 0)
             {
-                LOG_WARNING("CShaderProgramGL: Sampler not found: %s", name.c_str());
+                LOG_WARNING("CShaderProgramGL: Sampler not found: %s in program %d", name.c_str(), m_id);
             }
             else
             {
@@ -277,10 +283,15 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
 #ifdef _DEBUG_GL
         RENDERER->checkForErrors("CShaderProgramGL: Bind sampler error");
 #endif //_DEBUG_GL
-        std::remove_if(samplerList.begin(), samplerList.end(), [](const CShaderSampler* item) -> bool
+        /*SamplerList::iterator samplerIter = std::remove_if(samplerList.begin(), samplerList.end(), [](const CShaderSampler* item) -> bool
         {
             return (item->getID() == -1);
         });
+
+        if (samplerIter != samplerList.end())
+        {
+            samplerList.erase(samplerIter, samplerList.end());
+        }*/
     }
 #ifdef _DEBUG_GL
     RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
@@ -390,6 +401,14 @@ bool CShaderProgramGL::useProgram(u32 shaderProgram)
     return false;
 }
 
+s32 CShaderProgramGL::getCurrentProgram()
+{
+    s32 program;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+    return program;
+}
+
 bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
 {
     if (m_id <= 0)
@@ -491,6 +510,9 @@ void CShaderProgramGL::applyUniformInt(s32 location, s32 value)
     {
         glUniform1i(location, value);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformInt Error");
+#endif //_DEBUG_GL
 }
 
 void CShaderProgramGL::applyUniformFloat(s32 location, f32 value)
@@ -499,6 +521,9 @@ void CShaderProgramGL::applyUniformFloat(s32 location, f32 value)
     {
         glUniform1f(location, value);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformFloat Error");
+#endif //_DEBUG_GL
 }
 
 void CShaderProgramGL::applyUniformVector2(s32 location, const core::Vector2D& vector)
@@ -507,6 +532,9 @@ void CShaderProgramGL::applyUniformVector2(s32 location, const core::Vector2D& v
     {
         glUniform2fv(location, 1, &vector.x);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector2 Error");
+#endif //_DEBUG_GL
 }
 void CShaderProgramGL::applyUniformVector3(s32 location, const core::Vector3D& vector)
 {
@@ -514,6 +542,9 @@ void CShaderProgramGL::applyUniformVector3(s32 location, const core::Vector3D& v
     {
         glUniform3fv(location, 1, &vector.x);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector3 Error");
+#endif //_DEBUG_GL
 }
 
 void CShaderProgramGL::applyUniformVector4(s32 location, const core::Vector4D& vector)
@@ -522,6 +553,9 @@ void CShaderProgramGL::applyUniformVector4(s32 location, const core::Vector4D& v
     {
         glUniform4fv(location, 1, &vector.x);
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector4 Error");
+#endif //_DEBUG_GL
 }
 
 void CShaderProgramGL::applyUniformMatrix3(s32 location, const core::Matrix3D& matrix)
@@ -530,6 +564,9 @@ void CShaderProgramGL::applyUniformMatrix3(s32 location, const core::Matrix3D& m
     {
         glUniformMatrix3fv(location, 1, GL_TRUE, matrix.getPtr());
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix3 Error");
+#endif //_DEBUG_GL
 }
 
 void CShaderProgramGL::applyUniformMatrix4(s32 location, const core::Matrix4D& matrix)
@@ -538,6 +575,9 @@ void CShaderProgramGL::applyUniformMatrix4(s32 location, const core::Matrix4D& m
     {
         glUniformMatrix4fv(location, 1, GL_TRUE, matrix.getPtr());
     }
+#ifdef _DEBUG_GL
+    RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix4 Error");
+#endif //_DEBUG_GL
 }
 
 } //namespace renderer
