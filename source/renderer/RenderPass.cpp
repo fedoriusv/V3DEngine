@@ -55,6 +55,19 @@ CRenderPass::CRenderPass(const CRenderPass& pass)
     m_userShaderData->operator=(*pass.m_userShaderData);
 
     m_program = pass.m_program->clone();
+    if (!m_program)
+    {
+        ASSERT(false, "Copy program is failed");
+        return;
+    }
+
+    m_program->addShaderData(m_defaultShaderData);
+    m_program->addShaderData(m_userShaderData);
+
+    if (!m_program->create())
+    {
+        ASSERT(false, "CShaderProgramGL::clone fail");
+    }
 }
 
 CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
@@ -73,6 +86,17 @@ CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
     m_userShaderData->operator=(*pass.m_userShaderData);
 
     m_program = pass.m_program->clone();
+    ASSERT(m_program, "Copy program is failed");
+    if (m_program)
+    {
+        m_program->addShaderData(m_defaultShaderData);
+        m_program->addShaderData(m_userShaderData);
+
+        if (!m_program->create())
+        {
+            ASSERT(false, "CShaderProgramGL::clone fail");
+        }
+    }
 
     m_enable = pass.m_enable;
     m_name = pass.m_name;
@@ -657,8 +681,6 @@ void CRenderPass::unbind(u32 target)
 RenderPassPtr CRenderPass::clone() const
 {
     RenderPassPtr pass = std::make_shared<CRenderPass>(*this);
-    //pass->operator=(*this);
-
     return pass;
 }
 

@@ -22,8 +22,6 @@
             <depthTest val="lequal"/>
         </renderstate>
         <rendertarget>
-            <var val="screen2DLeftTarget"/>
-            <var val="screen2DRightTarget"/>
         </rendertarget>
         <lod geometry="0.0"/>
         <advanced>

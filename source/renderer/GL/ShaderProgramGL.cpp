@@ -118,14 +118,8 @@ ShaderProgramPtr CShaderProgramGL::clone() const
 {
     ShaderProgramPtr program = RENDERER->makeSharedProgram();
     std::static_pointer_cast<CShaderProgramGL>(program)->operator=(*this);
-    
-    if (program->create())
-    {
-        return program;
-    }
 
-    ASSERT(false, "CShaderProgramGL::clone fail");
-    return nullptr;
+    return program;
 }
 
 bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)

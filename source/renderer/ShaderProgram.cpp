@@ -21,7 +21,6 @@ IShaderProgram::IShaderProgram(const IShaderProgram& program)
     : m_enable(program.m_enable)
     , m_flags(IShaderProgram::eInvalid)
 {
-    m_shaderDataList = program.m_shaderDataList;
     m_shaderList = program.m_shaderList;
     m_defines = program.m_defines;
 
@@ -39,7 +38,7 @@ IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
     m_enable = program.m_enable;
     m_flags = IShaderProgram::eInvalid;
 
-    m_shaderDataList = program.m_shaderDataList;
+    m_shaderDataList.clear(); //filled form render pass
     m_shaderList = program.m_shaderList;
     m_defines = program.m_defines;
 

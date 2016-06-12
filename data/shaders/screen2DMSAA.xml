@@ -39,7 +39,7 @@
         <lod geometry="0.0"/>
         <shaders>
             <defines>
-                <var name="USE_MSAA" value="1"/>
+                <var name="USE_MSAA" val="1"/>
             </defines>
             <var name="vscreen2DMSAA" type="vertex">
                 <![CDATA[

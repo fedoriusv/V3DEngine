@@ -94,9 +94,6 @@ CShaderUniform::CShaderUniform(const CShaderUniform& uniform)
     {
         CShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
     }
-
-    m_id = uniform.m_id;
-
 }
 
 CShaderUniform& CShaderUniform::operator=(const CShaderUniform& uniform)
@@ -116,7 +113,7 @@ CShaderUniform& CShaderUniform::operator=(const CShaderUniform& uniform)
         CShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
     }
 
-    m_id = uniform.m_id;
+    m_id = -1;
 
     return *this;
 }
