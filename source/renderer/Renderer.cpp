@@ -172,8 +172,8 @@ bool CRenderer::isDebugMode() const
 
 void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr& data = pass->getDefaultShaderData();
-    const ShaderProgramPtr& program = pass->getShaderProgram();
+    const ShaderDataPtr data = pass->getDefaultShaderData();
+    const ShaderProgramPtr program = pass->getShaderProgram();
 
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)

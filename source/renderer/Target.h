@@ -56,8 +56,9 @@ namespace renderer
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     typedef std::shared_ptr<ITarget>            TargetPtr;
+    typedef std::weak_ptr<ITarget>              TargetWPtr;
 
-    typedef std::vector<TargetPtr>              TargetList;
+    typedef std::vector<TargetWPtr>             TargetList;
     typedef std::map<std::string, TargetPtr>    TargetMap;
     typedef TargetMap::iterator                 TargetIter;
     typedef TargetMap::const_iterator           TargetCIter;
