@@ -37,32 +37,10 @@ CVectorFontData::CVectorFontData(const std::string& font)
 
 CVectorFontData::~CVectorFontData()
 {
+#if USED_FREETYPE
     FT_Done_Face(m_Face);
     FT_Done_FreeType(m_Library);
-}
-
-bool CVectorFontData::addCharsToMap(const std::string& text)
-{
-    bool haveNew = false;
-
-    for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)
-    {
-        if (!m_charList[(*chr)])
-        {
-            haveNew = true;
-        }
-        m_charList[(*chr)] = true;
-    }
-
-    if (haveNew)
-    {
-        if (!CVectorFontData::loadCharList())
-        {
-            return false;
-        }
-    }
-
-    return haveNew;
+#endif //USED_FREETYPE
 }
 
 void CVectorFontData::init(const stream::IStreamPtr& stream)
@@ -79,15 +57,17 @@ bool CVectorFontData::load()
         return false;
     }
 
-    bool success = loadFont(IResource::getResourseName());
+    bool success = false;
+    success = loadFont(IResource::getResourseName());
     stream->close();
 
     return success;
 }
 
+
 bool CVectorFontData::loadFont(const std::string& resource)
 {
-
+#if USED_FREETYPE
     if (resource.empty())
     {
         ASSERT(false, "FreeTypeFont: empty name");
@@ -139,6 +119,33 @@ bool CVectorFontData::loadFont(const std::string& resource)
     }*/
 
     return true;
+#endif //USED_FREETYPE
+    return false;
+}
+
+#if USED_FREETYPE
+bool CVectorFontData::addCharsToMap(const std::string& text)
+{
+    bool haveNew = false;
+
+    for (std::string::const_iterator chr = text.begin(); chr < text.end(); ++chr)
+    {
+        if (!m_charList[(*chr)])
+        {
+            haveNew = true;
+        }
+        m_charList[(*chr)] = true;
+    }
+
+    if (haveNew)
+    {
+        if (!CVectorFontData::loadCharList())
+        {
+            return false;
+        }
+    }
+
+    return haveNew;
 }
 
 bool CVectorFontData::loadCharList()
@@ -306,6 +313,7 @@ void CVectorFontData::fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btG
     delete[] data;
     data = nullptr;
 }
+#endif //USED_FREETYPE
 
 } //namespace resources
 } //namespace v3d

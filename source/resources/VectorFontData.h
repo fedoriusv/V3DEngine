@@ -3,9 +3,11 @@
 
 #include "FontData.h"
 
+#if USED_FREETYPE
 #include "ft2build.h" 
 #include FT_FREETYPE_H
 #include FT_STROKER_H
+#endif //USED_FREETYPE
 
 namespace v3d
 {
@@ -31,13 +33,15 @@ namespace resources
         bool                        addCharsToMap(const std::string& text)  override final;
         bool                        loadFont(const std::string& resource)   override final;
 
+#if USED_FREETYPE
         bool                        loadCharToMap(u32 charId);
         bool                        loadCharList();
+
         void                        fillCharInfo(SCharDesc& charDesc, const FT_BitmapGlyph btGlyph, const FT_GlyphSlot glSlot, const FT_Fixed fixed);
 
         FT_Library                  m_Library;
         FT_Face                     m_Face;
-
+#endif //USED_FREETYPE
         bool                        m_charList[k_fontMapSize];
 
         core::Dimension2D           m_offetTextures;

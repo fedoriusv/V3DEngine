@@ -1,27 +1,28 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0.0)
 
+#Optional Libs
 option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." ON)
+option(BUILD_USE_FREE_TYPE_LIB "Build use FreeType2 library." ON)
 
+#Tested projects
 option(BUILD_TEST_PROJECT_0 "Build Test_CreateWindow" ON)
-option(BUILD_TEST_PROJECT_1 "Build Test_Font." ON)
-option(BUILD_TEST_PROJECT_2 "Build Test_RenderTarget." ON)
-option(BUILD_TEST_PROJECT_3 "Build Test_Billboard." ON)
+option(BUILD_TEST_PROJECT_1 "Build Test_Font." OFF)
+option(BUILD_TEST_PROJECT_2 "Build Test_RenderTarget." OFF)
+option(BUILD_TEST_PROJECT_3 "Build Test_Billboard." OFF)
 option(BUILD_TEST_PROJECT_4 "Build Test_Light." OFF)
-option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." ON)
-option(BUILD_TEST_PROJECT_6 "Build Test_Texture." ON)
-option(BUILD_TEST_PROJECT_7 "Build Test_ParticleSystem." ON)
-option(BUILD_TEST_PROJECT_8 "Build Test_Tessellation." ON)
+option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." OFF)
+option(BUILD_TEST_PROJECT_6 "Build Test_Texture." OFF)
+option(BUILD_TEST_PROJECT_7 "Build Test_ParticleSystem." OFF)
+option(BUILD_TEST_PROJECT_8 "Build Test_Tessellation." OFF)
+
+##############################################################
 
 set(SOLUTION_NAME Valera3D)
-set(ENGINE_NAME Valera3DEngine)
+set(ENGINE_NAME V3DEngine)
 set(GLEW_PLOJECT glew_static)
 set(TINYXML_PLOJECT tinyxml2)
-set(FREETYPE2_PROJECT freetype2)
-if(BUILD_USE_RESIL_LIB)
-    set(RESIL_PROJECT ResIL)
-endif(BUILD_USE_RESIL_LIB)
 
-################################
+##############################################################
 
 if (BUILD_TEST_PROJECT_0)
     set(TEST_PROJECT_0 Test_CreateWindow)
@@ -59,7 +60,7 @@ if (BUILD_TEST_PROJECT_8)
     set(TEST_PROJECT_8 Test_Tessellation)
 endif (BUILD_TEST_PROJECT_8)
 
-################################
+##############################################################
 
 if(COMPILER_MSVC)
     message("-- Configuring MSVC Compiler")
@@ -76,7 +77,7 @@ if(WIN32)
     add_definitions(-D_WIN32 -D_CONSOLE -DUNICODE -D_UNICODE)
 elseif(UNIX AND NOT APPLE)
     message("-- Platform Linux")
-        add_definitions(-D_LINUX -DUNICODE -D_UNICODE)
+    add_definitions(-D_LINUX -DUNICODE -D_UNICODE)
 elseif(APPLE)
     message("-- Platform MacOSX")
     add_definitions(-DMACOSX -DUNICODE -D_UNICODE)
@@ -84,23 +85,62 @@ else()
     message(FATAL_ERROR "Unknown platform. Only Platrorm Windows|Platrorm Linux|Platrorm MacOSX supported")
 endif()
 
-#set(CMAKE_CONFIGURATION_TYPES "Debug;Release;F3DDebug" CACHE STRING "" FORCE)
+##############################################################
 
 project(${SOLUTION_NAME})
+
+##############################################################
+
+#Pathes
+set(SOURCE_DIR source)
+set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs)
+set(TESTS_BIN_DIR ${CMAKE_BINARY_DIR}/tests)
+set(ENGINE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
+set(LIB_INCLUDE_DIRECTORY ${ENGINE_PROJECT_DIR}/${SOURCE_DIR}
+    ${ENGINE_PROJECT_DIR}/${SOURCE_DIR}/ThirdParty
+    ${ENGINE_PROJECT_DIR}/libs/glew/include;
+    ${ENGINE_PROJECT_DIR}/libs/tinyxml2;
+    )
+
+if(BUILD_USE_FREE_TYPE_LIB)
+    set(FREETYPE2_PROJECT freetype2)
+    set(FREETYPE_DEFINE "-DUSED_FREETYPE=1")
+    set(FREETYPE_INCLUDE_DIRECTORY ${ENGINE_PROJECT_DIR}/libs/freetype2/include)
+else(BUILD_USE_FREE_TYPE_LIB)
+    set(FREETYPE_DEFINE "-DUSED_FREETYPE=0")
+endif(BUILD_USE_FREE_TYPE_LIB)
+
+if(BUILD_USE_RESIL_LIB)
+    set(RESIL_PROJECT ResIL)
+    set(RESIL_DEFINE "-DUSED_DEVIL=1")
+    set(RESIL_INCLUDE_DIRECTORY ${ENGINE_PROJECT_DIR}/libs/ResIL/include)
+    set(RESIL_INCLUDE_SOURCE_DIRECTORY ${ENGINE_PROJECT_DIR}/libs/ResIL/src-IL/include)
+else(BUILD_USE_RESIL_LIB)
+    set(RESIL_DEFINE "-DUSED_DEVIL=0")
+endif(BUILD_USE_RESIL_LIB)
+
+##############################################################
+
+include_directories(BEFORE ${LIB_INCLUDE_DIRECTORY})
+
+##############################################################
 
 if(WIN32)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release;F3DDebug;F3DRelease" CACHE STRING "" FORCE)
 #   F3D Max Editor Debug
-    set(CMAKE_CXX_FLAGS_F3DDEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0 /Zi")
+    set(CMAKE_CXX_FLAGS_F3DDEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=0 -DUSED_FREETYPE=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0 /Zi")
     set(CMAKE_C_FLAGS_F3DDEBUG ${CMAKE_C_FLAGS_DEBUG})
     set(CMAKE_EXE_LINKER_FLAGS_F3DDEBUG ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
     set(CMAKE_F3DDEBUG_POSTFIX "_d")
-#   F3D Max Editor Release  
-    set(CMAKE_CXX_FLAGS_F3DRELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0")
+#   F3D Max Editor Release
+    set(CMAKE_CXX_FLAGS_F3DRELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=0 -DUSED_FREETYPE=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0")
     set(CMAKE_C_FLAGS_F3DRELEASE ${CMAKE_C_FLAGS_RELEASE})
     set(CMAKE_EXE_LINKER_FLAGS_F3DRELEASE ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
 #   Debug
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 ${RESIL_DEFINE} ${FREETYPE_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${FREETYPE_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
     if(CMAKE_CL_64)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
@@ -109,12 +149,15 @@ if(WIN32)
     endif(CMAKE_CL_64)
     set(CMAKE_DEBUG_POSTFIX "_d")
 #   Release
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 ${RESIL_DEFINE} ${FREETYPE_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${FREETYPE_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
 elseif(APPLE)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -x objective-c++" )
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 ${RESIL_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 ${RESIL_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
 #   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
     set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++0x")
@@ -122,18 +165,14 @@ elseif(APPLE)
     set(CMAKE_DEBUG_POSTFIX "_d")
 elseif(UNIX AND NOT APPLE)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=1 -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 ${RESIL_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 ${RESIL_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 #   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lX11 -lGL" )
     set(CMAKE_DEBUG_POSTFIX "_d")
 endif()
 
-################################
-
-set(SOURCE_DIR source)
-set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs)
-set(TESTS_BIN_DIR ${CMAKE_BINARY_DIR}/tests)
+##############################################################
 
 if(WIN32)
     if(CMAKE_CL_64)
@@ -149,62 +188,55 @@ if(WIN32)
     endif(BUILD_USE_RESIL_LIB)
 endif(WIN32)
 
-################################
-#Source Dir
+##############################################################
 
-set(MAIN_FILE 
-    ${SOURCE_DIR}/Object.cpp
-    ${SOURCE_DIR}/Object.h
- )
-
-#Filters
-################################
 #Platform Source
-if(WIN32) 
+if(WIN32)
     set(PLATFORM_HEADERS
         ${SOURCE_DIR}/platform/Platform.h
         ${SOURCE_DIR}/platform/Window.h
         ${SOURCE_DIR}/platform/WindowWin32.h
-    )
+        )
     
     set(PLATFORM_SOURCES
         ${SOURCE_DIR}/platform/Platform.cpp
         ${SOURCE_DIR}/platform/Window.cpp
         ${SOURCE_DIR}/platform/WindowWin32.cpp
-    )
+        )
 
 elseif(UNIX AND NOT APPLE)
     set(PLATFORM_HEADERS
         ${SOURCE_DIR}/platform/Platform.h
         ${SOURCE_DIR}/platform/Window.h
         ${SOURCE_DIR}/platform/WindowLinux.h
-    )
+        )
     
     set(PLATFORM_SOURCES
         ${SOURCE_DIR}/platform/Platform.cpp
         ${SOURCE_DIR}/platform/Window.cpp
         ${SOURCE_DIR}/platform/WindowLinux.cpp
-    )
+        )
 
 elseif(APPLE)
     set(PLATFORM_HEADERS
         ${SOURCE_DIR}/platform/Platform.h
         ${SOURCE_DIR}/platform/Window.h
         ${SOURCE_DIR}/platform/WindowMacOSX.h
-    )
+        )
     
     set(PLATFORM_SOURCES
         ${SOURCE_DIR}/platform/Platform.cpp
         ${SOURCE_DIR}/platform/Window.cpp
         ${SOURCE_DIR}/platform/WindowMacOSX.mm
-    )
+        )
 endif()
+
+##############################################################
 
 #Core Source
 file(GLOB CORE_HEADERS ${SOURCE_DIR}/core/*.h)
 file(GLOB CORE_INLINES ${SOURCE_DIR}/core/*.inl)
 file(GLOB CORE_SOURCES ${SOURCE_DIR}/core/*.cpp)
-
 
 #Renderer Source
 file(GLOB RENDERER_HEADERS ${SOURCE_DIR}/renderer/*.h)
@@ -255,7 +287,8 @@ file(GLOB EVENT_SOURCES ${SOURCE_DIR}/event/*.cpp)
 file(GLOB MAIN_HEADERS ${SOURCE_DIR}/*.h)
 file(GLOB MAIN_SOURCES ${SOURCE_DIR}/*.cpp)
 
-################################
+##############################################################
+
 #Filters
 source_group(platform         FILES ${PLATFORM_HEADERS}    ${PLATFORM_SOURCES})
 source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES}          ${CORE_INLINES})
@@ -272,17 +305,7 @@ source_group(utils            FILES ${UTILS_HEADERS}       ${UTILS_SOURCES})
 source_group(event            FILES ${EVENT_HEADERS}       ${EVENT_SOURCES})
 source_group(""               FILES ${MAIN_HEADERS}        ${MAIN_SOURCES})
 
-set (ENGINE_PROJECT_DIR ${PROJECT_SOURCE_DIR})
-
-include_directories(
-    ${SOURCE_DIR}
-    ${SOURCE_DIR}/ThirdParty
-    libs/glew/include
-    libs/tinyxml2
-    libs/freetype2/include
-    libs/ResIL/include
-    libs/ResIL/src-IL/include
-    )
+##############################################################
 
 add_library(
     ${ENGINE_NAME} STATIC
@@ -300,98 +323,110 @@ add_library(
     ${UTILS_HEADERS}       ${UTILS_SOURCES}
     ${EVENT_HEADERS}       ${EVENT_SOURCES}
     ${MAIN_HEADERS}        ${MAIN_SOURCES}
-    ) 
-
-if(BUILD_USE_RESIL_LIB)    
-    target_link_libraries(${ENGINE_NAME} 
-        ${TINYXML_PLOJECT}
-        ${FREETYPE2_PROJECT}
-#        ${GLEW_PLOJECT}
-#        ${RESIL_PROJECT}
-        )
-        
-    link_directories(${ENGINE_NAME}
-        ${PROJECT_BINARY_DIR}/libs/glew
-        ${RESIL_LIBPATH}
-        )
-else()
-    target_link_libraries(${ENGINE_NAME} 
-        ${TINYXML_PLOJECT}
-        ${FREETYPE2_PROJECT}
-#        ${GLEW_PLOJECT}
     )
-    
-    link_directories(${ENGINE_NAME}
-        ${PROJECT_BINARY_DIR}/libs/glew
-        )
-    
+
+##############################################################
+
+#link_libraries
+set(BUILD_LINK_LIBRARIES ${TINYXML_PLOJECT})
+#${GLEW_PLOJECT} included from source files
+#${RESIL_LIB} included from source files
+
+target_link_libraries(${ENGINE_NAME} ${BUILD_LINK_LIBRARIES})
+if(BUILD_USE_FREE_TYPE_LIB)
+    target_link_libraries(${ENGINE_NAME} ${FREETYPE2_PROJECT})
+endif(BUILD_USE_FREE_TYPE_LIB)
+
+##############################################################
+
+#LINK_DERICTORIES
+set(LINK_DERICTORIES ${PROJECT_BINARY_DIR}/libs/glew)
+
+if (BUILD_USE_RESIL_LIB)
+    set(LINK_DERICTORIES ${LINK_DERICTORIES} ${RESIL_LIBPATH})
 endif(BUILD_USE_RESIL_LIB)
 
-################################
+link_directories(${ENGINE_NAME} ${LINK_DERICTORIES})
+
+##############################################################
+
 #Additional Libs
+message("-- Include Source Lib GLEW")
 add_subdirectory(libs/glew)
+
+message("-- Include Source Lib TINYXML2")
 add_subdirectory(libs/tinyxml2)
-add_subdirectory(libs/freetype2)
+
+if(BUILD_USE_FREE_TYPE_LIB)
+    message("-- Include Source Lib FREETYPE2")
+    add_subdirectory(libs/freetype2)
+endif(BUILD_USE_FREE_TYPE_LIB)
+
 if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
+    message("-- Include Source Lib ResIL")
     add_subdirectory(libs/ResIL)
 endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
-################################
+##############################################################
 
 if (BUILD_TEST_PROJECT_0)
+    message("-- Create project ${TEST_PROJECT_0}")
     add_subdirectory(tests/${TEST_PROJECT_0})
 endif (BUILD_TEST_PROJECT_0)
 
 if (BUILD_TEST_PROJECT_1)
+    message("-- Create project ${TEST_PROJECT_1}")
     add_subdirectory(tests/${TEST_PROJECT_1})
 endif (BUILD_TEST_PROJECT_1)
 
 if (BUILD_TEST_PROJECT_2)
+    message("-- Create project ${TEST_PROJECT_2}")
     add_subdirectory(tests/${TEST_PROJECT_2})
 endif (BUILD_TEST_PROJECT_2)
 
 if (BUILD_TEST_PROJECT_3)
+    message("-- Create project ${TEST_PROJECT_3}")
     add_subdirectory(tests/${TEST_PROJECT_3})
 endif (BUILD_TEST_PROJECT_3)
 
 if (BUILD_TEST_PROJECT_4)
+    message("-- Create project ${TEST_PROJECT_4}")
     add_subdirectory(tests/${TEST_PROJECT_4})
 endif (BUILD_TEST_PROJECT_4)
 
 if (BUILD_TEST_PROJECT_5)
+    message("-- Create project ${TEST_PROJECT_5}")
     add_subdirectory(tests/${TEST_PROJECT_5})
 endif (BUILD_TEST_PROJECT_5)
 
 if (BUILD_TEST_PROJECT_6)
+    message("-- Create project ${TEST_PROJECT_6}")
     add_subdirectory(tests/${TEST_PROJECT_6})
 endif (BUILD_TEST_PROJECT_6)
 
 if (BUILD_TEST_PROJECT_7)
+    message("-- Create project ${TEST_PROJECT_7}")
     add_subdirectory(tests/${TEST_PROJECT_7})
 endif (BUILD_TEST_PROJECT_7)
 
 if (BUILD_TEST_PROJECT_8)
+    message("-- Create project ${TEST_PROJECT_8}")
     add_subdirectory(tests/${TEST_PROJECT_8})
 endif (BUILD_TEST_PROJECT_8)
 
-################################
+##############################################################
+
 #Dependencies
+set(BUILD_DEPENDENCIES ${GLEW_PLOJECT} ${TINYXML_PLOJECT})
+
+if(BUILD_USE_FREE_TYPE_LIB)
+    set(BUILD_DEPENDENCIES ${BUILD_DEPENDENCIES} ${FREETYPE2_PROJECT})
+endif(BUILD_USE_FREE_TYPE_LIB)
+
 if(NOT WIN32 AND BUILD_USE_RESIL_LIB)
-    add_dependencies(${ENGINE_NAME} 
-        ${GLEW_PLOJECT}
-        ${TINYXML_PLOJECT}
-        ${FREETYPE2_PROJECT}
-        ${RESIL_LIB}
-        )
-else()
-    add_dependencies(${ENGINE_NAME} 
-        ${GLEW_PLOJECT}
-        ${TINYXML_PLOJECT}
-        ${FREETYPE2_PROJECT}
-        )
+    set(BUILD_DEPENDENCIES ${BUILD_DEPENDENCIES} ${RESIL_LIB})
 endif(NOT WIN32 AND BUILD_USE_RESIL_LIB)
 
+add_dependencies(${ENGINE_NAME} ${BUILD_DEPENDENCIES})
 
-
-
-
+##############################################################

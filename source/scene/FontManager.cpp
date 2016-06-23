@@ -63,15 +63,13 @@ const CFontData* CFontManager::load(const std::string& name, const std::string& 
                         font = new CBitmapFontData(nameStr);
                         font->setFontType(CFontData::EFontType::eBitmapFont);
                     }
+#if USED_FREETYPE
                     else if (fileExtension == ".ttf")
                     {
                         font = new CVectorFontData(nameStr);
                         font->setFontType(CFontData::EFontType::eVectorFont);
                     }
-
-                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
-                    font->setResourseFolder(fullPath);
-
+#endif //USED_FREETYPE
                     if (!font)
                     {
                         LOG_ERROR("CFontManager: FreeTypeFont Load error [%s]", nameStr.c_str());
@@ -79,6 +77,9 @@ const CFontData* CFontManager::load(const std::string& name, const std::string& 
 
                         return nullptr;
                     }
+
+                    const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
+                    font->setResourseFolder(fullPath);
 
                     font->init(stream);
                     font->setResourseName(fullName);
