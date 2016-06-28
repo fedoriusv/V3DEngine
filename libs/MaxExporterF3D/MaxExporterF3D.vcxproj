@@ -31,6 +31,7 @@
     <MaxSDK>C:/Program Files/Autodesk/3ds Max 2015 SDK/maxsdk</MaxSDK>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <ProjectName>MaxExporterF3D</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -62,8 +63,8 @@
       <AdditionalIncludeDirectories>$(MaxSdkInc);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;paramblk2.lib;msxml2.lib;igame.lib;Valera3DEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(MaxSdkLib);$(MaxLib);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;../../project/win32/libs/tinyxml2/F3DRelease;../../project/win32/libs/freetype2/F3DRelease;../../project/win32/F3DRelease;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>comctl32.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;paramblk2.lib;msxml2.lib;igame.lib;V3DEngine.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(MaxSdkLib);$(MaxLib);C:\Program Files\Autodesk\3ds Max 2015 SDK\maxsdk\lib\x64\Release;../../project/win/libs/tinyxml2/Release;../../project/win/F3DRelease;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\ExporterF3D.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -76,6 +77,12 @@
     <ClCompile>
       <PreprocessorDefinitions>_SECURE_SCL=0;_USRDLL;_CRT_NON_CONFORMING_SWPRINTFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -127,11 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExporterF3D.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\project\win32\Valera3DEngine.vcxproj">
-      <Project>{59db0459-ccd1-42e2-a310-815601009023}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

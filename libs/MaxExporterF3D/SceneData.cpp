@@ -7,6 +7,7 @@
 #include "scene/Mesh.h"
 #include "scene/Light.h"
 #include "scene/Camera.h"
+#include "resources/Image.h"
 
 using namespace v3d;
 using namespace scene;
@@ -44,6 +45,14 @@ void CSceneData::addNode(const Obj& node)
 void CSceneData::addMaterial(const MaterialPtr& material)
 {
     m_materialList.push_back(material);
+}
+
+void v3d::CSceneData::addTexture(const renderer::MaterialPtr& material, const resources::CImage* image)
+{
+    if (material && image)
+    {
+        m_textureList.insert(decltype(m_textureList)::value_type(material, image));
+    }
 }
 
 const std::vector<MaterialPtr>& CSceneData::getMaterialList() const
@@ -174,15 +183,28 @@ bool CSceneData::saveMaterial(MemoryStreamPtr& stream)
         LOG_INFO("Material name %s", name.c_str());
 
         //Texture
-        u32 countTextures = material->getTextureCount();
+
+        decltype(m_textureList) textures;
+        std::copy_if(m_textureList.cbegin(), m_textureList.cend(), std::inserter(textures, textures.begin()), [&material](auto& item) -> bool
+        {
+            return item.first == material;
+        });
+
+        u32 countTextures = (u32)textures.size();
         subStream->write(countTextures);
         LOG_INFO("Num Texutes %d", countTextures);
 
-        for (u32 i = 0; i < countTextures; ++i)
+        for (auto& item : textures)
         {
-            const CTexture* texure = material->getTexture(i);
-            subStream->write(texure->getResourseName());
+            const std::string& name = item.second->getResourseName();
+            LOG_INFO("Texute name %d", name.c_str());
+            subStream->write(name);
         }
+        /*for (u32 i = 0; i < countTextures; ++i)
+        {
+            const TexturePtr texure = material->getTexture(i);
+            subStream->write(texure->getResourseName());
+        }*/
 
         //Colors
         core::Vector4D diffuse = material->getDiffuseColor();

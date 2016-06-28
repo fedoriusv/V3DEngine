@@ -234,6 +234,7 @@ const Dimension3D& CTexture::getSize() const
         return m_impl->getSize();
     }
 
+    ASSERT(false, "Returned local data");
     return Dimension3D(0, 0, 0);
 }
 
