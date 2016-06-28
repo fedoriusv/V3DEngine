@@ -13,12 +13,13 @@
 #include "scene/Mesh.h"
 #include "scene/Camera.h"
 #include "scene/Light.h"
+#include "resources/Image.h"
 #include "renderer/NULL/GeometryNull.h"
-#include "renderer/NULL/TextureNull.h"
 
 using namespace v3d;
 using namespace scene;
 using namespace renderer;
+using namespace resources;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -589,10 +590,11 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 std::string diffuseMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
                 LOG_INFO("DiffuseMap Texture File : %s", diffuseMapName.c_str());
 
-                CTexture* texture = new CTextureNull();
+                CImage* texture = new CImage();
                 texture->setResourseName(diffuseMapName);
 
-                material->setTexture(i, texture);
+                //material->setTexture(i, texture);
+                m_scene->addTexture(material, texture);
 
                 IGameUVGen* uvGen = textureMap->GetIGameUVGen();
                 if (uvGen)
@@ -618,10 +620,11 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 std::string heightMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
                 LOG_INFO("HeightMap Texture File : %s", heightMapName.c_str());
 
-                CTexture* texture = new CTextureNull();
+                CImage* texture = new CImage();
                 texture->setResourseName(heightMapName);
 
-                material->setTexture(i, texture);
+               // material->setTexture(i, texture);
+                m_scene->addTexture(material, texture);
 
             }
                 break;
@@ -632,10 +635,11 @@ bool ExporterF3D::ExportMaterial(IGameMaterial* gameMaterial, MaterialPtr& mater
                 std::string normalMapName = getBitmapNameWithoutPath(TCHARToString(textureMap->GetBitmapFileName()));
                 LOG_INFO("NormalMap Texture File : %s", normalMapName.c_str());
 
-                CTexture* texture = new CTextureNull();
+                CImage* texture = new CImage();
                 texture->setResourseName(normalMapName);
 
-                material->setTexture(i, texture);
+                //material->setTexture(i, texture);
+                m_scene->addTexture(material, texture);
 
             }
                 break;
