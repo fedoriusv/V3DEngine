@@ -1,4 +1,4 @@
-#include "WindowWin32.h"
+#include "WindowWinApi.h"
 #include "event/EventManager.h"
 
 #include <winuser.h>
@@ -11,28 +11,31 @@
 #   pragma comment(lib, "dxguid.lib")
 #endif
 
-using namespace v3d;
-using namespace v3d::platform;
-using namespace v3d::event;
+namespace v3d
+{
+namespace platform
+{
 
-CWindowWin32::CWindowWin32(const WindowParam& param)
-    : CWindow(param)
+using namespace event;
+
+WindowWinApi::WindowWinApi(const WindowParam& param)
+    : Window(param)
     , m_window(nullptr)
     , m_context(nullptr)
 {
-    m_platformType = EPlatformType::ePlatformWin32;
+    m_platformType = EPlatformType::ePlatformWindows;
 }
 
-CWindowWin32::~CWindowWin32()
+WindowWinApi::~WindowWinApi()
 {
 }
 
-HWND CWindowWin32::getHandleWindow() const
+HWND WindowWinApi::getHandleWindow() const
 {
     return m_window;
 }
 
-void CWindowWin32::minimize()
+void WindowWinApi::minimize()
 {
     WINDOWPLACEMENT wndpl;
     wndpl.length = sizeof(WINDOWPLACEMENT);
@@ -41,7 +44,7 @@ void CWindowWin32::minimize()
     SetWindowPlacement(m_window, &wndpl);
 }
 
-void CWindowWin32::maximize()
+void WindowWinApi::maximize()
 {
     WINDOWPLACEMENT wndpl;
     wndpl.length = sizeof(WINDOWPLACEMENT);
@@ -50,7 +53,7 @@ void CWindowWin32::maximize()
     SetWindowPlacement(m_window, &wndpl);
 }
 
-void CWindowWin32::restore()
+void WindowWinApi::restore()
 {
     WINDOWPLACEMENT wndpl;
     wndpl.length = sizeof(WINDOWPLACEMENT);
@@ -59,7 +62,7 @@ void CWindowWin32::restore()
     SetWindowPlacement(m_window, &wndpl);
 }
 
-void CWindowWin32::setResizeble(bool value)
+void WindowWinApi::setResizeble(bool value)
 {
     if (m_param._isFullscreen || m_param._isResizeble == value)
     {
@@ -98,7 +101,7 @@ void CWindowWin32::setResizeble(bool value)
 
 }
 
-void CWindowWin32::setFullScreen(bool value)
+void WindowWinApi::setFullScreen(bool value)
 {
     if (m_param._isFullscreen == value)
     {
@@ -158,7 +161,7 @@ void CWindowWin32::setFullScreen(bool value)
     m_param._isFullscreen = value;
 }
 
-bool CWindowWin32::isMaximized() const
+bool WindowWinApi::isMaximized() const
 {
     WINDOWPLACEMENT plc;
     plc.length = sizeof(WINDOWPLACEMENT);
@@ -172,7 +175,7 @@ bool CWindowWin32::isMaximized() const
     return ret;
 }
 
-bool CWindowWin32::isMinimized() const
+bool WindowWinApi::isMinimized() const
 {
     WINDOWPLACEMENT plc;
     plc.length = sizeof(WINDOWPLACEMENT);
@@ -186,24 +189,24 @@ bool CWindowWin32::isMinimized() const
     return ret;
 }
 
-bool CWindowWin32::isActive() const
+bool WindowWinApi::isActive() const
 {
     bool ret = (GetActiveWindow() == m_window);
     return ret;
 }
 
-bool CWindowWin32::isFocused() const
+bool WindowWinApi::isFocused() const
 {
     bool ret = (GetFocus() == m_window);
     return ret;
 }
 
-void CWindowWin32::setCaption(const std::string& text)
+void WindowWinApi::setCaption(const std::string& text)
 {
     SetWindowTextA(m_window, text.c_str());
 }
 
-void CWindowWin32::setPosition(const core::Point2D& pos)
+void WindowWinApi::setPosition(const core::Point2D& pos)
 {
     if (m_param._isFullscreen)
     {
@@ -218,7 +221,7 @@ void CWindowWin32::setPosition(const core::Point2D& pos)
     m_param._position = pos;
 }
 
-const core::Point2D& CWindowWin32::getPosition() const
+const core::Point2D& WindowWinApi::getPosition() const
 {
     RECT rect;
     GetWindowRect(m_window, &rect);
@@ -229,12 +232,12 @@ const core::Point2D& CWindowWin32::getPosition() const
     return m_param._position;
 }
 
-void CWindowWin32::setCursorPosition(const core::Point2D& pos)
+void WindowWinApi::setCursorPosition(const core::Point2D& pos)
 {
     SetCursorPos(pos.x, pos.y);
 }
 
-void CWindowWin32::getCursorPosition(core::Point2D& pos) const
+void WindowWinApi::getCursorPosition(core::Point2D& pos) const
 {
     POINT mouse;
     GetCursorPos(&mouse);
@@ -243,7 +246,7 @@ void CWindowWin32::getCursorPosition(core::Point2D& pos) const
     pos.y = static_cast<s32>(mouse.y);
 }
 
-bool CWindowWin32::begin()
+bool WindowWinApi::begin()
 {
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
@@ -263,16 +266,16 @@ bool CWindowWin32::begin()
     return true;
 }
 
-bool CWindowWin32::end()
+bool WindowWinApi::end()
 {
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
     return SwapBuffers(m_context) != FALSE;
-#else //_OPENGL_DRIVER_
+#else //_OPENGL_RENDER_
     return true;
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_
 }
 
-void CWindowWin32::create()
+void WindowWinApi::create()
 {
     LOG_INFO("Create Windows");
 
@@ -283,7 +286,7 @@ void CWindowWin32::create()
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wcex.lpfnWndProc = CWindowWin32::WndProc;
+    wcex.lpfnWndProc = WindowWinApi::WndProc;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
@@ -354,14 +357,14 @@ void CWindowWin32::create()
 
     LOG_INFO("Window Size (%d, %d)", m_param._size.width, m_param._size.height);
 
-    CWindowWin32::addKeyCodes();
+    WindowWinApi::addKeyCodes();
 
 #if _DIRECTINPUT_
     m_controllersInfo.init(hInstance, m_window);
 #endif
 }
 
-void CWindowWin32::close()
+void WindowWinApi::close()
 {
 #if _DIRECTINPUT_
     m_controllersInfo.release();
@@ -377,7 +380,7 @@ void CWindowWin32::close()
     UnregisterClass(__TEXT("V3DWin32"), hInstance);
 }
 
-void CWindowWin32::addKeyCodes()
+void WindowWinApi::addKeyCodes()
 {
     m_keys.add(eKeyUknown, 0x00);
     m_keys.add(eKeyLButton, 0x01);
@@ -526,18 +529,18 @@ void CWindowWin32::addKeyCodes()
 }
 
 #if _DIRECTINPUT_
-CWindowWin32::SControllerInfo& CWindowWin32::getControllersInfo()
+WindowWinApi::SControllerInfo& WindowWinApi::getControllersInfo()
 {
     return m_controllersInfo;
 }
 
-CWindowWin32::SControllerInfo::SControllerInfo()
+WindowWinApi::SControllerInfo::SControllerInfo()
 : _directInput(nullptr)
 , _window(nullptr)
 {
 }
 
-bool CWindowWin32::SControllerInfo::init(HINSTANCE instance, HWND window)
+bool WindowWinApi::SControllerInfo::init(HINSTANCE instance, HWND window)
 {
     _window = window;
 
@@ -556,7 +559,7 @@ bool CWindowWin32::SControllerInfo::init(HINSTANCE instance, HWND window)
     return true;
 }
 
-void CWindowWin32::SControllerInfo::release()
+void WindowWinApi::SControllerInfo::release()
 {
     for (u32 i = 0; i < k_maxControllers; ++i)
     {
@@ -576,7 +579,7 @@ void CWindowWin32::SControllerInfo::release()
     }
 }
 
-BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE lpddi, LPVOID cp)
+BOOL CALLBACK WindowWinApi::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE lpddi, LPVOID cp)
 {
     SControllerInfo* info = reinterpret_cast<SControllerInfo*>(cp);
 
@@ -679,7 +682,7 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumJoysticks(LPCDIDEVICEINSTANCE l
     return DIENUM_CONTINUE;
 }
 
-BOOL CALLBACK CWindowWin32::SControllerInfo::enumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, LPVOID cp)
+BOOL CALLBACK WindowWinApi::SControllerInfo::enumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, LPVOID cp)
 {
     SControllerState* controller = reinterpret_cast<SControllerState*>(cp);
 
@@ -703,7 +706,7 @@ BOOL CALLBACK CWindowWin32::SControllerInfo::enumObjectsCallback(const DIDEVICEO
     return DIENUM_CONTINUE;
 }
 
-HRESULT CWindowWin32::SControllerInfo::updateInputState()
+HRESULT WindowWinApi::SControllerInfo::updateInputState()
 {
     DIJOYSTATE js;
 
@@ -787,15 +790,15 @@ HRESULT CWindowWin32::SControllerInfo::updateInputState()
     return S_OK;
 }
 
-CWindowWin32::SControllerInfo::SControllerState::SControllerState()
-: _index(-1)
-, _connected(false)
-, _joy(nullptr)
-, _type(eCUnknown)
+WindowWinApi::SControllerInfo::SControllerState::SControllerState()
+    : _index(-1)
+    , _connected(false)
+    , _joy(nullptr)
+    , _type(eCUnknown)
 {
 }
 
-void CWindowWin32::SControllerInfo::SControllerState::reset()
+void WindowWinApi::SControllerInfo::SControllerState::reset()
 {
     _connected = false;
     _name.clear();
@@ -804,7 +807,7 @@ void CWindowWin32::SControllerInfo::SControllerState::reset()
 }
 #endif
 
-LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowWinApi::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #ifndef WHEEL_DELTA
 #   define WHEEL_DELTA 120
@@ -841,7 +844,7 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
         {
-            SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
+            SKeyCodes& keys = const_cast<SKeyCodes&>(ENGINE_WINDOW->getKeyCodes());
 
             event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
             event->_event = event::eKeyboardPressDown;
@@ -856,7 +859,7 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SYSKEYUP:
         case WM_KEYUP:
         {
-            SKeyCodes& keys = const_cast<SKeyCodes&>(WINDOW->getKeyCodes());
+            SKeyCodes& keys = const_cast<SKeyCodes&>(ENGINE_WINDOW->getKeyCodes());
 
             event::KeyboardInputEventPtr event = std::make_shared<event::SKeyboardInputEvent>();
             event->_event = event::eKeyboardPressUp;
@@ -929,7 +932,7 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_TIMER:
         {
 #if _DIRECTINPUT_
-            platform::WindowWin32Ptr window = std::static_pointer_cast<platform::CWindowWin32>(WINDOW);
+            platform::WindowWinApiPtr window = std::static_pointer_cast<platform::WindowWinApi>(ENGINE_WINDOW);
             if (DI_OK != window->getControllersInfo().updateInputState())
             {
                 KillTimer(hWnd, 0);
@@ -960,3 +963,6 @@ LRESULT CALLBACK CWindowWin32::WndProc(HWND hWnd, UINT message, WPARAM wParam, L
 
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
+
+} //namespace platform
+} //namespace v3d

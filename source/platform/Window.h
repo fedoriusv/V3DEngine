@@ -1,5 +1,4 @@
-#ifndef _V3D_WINDOW_H_
-#define _V3D_WINDOW_H_
+#pragma once
 
 #include "common.h"
 #include "event/InputEventKeyboard.h"
@@ -10,11 +9,12 @@ namespace platform
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum class EDriverType
+    enum class ERenderType
     {
-        eDriverNull = -1,
-        eDriverOpenGL,
-        eDriverDirect3D
+        eRenderNull = -1,
+        eRenderOpenGL,
+        eRenderDirect3D,
+        eRenderVulkan
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ namespace platform
     enum class EPlatformType
     {
         ePlatformNull = -1,
-        ePlatformWin32,
+        ePlatformWindows,
         ePlatformLinux,
         ePlatformMacOSX
     };
@@ -31,7 +31,7 @@ namespace platform
 
     struct WindowParam
     {
-        EDriverType       _driverType;
+        ERenderType       _renderType;
         core::Dimension2D _size;
         core::Point2D     _position;
         bool              _isFullscreen;
@@ -39,8 +39,7 @@ namespace platform
         bool              _isVisible;
 
         WindowParam()
-            : _driverType(EDriverType::eDriverNull)
-            , _size(core::Dimension2D(800U, 600U))
+            : _size(core::Dimension2D(1024U, 768U))
             , _position(core::Point2D(0U, 0U))
             , _isFullscreen(false)
             , _isResizeble(false)
@@ -51,14 +50,14 @@ namespace platform
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CPlatform;
+    class Platform;
 
-    class CWindow
+    class Window
     {
     public:
 
-        CWindow(const WindowParam& param);
-        virtual                         ~CWindow();
+        Window(const WindowParam& param);
+        virtual                         ~Window();
 
         virtual void                    minimize()                                  = 0;
         virtual void                    maximize()                                  = 0;
@@ -81,19 +80,19 @@ namespace platform
         bool                            isResizeble()       const;
         const core::Dimension2D&        getSize()           const;
         const EPlatformType             getPlatformType()   const;
-        const EDriverType               getDriverType()     const;
 
         virtual bool                    begin()                                     = 0;
         virtual bool                    end()                                       = 0;
+
+        virtual void                    close()                                     = 0;
 
         const event::SKeyCodes&         getKeyCodes();
 
     protected:
 
-        friend                          CPlatform;
+        friend                          Platform;
 
         virtual void                    create()                                    = 0;
-        virtual void                    close()                                     = 0;
 
         virtual void                    addKeyCodes()                               = 0;
 
@@ -105,10 +104,9 @@ namespace platform
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CWindow>    WindowPtr;
+    using WindowPtr =                   std::shared_ptr<Window>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_WINDOW_H_
+} //namespace platform
+} //namespace v3d

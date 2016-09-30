@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 
 #ifdef _PLATFORM_WIN_
-#   include "platform/WindowWin32.h"
+#   include "platform/WindowWinApi.h"
 #endif
 
 #ifdef _PLATFORM_MACOSX_
@@ -13,32 +13,26 @@
 #   include "platform/WindowLinux.h"
 #endif
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #   include "context/DriverContextGL.h"
 #   include "renderer/GL/RendererGL.h"
 #endif
 
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
 #   include "context/DriverContextD3D.h"
 #   include "renderer/D3D/RendererD3D.h"
 #endif
 
 
-using namespace v3d;
-using namespace core;
-using namespace platform;
+namespace v3d
+{
+namespace platform
+{
+
 using namespace renderer;
+using namespace core;
 
-CPlatform::CPlatform()
-{
-}
-
-CPlatform::~CPlatform()
-{
-}
-
-WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Point2D& pos,
-    bool isFullscreen, bool isResizeble, EDriverType driverType)
+WindowPtr Platform::createWindow(const core::Dimension2D & size, const core::Point2D & pos, bool isFullscreen, bool isResizeble)
 {
     WindowPtr window = nullptr;
 
@@ -47,19 +41,20 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
     param._position = pos;
     param._isFullscreen = isFullscreen;
     param._isResizeble = isFullscreen ? false : isResizeble;
-    param._driverType = driverType;
 
 #ifdef _PLATFORM_WIN_
-    window = std::make_shared<CWindowWin32>(param);
-#endif
-
-#ifdef _PLATFORM_MACOSX_
+    window = std::make_shared<WindowWinApi>(param);
+#elif _PLATFORM_MACOSX_
     window = std::make_shared<CWindowMacOSX>(param);
-#endif
-
-#ifdef _PLATFORM_LINUX_
+#elif _PLATFORM_LINUX_
     window = std::make_shared<CWindowLinux>(param);
-#endif
+#endif //_PLATFORM_LINUX_
+
+    if (!window)
+    {
+        LOG_ERROR("Platform::createWindow: Windows is't allocated");
+        return nullptr;
+    }
 
     window->create();
 
@@ -67,124 +62,102 @@ WindowPtr CPlatform::createWindowWithContext(const Dimension2D& size, const Poin
     window->setFullScreen(param._isFullscreen);
     window->setPosition(param._position);
 
-    renderer::DriverContextPtr driver = nullptr;
+    return window;
+}
 
-    switch (param._driverType)
+renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, ERenderType driverType)
+{
+    renderer::ContextPtr context = nullptr;
+    switch (driverType)
     {
-        case EDriverType::eDriverOpenGL:
+        case ERenderType::eRenderOpenGL:
         {
-#ifdef _OPENGL_DRIVER_
-            driver = std::make_shared<CDriverContextGL>(window);
-#else //_OPENGL_DRIVER_
-            LOG_ERROR("CPlatform::createWindowWithContext: _OPENGL_DRIVER_ not defined");
-#endif //_OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
+            context = std::make_shared<CDriverContextGL>(window);
+#else //_OPENGL_RENDER_
+            LOG_ERROR("Platform::createContext: _OPENGL_RENDER_ not defined");
+#endif //_OPENGL_RENDER_
             break;
         }
 
-        case EDriverType::eDriverDirect3D:
+        case ERenderType::eRenderDirect3D:
         {
-#ifdef _DIRECT3D_DRIVER_
-            driver = std::make_shared<CDriverContextD3D>(window);
-#else //_DIRECT3D_DRIVER_
-            LOG_ERROR("CPlatform::createWindowWithContext: _DIRECT3D_DRIVER_ not defined");
-#endif //_DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
+            context = std::make_shared<CDriverContextD3D>(window);
+#else //_DIRECT3D_RENDER_
+            LOG_ERROR("Platform::createContext: _DIRECT3D_RENDER_ not defined");
+#endif //_DIRECT3D_RENDER_
+            break;
+        }
+
+        case ERenderType::eRenderVulkan:
+        {
+#ifdef _VULKAN_RENDER_
+            //context = std::make_shared<CDriverContextD3D>(window);
+#else //_VULKAN_RENDER_
+            LOG_ERROR("Platform::createContext: _VULKAN_RENDER_ not defined");
+#endif //_VULKAN_RENDER_
             break;
         }
 
         default:
         {
-            window->close();
-            system("pause");
-
+            LOG_ERROR("Platform::createContext: driverType is unkown");
             return nullptr;
         }
     }
 
-    if (!driver)
-    {
-        window->close();
-        system("pause");
-
-        return nullptr;
-    }
-
-    if (!driver->createContext())
-    {
-        LOG_ERROR("CPlatform::createWindowWithContext: Error create context");
-        
-        driver->destroyContext();
-        driver = nullptr;
-        
-        window->close();
-        system("pause");
-
-        return nullptr;
-    }
-
-    m_window = window;
-    m_renderer = CPlatform::createRenderer(driver, param);
-    if (!m_renderer)
-    {
-        LOG_ERROR("CPlatform::createWindowWithContext: Error create Renderer");
-        
-        driver->destroyContext();
-        driver = nullptr;
-
-        window->close();
-        system("pause");
-
-        return nullptr;
-    }
-
-    return window;
-}
-
-bool CPlatform::begin()
-{
-    return m_window->begin();
-}
-
-bool CPlatform::end()
-{
-    return m_window->end();
-}
-
-bool CPlatform::hasError() const
-{
-    return m_window == nullptr;
-}
-
-renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context, const WindowParam& param)
-{
-    RendererPtr renderer = nullptr;
-
     if (!context)
     {
+        LOG_ERROR("Platform::createContext: driverType is nullptr");
+        return nullptr;
+    }
+
+    if (!context->create())
+    {
+        LOG_ERROR("Platform::createContext: Create context is Faied");
+        context->destroy();
         return nullptr;
     }
 
     context->driverInfo();
 
-    switch (param._driverType)
+    return context;
+}
+
+renderer::RendererPtr Platform::createRenderer(const renderer::ContextPtr context, ERenderType driverType)
+{
+    RendererPtr renderer = nullptr;
+    switch (driverType)
     {
-        case EDriverType::eDriverOpenGL:
+        case ERenderType::eRenderOpenGL:
         {
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
             renderer = std::make_shared<gl::CRendererGL>(context);
-#else //_OPENGL_DRIVER_
-            LOG_ERROR("CPlatform::createRenderer: _OPENGL_DRIVER_ not defined");
-#endif //_OPENGL_DRIVER_
+#else //_OPENGL_RENDER_
+            LOG_ERROR("Platform::createRenderer: _OPENGL_RENDER_ not defined");
+#endif //_OPENGL_RENDER_
             break;
         }
 
-        case EDriverType::eDriverDirect3D:
+        case ERenderType::eRenderDirect3D:
         {
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
             renderer = std::make_shared<d3d::CRendererD3D>(context);
-#else //_DIRECT3D_DRIVER_
-            LOG_ERROR("CPlatform::createRenderer: _DIRECT3D_DRIVER_ not defined");
-#endif //_DIRECT3D_DRIVER_
+#else //_DIRECT3D_RENDER_
+            LOG_ERROR("Platform::createRenderer: _DIRECT3D_RENDER_ not defined");
+#endif //_DIRECT3D_RENDER_
            break;
+        }
+
+        case ERenderType::eRenderVulkan:
+        {
+#ifdef _VULKAN_RENDER_
+            //renderer = std::make_shared<d3d::CRendererD3D>(context);
+#else //_VULKAN_RENDER_
+            LOG_ERROR("Platform::createRenderer: _VULKAN_RENDER_ not defined");
+#endif //_VULKAN_RENDER_
+            break;
         }
 
         default:
@@ -196,37 +169,5 @@ renderer::RendererPtr CPlatform::createRenderer(const DriverContextPtr& context,
     return renderer;
 }
 
-platform::WindowPtr CPlatform::getWindow() const
-{
-    return m_window;
-}
-
-RendererPtr CPlatform::getRenderer() const
-{
-    return m_renderer;
-}
-
-void CPlatform::closeWindow() const
-{
-    if (m_window)
-    {
-        m_window->close();
-    }
-}
-
-bool CPlatform::init()
-{
-    if (!m_renderer)
-    {
-        return false;
-    }
-
-    m_renderer->init();
-
-    return true;
-}
-
-const platform::EDriverType CPlatform::getDriverType() const
-{
-    return m_window->getDriverType();
-}
+} //namespace platform
+} //namespace v3d

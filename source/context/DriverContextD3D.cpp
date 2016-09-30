@@ -1,7 +1,7 @@
 #include "DriverContextD3D.h"
 #include "utils/Logger.h"
 
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
 #include <dxgi.h>
 #include <d3dcommon.h>
 
@@ -10,7 +10,7 @@
 
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
-#   include "platform/WindowWin32.h"
+#   include "platform/WindowWinApi.h"
 #endif //_PLATFORM_WIN_
 
 using namespace v3d;
@@ -32,23 +32,23 @@ CDriverContextD3D::~CDriverContextD3D()
 {
 }
 
-bool CDriverContextD3D::createContext()
+bool CDriverContextD3D::create()
 {
 #if defined(_PLATFORM_WIN_)
-    return createWin32Context();
+    return createWinApiContext();
 #endif //_PLATFORM_WIN_
     return false;
 }
 
-void CDriverContextD3D::destroyContext()
+void CDriverContextD3D::destroy()
 {
 #if defined(_PLATFORM_WIN_)
-    destroyWin32Context();
+    destroyWinApiContext();
 #endif //_PLATFORM_WIN_
 }
 
 #if defined(_PLATFORM_WIN_)
-bool CDriverContextD3D::createWin32Context()
+bool CDriverContextD3D::createWinApiContext()
 {
     LOG_INFO("Create Win32 D3D Context");
 
@@ -164,7 +164,7 @@ bool CDriverContextD3D::createWin32Context()
     factory = nullptr;
 
     // Get HWND
-    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(getWindow())->getHandleWindow();
+    HWND window = std::static_pointer_cast<const platform::WindowWinApi>(getWindow())->getHandleWindow();
 
     // Initialize the swap chain description.
     DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -254,7 +254,7 @@ bool CDriverContextD3D::createWin32Context()
     return true;
 }
 
-void CDriverContextD3D::destroyWin32Context()
+void CDriverContextD3D::destroyWinApiContext()
 {
     if (m_swapChain)
     {

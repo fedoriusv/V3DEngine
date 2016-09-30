@@ -1,45 +1,46 @@
 #include "Window.h"
 
-using namespace v3d;
-using namespace platform;
+namespace v3d
+{
+namespace platform
+{
+
 using namespace core;
 
-CWindow::CWindow(const WindowParam& param)
+Window::Window(const WindowParam& param)
     : m_param(param)
     , m_platformType(EPlatformType::ePlatformNull)
 {
 }
 
-CWindow::~CWindow()
+Window::~Window()
 {
 }
 
-bool CWindow::isFullscreen() const
+bool Window::isFullscreen() const
 {
     return m_param._isFullscreen;
 }
 
-bool CWindow::isResizeble() const
+bool Window::isResizeble() const
 {
     return m_param._isResizeble;
 }
 
-const Dimension2D& CWindow::getSize() const
+const Dimension2D& Window::getSize() const
 {
     return m_param._size;
 }
 
-const EPlatformType CWindow::getPlatformType() const
+const EPlatformType Window::getPlatformType() const
 {
     return m_platformType;
 }
 
-const EDriverType CWindow::getDriverType() const
-{
-    return m_param._driverType;
-}
-
-const event::SKeyCodes& CWindow::getKeyCodes()
+const event::SKeyCodes& Window::getKeyCodes()
 {
     return m_keys;
 }
+
+} //namespace platform
+} //namespace v3d

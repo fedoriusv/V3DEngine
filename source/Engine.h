@@ -1,8 +1,8 @@
-#ifndef _V3D_ENGINE_H_
-#define _V3D_ENGINE_H_
+#pragma once
 
 #include "utils/Singleton.h"
 #include "platform/Platform.h"
+#include "platform/Device.h"
 #include "platform/Window.h"
 #include "event/InputEventHandler.h"
 #include "scene/SceneManager.h"
@@ -13,22 +13,27 @@ namespace v3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CEngine : public utils::TSingleton<CEngine>
+    class Engine final : public utils::TSingleton<Engine>
     {
     private:
 
-        friend utils::TSingleton<CEngine>;
-        CEngine();
-        ~CEngine();
+        Engine();
+        ~Engine();
 
     public:
 
-        const platform::PlatformPtr&        getPlatform()          const;
-        const event::InputEventHandlerPtr&  getInputEventHandler() const;
-        const scene::SceneManagerPtr&       getSceneManager()      const;
+        bool                                createWindowWithContext(
+                                                const core::Dimension2D& size = core::Dimension2D(800U, 600),
+                                                const core::Point2D& pos = core::Point2D(100U, 100U),
+                                                bool isFullscreen = false,
+                                                bool isResizeble = false,
+                                                platform::ERenderType driverType = platform::ERenderType::eRenderOpenGL);
+
+        const event::InputEventHandlerPtr   getInputEventHandler() const;
+        const scene::SceneManagerPtr        getSceneManager()      const;
         const platform::WindowPtr           getWindow()            const;
         const renderer::RendererPtr         getRenderer()          const;
-        const renderer::DriverContextPtr    getContext()           const;
+        const renderer::ContextPtr          getContext()           const;
 
         bool                                init();
         bool                                begin();
@@ -36,7 +41,10 @@ namespace v3d
 
     private:
 
-        platform::PlatformPtr               m_platform;
+        friend utils::TSingleton<Engine>;
+
+        platform::WindowPtr                 m_window;
+        platform::DevicePtr                 m_device;
         event::InputEventHandlerPtr         m_inputEventHandler;
         scene::SceneManagerPtr              m_scene;
 
@@ -44,12 +52,11 @@ namespace v3d
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    #define RENDERER        CEngine::getInstance()->getRenderer()
-    #define INPUT_EVENTS    CEngine::getInstance()->getInputEventHandler()
-    #define WINDOW          CEngine::getInstance()->getWindow()
-    #define DRIVER_CONTEXT  CEngine::getInstance()->getContext()
+    #define ENGINE_RENDERER        Engine::getInstance()->getRenderer()
+    #define ENGINE_INPUT_EVENTS    Engine::getInstance()->getInputEventHandler()
+    #define ENGINE_WINDOW          Engine::getInstance()->getWindow()
+    #define ENGINE_CONTEXT         Engine::getInstance()->getContext()
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
 
-#endif //_V3D_ENGINE_H_
+} //namespace v3d

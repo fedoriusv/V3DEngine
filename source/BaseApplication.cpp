@@ -1,7 +1,9 @@
 #include "BaseApplication.h"
 #include "utils/Logger.h"
 
-using namespace v3d;
+namespace v3d
+{
+
 using namespace event;
 using namespace scene;
 using namespace platform;
@@ -9,12 +11,12 @@ using namespace renderer;
 
 BaseApplication::BaseApplication(int& argc, char** argv)
 {
-    m_engine = CEngine::getInstance();
+    m_engine = Engine::getInstance();
 }
 
 BaseApplication::~BaseApplication()
 {
-    CEngine::freeInstance();
+    Engine::freeInstance();
 }
 
 int BaseApplication::exec()
@@ -27,7 +29,7 @@ int BaseApplication::exec()
 
     LOG_INFO("---------Init Application--------");
     this->init();
-    getSceneManager()->init();
+	BaseApplication::getSceneManager()->init();
 
     LOG_INFO("---------Run Application--------");
     while (m_engine->begin())
@@ -43,22 +45,24 @@ int BaseApplication::exec()
     return 0;
 }
 
-const PlatformPtr& BaseApplication::getPlatform() const
-{
-    return m_engine->getPlatform();
-}
-
 const WindowPtr BaseApplication::getWindow() const
 {
-    return m_engine->getPlatform()->getWindow();
+    return m_engine->getWindow();
 }
 
-const InputEventHandlerPtr& BaseApplication::getInputEventHandler() const
+const InputEventHandlerPtr BaseApplication::getInputEventHandler() const
 {
     return m_engine->getInputEventHandler();
 }
 
-const SceneManagerPtr& BaseApplication::getSceneManager() const
+const SceneManagerPtr BaseApplication::getSceneManager() const
 {
     return m_engine->getSceneManager();
 }
+
+Engine* BaseApplication::getEngine()
+{
+    return m_engine;
+}
+
+} //namespace v3d

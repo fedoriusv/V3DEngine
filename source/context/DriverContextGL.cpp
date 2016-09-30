@@ -2,7 +2,7 @@
 #include "renderer/GL/TextureGL.h"
 #include "utils/Logger.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 #pragma comment(lib, "OpenGL32.lib")
 #ifdef _DEBUG
@@ -14,7 +14,7 @@
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
 #   include "GL/wglew.h"
-#   include "platform/WindowWin32.h"
+#   include "platform/WindowWinApi.h"
 #elif defined(_PLATFORM_LINUX_)
 #   include "GL/glxew.h"
 #   include <GL/glx.h>
@@ -43,10 +43,10 @@ CDriverContextGL::~CDriverContextGL()
 {
 }
 
-bool CDriverContextGL::createContext()
+bool CDriverContextGL::create()
 {
 #if defined(_PLATFORM_WIN_)
-    return createWin32Context();
+    return createWinApiContext();
 
 #elif defined(_PLATFORM_LINUX_)
     return createLinuxContext();
@@ -57,10 +57,10 @@ bool CDriverContextGL::createContext()
     return false;
 }
 
-void CDriverContextGL::destroyContext()
+void CDriverContextGL::destroy()
 {
 #if defined(_PLATFORM_WIN_)
-    destroyWin32Context();
+    destroyWinApiContext();
 #elif defined(_PLATFORM_LINUX_)
     return createLinuxContext();
 #elif defined(_PLATFORM_MACOSX_)
@@ -69,7 +69,7 @@ void CDriverContextGL::destroyContext()
 }
 
 #if defined(_PLATFORM_WIN_)
-bool CDriverContextGL::createWin32Context()
+bool CDriverContextGL::createWinApiContext()
 {
     LOG_INFO("Create Win32 GL Context");
 
@@ -212,7 +212,7 @@ bool CDriverContextGL::createWin32Context()
         WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
         WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
         WGL_COLOR_BITS_ARB, 24,
-        WGL_ALPHA_BITS_ARB, 8,
+        WGL_ALPHA_BITS_ARB, 0,
         WGL_DEPTH_BITS_ARB, 24,
         WGL_STENCIL_BITS_ARB, 8,
         WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
@@ -257,7 +257,7 @@ bool CDriverContextGL::createWin32Context()
     UnregisterClass(className, hInstance);
 
     // Get HWND
-    HWND window = std::static_pointer_cast<const platform::CWindowWin32>(getWindow())->getHandleWindow();
+    HWND window = std::static_pointer_cast<const platform::WindowWinApi>(getWindow())->getHandleWindow();
 
     HDC hDC = GetDC(window);
     if (!hDC)
@@ -313,7 +313,7 @@ bool CDriverContextGL::createWin32Context()
     return true;
 }
 
-void CDriverContextGL::destroyWin32Context()
+void CDriverContextGL::destroyWinApiContext()
 {
     wglMakeCurrent(NULL, NULL);
     if (m_hRc)
@@ -668,4 +668,4 @@ void CDriverContextGL::flushBuffers()
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

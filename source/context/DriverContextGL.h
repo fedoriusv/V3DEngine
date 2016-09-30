@@ -23,8 +23,8 @@ namespace renderer
         ~CDriverContextGL();
 
         void                checkForErrors(const std::string& location = "") override;
-        bool                createContext()                                  override;
-        void                destroyContext()                                 override;
+        bool                create()                                         override;
+        void                destroy()                                        override;
         void                flushBuffers()                                   override;
         
         bool                setVSync(bool use)                               override;
@@ -39,8 +39,8 @@ namespace renderer
         void                printExtensionList() const;
 
 #if defined(_PLATFORM_WIN_)
-        bool                createWin32Context();
-        void                destroyWin32Context();
+        bool                createWinApiContext();
+        void                destroyWinApiContext();
 
         HGLRC               m_hRc;
 #elif defined(_PLATFORM_LINUX_)

@@ -1,5 +1,4 @@
-#ifndef _V3D_WINDOW_WIN32_H_
-#define _V3D_WINDOW_WIN32_H_
+#pragma once
 
 #include "Window.h"
 #include <windows.h>
@@ -14,12 +13,12 @@ namespace platform
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CWindowWin32 : public CWindow
+    class WindowWinApi : public Window
     {
     public:
 
-        CWindowWin32(const WindowParam& param);
-        ~CWindowWin32();
+        WindowWinApi(const WindowParam& param);
+        ~WindowWinApi();
 
         void    minimize()                                  override;
         void    maximize()                                  override;
@@ -30,7 +29,7 @@ namespace platform
         void    setPosition(const core::Point2D& pos)       override;
         void    setCursorPosition(const core::Point2D& pos) override;
         void    getCursorPosition(core::Point2D& pos) const override;
-        const core::Point2D& getPosition() const            override;
+        const   core::Point2D& getPosition() const          override;
 
         bool    isMaximized() const                         override;
         bool    isMinimized() const                         override;
@@ -40,12 +39,13 @@ namespace platform
         bool    begin()                                     override;
         bool    end()                                       override;
 
+        void    close()                                     override;
+
         HWND    getHandleWindow() const;
 
     protected:
 
         void    create()                                    override;
-        void    close()                                     override;
 
         void    addKeyCodes()                               override;
 
@@ -106,10 +106,9 @@ namespace platform
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CWindowWin32>   WindowWin32Ptr;
+    typedef std::shared_ptr<WindowWinApi>   WindowWinApiPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_WINDOW_WIN32_H_
+} //namespace platform
+} //namespace v3d

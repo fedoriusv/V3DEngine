@@ -1,5 +1,4 @@
-#ifndef _V3D_PLATFORM_H_
-#define _V3D_PLATFORM_H_
+#pragma once
 
 #include "Window.h"
 #include "renderer/Renderer.h"
@@ -10,46 +9,26 @@ namespace platform
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CPlatform
+    class Platform
     {
     public:
 
-        CPlatform();
-        virtual                     ~CPlatform();
+        static WindowPtr                createWindow(
+                                            const core::Dimension2D& size = core::Dimension2D(800U, 600),
+                                            const core::Point2D& pos = core::Point2D(100U, 100U),
+                                            bool isFullscreen = false,
+                                            bool isResizeble = false);
 
-        WindowPtr                   createWindowWithContext(
-                                        const core::Dimension2D& size = core::Dimension2D(800U, 600),
-                                        const core::Point2D& pos = core::Point2D(100U, 100U),
-                                        bool isFullscreen = false,
-                                        bool isResizeble = false,
-                                        EDriverType driverType = EDriverType::eDriverOpenGL);
+        static renderer::ContextPtr     createContext(
+                                            const platform::WindowPtr window,
+                                            ERenderType driverType);
 
-        bool                        hasError()      const;
-        void                        closeWindow()   const;
-
-        WindowPtr                   getWindow()     const;
-        renderer::RendererPtr       getRenderer()   const;
-
-        const platform::EDriverType getDriverType() const;
-
-        bool                        init();
-        bool                        begin();
-        bool                        end();
-
-    private:
-
-        renderer::RendererPtr       createRenderer(const renderer::DriverContextPtr& driver, const WindowParam& param);
-
-        WindowPtr                   m_window;
-        renderer::RendererPtr       m_renderer;
-
+        static renderer::RendererPtr    createRenderer(
+                                            const renderer::ContextPtr,
+                                            ERenderType type = ERenderType::eRenderOpenGL);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CPlatform>  PlatformPtr;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
-#endif //_V3D_PLATFORM_H_
+} //namespace platform
+} //namespace v3d

@@ -13,7 +13,7 @@ using namespace event;
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
 {
-    BaseApplication::getPlatform()->createWindowWithContext(Dimension2D(1024, 768), Point2D(100, 100), false, false, EDriverType::eDriverDirect3D);
+    BaseApplication::getEngine()->createWindowWithContext(Dimension2D(1024, 768), Point2D(100, 100), false, false, ERenderType::eRenderOpenGL);
 }
 
 MyApplication::~MyApplication()
@@ -40,7 +40,7 @@ void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)
     {
         if (event->_key == EKeyCode::eKeyEscape)
         {
-            getPlatform()->closeWindow();
+            BaseApplication::getWindow()->close();
         }
         if (event->_key == EKeyCode::eKeyKey_N)
         {

@@ -9,7 +9,8 @@ namespace v3d
 {
 namespace platform
 {
-    class CPlatform;
+    class Platform;
+
 } //namespace platform
 
 namespace renderer
@@ -27,8 +28,8 @@ namespace renderer
         virtual                     ~CDriverContext();
 
         virtual void                checkForErrors(const std::string& location = "") = 0;
-        virtual bool                createContext()                                  = 0;
-        virtual void                destroyContext()                                 = 0;
+        virtual bool                create()                                         = 0;
+        virtual void                destroy()                                        = 0;
 
         virtual bool                setVSync(bool use)                               = 0;
         virtual void                flushBuffers()                                   = 0;
@@ -48,11 +49,10 @@ namespace renderer
     protected:
 
         friend                      CTexture;
+        friend                      platform::Platform;
 
         virtual TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
         virtual TexturePtr          createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)                 = 0;
-
-        friend                      platform::CPlatform;
 
         virtual void                driverInfo() = 0;
 
@@ -80,7 +80,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CDriverContext> DriverContextPtr;
+    using ContextPtr = std::shared_ptr<CDriverContext>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

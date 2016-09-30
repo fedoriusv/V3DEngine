@@ -1,5 +1,4 @@
-#ifndef _V3D_BASE_APPLICATION_H_
-#define _V3D_BASE_APPLICATION_H_
+#pragma once
 
 #include "Engine.h"
 
@@ -15,22 +14,22 @@ namespace v3d
         virtual                                         ~BaseApplication();
 
         virtual void                                    init() = 0;
-        virtual void                                    run() = 0;
+        virtual void                                    run()  = 0;
 
         int                                             exec();
 
     protected:
 
-        virtual const platform::PlatformPtr&            getPlatform()          const final;
         virtual const platform::WindowPtr               getWindow()            const final;
-        virtual const event::InputEventHandlerPtr&      getInputEventHandler() const final;
-        virtual const scene::SceneManagerPtr&           getSceneManager()      const final;
+        virtual const event::InputEventHandlerPtr       getInputEventHandler() const final;
+        virtual const scene::SceneManagerPtr            getSceneManager()      const final;
+        Engine*                                         getEngine();
 
     private:
 
-        CEngine*                                        m_engine;
+        Engine*                                         m_engine;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-#endif //_V3D_BASE_APPLICATION_H_
+
+} //namespace v3d

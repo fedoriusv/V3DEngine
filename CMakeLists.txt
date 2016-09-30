@@ -5,12 +5,12 @@ option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." ON)
 option(BUILD_USE_FREE_TYPE_LIB "Build use FreeType2 library." ON)
 
 #Tested projects
-option(BUILD_TEST_PROJECT_0 "Build Test_CreateWindow" ON)
+option(BUILD_TEST_PROJECT_0 "Build Test_CreateWindow" OFF)
 option(BUILD_TEST_PROJECT_1 "Build Test_Font." OFF)
 option(BUILD_TEST_PROJECT_2 "Build Test_RenderTarget." OFF)
 option(BUILD_TEST_PROJECT_3 "Build Test_Billboard." OFF)
 option(BUILD_TEST_PROJECT_4 "Build Test_Light." OFF)
-option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." OFF)
+option(BUILD_TEST_PROJECT_5 "Build Test_CreateContext." ON)
 option(BUILD_TEST_PROJECT_6 "Build Test_Texture." OFF)
 option(BUILD_TEST_PROJECT_7 "Build Test_ParticleSystem." OFF)
 option(BUILD_TEST_PROJECT_8 "Build Test_Tessellation." OFF)
@@ -195,13 +195,13 @@ if(WIN32)
     set(PLATFORM_HEADERS
         ${SOURCE_DIR}/platform/Platform.h
         ${SOURCE_DIR}/platform/Window.h
-        ${SOURCE_DIR}/platform/WindowWin32.h
+        ${SOURCE_DIR}/platform/WindowWinApi.h
         )
     
     set(PLATFORM_SOURCES
         ${SOURCE_DIR}/platform/Platform.cpp
         ${SOURCE_DIR}/platform/Window.cpp
-        ${SOURCE_DIR}/platform/WindowWin32.cpp
+        ${SOURCE_DIR}/platform/WindowWinApi.cpp
         )
 
 elseif(UNIX AND NOT APPLE)

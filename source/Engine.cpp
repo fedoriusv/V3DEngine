@@ -8,26 +8,27 @@
 #include "scene/ModelManager.h"
 #include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
+#include "utils/Logger.h"
 
-using namespace v3d;
-using namespace platform;
+namespace v3d
+{
+
 using namespace event;
 using namespace scene;
-using namespace renderer;
+using namespace platform;
 
-CEngine::CEngine()
-    : m_platform(nullptr)
+Engine::Engine()
+    : m_window(nullptr)
     , m_inputEventHandler(nullptr)
     , m_scene(nullptr)
 {
-    m_platform = std::make_shared<CPlatform>();
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
     m_scene = std::make_shared<CSceneManager>();
 
     m_inputEventHandler->setEnableEvents(true);
 }
 
-CEngine::~CEngine()
+Engine::~Engine()
 {
     m_inputEventHandler->setEnableEvents(false);
 
@@ -40,14 +41,9 @@ CEngine::~CEngine()
     CShaderManager::freeInstance();
 }
 
-bool CEngine::init()
+bool Engine::init()
 {
-    if (m_platform->hasError())
-    {
-        return false;
-    }
-
-    if (!m_platform->init())
+    if (!m_device->init())
     {
         return false;
     }
@@ -55,70 +51,97 @@ bool CEngine::init()
     return true;
 }
 
-const PlatformPtr& CEngine::getPlatform() const
+bool Engine::createWindowWithContext(const core::Dimension2D& size, const core::Point2D& pos, bool isFullscreen, bool isResizeble, platform::ERenderType driverType)
 {
-    return m_platform;
+    m_window = platform::Platform::createWindow(size, pos, isFullscreen, isResizeble);
+    if (!m_window)
+    {
+        LOG_ERROR("Engine::createWindowWithContext: Can't create window");
+        system("pause");
+
+        return false;
+    }
+
+    renderer::ContextPtr context = platform::Platform::createContext(m_window, driverType);
+    if (!context)
+    {
+        LOG_ERROR("Engine::createWindowWithContext: Can't create context");
+        system("pause");
+
+        return false;
+    }
+
+    renderer::RendererPtr renderer = platform::Platform::createRenderer(context, driverType);
+    if (!renderer)
+    {
+        LOG_ERROR("Engine::createWindowWithContext: Can't create render");
+        system("pause");
+
+        return false;
+    }
+
+    m_device = std::make_unique<Device>(renderer, true);
 }
 
-const InputEventHandlerPtr& CEngine::getInputEventHandler() const
+const InputEventHandlerPtr Engine::getInputEventHandler() const
 {
     return m_inputEventHandler;
 }
 
-const SceneManagerPtr& CEngine::getSceneManager() const
+const SceneManagerPtr Engine::getSceneManager() const
 {
     return m_scene;
 }
 
-bool CEngine::begin()
+bool Engine::begin()
 {
-    if (!m_platform)
+    if (!m_window)
     {
         return false;
     }
 
     m_inputEventHandler->update();
-    m_scene->draw();
+    if (m_device->getRenderer())
+    {
+        m_scene->draw();
+    }
 
-    return m_platform->begin();
+    return m_window->begin();
 }
 
-bool CEngine::end()
+bool Engine::end()
 {
-    if (!m_platform)
+    if (!m_window)
     {
         return false;
     }
 
-    return m_platform->end();
+    return m_window->end();
 }
 
-const WindowPtr CEngine::getWindow() const
+const WindowPtr Engine::getWindow() const
 {
-    if (!m_platform)
+    return m_window;
+}
+
+const renderer::RendererPtr Engine::getRenderer() const
+{
+    if (!m_device)
     {
         return nullptr;
     }
 
-    return m_platform->getWindow();
+    return m_device->getRenderer();
 }
 
-const RendererPtr CEngine::getRenderer() const
+const renderer::ContextPtr Engine::getContext() const
 {
-    if (!m_platform)
+    if (!m_device)
     {
         return nullptr;
     }
 
-    return m_platform->getRenderer();
+    return m_device->getRenderer()->getContext();
 }
 
-const renderer::DriverContextPtr CEngine::getContext() const
-{
-    if (!m_platform)
-    {
-        return nullptr;
-    }
-
-    return m_platform->getRenderer()->getContext();
-}
+} //namespace v3d

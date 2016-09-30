@@ -48,49 +48,58 @@
 #endif
 
 
-
-//Video Driver
+//Render
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined (_PLATFORM_WIN_)
 #if USED_GL_RENDER
-#   define _OPENGL_DRIVER_
+#   define _OPENGL_RENDER_
 #endif //USED_GL_RENDER
 
 #if USED_D3D_RENDER
-#   define _DIRECT3D_DRIVER_
+#   define _DIRECT3D_RENDER_
 #endif //USED_D3D_RENDER
 
-#   define _DIRECTINPUT_ 1
+#if USED_VULKAN_RENDER
+#   define _VULKAN_RENDER_
+#endif //USED_VULKAN_RENDER
+
+#define _DIRECTINPUT_ 1
+
 #endif //_PLATFORM_WIN_
 
 #if defined (_PLATFORM_LINUX_)
 #if USED_GL_RENDER
-#   define _OPENGL_DRIVER_
+#   define _OPENGL_RENDER_
 #endif //USED_GL_RENDER
 #endif //_PLATFORM_LINUX_
 
 #if defined (_PLATFORM_MACOSX_)
 #if USED_GL_RENDER
-#   define _OPENGL_DRIVER_
+#   define _OPENGL_RENDER_
 #endif //USED_GL_RENDER
 #endif //_PLATFORM_MACOSX_
 
+//Render Version
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #   define OPENGL_VERSION_MAJOR 4
 #   define OPENGL_VERSION_MINOR 4
 
 #   define GLEW_STATIC
 #   define _DEBUG_GL
 #   define _DEBUG_GL_ERROR_ASSERT 1
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_
 
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
 #   define DIRECTD3D_VERSION_MAJOR 11
 #   define DIRECTD3D_VERSION_MINOR 0
-#endif //_DIRECT3D_DRIVER_
+#endif //_DIRECT3D_RENDER_
+
+#ifdef _VULKAN_RENDER_
+//
+#endif //_DIRECT3D_RENDER_
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
