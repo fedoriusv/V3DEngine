@@ -1,5 +1,4 @@
-#ifndef _V3D_IEVENT_RECEIVER_H_
-#define _V3D_IEVENT_RECEIVER_H_
+#pragma once
 
 #include "common.h"
 #include "event/InputEvents.h"
@@ -29,7 +28,6 @@ namespace event
     typedef std::weak_ptr<IEventReceiver>   IEventReceiverWPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_IEVENT_RECEIVER_H_
+} //namespace event
+} //namespace v3d

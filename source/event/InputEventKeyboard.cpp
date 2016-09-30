@@ -1,13 +1,15 @@
 #include "InputEventKeyboard.h"
 
-using namespace v3d;
-using namespace event;
+namespace v3d
+{
+namespace event
+{
 
 SKeyboardInputEvent::SKeyboardInputEvent()
-: _character(0)
-, _key(eKeyUknown)
-, _event(eKeyboardUnknown)
-, _modifers(0)
+    : _character(0)
+    , _key(eKeyUknown)
+    , _event(eKeyboardUnknown)
+    , _modifers(0)
 {
     _eventType = eKeyboardInputEvent;
 }
@@ -37,3 +39,6 @@ EKeyCode SKeyCodes::get(u32 code)
 
     return eKeyUknown;
 }
+
+} //namespace event
+} //namespace v3d

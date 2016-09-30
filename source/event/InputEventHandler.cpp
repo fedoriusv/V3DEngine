@@ -2,13 +2,15 @@
 #include "EventManager.h"
 #include "utils/Logger.h"
 
-using namespace v3d;
-using namespace v3d::event;
+namespace v3d
+{
+namespace event
+{
 
 CInputEventHandler::CInputEventHandler()
-: m_gamepadStates(0U)
-, m_mousePosition(0, 0)
-, m_mouseWheel(0.0f)
+    : m_gamepadStates(0U)
+    , m_mousePosition(0, 0)
+    , m_mouseWheel(0.0f)
 {
     resetKeyPressed();
 }
@@ -214,7 +216,10 @@ const core::Point2D& CInputEventHandler::getCursorPosition() const
     return m_mousePosition;
 }
 
-float CInputEventHandler::getMouseWheel() const
+f32 CInputEventHandler::getMouseWheel() const
 {
     return m_mouseWheel;
 }
+
+} //namespace event
+} //namespace v3d

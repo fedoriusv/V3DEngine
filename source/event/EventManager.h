@@ -1,5 +1,4 @@
-#ifndef _V3D_EVENT_MANAGER_H_
-#define _V3D_EVENT_MANAGER_H_
+#pragma once
 
 #include "common.h"
 
@@ -40,8 +39,6 @@ namespace event
 
         virtual void                update();
 
-
-
     private:
 
         std::queue<SInputEventPtr>  m_events;
@@ -49,7 +46,6 @@ namespace event
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_EVENT_MANAGER_H_
+} //namespace event
+} //namespace v3d

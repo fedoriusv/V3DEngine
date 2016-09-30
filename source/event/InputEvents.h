@@ -1,5 +1,4 @@
-#ifndef _V3D_INPUT_EVENTS_H_
-#define _V3D_INPUT_EVENTS_H_
+#pragma once
 
 #include "common.h"
 
@@ -47,7 +46,6 @@ namespace event
     typedef std::shared_ptr<SInputEvent> SInputEventPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_INPUT_EVENTS_H_
+} //namespace event
+} //namespace v3d

@@ -1,13 +1,15 @@
 #include "InputEventMouse.h"
 
-using namespace v3d;
-using namespace event;
+namespace v3d
+{
+namespace event
+{
 
 SMouseInputEvent::SMouseInputEvent()
-: _position(0, 0)
-, _wheel(0.0f)
-, _event(eMouseUnknown)
-, _modifers(0)
+    : _position(0, 0)
+    , _wheel(0.0f)
+    , _event(eMouseUnknown)
+    , _modifers(0)
 {
     _eventType = eMouseInputEvent;
 }
@@ -22,3 +24,6 @@ bool SMouseInputEvent::operator == (const SMouseInputEvent& event) const
         _wheel == event._wheel &&
         _event == event._event);
 }
+
+} //namespace event
+} //namespace v3d

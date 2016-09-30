@@ -1,5 +1,4 @@
-#ifndef _V3D_INPUT_EVENT_GAMEPAD_H_
-#define _V3D_INPUT_EVENT_GAMEPAD_H_
+#pragma once
 
 #include "common.h"
 #include "InputEvents.h"
@@ -67,7 +66,6 @@ namespace event
     typedef std::shared_ptr<SGamepadInputEvent> GamepadInputEventPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_INPUT_EVENT_KEYBOARD_H_
+} //namespace event
+} //namespace v3d

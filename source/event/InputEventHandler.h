@@ -1,7 +1,7 @@
-#ifndef _V3D_INPUT_EVENT_HANDLER_H_
-#define _V3D_INPUT_EVENT_HANDLER_H_
+#pragma once
 
 #include "common.h"
+
 #include "EventReceiver.h"
 #include "InputEventKeyboard.h"
 #include "InputEventMouse.h"
@@ -37,7 +37,7 @@ namespace event
         bool                            isGamepadPressed(const EGamepadButton& code)    const;
 
         const core::Point2D&            getCursorPosition()                             const;
-        float                           getMouseWheel()                                 const;
+        f32                             getMouseWheel()                                 const;
 
         void                            setEnableEvents(bool enable);
 
@@ -51,7 +51,7 @@ namespace event
         u32                             m_gamepadStates;
 
         core::Point2D                   m_mousePosition;
-        float                           m_mouseWheel;
+        f32                             m_mouseWheel;
 
         typedef std::function<void(const KeyboardInputEventPtr&)>   KeyboardCallback;
         typedef std::function<void(const MouseInputEventPtr&)>      MouseCallback;
@@ -67,7 +67,6 @@ namespace event
     typedef std::shared_ptr<CInputEventHandler>             InputEventHandlerPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_INPUT_EVENT_HANDLER_H_
+} //namespace event
+} //namespace v3d

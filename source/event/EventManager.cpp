@@ -1,7 +1,9 @@
 #include "EventManager.h"
 
-using namespace v3d;
-using namespace event;
+namespace v3d
+{
+namespace event
+{
 
 CEventManager::CEventManager()
 {
@@ -74,7 +76,6 @@ void CEventManager::attach(EInputEventType type, const IEventReceiverPtr& receiv
     {
         m_receivers.insert(rcv);
     }
-
 }
 
 void CEventManager::dettach(EInputEventType type, const IEventReceiverPtr& receiver)
@@ -93,3 +94,5 @@ void CEventManager::dettach(EInputEventType type, const IEventReceiverPtr& recei
     }
 }
 
+} //namespace event
+} //namespace v3d
