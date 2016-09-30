@@ -37,6 +37,8 @@ namespace platform
         utils::Thread               m_thread;
         //semophore
         renderer::RendererPtr       m_render;
+
+
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

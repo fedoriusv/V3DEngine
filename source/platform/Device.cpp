@@ -18,7 +18,6 @@ Device::Device(renderer::RendererPtr renderer, bool isThreaded)
             ASSERT(false, "Device::Device: thread has not started");
         }
     }
-
 }
 
 Device::~Device()

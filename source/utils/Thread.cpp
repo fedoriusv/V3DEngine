@@ -5,8 +5,12 @@ namespace v3d
 namespace utils
 {
 
+std::thread::id Thread::s_mainThreadId = Thread::getCurrentThread();
+
 Thread::Thread()
     : m_isRunning(false)
+    , m_callback(nullptr)
+    , m_userData(nullptr)
 {
 }
 
@@ -56,6 +60,21 @@ void Thread::terminate()
 bool Thread::isRunning()
 {
     return m_isRunning;
+}
+
+const std::thread::id Thread::getThreadId() const
+{
+    return m_thread.get_id();
+}
+
+const std::thread::id Thread::getCurrentThread()
+{
+    return std::this_thread::get_id();
+}
+
+const std::thread::id Thread::getMainThreadId()
+{
+    return s_mainThreadId;
 }
 
 } //namespace utils
