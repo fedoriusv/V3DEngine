@@ -14,7 +14,7 @@ namespace renderer
 using namespace core;
 using namespace scene;
 
-CRenderer::CRenderer(const DriverContextPtr& context)
+CRenderer::CRenderer(const ContextPtr& context)
     : m_context(context)
     , m_frameIndex(0U)
 
@@ -29,11 +29,11 @@ CRenderer::CRenderer(const DriverContextPtr& context)
 
 CRenderer::~CRenderer()
 {
-    m_context->destroyContext();
+    m_context->destroy();
     m_lightList.clear();
 }
 
-const DriverContextPtr& CRenderer::getContext() const
+const ContextPtr& CRenderer::getContext() const
 {
     return m_context;
 }

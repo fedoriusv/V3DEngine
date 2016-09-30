@@ -35,7 +35,7 @@ const std::string& IShader::getName() const
 
 ShaderPtr IShader::clone() const
 {
-    ShaderPtr shader = RENDERER->makeSharedShader();
+    ShaderPtr shader = ENGINE_RENDERER->makeSharedShader();
 
     CShaderSource& data = shader->m_data;
     data.setHeader(m_data.getHeader());

@@ -30,7 +30,7 @@ CRenderPass::CRenderPass()
 {
     CRenderPass::init();
 
-    m_program = RENDERER->makeSharedProgram();
+    m_program = ENGINE_RENDERER->makeSharedProgram();
 }
 
 CRenderPass::CRenderPass(const CRenderPass& pass)
@@ -464,7 +464,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         ShaderWPtr shader = CShaderManager::getInstance()->get(shaderData.getHash());
         if (shader.expired())
         {
-            ShaderPtr newShader = RENDERER->makeSharedShader();
+            ShaderPtr newShader = ENGINE_RENDERER->makeSharedShader();
             newShader->setFlag(IShader::eLoaded);
 
             if (!newShader->create(std::move(shaderData)))
@@ -501,7 +501,7 @@ void CRenderPass::init()
     m_defaultShaderData = std::make_shared<CShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
     m_advanced = std::make_shared<CRenderAdvanced>();
-    m_renderState = RENDERER->makeSharedRenderState();
+    m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }
 
 bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
@@ -535,7 +535,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         if (isDefault)
         {
             LOG_INFO("CRenderTarget: Set default setting for render target");
-            CRenderPass::addTarget(RENDERER->getDefaultRenderTarget());
+            CRenderPass::addTarget(ENGINE_RENDERER->getDefaultRenderTarget());
         }
         else
         {

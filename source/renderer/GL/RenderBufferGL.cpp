@@ -3,7 +3,7 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -136,11 +136,11 @@ void CRenderBufferGL::renderbufferStorage(u32 internalFormat, const Dimension2D&
 
     m_changed = false;
 
-    RENDERER->checkForErrors("CRenderBufferGL::renderbufferStorage Error");
+    ENGINE_RENDERER->checkForErrors("CRenderBufferGL::renderbufferStorage Error");
 }
 
 } //namespace gl
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

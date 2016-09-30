@@ -1,7 +1,7 @@
 #include "RenderStateGL.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -106,7 +106,7 @@ void CRenderStateGL::bind()
     CRenderStateGL::blend(m_blend);
     CRenderStateGL::blendFunc(m_blendSrc, m_blendDst);
 
-    RENDERER->checkForErrors("CRenderStateGL: Bind Error");
+    ENGINE_RENDERER->checkForErrors("CRenderStateGL: Bind Error");
 }
 
 bool CRenderStateGL::blend(bool enable)
@@ -221,7 +221,7 @@ bool CRenderStateGL::pointSize(f32 value)
         s_pointSize = value;
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors(" CRenderStateGL::pointSize error");
+        ENGINE_RENDERER->checkForErrors(" CRenderStateGL::pointSize error");
 #endif //_DEBUG_GL
 
         return true;
@@ -239,7 +239,7 @@ bool CRenderStateGL::pointSizeProgram(bool enable)
         s_pointSizeProgram = enable;
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderStateGL::pointSizeProgram error");
+        ENGINE_RENDERER->checkForErrors("CRenderStateGL::pointSizeProgram error");
 #endif //_DEBUG_GL
 
         return true;
@@ -299,7 +299,7 @@ bool CRenderStateGL::patchLevel(u32 size, f32 inner, f32 outer)
         s_patchesSize = size;
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_VERTICES error");
+        ENGINE_RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_VERTICES error");
 #endif //_DEBUG_GL
         changed =  true;
     }
@@ -312,7 +312,7 @@ bool CRenderStateGL::patchLevel(u32 size, f32 inner, f32 outer)
         s_patchLevel[0] = inner;
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_INNER_LEVEL error");
+        ENGINE_RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_INNER_LEVEL error");
 #endif //_DEBUG_GL
 
         std::array<f32, 4> outerArray;
@@ -321,7 +321,7 @@ bool CRenderStateGL::patchLevel(u32 size, f32 inner, f32 outer)
         s_patchLevel[1] = outer;
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_OUTER_LEVEL error");
+        ENGINE_RENDERER->checkForErrors("CRenderStateGL::patchLevel GL_PATCH_DEFAULT_OUTER_LEVEL error");
 #endif //_DEBUG_GL
 
         changed = true;
@@ -334,4 +334,4 @@ bool CRenderStateGL::patchLevel(u32 size, f32 inner, f32 outer)
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "RenderStateGL.h"
 #include "RenderBufferGL.h"
 #include "TextureGL.h"
@@ -78,7 +78,7 @@ void CRenderTargetGL::bind()
     bool chaned = CRenderTargetGL::bindFramebuffer(m_frameBufferId);
     if (chaned)
     {
-        RENDERER->setCurrentRenderTarget(shared_from_this());
+        ENGINE_RENDERER->setCurrentRenderTarget(shared_from_this());
         const Rect32& rect = getViewport();
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
@@ -92,11 +92,11 @@ void CRenderTargetGL::bind()
         }
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderTargetGL: DrawBuffer Error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: DrawBuffer Error");
 #endif //_DEBUG_GL
     }
 
-    u32 frameIdx = RENDERER->getFrameIndex();
+    u32 frameIdx = ENGINE_RENDERER->getFrameIndex();
     if (chaned || frameIdx != m_lastFrameIndex)
     {
         m_lastFrameIndex = frameIdx;
@@ -111,7 +111,7 @@ void CRenderTargetGL::bind()
             glClearDepthf(depth);
 
 #ifdef _DEBUG_GL
-            RENDERER->checkForErrors("CRenderTargetGL: ClearDepth Error");
+            ENGINE_RENDERER->checkForErrors("CRenderTargetGL: ClearDepth Error");
 #endif //_DEBUG_GL
         }
         
@@ -124,7 +124,7 @@ void CRenderTargetGL::bind()
             glClearStencil(stencil);
 
 #ifdef _DEBUG_GL
-            RENDERER->checkForErrors("CRenderTargetGL: ClearStencil Error");
+            ENGINE_RENDERER->checkForErrors("CRenderTargetGL: ClearStencil Error");
 #endif //_DEBUG_GL
         }
 
@@ -136,7 +136,7 @@ void CRenderTargetGL::bind()
             glClearColor(color.x, color.y, color.z, color.w);
 
 #ifdef _DEBUG_GL
-            RENDERER->checkForErrors("CRenderTargetGL: ClearColor Error");
+            ENGINE_RENDERER->checkForErrors("CRenderTargetGL: ClearColor Error");
 #endif //_DEBUG_GL
         }
 
@@ -147,7 +147,7 @@ void CRenderTargetGL::bind()
     }
 
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
+    ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 #endif //_DEBUG_GL
 }
 
@@ -159,14 +159,14 @@ void CRenderTargetGL::unbind()
         glReadBuffer(GL_BACK);
         glDrawBuffer(GL_BACK);
 
-        const RenderTargetPtr& target = RENDERER->getDefaultRenderTarget();
+        const RenderTargetPtr& target = ENGINE_RENDERER->getDefaultRenderTarget();
         const Rect32& rect = target->getViewport();
         glViewport(0, 0, rect.getWidth(), rect.getHeight());
 
-        RENDERER->setCurrentRenderTarget(target);
+        ENGINE_RENDERER->setCurrentRenderTarget(target);
 
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CRenderTargetGL:unbind target Error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL:unbind target Error");
 #endif //_DEBUG_GL
     }
 
@@ -191,12 +191,12 @@ bool CRenderTargetGL::create()
     u32 y = rect.getTopY();
     if (width == 0)
     {
-        width = WINDOW->getSize().width;
+        width = ENGINE_WINDOW->getSize().width;
     }
 
     if (height == 0)
     {
-        height = WINDOW->getSize().height;
+        height = ENGINE_WINDOW->getSize().height;
     }
 
     /*width = core::getSmallestPowerOf2(width);
@@ -257,7 +257,7 @@ bool CRenderTargetGL::create()
     };
 
     ASSERT((result == GL_FRAMEBUFFER_COMPLETE), "CRenderTarget: Create render target Error");
-    RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
+    ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Create render target Error");
 
     if (originalFBO > 0)
     {
@@ -320,7 +320,7 @@ void CRenderTargetGL::destroy()
         }
     }
 
-    RENDERER->checkForErrors("CRenderTargetGL: destroy Error");
+    ENGINE_RENDERER->checkForErrors("CRenderTargetGL: destroy Error");
 
     if (m_frameBufferId > 0)
     {
@@ -363,7 +363,7 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
         return GL_RGBA8;
     };
 
-    u32 samplerSize = DRIVER_CONTEXT->getSamplesCount();
+    u32 samplerSize = ENGINE_CONTEXT->getSamplesCount();
 
     switch (attach._attachmentType)
     {
@@ -395,7 +395,7 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
         CRenderTargetGL::framebufferRenderbuffer(GL_COLOR_ATTACHMENT0 + attach._index, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
         attach._buffer->unbind();
 
-        RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
     }
     break;
 
@@ -414,7 +414,7 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
         CRenderTargetGL::framebufferRenderbuffer(GL_DEPTH_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
         attach._buffer->unbind();
 
-        RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
     }
     break;
 
@@ -433,7 +433,7 @@ void CRenderTargetGL::createRenderToRenderbuffer(SAttachments& attach, const Rec
         CRenderTargetGL::framebufferRenderbuffer(GL_STENCIL_ATTACHMENT, static_cast<CRenderBufferGL*>(attach._buffer)->getRenderBufferID());
         attach._buffer->unbind();
 
-        RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
     }
     break;
 
@@ -487,7 +487,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             CRenderTargetGL::framebufferTexture2D(GL_COLOR_ATTACHMENT0 + attach._index, GL_TEXTURE_2D, utils::static_pointer_cast<CTextureGL>(attach._texture->getImpl())->getTextureID());
         }
 
-        RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Color attachment error");
     }
     break;
 
@@ -510,7 +510,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             CRenderTargetGL::framebufferTexture2D(GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture->getImpl().get())->getTextureID());
         }
 
-        RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Depth attachment error");
     }
     break;
 
@@ -533,7 +533,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             CRenderTargetGL::framebufferTexture2D(GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
         }
 
-        RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Stencil attachment error");
     }
     break;
 
@@ -555,7 +555,7 @@ void CRenderTargetGL::createRenderToTexture(SAttachments& attach, const Rect32& 
             CRenderTargetGL::framebufferTexture2D(GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<CTextureGL*>(attach._texture.get())->getTextureID());
         }
 
-        RENDERER->checkForErrors("CRenderTargetGL: DepthStencil attachment error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: DepthStencil attachment error");
     }
     break;
 
@@ -587,7 +587,7 @@ void CRenderTargetGL::copyToRenderbuffer(const RenderTargetPtr& dst)
         CRenderTargetGL::blitFramebuffer(Rect32(0, 0, width, height), Rect32(x, invHeight - height, width + x, invHeight),
             GL_COLOR_BUFFER_BIT, m_MSAA ? GL_NEAREST : GL_LINEAR);
 
-        RENDERER->checkForErrors("CRenderTargetGL: Copy to renderbuffer error");
+        ENGINE_RENDERER->checkForErrors("CRenderTargetGL: Copy to renderbuffer error");
     }
 }
 
@@ -627,4 +627,4 @@ void CRenderTargetGL::blitFramebuffer(const Rect32& src, const Rect32& dst, u32 
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

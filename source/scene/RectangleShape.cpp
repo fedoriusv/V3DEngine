@@ -58,8 +58,8 @@ void CRectangleShape::build()
 {
     SVertexData& data = CShape::getGeometryData();
 
-    Vector2D leftUp = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getLeftX(), m_rect.getTopY()));
-    Vector2D rightDown = RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getRightX(), m_rect.getBottomY()));
+    Vector2D leftUp = ENGINE_RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getLeftX(), m_rect.getTopY()));
+    Vector2D rightDown = ENGINE_RENDERER->convertPosScreenToCanvas(Point2D(m_rect.getRightX(), m_rect.getBottomY()));
 
     data._vertices =
     {

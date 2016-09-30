@@ -51,7 +51,7 @@ CSceneManager::~CSceneManager()
 #ifdef _DEBUG
 void CSceneManager::setDebugMode(bool active)
 {
-    RENDERER->setDebugMode(active);
+    ENGINE_RENDERER->setDebugMode(active);
 }
 #endif
 
@@ -289,7 +289,7 @@ CLight* CSceneManager::addLight(CNode* parent, const Vector3D& pos, const Vector
     node->setRadius(radius);
 
     CSceneManager::addNode(node);
-    RENDERER->addLight(node);
+    ENGINE_RENDERER->addLight(node);
 
     return node;
 }

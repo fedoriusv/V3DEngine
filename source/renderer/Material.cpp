@@ -125,7 +125,7 @@ f32 CMaterial::getGlossiness() const
 const TexturePtr CMaterial::getTexture(u32 unit) const
 {
 #ifdef _DEBUG
-    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
+    if (unit >= ENGINE_CONTEXT->getTextureUnitsCount())
     {
         ASSERT(false, "CMaterial::getTexture: Invalid texture unit");
     }
@@ -136,7 +136,7 @@ const TexturePtr CMaterial::getTexture(u32 unit) const
 TexturePtr CMaterial::getTexture(u32 unit)
 {
 #ifdef _DEBUG
-    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
+    if (unit >= ENGINE_CONTEXT->getTextureUnitsCount())
     {
         ASSERT(false, "CMaterial::getTexture: Invalid texture unit");
     }
@@ -151,7 +151,7 @@ u32 CMaterial::getTextureCount() const
 
 bool CMaterial::setTexture(u32 unit, const std::string& file)
 {
-    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
+    if (unit >= ENGINE_CONTEXT->getTextureUnitsCount())
     {
         ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return false;
@@ -171,7 +171,7 @@ bool CMaterial::setTexture(u32 unit, const std::string& file)
 
 bool CMaterial::setTexture(u32 unit, const std::string files[6])
 {
-    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
+    if (unit >= ENGINE_CONTEXT->getTextureUnitsCount())
     {
         ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return false;
@@ -191,7 +191,7 @@ bool CMaterial::setTexture(u32 unit, const std::string files[6])
 
 void CMaterial::setTexture(u32 unit, const TexturePtr& texture)
 {
-    if (unit >= DRIVER_CONTEXT->getTextureUnitsCount())
+    if (unit >= ENGINE_CONTEXT->getTextureUnitsCount())
     {
         ASSERT(false, "CMaterial::setTexture: Texture unit range out");
         return;

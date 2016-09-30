@@ -65,17 +65,17 @@ bool CFPSCamera::isPointOut(const Vector3D& point)
 void CFPSCamera::rotateByMouse()
 {
     Point2D position;
-    WINDOW->getCursorPosition(position);
+    ENGINE_WINDOW->getCursorPosition(position);
 
-    const Dimension2D& size = WINDOW->getSize();
-    const Point2D& pos = WINDOW->getPosition();
+    const Dimension2D& size = ENGINE_WINDOW->getSize();
+    const Point2D& pos = ENGINE_WINDOW->getPosition();
     Point2D middle = Point2D(pos.x + (size.width / 2), pos.y + (size.height / 2));
     if (position == middle)
     {
         return;
     }
 
-    WINDOW->setCursorPosition(middle);
+    ENGINE_WINDOW->setCursorPosition(middle);
 
     static f32 currentRotX = 0.0f;
     static f32 lastRotX = 0.0f;
@@ -146,25 +146,25 @@ void CFPSCamera::update(s32 dt)
     if (m_active)
     {
         f32 acceleration = 1.0f;
-        if (INPUT_EVENTS->isKeyPressed(m_keys._acceleration))
+        if (ENGINE_INPUT_EVENTS->isKeyPressed(m_keys._acceleration))
         {
             acceleration = 10.0f;
         }
 
         f32 s = m_speed * acceleration * static_cast<f32>(dt);
-        if (INPUT_EVENTS->isKeyPressed(m_keys._forward))
+        if (ENGINE_INPUT_EVENTS->isKeyPressed(m_keys._forward))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, s));
         }
-        if (INPUT_EVENTS->isKeyPressed(m_keys._back))
+        if (ENGINE_INPUT_EVENTS->isKeyPressed(m_keys._back))
         {
             CFPSCamera::move(Vector3D(0.0f, 0.0f, -s));
         }
-        if (INPUT_EVENTS->isKeyPressed(m_keys._left))
+        if (ENGINE_INPUT_EVENTS->isKeyPressed(m_keys._left))
         {
             CFPSCamera::move(Vector3D(-s, 0.0f, 0.0f));
         }
-        if (INPUT_EVENTS->isKeyPressed(m_keys._right))
+        if (ENGINE_INPUT_EVENTS->isKeyPressed(m_keys._right))
         {
             CFPSCamera::move(Vector3D(s, 0.0f, 0.0f));
         }

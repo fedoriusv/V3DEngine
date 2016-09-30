@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -65,7 +65,7 @@ bool CShaderGL::create(CShaderSource&& data)
     {
         ASSERT(m_id, "Shader id doesn't exist");
 
-        const std::string& version = DRIVER_CONTEXT->getShaderVersion();
+        const std::string& version = ENGINE_CONTEXT->getShaderVersion();
 
         std::string shaderSource = "#version ";
         shaderSource.append(version);
@@ -144,10 +144,10 @@ bool CShaderGL::compileShader(u32 shader, const std::string& body, EShaderType t
     GLchar* stringPtr[1];
     stringPtr[0] = (GLchar*)body.c_str();
     glShaderSource(shader, 1, (const GLchar**)stringPtr, NULL);
-    RENDERER->checkForErrors("Set Source Shader Error");
+    ENGINE_RENDERER->checkForErrors("Set Source Shader Error");
 
     glCompileShader(shader);
-    RENDERER->checkForErrors("Compile Shader Error");
+    ENGINE_RENDERER->checkForErrors("Compile Shader Error");
 
     GLint isCompiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
@@ -195,7 +195,7 @@ bool CShaderGL::compileShader(u32 shader, const std::string& body, EShaderType t
     }
 #endif //_DEBUG_GL
 
-    RENDERER->checkForErrors("Init Shader Error");
+    ENGINE_RENDERER->checkForErrors("Init Shader Error");
 
     return (isCompiled == GL_TRUE) ? true : false;
 }
@@ -217,4 +217,4 @@ void CShaderGL::destroy()
 } //namespace v3d
 } //namespace renderer
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

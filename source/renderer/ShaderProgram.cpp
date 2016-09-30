@@ -221,11 +221,11 @@ bool IShaderProgram::create(const std::string& vertex, const std::string& fragme
 
     IShaderProgram::clear();
 
-    ShaderPtr vshader = RENDERER->makeSharedShader();
+    ShaderPtr vshader = ENGINE_RENDERER->makeSharedShader();
     IShaderProgram::attachShader(vshader);
     vshader->create(EShaderType::eVertex, vertex);
 
-    ShaderPtr fshader = RENDERER->makeSharedShader();
+    ShaderPtr fshader = ENGINE_RENDERER->makeSharedShader();
     IShaderProgram::attachShader(fshader);
     fshader->create(EShaderType::eFragment, fragment);
 
@@ -236,7 +236,7 @@ bool IShaderProgram::create(const std::string& vertex, const std::string& fragme
         c8* strName = va_arg(argList, c8*);
         s32 type = va_arg(argList, s32);
 
-        ShaderPtr shader = RENDERER->makeSharedShader();
+        ShaderPtr shader = ENGINE_RENDERER->makeSharedShader();
         IShaderProgram::attachShader(shader);
         shader->create((EShaderType)type, strName);
     }
@@ -257,7 +257,7 @@ bool IShaderProgram::create(const std::string& compute)
 
     IShaderProgram::clear();
 
-    ShaderPtr cshader = RENDERER->makeSharedShader();
+    ShaderPtr cshader = ENGINE_RENDERER->makeSharedShader();
     IShaderProgram::attachShader(cshader);
     cshader->create(EShaderType::eCompute, compute);
 

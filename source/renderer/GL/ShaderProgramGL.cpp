@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "renderer/GL/ShaderGL.h"
 #include "renderer/GL/TransformFeedbackGL.h"
 #include "GL/glew.h"
@@ -96,7 +96,7 @@ void CShaderProgramGL::bind()
     {
         CShaderProgramGL::useProgram(m_id);
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Bind ShaderProgram Error");
 #endif //_DEBUG_GL
     }
 }
@@ -105,7 +105,7 @@ void CShaderProgramGL::unbind()
 {
     CShaderProgramGL::useProgram(0);
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: Unbind ShaderProgram Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Unbind ShaderProgram Error");
 #endif //_DEBUG_GL
 }
 
@@ -116,7 +116,7 @@ u32 CShaderProgramGL::getShaderProgramID() const
 
 ShaderProgramPtr CShaderProgramGL::clone() const
 {
-    ShaderProgramPtr program = RENDERER->makeSharedProgram();
+    ShaderProgramPtr program = ENGINE_RENDERER->makeSharedProgram();
     std::static_pointer_cast<CShaderProgramGL>(program)->operator=(*this);
 
     return program;
@@ -147,14 +147,14 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
         glAttachShader(m_id, shaders[i]);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: Attach Program error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Attach Program error");
 #endif //_DEBUG_GL
 
     if (!m_varyingsList.empty())
     {
         gl::TransformFeedbackGL::transformFeedbackVaryings(m_id, m_varyingsList);
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Add Varyings to program error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Add Varyings to program error");
 #endif //_DEBUG_GL
     }
 
@@ -212,7 +212,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             }
         }
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Bind attribute error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Bind attribute error");
 #endif //_DEBUG_GL
         AttributeList& fragDataList = shaderData.lock()->getFragDataList();
         for (AttributeList::iterator fragData = fragDataList.begin(), end = fragDataList.end(); fragData != end;)
@@ -233,7 +233,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             }
         }
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Bind frag data error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Bind frag data error");
 #endif //_DEBUG_GL
         UniformList& uniformList = shaderData.lock()->getUniformList();
         for (UniformList::iterator uniform = uniformList.begin(), end = uniformList.end(); uniform != end;)
@@ -255,7 +255,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             }
         }
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Bind uniform error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Bind uniform error");
 #endif //_DEBUG_GL
         SamplerList& samplerList = shaderData.lock()->getSamplerList();
         for (auto& sampler : samplerList)
@@ -275,7 +275,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
             }
         }
 #ifdef _DEBUG_GL
-        RENDERER->checkForErrors("CShaderProgramGL: Bind sampler error");
+        ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Bind sampler error");
 #endif //_DEBUG_GL
         /*SamplerList::iterator samplerIter = std::remove_if(samplerList.begin(), samplerList.end(), [](const CShaderSampler* item) -> bool
         {
@@ -288,7 +288,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
         }*/
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Init ShaderProgram Error");
 #endif //_DEBUG_GL
     if (originalProgram >= 0)
     {
@@ -301,7 +301,7 @@ bool CShaderProgramGL::createProgram(const std::vector<u32>& shaders)
         glDetachShader(m_id, shaders[i]);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: Detach ShaderProgram Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: Detach ShaderProgram Error");
 #endif //_DEBUG_GL
 
     return true;
@@ -314,7 +314,7 @@ bool CShaderProgramGL::linkProgram()
 #endif //_DEBUG_GL
     glLinkProgram(m_id);
 
-    RENDERER->checkForErrors("CShaderProgramGL: link");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: link");
 
     GLint linkStatus;
     glGetProgramiv(m_id, GL_LINK_STATUS, &linkStatus);
@@ -493,7 +493,7 @@ bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
         LOG_ERROR("CShaderProgramGL: Error Uniform Location: %s . Shader ID : %d", uniform->getName().c_str(), m_id);
     }
 
-    RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getName());
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL Set Uniform Error: " + uniform->getName());
 #endif //_DEBUG_GL
     return (location != -1);
 }
@@ -505,7 +505,7 @@ void CShaderProgramGL::applyUniformInt(s32 location, s32 value)
         glUniform1i(location, value);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformInt Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformInt Error");
 #endif //_DEBUG_GL
 }
 
@@ -516,7 +516,7 @@ void CShaderProgramGL::applyUniformFloat(s32 location, f32 value)
         glUniform1f(location, value);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformFloat Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformFloat Error");
 #endif //_DEBUG_GL
 }
 
@@ -527,7 +527,7 @@ void CShaderProgramGL::applyUniformVector2(s32 location, const core::Vector2D& v
         glUniform2fv(location, 1, &vector.x);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector2 Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector2 Error");
 #endif //_DEBUG_GL
 }
 void CShaderProgramGL::applyUniformVector3(s32 location, const core::Vector3D& vector)
@@ -537,7 +537,7 @@ void CShaderProgramGL::applyUniformVector3(s32 location, const core::Vector3D& v
         glUniform3fv(location, 1, &vector.x);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector3 Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector3 Error");
 #endif //_DEBUG_GL
 }
 
@@ -548,7 +548,7 @@ void CShaderProgramGL::applyUniformVector4(s32 location, const core::Vector4D& v
         glUniform4fv(location, 1, &vector.x);
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector4 Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformVector4 Error");
 #endif //_DEBUG_GL
 }
 
@@ -559,7 +559,7 @@ void CShaderProgramGL::applyUniformMatrix3(s32 location, const core::Matrix3D& m
         glUniformMatrix3fv(location, 1, GL_TRUE, matrix.getPtr());
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix3 Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix3 Error");
 #endif //_DEBUG_GL
 }
 
@@ -570,11 +570,11 @@ void CShaderProgramGL::applyUniformMatrix4(s32 location, const core::Matrix4D& m
         glUniformMatrix4fv(location, 1, GL_TRUE, matrix.getPtr());
     }
 #ifdef _DEBUG_GL
-    RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix4 Error");
+    ENGINE_RENDERER->checkForErrors("CShaderProgramGL: applyUniformMatrix4 Error");
 #endif //_DEBUG_GL
 }
 
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

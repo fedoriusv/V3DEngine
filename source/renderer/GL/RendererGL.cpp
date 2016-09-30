@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 #include "context/DriverContext.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "ShaderGL.h"
 #include "ShaderProgramGL.h"
 #include "GeometryGL.h"
@@ -20,7 +20,7 @@ namespace renderer
 namespace gl
 {
 
-CRendererGL::CRendererGL(const DriverContextPtr& context)
+CRendererGL::CRendererGL(const ContextPtr& context)
     : CRenderer(context)
     , m_isLocked(false)
 {
@@ -104,6 +104,12 @@ void CRendererGL::postRender()
     m_context->flushBuffers();
 }
 
+
+platform::ERenderType CRendererGL::getRenderType() const
+{
+    return platform::ERenderType::eRenderOpenGL;
+}
+
 ShaderPtr CRendererGL::makeSharedShader()
 {
     return std::make_shared<CShaderGL>();
@@ -148,4 +154,4 @@ void CRendererGL::resetTextures()
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

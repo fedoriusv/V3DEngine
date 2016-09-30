@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -97,7 +97,7 @@ void TransformFeedbackGL::begin(EPrimitivesMode mode)
     s_started = true;
     s_paused = false;
 
-    RENDERER->checkForErrors("TransformFeedbackGL::begin Error");
+    ENGINE_RENDERER->checkForErrors("TransformFeedbackGL::begin Error");
 }
 
 void TransformFeedbackGL::end()
@@ -111,7 +111,7 @@ void TransformFeedbackGL::end()
     s_started = false;
     s_paused = false;
 
-    RENDERER->checkForErrors("TransformFeedbackGL::end Error");
+    ENGINE_RENDERER->checkForErrors("TransformFeedbackGL::end Error");
 }
 
 void TransformFeedbackGL::pause()
@@ -124,7 +124,7 @@ void TransformFeedbackGL::pause()
     glPauseTransformFeedback();
     s_paused = true;
 
-    RENDERER->checkForErrors("TransformFeedbackGL::pause Error");
+    ENGINE_RENDERER->checkForErrors("TransformFeedbackGL::pause Error");
 }
 
 void TransformFeedbackGL::resume()
@@ -137,7 +137,7 @@ void TransformFeedbackGL::resume()
     glResumeTransformFeedback();
     s_paused = false;
 
-    RENDERER->checkForErrors("TransformFeedbackGL::resume Error");
+    ENGINE_RENDERER->checkForErrors("TransformFeedbackGL::resume Error");
 }
 
 
@@ -145,4 +145,4 @@ void TransformFeedbackGL::resume()
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

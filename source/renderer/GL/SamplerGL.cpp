@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -47,7 +47,7 @@ bool SamplerGL::bind(u32 texture)
 #endif //_DEBUG_GL
         s_currentSamplerID = m_samplerID;
 
-        RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
+        ENGINE_RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
 
         return true;
     }
@@ -62,7 +62,7 @@ bool SamplerGL::unbind(u32 texture)
         glBindSampler(texture, 0);
         s_currentSamplerID = 0;
 
-        RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
+        ENGINE_RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
 
         return true;
     }
@@ -78,7 +78,7 @@ void SamplerGL::setFilterType(u32 min, u32 mag)
     glSamplerParameteri(m_samplerID, GL_TEXTURE_MIN_FILTER, min);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_MAG_FILTER, mag);
 
-    RENDERER->checkForErrors("CTextureGL::filterSampler Error");
+    ENGINE_RENDERER->checkForErrors("CTextureGL::filterSampler Error");
 }
 
 void SamplerGL::setWrap(u32 wrap)
@@ -90,19 +90,19 @@ void SamplerGL::setWrap(u32 wrap)
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_T, wrap);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_R, wrap);
 
-    RENDERER->checkForErrors("CTextureGL::wrapSampler Error");
+    ENGINE_RENDERER->checkForErrors("CTextureGL::wrapSampler Error");
 }
 
 void SamplerGL::setAnisotropicLevel(EAnisotropic level)
 {
 #ifdef _DEBUG_GL
-    GLfloat largest = DRIVER_CONTEXT->getMaxAnisotropySize();
+    GLfloat largest = ENGINE_CONTEXT->getMaxAnisotropySize();
     ASSERT(largest >= level, "Anisotropy level out the range");
     ASSERT(glIsSampler(m_samplerID), "Invalid Sampler index");
 #endif //_DEBUG_GL
     glSamplerParameterf(m_samplerID, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLfloat)level);
 
-    RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
+    ENGINE_RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
 }
 
 void SamplerGL::setTextureCompare(u32 mode, u32 func)
@@ -113,7 +113,7 @@ void SamplerGL::setTextureCompare(u32 mode, u32 func)
     glSamplerParameteri(m_samplerID, GL_TEXTURE_COMPARE_MODE, mode);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_COMPARE_FUNC, func);
 
-    RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
+    ENGINE_RENDERER->checkForErrors("CTextureGL::anisotropicSampler Error");
 }
 
 u32 SamplerGL::getSamplerID() const
@@ -133,4 +133,4 @@ s32 SamplerGL::getActiveSampler()
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

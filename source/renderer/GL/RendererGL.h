@@ -19,13 +19,15 @@ namespace gl
     {
     public:
     
-        CRendererGL(const DriverContextPtr& context);
+        CRendererGL(const ContextPtr& context);
         ~CRendererGL();
     
         void                init()                                                                  override;
     
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
+
+        platform::ERenderType getRenderType() const                                                 override;
 
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;

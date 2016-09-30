@@ -16,6 +16,7 @@ namespace v3d
     typedef float               f32;
     typedef double              f64;
     typedef long double         f80;
+
 } //namespace v3d
 
 #include <string>

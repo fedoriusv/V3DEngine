@@ -59,7 +59,7 @@ const GeometryPtr& Renderable::getGeometry() const
 void Renderable::render()
 {
     ASSERT(Renderable::getRenderJob(), "Renderable: Render job nullptr");
-    RENDERER->draw(Renderable::getRenderJob());
+    ENGINE_RENDERER->draw(Renderable::getRenderJob());
 }
 
 const CRenderTechnique* Renderable::getRenderTechique() const

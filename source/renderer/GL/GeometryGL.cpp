@@ -8,7 +8,7 @@
 #   pragma clang diagnostic ignored "-Wswitch"
 #endif  //_PLATFORM_WIN_
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "BufferGL.h"
 #include "RenderStateGL.h"
 #include "GL/glew.h"
@@ -91,7 +91,7 @@ void CGeometryGL::init()
         m_indexBuffer->set(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
     }
 
-    RENDERER->checkForErrors("GeometryGL: Init Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: Init Error");
 
     CGeometryGL::bindVertexArray(0);
 
@@ -237,7 +237,7 @@ void CGeometryGL::draw()
 
     CGeometryGL::bindVertexArray(0);
 
-    RENDERER->checkForErrors("GeometryGL: Draw Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: Draw Error");
 }
 
 void CGeometryGL::free()
@@ -263,7 +263,7 @@ void CGeometryGL::free()
 
     CGeometryGL::deleteVertexArray(m_arrayId);
 
-    RENDERER->checkForErrors("GeometryGL: Delete buffers Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: Delete buffers Error");
 }
 
 void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
@@ -291,7 +291,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexPosition Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexPosition Error");
                 }
                 break;
 
@@ -302,7 +302,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexNormal Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexNormal Error");
                 }
                 break;
 
@@ -313,7 +313,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexColor Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexColor Error");
                 }
                 break;
 
@@ -324,7 +324,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexBinormal Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexBinormal Error");
                 }
                 break;
 
@@ -335,7 +335,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexTangent Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexTangent Error");
                 }
                 break;
 
@@ -350,7 +350,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     offset += size;
                     ++layer;
 
-                    RENDERER->checkForErrors("GeometryGL: init eAttribVertexTexture Error");
+                    ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexTexture Error");
                 }
                 break;
 
@@ -402,7 +402,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                         CGeometryGL::initVertexAttribPointer(userLayer, type, componentsCount(type), attr.second->getUserDataSize(), offset);
                         offset += size;
 
-                        RENDERER->checkForErrors("GeometryGL: init eAttribUser Error");
+                        ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribUser Error");
 
                         u32 divisor = attr.second->getDivisor();
                         if (divisor > 0)
@@ -454,7 +454,7 @@ void CGeometryGL::refresh()
         m_indexBuffer->set(m_geometyType, sizeof(GLint)* m_data.indicesSize(), m_data._indices.data());
     }
 
-    RENDERER->checkForErrors("GeometryGL: Refresh Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: Refresh Error");
 
     //Array
     CGeometryGL::bindVertexArray(0);
@@ -547,7 +547,7 @@ void CGeometryGL::drawElements(EPrimitivesMode mode, u32 count, u32 primCount)
         glDrawElements(EPrimitivesModeGL[mode], count, GL_UNSIGNED_INT, NULL);
     }
 
-    RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawElements Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawElements Error");
 }
 
 void CGeometryGL::drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 primCount)
@@ -561,11 +561,11 @@ void CGeometryGL::drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 pri
         glDrawArrays(EPrimitivesModeGL[mode], first, count);
     }
 
-    RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawArrays Error");
+    ENGINE_RENDERER->checkForErrors("GeometryGL: CGeometryGL::drawArrays Error");
 }
 
 } //namespace gl
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

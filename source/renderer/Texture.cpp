@@ -16,7 +16,7 @@ CTexture::CTexture()
 }
 
 CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data, u32 level)
-    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, level))
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, level))
 {
     if (m_impl)
     {
@@ -28,7 +28,7 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
 }
 
 CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data, u32 level)
-    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, Dimension3D(size.width, size.height, 1), data, level))
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size.width, size.height, 1), data, level))
 {
     if (m_impl)
     {
@@ -44,7 +44,7 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
 }
 
 CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
-    : m_impl(DRIVER_CONTEXT->createTexture(target, format, type, size, data, level))
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, size, data, level))
 {
     if (m_impl)
     {
@@ -57,7 +57,7 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
 }
 
 CTexture::CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
-    : m_impl(DRIVER_CONTEXT->createCubeTexture(format, type, size, data, level))
+    : m_impl(ENGINE_CONTEXT->createCubeTexture(format, type, size, data, level))
 {
     if (m_impl)
     {

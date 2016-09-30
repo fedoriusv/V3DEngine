@@ -18,7 +18,7 @@ CCamera::CCamera()
     m_nodeType = ENodeType::eCamera;
     LOG_INFO("Create node type: %s", getNodeNameByType(m_nodeType).c_str());
 
-    const core::Rect32& size = RENDERER->getViewportSize();
+    const core::Rect32& size = ENGINE_RENDERER->getViewportSize();
     m_aspect = (f32)size.getWidth() / (f32)size.getHeight();
 
     m_matricesFlag |= eCameraStateProjection;
@@ -125,7 +125,7 @@ void CCamera::recalculateProjectionMatrix() const
 {
     if (CCamera::isOrthogonal())
     {
-        const core::Rect32& size = RENDERER->getViewportSize();
+        const core::Rect32& size = ENGINE_RENDERER->getViewportSize();
         m_transform[eTransformProjectionMatrix] = core::buildProjectionMatrixOrtho(0.0f, (f32)size.getWidth(), 0.0f, (f32)size.getHeight(), m_zNear, m_zFar);
         m_transform[eTransformProjectionMatrix].makeTransposed();
     }
@@ -184,7 +184,7 @@ void CCamera::update(s32 dt)
             CCamera::recalculateViewMatrix();
         }
 
-        RENDERER->updateCamera(this);
+        ENGINE_RENDERER->updateCamera(this);
     }
 }
 

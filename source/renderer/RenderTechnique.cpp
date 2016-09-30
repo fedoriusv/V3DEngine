@@ -157,7 +157,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 continue;
             }
 
-            RenderTargetPtr target = RENDERER->makeSharedRenderTarget();
+            RenderTargetPtr target = ENGINE_RENDERER->makeSharedRenderTarget();
             if (!target->parse(targetElement))
             {
                 LOG_ERROR("CRenderTechnique: Rendertarget parse error");
@@ -193,7 +193,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
                 continue;
             }
 
-            GeometryTargetPtr target = RENDERER->makeSharedGeometryTarget();
+            GeometryTargetPtr target = ENGINE_RENDERER->makeSharedGeometryTarget();
             if (!target->parse(transformfeedbackElement))
             {
                 LOG_ERROR("CRenderTechnique: Transformfeedback target parse error");

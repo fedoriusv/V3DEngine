@@ -1,12 +1,13 @@
 #include "RendererD3D.h"
 #include "utils/Logger.h"
 
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
 #include "context/DriverContextD3D.h"
 #include "renderer/D3D/TextureD3D.h"
 #include "GeometryD3D.h"
 
 #include <d3d11.h>
+#include "RendererD3D.h"
 
 namespace v3d
 {
@@ -15,7 +16,7 @@ namespace renderer
 namespace d3d
 {
 
-CRendererD3D::CRendererD3D(const DriverContextPtr& context)
+CRendererD3D::CRendererD3D(const ContextPtr& context)
     : CRenderer(context)
     , m_isLocked(false)
 {
@@ -145,8 +146,15 @@ void CRendererD3D::resetTextures()
     //CTextureGL::reset();
 }
 
+
+platform::ERenderType CRendererD3D::getRenderType() const
+{
+    return platform::ERenderType();
+}
+
 } //namespace d3d
 } //namespace renderer
 } //namespace v3d
 
-#endif //_DIRECT3D_DRIVER_
+#endif //_DIRECT3D_RENDER_
+

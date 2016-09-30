@@ -34,15 +34,17 @@ namespace renderer
     {
     public:
 
-        CRenderer(const DriverContextPtr& context);
+        CRenderer(const ContextPtr& context);
         virtual                     ~CRenderer();
 
-        const DriverContextPtr&     getContext() const;
+        const ContextPtr&           getContext() const;
 
         virtual void                init()                         = 0;
         
         virtual void                preRender(bool clear = false)  = 0;
         virtual void                postRender()                   = 0;
+
+        virtual platform::ERenderType getRenderType() const = 0;
 
         void                        draw(const RenderJobPtr& job);
 
@@ -65,6 +67,8 @@ namespace renderer
         const core::Rect32&         getViewportSize() const;
         u32                         getFrameIndex()   const;
 
+
+
         const RenderTargetPtr&      getDefaultRenderTarget() const;
         const RenderTargetPtr&      getCurrentRenderTarget() const;
         void                        setCurrentRenderTarget(const RenderTargetPtr& target);
@@ -84,7 +88,7 @@ namespace renderer
         void                        updateTexture(MaterialPtr& material, const RenderPassPtr& pass);
         void                        updateAdvanced(const RenderPassPtr& pass);
 
-        DriverContextPtr            m_context;
+        ContextPtr                  m_context;
         u32                         m_frameIndex;
 
         RenderTargetPtr             m_defaultRenderTarget;
@@ -101,7 +105,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderer>  RendererPtr;
+    using RendererPtr = std::shared_ptr<CRenderer>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

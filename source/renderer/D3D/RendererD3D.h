@@ -15,7 +15,7 @@ namespace d3d
     {
     public:
     
-        CRendererD3D(const DriverContextPtr& context);
+        CRendererD3D(const ContextPtr& context);
         ~CRendererD3D();
     
         void                init()                                                                  override;
@@ -32,6 +32,8 @@ namespace d3d
         GeometryTargetPtr   makeSharedGeometryTarget()                                              override;
 
         bool                isLocked() const;
+
+        platform::ERenderType getRenderType() const                                                 override;
 
     private:
 

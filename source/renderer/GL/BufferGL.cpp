@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -84,7 +84,7 @@ void BufferGL::bindToTarget(EBufferTarget target, u32 offset, u32 size) const
         glBindBufferRange(EBufferTargetGL[target], 0, m_bufferID, size, offset);
     }
 
-    RENDERER->checkForErrors("BufferGL::bindToBuffer Error");
+    ENGINE_RENDERER->checkForErrors("BufferGL::bindToBuffer Error");
 }
 
 void BufferGL::unbind() const
@@ -106,7 +106,7 @@ void BufferGL::set(EDataUsageType type, u32 size, const void* data)
     BufferGL::bind();
     glBufferData(EBufferTargetGL[m_target], size, data, EDataUsageTypeGL[type]);
 
-    RENDERER->checkForErrors("BufferGL::setData Error");
+    ENGINE_RENDERER->checkForErrors("BufferGL::setData Error");
 }
 
 void BufferGL::update(u32 offset, u32 size, const void* data)
@@ -119,7 +119,7 @@ void BufferGL::update(u32 offset, u32 size, const void* data)
     BufferGL::bind();
     glBufferSubData(EBufferTargetGL[m_target], offset, size, data);
 
-    RENDERER->checkForErrors("BufferGL::updateData Error");
+    ENGINE_RENDERER->checkForErrors("BufferGL::updateData Error");
 }
 
 void BufferGL::read(u32 offset, u32 size, void* data) const
@@ -137,7 +137,7 @@ void BufferGL::read(u32 offset, u32 size, void* data) const
 #endif //_DEBUG_GL
     glGetBufferSubData(EBufferTargetGL[m_target], offset, size, data);
 
-    RENDERER->checkForErrors("BufferGL::readData Error");
+    ENGINE_RENDERER->checkForErrors("BufferGL::readData Error");
 }
 
 void* BufferGL::map(u32 access)
@@ -163,4 +163,4 @@ u32 BufferGL::getID() const
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_

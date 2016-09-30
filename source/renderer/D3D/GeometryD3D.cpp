@@ -3,7 +3,7 @@
 #include "renderer/RenderTechnique.h"
 #include "Engine.h"
 
-#ifdef _DIRECT3D_DRIVER_
+#ifdef _DIRECT3D_RENDER_
 #include <d3d11.h>
 
 using namespace v3d;
@@ -53,9 +53,6 @@ void CGeometryD3D::init()
     {
        //TODO:
     }
-
-    RENDERER->checkForErrors("GeometryGL: Init Error");
-
    //
 }
 
@@ -73,4 +70,4 @@ void CGeometryD3D::refresh()
 {
 }
 
-#endif //_DIRECT3D_DRIVER_
+#endif //_DIRECT3D_RENDER_

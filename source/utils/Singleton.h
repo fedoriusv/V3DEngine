@@ -1,5 +1,4 @@
-#ifndef _V3D_SINGLETON_H_
-#define _V3D_SINGLETON_H_
+#pragma once
 
 #include "common.h"
 
@@ -72,5 +71,3 @@ namespace utils
 
 } //namespace utils
 } //namespace v3d
-
-#endif //_V3D_SINGLETON_H_

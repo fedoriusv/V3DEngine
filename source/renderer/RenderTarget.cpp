@@ -94,8 +94,8 @@ CRenderTarget::CRenderTarget()
     ITarget::setTargetType(ITarget::ETagetType::eRenderTarget);
     ITarget::setName(k_defaultName);
 
-    u32 width = (u32)(WINDOW->getSize().width);
-    u32 height = (u32)(WINDOW->getSize().height);
+    u32 width = (u32)(ENGINE_WINDOW->getSize().width);
+    u32 height = (u32)(ENGINE_WINDOW->getSize().height);
     CRenderTarget::setViewport(Rect32(0, 0, width, height));
 }
 
@@ -325,8 +325,8 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
     {
         x = 0;
         y = 0;
-        width = (u32)(WINDOW->getSize().width * ratio);
-        height = (u32)(WINDOW->getSize().height * ratio);
+        width = (u32)(ENGINE_WINDOW->getSize().width * ratio);
+        height = (u32)(ENGINE_WINDOW->getSize().height * ratio);
     }
     CRenderTarget::setViewport(Rect32(x, y, width, height));
 

@@ -1,7 +1,7 @@
 #include "QueryGL.h"
 #include "Engine.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "GL/glew.h"
 
 namespace v3d
@@ -40,14 +40,14 @@ void QueryGL::beginQuery(EQueryTarget target, u32 query)
     glBeginQuery(EQueryTargetGL[target], query);
     ASSERT(glIsQuery(query), "Invalid Query index");
 
-    RENDERER->checkForErrors("QueryGL::beginQuery Error");
+    ENGINE_RENDERER->checkForErrors("QueryGL::beginQuery Error");
 }
 
 void QueryGL::endQuery(EQueryTarget target)
 {
     glEndQuery(EQueryTargetGL[target]);
 
-    RENDERER->checkForErrors("QueryGL::endQuery Error");
+    ENGINE_RENDERER->checkForErrors("QueryGL::endQuery Error");
 }
 
 void QueryGL::getQueryResults(u32 query, s32* result)

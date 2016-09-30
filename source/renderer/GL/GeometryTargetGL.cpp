@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "utils/Logger.h"
 
-#ifdef _OPENGL_DRIVER_
+#ifdef _OPENGL_RENDER_
 #include "TransformFeedbackGL.h"
 #include "BufferGL.h"
 #include "RenderStateGL.h"
@@ -63,7 +63,7 @@ void CGeometryTargetGL::bind()
     QueryGL::beginQuery(QueryGL::eFeedbackPrimitivesWrittenTarget, m_queryId);
     TransformFeedbackGL::begin(m_mode);
 
-    RENDERER->checkForErrors("CGeometryTargetGL: Bind TransformFeedback Error");
+    ENGINE_RENDERER->checkForErrors("CGeometryTargetGL: Bind TransformFeedback Error");
 }
 
 void CGeometryTargetGL::unbind()
@@ -95,7 +95,7 @@ void CGeometryTargetGL::unbind()
         }
     }
 
-    RENDERER->checkForErrors("CGeometryTargetGL: Unbind TransformFeedback Error");
+    ENGINE_RENDERER->checkForErrors("CGeometryTargetGL: Unbind TransformFeedback Error");
 }
 
 bool CGeometryTargetGL::create()
@@ -158,14 +158,14 @@ bool CGeometryTargetGL::create()
     //m_transformfeedback = new TransformFeedbackGL();
     QueryGL::genQuery(m_queryId);
 
-    RENDERER->checkForErrors("CGeometryTargetGL: init TransformFeedback Error");
+    ENGINE_RENDERER->checkForErrors("CGeometryTargetGL: init TransformFeedback Error");
 
     if (originTransformFeedback > 0)
     {
         glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, originTransformFeedback);
     }
 
-    RENDERER->checkForErrors("CGeometryTargetGL: init TransformFeedback Error");
+    ENGINE_RENDERER->checkForErrors("CGeometryTargetGL: init TransformFeedback Error");
 
     m_initialized = true;
 
@@ -193,4 +193,4 @@ void CGeometryTargetGL::destroy()
 } //namespace renderer
 } //namespace v3d
 
-#endif //_OPENGL_DRIVER_
+#endif //_OPENGL_RENDER_
