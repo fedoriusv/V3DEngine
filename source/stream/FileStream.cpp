@@ -6,9 +6,12 @@
 #include <istream>
 #include <sys/stat.h>
 
-using namespace v3d;
-using namespace v3d::stream;
-using namespace v3d::core;
+namespace v3d
+{
+namespace stream
+{
+
+using namespace core;
 
 FileStream::FileStream()
     : m_fileHandler(nullptr)
@@ -108,91 +111,91 @@ bool FileStream::isOpen() const
     return m_isOpen;
 }
 
-u32 FileStream::read(void* buffer, const u32 size, const u32 count)
+u32 FileStream::read(void* buffer, const u32 size, const u32 count) const
 {
     ASSERT(m_fileHandler, "File Handler nullptr");
     const u32 ret = (u32)fread(buffer, size, count, m_fileHandler);
     return ret;
 }
 
-u32 FileStream::read(u8& value)
+u32 FileStream::read(u8& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(s8& value)
+u32 FileStream::read(s8& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(u16& value)
+u32 FileStream::read(u16& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(s16& value)
+u32 FileStream::read(s16& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(u32& value)
+u32 FileStream::read(u32& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(s32& value)
+u32 FileStream::read(s32& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(u64& value)
+u32 FileStream::read(u64& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(s64& value)
+u32 FileStream::read(s64& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(f32& value)
+u32 FileStream::read(f32& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(f64& value)
+u32 FileStream::read(f64& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(f80& value)
+u32 FileStream::read(f80& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(bool& value)
+u32 FileStream::read(bool& value) const
 {
     const u32 ret = FileStream::read(&value, sizeof(value), 1);
     return ret;
 }
 
-u32 FileStream::read(std::string& value)
+u32 FileStream::read(std::string& value) const
 {
     ASSERT(m_fileHandler, "File Handler nullptr");
 
-    FileStream::seekEnd(0);
-    m_fileSize = FileStream::tell();
+    fseek(m_fileHandler, 0, SEEK_END);
+    m_fileSize = ftell(m_fileHandler);
     rewind(m_fileHandler);
 
     value.clear();
@@ -381,3 +384,6 @@ bool FileStream::remove(const std::string& file)
 {
     return std::remove(file.c_str()) == 0;
 }
+
+} //namespace stream
+} //namespace v3d

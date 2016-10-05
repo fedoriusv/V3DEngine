@@ -2,12 +2,23 @@
 
 #include "renderer/Renderer.h"
 #include "utils/Thread.h"
+#include "utils/Semaphore.h"
 #include "stream/MemoryStream.h"
 
 namespace v3d
 {
 namespace platform
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EDeviceCommand
+    {
+        eCmdInit = 0,
+
+
+        eCmdTerminate
+    };
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class Device final
@@ -35,10 +46,11 @@ namespace platform
         stream::MemoryStream        m_commandBuffer;
 
         utils::Thread               m_thread;
-        //semophore
+        utils::Semaphore            m_semaphore;
         renderer::RendererPtr       m_render;
 
-
+        void                        wait(bool result = false);
+        void                        notify();
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

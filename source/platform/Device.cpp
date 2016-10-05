@@ -1,4 +1,5 @@
 #include "Device.h"
+#include "utils/Logger.h"
 
 namespace v3d
 {
@@ -8,6 +9,7 @@ namespace platform
 Device::Device(renderer::RendererPtr renderer, bool isThreaded)
     : m_isThreaded(isThreaded)
     , m_isRunning(false)
+    , m_semaphore(1)
     , m_render(renderer)
 {
     if (Device::isThreaded())
@@ -31,7 +33,10 @@ bool Device::init()
 
     if (Device::isThreaded())
     {
-        //
+        m_commandBuffer.write((s32)eCmdInit);
+        
+        //Test
+        m_commandBuffer.write(s32(5));
     }
     else
     {
@@ -63,13 +68,58 @@ void Device::threadWorker(void* data)
             m_isRunning = false;
         }
 
+        Device::wait();
         Device::runCommand(stream);
     }
 }
 
 void Device::runCommand(const stream::MemoryStream& stream)
 {
-    //TODO:
+    Device::notify();
+
+    s32 cmd;
+    stream.read(cmd);
+    EDeviceCommand command = (EDeviceCommand)cmd;
+
+    switch (command)
+    {
+        case eCmdInit:
+        {
+            u32 test;
+            stream.read(test);
+            LOG_DEBUG("Device::runCommand test: %d", test);
+        }
+
+        case eCmdTerminate:
+        {
+            m_isRunning = false;
+            Device::wait(true);
+        }
+
+        default:
+            ASSERT(false, "Unknown command");
+    }
+    
+
+    
+
+}
+
+void Device::wait(bool result)
+{
+    if (result)
+    {
+        m_semaphore.tryWait();
+    }
+    else
+    {
+        m_semaphore.wait();
+    }
+}
+
+void Device::notify()
+{
+    m_semaphore.post();
 }
 
 } //namespace platform

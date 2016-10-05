@@ -81,6 +81,8 @@ bool Engine::createWindowWithContext(const core::Dimension2D& size, const core::
     }
 
     m_device = std::make_unique<Device>(renderer, true);
+
+    return true;
 }
 
 const InputEventHandlerPtr Engine::getInputEventHandler() const

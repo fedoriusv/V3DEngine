@@ -1,5 +1,4 @@
-#ifndef _V3D_FILE_STREAM_H_
-#define _V3D_FILE_STREAM_H_
+#pragma once
 
 #include "IStream.h"
 
@@ -32,24 +31,24 @@ namespace stream
         ~FileStream();
 
         bool    open(const std::string& file, EOpenMode openMode = e_in);
-        void    close()                                                 override;
+        void    close()                                                         override;
 
         bool    isOpen() const;
 
-        u32     read(void* buffer, const u32 size, const u32 count = 1)         override;
-        u32     read(u8& value)                                                 override;
-        u32     read(s8& value)                                                 override;
-        u32     read(u16& value)                                                override;
-        u32     read(s16& value)                                                override;
-        u32     read(u32& value)                                                override;
-        u32     read(s32& value)                                                override;
-        u32     read(u64& value)                                                override;
-        u32     read(s64& value)                                                override;
-        u32     read(f32& value)                                                override;
-        u32     read(f64& value)                                                override;
-        u32     read(f80& value)                                                override;
-        u32     read(bool& value)                                               override;
-        u32     read(std::string& value)                                        override;
+        u32     read(void* buffer, const u32 size, const u32 count = 1) const   override;
+        u32     read(u8& value) const                                           override;
+        u32     read(s8& value) const                                           override;
+        u32     read(u16& value) const                                          override;
+        u32     read(s16& value) const                                          override;
+        u32     read(u32& value) const                                          override;
+        u32     read(s32& value) const                                          override;
+        u32     read(u64& value) const                                          override;
+        u32     read(s64& value) const                                          override;
+        u32     read(f32& value) const                                          override;
+        u32     read(f64& value) const                                          override;
+        u32     read(f80& value) const                                          override;
+        u32     read(bool& value) const                                         override;
+        u32     read(std::string& value) const                                  override;
 
         u32     write(const void* buffer, const u32 size, const u32 count = 1)  override;
         u32     write(const u8 value)                                           override;
@@ -82,7 +81,7 @@ namespace stream
         FILE*       m_fileHandler;
         std::string m_fileName;
         EOpenMode   m_openMode;
-        u32         m_fileSize;
+        mutable u32 m_fileSize;
         bool        m_isOpen;
 
         u8*         m_mappedMemory;
@@ -94,7 +93,6 @@ namespace stream
     typedef std::shared_ptr<FileStream> FileStreamPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_FILE_STREAM_H_
+} //namespace stream
+} //namespace v3d

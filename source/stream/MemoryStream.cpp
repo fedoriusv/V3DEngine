@@ -1,7 +1,9 @@
 #include "MemoryStream.h"
 
-using namespace v3d;
-using namespace stream;
+namespace v3d
+{
+namespace stream
+{
 
 MemoryStream::MemoryStream()
     : m_stream(nullptr)
@@ -34,7 +36,7 @@ void MemoryStream::close()
 {
 }
 
-u32 MemoryStream::read(void* buffer, const u32 size, const u32 count)
+u32 MemoryStream::read(void* buffer, const u32 size, const u32 count) const
 {
     ASSERT(m_pos + size * count <= m_length, "Invalid memory size");
 
@@ -44,7 +46,7 @@ u32 MemoryStream::read(void* buffer, const u32 size, const u32 count)
     return m_pos;
 }
 
-u32 MemoryStream::read(u8& value)
+u32 MemoryStream::read(u8& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(u8), "Invalid memory size");
 
@@ -53,7 +55,7 @@ u32 MemoryStream::read(u8& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(s8& value)
+u32 MemoryStream::read(s8& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(s8), "Invalid memory size");
 
@@ -62,7 +64,7 @@ u32 MemoryStream::read(s8& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(u16& value)
+u32 MemoryStream::read(u16& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(u16), "Invalid memory size");
 
@@ -72,7 +74,7 @@ u32 MemoryStream::read(u16& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(s16& value)
+u32 MemoryStream::read(s16& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(s16), "Invalid memory size");
 
@@ -82,7 +84,7 @@ u32 MemoryStream::read(s16& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(u32& value)
+u32 MemoryStream::read(u32& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(u32), "Invalid memory size");
 
@@ -94,7 +96,7 @@ u32 MemoryStream::read(u32& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(s32& value)
+u32 MemoryStream::read(s32& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(s32), "Invalid memory size");
 
@@ -106,7 +108,7 @@ u32 MemoryStream::read(s32& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(u64& value)
+u32 MemoryStream::read(u64& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(u64), "Invalid memory size");
 
@@ -123,7 +125,7 @@ u32 MemoryStream::read(u64& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(s64& value)
+u32 MemoryStream::read(s64& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(s64), "Invalid memory size");
 
@@ -140,7 +142,7 @@ u32 MemoryStream::read(s64& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(f32& value)
+u32 MemoryStream::read(f32& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(f32), "Invalid memory size");
 
@@ -154,7 +156,7 @@ u32 MemoryStream::read(f32& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(f64& value)
+u32 MemoryStream::read(f64& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(f64), "Invalid memory size");
 
@@ -173,7 +175,7 @@ u32 MemoryStream::read(f64& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(f80& value)
+u32 MemoryStream::read(f80& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(f80), "Invalid memory size");
 
@@ -192,7 +194,7 @@ u32 MemoryStream::read(f80& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(bool& value)
+u32 MemoryStream::read(bool& value) const
 {
     ASSERT(m_length - m_pos >= sizeof(bool), "Invalid memory size");
     value = m_stream[m_pos++] != 0;
@@ -200,7 +202,7 @@ u32 MemoryStream::read(bool& value)
     return m_pos;
 }
 
-u32 MemoryStream::read(std::string& value)
+u32 MemoryStream::read(std::string& value) const
 {
     u32 size = 0;
     read(size);
@@ -594,3 +596,6 @@ bool MemoryStream::checkSize(u32 size)
 
     return true;
 }
+
+} //namespace stream
+} //namespace v3d
