@@ -20,6 +20,7 @@ using namespace platform;
 Engine::Engine()
     : m_window(nullptr)
     , m_inputEventHandler(nullptr)
+    , m_render(nullptr)
     , m_scene(nullptr)
 {
     m_inputEventHandler = std::make_shared<CInputEventHandler>();
@@ -30,6 +31,16 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+    if (m_render)
+    {
+        //m_render->destiroy()
+    }
+
+    if (m_context)
+    {
+        m_context->destroy();
+    }
+
     m_inputEventHandler->setEnableEvents(false);
 
     CRenderTechniqueManager::freeInstance();
@@ -43,10 +54,12 @@ Engine::~Engine()
 
 bool Engine::init()
 {
-    if (!m_device->init())
+    if (!m_context || !m_render)
     {
         return false;
     }
+
+    m_render->init();
 
     return true;
 }
@@ -62,25 +75,26 @@ bool Engine::createWindowWithContext(const core::Dimension2D& size, const core::
         return false;
     }
 
-    renderer::ContextPtr context = platform::Platform::createContext(m_window, driverType);
-    if (!context)
+    m_context = platform::Platform::createContext(m_window, driverType);
+    if (!m_context)
     {
         LOG_ERROR("Engine::createWindowWithContext: Can't create context");
+        m_window->close();
         system("pause");
 
         return false;
     }
 
-    renderer::RendererPtr renderer = platform::Platform::createRenderer(context, driverType);
-    if (!renderer)
+    m_render = platform::Platform::createRenderer(m_context, driverType);
+    if (!m_render)
     {
         LOG_ERROR("Engine::createWindowWithContext: Can't create render");
+        m_context->destroy();
+        m_window->close();
         system("pause");
 
         return false;
     }
-
-    m_device = std::make_unique<Device>(renderer, true);
 
     return true;
 }
@@ -103,7 +117,7 @@ bool Engine::begin()
     }
 
     m_inputEventHandler->update();
-    if (m_device->getRenderer())
+    if (m_render)
     {
         m_scene->draw();
     }
@@ -128,22 +142,12 @@ const WindowPtr Engine::getWindow() const
 
 const renderer::RendererPtr Engine::getRenderer() const
 {
-    if (!m_device)
-    {
-        return nullptr;
-    }
-
-    return m_device->getRenderer();
+    return m_render;
 }
 
 const renderer::ContextPtr Engine::getContext() const
 {
-    if (!m_device)
-    {
-        return nullptr;
-    }
-
-    return m_device->getRenderer()->getContext();
+    return m_context;
 }
 
 } //namespace v3d
