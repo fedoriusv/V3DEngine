@@ -52,7 +52,6 @@ namespace platform
         static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
         HWND    m_window;
-        HDC     m_context;
 
 #if _DIRECTINPUT_
         struct SControllerInfo

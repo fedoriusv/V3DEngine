@@ -2,7 +2,7 @@
 #include "utils/Logger.h"
 
 #ifdef _DIRECT3D_RENDER_
-#include "context/DriverContextD3D.h"
+#include "context/DeviceContextD3D.h"
 #include "renderer/D3D/TextureD3D.h"
 #include "GeometryD3D.h"
 
@@ -16,39 +16,59 @@ namespace renderer
 namespace d3d
 {
 
-CRendererD3D::CRendererD3D(const ContextPtr& context)
-    : CRenderer(context)
+RendererD3D::RendererD3D(const ContextPtr context)
+    : IRenderer(context, true)
     , m_isLocked(false)
 {
     m_defaultRenderTarget = makeSharedRenderTarget();
-    CRenderer::setCurrentRenderTarget(m_defaultRenderTarget);
+    IRenderer::setCurrentRenderTarget(m_defaultRenderTarget);
 }
 
-CRendererD3D::~CRendererD3D()
+RendererD3D::~RendererD3D()
 {
 }
 
-void CRendererD3D::init()
+void RendererD3D::immediateInit()
 {
-    LOG_INFO("Direct3D Render Init");
+}
 
-    // Setup the viewport for rendering.
-    D3D11_VIEWPORT vp;
-    vp.Width = (FLOAT)m_context->getWindowSize().width;
-    vp.Height = (FLOAT)m_context->getWindowSize().height;
-    vp.MinDepth = 0.0f;
-    vp.MaxDepth = 1.0f;
-    vp.TopLeftX = 0.0f;
-    vp.TopLeftY = 0.0f;
+void RendererD3D::immediaterBeginFrame()
+{
+}
 
-    ID3D11DeviceContext* d3dContext = std::static_pointer_cast<CDriverContextD3D>(m_context)->getD3DContext();
-    d3dContext->RSSetViewports(1, &vp);
+void RendererD3D::immediateEndFrame()
+{
+}
 
-    ID3D11RenderTargetView* d3dTargetView = std::static_pointer_cast<CDriverContextD3D>(m_context)->getD3DTargetView();
-    FLOAT clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    d3dContext->ClearRenderTargetView(d3dTargetView, clearColor);
+void RendererD3D::immediatePresentFrame()
+{
+}
 
-    m_context->setVSync(false);
+void RendererD3D::immediateDraw()
+{
+}
+
+//void RendererD3D::init()
+//{
+    //LOG_INFO("Direct3D Render Init");
+
+    //// Setup the viewport for rendering.
+    //D3D11_VIEWPORT vp;
+    //vp.Width = (FLOAT)m_context->getWindowSize().width;
+    //vp.Height = (FLOAT)m_context->getWindowSize().height;
+    //vp.MinDepth = 0.0f;
+    //vp.MaxDepth = 1.0f;
+    //vp.TopLeftX = 0.0f;
+    //vp.TopLeftY = 0.0f;
+
+    //ID3D11DeviceContext* d3dContext = std::static_pointer_cast<CDriverContextD3D>(m_context)->getD3DContext();
+    //d3dContext->RSSetViewports(1, &vp);
+
+    //ID3D11RenderTargetView* d3dTargetView = std::static_pointer_cast<CDriverContextD3D>(m_context)->getD3DTargetView();
+    //FLOAT clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    //d3dContext->ClearRenderTargetView(d3dTargetView, clearColor);
+
+    //m_context->setVSync(false);
 
     /*CRenderStateGL::winding(eWindingCW);
     CRenderStateGL::culling(true);
@@ -71,12 +91,12 @@ void CRendererD3D::init()
 
     glDisable(GL_DITHER);*/
 
-#ifdef _DEBUG
-    m_context->checkForErrors("CRendererD3D: Render Init");
-#endif
-}
+//#ifdef _DEBUG
+//    m_context->checkForErrors("CRendererD3D: Render Init");
+//#endif
+//}
 
-void CRendererD3D::preRender(bool clear)
+void RendererD3D::preRender(bool clear)
 {
     if (isLocked())
     {
@@ -86,7 +106,7 @@ void CRendererD3D::preRender(bool clear)
     m_isLocked = true;
 }
 
-void CRendererD3D::postRender()
+void RendererD3D::postRender()
 {
     if (!isLocked())
     {
@@ -95,59 +115,54 @@ void CRendererD3D::postRender()
 
     m_frameIndex++;
     m_isLocked = false;
-
-#ifdef _DEBUG
-    m_context->checkForErrors();
-#endif
-    m_context->flushBuffers();
 }
 
-ShaderPtr CRendererD3D::makeSharedShader()
+ShaderPtr RendererD3D::makeSharedShader()
 {
     return nullptr;
     //return std::make_shared<CShaderGL>();
 }
 
-ShaderProgramPtr CRendererD3D::makeSharedProgram()
+ShaderProgramPtr RendererD3D::makeSharedProgram()
 {
     return nullptr;
     //return std::make_shared<CShaderProgramGL>();
 }
 
-GeometryPtr CRendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
+GeometryPtr RendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
 {
     return std::make_shared<CGeometryD3D>(technique);
 }
 
-RenderStatePtr CRendererD3D::makeSharedRenderState()
+RenderStatePtr RendererD3D::makeSharedRenderState()
 {
     return nullptr;
     //return std::make_shared<CRenderStateGL>();
 }
 
-RenderTargetPtr CRendererD3D::makeSharedRenderTarget()
+RenderTargetPtr RendererD3D::makeSharedRenderTarget()
 {
     return nullptr;
     //return std::make_shared<CRenderTargetGL>();
 }
 
-GeometryTargetPtr CRendererD3D::makeSharedGeometryTarget()
+GeometryTargetPtr RendererD3D::makeSharedGeometryTarget()
 {
     return nullptr;
 }
 
-bool CRendererD3D::isLocked() const
+bool RendererD3D::isLocked() const
 {
     return m_isLocked;
 }
 
-void CRendererD3D::resetTextures()
+void RendererD3D::resetTextures()
 {
     //CTextureGL::reset();
 }
 
 
-platform::ERenderType CRendererD3D::getRenderType() const
+platform::ERenderType RendererD3D::getRenderType() const
 {
     return platform::ERenderType();
 }

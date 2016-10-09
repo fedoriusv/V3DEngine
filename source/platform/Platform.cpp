@@ -3,25 +3,30 @@
 
 #ifdef _PLATFORM_WIN_
 #   include "platform/WindowWinApi.h"
-#endif
+#endif //_PLATFORM_WIN_
 
 #ifdef _PLATFORM_MACOSX_
 #   include "platform/WindowMacOSX.h"
-#endif
+#endif //_PLATFORM_MACOSX_
 
 #ifdef _PLATFORM_LINUX_
 #   include "platform/WindowLinux.h"
-#endif
+#endif //_PLATFORM_LINUX_
 
 #ifdef _OPENGL_RENDER_
-#   include "context/DriverContextGL.h"
+#   include "context/DeviceContextGL.h"
 #   include "renderer/GL/RendererGL.h"
-#endif
+#endif //_OPENGL_RENDER_
 
 #ifdef _DIRECT3D_RENDER_
-#   include "context/DriverContextD3D.h"
+#   include "context/DeviceContextD3D.h"
 #   include "renderer/D3D/RendererD3D.h"
-#endif
+#endif //_DIRECT3D_RENDER_
+
+#ifdef _VULKAN_RENDER_
+#   include "context/DeviceContextVK.h"
+#   include "renderer/VK/RendererVK.h"
+#endif //_VULKAN_RENDER_
 
 
 namespace v3d
@@ -73,7 +78,7 @@ renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, E
         case ERenderType::eRenderOpenGL:
         {
 #ifdef _OPENGL_RENDER_
-            context = std::make_shared<CDriverContextGL>(window);
+            context = std::make_shared<gl::DeviceContextGL>(window);
 #else //_OPENGL_RENDER_
             LOG_ERROR("Platform::createContext: _OPENGL_RENDER_ not defined");
 #endif //_OPENGL_RENDER_
@@ -83,7 +88,7 @@ renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, E
         case ERenderType::eRenderDirect3D:
         {
 #ifdef _DIRECT3D_RENDER_
-            context = std::make_shared<CDriverContextD3D>(window);
+            context = std::make_shared<d3d::DeviceContextD3D>(window);
 #else //_DIRECT3D_RENDER_
             LOG_ERROR("Platform::createContext: _DIRECT3D_RENDER_ not defined");
 #endif //_DIRECT3D_RENDER_
@@ -93,7 +98,7 @@ renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, E
         case ERenderType::eRenderVulkan:
         {
 #ifdef _VULKAN_RENDER_
-            //context = std::make_shared<CDriverContextD3D>(window);
+            context = std::make_shared<vk::DeviceContextVK>(window);
 #else //_VULKAN_RENDER_
             LOG_ERROR("Platform::createContext: _VULKAN_RENDER_ not defined");
 #endif //_VULKAN_RENDER_
@@ -120,7 +125,7 @@ renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, E
         return nullptr;
     }
 
-    context->driverInfo();
+    context->fillGrapthicCaps();
 
     return context;
 }
@@ -133,7 +138,7 @@ renderer::RendererPtr Platform::createRenderer(const renderer::ContextPtr contex
         case ERenderType::eRenderOpenGL:
         {
 #ifdef _OPENGL_RENDER_
-            renderer = std::make_shared<gl::CRendererGL>(context);
+            renderer = std::make_shared<gl::RendererGL>(context);
 #else //_OPENGL_RENDER_
             LOG_ERROR("Platform::createRenderer: _OPENGL_RENDER_ not defined");
 #endif //_OPENGL_RENDER_
@@ -143,7 +148,7 @@ renderer::RendererPtr Platform::createRenderer(const renderer::ContextPtr contex
         case ERenderType::eRenderDirect3D:
         {
 #ifdef _DIRECT3D_RENDER_
-            renderer = std::make_shared<d3d::CRendererD3D>(context);
+            renderer = std::make_shared<d3d::RendererD3D>(context);
 #else //_DIRECT3D_RENDER_
             LOG_ERROR("Platform::createRenderer: _DIRECT3D_RENDER_ not defined");
 #endif //_DIRECT3D_RENDER_
@@ -153,7 +158,7 @@ renderer::RendererPtr Platform::createRenderer(const renderer::ContextPtr contex
         case ERenderType::eRenderVulkan:
         {
 #ifdef _VULKAN_RENDER_
-            //renderer = std::make_shared<d3d::CRendererD3D>(context);
+            renderer = std::make_shared<vk::RendererVK>(context);
 #else //_VULKAN_RENDER_
             LOG_ERROR("Platform::createRenderer: _VULKAN_RENDER_ not defined");
 #endif //_VULKAN_RENDER_
@@ -164,6 +169,12 @@ renderer::RendererPtr Platform::createRenderer(const renderer::ContextPtr contex
         {
             return nullptr;
         }
+    }
+
+    if (!renderer->create())
+    {
+        LOG_ERROR("Platform::createRenderer: create render is filed");
+        return nullptr;
     }
 
     return renderer;

@@ -20,8 +20,7 @@ using namespace event;
 
 WindowWinApi::WindowWinApi(const WindowParam& param)
     : Window(param)
-    , m_window(nullptr)
-    , m_context(nullptr)
+    , m_window(NULL)
 {
     m_platformType = EPlatformType::ePlatformWindows;
 }
@@ -269,7 +268,8 @@ bool WindowWinApi::begin()
 bool WindowWinApi::end()
 {
 #ifdef _OPENGL_RENDER_
-    return SwapBuffers(m_context) != FALSE;
+    //return SwapBuffers(GetDC(m_window)) != FALSE;
+    return true;
 #else //_OPENGL_RENDER_
     return true;
 #endif //_OPENGL_RENDER_
@@ -351,9 +351,6 @@ void WindowWinApi::create()
     UpdateWindow(HWnd);
 
     m_window = HWnd;
-
-    HDC hDc = GetDC(m_window);
-    m_context = hDc;
 
     LOG_INFO("Window Size (%d, %d)", m_param._size.width, m_param._size.height);
 

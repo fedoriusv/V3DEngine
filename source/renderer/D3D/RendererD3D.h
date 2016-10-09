@@ -11,14 +11,25 @@ namespace d3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    class CRendererD3D : public CRenderer
+    class RendererD3D : public IRenderer
     {
     public:
     
-        CRendererD3D(const ContextPtr& context);
-        ~CRendererD3D();
+        RendererD3D(const ContextPtr context);
+        ~RendererD3D();
     
-        void                init()                                                                  override;
+    private:
+
+        void           immediateInit() override;
+
+        void           immediaterBeginFrame() override;
+        void           immediateEndFrame() override;
+        void           immediatePresentFrame() override;
+
+        void           immediateDraw() override;
+
+
+    public:
     
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;

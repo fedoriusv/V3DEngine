@@ -1,7 +1,7 @@
 #include "Renderer.h"
+#include "RenderThread.h"
 #include "Material.h"
 #include "RenderTechnique.h"
-#include "context/DriverContext.h"
 #include "scene/Light.h"
 #include "scene/Camera.h"
 #include "utils/Timer.h"
@@ -14,9 +14,12 @@ namespace renderer
 using namespace core;
 using namespace scene;
 
-CRenderer::CRenderer(const ContextPtr& context)
+IRenderer::IRenderer(const ContextPtr context, bool isThreaded)
     : m_context(context)
     , m_frameIndex(0U)
+
+    , m_renderThread(nullptr)
+    , m_isThreaded(isThreaded)
 
     , m_defaultRenderTarget(nullptr)
     , m_currentRenderTarget(nullptr)
@@ -27,33 +30,97 @@ CRenderer::CRenderer(const ContextPtr& context)
 {
 }
 
-CRenderer::~CRenderer()
+IRenderer::~IRenderer()
 {
-    m_context->destroy();
     m_lightList.clear();
 }
 
-const ContextPtr& CRenderer::getContext() const
+bool IRenderer::create()
 {
-    return m_context;
+    if (m_isThreaded)
+    {
+        m_renderThread = new RenderThread(shared_from_this());
+    }
+
+    return true;
 }
 
-void CRenderer::addLight(scene::CLight* lights)
+void IRenderer::init()
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->init();
+    }
+    else
+    {
+        this->immediateInit();
+    }
+}
+
+void IRenderer::beginFrame()
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->init();
+    }
+    else
+    {
+        this->immediaterBeginFrame();
+    }
+}
+
+void IRenderer::endFrame()
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->endFrame();
+    }
+    else
+    {
+        this->immediateEndFrame();
+    }
+}
+
+void IRenderer::presentFrame()
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->presentFrame();
+    }
+    else
+    {
+        this->immediatePresentFrame();
+    }
+}
+
+void IRenderer::draw()
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->draw();
+    }
+    else
+    {
+        this->immediateDraw();
+    }
+}
+
+void IRenderer::addLight(scene::CLight* lights)
 {
     m_lightList.push_back(lights);
 }
 
-void CRenderer::checkForErrors(const std::string& location)
+void IRenderer::checkForErrors(const std::string& location)
 {
-    m_context->checkForErrors(location);
+    m_context.lock()->checkForErrors(location);
 }
 
-void CRenderer::updateCamera(CCamera* camera)
+void IRenderer::updateCamera(CCamera* camera)
 {
     m_camera = camera;
 }
 
-const core::Rect32& CRenderer::getViewportSize() const
+const core::Rect32& IRenderer::getViewportSize() const
 {
     ASSERT(m_currentRenderTarget, "CRenderer: Current Render Target in null");
     if (m_currentRenderTarget)
@@ -66,9 +133,14 @@ const core::Rect32& CRenderer::getViewportSize() const
     }
 }
 
-Vector2D CRenderer::convertPosScreenToCanvas(const Point2D& pos)
+Vector2D IRenderer::convertPosScreenToCanvas(const Point2D& pos)
 {
-    const core::Dimension2D& size = m_context->getWindowSize();
+    if (m_context.expired())
+    {
+        return Vector2D();
+    }
+
+    const core::Dimension2D& size = m_context.lock()->getWindowSize();
     
     Vector2D newpos(0.0f, 0.0f);
     f32 koefW = pos.x / (f32)size.width;
@@ -79,9 +151,14 @@ Vector2D CRenderer::convertPosScreenToCanvas(const Point2D& pos)
     return newpos;
 }
 
-Point2D CRenderer::convertPosCanvasToScreen(const Vector2D& pos)
+Point2D IRenderer::convertPosCanvasToScreen(const Vector2D& pos)
 {
-    const core::Dimension2D& size = m_context->getWindowSize();
+    if (m_context.expired())
+    {
+        return Point2D();
+    }
+
+    const core::Dimension2D& size = m_context.lock()->getWindowSize();
 
     Point2D newpos(0, 0);
     f32 koefW = (pos.x + 1.0f) / 2.0f;
@@ -92,17 +169,17 @@ Point2D CRenderer::convertPosCanvasToScreen(const Vector2D& pos)
     return newpos;
 }
 
-u32 CRenderer::getFrameIndex() const
+u32 IRenderer::getFrameIndex() const
 {
     return m_frameIndex;
 }
 
-const RenderTargetPtr& CRenderer::getDefaultRenderTarget() const
+const RenderTargetPtr& IRenderer::getDefaultRenderTarget() const
 {
     return m_defaultRenderTarget;
 }
 
-const RenderTargetPtr& CRenderer::getCurrentRenderTarget() const
+const RenderTargetPtr& IRenderer::getCurrentRenderTarget() const
 {
     if (m_currentRenderTarget)
     {
@@ -114,12 +191,12 @@ const RenderTargetPtr& CRenderer::getCurrentRenderTarget() const
     }
 }
 
-void CRenderer::setCurrentRenderTarget(const RenderTargetPtr& target)
+void IRenderer::setCurrentRenderTarget(const RenderTargetPtr& target)
 {
     m_currentRenderTarget = target;
 }
 
-void CRenderer::draw(const RenderJobPtr& job)
+void IRenderer::draw(const RenderJobPtr& job)
 {
     MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
@@ -140,11 +217,11 @@ void CRenderer::draw(const RenderJobPtr& job)
 
         techique->setCurrentPass((*passIter));
 
-        CRenderer::updateTransform(transform, pass);
-        CRenderer::updateMaterial(material, pass);
-        CRenderer::updateTexture(material, pass);
-        CRenderer::updateLight(transform, pass);
-        CRenderer::updateAdvanced(pass);
+        IRenderer::updateTransform(transform, pass);
+        IRenderer::updateMaterial(material, pass);
+        IRenderer::updateTexture(material, pass);
+        IRenderer::updateLight(transform, pass);
+        IRenderer::updateAdvanced(pass);
 
         //Draw Geometry
         if (geometry->updated())
@@ -159,18 +236,18 @@ void CRenderer::draw(const RenderJobPtr& job)
 }
 
 #ifdef _DEBUG
-void CRenderer::setDebugMode(bool active)
+void IRenderer::setDebugMode(bool active)
 {
     m_debugMode = active;
 }
 
-bool CRenderer::isDebugMode() const
+bool IRenderer::isDebugMode() const
 {
     return m_debugMode;
 }
 #endif //_DEBUG
 
-void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
+void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
     const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr program = pass->getShaderProgram();
@@ -252,7 +329,7 @@ void CRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     }
 }
 
-void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
+void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
 {
     const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
@@ -301,7 +378,7 @@ void CRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
     }
 }
 
-void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass)
+void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
     if (m_lightList.empty())
     {
@@ -393,7 +470,7 @@ void CRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     }
 }
 
-void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
+void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
 {
     const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
     const SamplerList& samplerList = defaultData->getSamplerList();
@@ -463,7 +540,7 @@ void CRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     }
 }
 
-void CRenderer::updateAdvanced(const RenderPassPtr & pass)
+void IRenderer::updateAdvanced(const RenderPassPtr & pass)
 {
     const ShaderDataPtr& data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
@@ -484,7 +561,7 @@ void CRenderer::updateAdvanced(const RenderPassPtr & pass)
 
         case CShaderUniform::eViewportSize:
         {
-            const core::Rect32& rect = CRenderer::getCurrentRenderTarget()->getViewport();
+            const core::Rect32& rect = IRenderer::getCurrentRenderTarget()->getViewport();
             program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
         }
         break;

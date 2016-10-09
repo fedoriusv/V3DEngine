@@ -1,11 +1,10 @@
 // V3D Engine (c) 2016 Fred Nekrasov
 
-#ifndef _V3D_CONFIG_H_
-#define _V3D_CONFIG_H_
+#pragma once
 
 //Version 2.0.0
-#define VERSION_MAJOR       2
-#define VERSION_MINOR       0
+#define VERSION_MAJOR       0
+#define VERSION_MINOR       2
 #define VERSION_REVISION    0
 
 //Config
@@ -64,7 +63,7 @@
 #   define _VULKAN_RENDER_
 #endif //USED_VULKAN_RENDER
 
-#define _DIRECTINPUT_ 1
+#define _DIRECTINPUT_ 0
 
 #endif //_PLATFORM_WIN_
 
@@ -98,10 +97,18 @@
 #endif //_DIRECT3D_RENDER_
 
 #ifdef _VULKAN_RENDER_
+#   define VULKAN_VERSION_MAJOR 1
+#   define VULKAN_VERSION_MINOR 0
+#   define VULKAN_VERSION_PATCH 0
+
+#   define VULKAN_DEBUG 1
+#   define VULKAN_USE_VALIDATION_LAYERS 0
+#   define VULKAN_USE_DEBUG_MARKERS 0
+#   define VK_USE_PLATFORM_WIN32_KHR
+#endif //_VULKAN_RENDER_
+
+#ifdef _VULKAN_RENDER_
 //
 #endif //_DIRECT3D_RENDER_
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-#endif //_V3D_CONFIG_H_

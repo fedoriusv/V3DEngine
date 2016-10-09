@@ -2,17 +2,20 @@
 
 #include "utils/Singleton.h"
 #include "platform/Platform.h"
-#include "platform/Device.h"
 #include "platform/Window.h"
+#include "context/DeviceContext.h"
 #include "event/InputEventHandler.h"
 #include "scene/SceneManager.h"
 #include "renderer/Renderer.h"
-#include "context/DriverContext.h"
+
 
 namespace v3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+    * Engine. General module.
+    */
     class Engine final : public utils::TSingleton<Engine>
     {
     private:
@@ -30,10 +33,10 @@ namespace v3d
                                                 platform::ERenderType driverType = platform::ERenderType::eRenderOpenGL);
 
         const event::InputEventHandlerPtr   getInputEventHandler() const;
-        const scene::SceneManagerPtr        getSceneManager()      const;
-        const platform::WindowPtr           getWindow()            const;
-        const renderer::RendererPtr         getRenderer()          const;
-        const renderer::ContextPtr          getContext()           const;
+        const scene::SceneManagerPtr        getSceneManager()const;
+        const platform::WindowPtr           getWindow() const;
+        const renderer::RendererPtr         getRenderer() const;
+        const renderer::ContextPtr          getContext() const;
 
         bool                                init();
         bool                                begin();
@@ -44,8 +47,13 @@ namespace v3d
         friend utils::TSingleton<Engine>;
 
         platform::WindowPtr                 m_window;
-        platform::DevicePtr                 m_device;
+        renderer::ContextPtr                m_context;
         event::InputEventHandlerPtr         m_inputEventHandler;
+
+        renderer::RendererPtr               m_render;
+        //physics::PhysicsPtr                 m_physics;
+        //audio::Audio                        m_audio;
+
         scene::SceneManagerPtr              m_scene;
 
     };

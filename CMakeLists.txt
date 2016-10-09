@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 #Optional Libs
-option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." ON)
-option(BUILD_USE_FREE_TYPE_LIB "Build use FreeType2 library." ON)
+option(BUILD_USE_RESIL_LIB "Build use ResIL libraries." OFF)
+option(BUILD_USE_FREE_TYPE_LIB "Build use FreeType2 library." OFF)
+option(BUILD_USE_VULKAN_SDK "Build use Vulkan SDK." ON)
 
 #Tested projects
 option(BUILD_TEST_PROJECT_0 "Build Test_CreateWindow" OFF)
@@ -85,6 +86,10 @@ else()
     message(FATAL_ERROR "Unknown platform. Only Platrorm Windows|Platrorm Linux|Platrorm MacOSX supported")
 endif()
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	message(FATAL_ERROR "Only support x64 Architecture")
+endif()
+
 ##############################################################
 
 project(${SOLUTION_NAME})
@@ -119,6 +124,16 @@ else(BUILD_USE_RESIL_LIB)
     set(RESIL_DEFINE "-DUSED_DEVIL=0")
 endif(BUILD_USE_RESIL_LIB)
 
+if(BUILD_USE_VULKAN_SDK)
+	set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=1")
+	#VK_SDK_PATH - must be added to system variables
+	set(VULKAN_SDK_PATH $ENV{VK_SDK_PATH})
+	set(VULKAN_SDK_INCLUDE_DIRECTORY ${VULKAN_SDK_PATH}/include)
+	set(VULKAN_SDK_LIB_DIRECTORY ${VULKAN_SDK_PATH}/Bin)
+else(BUILD_USE_VULKAN_SDK)
+	set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=0")
+endif(BUILD_USE_VULKAN_SDK)
+
 ##############################################################
 
 include_directories(BEFORE ${LIB_INCLUDE_DIRECTORY})
@@ -128,31 +143,29 @@ include_directories(BEFORE ${LIB_INCLUDE_DIRECTORY})
 if(WIN32)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release;F3DDebug;F3DRelease" CACHE STRING "" FORCE)
 #   F3D Max Editor Debug
-    set(CMAKE_CXX_FLAGS_F3DDEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 -DUSED_DEVIL=0 -DUSED_FREETYPE=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0 /Zi")
+    set(CMAKE_CXX_FLAGS_F3DDEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 /Zi")
     set(CMAKE_C_FLAGS_F3DDEBUG ${CMAKE_C_FLAGS_DEBUG})
     set(CMAKE_EXE_LINKER_FLAGS_F3DDEBUG ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
     set(CMAKE_F3DDEBUG_POSTFIX "_d")
 #   F3D Max Editor Release
-    set(CMAKE_CXX_FLAGS_F3DRELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 -DUSED_DEVIL=0 -DUSED_FREETYPE=0 -DUSED_GL_RENDER=0 -DUSED_D3D_RENDER=0")
+    set(CMAKE_CXX_FLAGS_F3DRELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0")
     set(CMAKE_C_FLAGS_F3DRELEASE ${CMAKE_C_FLAGS_RELEASE})
     set(CMAKE_EXE_LINKER_FLAGS_F3DRELEASE ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
 #   Debug
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 ${RESIL_DEFINE} ${FREETYPE_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG -DDEBUG -DUSED_LOGGER=1 ${RESIL_DEFINE} ${FREETYPE_DEFINE} ${VULKAN_SDK_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${FREETYPE_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
-    if(CMAKE_CL_64)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
-    else(CMAKE_CL_64)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
-    endif(CMAKE_CL_64)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
     set(CMAKE_DEBUG_POSTFIX "_d")
 #   Release
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 ${RESIL_DEFINE} ${FREETYPE_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DUSED_LOGGER=0 ${RESIL_DEFINE} ${FREETYPE_DEFINE} ${VULKAN_SDK_DEFINE} -DUSED_GL_RENDER=1 -DUSED_D3D_RENDER=1")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${FREETYPE_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
 elseif(APPLE)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -x objective-c++" )
@@ -191,42 +204,38 @@ endif(WIN32)
 ##############################################################
 
 #Platform Source
+	set(PLATFORM_HEADERS
+		${SOURCE_DIR}/platform/Platform.h
+		${SOURCE_DIR}/platform/Window.h
+		)
+		
+	set(PLATFORM_SOURCES
+        ${SOURCE_DIR}/platform/Platform.cpp	
+		${SOURCE_DIR}/platform/Window.cpp
+		)
+		
 if(WIN32)
-    set(PLATFORM_HEADERS
-        ${SOURCE_DIR}/platform/Platform.h
-        ${SOURCE_DIR}/platform/Window.h
+    set(PLATFORM_HEADERS ${PLATFORM_HEADERS}
         ${SOURCE_DIR}/platform/WindowWinApi.h
         )
     
-    set(PLATFORM_SOURCES
-        ${SOURCE_DIR}/platform/Platform.cpp
-        ${SOURCE_DIR}/platform/Window.cpp
+    set(PLATFORM_SOURCES ${PLATFORM_SOURCES}
         ${SOURCE_DIR}/platform/WindowWinApi.cpp
         )
-
 elseif(UNIX AND NOT APPLE)
-    set(PLATFORM_HEADERS
-        ${SOURCE_DIR}/platform/Platform.h
-        ${SOURCE_DIR}/platform/Window.h
+    set(PLATFORM_HEADERS ${PLATFORM_HEADERS}
         ${SOURCE_DIR}/platform/WindowLinux.h
         )
     
-    set(PLATFORM_SOURCES
-        ${SOURCE_DIR}/platform/Platform.cpp
-        ${SOURCE_DIR}/platform/Window.cpp
+    set(PLATFORM_SOURCES ${PLATFORM_SOURCES}
         ${SOURCE_DIR}/platform/WindowLinux.cpp
         )
-
 elseif(APPLE)
-    set(PLATFORM_HEADERS
-        ${SOURCE_DIR}/platform/Platform.h
-        ${SOURCE_DIR}/platform/Window.h
+    set(PLATFORM_HEADERS ${PLATFORM_HEADERS}
         ${SOURCE_DIR}/platform/WindowMacOSX.h
         )
     
-    set(PLATFORM_SOURCES
-        ${SOURCE_DIR}/platform/Platform.cpp
-        ${SOURCE_DIR}/platform/Window.cpp
+    set(PLATFORM_SOURCES ${PLATFORM_SOURCES}
         ${SOURCE_DIR}/platform/WindowMacOSX.mm
         )
 endif()
@@ -258,6 +267,10 @@ file(GLOB GL_SOURCES ${SOURCE_DIR}/*/GL/*.cpp)
 file(GLOB D3D_HEADERS ${SOURCE_DIR}/*/D3D/*.h)
 file(GLOB D3D_SOURCES ${SOURCE_DIR}/*/D3D/*.cpp)
 
+#VK Source
+file(GLOB VK_HEADERS ${SOURCE_DIR}/*/VK/*.h)
+file(GLOB VK_SOURCES ${SOURCE_DIR}/*/VK/*.cpp)
+
 #NULL Source
 file(GLOB NULL_HEADERS ${SOURCE_DIR}/*/NULL/*.h)
 file(GLOB NULL_SOURCES ${SOURCE_DIR}/*/NULL/*.cpp)
@@ -279,6 +292,14 @@ file(GLOB STREAM_SOURCES ${SOURCE_DIR}/stream/*.cpp)
 file(GLOB UTILS_HEADERS ${SOURCE_DIR}/utils/*.h)
 file(GLOB UTILS_SOURCES ${SOURCE_DIR}/utils/*.cpp)
 
+#Audio Source
+file(GLOB AUDIO_HEADERS ${SOURCE_DIR}/audio/*.h)
+file(GLOB AUDIO_SOURCES ${SOURCE_DIR}/audio/*.cpp)
+
+#Phisics Source
+file(GLOB PHISICS_HEADERS ${SOURCE_DIR}/phisics/*.h)
+file(GLOB PHISICS_SOURCES ${SOURCE_DIR}/phisics/*.cpp)
+
 #Event Source
 file(GLOB EVENT_HEADERS ${SOURCE_DIR}/event/*.h)
 file(GLOB EVENT_SOURCES ${SOURCE_DIR}/event/*.cpp)
@@ -297,12 +318,15 @@ source_group(resources        FILES ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES})
 source_group(decoders         FILES ${DECODERS_HEADERS}    ${DECODERS_SOURCES})
 source_group(gl               FILES ${GL_HEADERS}          ${GL_SOURCES})
 source_group(d3d              FILES ${D3D_HEADERS}         ${D3D_SOURCES})
+source_group(vk               FILES ${VK_HEADERS}          ${VK_SOURCES})
 source_group(null             FILES ${NULL_HEADERS}        ${NULL_SOURCES})
 source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
 source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES}        ${STREAM_INLINES})
 source_group(scene            FILES ${SCENE_HEADERS}       ${SCENE_SOURCES})
 source_group(utils            FILES ${UTILS_HEADERS}       ${UTILS_SOURCES})
 source_group(event            FILES ${EVENT_HEADERS}       ${EVENT_SOURCES})
+source_group(audio            FILES ${AUDIO_HEADERS}       ${AUDIO_SOURCES})
+source_group(phisics          FILES ${PHISICS_HEADERS}     ${PHISICS_SOURCES})
 source_group(""               FILES ${MAIN_HEADERS}        ${MAIN_SOURCES})
 
 ##############################################################
@@ -316,6 +340,7 @@ add_library(
     ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES}
     ${GL_HEADERS}          ${GL_SOURCES}
     ${D3D_HEADERS}         ${D3D_SOURCES}
+	${VK_HEADERS}		   ${VK_SOURCES}
     ${NULL_HEADERS}        ${NULL_SOURCES}
     ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES}
     ${STREAM_HEADERS}      ${STREAM_SOURCES}
@@ -342,9 +367,13 @@ endif(BUILD_USE_FREE_TYPE_LIB)
 #LINK_DERICTORIES
 set(LINK_DERICTORIES ${PROJECT_BINARY_DIR}/libs/glew)
 
-if (BUILD_USE_RESIL_LIB)
+if(BUILD_USE_RESIL_LIB)
     set(LINK_DERICTORIES ${LINK_DERICTORIES} ${RESIL_LIBPATH})
 endif(BUILD_USE_RESIL_LIB)
+
+if(BUILD_USE_VULKAN_SDK)
+	set(LINK_DERICTORIES ${LINK_DERICTORIES} ${VULKAN_SDK_LIB_DIRECTORY})
+endif(BUILD_USE_VULKAN_SDK)
 
 link_directories(${ENGINE_NAME} ${LINK_DERICTORIES})
 

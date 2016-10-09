@@ -1,7 +1,6 @@
-#ifndef _V3D_RENDERER_H_
-#define _V3D_RENDERER_H_
+#pragma once
 
-#include "context/DriverContext.h"
+#include "context/DeviceContext.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "Geometry.h"
@@ -23,30 +22,57 @@ namespace scene
 }
 namespace renderer
 {
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CMaterial;
+    class RenderThread;
 
     /**
     * Interface for general render management.
     */
-    class CRenderer
+    class IRenderer : public std::enable_shared_from_this<IRenderer>
     {
     public:
 
-        CRenderer(const ContextPtr& context);
-        virtual                     ~CRenderer();
+        IRenderer(const ContextPtr context, bool isThreaded);
+        virtual                         ~IRenderer();
 
-        const ContextPtr&           getContext() const;
+        bool                            create();
 
-        virtual void                init()                         = 0;
+        virtual platform::ERenderType   getRenderType() const = 0;
+
+        //main thread
+        void                            init();
+
+        void                            beginFrame();
+        void                            endFrame();
+        void                            presentFrame();
+
+        void                            draw();
+
+    private:
+
+        //render thread
+        virtual void                    immediateInit() = 0;
+
+        virtual void                    immediaterBeginFrame() = 0;
+        virtual void                    immediateEndFrame() = 0;
+        virtual void                    immediatePresentFrame() = 0;
+
+        virtual void                    immediateDraw() = 0;
+
+
+    public:
+        void                        draw(const RenderJobPtr& job);
+
         
         virtual void                preRender(bool clear = false)  = 0;
         virtual void                postRender()                   = 0;
 
-        virtual platform::ERenderType getRenderType() const = 0;
 
-        void                        draw(const RenderJobPtr& job);
+
+
 
         void                        updateCamera(scene::CCamera* camera);
 
@@ -88,8 +114,11 @@ namespace renderer
         void                        updateTexture(MaterialPtr& material, const RenderPassPtr& pass);
         void                        updateAdvanced(const RenderPassPtr& pass);
 
-        ContextPtr                  m_context;
+        ContextWPtr                 m_context;
         u32                         m_frameIndex;
+
+        RenderThread*               m_renderThread;
+        bool                        m_isThreaded;
 
         RenderTargetPtr             m_defaultRenderTarget;
         RenderTargetPtr             m_currentRenderTarget;
@@ -105,11 +134,10 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    using RendererPtr = std::shared_ptr<CRenderer>;
+    using RendererPtr  = std::shared_ptr<IRenderer>;
+    using RendererWPtr = std::weak_ptr<IRenderer>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_RENDERER_H_

@@ -30,10 +30,15 @@ namespace utils
         static const std::thread::id    getCurrentThread();
         static const std::thread::id    getMainThreadId();
 
+        void                            setName(const std::string& name);
+        const std::string&              getName() const;
+
     private:
 
         std::thread                     m_thread;
         bool                            m_isRunning;
+
+        std::string                     m_name;
 
         void*                           m_userData;
         ThreadCallback                  m_callback;

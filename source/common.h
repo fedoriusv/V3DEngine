@@ -29,6 +29,7 @@ namespace v3d
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <atomic>
 #include <fstream>
 #include <functional>
 #include <utility>

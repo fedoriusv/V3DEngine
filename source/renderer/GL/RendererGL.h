@@ -1,5 +1,4 @@
-#ifndef _V3D_RENDERER_GL_H_
-#define _V3D_RENDERER_GL_H_
+#pragma once
 
 #include "renderer/Renderer.h"
 
@@ -15,19 +14,32 @@ namespace gl
     /**
     * Inherited class for general render management. GL render only.
     */
-    class CRendererGL : public CRenderer
+    class RendererGL final : public IRenderer
     {
     public:
     
-        CRendererGL(const ContextPtr& context);
-        ~CRendererGL();
-    
-        void                init()                                                                  override;
+        explicit RendererGL(const ContextPtr context);
+        ~RendererGL();
+
+        platform::ERenderType   getRenderType() const override;
+
+    private:
+
+        void           immediateInit() override;
+
+        void           immediaterBeginFrame() override;
+        void           immediateEndFrame() override;
+        void           immediatePresentFrame() override;
+
+        void           immediateDraw() override;
+
+
+    public:
     
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
 
-        platform::ERenderType getRenderType() const                                                 override;
+
 
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
@@ -51,5 +63,3 @@ namespace gl
 } //namespace gl
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_RENDERER_GL_H_

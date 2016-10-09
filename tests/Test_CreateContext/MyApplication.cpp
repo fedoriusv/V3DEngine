@@ -13,7 +13,7 @@ using namespace event;
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
 {
-    BaseApplication::getEngine()->createWindowWithContext(Dimension2D(1024, 768), Point2D(100, 100), false, false, ERenderType::eRenderOpenGL);
+    BaseApplication::getEngine()->createWindowWithContext(Dimension2D(1024, 768), Point2D(100, 100), false, false, ERenderType::eRenderVulkan);
 }
 
 MyApplication::~MyApplication()
@@ -27,7 +27,7 @@ void MyApplication::init()
 
 void MyApplication::run()
 {
-    BaseApplication::getWindow()->setCaption("Test. FPS: " + std::to_string(BaseApplication::getSceneManager()->getFPS()));
+    //BaseApplication::getWindow()->setCaption("Test. FPS: " + std::to_string(BaseApplication::getSceneManager()->getFPS()));
 }
 
 void MyApplication::onKeyboard(const KeyboardInputEventPtr& event)

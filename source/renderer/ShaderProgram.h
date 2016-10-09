@@ -12,7 +12,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
-    class CRenderer;
+    class IRenderer;
     class IShaderProgram;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace renderer
         void                                addFlag(EProgramFlags flag);
 
         friend                              CRenderPass;
-        friend                              CRenderer;
+        friend                              IRenderer;
 
         void                                attachShader(const ShaderWPtr& shader);
         void                                detachShader(const ShaderWPtr& shader);
