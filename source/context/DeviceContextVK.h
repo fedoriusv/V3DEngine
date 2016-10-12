@@ -34,6 +34,8 @@ namespace vk
         VkInstance          getVulkanInstance() const;
         VkDevice            getVulkanDevice() const;
         VkPhysicalDevice    getVulkanPhysicalDevice() const;
+        VkQueue             getVuklanQueue() const;
+        s32                 getVulkanQueueFamilyGraphicsIndex() const;
 
     protected:
 
@@ -55,14 +57,16 @@ namespace vk
         u32                 getQueueFamiliyIndex(VkQueueFlagBits queueFlags);
 
         VkBool32            checkGlobalExtensionPresent(const c8* extensionName);
-        VkBool32            checkDeviceExtensionPresent(VkPhysicalDevice physicalDevice, const c8* extensionName);
+        VkBool32            checkDeviceExtensionPresent(const c8* extensionName);
 
         VkInstance          m_instance;
         VkPhysicalDevice    m_physicalDevice;
+        VkDevice            m_device;
+        VkQueue             m_queueRender;
 
-        struct VulkanDevice
+        struct SVulkanProperties
         {
-            VkDevice                             _device;
+
             VkPhysicalDeviceProperties           _properties;
             VkPhysicalDeviceFeatures             _features;
             VkPhysicalDeviceMemoryProperties     _memoryProperties;
@@ -70,13 +74,14 @@ namespace vk
 
             struct
             {
-                u32 _graphics;
-                u32 _compute;
-                u32 _transfer;
+                s32 _graphics;
+                s32 _compute;
+                s32 _transfer;
             }                                    _queueFamilyIndices;
         };
 
-        VulkanDevice        m_vulkanDevice;
+        SVulkanProperties   m_vulkanDevice;
+
         SwapChainVK*        m_swapchain;
     };
 

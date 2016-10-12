@@ -38,6 +38,7 @@ namespace vk
 
         bool                        createSurface();
         bool                        createSwapChain();
+        bool                        createSwapchainImages();
 
         u32                         m_currentBuffer;
 
@@ -45,13 +46,17 @@ namespace vk
         VkSurfaceKHR                m_surface;
 
         s32                         m_queueFamilyIndex;
-        VkQueue                     m_queue; //?
+        VkQueue                     m_queuePresent;
+
+        VkSemaphore                 m_semaphorePresent;
 
         VkInstance                  m_instance;
         VkDevice                    m_device;
         VkPhysicalDevice            m_physicalDevice;
 
         VkSurfaceCapabilitiesKHR    m_surfaceCaps;
+
+        std::mutex                  m_mutex;
 
         VkSurfaceFormatKHR          m_surfaceFormat;
         VkExtent2D                  m_surfaceSize;

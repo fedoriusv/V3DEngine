@@ -142,6 +142,40 @@ void DebugVK::freeDebugCallback(VkInstance instance)
     }
 }
 
+bool DebugVK::checkValidationLayerSupported(const c8* layerName)
+{
+    u32 instanceLayerPropertyCount = 0;
+    VkResult result = vkEnumerateInstanceLayerProperties(&instanceLayerPropertyCount, nullptr);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("DebugVK::isValidationLayerSupported: vkEnumerateInstanceLayerProperties count error %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    std::vector<VkLayerProperties> instanceLayerProperties(instanceLayerPropertyCount);
+    if (!instanceLayerProperties.empty())
+    {
+        result = vkEnumerateInstanceLayerProperties(&instanceLayerPropertyCount, instanceLayerProperties.data());
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("DebugVK::isValidationLayerSupported: vkEnumerateInstanceLayerProperties list error %s", DebugVK::errorString(result).c_str());
+            return false;
+        }
+
+        for (auto iter = instanceLayerProperties.cbegin(); iter < instanceLayerProperties.cend(); ++iter)
+        {
+            if (!strcmp((*iter).layerName, layerName))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    return false;
+}
+
 } //namespace vk
 } //namespace renderer
 } //namespace v3d

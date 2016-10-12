@@ -19,8 +19,11 @@ SwapChainVK::SwapChainVK(const ContextPtr context)
     : m_currentBuffer(0)
     , m_swapChain(VK_NULL_HANDLE)
     , m_surface(VK_NULL_HANDLE)
+
     , m_queueFamilyIndex(0)
-    , m_queue(VK_NULL_HANDLE)
+    , m_queuePresent(VK_NULL_HANDLE)
+
+    , m_semaphorePresent(VK_NULL_HANDLE)
 
     , m_instance(VK_NULL_HANDLE)
     , m_device(VK_NULL_HANDLE)
@@ -34,36 +37,59 @@ SwapChainVK::SwapChainVK(const ContextPtr context)
     m_appInstance = GetModuleHandle(NULL);
     m_appWindow = std::static_pointer_cast<const platform::WindowWinApi>(context->getWindow())->getHandleWindow();
 #endif //_PLATFORM_WIN_
-    m_instance = std::static_pointer_cast<const DeviceContextVK>(context)->getVulkanInstance();
-    m_physicalDevice = std::static_pointer_cast<const DeviceContextVK>(context)->getVulkanPhysicalDevice();
+
+    std::shared_ptr<const DeviceContextVK> contextVK = std::static_pointer_cast<const DeviceContextVK>(context);
+    m_instance = contextVK->getVulkanInstance();
+    m_physicalDevice = contextVK->getVulkanPhysicalDevice();
+    m_device = contextVK->getVulkanDevice();
+    m_queuePresent = contextVK->getVuklanQueue();
+    m_queueFamilyIndex = contextVK->getVulkanQueueFamilyGraphicsIndex();
 
     m_surfaceSize.width = context->getWindowSize().width;
     m_surfaceSize.height = context->getWindowSize().height;
     m_isVSync = context->isVSync();
+
+    VkSemaphoreCreateInfo semaphoreInfo = {};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreInfo.pNext = nullptr;
+    semaphoreInfo.flags = 0;
+
+    VkResult result = vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_semaphorePresent);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR(" SwapChainVK::SwapChainVK: vkCreateSemaphore error %s", DebugVK::errorString(result).c_str());
+    }
 }
 
 SwapChainVK::~SwapChainVK()
 {
     ASSERT(!m_swapChain, "m_swapChain is exist");
     ASSERT(!m_surface, "m_surface is exsit");
-    ASSERT(!m_queue, "m_queue is exist");
+
+    if (m_semaphorePresent != VK_NULL_HANDLE)
+    {
+        vkDestroySemaphore(m_device, m_semaphorePresent, nullptr);
+        m_semaphorePresent = VK_NULL_HANDLE;
+    }
 }
 
 bool SwapChainVK::create()
 {
-    if (SwapChainVK::createSurface())
+    if (!SwapChainVK::createSurface())
     {
         LOG_ERROR(" SwapChainVK::create: cannot create surface");
-        SwapChainVK::destroy();
-
         return false;
     }
 
-    if (SwapChainVK::createSwapChain())
+    if (!SwapChainVK::createSwapChain())
     {
         LOG_ERROR(" SwapChainVK::create: cannot create swapchain");
-        SwapChainVK::destroy();
+        return false;
+    }
 
+    if (!SwapChainVK::createSwapchainImages())
+    {
+        LOG_ERROR(" SwapChainVK::create: cannot create swapchain images");
         return false;
     }
 
@@ -101,17 +127,21 @@ bool SwapChainVK::update(const core::Dimension2D& size, bool vsync)
 
 void SwapChainVK::presentFrame()
 {
+    ASSERT(m_semaphorePresent, "Invalid semaphore");
+
     VkPresentInfoKHR presentInfo;
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.pNext = nullptr;
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &m_swapChain;
     presentInfo.pImageIndices = &m_currentBuffer;
-    presentInfo.pWaitSemaphores = &semaphore;
+    presentInfo.pWaitSemaphores = &m_semaphorePresent;
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pResults = nullptr;
 
-    VkResult result = vkQueuePresentKHR(m_queue, &presentInfo);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    VkResult result = vkQueuePresentKHR(m_queuePresent, &presentInfo);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         LOG_WARNING("SwapChainVK::presentFrame: Error VK_ERROR_OUT_OF_DATE_KHR. Swapchain is out of date. Needs to be recreated for defined results");
@@ -124,8 +154,12 @@ void SwapChainVK::presentFrame()
 
 s32 SwapChainVK::prepareFrame()
 {
+    ASSERT(m_semaphorePresent, "Invalid semaphore");
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     u32 outImageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, semaphore, VK_NULL_HANDLE, &outImageIndex);
+    VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         LOG_WARNING("SwapChainVK::prepareFrame: Error VK_ERROR_OUT_OF_DATE_KHR. Swapchain is out of date. Needs to be recreated for defined results");
@@ -294,11 +328,71 @@ bool SwapChainVK::createSwapChain()
     VkResult result = vkCreateSwapchainKHR(m_device, &swapChainInfo, nullptr, &m_swapChain);
     if (result != VK_SUCCESS)
     {
-        LOG_ERROR("SwapChainVK::createSurface: vkGetPhysicalDeviceSurfaceFormatsKHR. Error %s", DebugVK::errorString(result).c_str());
+        LOG_ERROR("SwapChainVK::createSwapChain: vkCreateSwapchainKHR. Error %s", DebugVK::errorString(result).c_str());
         return false;
     }
 
+    LOG_DEBUG("SwapChainVK::createSwapChain created");
+
     return true;
+}
+
+bool SwapChainVK::createSwapchainImages()
+{
+    u32 swapChainImageCount;
+    VkResult result = vkGetSwapchainImagesKHR(m_device, m_swapChain, &swapChainImageCount, nullptr);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("SwapChainVK::createSwapchainImages: vkGetSwapchainImagesKHR count. Error %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    if (swapChainImageCount < 2)
+    {
+        LOG_ERROR("SwapChainVK::createSurface: Not enough images supported in vulkan swapchain");
+        return false;
+    }
+
+    LOG_DEBUG("SwapChainVK::createSwapchainImages: Count images %d", swapChainImageCount);
+
+    std::vector<VkImage> images(swapChainImageCount);
+    result = vkGetSwapchainImagesKHR(m_device, m_swapChain, &swapChainImageCount, images.data());
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("SwapChainVK::createSwapchainImages: vkGetSwapchainImagesKHR array. Error %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    //TODO:
+    //buffers.resize(imageCount);
+    //for (uint32_t i = 0; i < imageCount; i++)
+    //{
+    //    VkImageViewCreateInfo colorAttachmentView = {};
+    //    colorAttachmentView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    //    colorAttachmentView.pNext = NULL;
+    //    colorAttachmentView.format = colorFormat;
+    //    colorAttachmentView.components = {
+    //        VK_COMPONENT_SWIZZLE_R,
+    //        VK_COMPONENT_SWIZZLE_G,
+    //        VK_COMPONENT_SWIZZLE_B,
+    //        VK_COMPONENT_SWIZZLE_A
+    //    };
+    //    colorAttachmentView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    //    colorAttachmentView.subresourceRange.baseMipLevel = 0;
+    //    colorAttachmentView.subresourceRange.levelCount = 1;
+    //    colorAttachmentView.subresourceRange.baseArrayLayer = 0;
+    //    colorAttachmentView.subresourceRange.layerCount = 1;
+    //    colorAttachmentView.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    //    colorAttachmentView.flags = 0;
+
+    //    buffers[i].image = images[i];
+
+    //    colorAttachmentView.image = buffers[i].image;
+
+    //    err = vkCreateImageView(device, &colorAttachmentView, nullptr, &buffers[i].view);
+    //    assert(!err);
+
+    return false;
 }
 
 #if defined(_PLATFORM_WIN_)
@@ -316,6 +410,8 @@ bool SwapChainVK::createSurfaceWinApi()
         LOG_ERROR("SwapChainVK::createSurfaceWinApi: vkCreateWin32SurfaceKHR. Error %s", DebugVK::errorString(result).c_str());
         return false;
     }
+
+    LOG_DEBUG("SwapChainVK::createSurfaceWinApi created");
 
     return true;
 }

@@ -27,22 +27,17 @@ DeviceContextVK::DeviceContextVK(const platform::WindowPtr window)
     : DeviceContext(window)
     , m_instance(VK_NULL_HANDLE)
     , m_physicalDevice(VK_NULL_HANDLE)
+    , m_device(VK_NULL_HANDLE)
+    , m_queueRender(VK_NULL_HANDLE)
     , m_swapchain(nullptr)
 {
-    m_vulkanDevice._device = VK_NULL_HANDLE;
 }
 
 DeviceContextVK::~DeviceContextVK()
 {
-    if (m_swapchain)
-    {
-        delete m_swapchain;
-        m_swapchain = nullptr;
-    }
-
     ASSERT(!m_swapchain, "m_device already exits");
 
-    ASSERT(!m_physicalDevice, "m_physicalDevice already exits");
+    ASSERT(!m_device, "m_physicalDevice already exits");
     ASSERT(!m_instance, "m_instance already exits");
 }
 
@@ -82,25 +77,27 @@ bool DeviceContextVK::createWinApiContext()
     if (!createPhysicalDevice())
     {
         LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create Vulkan PhysicalDevice");
-        DeviceContextVK::destroy();
-
         return false;
     }
 
-    if (!createLogicalDevice(true, VK_QUEUE_GRAPHICS_BIT /*| VK_QUEUE_COMPUTE_BIT*/))
+    if (!createLogicalDevice(true, VK_QUEUE_GRAPHICS_BIT))
     {
         LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create Vulkan Device");
-        DeviceContextVK::destroy();
-
         return false;
+    }
+
+    // Get a graphics queue from the device
+    if (m_vulkanDevice._queueFamilyIndices._graphics >= 0)
+    {
+        vkGetDeviceQueue(m_device, m_vulkanDevice._queueFamilyIndices._graphics, 0, &m_queueRender);
     }
 
     m_swapchain = new SwapChainVK(shared_from_this());
     if (!m_swapchain->create())
     {
-        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create SwapChain");
-        DeviceContextVK::destroy();
+        m_swapchain->destroy();
 
+        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create SwapChain");
         return false;
     }
 
@@ -123,11 +120,27 @@ bool DeviceContextVK::createInstance(bool enableValidation)
         VULKAN_VERSION_PATCH
     );
 
-    std::vector<const c8*> enabledExtensions = { VK_KHR_SURFACE_EXTENSION_NAME };
-
+    std::vector<const c8*> enabledExtensions;
+    if (DeviceContextVK::checkGlobalExtensionPresent(VK_KHR_SURFACE_EXTENSION_NAME))
+    {
+        enabledExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+    }
+    else
+    {
+        LOG_ERROR("DeviceContextVK::createInstance: vkCreateInstance does not support surface extensions");
+        ASSERT(false, "VK_KHR_SURFACE_EXTENSION_NAME");
+        return false;
+    }
     // Enable surface extensions depending on os
 #if defined(_PLATFORM_WIN_)
-    enabledExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+    if (DeviceContextVK::checkGlobalExtensionPresent(VK_KHR_WIN32_SURFACE_EXTENSION_NAME))
+    {
+        enabledExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+    }
+    else
+    {
+        ASSERT(false, "VK_KHR_WIN32_SURFACE_EXTENSION_NAME");
+    }
 #elif defined(_PLATFORM_ANDROID_)
     enabledExtensions.push_back(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
 #elif defined(_PLATFORM_LINUX_)
@@ -140,19 +153,39 @@ bool DeviceContextVK::createInstance(bool enableValidation)
     instanceCreateInfo.flags = 0;
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
-    if (enabledExtensions.size() > 0)
+    if (!enabledExtensions.empty())
     {
 #if VULKAN_DEBUG
-         enabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        if (DeviceContextVK::checkGlobalExtensionPresent(VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
+        {
+            enabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        }
+        else
+        {
+            ASSERT(false, "VK_EXT_DEBUG_REPORT_EXTENSION_NAME");
+        }
 #endif //VULKAN_DEBUG
         instanceCreateInfo.enabledExtensionCount = (uint32_t)enabledExtensions.size();
         instanceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
     }
+    else
+    {
+        ASSERT(false, "enabledExtensions.empty()");
+    }
 
     if (enableValidation)
     {
-        instanceCreateInfo.enabledLayerCount = static_cast<u32>(DebugVK::s_validationLayerNames.size());
-        instanceCreateInfo.ppEnabledLayerNames = DebugVK::s_validationLayerNames.data();
+        std::vector<const c8*> validationLayerNames;
+        for (auto layerName = DebugVK::s_validationLayerNames.cbegin(); layerName < DebugVK::s_validationLayerNames.cend(); ++layerName)
+        {
+            if (DebugVK::checkValidationLayerSupported(*layerName))
+            {
+                validationLayerNames.push_back(*layerName);
+            }
+        }
+
+        instanceCreateInfo.enabledLayerCount = static_cast<u32>(validationLayerNames.size());
+        instanceCreateInfo.ppEnabledLayerNames = validationLayerNames.data();
     }
 
     VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
@@ -190,7 +223,7 @@ bool DeviceContextVK::createPhysicalDevice()
     // This example will always use the first physical device reported,
     // change the vector index if you have multiple Vulkan devices installed
     // and want to use another one
-    m_physicalDevice = physicalDevices[0];
+    m_physicalDevice = physicalDevices.front();
 
     // Store Properties features, limits and properties of the physical device for later use
     // Device properties also contain limits and sparse properties
@@ -218,7 +251,7 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
         return false;
     }
 
-    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 
     // Get queue family indices for the requested queue family types
     // Note that the indices may overlap depending on the implementation
@@ -242,7 +275,7 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
     }
     else
     {
-        m_vulkanDevice._queueFamilyIndices._graphics = VK_NULL_HANDLE;
+        m_vulkanDevice._queueFamilyIndices._graphics = -1;
     }
 
     // Dedicated compute queue
@@ -291,12 +324,12 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
     else
     {
         // Else we use the same queue
-        m_vulkanDevice._queueFamilyIndices._transfer = m_vulkanDevice._queueFamilyIndices._graphics;
+        m_vulkanDevice._queueFamilyIndices._transfer = m_vulkanDevice._queueFamilyIndices._compute;
     }
 
     // Create the logical device representation
     std::vector<const c8*> deviceExtensions;
-    if (useSwapChain)
+    if (useSwapChain && DeviceContextVK::checkDeviceExtensionPresent(VK_KHR_SWAPCHAIN_EXTENSION_NAME))
     {
         // If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
         deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
@@ -313,7 +346,7 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
     // Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
     if (DebugVK::s_enableDebugMarkers)
     {
-        if (DeviceContextVK::checkDeviceExtensionPresent(m_physicalDevice, VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+        if (DeviceContextVK::checkDeviceExtensionPresent(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
         {
             deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
         }
@@ -331,7 +364,7 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
         deviceCreateInfo.ppEnabledLayerNames = DebugVK::s_validationLayerNames.data();
     }
 
-    VkResult result = vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_vulkanDevice._device);
+    VkResult result = vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_device);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("DeviceContextVK::createLogicalDevice: vkCreateDevice Error %s", DebugVK::errorString(result).c_str());
@@ -391,9 +424,9 @@ VkBool32 DeviceContextVK::checkGlobalExtensionPresent(const c8* extensionName)
 {
     u32 extensionCount = 0;
     std::vector<VkExtensionProperties> extensions;
-    vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, NULL);
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     extensions.resize(extensionCount);
-    vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, extensions.data());
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
     for (auto& ext : extensions)
     {
         if (!strcmp(extensionName, ext.extensionName))
@@ -404,13 +437,13 @@ VkBool32 DeviceContextVK::checkGlobalExtensionPresent(const c8* extensionName)
     return false;
 }
 
-VkBool32 DeviceContextVK::checkDeviceExtensionPresent(VkPhysicalDevice physicalDevice, const c8* extensionName)
+VkBool32 DeviceContextVK::checkDeviceExtensionPresent(const c8* extensionName)
 {
     u32 extensionCount = 0;
     std::vector<VkExtensionProperties> extensions;
-    vkEnumerateDeviceExtensionProperties(physicalDevice, NULL, &extensionCount, NULL);
+    vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
     extensions.resize(extensionCount);
-    vkEnumerateDeviceExtensionProperties(physicalDevice, NULL, &extensionCount, extensions.data());
+    vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, extensions.data());
     for (auto& ext : extensions)
     {
         if (!strcmp(extensionName, ext.extensionName))
@@ -423,13 +456,22 @@ VkBool32 DeviceContextVK::checkDeviceExtensionPresent(VkPhysicalDevice physicalD
 
 void DeviceContextVK::destroy()
 {
-    if (m_vulkanDevice._device != VK_NULL_HANDLE)
+    if (m_swapchain)
     {
-        vkDestroyDevice(m_vulkanDevice._device, nullptr);
-        m_vulkanDevice._device = VK_NULL_HANDLE;
+        m_swapchain->destroy();
+
+        delete m_swapchain;
+        m_swapchain = nullptr;
+    }
+
+    if (m_device != VK_NULL_HANDLE)
+    {
+        vkDestroyDevice(m_device, nullptr);
+        m_device = VK_NULL_HANDLE;
     }
 
     m_physicalDevice = VK_NULL_HANDLE;
+    m_queueRender = VK_NULL_HANDLE;
 
 #if VULKAN_DEBUG
     DebugVK::freeDebugCallback(m_instance);
@@ -466,12 +508,22 @@ VkInstance DeviceContextVK::getVulkanInstance() const
 
 VkDevice DeviceContextVK::getVulkanDevice() const
 {
-    return m_vulkanDevice._device;
+    return m_device;
 }
 
 VkPhysicalDevice DeviceContextVK::getVulkanPhysicalDevice() const
 {
     return m_physicalDevice;
+}
+
+VkQueue DeviceContextVK::getVuklanQueue() const
+{
+    return m_queueRender;
+}
+
+s32 DeviceContextVK::getVulkanQueueFamilyGraphicsIndex() const
+{
+    return m_vulkanDevice._queueFamilyIndices._graphics;
 }
 
 TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)

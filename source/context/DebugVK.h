@@ -33,6 +33,8 @@ namespace vk
         static void                     setupDebugging(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportCallbackEXT callBack, void* userData);
         static void                     freeDebugCallback(VkInstance instance);
 
+        static bool                     checkValidationLayerSupported(const c8* layerName);
+
         static VkDebugReportCallbackEXT s_msgCallback;
 
         static bool                     s_enableValidationLayers;

@@ -120,7 +120,7 @@ renderer::ContextPtr Platform::createContext(const platform::WindowPtr window, E
 
     if (!context->create())
     {
-        LOG_ERROR("Platform::createContext: Create context is Faied");
+        LOG_ERROR("Platform::createContext: Create context is Failed");
         context->destroy();
         return nullptr;
     }
