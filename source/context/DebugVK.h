@@ -2,9 +2,8 @@
 
 #include "common.h"
 
-#if defined(_VULKAN_RENDER_) 
+#if defined(_VULKAN_RENDER_)
 #   include <vulkan/vulkan.h>
-#endif //_VULKAN_RENDER_
 
 namespace v3d
 {
@@ -54,3 +53,5 @@ namespace vk
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_

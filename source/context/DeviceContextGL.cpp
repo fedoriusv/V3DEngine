@@ -658,6 +658,11 @@ bool DeviceContextGL::setVSync(bool use)
     GLint sync = use ? 1 : 0;
     [m_context._context setValues:&sync forParameter:NSOpenGLCPSwapInterval];
 #endif //_PLATFORM_MACOSX_
+    if (succeed)
+    {
+        m_isVSync = use;
+    }
+
     return succeed;
 }
 

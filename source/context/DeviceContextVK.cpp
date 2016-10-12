@@ -3,16 +3,15 @@
 #include "utils/Logger.h"
 
 #ifdef _VULKAN_RENDER_
-
-#if defined(_PLATFORM_WIN_)
-#   include <winuser.h>
 #   include <vulkan/vulkan.h>
+#   include <vulkan/vk_sdk_platform.h>
+
+#   if defined(_PLATFORM_WIN_)
+#   include <windows.h>
 #   pragma comment(lib, "vulkan-1.lib")
 
 #   include "platform/WindowWinApi.h"
-#endif //_PLATFORM_WIN_
-
-#include <vulkan/vk_sdk_platform.h>
+#   endif //_PLATFORM_WIN_
 
 namespace v3d
 {
@@ -26,17 +25,22 @@ const std::string k_vulkanApplicationName = "V3DWinApiVulkan";
 
 DeviceContextVK::DeviceContextVK(const platform::WindowPtr window)
     : DeviceContext(window)
-    , m_instance(nullptr)
-    , m_physicalDevice(nullptr)
-    , m_surface(nullptr)
+    , m_instance(VK_NULL_HANDLE)
+    , m_physicalDevice(VK_NULL_HANDLE)
+    , m_swapchain(nullptr)
 {
-    m_vulkanDevice._device = nullptr;
+    m_vulkanDevice._device = VK_NULL_HANDLE;
 }
 
 DeviceContextVK::~DeviceContextVK()
 {
-    ASSERT(!m_surface, "m_surface already exits");
-    ASSERT(!m_vulkanDevice._device, "m_device already exits");
+    if (m_swapchain)
+    {
+        delete m_swapchain;
+        m_swapchain = nullptr;
+    }
+
+    ASSERT(!m_swapchain, "m_device already exits");
 
     ASSERT(!m_physicalDevice, "m_physicalDevice already exits");
     ASSERT(!m_instance, "m_instance already exits");
@@ -91,19 +95,14 @@ bool DeviceContextVK::createWinApiContext()
         return false;
     }
 
+    m_swapchain = new SwapChainVK(shared_from_this());
+    if (!m_swapchain->create())
+    {
+        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create SwapChain");
+        DeviceContextVK::destroy();
 
-    /////
-
-    //HINSTANCE hInstance = GetModuleHandle(NULL);
-    //HWND window = std::static_pointer_cast<const platform::WindowWinApi>(getWindow())->getHandleWindow();
-
-    //VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
-    //surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    //surfaceCreateInfo.hinstance = hInstance;
-    //surfaceCreateInfo.hwnd = window;
-    //VkResult error = vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &m_surface);
-
-
+        return false;
+    }
 
     return true;
 }
@@ -445,7 +444,8 @@ void DeviceContextVK::destroy()
 
 bool DeviceContextVK::present()
 {
-    return false;
+    m_swapchain->presentFrame();
+    return true;
 }
 
 void DeviceContextVK::flush()
@@ -454,7 +454,24 @@ void DeviceContextVK::flush()
 
 bool DeviceContextVK::setVSync(bool use)
 {
-    return false;
+    m_isVSync = use;
+
+    return true;
+}
+
+VkInstance DeviceContextVK::getVulkanInstance() const
+{
+    return m_instance;
+}
+
+VkDevice DeviceContextVK::getVulkanDevice() const
+{
+    return m_vulkanDevice._device;
+}
+
+VkPhysicalDevice DeviceContextVK::getVulkanPhysicalDevice() const
+{
+    return m_physicalDevice;
 }
 
 TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)

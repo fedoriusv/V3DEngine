@@ -33,7 +33,7 @@ Engine::~Engine()
 {
     if (m_render)
     {
-        //m_render->destiroy()
+        //m_render->destroy()
     }
 
     if (m_context)

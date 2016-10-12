@@ -21,7 +21,7 @@ namespace renderer
     /**
     * Interface Context stored all information about device context.
     */
-    class DeviceContext
+    class DeviceContext : public std::enable_shared_from_this<DeviceContext>
     {
     public:
 
@@ -34,6 +34,8 @@ namespace renderer
 
         virtual bool                setVSync(bool use) = 0;
         virtual bool                present() = 0;
+
+        bool                        isVSync() const;
 
         const core::Dimension2D&    getWindowSize() const;
         const platform::WindowPtr   getWindow() const;
@@ -62,6 +64,10 @@ namespace renderer
         s32                         m_renderMinorVersion;
 
         GpraphicsCaps               m_graphicsCaps;
+
+    protected:
+
+        bool                        m_isVSync;
 
     private:
 

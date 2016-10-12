@@ -4,7 +4,8 @@
 
 #if defined(_VULKAN_RENDER_) 
 #   include <vulkan/vulkan.h>
-#endif //_VULKAN_RENDER_
+
+#   include "SwapChainVK.h"
 
 namespace v3d
 {
@@ -30,6 +31,10 @@ namespace vk
 
         bool                setVSync(bool use) override;
 
+        VkInstance          getVulkanInstance() const;
+        VkDevice            getVulkanDevice() const;
+        VkPhysicalDevice    getVulkanPhysicalDevice() const;
+
     protected:
 
         TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
@@ -43,7 +48,6 @@ namespace vk
         bool                createWinApiContext();
 #endif //_PLATFORM_WIN_
 
-#if defined(_VULKAN_RENDER_) 
         bool                createInstance(bool enableValidation);
         bool                createPhysicalDevice();
         bool                createLogicalDevice(bool useSwapChain, VkQueueFlags requestedQueueTypes);
@@ -73,9 +77,7 @@ namespace vk
         };
 
         VulkanDevice        m_vulkanDevice;
-
-        VkSurfaceKHR        m_surface;
-#endif //_VULKAN_RENDER_
+        SwapChainVK*        m_swapchain;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,3 +85,5 @@ namespace vk
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_

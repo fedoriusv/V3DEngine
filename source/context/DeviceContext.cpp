@@ -11,6 +11,8 @@ DeviceContext::DeviceContext(const platform::WindowPtr window)
     , m_shaderVersion("")
     , m_renderMajorVersion(0)
     , m_renderMinorVersion(0)
+
+    , m_isVSync(true)
 {
 }
 
@@ -21,6 +23,11 @@ DeviceContext::~DeviceContext()
 const platform::WindowPtr DeviceContext::getWindow() const
 {
     return m_window;
+}
+
+bool DeviceContext::isVSync() const
+{
+    return m_isVSync;
 }
 
 const core::Dimension2D& DeviceContext::getWindowSize() const
