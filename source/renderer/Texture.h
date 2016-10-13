@@ -1,5 +1,4 @@
-#ifndef _V3D_TEXTURE_H_
-#define _V3D_TEXTURE_H_
+#pragma once
 
 #include "ImageFormats.h"
 #include "stream/Resource.h"
@@ -22,6 +21,10 @@ namespace resources
 
 namespace renderer
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const u32 k_textureCubemapSideCount = 6U;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum ETextureTarget
@@ -162,5 +165,3 @@ namespace renderer
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_TEXTURE_H_

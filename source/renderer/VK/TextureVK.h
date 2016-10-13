@@ -2,28 +2,28 @@
 
 #include "renderer/Texture.h"
 
+#ifdef _VULKAN_RENDER_
+#   include "vulkan/vulkan.h"
+#endif //_VULKAN_RENDER_
+
 namespace v3d
 {
 namespace renderer
 {
-namespace gl
+namespace vk
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class BufferGL;
-    class SamplerGL;
-    class CRendererGL;
-
     /**
-    * Inherited class for texture management. GL render only.
+    * Inherited class for texture management. VK render only.
     */
-    class CTextureGL : public CTexture
+    class TextureVK : public CTexture
     {
     public:
 
-        CTextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level = 0U);
-        CTextureGL(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
-        ~CTextureGL();
+        TextureVK(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level = 0U);
+        TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
+        ~TextureVK();
 
         void                        bind(u32 unit)  override;
         void                        unbind()        override;
@@ -71,16 +71,15 @@ namespace gl
         bool                        create();
         void                        destroy();
 
-        friend                      CRendererGL;
-
-        void                        setSampler(SamplerGL* sampler);
-
         static bool                 bindTexture(ETextureTarget target, u32 texture);
         static void                 bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset = 0, u32 size = 0);
         static bool                 bindTextureUnit(u32 unit);
 
         static s32                  getActiveTexture(u32 target);
         static s32                  getActiveTextureUnit();
+
+        static void                 setImageLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageAspectFlags aspectMask,
+                                        VkImageLayout oldImageLayout, VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange);
 
     private:
 
@@ -100,19 +99,20 @@ namespace gl
 
     private:
 
-        SamplerGL*                  m_sampler;
-        BufferGL*                   m_textureBuffer;
+#ifdef _VULKAN_RENDER_
+        VkImage                     m_image;
+        VkImageView                 m_imageView;
+        VkImageLayout               m_imageLayout;
+
+        VkDeviceMemory              m_deviceMemory;
+
+#endif //_VULKAN_RENDER_
 
         bool                        m_initialized;
-
-        u32                         m_textureID;
-
-        static u32                  s_currentTextureID[eTargetCount];
-        static u32                  s_currentUnitID;
    };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} //namespace gl
+} //namespace vk
 } //namespace renderer
 } //namespace v3d

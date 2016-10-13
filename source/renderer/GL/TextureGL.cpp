@@ -16,9 +16,7 @@ namespace gl
 
 using namespace core;
 
-#define TEXTURE_CUBE_MAP_COUNT 6
-
-GLenum ECubeMapGL[TEXTURE_CUBE_MAP_COUNT] =
+GLenum ECubeMapGL[k_textureCubemapSideCount] =
 {
     GL_TEXTURE_CUBE_MAP_POSITIVE_X,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -382,7 +380,7 @@ CTextureGL::CTextureGL(EImageFormat format, EImageType type, const core::Dimensi
     CTextureGL::create();
     if (data)
     {
-        for (u32 cubemapSide = 0; cubemapSide < TEXTURE_CUBE_MAP_COUNT; ++cubemapSide)
+        for (u32 cubemapSide = 0; cubemapSide < k_textureCubemapSideCount; ++cubemapSide)
         {
             CTextureGL::update(cubemapSide, Dimension2D(0U, 0U), size, data[cubemapSide], level);
         }
@@ -566,7 +564,7 @@ bool CTextureGL::create()
 
         case ETextureTarget::eTextureCubeMap:
         {
-            for (u32 cubemapSide = 0; cubemapSide < TEXTURE_CUBE_MAP_COUNT; ++cubemapSide)
+            for (u32 cubemapSide = 0; cubemapSide < k_textureCubemapSideCount; ++cubemapSide)
             {
                 //glTexStorage2D(GL_PROXY_TEXTURE_CUBE_MAP, m_mipmapLevel + 1, internalFormat(EImageFormatGL[m_format], EImageTypeGL[m_type]), m_size.width, m_size.height);
                 glTexImage2D(ECubeMapGL[cubemapSide], 0, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]), m_size.width, m_size.height,
@@ -781,8 +779,8 @@ void CTextureGL::update(u32 cubemapSide, const core::Dimension2D& offset, const 
     {
         case ETextureTarget::eTextureCubeMap:
         {
-            ASSERT(cubemapSide < TEXTURE_CUBE_MAP_COUNT, "Wrong cubemap side");
-            s32 index = (cubemapSide < TEXTURE_CUBE_MAP_COUNT) ? cubemapSide : 0;
+            ASSERT(cubemapSide < k_textureCubemapSideCount, "Wrong cubemap side");
+            s32 index = (cubemapSide < k_textureCubemapSideCount) ? cubemapSide : 0;
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, ImageFormat::typeSize(m_type));
             ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
@@ -894,8 +892,8 @@ void CTextureGL::read(u32 cubemapSide, void* data, u32 level) const
     {
         case ETextureTarget::eTextureCubeMap:
         {
-            ASSERT(cubemapSide > TEXTURE_CUBE_MAP_COUNT, "Wrong cubemap side");
-            s32 index = (cubemapSide > TEXTURE_CUBE_MAP_COUNT) ? 0 : cubemapSide;
+            ASSERT(cubemapSide > k_textureCubemapSideCount, "Wrong cubemap side");
+            s32 index = (cubemapSide > k_textureCubemapSideCount) ? 0 : cubemapSide;
 
             u32 format = EImageFormatGL[toEnumType(m_format)];
             u32 type = EImageTypeGL[toEnumType(m_type)];
@@ -1060,7 +1058,7 @@ void CTextureGL::fill(const void* data, const core::Dimension2D& offset, const c
     if (m_target == ETextureTarget::eTextureCubeMap)
     {
         glClearTexSubImage(m_textureID, level, offset.width, offset.height, 0,
-            size.width, size.height, TEXTURE_CUBE_MAP_COUNT, format, type, data);
+            size.width, size.height, k_textureCubemapSideCount, format, type, data);
 
         ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture CubeMap Error");
         return;

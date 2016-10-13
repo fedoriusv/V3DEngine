@@ -23,7 +23,7 @@ namespace vk
     {
     public:
 
-        SwapChainVK(const ContextPtr context);
+        explicit SwapChainVK(const ContextPtr context);
         ~SwapChainVK();
 
         bool                        create();
