@@ -28,7 +28,6 @@ DeviceContextVK::DeviceContextVK(const platform::WindowPtr window)
     , m_instance(VK_NULL_HANDLE)
     , m_physicalDevice(VK_NULL_HANDLE)
     , m_device(VK_NULL_HANDLE)
-    , m_queueRender(VK_NULL_HANDLE)
     , m_swapchain(nullptr)
 {
 }
@@ -36,6 +35,8 @@ DeviceContextVK::DeviceContextVK(const platform::WindowPtr window)
 DeviceContextVK::~DeviceContextVK()
 {
     ASSERT(!m_swapchain, "m_device already exits");
+
+    ASSERT(m_queueFamily.empty(), "m_queueFamily.empty");
 
     ASSERT(!m_device, "m_physicalDevice already exits");
     ASSERT(!m_instance, "m_instance already exits");
@@ -47,22 +48,16 @@ void DeviceContextVK::checkForErrors(const std::string& location)
 
 bool DeviceContextVK::create()
 {
-#if defined(_PLATFORM_WIN_)
-    return createWinApiContext();
-#else
-    return false;
-#endif //_PLATFORM_WIN_
-    return false;
+    return createContext();
 }
 
-#if defined(_PLATFORM_WIN_)
-bool DeviceContextVK::createWinApiContext()
+bool DeviceContextVK::createContext()
 {
-    LOG_INFO("Create WinApi Vulkan Context");
+    LOG_INFO("Create Vulkan Context");
 
     if (!DeviceContextVK::createInstance(DebugVK::s_enableValidationLayers))
     {
-        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create Vulkan instance");
+        LOG_ERROR("DeviceContextVK::createContext: Could not create Vulkan instance");
         return false;
     }
 
@@ -76,20 +71,33 @@ bool DeviceContextVK::createWinApiContext()
 
     if (!createPhysicalDevice())
     {
-        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create Vulkan PhysicalDevice");
+        LOG_ERROR("DeviceContextVK::createContext: Could not create Vulkan PhysicalDevice");
         return false;
     }
 
-    if (!createLogicalDevice(true, VK_QUEUE_GRAPHICS_BIT))
+    s32 familyIndices[1];
+    familyIndices[0] = getQueueFamiliyIndex(VK_QUEUE_GRAPHICS_BIT);
+
+    //index family, queue bits, priority list 
+    const std::list<std::tuple<s32, VkQueueFlags, std::vector<f32>>> queueLists =
+    { 
+        { familyIndices[0], VK_QUEUE_GRAPHICS_BIT, { 0.0f } },
+    };
+
+    if (!createLogicalDevice(true, queueLists))
     {
-        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create Vulkan Device");
+        LOG_ERROR("DeviceContextVK::createContext: Could not create Vulkan Device");
         return false;
     }
 
-    // Get a graphics queue from the device
-    if (m_vulkanDevice._queueFamilyIndices._graphics >= 0)
+    for (auto& queueFamily : m_queueFamily)
     {
-        vkGetDeviceQueue(m_device, m_vulkanDevice._queueFamilyIndices._graphics, 0, &m_queueRender);
+        ASSERT(queueFamily.second._queueFamilyIndex >= 0, "invalid queue family index");
+        for (u32 queueIndex = 0; queueIndex < queueFamily.second._queue.size(); ++queueIndex)
+        {
+            auto& queue = queueFamily.second._queue;
+            vkGetDeviceQueue(m_device, static_cast<u32>(queueFamily.second._queueFamilyIndex), queueIndex, &queue[queueIndex]);
+        }
     }
 
     m_swapchain = new SwapChainVK(shared_from_this());
@@ -97,13 +105,12 @@ bool DeviceContextVK::createWinApiContext()
     {
         m_swapchain->destroy();
 
-        LOG_ERROR("DeviceContextVK::createWinApiContext: Could not create SwapChain");
+        LOG_ERROR("DeviceContextVK::createContext: Could not create SwapChain");
         return false;
     }
 
     return true;
 }
-#endif //_PLATFORM_WIN_
 
 bool DeviceContextVK::createInstance(bool enableValidation)
 {
@@ -227,23 +234,23 @@ bool DeviceContextVK::createPhysicalDevice()
 
     // Store Properties features, limits and properties of the physical device for later use
     // Device properties also contain limits and sparse properties
-    vkGetPhysicalDeviceProperties(m_physicalDevice, &m_vulkanDevice._properties);
+    vkGetPhysicalDeviceProperties(m_physicalDevice, &m_vulkanPropsDevice._properties);
     // Features should be checked by the examples before using them
-    vkGetPhysicalDeviceFeatures(m_physicalDevice, &m_vulkanDevice._features);
+    vkGetPhysicalDeviceFeatures(m_physicalDevice, &m_vulkanPropsDevice._features);
     // Memory properties are used regularly for creating all kinds of buffer
-    vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &m_vulkanDevice._memoryProperties);
+    vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &m_vulkanPropsDevice._memoryProperties);
     // Queue family properties, used for setting up requested queues upon device creation
 
     u32 queueFamilyCount;
     vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, nullptr);
     ASSERT(queueFamilyCount > 0, "Must be greater than 0");
-    m_vulkanDevice._queueFamilyProperties.resize(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, m_vulkanDevice._queueFamilyProperties.data());
+    m_vulkanPropsDevice._queueFamilyProperties.resize(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, m_vulkanPropsDevice._queueFamilyProperties.data());
 
     return true;
 }
 
-bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags requestedQueueTypes)
+bool DeviceContextVK::createLogicalDevice(bool useSwapChain, const std::list<std::tuple<s32, VkQueueFlags, std::vector<f32>>>& queueLists)
 {
     if (!m_physicalDevice)
     {
@@ -255,76 +262,45 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
 
     // Get queue family indices for the requested queue family types
     // Note that the indices may overlap depending on the implementation
-
-    const f32 defaultQueuePriority(0.0f);
-
-    // Graphics queue
-    if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT)
+    for (auto& requestedQueue : queueLists)
     {
-        m_vulkanDevice._queueFamilyIndices._graphics = getQueueFamiliyIndex(VK_QUEUE_GRAPHICS_BIT);
+        s32 requestedQueueFamalyIndex = std::get<0>(requestedQueue);
+        VkQueueFlags requestedQueueTypes = std::get<1>(requestedQueue);
+        const std::vector<f32>& queuePriority = std::get<2>(requestedQueue);
+        s32 requestedQueueCount = static_cast<s32>(std::get<2>(requestedQueue).size());
+
+        SQueueFamily queue;
+        queue._queueFamilyIndex = requestedQueueFamalyIndex;
+        queue._queue.resize(requestedQueueCount);
+        if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT) // Graphics queue
+        {
+            queue._queueFlag = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+        }
+        else if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT) // Dedicated compute queue
+        {
+            queue._queueFlag = VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+        }
+        else if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT) // Dedicated transfer queue
+        {
+            queue._queueFlag = VK_QUEUE_TRANSFER_BIT;
+        }
+        else
+        {
+            ASSERT(false, "invalid requestedQueueTypes");
+        }
+
+        m_queueFamily.insert(std::make_pair(requestedQueueFamalyIndex, queue));
+
 
         VkDeviceQueueCreateInfo queueInfo = {};
         queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueInfo.pNext = nullptr;
         queueInfo.flags = 0;
-        queueInfo.queueFamilyIndex = m_vulkanDevice._queueFamilyIndices._graphics;
-        queueInfo.queueCount = 1;
-        queueInfo.pQueuePriorities = &defaultQueuePriority;
+        queueInfo.queueFamilyIndex = requestedQueueFamalyIndex;
+        queueInfo.queueCount = requestedQueueCount;
+        queueInfo.pQueuePriorities = queuePriority.data();
 
         queueCreateInfos.push_back(queueInfo);
-    }
-    else
-    {
-        m_vulkanDevice._queueFamilyIndices._graphics = -1;
-    }
-
-    // Dedicated compute queue
-    if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT)
-    {
-        m_vulkanDevice._queueFamilyIndices._compute = getQueueFamiliyIndex(VK_QUEUE_COMPUTE_BIT);
-        if (m_vulkanDevice._queueFamilyIndices._compute != m_vulkanDevice._queueFamilyIndices._graphics)
-        {
-            // If compute family index differs, we need an additional queue create info for the compute queue
-            VkDeviceQueueCreateInfo queueInfo = {};
-            queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queueInfo.pNext = nullptr;
-            queueInfo.flags = 0;
-            queueInfo.queueFamilyIndex = m_vulkanDevice._queueFamilyIndices._compute;
-            queueInfo.queueCount = 1;
-            queueInfo.pQueuePriorities = &defaultQueuePriority;
-
-            queueCreateInfos.push_back(queueInfo);
-        }
-    }
-    else
-    {
-        // Else we use the same queue
-        m_vulkanDevice._queueFamilyIndices._compute = m_vulkanDevice._queueFamilyIndices._graphics;
-    }
-
-    // Dedicated transfer queue
-    if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT)
-    {
-        m_vulkanDevice._queueFamilyIndices._transfer = getQueueFamiliyIndex(VK_QUEUE_TRANSFER_BIT);
-        if ((m_vulkanDevice._queueFamilyIndices._transfer != m_vulkanDevice._queueFamilyIndices._graphics) &&
-            (m_vulkanDevice._queueFamilyIndices._transfer != m_vulkanDevice._queueFamilyIndices._compute))
-        {
-            // If compute family index differs, we need an additional queue create info for the compute queue
-            VkDeviceQueueCreateInfo queueInfo = {};
-            queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queueInfo.pNext = nullptr;
-            queueInfo.flags = 0;
-            queueInfo.queueFamilyIndex = m_vulkanDevice._queueFamilyIndices._transfer;
-            queueInfo.queueCount = 1;
-            queueInfo.pQueuePriorities = &defaultQueuePriority;
-
-            queueCreateInfos.push_back(queueInfo);
-        }
-    }
-    else
-    {
-        // Else we use the same queue
-        m_vulkanDevice._queueFamilyIndices._transfer = m_vulkanDevice._queueFamilyIndices._compute;
     }
 
     // Create the logical device representation
@@ -341,7 +317,7 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, VkQueueFlags reques
     deviceCreateInfo.flags = 0;
     deviceCreateInfo.queueCreateInfoCount = static_cast<u32>(queueCreateInfos.size());;
     deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-    deviceCreateInfo.pEnabledFeatures = &m_vulkanDevice._features;
+    deviceCreateInfo.pEnabledFeatures = &m_vulkanPropsDevice._features;
 
     // Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
     if (DebugVK::s_enableDebugMarkers)
@@ -380,9 +356,9 @@ u32 DeviceContextVK::getQueueFamiliyIndex(VkQueueFlagBits queueFlags)
     // Try to find a queue family index that supports compute but not graphics
     if (queueFlags & VK_QUEUE_COMPUTE_BIT)
     {
-        for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanDevice._queueFamilyProperties.size()); i++)
+        for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanPropsDevice._queueFamilyProperties.size()); i++)
         {
-            if ((m_vulkanDevice._queueFamilyProperties[i].queueFlags & queueFlags) && ((m_vulkanDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0))
+            if ((m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & queueFlags) && ((m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0))
             {
                 return i;
                 break;
@@ -394,11 +370,11 @@ u32 DeviceContextVK::getQueueFamiliyIndex(VkQueueFlagBits queueFlags)
     // Try to find a queue family index that supports transfer but not graphics and compute
     if (queueFlags & VK_QUEUE_TRANSFER_BIT)
     {
-        for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanDevice._queueFamilyProperties.size()); i++)
+        for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanPropsDevice._queueFamilyProperties.size()); i++)
         {
-            if ((m_vulkanDevice._queueFamilyProperties[i].queueFlags & queueFlags) &&
-                ((m_vulkanDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) &&
-                ((m_vulkanDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
+            if ((m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & queueFlags) &&
+                ((m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) &&
+                ((m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
             {
                 return i;
                 break;
@@ -407,9 +383,9 @@ u32 DeviceContextVK::getQueueFamiliyIndex(VkQueueFlagBits queueFlags)
     }
 
     // For other queue types or if no separate compute queue is present, return the first one to support the requested flags
-    for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanDevice._queueFamilyProperties.size()); i++)
+    for (uint32_t i = 0; i < static_cast<uint32_t>(m_vulkanPropsDevice._queueFamilyProperties.size()); i++)
     {
-        if (m_vulkanDevice._queueFamilyProperties[i].queueFlags & queueFlags)
+        if (m_vulkanPropsDevice._queueFamilyProperties[i].queueFlags & queueFlags)
         {
             return i;
             break;
@@ -464,6 +440,12 @@ void DeviceContextVK::destroy()
         m_swapchain = nullptr;
     }
 
+    for (auto& queueFamily : m_queueFamily)
+    {
+        queueFamily.second._queue.clear();
+    }
+    m_queueFamily.clear();
+
     if (m_device != VK_NULL_HANDLE)
     {
         vkDestroyDevice(m_device, nullptr);
@@ -471,7 +453,6 @@ void DeviceContextVK::destroy()
     }
 
     m_physicalDevice = VK_NULL_HANDLE;
-    m_queueRender = VK_NULL_HANDLE;
 
 #if VULKAN_DEBUG
     DebugVK::freeDebugCallback(m_instance);
@@ -516,14 +497,36 @@ VkPhysicalDevice DeviceContextVK::getVulkanPhysicalDevice() const
     return m_physicalDevice;
 }
 
-VkQueue DeviceContextVK::getVuklanQueue() const
+VkQueue DeviceContextVK::getVuklanQueue(u32 queueFamily, u32 index) const
 {
-    return m_queueRender;
+    auto result = m_queueFamily.find(queueFamily);
+    if (result != m_queueFamily.cend())
+    {
+        ASSERT((*result).second._queue.size() > index, "Out of range");
+        return (*result).second._queue[index];
+    }
+
+    return VK_NULL_HANDLE;
 }
 
-s32 DeviceContextVK::getVulkanQueueFamilyGraphicsIndex() const
+s32 DeviceContextVK::getVulkanQueueFamilyIndex(VkQueueFlagBits queueFlag) const
 {
-    return m_vulkanDevice._queueFamilyIndices._graphics;
+    auto result = std::find_if(m_queueFamily.cbegin(), m_queueFamily.cend(), [&queueFlag](std::pair<const s32, SQueueFamily> item) -> bool
+    {
+        if (item.second._queueFlag & queueFlag)
+        {
+            return true;
+        }
+
+        return false;
+    });
+
+    if (result != m_queueFamily.cend())
+    {
+        return (*result).second._queueFamilyIndex;
+    }
+
+    return -1;
 }
 
 TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)

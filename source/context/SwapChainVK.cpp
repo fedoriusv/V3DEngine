@@ -42,8 +42,9 @@ SwapChainVK::SwapChainVK(const ContextPtr context)
     m_instance = contextVK->getVulkanInstance();
     m_physicalDevice = contextVK->getVulkanPhysicalDevice();
     m_device = contextVK->getVulkanDevice();
-    m_queuePresent = contextVK->getVuklanQueue();
-    m_queueFamilyIndex = contextVK->getVulkanQueueFamilyGraphicsIndex();
+    m_queueFamilyIndex = contextVK->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+    ASSERT(m_queueFamilyIndex >= 0, "m_queueFamilyIndex < 0");
+    m_queuePresent = contextVK->getVuklanQueue(m_queueFamilyIndex, 0);
 
     m_surfaceSize.width = context->getWindowSize().width;
     m_surfaceSize.height = context->getWindowSize().height;

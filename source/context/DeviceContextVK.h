@@ -20,49 +20,55 @@ namespace vk
     {
     public:
 
-        explicit            DeviceContextVK(const platform::WindowPtr window);
+        explicit                    DeviceContextVK(const platform::WindowPtr window);
         ~DeviceContextVK();
 
-        void                checkForErrors(const std::string& location = "") override;
-        bool                create() override;
-        void                destroy() override;
-        bool                present() override;
-        void                flush();
+        void                        checkForErrors(const std::string& location = "") override;
+        bool                        create() override;
+        void                        destroy() override;
+        bool                        present() override;
+        void                        flush();
 
-        bool                setVSync(bool use) override;
+        bool                        setVSync(bool use) override;
 
-        VkInstance          getVulkanInstance() const;
-        VkDevice            getVulkanDevice() const;
-        VkPhysicalDevice    getVulkanPhysicalDevice() const;
-        VkQueue             getVuklanQueue() const;
-        s32                 getVulkanQueueFamilyGraphicsIndex() const;
+        VkInstance                  getVulkanInstance() const;
+        VkDevice                    getVulkanDevice() const;
+        VkPhysicalDevice            getVulkanPhysicalDevice() const;
+        VkQueue                     getVuklanQueue(u32 queueFamily, u32 index) const;
+        s32                         getVulkanQueueFamilyIndex(VkQueueFlagBits queueFlag) const;
 
     protected:
 
-        TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
-        TexturePtr          createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) override;
+        TexturePtr                  createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
+        TexturePtr                  createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) override;
 
-        void                fillGrapthicCaps() override;
+        void                        fillGrapthicCaps() override;
 
-        void                printExtensionList() const;
+        void                        printExtensionList() const;
 
-#if defined(_PLATFORM_WIN_)
-        bool                createWinApiContext();
-#endif //_PLATFORM_WIN_
+        bool                        createContext();
 
-        bool                createInstance(bool enableValidation);
-        bool                createPhysicalDevice();
-        bool                createLogicalDevice(bool useSwapChain, VkQueueFlags requestedQueueTypes);
+        bool                        createInstance(bool enableValidation);
+        bool                        createPhysicalDevice();
+        bool                        createLogicalDevice(bool useSwapChain, const std::list<std::tuple<s32, VkQueueFlags, std::vector<f32>>>& queueLists);
 
-        u32                 getQueueFamiliyIndex(VkQueueFlagBits queueFlags);
+        u32                         getQueueFamiliyIndex(VkQueueFlagBits queueFlags);
 
-        VkBool32            checkGlobalExtensionPresent(const c8* extensionName);
-        VkBool32            checkDeviceExtensionPresent(const c8* extensionName);
+        VkBool32                    checkGlobalExtensionPresent(const c8* extensionName);
+        VkBool32                    checkDeviceExtensionPresent(const c8* extensionName);
 
-        VkInstance          m_instance;
-        VkPhysicalDevice    m_physicalDevice;
-        VkDevice            m_device;
-        VkQueue             m_queueRender;
+        VkInstance                  m_instance;
+        VkPhysicalDevice            m_physicalDevice;
+        VkDevice                    m_device;
+
+        struct SQueueFamily
+        {
+            s32                     _queueFamilyIndex;
+            VkQueueFlags            _queueFlag;
+            std::vector<VkQueue>    _queue;
+        };
+
+        std::map<s32, SQueueFamily> m_queueFamily;
 
         struct SVulkanProperties
         {
@@ -71,18 +77,10 @@ namespace vk
             VkPhysicalDeviceFeatures             _features;
             VkPhysicalDeviceMemoryProperties     _memoryProperties;
             std::vector<VkQueueFamilyProperties> _queueFamilyProperties;
-
-            struct
-            {
-                s32 _graphics;
-                s32 _compute;
-                s32 _transfer;
-            }                                    _queueFamilyIndices;
         };
+        SVulkanProperties           m_vulkanPropsDevice;
 
-        SVulkanProperties   m_vulkanDevice;
-
-        SwapChainVK*        m_swapchain;
+        SwapChainVK*                m_swapchain;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
