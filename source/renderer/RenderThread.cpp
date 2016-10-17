@@ -90,7 +90,7 @@ void RenderThread::runCommand(const stream::MemoryStream& stream)
     switch (flag)
     {
     case ERenderCommand::eRCmdInit:
-        render->init();
+        render->immidateInit();
         break;
 
     case ERenderCommand::eRCmdBeginFrame:
@@ -115,6 +115,16 @@ void RenderThread::runCommand(const stream::MemoryStream& stream)
     case ERenderCommand::eRCmdTerminate:
         m_isRunning = false;
         break;
+
+    case ERenderCommand::eCommandUpdateTexure:
+        Texture tex;
+        TexData data;
+        m_commandBuffer.read(tex);
+        m_commandBuffer.read(data);
+        tex->immidateUpdate(data);
+
+
+
 
     default:
         ASSERT(false, "Buffer command is unknown");

@@ -20,6 +20,8 @@ namespace renderer
         eRCmdPresentFrame,
         eRCmdDraw,
 
+        eCommandUpdateTexure,
+
         eRCmdDestroy,
 
         eRCmdTerminate,

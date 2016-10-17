@@ -21,7 +21,7 @@ namespace renderer
     /**
     * Interface Context stored all information about device context.
     */
-    class DeviceContext : public std::enable_shared_from_this<DeviceContext>
+    class DeviceContext
     {
     public:
 

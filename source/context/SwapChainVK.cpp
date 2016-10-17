@@ -4,6 +4,7 @@
 #if defined(_VULKAN_RENDER_)
 #include "DebugVK.h"
 #include "DeviceContextVK.h"
+
 #if defined(_PLATFORM_WIN_)
 #   include "platform/WindowWinApi.h"
 #endif //_PLATFORM_WIN_
@@ -15,7 +16,7 @@ namespace renderer
 namespace vk
 {
 
-SwapChainVK::SwapChainVK(const ContextPtr context)
+SwapChainVK::SwapChainVK(const ContextVKPtr context)
     : m_currentBuffer(0)
     , m_swapChain(VK_NULL_HANDLE)
     , m_surface(VK_NULL_HANDLE)
@@ -38,13 +39,12 @@ SwapChainVK::SwapChainVK(const ContextPtr context)
     m_appWindow = std::static_pointer_cast<const platform::WindowWinApi>(context->getWindow())->getHandleWindow();
 #endif //_PLATFORM_WIN_
 
-    std::shared_ptr<const DeviceContextVK> contextVK = std::static_pointer_cast<const DeviceContextVK>(context);
-    m_instance = contextVK->getVulkanInstance();
-    m_physicalDevice = contextVK->getVulkanPhysicalDevice();
-    m_device = contextVK->getVulkanDevice();
-    m_queueFamilyIndex = contextVK->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+    m_instance = context->getVulkanInstance();
+    m_physicalDevice = context->getVulkanPhysicalDevice();
+    m_device = context->getVulkanDevice();
+    m_queueFamilyIndex = context->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
     ASSERT(m_queueFamilyIndex >= 0, "m_queueFamilyIndex < 0");
-    m_queuePresent = contextVK->getVuklanQueue(m_queueFamilyIndex, 0);
+    m_queuePresent = context->getVuklanQueue(m_queueFamilyIndex, 0);
 
     m_surfaceSize.width = context->getWindowSize().width;
     m_surfaceSize.height = context->getWindowSize().height;
@@ -364,7 +364,7 @@ bool SwapChainVK::createSwapchainImages()
         return false;
     }
 
-    //TODO:
+   //TODO:
     //buffers.resize(imageCount);
     //for (uint32_t i = 0; i < imageCount; i++)
     //{
@@ -393,7 +393,7 @@ bool SwapChainVK::createSwapchainImages()
     //    err = vkCreateImageView(device, &colorAttachmentView, nullptr, &buffers[i].view);
     //    assert(!err);
 
-    return false;
+    return true;
 }
 
 #if defined(_PLATFORM_WIN_)

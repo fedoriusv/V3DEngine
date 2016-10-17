@@ -2,6 +2,11 @@
 
 #include "renderer/Renderer.h"
 
+#ifdef _VULKAN_RENDER_
+#   include "vulkan/vulkan.h"
+#   include "context/DeviceContextVK.h"
+#endif //_VULKAN_RENDER_
+
 namespace v3d
 {
 namespace renderer
@@ -10,6 +15,8 @@ namespace vk
 {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class MemoryManagerVK;
 
     /**
     * Inherited class for general render management. Vulkan render only.
@@ -23,6 +30,9 @@ namespace vk
 
         platform::ERenderType   getRenderType() const override;
 
+        const ContextVKPtr      getVulkanContext() const;
+        MemoryManagerVK*        getMemoryManager();
+
     private:
 
         void                    immediateInit() override;
@@ -32,6 +42,11 @@ namespace vk
         void                    immediatePresentFrame() override;
 
         void                    immediateDraw() override;
+
+        MemoryManagerVK*        m_memoryMamager;
+
+        VkDevice                m_device;
+        u32                     m_queueFamilyIndex;
 
     public:
 

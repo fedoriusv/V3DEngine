@@ -5,6 +5,7 @@
 #ifdef _VULKAN_RENDER_
 #   include <vulkan/vulkan.h>
 #   include <vulkan/vk_sdk_platform.h>
+#   include "SwapChainVK.h"
 
 #   if defined(_PLATFORM_WIN_)
 #   include <windows.h>
@@ -527,6 +528,11 @@ s32 DeviceContextVK::getVulkanQueueFamilyIndex(VkQueueFlagBits queueFlag) const
     }
 
     return -1;
+}
+
+const VkPhysicalDeviceMemoryProperties& DeviceContextVK::getVulkanPhysicalDeviceMemoryProperties() const
+{
+    return m_vulkanPropsDevice._memoryProperties;
 }
 
 TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)

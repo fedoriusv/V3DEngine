@@ -97,6 +97,20 @@ bool CTexture::isValid() const
 
 void CTexture::update(u32 offset, u32 size, const void* data, u32 level)
 {
+    vkRenderer;
+    if (vkRenderer->threaded)
+    {
+        memStream;
+        vkRenderer->pushRenderCommand(memStream);
+    }
+    else
+    {
+        CTexture::immidateUpdate(offset, size, data, level);
+    }
+}
+
+void CTexture::immidateUpdate(u32 offset, u32 size, const void* data, u32 level)
+{
     if (m_impl)
     {
         m_impl->update(offset, size, data, level);

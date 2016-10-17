@@ -1,10 +1,10 @@
 #pragma once
 
 #include "common.h"
-#include "DeviceContext.h"
 
 #if defined(_VULKAN_RENDER_)
 #   include <vulkan/vulkan.h>
+#   include "DeviceContextVK.h"
 
 #   if defined(_PLATFORM_WIN_)
 #   include <windows.h>
@@ -23,7 +23,7 @@ namespace vk
     {
     public:
 
-        explicit SwapChainVK(const ContextPtr context);
+        explicit SwapChainVK(const ContextVKPtr context);
         ~SwapChainVK();
 
         bool                        create();

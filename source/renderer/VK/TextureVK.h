@@ -4,6 +4,8 @@
 
 #ifdef _VULKAN_RENDER_
 #   include "vulkan/vulkan.h"
+
+#   include "MemoryManagerVK.h"
 #endif //_VULKAN_RENDER_
 
 namespace v3d
@@ -100,11 +102,17 @@ namespace vk
     private:
 
 #ifdef _VULKAN_RENDER_
+        VkDevice                    m_device;
+        u32                         m_queueFamilyIndex;
+
+        SMemoryVK                   m_memory;
         VkImage                     m_image;
         VkImageView                 m_imageView;
         VkImageLayout               m_imageLayout;
+        VkImageUsageFlags           m_usage;
 
         VkDeviceMemory              m_deviceMemory;
+        bool                        m_mappable;
 
 #endif //_VULKAN_RENDER_
 

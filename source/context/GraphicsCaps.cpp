@@ -57,5 +57,7 @@ void GpraphicsCaps::setMaxPatchVertices(u32 size)
     m_maxPatchVertices = size;
 }
 
+//VkPhysicalDeviceLimits::nonCoherentAtomSize
+
 } //namespace renderer
 } //namespace v3d
