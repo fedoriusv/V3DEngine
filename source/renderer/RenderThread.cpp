@@ -5,6 +5,49 @@ namespace v3d
 namespace renderer
 {
 
+RenderStreamCommand::RenderStreamCommand(ERenderCommand cmd)
+    : m_commandStream()
+    , m_command(cmd)
+{
+    m_commandStream.seekBeg(0);
+    RenderStreamCommand::writeValue<ERenderCommand>(cmd);
+}
+
+RenderStreamCommand::~RenderStreamCommand()
+{
+    m_commandStream.clear();
+}
+
+void* RenderStreamCommand::readValue(u32 size, u32 count)
+{
+    void* data = malloc(size * count);
+    m_commandStream.read(data, size, count);
+
+    return data;
+}
+
+void RenderStreamCommand::writeValue(const void* data, u32 size, u32 count)
+{
+    m_commandStream.write(data, size, count);
+}
+
+void* RenderStreamCommand::getStreamData() const
+{
+    return m_commandStream.getData();
+}
+
+u32 RenderStreamCommand::getStreamSize() const
+{
+    return m_commandStream.size();
+}
+
+RenderStreamCommand::RenderStreamCommand(const stream::MemoryStream& stream)
+    : m_commandStream(stream)
+{
+    m_commandStream.seekBeg(0);
+    m_command = RenderStreamCommand::readValue<ERenderCommand>();
+}
+
 RenderThread::RenderThread(const renderer::RendererPtr renderer)
     : m_renderer(renderer)
 {
@@ -18,6 +61,23 @@ RenderThread::RenderThread(const renderer::RendererPtr renderer)
 RenderThread::~RenderThread()
 {
     m_thread.wait(true);
+}
+
+void RenderThread::pushCommand(const RenderStreamCommand& command)
+{
+    m_commandBuffer.write(command.getStreamSize());
+    m_commandBuffer.write(command.getStreamData(), command.getStreamSize(), 1);
+}
+
+const RenderStreamCommand RenderThread::popCommand()
+{
+    u32 streamSize;
+    m_commandBuffer.read(streamSize);
+    stream::MemoryStream stream = stream::MemoryStream(nullptr, streamSize);
+    m_commandBuffer.read(stream.getData(), streamSize, 1);
+
+    RenderStreamCommand command(stream);
+    return command;
 }
 
 void RenderThread::init()
@@ -70,17 +130,16 @@ void RenderThread::threadWorker(void* data)
             m_isRunning = false;
         }
 
-        RenderThread::runCommand(*stream);
+        if (m_commandBuffer.size() > 0)
+        {
+            const RenderStreamCommand& command = RenderThread::popCommand();
+            RenderThread::runCommand(command);
+        }
     }
 }
 
-void RenderThread::runCommand(const stream::MemoryStream& stream)
+void RenderThread::runCommand(const RenderStreamCommand& command)
 {
-    if (m_commandBuffer.size() <= 0)
-    {
-        return;
-    }
-
     s32 flag;
     m_commandBuffer.read(flag);
 

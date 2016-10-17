@@ -37,7 +37,7 @@ stream::IResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
     {
         stream->seekBeg(0);
 
-        MemoryStreamPtr data = CStreamManager::createMemoryStream(nullptr, stream->size());
+        MemoryStreamPtr data = StreamManager::createMemoryStream(nullptr, stream->size());
         stream->read(data->getData(), sizeof(u8), stream->size());
 
         f32 version;
@@ -67,7 +67,7 @@ stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
     std::string name;
     stream->read(name);
 
-    IStreamPtr data = CStreamManager::createMemoryStream();
+    IStreamPtr data = StreamManager::createMemoryStream();
     data->seekBeg(0);
 
     data->write(id);
@@ -83,7 +83,7 @@ stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         u32 materialStreamSize;
         stream->read(materialStreamSize);
 
-        MemoryStreamPtr materialStream = stream::CStreamManager::createMemoryStream(nullptr, materialStreamSize);
+        MemoryStreamPtr materialStream = stream::StreamManager::createMemoryStream(nullptr, materialStreamSize);
         stream->read(materialStream->getData(), sizeof(u8), materialStreamSize);
         
         materialStream->seekBeg(0);
@@ -117,7 +117,7 @@ stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
         u32 nodeStreamSize;
         stream->read(nodeStreamSize);
 
-        MemoryStreamPtr nodeStream = stream::CStreamManager::createMemoryStream(nullptr, nodeStreamSize);
+        MemoryStreamPtr nodeStream = stream::StreamManager::createMemoryStream(nullptr, nodeStreamSize);
         stream->read(nodeStream->getData(), sizeof(u8), nodeStreamSize);
 
         data->write(nodetype);

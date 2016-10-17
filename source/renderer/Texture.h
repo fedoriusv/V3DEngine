@@ -85,28 +85,28 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTexture;
+    class Texture;
 
-    typedef utils::TIntrusivePtr<CTexture> TexturePtr;
+    typedef utils::TIntrusivePtr<Texture> TexturePtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Base Interface for texture entity.
     */
-    class CTexture : public utils::CRefCounted, public utils::TCloneable<TexturePtr>
+    class Texture : public utils::CRefCounted, public utils::TCloneable<TexturePtr>
     {
     public:
 
-        CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data = nullptr, u32 level = 0U);
-        CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data = nullptr, u32 level = 0U);
-        CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 level = 0U);
-        CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = {}, u32 level = 0U);
+        Texture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data = nullptr, u32 mipCount = 1U);
+        Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data = nullptr, u32 mipCount = 1U);
+        Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 mipCount = 1U);
+        Texture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = {}, u32 mipCount = 1U);
 
-        CTexture(const CTexture&)               = delete;
-        CTexture& operator=(const CTexture&)    = delete;
+        Texture(const Texture&)               = delete;
+        Texture& operator=(const Texture&)    = delete;
 
-        virtual ~CTexture();
+        virtual ~Texture();
 
         virtual void                        bind(u32 unit);
         virtual void                        unbind();
@@ -114,17 +114,17 @@ namespace renderer
         virtual bool                        isValid()  const;
         virtual bool                        isEnable() const;
 
-        virtual void                        update(u32 offset, u32 size, const void* data, u32 level = 0U);
-        virtual void                        update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U);
-        virtual void                        update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 level = 0U);
-        virtual void                        update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level = 0U);
+        virtual void                        update(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
+        virtual void                        update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
+        virtual void                        update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel = 0U);
+        virtual void                        update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
 
-        virtual void                        read(void* data, u32 level = 0U) const;
-        virtual void                        read(u32 cubemapSide, void* data, u32 level = 0U) const;
+        virtual void                        read(void* data, u32 mipLevel = 0U) const;
+        virtual void                        read(u32 cubemapSide, void* data, u32 mipLevel = 0U) const;
 
-        virtual void                        fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 level = 0U);
-        virtual void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 level = 0U);
-        virtual void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 level = 0U);
+        virtual void                        fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 mipLevel = 0U);
+        virtual void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 mipLevel = 0U);
+        virtual void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
 
         virtual ETextureTarget              getTarget()      const;
         virtual ETextureFilter              getMinFiler()    const;
@@ -146,11 +146,20 @@ namespace renderer
         
     protected:
 
-        CTexture();
+        Texture();
 
         virtual void                        copyData(const TexturePtr& texture);
 
     private:
+
+        void                                immidateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
+        void                                immidateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
+        void                                immidateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel = 0U);
+        void                                immidateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
+        void                                immidateFill(const void* data, u32 offset = 0U, u32 size = 0U, u32 mipLevel = 0U);
+        void                                immidateFill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 mipLevel = 0U);
+        void                                immidateFill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
+
 
         TexturePtr const                    m_impl;
     };

@@ -17,13 +17,13 @@ namespace gl
     /**
     * Inherited class for texture management. GL render only.
     */
-    class CTextureGL : public CTexture
+    class TextureGL : public Texture
     {
     public:
 
-        CTextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level = 0U);
-        CTextureGL(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
-        ~CTextureGL();
+        TextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level = 0U);
+        TextureGL(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level = 0U);
+        ~TextureGL();
 
         void                        bind(u32 unit)  override;
         void                        unbind()        override;

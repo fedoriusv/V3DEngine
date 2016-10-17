@@ -101,7 +101,7 @@ bool CModel::load()
             u32 nodeStreamSize;
             stream->read(nodeStreamSize);
 
-            MemoryStreamPtr nodeStream = CStreamManager::createMemoryStream(nullptr, nodeStreamSize);
+            MemoryStreamPtr nodeStream = StreamManager::createMemoryStream(nullptr, nodeStreamSize);
             stream->read(nodeStream->getData(), sizeof(u8), nodeStreamSize);
 
             CNode* node = nullptr;
@@ -119,7 +119,7 @@ bool CModel::load()
                         u32 materialStreamSize;
                         stream->read(materialStreamSize);
 
-                        MemoryStreamPtr materialStream = CStreamManager::createMemoryStream(nullptr, materialStreamSize);
+                        MemoryStreamPtr materialStream = StreamManager::createMemoryStream(nullptr, materialStreamSize);
                         stream->read(materialStream->getData(), sizeof(u8), materialStreamSize);
 
                         const MaterialPtr& material = static_cast<CMesh*>(node)->getMaterial();

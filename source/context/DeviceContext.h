@@ -9,13 +9,6 @@ namespace v3d
 {
 namespace renderer
 {
-
-    //namespace platform
-    //{
-    //    class Platform;
-
-    //} //namespace platform
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -51,8 +44,8 @@ namespace renderer
 
     protected:
 
-        friend                      CTexture;
         friend                      platform::Platform;
+        friend                      Texture;
 
         virtual TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
         virtual TexturePtr          createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) = 0;

@@ -95,10 +95,10 @@ GLenum EImageTypeGL[toEnumType(EImageType::eImageTypeCount)] =
     GL_FLOAT
 };
 
-u32 CTextureGL::s_currentTextureID[] = { 0 };
-u32 CTextureGL::s_currentUnitID      = 0;
+u32 TextureGL::s_currentTextureID[] = { 0 };
+u32 TextureGL::s_currentUnitID      = 0;
 
-u32 CTextureGL::internalFormat(u32 format, u32 type)
+u32 TextureGL::internalFormat(u32 format, u32 type)
 {
     switch (type)
     {
@@ -301,7 +301,7 @@ u32 CTextureGL::internalFormat(u32 format, u32 type)
     return format;
 }
 
-CTextureGL::CTextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
+TextureGL::TextureGL(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
     : m_target(target)
     , m_format(format)
     , m_type(type)
@@ -323,28 +323,28 @@ CTextureGL::CTextureGL(ETextureTarget target, EImageFormat format, EImageType ty
 
     , m_initialized(false)
 {
-    LOG_DEBUG("CTextureGL::CTextureGL constructor %x", this);
-    CTextureGL::create();
+    LOG_DEBUG("TextureGL::TextureGL constructor %x", this);
+    TextureGL::create();
     if (data)
     {
         switch (m_target)
         {
         case ETextureTarget::eTexture1D:
         case ETextureTarget::eTextureBuffer:
-            CTextureGL::update(0, size.width, data, level);
+            TextureGL::update(0, size.width, data, level);
             break;
 
         case ETextureTarget::eTexture1DArray:
         case ETextureTarget::eTexture2D:
         case ETextureTarget::eTexture2DMSAA:
         case ETextureTarget::eTextureRectangle:
-            CTextureGL::update(Dimension2D(0U, 0U), Dimension2D(size.width, size.height), data, level);
+            TextureGL::update(Dimension2D(0U, 0U), Dimension2D(size.width, size.height), data, level);
             break;
 
         case ETextureTarget::eTexture2DArray:
         case ETextureTarget::eTexture3D:
         case ETextureTarget::eTexture3DMSAA:
-            CTextureGL::update(Dimension3D(0U, 0U, 0U), size, data, level);
+            TextureGL::update(Dimension3D(0U, 0U, 0U), size, data, level);
             break;
 
         default:
@@ -354,7 +354,7 @@ CTextureGL::CTextureGL(ETextureTarget target, EImageFormat format, EImageType ty
     }
 }
 
-CTextureGL::CTextureGL(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
+TextureGL::TextureGL(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
     : m_target(eTextureCubeMap)
     , m_format(format)
     , m_type(type)
@@ -376,33 +376,33 @@ CTextureGL::CTextureGL(EImageFormat format, EImageType type, const core::Dimensi
 
     , m_initialized(false)
 {
-    LOG_DEBUG("CTextureGL::CTextureGL constructor %x", this);
-    CTextureGL::create();
+    LOG_DEBUG("TextureGL::TextureGL constructor %x", this);
+    TextureGL::create();
     if (data)
     {
         for (u32 cubemapSide = 0; cubemapSide < k_textureCubemapSideCount; ++cubemapSide)
         {
-            CTextureGL::update(cubemapSide, Dimension2D(0U, 0U), size, data[cubemapSide], level);
+            TextureGL::update(cubemapSide, Dimension2D(0U, 0U), size, data[cubemapSide], level);
         }
     }
 }
 
-CTextureGL::~CTextureGL()
+TextureGL::~TextureGL()
 {
-    CTextureGL::destroy();
+    TextureGL::destroy();
 
     ASSERT(m_textureID == 0, "Texture doesn't deleted");
-    LOG_DEBUG("CTextureGL::CTextureGL destructor %x", this);
+    LOG_DEBUG("TextureGL::TextureGL destructor %x", this);
 }
 
-void CTextureGL::bind(u32 unit)
+void TextureGL::bind(u32 unit)
 {
     if (!m_initialized)
     {
         return;
     }
 
-    CTextureGL::bindTextureUnit(unit);
+    TextureGL::bindTextureUnit(unit);
     if (m_sampler)
     {
         m_sampler->bind(unit);
@@ -413,17 +413,17 @@ void CTextureGL::bind(u32 unit)
         u32 format = EImageFormatGL[toEnumType(m_format)];
         u32 type = EImageTypeGL[toEnumType(m_type)];
 
-        CTextureGL::bindTexBuffer(internalFormat(format, type), m_textureID, m_textureBuffer->getID());
-        ENGINE_RENDERER->checkForErrors("CTextureGL: Bind Texture Buffer Error");
+        TextureGL::bindTexBuffer(internalFormat(format, type), m_textureID, m_textureBuffer->getID());
+        ENGINE_RENDERER->checkForErrors("TextureGL: Bind Texture Buffer Error");
     }
     else
     {
-        CTextureGL::bindTexture(m_target, m_textureID);
-        ENGINE_RENDERER->checkForErrors("CTextureGL: Bind Texture Error");
+        TextureGL::bindTexture(m_target, m_textureID);
+        ENGINE_RENDERER->checkForErrors("TextureGL: Bind Texture Error");
     }
 }
 
-void CTextureGL::unbind()
+void TextureGL::unbind()
 {
     if (!m_initialized)
     {
@@ -432,28 +432,28 @@ void CTextureGL::unbind()
 
     if (m_textureBuffer)
     {
-        CTextureGL::bindTexture(ETextureTarget::eTextureBuffer, 0);
+        TextureGL::bindTexture(ETextureTarget::eTextureBuffer, 0);
     }
     else
     {
-        CTextureGL::bindTexture(m_target, 0);
+        TextureGL::bindTexture(m_target, 0);
     }
 
-    ENGINE_RENDERER->checkForErrors("CTextureGL: Unbind Texture Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL: Unbind Texture Error");
 }
 
-void CTextureGL::reset()
+void TextureGL::reset()
 {
-    CTextureGL::bindTextureUnit(0);
+    TextureGL::bindTextureUnit(0);
     for (u32 i = 0; i < eTargetCount; ++i)
     {
-        CTextureGL::bindTexture((ETextureTarget)i, 0);
+        TextureGL::bindTexture((ETextureTarget)i, 0);
     }
 
-    ENGINE_RENDERER->checkForErrors("CTextureGL: Unbind All Texture Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL: Unbind All Texture Error");
 }
 
-bool CTextureGL::create()
+bool TextureGL::create()
 {
     if (m_initialized)
     {
@@ -467,7 +467,7 @@ bool CTextureGL::create()
     GLint originalTexture;
     glGetIntegerv(ETextureBindingGL[m_target], &originalTexture);
 
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTexture1D:
@@ -478,7 +478,7 @@ bool CTextureGL::create()
             ASSERT((s32)m_size.width <= maxSize, "Size greater than max value");
 #endif //_DEBUG_GL
             glTexStorage1D(ETextureTargetGL[eTexture1D], m_mipmapLevel + 1, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]), m_size.width);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTexture1D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::setData eTexture1D Error");
 
             success = true;
         }
@@ -494,7 +494,7 @@ bool CTextureGL::create()
             ASSERT((s32)m_size.width <= maxSize && (s32)m_size.height <= maxSize, "Size greater than max value");
 #endif //_DEBUG_GL
             glTexStorage2D(ETextureTargetGL[m_target], m_mipmapLevel + 1, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]), m_size.width, m_size.height);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTexture2D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::setData eTexture2D Error");
 
             success = true;
         }
@@ -516,7 +516,7 @@ bool CTextureGL::create()
 #endif //_DEBUG_GL
             glTexStorage2DMultisample(ETextureTargetGL[eTexture2DMSAA], samplesSize, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]),
                 m_size.width, m_size.height, GL_TRUE);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTexture2DMSAA Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::setData eTexture2DMSAA Error");
 
             success = true;
         }
@@ -533,7 +533,7 @@ bool CTextureGL::create()
 #endif //_DEBUG_GL
             glTexStorage3D(ETextureTargetGL[m_target], m_mipmapLevel + 1, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]),
                 m_size.width, m_size.height, m_size.depth);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTexture3D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::setData eTexture3D Error");
 
             success = true;
         }
@@ -556,7 +556,7 @@ bool CTextureGL::create()
 #endif //_DEBUG_GL
             glTexStorage3DMultisample(ETextureTargetGL[eTexture3DMSAA], samplesSize, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]),
                 m_size.width, m_size.height, m_size.depth, GL_TRUE);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::initTexture3DMSAA error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::initTexture3DMSAA error");
 
             success = true;
         }
@@ -569,7 +569,7 @@ bool CTextureGL::create()
                 //glTexStorage2D(GL_PROXY_TEXTURE_CUBE_MAP, m_mipmapLevel + 1, internalFormat(EImageFormatGL[m_format], EImageTypeGL[m_type]), m_size.width, m_size.height);
                 glTexImage2D(ECubeMapGL[cubemapSide], 0, internalFormat(EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)]), m_size.width, m_size.height,
                     0, EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], NULL);
-                ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTextureCubeMap Error");
+                ENGINE_RENDERER->checkForErrors("TextureGL::setData eTextureCubeMap Error");
             }
 
             success = true;
@@ -578,7 +578,7 @@ bool CTextureGL::create()
 
         case ETextureTarget::eTextureBuffer:
         {
-            LOG_DEBUG("CTextureGL::create: Store to buffer");
+            LOG_DEBUG("TextureGL::create: Store to buffer");
             ASSERT(!m_textureBuffer, "Texture target already exist");
             m_textureBuffer = new BufferGL(EBufferTarget::eTextureStoreBuffer);
 
@@ -591,7 +591,7 @@ bool CTextureGL::create()
 #endif //_DEBUG_GL
             ASSERT(m_textureBuffer, "TBO doesn't exist");
             m_textureBuffer->set(EDataUsageType::eDrawStatic, dataSize, nullptr);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::setData eTextureBuffer Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::setData eTextureBuffer Error");
 
             success = true;
         }
@@ -603,25 +603,25 @@ bool CTextureGL::create()
     }
 
     ASSERT(!m_sampler, "Sampler already exist");
-    CTextureGL::setSampler(new SamplerGL());
+    TextureGL::setSampler(new SamplerGL());
 
     m_sampler->setWrap(EWrapTypeGL[m_wrap]);
     m_sampler->setAnisotropicLevel(m_anisotropicLevel);
     m_sampler->setFilterType(ETextureFilterGL[m_minFilter], ETextureFilterGL[m_magFilter]);
 
     glTexParameteri(ETextureTargetGL[m_target], GL_TEXTURE_MAX_LEVEL, m_mipmapLevel);
-    ENGINE_RENDERER->checkForErrors("CTextureGL: set level Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL: set level Error");
     if (m_mipmapLevel > 0)
     {
         glGenerateMipmap(ETextureTargetGL[m_target]);
-        ENGINE_RENDERER->checkForErrors("CTextureGL: GenerateMipmap Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL: GenerateMipmap Error");
     }
 
     if (originalTexture >= 0)
     {
-        CTextureGL::bindTexture(m_target, originalTexture);
+        TextureGL::bindTexture(m_target, originalTexture);
     }
-    ENGINE_RENDERER->checkForErrors("CTextureGL: Create Texture Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL: Create Texture Error");
 
     if (success)
     {
@@ -632,7 +632,7 @@ bool CTextureGL::create()
     return success;
 }
 
-void CTextureGL::destroy()
+void TextureGL::destroy()
 {
     if (m_sampler)
     {
@@ -648,7 +648,7 @@ void CTextureGL::destroy()
         m_textureBuffer = nullptr;
     }
 
-    CTextureGL::bindTexture(m_target, 0);
+    TextureGL::bindTexture(m_target, 0);
     if (m_textureID > 0)
     {
 #ifdef _DEBUG_GL
@@ -659,30 +659,30 @@ void CTextureGL::destroy()
     }
 }
 
-bool CTextureGL::isValid() const
+bool TextureGL::isValid() const
 {
     return m_textureID > 0 && !m_size.isNull();
 }
 
-bool CTextureGL::isEnable() const
+bool TextureGL::isEnable() const
 {
     return m_enable;
 }
 
-void CTextureGL::update(u32 offset, u32 size, const void* data, u32 level)
+void TextureGL::update(u32 offset, u32 size, const void* data, u32 level)
 {
     ASSERT(size <= m_size.width, "Different size");
     ASSERT(data, "Data nullptr");
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTexture1D:
         {
             glPixelStorei(GL_UNPACK_ALIGNMENT, ImageFormat::typeSize(m_type));
-            ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::Pixel Store Error");
 
             glTexSubImage1D(ETextureTargetGL[eTexture1D], level, offset, size, EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], data);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::updateData eTexture1D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::updateData eTexture1D Error");
             return;
         }
 
@@ -700,7 +700,7 @@ void CTextureGL::update(u32 offset, u32 size, const void* data, u32 level)
 #endif //_DEBUG_GL
             ASSERT(m_textureBuffer, "TBO doesn't exist");
             m_textureBuffer->update(dataOffset, dataSize, data);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::updateData eTextureBuffer Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::updateData eTextureBuffer Error");
             return;
         }
 
@@ -709,21 +709,21 @@ void CTextureGL::update(u32 offset, u32 size, const void* data, u32 level)
     }
 }
 
-void CTextureGL::update(const Dimension2D& offset, const Dimension2D& size, const void* data, u32 level)
+void TextureGL::update(const Dimension2D& offset, const Dimension2D& size, const void* data, u32 level)
 {
     ASSERT(size.width <= m_size.width && size.height <= m_size.height, "Different size");
     ASSERT(data, "Data nullptr");
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTexture2D:
         case ETextureTarget::eTexture1DArray:
         {
             glPixelStorei(GL_UNPACK_ALIGNMENT, ImageFormat::typeSize(m_type));
-            ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::Pixel Store Error");
 
             glTexSubImage2D(ETextureTargetGL[eTexture2D], level, offset.width, offset.height, size.width, size.height, EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], data);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::updateData eTexture2D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::updateData eTexture2D Error");
             return;
         }
 
@@ -739,25 +739,25 @@ void CTextureGL::update(const Dimension2D& offset, const Dimension2D& size, cons
             ASSERT(false, "Wrong target");
     }
 
-    ENGINE_RENDERER->checkForErrors("CTextureGL::readData Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::readData Error");
 }
 
-void CTextureGL::update(const Dimension3D& offset, const Dimension3D& size, const void* data, u32 level)
+void TextureGL::update(const Dimension3D& offset, const Dimension3D& size, const void* data, u32 level)
 {
     ASSERT(size.width <= m_size.width && size.height <= m_size.height && size.depth <= m_size.depth, "Different size");
     ASSERT(data, "Data nullptr");
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTexture3D:
         case ETextureTarget::eTexture2DArray:
         {
             glPixelStorei(GL_UNPACK_ALIGNMENT, ImageFormat::typeSize(m_type));
-            ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::Pixel Store Error");
 
             glTexSubImage3D(ETextureTargetGL[m_target], level, offset.width, offset.height, offset.depth, size.width, size.height, size.depth,
                 EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], data);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::updateData eTexture3D Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::updateData eTexture3D Error");
             return;
         }
 
@@ -770,11 +770,11 @@ void CTextureGL::update(const Dimension3D& offset, const Dimension3D& size, cons
     }
 }
 
-void CTextureGL::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
+void TextureGL::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
 {
     ASSERT(size.width <= m_size.width && size.height <= m_size.height, "Different size");
     ASSERT(data, "Data nullptr");
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTextureCubeMap:
@@ -783,10 +783,10 @@ void CTextureGL::update(u32 cubemapSide, const core::Dimension2D& offset, const 
             s32 index = (cubemapSide < k_textureCubemapSideCount) ? cubemapSide : 0;
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, ImageFormat::typeSize(m_type));
-            ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::Pixel Store Error");
 
             glTexSubImage2D(ECubeMapGL[index], level, offset.width, offset.height, size.width, size.height, EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], data);
-            ENGINE_RENDERER->checkForErrors("CTextureGL::updateData eTextureCubeMap Error");
+            ENGINE_RENDERER->checkForErrors("TextureGL::updateData eTextureCubeMap Error");
             return;
         }
 
@@ -797,9 +797,9 @@ void CTextureGL::update(u32 cubemapSide, const core::Dimension2D& offset, const 
 
 
 
-void CTextureGL::read(void* data, u32 level) const
+void TextureGL::read(void* data, u32 level) const
 {
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
     case ETextureTarget::eTexture1D:
@@ -847,10 +847,10 @@ void CTextureGL::read(void* data, u32 level) const
         u32 type = EImageTypeGL[toEnumType(m_type)];
 
         glPixelStorei(GL_PACK_ALIGNMENT, ImageFormat::typeSize(m_type));
-        ENGINE_RENDERER->checkForErrors("CTextureGL::Pixel Store Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL::Pixel Store Error");
 
         glGetTexImage(ETextureTargetGL[toEnumType(m_target)], level, format, type, data);
-        ENGINE_RENDERER->checkForErrors("CTextureGL::readData Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL::readData Error");
 
         return;
     }
@@ -875,7 +875,7 @@ void CTextureGL::read(void* data, u32 level) const
 #endif //_DEBUG_GL
         ASSERT(m_textureBuffer, "TBO doesn't exist");
         m_textureBuffer->read(0, dataSize, data); //TODO: maybe need to use mapper
-        ENGINE_RENDERER->checkForErrors("CTextureGL::readData buffer Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL::readData buffer Error");
 
         return;
     }
@@ -885,9 +885,9 @@ void CTextureGL::read(void* data, u32 level) const
     }
 }
 
-void CTextureGL::read(u32 cubemapSide, void* data, u32 level) const
+void TextureGL::read(u32 cubemapSide, void* data, u32 level) const
 {
-    CTextureGL::bindTexture(m_target, m_textureID);
+    TextureGL::bindTexture(m_target, m_textureID);
     switch (m_target)
     {
         case ETextureTarget::eTextureCubeMap:
@@ -907,12 +907,12 @@ void CTextureGL::read(u32 cubemapSide, void* data, u32 level) const
     }
 }
 
-u32 CTextureGL::getTextureID() const
+u32 TextureGL::getTextureID() const
 {
     return m_textureID;
 }
 
-void CTextureGL::setFilterType(ETextureFilter min, ETextureFilter mag)
+void TextureGL::setFilterType(ETextureFilter min, ETextureFilter mag)
 {
     ASSERT(mag <= ETextureFilter::eLinear, "Incorrect mag filter");
     if (min != m_minFilter || mag != m_magFilter)
@@ -930,7 +930,7 @@ void CTextureGL::setFilterType(ETextureFilter min, ETextureFilter mag)
     }
 }
 
-void CTextureGL::setWrap(EWrapType wrap)
+void TextureGL::setWrap(EWrapType wrap)
 {
     if (wrap != m_wrap)
     {
@@ -946,7 +946,7 @@ void CTextureGL::setWrap(EWrapType wrap)
     }
 }
 
-void CTextureGL::setAnisotropicLevel(EAnisotropic level)
+void TextureGL::setAnisotropicLevel(EAnisotropic level)
 {
     if (level != m_anisotropicLevel)
     {
@@ -962,52 +962,52 @@ void CTextureGL::setAnisotropicLevel(EAnisotropic level)
     }
 }
 
-ETextureTarget CTextureGL::getTarget() const
+ETextureTarget TextureGL::getTarget() const
 {
     return m_target;
 }
 
-ETextureFilter CTextureGL::getMinFiler() const
+ETextureFilter TextureGL::getMinFiler() const
 {
     return m_minFilter;
 }
 
-ETextureFilter CTextureGL::getMagFiler() const
+ETextureFilter TextureGL::getMagFiler() const
 {
     return m_magFilter;
 }
 
-EWrapType CTextureGL::getWrap() const
+EWrapType TextureGL::getWrap() const
 {
     return m_wrap;
 }
 
-EAnisotropic CTextureGL::getAnisotropic() const
+EAnisotropic TextureGL::getAnisotropic() const
 {
     return m_anisotropicLevel;
 }
 
-u32 CTextureGL::getMipmapLevel() const
+u32 TextureGL::getMipmapLevel() const
 {
     return m_mipmapLevel;
 }
 
-const core::Dimension3D& CTextureGL::getSize() const
+const core::Dimension3D& TextureGL::getSize() const
 {
     return m_size;
 }
 
-EImageFormat CTextureGL::getFormat() const
+EImageFormat TextureGL::getFormat() const
 {
     return m_format;
 }
 
-EImageType CTextureGL::getType() const
+EImageType TextureGL::getType() const
 {
     return m_type;
 }
 
-void CTextureGL::fill(const void* data, u32 offset, u32 size, u32 level)
+void TextureGL::fill(const void* data, u32 offset, u32 size, u32 level)
 {
 #ifdef _DEBUG_GL
     ASSERT(glIsTexture(m_textureID), "Invalid Texture index");
@@ -1027,7 +1027,7 @@ void CTextureGL::fill(const void* data, u32 offset, u32 size, u32 level)
         {
             glClearBufferData(GL_TEXTURE_BUFFER, internalFormat(format, type), format, type, data);
         }
-        ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture Buffer texture Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL::fillTexture Buffer texture Error");
         return;
     }
     else if (m_target == ETextureTarget::eTexture1D)
@@ -1041,10 +1041,10 @@ void CTextureGL::fill(const void* data, u32 offset, u32 size, u32 level)
             glClearTexImage(m_textureID, level, EImageFormatGL[toEnumType(m_format)], EImageTypeGL[toEnumType(m_type)], data);
         }
     }
-    ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture 1D Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::fillTexture 1D Error");
 }
 
-void CTextureGL::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 level)
+void TextureGL::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 level)
 {
 #ifdef _DEBUG_GL
     ASSERT(glIsTexture(m_textureID), "Invalid Texture index");
@@ -1060,7 +1060,7 @@ void CTextureGL::fill(const void* data, const core::Dimension2D& offset, const c
         glClearTexSubImage(m_textureID, level, offset.width, offset.height, 0,
             size.width, size.height, k_textureCubemapSideCount, format, type, data);
 
-        ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture CubeMap Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL::fillTexture CubeMap Error");
         return;
     }
     else if (m_target == ETextureTarget::eTexture2D || m_target == ETextureTarget::eTexture2DArray)
@@ -1075,10 +1075,10 @@ void CTextureGL::fill(const void* data, const core::Dimension2D& offset, const c
             glClearTexImage(m_textureID, level, format, type, data);
         }
     }
-    ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture 2D Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::fillTexture 2D Error");
 }
 
-void CTextureGL::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 level)
+void TextureGL::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 level)
 {
 #ifdef _DEBUG_GL
     ASSERT(glIsTexture(m_textureID), "Invalid Texture index");
@@ -1104,22 +1104,22 @@ void CTextureGL::fill(const void* data, const core::Dimension3D& offset, const c
             glClearTexImage(m_textureID, level, format, type, data);
         }
     }
-    ENGINE_RENDERER->checkForErrors("CTextureGL::fillTexture 3D Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::fillTexture 3D Error");
 }
 
-void CTextureGL::setSampler(SamplerGL* sampler)
+void TextureGL::setSampler(SamplerGL* sampler)
 {
     m_sampler = sampler;
 }
 
-bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
+bool TextureGL::bindTexture(ETextureTarget target, u32 texture)
 {
     if (s_currentTextureID[target] != texture)
     {
         glBindTexture(ETextureTargetGL[target], texture);
 #ifdef _DEBUG_GL
         ASSERT((glIsTexture(texture) || texture == 0), "Invalid Texture index");
-        ENGINE_RENDERER->checkForErrors("CTextureGL: bindTexture Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL: bindTexture Error");
 #endif //_DEBUG_GL
         s_currentTextureID[target] = texture;
 
@@ -1129,9 +1129,9 @@ bool CTextureGL::bindTexture(ETextureTarget target, u32 texture)
     return false;
 }
 
-void CTextureGL::bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset, u32 size)
+void TextureGL::bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset, u32 size)
 {
-    CTextureGL::bindTexture(ETextureTarget::eTextureBuffer, texture);
+    TextureGL::bindTexture(ETextureTarget::eTextureBuffer, texture);
     if (offset != 0 || size != 0)
     {
         glTexBufferRange(ETextureTargetGL[ETextureTarget::eTextureBuffer], format, buffer, offset, size);
@@ -1141,10 +1141,10 @@ void CTextureGL::bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset, 
         glTexBuffer(ETextureTargetGL[ETextureTarget::eTextureBuffer], format, buffer);
     }
 
-    ENGINE_RENDERER->checkForErrors("CTextureGL::bindTexBuffer Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::bindTexBuffer Error");
 }
 
-bool CTextureGL::bindTextureUnit(u32 unit)
+bool TextureGL::bindTextureUnit(u32 unit)
 {
     if (s_currentUnitID != unit)
     {
@@ -1153,7 +1153,7 @@ bool CTextureGL::bindTextureUnit(u32 unit)
 #endif //_DEBUG_GL
         glActiveTexture(GL_TEXTURE0 + unit);
 #ifdef _DEBUG_GL
-        ENGINE_RENDERER->checkForErrors("CTextureGL: bindTextureUnit Error");
+        ENGINE_RENDERER->checkForErrors("TextureGL: bindTextureUnit Error");
 #endif //_DEBUG_GL
         s_currentUnitID = unit;
 
@@ -1163,7 +1163,7 @@ bool CTextureGL::bindTextureUnit(u32 unit)
     return false;
 }
 
-s32 CTextureGL::getActiveTexture(u32 target)
+s32 TextureGL::getActiveTexture(u32 target)
 {
     s32 texture;
     glGetIntegerv(target, &texture);
@@ -1171,7 +1171,7 @@ s32 CTextureGL::getActiveTexture(u32 target)
     return texture;
 }
 
-s32 CTextureGL::getActiveTextureUnit()
+s32 TextureGL::getActiveTextureUnit()
 {
     s32 unit;
     glGetIntegerv(GL_ACTIVE_TEXTURE, &unit);
@@ -1179,7 +1179,7 @@ s32 CTextureGL::getActiveTextureUnit()
     return unit;
 }
 
-void CTextureGL::freeMemory(u32 texture)
+void TextureGL::freeMemory(u32 texture)
 {
 #ifdef _DEBUG_GL
     ASSERT(glIsTexture(texture), "Invalid Texture index");
@@ -1212,16 +1212,16 @@ void CTextureGL::freeMemory(u32 texture)
     }
 }
 
-void CTextureGL::copyData(const TexturePtr& texture)
+void TextureGL::copyData(const TexturePtr& texture)
 {
-    u32 id = static_cast<CTextureGL*>(texture->getImpl().get())->getTextureID();
+    u32 id = static_cast<TextureGL*>(texture->getImpl().get())->getTextureID();
     for (u32 i = 0; i < m_mipmapLevel; ++i)
     {
         glCopyImageSubData(id, ETextureTargetGL[texture->getTarget()], i, 0, 0, 0, 
             m_textureID, ETextureTargetGL[m_target], i, 0, 0, 0, m_size.width, m_size.height, m_size.depth);
     }
 
-    ENGINE_RENDERER->checkForErrors("CTextureGL::copyData Error");
+    ENGINE_RENDERER->checkForErrors("TextureGL::copyData Error");
 }
 
 } //namespace gl

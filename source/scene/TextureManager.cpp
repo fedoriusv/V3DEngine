@@ -66,7 +66,7 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
                 if (isFileExist)
                 {
                     wasFoundPath = true;
-                    const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                    const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
                     if (stream->isOpen())
                     {
                         std::string fileExtension = CTextureManager::getFileExtension(nameString);
@@ -166,7 +166,7 @@ TexturePtr CTextureManager::load(const std::string& file, const std::string& ali
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
                     std::string fileExtension = CTextureManager::getFileExtension(nameString);
@@ -228,7 +228,7 @@ TexturePtr CTextureManager::createTextureFromImage(const CImage* image)
 {
     if (image && image->isLoaded())
     {
-        TexturePtr texure = new CTexture(k_useTextureBuffer ? ETextureTarget::eTextureBuffer : ETextureTarget::eTexture2D,
+        TexturePtr texure = new Texture(k_useTextureBuffer ? ETextureTarget::eTextureBuffer : ETextureTarget::eTexture2D,
             image->getFormat(), image->getType(),image->getSize(), image->getData(), 0);
 
         return texure;
@@ -253,7 +253,7 @@ renderer::TexturePtr CTextureManager::createCubeTextureFromImages(const resource
         dataList[i] = image[i]->getData();
     }
 
-    TexturePtr texure = new CTexture(image[0]->getFormat(), image[0]->getType(), image[0]->getSize(), (const void**)dataList);
+    TexturePtr texure = new Texture(image[0]->getFormat(), image[0]->getType(), image[0]->getSize(), (const void**)dataList);
 
     return texure;
 }

@@ -70,9 +70,9 @@ namespace vk
         SMemoryVK                           allocate(VkDevice device, VkMemoryPropertyFlags flags, u64 memorySize, s32 memoryTypeIndex) override;
         void                                free(VkDevice device, SMemoryVK& memory) override;
 
-        const u32                           m_initializeMemSize;
-        const u32                           m_blockSize;
-        const u32                           m_minAllocSize;
+        const u64                           m_initializeMemSize;
+        const u64                           m_blockSize;
+        const u64                           m_minAllocSize;
 
         std::map<s32, utils::MemoryPool*>   m_pools;
 

@@ -9,7 +9,6 @@ namespace v3d
 {
 namespace renderer
 {
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum ERenderCommand
@@ -20,11 +19,49 @@ namespace renderer
         eRCmdPresentFrame,
         eRCmdDraw,
 
-        eCommandUpdateTexure,
+        eCommandUpdateTexure1D,
+        eCommandUpdateTexure2D,
+        eCommandUpdateTexure3D,
+        eCommandUpdateTexureCube,
+        eCommandFillTexure1D,
+        eCommandFillTexure2D,
+        eCommandFillTexure3D,
 
         eRCmdDestroy,
 
         eRCmdTerminate,
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class RenderThread;
+
+    class RenderStreamCommand
+    {
+    public:
+
+        RenderStreamCommand(ERenderCommand cmd);
+        ~RenderStreamCommand();
+
+        template <class T>
+        const T&    readValue(u32 count = 1);
+        void*       readValue(u32 size, u32 count = 1);
+
+        template <class T>
+        void        writeValue(const T& val, u32 count = 1);
+        void        writeValue(const void* data, u32 size, u32 count = 1);
+
+        void*       getStreamData() const;
+        u32         getStreamSize() const;
+
+    private:
+
+        friend              RenderThread;
+
+        RenderStreamCommand(const stream::MemoryStream& stream);
+
+        stream::MemoryStream m_commandStream;
+        ERenderCommand       m_command;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +72,8 @@ namespace renderer
 
         explicit RenderThread(const renderer::RendererPtr renderer);
         ~RenderThread();
+
+        void                        pushCommand(const RenderStreamCommand& command);
 
         void                        init();
                                     
@@ -52,8 +91,10 @@ namespace renderer
 
     private:
 
+        const RenderStreamCommand   popCommand();
+
         void                        threadWorker(void* data);
-        void                        runCommand(const stream::MemoryStream& stream);
+        void                        runCommand(const RenderStreamCommand& command);
 
         std::atomic_bool            m_isRunning;
 
@@ -66,6 +107,21 @@ namespace renderer
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    template<class T>
+    inline const T& RenderStreamCommand::readValue(u32 count)
+    {
+        T& value;
+        m_commandStream.read(value, sizeof(T), count);
+
+        return value;
+    }
+
+    template<class T>
+    inline void RenderStreamCommand::writeValue(const T& val, u32 count)
+    {
+        m_commandStream.write((const void*)val, sizeof(T), count);
+    }
 
 } //namespace renderer
 } //namespace v3d

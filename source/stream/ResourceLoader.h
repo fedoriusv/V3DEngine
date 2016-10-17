@@ -1,5 +1,4 @@
-#ifndef _V3D_RESOURCE_LOADER_H_
-#define _V3D_RESOURCE_LOADER_H_
+#pragma once
 
 #include "common.h"
 #include "decoders/ResourceDecoder.h"
@@ -67,5 +66,3 @@ namespace stream
 } //namespace v3d
 
 #include "ResourceLoader.inl"
-
-#endif //_V3D_RESOURCE_LOADER_H_

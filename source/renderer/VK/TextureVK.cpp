@@ -462,10 +462,10 @@ void TextureVK::update(u32 offset, u32 size, const void* data, u32 levels)
     //    offset += static_cast<uint32_t>(tex2D[i].size());
     //}
 
-    vkCmdCopyBufferToImage();
+    //vkCmdCopyBufferToImage();
 
-    memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
-    vkDestroyBuffer(m_device, stagingBuffer, nullptr);
+    //memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
+    //vkDestroyBuffer(m_device, stagingBuffer, nullptr);
 }
 
 void TextureVK::update(const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
@@ -592,7 +592,7 @@ bool TextureVK::create()
     }
 
     VkMemoryPropertyFlags memoryProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    const bool transient = (m_usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+    const bool transient = (m_usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) ? true : false;
     if (transient)
     {
         memoryProps |= VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;

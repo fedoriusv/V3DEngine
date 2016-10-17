@@ -54,7 +54,7 @@ const CShaderSourceData* CShaderManager::load(const std::string& name, const std
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                const stream::FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
                     CShaderSourceData* shader = new CShaderSourceData();

@@ -19,7 +19,7 @@ namespace vk
     /**
     * Inherited class for texture management. VK render only.
     */
-    class TextureVK : public CTexture
+    class TextureVK : public Texture
     {
     public:
 

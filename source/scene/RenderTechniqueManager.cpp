@@ -50,7 +50,7 @@ const CRenderTechnique* CRenderTechniqueManager::load(const std::string& name, c
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                FileStreamPtr stream = stream::CStreamManager::createFileStream(fullName, stream::FileStream::e_in);
+                FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
 
                 if (stream->isOpen())
                 {

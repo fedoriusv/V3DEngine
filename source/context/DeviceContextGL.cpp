@@ -1,5 +1,4 @@
 ﻿#include "DeviceContextGL.h"
-#include "renderer/GL/TextureGL.h"
 #include "utils/Logger.h"
 
 #ifdef _OPENGL_RENDER_
@@ -10,6 +9,8 @@
 #else //_DEBUG
 #   pragma comment(lib, "glew_static.lib")
 #endif //_DEBUG
+
+#include "renderer/GL/TextureGL.h"
 
 #if defined(_PLATFORM_WIN_)
 #   include <winuser.h>
@@ -542,12 +543,12 @@ void CDriverContextGL::destroyMacOSXContext()
 
 TexturePtr DeviceContextGL::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
 {
-    return new gl::CTextureGL(target, format, type, size, data, level);
+    return new TextureGL(target, format, type, size, data, level);
 }
 
 TexturePtr DeviceContextGL::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
 {
-    return new gl::CTextureGL(format, type, size, data, level);
+    return new TextureGL(format, type, size, data, level);
 }
 
 void DeviceContextGL::fillGrapthicCaps()

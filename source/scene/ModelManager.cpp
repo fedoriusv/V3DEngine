@@ -57,7 +57,7 @@ CModel* CModelManager::load(const std::string& name, const std::string& alias)
             const bool isFileExist = FileStream::isFileExist(fullName);
             if (isFileExist)
             {
-                const FileStreamPtr stream = CStreamManager::createFileStream(fullName, FileStream::e_in);
+                const FileStreamPtr stream = StreamManager::createFileStream(fullName, FileStream::e_in);
                 if (stream->isOpen())
                 {
                     

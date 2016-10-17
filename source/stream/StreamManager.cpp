@@ -2,15 +2,20 @@
 #include "FileStream.h"
 #include "MemoryStream.h"
 
-using namespace v3d;
-using namespace stream;
+namespace v3d
+{
+namespace stream
+{
 
-FileStreamPtr CStreamManager::createFileStream(const std::string& file, FileStream::EOpenMode mode)
+FileStreamPtr StreamManager::createFileStream(const std::string& file, FileStream::EOpenMode mode)
 {
     return std::make_shared<FileStream>(file, mode);
 }
 
-MemoryStreamPtr CStreamManager::createMemoryStream(const void* data, const u32 size)
+MemoryStreamPtr StreamManager::createMemoryStream(const void* data, const u32 size)
 {
     return std::make_shared<MemoryStream>(data, size);
 }
+
+} //namespace stream
+} //namespace v3d

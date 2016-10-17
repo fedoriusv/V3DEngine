@@ -45,6 +45,11 @@ bool IRenderer::create()
     return true;
 }
 
+bool IRenderer::isThreaded() const
+{
+    return m_isThreaded;
+}
+
 void IRenderer::init()
 {
     if (m_isThreaded)
@@ -102,6 +107,14 @@ void IRenderer::draw()
     else
     {
         this->immediateDraw();
+    }
+}
+
+void IRenderer::pushCommand(const RenderStreamCommand& command)
+{
+    if (m_isThreaded)
+    {
+        m_renderThread->pushCommand(command);
     }
 }
 

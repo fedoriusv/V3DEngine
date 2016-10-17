@@ -14,7 +14,7 @@ MemoryStream::MemoryStream()
 {
 }
 
-MemoryStream::MemoryStream(const void* data, const u32 size)
+MemoryStream::MemoryStream(const void* data, u32 size)
     : m_stream((u8*)data)
     , m_length(size)
     , m_allocated(size)
@@ -36,7 +36,7 @@ void MemoryStream::close()
 {
 }
 
-u32 MemoryStream::read(void* buffer, const u32 size, const u32 count) const
+u32 MemoryStream::read(void* buffer, u32 size, u32 count) const
 {
     ASSERT(m_pos + size * count <= m_length, "Invalid memory size");
 
@@ -221,7 +221,7 @@ u32 MemoryStream::read(std::string& value) const
     return m_pos;
 }
 
-u32 MemoryStream::write(const void* buffer, const u32 size, const u32 count)
+u32 MemoryStream::write(const void* buffer, u32 size, u32 count)
 {
     if (checkSize(size * count))
     {
@@ -237,7 +237,7 @@ u32 MemoryStream::write(const void* buffer, const u32 size, const u32 count)
     return m_pos;
 }
 
-u32 MemoryStream::write(const u8 value)
+u32 MemoryStream::write(u8 value)
 {
     if (checkSize(sizeof(u8)))
     {
@@ -252,7 +252,7 @@ u32 MemoryStream::write(const u8 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const s8 value)
+u32 MemoryStream::write(s8 value)
 {
     if (checkSize(sizeof(s8)))
     {
@@ -267,7 +267,7 @@ u32 MemoryStream::write(const s8 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const u16 value)
+u32 MemoryStream::write(u16 value)
 {
     if (checkSize(sizeof(u16)))
     {
@@ -283,7 +283,7 @@ u32 MemoryStream::write(const u16 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const s16 value)
+u32 MemoryStream::write(s16 value)
 {
     if (checkSize(sizeof(s16)))
     {
@@ -299,7 +299,7 @@ u32 MemoryStream::write(const s16 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const u32 value)
+u32 MemoryStream::write(u32 value)
 {
     if (checkSize(sizeof(u32)))
     {
@@ -317,7 +317,7 @@ u32 MemoryStream::write(const u32 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const s32 value)
+u32 MemoryStream::write(s32 value)
 {
     if (checkSize(sizeof(s32)))
     {
@@ -335,7 +335,7 @@ u32 MemoryStream::write(const s32 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const u64 value)
+u32 MemoryStream::write(u64 value)
 {
     if (checkSize(sizeof(u64)))
     {
@@ -358,7 +358,7 @@ u32 MemoryStream::write(const u64 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const s64 value)
+u32 MemoryStream::write(s64 value)
 {
     if (checkSize(sizeof(s64)))
     {
@@ -381,7 +381,7 @@ u32 MemoryStream::write(const s64 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const f32 value)
+u32 MemoryStream::write(f32 value)
 {
     if (checkSize(sizeof(f32)))
     {
@@ -401,7 +401,7 @@ u32 MemoryStream::write(const f32 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const f64 value)
+u32 MemoryStream::write(f64 value)
 {
     if (checkSize(sizeof(f64)))
     {
@@ -426,7 +426,7 @@ u32 MemoryStream::write(const f64 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const f80 value)
+u32 MemoryStream::write(f80 value)
 {
     if (checkSize(sizeof(f80)))
     {
@@ -446,7 +446,7 @@ u32 MemoryStream::write(const f80 value)
     return m_pos;
 }
 
-u32 MemoryStream::write(const bool value)
+u32 MemoryStream::write(bool value)
 {
     if (checkSize(sizeof(bool)))
     {
@@ -473,10 +473,10 @@ u32 MemoryStream::write(const std::string value)
         return m_pos;
     }
 
-    if (checkSize((u32)value.size()))
+    if (checkSize(static_cast<u32>(value.size())))
     {
         memcpy(m_stream + m_pos, &value[0], value.size());
-        m_pos += (u32)value.size();
+        m_pos += static_cast<u32>(value.size());
 
         if (m_pos > m_length)
         {
@@ -487,35 +487,35 @@ u32 MemoryStream::write(const std::string value)
     return m_pos;
 }
 
-void MemoryStream::seekBeg(const u32 offset)
+void MemoryStream::seekBeg(u32 offset)
 {
     ASSERT(offset <= m_length, "Invalid memory size");
     m_pos = offset;
 }
 
-void MemoryStream::seekEnd(const u32 offset)
+void MemoryStream::seekEnd(u32 offset)
 {
     ASSERT(offset <= m_length, "Invalid memory size");
     m_pos = m_length + offset;
 }
 
-void MemoryStream::seekCur(const u32 offset)
+void MemoryStream::seekCur(u32 offset)
 {
     ASSERT(offset <= m_length, "Invalid memory size");
     m_pos += offset;
 }
 
-u32 MemoryStream::tell()
+u32 MemoryStream::tell() const
 {
     return m_pos;
 }
 
-u32 MemoryStream::size()
+u32 MemoryStream::size() const
 {
     return m_length;
 }
 
-u8* MemoryStream::map(const u32 size)
+u8* MemoryStream::map(u32 size)
 {
     u8* res = 0;
 

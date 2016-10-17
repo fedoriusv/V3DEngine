@@ -14,7 +14,7 @@ namespace d3d
     /**
     * Inherited class for texture management. D3D render only.
     */
-    class CTextureD3D : public CTexture
+    class CTextureD3D : public Texture
     {
     public:
 

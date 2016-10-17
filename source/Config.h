@@ -2,7 +2,7 @@
 
 #pragma once
 
-//Version 2.0.0
+//Version 0.2.0
 #define VERSION_MAJOR       0
 #define VERSION_MINOR       2
 #define VERSION_REVISION    0
@@ -104,7 +104,11 @@
 #   define VULKAN_DEBUG 1
 #   define VULKAN_USE_VALIDATION_LAYERS 0
 #   define VULKAN_USE_DEBUG_MARKERS 0
-#   define VK_USE_PLATFORM_WIN32_KHR
+
+#   ifdef _PLATFORM_WIN_
+#       define VK_USE_PLATFORM_WIN32_KHR
+#   endif //_PLATFORM_WIN_
+
 #endif //_VULKAN_RENDER_
 
 #ifdef _VULKAN_RENDER_

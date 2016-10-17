@@ -181,7 +181,7 @@ const TexturePtr CShaderSampler::getTexture() const
 
 TexturePtr CShaderSampler::getTexture()
 {
-    return utils::const_pointer_cast<CTexture>(m_texture);
+    return utils::const_pointer_cast<Texture>(m_texture);
 }
 
 const RenderTargetWPtr CShaderSampler::getTarget() const

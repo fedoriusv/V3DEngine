@@ -250,7 +250,7 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
         return false;
     }
 
-    m_charTexture[pageId] = utils::const_pointer_cast<CTexture>(texture);
+    m_charTexture[pageId] = utils::const_pointer_cast<Texture>(texture);
 
     return true;
 }

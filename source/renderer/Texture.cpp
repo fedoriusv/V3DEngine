@@ -2,6 +2,7 @@
 #include "utils/Logger.h"
 #include "resources/Image.h"
 #include "Engine.h"
+#include "RenderThread.h"
 
 namespace v3d
 {
@@ -10,13 +11,13 @@ namespace renderer
 
 using namespace core;
 
-CTexture::CTexture()
+Texture::Texture()
     : m_impl(nullptr)
 {
 }
 
-CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data, u32 level)
-    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, level))
+Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data, u32 mipCount)
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, mipCount))
 {
     if (m_impl)
     {
@@ -27,8 +28,8 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
     }
 }
 
-CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data, u32 level)
-    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size.width, size.height, 1), data, level))
+Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data, u32 mipCount)
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size.width, size.height, 1), data, mipCount))
 {
     if (m_impl)
     {
@@ -43,8 +44,8 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
     }
 }
 
-CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
-    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, size, data, level))
+Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 mipCount)
+    : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, size, data, mipCount))
 {
     if (m_impl)
     {
@@ -56,8 +57,8 @@ CTexture::CTexture(ETextureTarget target, EImageFormat format, EImageType type, 
     }
 }
 
-CTexture::CTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
-    : m_impl(ENGINE_CONTEXT->createCubeTexture(format, type, size, data, level))
+Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 mipCount)
+    : m_impl(ENGINE_CONTEXT->createCubeTexture(format, type, size, data, mipCount))
 {
     if (m_impl)
     {
@@ -65,11 +66,11 @@ CTexture::CTexture(EImageFormat format, EImageType type, const core::Dimension2D
     }
 }
 
-CTexture::~CTexture()
+Texture::~Texture()
 {
 }
 
-void CTexture::bind(u32 unit)
+void Texture::bind(u32 unit)
 {
     if (m_impl)
     {
@@ -77,7 +78,7 @@ void CTexture::bind(u32 unit)
     }
 }
 
-void CTexture::unbind()
+void Texture::unbind()
 {
     if (m_impl)
     {
@@ -85,7 +86,7 @@ void CTexture::unbind()
     }
 }
 
-bool CTexture::isValid() const
+bool Texture::isValid() const
 {
     if (m_impl)
     {
@@ -95,93 +96,155 @@ bool CTexture::isValid() const
     return false;
 }
 
-void CTexture::update(u32 offset, u32 size, const void* data, u32 level)
+void Texture::update(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
-    vkRenderer;
-    if (vkRenderer->threaded)
+    if (ENGINE_RENDERER->isThreaded())
     {
-        memStream;
-        vkRenderer->pushRenderCommand(memStream);
+        RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure1D);
+        command.writeValue<u32>(offset);
+        command.writeValue<u32>(size);
+        command.writeValue(data, size, 1);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command);
     }
     else
     {
-        CTexture::immidateUpdate(offset, size, data, level);
+        Texture::immidateUpdate(offset, size, data, mipLevel);
     }
 }
 
-void CTexture::immidateUpdate(u32 offset, u32 size, const void* data, u32 level)
+void Texture::update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
+{
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure2D);
+        command.writeValue<Dimension2D>(offset);
+        command.writeValue<Dimension2D>(size);
+        command.writeValue(data, size.getArea(), 1);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command);
+    }
+    else
+    {
+        Texture::immidateUpdate(offset, size, data, mipLevel);
+    }
+}
+
+void Texture::update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
+{
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure3D);
+        command.writeValue<Dimension3D>(offset);
+        command.writeValue<Dimension3D>(size);
+        command.writeValue(data, size.getArea(), 1);
+        command.writeValue<u32>(mipLevel);
+    }
+    else
+    {
+        Texture::immidateUpdate(offset, size, data, mipLevel);
+    }
+}
+
+void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
+{
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandUpdateTexureCube);
+        command.writeValue<Dimension2D>(offset);
+        command.writeValue<Dimension2D>(size);
+        command.writeValue(data, size.getArea(), 1);
+        command.writeValue<u32>(mipLevel);
+    }
+    else
+    {
+        Texture::immidateUpdate(offset, size, data, mipLevel);
+    }
+}
+
+void Texture::immidateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->update(offset, size, data, level);
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
-void CTexture::update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
+void Texture::immidateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->update(offset, size, data, level);
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
-void CTexture::update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 level)
+void Texture::immidateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->update(offset, size, data, level);
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
-void CTexture::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 level)
+void Texture::immidateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D & size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->update(cubemapSide, offset, size, data, level);
+        m_impl->update(cubemapSide, offset, size, data, mipLevel);
     }
 }
 
-void CTexture::read(void* data, u32 level) const
+void Texture::read(void* data, u32 mipLevel) const
+{
+}
+
+void Texture::read(u32 cubemapSide, void* data, u32 mipLevel) const
+{
+
+}
+
+void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
+{
+    //TODO:
+}
+
+void Texture::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
+{
+    //TODO:
+}
+
+void Texture::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 mipLevel)
+{
+    //TODO:
+}
+
+void Texture::immidateFill(const void* data, u32 offset, u32 size, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->read(data, level);
+        m_impl->fill(data, offset, size, mipLevel);
     }
 }
 
-void CTexture::read(u32 cubemapSide, void* data, u32 level) const
+void Texture::immidateFill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->read(cubemapSide, data, level);
+        m_impl->fill(data, offset, size, mipLevel);
     }
 }
 
-void CTexture::fill(const void* data, u32 offset, u32 size, u32 level)
+void Texture::immidateFill(const void * data, const core::Dimension3D & offset, const core::Dimension3D & size, u32 mipLevel)
 {
     if (m_impl)
     {
-        m_impl->fill(data, offset, size, level);
+        m_impl->fill(data, offset, size, mipLevel);
     }
 }
 
-void CTexture::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 level)
-{
-    if (m_impl)
-    {
-        m_impl->fill(data, offset, size, level);
-    }
-}
-
-void CTexture::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 level)
-{
-    if (m_impl)
-    {
-        m_impl->fill(data, offset, size, level);
-    }
-}
-
-ETextureTarget CTexture::getTarget() const
+ETextureTarget Texture::getTarget() const
 {
     if (m_impl)
     {
@@ -191,7 +254,7 @@ ETextureTarget CTexture::getTarget() const
     return ETextureTarget::eTextureNull;
 }
 
-ETextureFilter CTexture::getMinFiler() const
+ETextureFilter Texture::getMinFiler() const
 {
     if (m_impl)
     {
@@ -201,7 +264,7 @@ ETextureFilter CTexture::getMinFiler() const
     return ETextureFilter::eNearest;
 }
 
-ETextureFilter CTexture::getMagFiler() const
+ETextureFilter Texture::getMagFiler() const
 {
     if (m_impl)
     {
@@ -211,7 +274,7 @@ ETextureFilter CTexture::getMagFiler() const
     return ETextureFilter::eNearest;
 }
 
-EWrapType CTexture::getWrap() const
+EWrapType Texture::getWrap() const
 {
     if (m_impl)
     {
@@ -221,7 +284,7 @@ EWrapType CTexture::getWrap() const
     return EWrapType::eRepeat;
 }
 
-EAnisotropic CTexture::getAnisotropic()const
+EAnisotropic Texture::getAnisotropic()const
 {
     if (m_impl)
     {
@@ -231,7 +294,7 @@ EAnisotropic CTexture::getAnisotropic()const
     return EAnisotropic::eAnisotropicNone;
 }
 
-u32 CTexture::getMipmapLevel() const
+u32 Texture::getMipmapLevel() const
 {
     if (m_impl)
     {
@@ -241,7 +304,7 @@ u32 CTexture::getMipmapLevel() const
     return 0;
 }
 
-const Dimension3D& CTexture::getSize() const
+const Dimension3D& Texture::getSize() const
 {
     if (m_impl)
     {
@@ -252,7 +315,7 @@ const Dimension3D& CTexture::getSize() const
     return Dimension3D(0, 0, 0);
 }
 
-EImageFormat CTexture::getFormat() const
+EImageFormat Texture::getFormat() const
 {
     if (m_impl)
     {
@@ -262,7 +325,7 @@ EImageFormat CTexture::getFormat() const
     return EImageFormat::eFormatCount;
 }
 
-EImageType CTexture::getType() const
+EImageType Texture::getType() const
 {
     if (m_impl)
     {
@@ -272,7 +335,7 @@ EImageType CTexture::getType() const
     return EImageType::eImageTypeCount;
 }
 
-void CTexture::setFilterType(ETextureFilter min, ETextureFilter mag)
+void Texture::setFilterType(ETextureFilter min, ETextureFilter mag)
 {
     if (m_impl)
     {
@@ -280,7 +343,7 @@ void CTexture::setFilterType(ETextureFilter min, ETextureFilter mag)
     }
 }
 
-void CTexture::setAnisotropicLevel(EAnisotropic level)
+void Texture::setAnisotropicLevel(EAnisotropic level)
 {
     if (m_impl)
     {
@@ -288,12 +351,12 @@ void CTexture::setAnisotropicLevel(EAnisotropic level)
     }
 }
 
-TexturePtr CTexture::getImpl() const
+TexturePtr Texture::getImpl() const
 {
     return m_impl;
 }
 
-TexturePtr CTexture::clone() const
+TexturePtr Texture::clone() const
 {
     if (!m_impl)
     {
@@ -301,21 +364,21 @@ TexturePtr CTexture::clone() const
     }
 
     TexturePtr texure;
-    if (CTexture::getTarget() == ETextureTarget::eTextureCubeMap)
+    if (Texture::getTarget() == ETextureTarget::eTextureCubeMap)
     {
-        texure = new CTexture(m_impl->getFormat(), m_impl->getType(), Dimension2D(m_impl->getSize().width, m_impl->getSize().height),
+        texure = new Texture(m_impl->getFormat(), m_impl->getType(), Dimension2D(m_impl->getSize().width, m_impl->getSize().height),
             nullptr, m_impl->getMipmapLevel());
     }
     else
     {
-        texure = new CTexture(m_impl->getTarget(), m_impl->getFormat(), m_impl->getType(), m_impl->getSize(), nullptr, m_impl->getMipmapLevel());
+        texure = new Texture(m_impl->getTarget(), m_impl->getFormat(), m_impl->getType(), m_impl->getSize(), nullptr, m_impl->getMipmapLevel());
     }
     texure->copyData(m_impl);
 
     return texure;
 }
 
-void CTexture::setWrap(EWrapType wrap)
+void Texture::setWrap(EWrapType wrap)
 {
     if (m_impl)
     {
@@ -323,7 +386,7 @@ void CTexture::setWrap(EWrapType wrap)
     }
 }
 
-bool CTexture::isEnable() const
+bool Texture::isEnable() const
 {
     if (m_impl)
     {
@@ -333,7 +396,7 @@ bool CTexture::isEnable() const
     return false;
 }
 
-void CTexture::copyData(const TexturePtr& texture)
+void Texture::copyData(const TexturePtr& texture)
 {
     if (m_impl)
     {

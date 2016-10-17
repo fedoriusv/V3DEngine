@@ -4,6 +4,8 @@
 
 namespace v3d
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     typedef unsigned char       u8;
     typedef signed char         s8;
     typedef char                c8;
@@ -16,6 +18,8 @@ namespace v3d
     typedef float               f32;
     typedef double              f64;
     typedef long double         f80;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace v3d
 

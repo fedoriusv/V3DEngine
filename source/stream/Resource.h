@@ -1,5 +1,4 @@
-#ifndef _V3D_RESOURCE_H_
-#define _V3D_RESOURCE_H_
+#pragma once
 
 #include "stream/IStream.h"
 
@@ -20,7 +19,7 @@ namespace stream
         virtual             ~IResource();
 
         virtual void        init(const IStreamPtr& stream) = 0;
-        virtual bool        load()                         = 0;
+        virtual bool        load() = 0;
 
         const IStreamPtr&   getStream() const;
         bool                isLoaded()  const;
@@ -52,5 +51,3 @@ namespace stream
 
 } //namespace stream
 } //namespace v3d
-
-#endif //_V3D_RESOURCE_H_

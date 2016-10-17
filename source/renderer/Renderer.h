@@ -27,6 +27,7 @@ namespace renderer
 
     class CMaterial;
     class RenderThread;
+    class RenderStreamCommand;
 
     /**
     * Interface for general render management.
@@ -42,6 +43,8 @@ namespace renderer
 
         virtual platform::ERenderType   getRenderType() const = 0;
 
+        bool                            isThreaded() const;
+
         //main thread
         void                            init();
 
@@ -50,6 +53,8 @@ namespace renderer
         void                            presentFrame();
 
         void                            draw();
+
+        void                            pushCommand(const RenderStreamCommand& command);
 
     private:
 

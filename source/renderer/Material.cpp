@@ -141,7 +141,7 @@ TexturePtr CMaterial::getTexture(u32 unit)
         ASSERT(false, "CMaterial::getTexture: Invalid texture unit");
     }
 #endif //_DEBUG
-    return utils::const_pointer_cast<CTexture>(m_texture.at(unit));
+    return utils::const_pointer_cast<Texture>(m_texture.at(unit));
 }
 
 u32 CMaterial::getTextureCount() const

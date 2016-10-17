@@ -1,8 +1,11 @@
 #include "Resource.h"
+
 #include "common.h"
 
-using namespace v3d;
-using namespace v3d::stream;
+namespace v3d
+{
+namespace stream
+{
 
 IResource::IResource()
     : m_stream(nullptr)
@@ -86,3 +89,6 @@ void IResource::setLoaded(bool loaded)
 {
     m_isLoaded = loaded;
 }
+
+} //namespace stream
+} //namespace v3d

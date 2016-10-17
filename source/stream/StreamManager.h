@@ -1,5 +1,4 @@
-#ifndef _V3D_STREAM_MANAGER_H_
-#define _V3D_STREAM_MANAGER_H_
+#pragma once
 
 #include "FileStream.h"
 #include "MemoryStream.h"
@@ -10,7 +9,7 @@ namespace stream
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CStreamManager
+    class StreamManager
     {
     public:
 
@@ -20,7 +19,6 @@ namespace stream
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_STREAM_MANAGER_H_
+} //namespace stream
+} //namespace v3d

@@ -3,16 +3,18 @@
 #include "utils/Logger.h"
 
 #ifdef _VULKAN_RENDER_
-#   include <vulkan/vulkan.h>
-#   include <vulkan/vk_sdk_platform.h>
-#   include "SwapChainVK.h"
+#include <vulkan/vulkan.h>
+#include <vulkan/vk_sdk_platform.h>
 
-#   if defined(_PLATFORM_WIN_)
+#include "SwapChainVK.h"
+#include "renderer/VK/TextureVK.h"
+
+#if defined(_PLATFORM_WIN_)
 #   include <windows.h>
 #   pragma comment(lib, "vulkan-1.lib")
 
 #   include "platform/WindowWinApi.h"
-#   endif //_PLATFORM_WIN_
+#endif //_PLATFORM_WIN_
 
 namespace v3d
 {
@@ -535,14 +537,14 @@ const VkPhysicalDeviceMemoryProperties& DeviceContextVK::getVulkanPhysicalDevice
     return m_vulkanPropsDevice._memoryProperties;
 }
 
-TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D & size, const void * data, u32 level)
+TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
 {
-    return TexturePtr();
+    return new TextureVK(target, format, type, size, data, level);
 }
 
-TexturePtr DeviceContextVK::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D & size, const void * data[6], u32 level)
+TexturePtr DeviceContextVK::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
 {
-    return TexturePtr();
+    return new TextureVK(format, type, size, data, level);
 }
 
 void DeviceContextVK::fillGrapthicCaps()
