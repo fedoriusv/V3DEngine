@@ -235,9 +235,9 @@ bool CBitmapFontData::parsePages(tinyxml2::XMLElement* root)
     const std::string file = pageElement->Attribute("file");
 
     const std::string& folder = getResourseFolder();
-    scene::CTextureManager::getInstance()->registerPath(folder);
+    scene::TextureManager::getInstance()->registerPath(folder);
 
-    const TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
+    const TexturePtr texture = scene::TextureManager::getInstance()->load(file);
     if (!texture)
     {
         LOG_ERROR("BitmapFontData Error parse. Load file %s", file.c_str());

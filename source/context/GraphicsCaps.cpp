@@ -6,7 +6,7 @@ namespace renderer
 {
 
 GpraphicsCaps::GpraphicsCaps()
-    : m_samplesCount(0U)
+    : m_samplesCount(1U)
     , m_maxTextureUnits(0U)
     , m_maxAnisotropy(0U)
     , m_maxPatchVertices(0U)
@@ -55,6 +55,11 @@ void GpraphicsCaps::setMaxAnisotropySize(f32 size)
 void GpraphicsCaps::setMaxPatchVertices(u32 size)
 {
     m_maxPatchVertices = size;
+}
+
+bool GpraphicsCaps::isSupportMultisample() const
+{
+    return m_samplesCount > 1;
 }
 
 //VkPhysicalDeviceLimits::nonCoherentAtomSize

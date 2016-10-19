@@ -16,7 +16,7 @@ using namespace decoders;
 using namespace stream;
 using namespace resources;
 
-CTextureManager::CTextureManager()
+TextureManager::TextureManager()
 {
     TResourceLoader::registerPath("../../../../data/");
     TResourceLoader::registerPath("../../../../../data/");
@@ -26,11 +26,11 @@ CTextureManager::CTextureManager()
     TResourceLoader::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
 }
 
-CTextureManager::~CTextureManager()
+TextureManager::~TextureManager()
 {
 }
 
-TexturePtr CTextureManager::load(const std::string files[6], const std::string& alias)
+TexturePtr TextureManager::load(const std::string files[6], const std::string& alias)
 {
     std::string aliasNameStr("");
     for (u32 i = 0; i < 6; ++i)
@@ -69,11 +69,11 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
                     const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
                     if (stream->isOpen())
                     {
-                        std::string fileExtension = CTextureManager::getFileExtension(nameString);
+                        std::string fileExtension = TextureManager::getFileExtension(nameString);
                         const DecoderPtr decoder = TResourceLoader::findDecoder(fileExtension);
                         if (!decoder)
                         {
-                            LOG_ERROR("CTextureManager: Format not supported file [%s]", nameString.c_str());
+                            LOG_ERROR("TextureManager: Format not supported file [%s]", nameString.c_str());
                             return nullptr;
                         }
 
@@ -82,7 +82,7 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
 
                         if (!resource)
                         {
-                            LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameString.c_str());
+                            LOG_ERROR("TextureManager: Streaming error read file [%s]", nameString.c_str());
                             return nullptr;
                         }
 
@@ -96,7 +96,7 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
                             delete image;
                             image = nullptr;
 
-                            LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameString.c_str());
+                            LOG_ERROR("TextureManager: Streaming error read file [%s]", nameString.c_str());
                             return nullptr;
                         }
 
@@ -104,13 +104,13 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
                     }
                     else
                     {
-                        LOG_ERROR("CTextureManager: error read file [%s]", nameString.c_str());
+                        LOG_ERROR("TextureManager: error read file [%s]", nameString.c_str());
                         return nullptr;
                     }
                 }
                 else
                 {
-                    LOG_ERROR("CTextureManager: file not found [%s]", nameString.c_str());
+                    LOG_ERROR("TextureManager: file not found [%s]", nameString.c_str());
                     return nullptr;
                 }
             }
@@ -119,7 +119,7 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
         if (wasFoundPath)
         {
 
-            TexturePtr cubeTexture = CTextureManager::createCubeTextureFromImages(cubeImage);
+            TexturePtr cubeTexture = TextureManager::createCubeTextureFromImages(cubeImage);
             for (u32 i = 0; i < 6; ++i)
             {
                 delete cubeImage[i];
@@ -129,23 +129,23 @@ TexturePtr CTextureManager::load(const std::string files[6], const std::string& 
             if (!cubeTexture)
             {
 
-                LOG_ERROR("CTextureManager: Create cube texture form images [%s] is failed", aliasNameStr.c_str());
+                LOG_ERROR("TextureManager: Create cube texture form images [%s] is failed", aliasNameStr.c_str());
                 return nullptr;
             }
 
             TResourceLoader::insert(cubeTexture, alias.empty() ? aliasNameStr : alias);
 
-            LOG_INFO("CTextureManager: File [%s] success loaded", aliasNameStr.c_str());
+            LOG_INFO("TextureManager: File [%s] success loaded", aliasNameStr.c_str());
             return cubeTexture;
         }
 
-        LOG_WARNING("CTextureManager: Files [%s] not found", aliasNameStr.c_str());
+        LOG_WARNING("TextureManager: Files [%s] not found", aliasNameStr.c_str());
     }
 
     return nullptr;
 }
 
-TexturePtr CTextureManager::load(const std::string& file, const std::string& alias)
+TexturePtr TextureManager::load(const std::string& file, const std::string& alias)
 {
     std::string nameString(file);
     std::transform(file.begin(), file.end(), nameString.begin(), ::tolower);
@@ -169,11 +169,11 @@ TexturePtr CTextureManager::load(const std::string& file, const std::string& ali
                 const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);
                 if (stream->isOpen())
                 {
-                    std::string fileExtension = CTextureManager::getFileExtension(nameString);
+                    std::string fileExtension = TextureManager::getFileExtension(nameString);
                     const DecoderPtr decoder = TResourceLoader::findDecoder(fileExtension);
                     if (!decoder)
                     {
-                        LOG_ERROR("CTextureManager: Format not supported file [%s]", nameString.c_str());
+                        LOG_ERROR("TextureManager: Format not supported file [%s]", nameString.c_str());
                         return nullptr;
                     }
 
@@ -182,7 +182,7 @@ TexturePtr CTextureManager::load(const std::string& file, const std::string& ali
 
                     if (!resource)
                     {
-                        LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameString.c_str());
+                        LOG_ERROR("TextureManager: Streaming error read file [%s]", nameString.c_str());
                         return nullptr;
                     }
 
@@ -196,35 +196,35 @@ TexturePtr CTextureManager::load(const std::string& file, const std::string& ali
                         delete image;
                         image = nullptr;
 
-                        LOG_ERROR("CTextureManager: Streaming error read file [%s]", nameString.c_str());
+                        LOG_ERROR("TextureManager: Streaming error read file [%s]", nameString.c_str());
                         return nullptr;
                     }
 
-                    TexturePtr texture = CTextureManager::createTextureFromImage(image);
+                    TexturePtr texture = TextureManager::createTextureFromImage(image);
                     delete image;
                     image = nullptr;
 
                     if (!texture)
                     {
-                        LOG_ERROR("CTextureManager: Error to Create Texture file [%s]", nameString.c_str());
+                        LOG_ERROR("TextureManager: Error to Create Texture file [%s]", nameString.c_str());
                         return nullptr;
                     }
 
                     TResourceLoader::insert(texture, alias.empty() ? nameString : aliasString);
 
-                    LOG_INFO("CTextureManager: File [%s] success loaded", fullName.c_str());
+                    LOG_INFO("TextureManager: File [%s] success loaded", fullName.c_str());
                     return texture;
                 }
             }
         }
 
-        LOG_WARNING("CTextureManager: File [%s] not found", nameString.c_str());
+        LOG_WARNING("TextureManager: File [%s] not found", nameString.c_str());
     }
 
     return nullptr;
 }
 
-TexturePtr CTextureManager::createTextureFromImage(const CImage* image)
+TexturePtr TextureManager::createTextureFromImage(const CImage* image)
 {
     if (image && image->isLoaded())
     {
@@ -237,7 +237,7 @@ TexturePtr CTextureManager::createTextureFromImage(const CImage* image)
     return nullptr;
 }
 
-renderer::TexturePtr CTextureManager::createCubeTextureFromImages(const resources::CImage* image[6])
+renderer::TexturePtr TextureManager::createCubeTextureFromImages(const resources::CImage* image[6])
 {
     const u8* dataList[6];
     for (u32 i = 0; i < 6; ++i)
@@ -258,7 +258,7 @@ renderer::TexturePtr CTextureManager::createCubeTextureFromImages(const resource
     return texure;
 }
 
-std::string v3d::scene::CTextureManager::getFileExtension(const std::string& fullFileName)
+std::string TextureManager::getFileExtension(const std::string& fullFileName)
 {
     std::string fileExtension = "";
 

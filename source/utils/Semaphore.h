@@ -12,7 +12,7 @@ namespace utils
     {
     public:
 
-        explicit Semaphore(u32 countThreads);
+        explicit Semaphore(u32 maxThreads);
         ~Semaphore();
 
         void wait();
@@ -22,6 +22,7 @@ namespace utils
     private:
 
         u32                     m_countThreads;
+        u32                     m_maxThreads;
 
         std::condition_variable m_cv;
         std::mutex              m_mutex;

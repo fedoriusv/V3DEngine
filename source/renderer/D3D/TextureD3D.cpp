@@ -1,5 +1,7 @@
 #include "TextureD3D.h"
 
+#ifdef _DIRECT3D_RENDER_
+
 namespace v3d
 {
 namespace renderer
@@ -120,3 +122,5 @@ void CTextureD3D::fill(const void* data, const core::Dimension3D& offset, const 
 } //namespace d3d
 } //namespace renderer
 } //namespace v3d
+
+#endif //_DIRECT3D_RENDER_

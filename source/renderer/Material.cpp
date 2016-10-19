@@ -157,7 +157,7 @@ bool CMaterial::setTexture(u32 unit, const std::string& file)
         return false;
     }
 
-    const TexturePtr texture = scene::CTextureManager::getInstance()->load(file);
+    const TexturePtr texture = scene::TextureManager::getInstance()->load(file);
     if (!texture)
     {
         LOG_ERROR("CMaterial::setTexture: Error read file [%s]", file.c_str());
@@ -177,7 +177,7 @@ bool CMaterial::setTexture(u32 unit, const std::string files[6])
         return false;
     }
 
-    const TexturePtr texture = scene::CTextureManager::getInstance()->load(files);
+    const TexturePtr texture = scene::TextureManager::getInstance()->load(files);
     if (!texture)
     {
         LOG_ERROR("CMaterial: Error read cubemap files");

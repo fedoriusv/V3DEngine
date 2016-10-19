@@ -12,6 +12,20 @@ RenderStreamCommand::RenderStreamCommand(ERenderCommand cmd)
     m_commandStream.seekBeg(0);
 }
 
+RenderStreamCommand::RenderStreamCommand(const RenderStreamCommand& obj)
+    : m_commandStream(obj.m_commandStream)
+    , m_command(obj.m_command)
+{
+}
+
+RenderStreamCommand::RenderStreamCommand(RenderStreamCommand&& obj)
+    : m_commandStream(std::move(obj.m_commandStream))
+    , m_command(obj.m_command)
+{
+    //TODO: test
+    obj.m_command = eCommandTerminate;
+}
+
 RenderStreamCommand::~RenderStreamCommand()
 {
     m_commandStream.clear();
@@ -61,7 +75,7 @@ RenderThread::~RenderThread()
     m_thread.wait(true);
 }
 
-void RenderThread::pushCommand(const RenderStreamCommand& command)
+void RenderThread::pushCommand(RenderStreamCommand& command)
 {
     m_commandBufferQueue.push(std::move(command));
 }
@@ -78,7 +92,7 @@ void RenderThread::wait()
 
 const RenderStreamCommand RenderThread::popCommand()
 {
-    RenderStreamCommand& command = m_commandBufferQueue.front();
+    RenderStreamCommand command = std::move(m_commandBufferQueue.front());
     m_commandBufferQueue.pop();
 
     return command;
@@ -86,8 +100,6 @@ const RenderStreamCommand RenderThread::popCommand()
 
 void RenderThread::init()
 {
-    /*m_commandBuffer.write(s32(ERenderCommand::eRCmdInit));
-    m_commandBuffer.seekBeg(0);*/
 }
 
 void RenderThread::beginFrame()
@@ -124,9 +136,9 @@ void RenderThread::threadWorker(void* data)
 {
     m_thread.setName("Render Thread");
 
-    stream::MemoryStream* stream = reinterpret_cast<stream::MemoryStream*>(data);
-    m_isRunning = true;
+    RenderThread::submit();
 
+    m_isRunning = true;
     while (m_isRunning)
     {
         if (!m_thread.isRunning())
@@ -134,11 +146,15 @@ void RenderThread::threadWorker(void* data)
             m_isRunning = false;
         }
 
-        RenderThread::wait();
         if (!m_commandBufferQueue.empty())
         {
+            RenderThread::wait();
             const RenderStreamCommand& command = RenderThread::popCommand();
             RenderThread::runCommand(command);
+        }
+        else
+        {
+            RenderThread::submit();
         }
     }
 }
@@ -154,6 +170,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
     {
     case ERenderCommand::eCommandInitialize:
         render->immediateInit();
+        RenderThread::submit();
         break;
 
  /*   case ERenderCommand::eRCmdBeginFrame:
@@ -179,19 +196,129 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         m_isRunning = false;
         break;*/
 
-    case ERenderCommand::eCommandUpdateTexure1D:
+    case ERenderCommand::eCommandUpdateTexure:
     {
-        Texture* texute = reinterpret_cast<Texture*>(command.readValue<void*>());
-        u32 offset = command.readValue<u32>();
-        u32 size = command.readValue<u32>();
-        void* data = command.readValue(size, 1);
+        Texture* texute = command.readValue<Texture*>();
         u32 mipLevel = command.readValue<u32>();
+        if (texute->getTarget() == ETextureTarget::eTexture1D ||
+            texute->getTarget() == ETextureTarget::eTextureBuffer)
+        {
+            u32 offset = command.readValue<u32>();
+            u32 size = command.readValue<u32>();
+            void* data = command.readValue(size, 1);
+            RenderThread::submit();
 
-        texute->immediateUpdate(offset, size, data, mipLevel);
-        RenderThread::submit();
+            texute->immediateUpdate(offset, size, data, mipLevel);
+            free(data);
+        }
+        else if (texute->getTarget() == ETextureTarget::eTexture2D ||
+            texute->getTarget() == ETextureTarget::eTexture1DArray)
+        {
+            core::Dimension2D offset = command.readValue<core::Dimension2D>();
+            core::Dimension2D size = command.readValue<core::Dimension2D>();
+            void* data = command.readValue(size.getArea(), 1);
+            RenderThread::submit();
 
-        free(data);
+            texute->immediateUpdate(offset, size, data, mipLevel);
+            free(data);
+        }
+        else if (texute->getTarget() == ETextureTarget::eTexture3D ||
+            texute->getTarget() == ETextureTarget::eTexture2DArray)
+        {
+            core::Dimension3D offset = command.readValue<core::Dimension3D>();
+            core::Dimension3D size = command.readValue<core::Dimension3D>();
+            void* data = command.readValue(size.getArea(), 1);
+            RenderThread::submit();
+
+            texute->immediateUpdate(offset, size, data, mipLevel);
+            free(data);
+        }
         break;
+    }
+
+    case ERenderCommand::eCommandReadTexture:
+    {
+        Texture* texute = command.readValue<Texture*>();
+        void const* dataDst = command.readValue<void const*>();
+        u32 mipLevel = command.readValue<u32>();
+        if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
+        {
+            u32 cubemapSide = command.readValue<u32>();
+            texute->read(cubemapSide, dataDst, mipLevel);
+        }
+        else
+        {
+            texute->read(dataDst, mipLevel);
+        }
+        RenderThread::submit();
+        break;
+    }
+
+    case ERenderCommand::eCommandFillTexure:
+    {
+        Texture* texute = command.readValue<Texture*>();
+        u32 mipLevel = command.readValue<u32>();
+        if (texute->getTarget() == ETextureTarget::eTexture1D ||
+            texute->getTarget() == ETextureTarget::eTextureBuffer)
+        {
+            u32 offset = command.readValue<u32>();
+            u32 size = command.readValue<u32>();
+            void* data = command.readValue(size, 1);
+            RenderThread::submit();
+
+            texute->immediateFill(data, offset, size, mipLevel);
+            free(data);
+        }
+        else if (texute->getTarget() == ETextureTarget::eTexture2D ||
+            texute->getTarget() == ETextureTarget::eTexture1DArray)
+        {
+            core::Dimension2D offset = command.readValue<core::Dimension2D>();
+            core::Dimension2D size = command.readValue<core::Dimension2D>();
+            void* data = command.readValue(size.getArea(), 1);
+            RenderThread::submit();
+
+            texute->immediateFill(data, offset, size, mipLevel);
+            free(data);
+        }
+        else if (texute->getTarget() == ETextureTarget::eTexture3D ||
+            texute->getTarget() == ETextureTarget::eTexture2DArray)
+        {
+            core::Dimension3D offset = command.readValue<core::Dimension3D>();
+            core::Dimension3D size = command.readValue<core::Dimension3D>();
+            void* data = command.readValue(size.getArea(), 1);
+            RenderThread::submit();
+
+            texute->immediateFill(data, offset, size, mipLevel);
+            free(data);
+        }
+        break;
+    }
+
+    case ERenderCommand::eCommadCreateTexture:
+    {
+        Texture* texute = command.readValue<Texture*>();
+        ETextureTarget target = command.readValue<ETextureTarget>();
+        EImageFormat format = command.readValue<EImageFormat>();
+        EImageType type = command.readValue<EImageType>();
+        u32 mipCount = command.readValue<u32>();
+        if (target == eTexture1D)
+        {
+            u32 size = command.readValue<u32>(size);
+            bool presentData = command.readValue<bool>();
+            void* data = nullptr;
+            if (presentData)
+            {
+                data = command.readValue(size, 1);
+            }
+
+
+        }
+        
+
+        
+        
+
+        
     }
 
     

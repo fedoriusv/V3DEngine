@@ -157,7 +157,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             return true;
         }
 
-        const TexturePtr texture = CTextureManager::getInstance()->get(varVal);
+        const TexturePtr texture = TextureManager::getInstance()->get(varVal);
         if (texture)
         {
             m_type = ESamplerType::eTextureSampler;

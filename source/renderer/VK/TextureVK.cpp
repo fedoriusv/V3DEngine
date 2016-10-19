@@ -41,29 +41,32 @@ VkImageType getImageTypeVK(ETextureTarget target)
     return VK_IMAGE_TYPE_MAX_ENUM;
 }
 
-VkSampleCountFlagBits getSampleCountVK(u32 size)
+VkSampleCountFlagBits getSampleCountVK(u32 size, ETextureTarget target)
 {
-    switch (size)
+    if (target == eTexture2DMSAA || target == eTexture3DMSAA)
     {
-    case 1:
-        return VK_SAMPLE_COUNT_1_BIT;
-    case 2:
-        return VK_SAMPLE_COUNT_2_BIT;
-    case 4:
-        return VK_SAMPLE_COUNT_4_BIT;
-    case 8:
-        return VK_SAMPLE_COUNT_8_BIT;
-    case 16:
-        return VK_SAMPLE_COUNT_16_BIT;
-    case 32:
-        return VK_SAMPLE_COUNT_32_BIT;
-    case 64:
-        return VK_SAMPLE_COUNT_64_BIT;
-    default:
-        ASSERT(false, "Invalid size");
+        switch (size)
+        {
+        case 1:
+            return VK_SAMPLE_COUNT_1_BIT;
+        case 2:
+            return VK_SAMPLE_COUNT_2_BIT;
+        case 4:
+            return VK_SAMPLE_COUNT_4_BIT;
+        case 8:
+            return VK_SAMPLE_COUNT_8_BIT;
+        case 16:
+            return VK_SAMPLE_COUNT_16_BIT;
+        case 32:
+            return VK_SAMPLE_COUNT_32_BIT;
+        case 64:
+            return VK_SAMPLE_COUNT_64_BIT;
+        default:
+            ASSERT(false, "Invalid size");
+        }
     }
 
-    return VK_SAMPLE_COUNT_FLAG_BITS_MAX_ENUM;
+    return VK_SAMPLE_COUNT_1_BIT;
 }
 
 u32 getArrayLayersCountVK(ETextureTarget target, const Dimension3D& size)
@@ -156,24 +159,25 @@ VkFormat getImageFormatVK(EImageFormat format, EImageType type)
             return VK_FORMAT_UNDEFINED;
         }
 
-    /*case EImageType::eUnsignedByte:
+    case EImageType::eUnsignedByte:
         switch (format)
         {
         case EImageFormat::eRed:
             return VK_FORMAT_R8_UNORM;
         case EImageFormat::eRG:
-            return;
+            return VK_FORMAT_R8G8_UNORM;
         case EImageFormat::eRGB:
-            return;
+            return VK_FORMAT_R8G8B8_UNORM;
         case EImageFormat::eRGBA:
-            return;
+            return VK_FORMAT_R8G8B8A8_UNORM;
+
         case EImageFormat::eDepthComponent:
-            return;
+            return VK_FORMAT_UNDEFINED;
         case EImageFormat::eStencilIndex:
-            return;
+            return VK_FORMAT_UNDEFINED;
         }
 
-    case EImageType::eShort:
+    /*case EImageType::eShort:
         switch (format)
         {
         case EImageFormat::eRed:
@@ -296,7 +300,7 @@ VkFormat getImageFormatVK(EImageFormat format, EImageType type)
     return VK_FORMAT_UNDEFINED;
 }
 
-TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
+TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 mipCount)
     : m_target(target)
     , m_format(format)
     , m_type(type)
@@ -307,9 +311,9 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_anisotropicLevel(eAnisotropic16x)
     , m_wrap(eClampToEdge)
 
-    , m_minFilter(level > 0 ? eLinearMipmapLinear : eLinear)
+    , m_minFilter(mipCount > 1 ? eLinearMipmapLinear : eLinear)
     , m_magFilter(eLinear)
-    , m_mipmapLevel(level)
+    , m_mipmapLevel(mipCount)
 
     , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
@@ -323,6 +327,10 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_initialized(false)
 {
     LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
+
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
     TextureVK::create();
     if (data)
     {
@@ -330,7 +338,10 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
         {
         case ETextureTarget::eTexture1D:
         case ETextureTarget::eTextureBuffer:
-            TextureVK::update(0, size.width, data, level);
+            for (u32 level = 0; level < m_mipmapLevel; ++level)
+            {
+                TextureVK::update(0, size.width, data, level);
+            }
             break;
 
         case ETextureTarget::eTexture1DArray:
@@ -353,7 +364,7 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     }
 }
 
-TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
+TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 mipCount)
     : m_target(eTextureCubeMap)
     , m_format(format)
     , m_type(type)
@@ -364,9 +375,9 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_anisotropicLevel(eAnisotropic16x)
     , m_wrap(eClampToEdge)
 
-    , m_minFilter(level > 0 ? eLinearMipmapLinear : eLinear)
+    , m_minFilter(mipCount > 1 ? eLinearMipmapLinear : eLinear)
     , m_magFilter(eLinear)
-    , m_mipmapLevel(level)
+    , m_mipmapLevel(mipCount)
 
     , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
@@ -380,6 +391,10 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_initialized(false)
 {
     LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
+
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
     TextureVK::create();
     if (data)
     {
@@ -411,7 +426,7 @@ bool TextureVK::isEnable() const
 {
     return false;
 }
-void TextureVK::update(u32 offset, u32 size, const void* data, u32 levels)
+void TextureVK::update(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
     VkBufferCreateInfo bufferCreateInfo = {};
     bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -498,12 +513,12 @@ ETextureTarget TextureVK::getTarget() const
     return m_target;
 }
 
-ETextureFilter TextureVK::getMinFiler() const
+ETextureFilter TextureVK::getMinFilter() const
 {
     return m_minFilter;
 }
 
-ETextureFilter TextureVK::getMagFiler() const
+ETextureFilter TextureVK::getMagFilter() const
 {
     return m_magFilter;
 }
@@ -518,7 +533,7 @@ EAnisotropic TextureVK::getAnisotropic() const
     return m_anisotropicLevel;
 }
 
-u32 TextureVK::getMipmapLevel() const
+u32 TextureVK::getMipmapLevels() const
 {
     return m_mipmapLevel;
 }
@@ -575,7 +590,7 @@ bool TextureVK::create()
     imageCreateInfo.format = getImageFormatVK(m_format, m_type);
     imageCreateInfo.mipLevels = m_mipmapLevel;
     imageCreateInfo.arrayLayers = getArrayLayersCountVK(m_target, m_size);
-    imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount());
+    imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount(), m_target);
     imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
@@ -587,7 +602,7 @@ bool TextureVK::create()
     VkResult result = vkCreateImage(m_device, &imageCreateInfo, nullptr, &m_image);
     if (result != VK_SUCCESS)
     {
-        LOG_ERROR("TextureVK::create: vkCreateImage. Error %s", DebugVK::errorString(result).c_str());
+        LOG_ERROR("TextureVK::create: vkCreateImage. Error: %s", DebugVK::errorString(result).c_str());
         return false;
     }
 
@@ -642,69 +657,6 @@ s32 TextureVK::getActiveTexture(u32 target)
 s32 TextureVK::getActiveTextureUnit()
 {
     return s32();
-}
-
-void TextureVK::setImageLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange)
-{
-    //// Create an image barrier object
-    //VkImageMemoryBarrier imageMemoryBarrier = vkTools::initializers::imageMemoryBarrier();;
-    //imageMemoryBarrier.oldLayout = oldImageLayout;
-    //imageMemoryBarrier.newLayout = newImageLayout;
-    //imageMemoryBarrier.image = image;
-    //imageMemoryBarrier.subresourceRange = subresourceRange;
-
-    //// Only sets masks for layouts used in this example
-    //// For a more complete version that can be used with other layouts see vkTools::setImageLayout
-
-    //// Source layouts (old)
-    //switch (oldImageLayout)
-    //{
-    //case VK_IMAGE_LAYOUT_UNDEFINED:
-    //    // Only valid as initial layout, memory contents are not preserved
-    //    // Can be accessed directly, no source dependency required
-    //    imageMemoryBarrier.srcAccessMask = 0;
-    //    break;
-
-    //case VK_IMAGE_LAYOUT_PREINITIALIZED:
-    //    // Only valid as initial layout for linear images, preserves memory contents
-    //    // Make sure host writes to the image have been finished
-    //    imageMemoryBarrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-    //    break;
-
-    //case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
-    //    // Old layout is transfer destination
-    //    // Make sure any writes to the image have been finished
-    //    imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-    //    break;
-    //}
-
-    //// Target layouts (new)
-    //switch (newImageLayout)
-    //{
-    //case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
-    //    // Transfer source (copy, blit)
-    //    // Make sure any reads from the image have been finished
-    //    imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-    //    break;
-
-    //case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
-    //    // Transfer destination (copy, blit)
-    //    // Make sure any writes to the image have been finished
-    //    imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-    //    break;
-
-    //case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-    //    // Shader read (sampler, input attachment)
-    //    imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    //    break;
-    //}
-
-    //// Put barrier on top of pipeline
-    //VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-    //VkPipelineStageFlags destStageFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-
-    //// Put barrier inside setup command buffer
-    //vkCmdPipelineBarrier( cmdBuffer, srcStageFlags, destStageFlags, VK_FLAGS_NONE, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
 }
 
 } //namespace vk

@@ -23,7 +23,7 @@ CSkybox::~CSkybox()
 
 void CSkybox::load(const std::string files[6])
 {
-    TexturePtr texure = CTextureManager::getInstance()->load(files);
+    TexturePtr texure = TextureManager::getInstance()->load(files);
     if (!texure)
     {
         LOG_ERROR("CSkybox: Texture didn't load");

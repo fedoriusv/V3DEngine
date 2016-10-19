@@ -62,7 +62,7 @@ u32 DeviceContext::getTextureUnitsCount() const
 
 f32 DeviceContext::getMaxAnisotropySize() const
 {
-    return m_graphicsCaps.getMaxPatchVertices();
+    return m_graphicsCaps.getMaxAnisotropySize();
 }
 
 u32 DeviceContext::getMaxPatchVertices() const

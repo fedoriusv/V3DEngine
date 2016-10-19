@@ -2,6 +2,7 @@
 #include "Valera3D.h"
 
 #include "stream/StreamManager.h"
+#include "scene/TextureManager.h"
 
 using namespace v3d;
 using namespace core;
@@ -9,6 +10,7 @@ using namespace scene;
 using namespace stream;
 using namespace platform;
 using namespace event;
+using namespace renderer;
 
 MyApplication::MyApplication(int& argc, char** argv)
     : BaseApplication(argc, argv)
@@ -23,6 +25,8 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
+
+    TexturePtr tex = TextureManager::getInstance()->load("textures/box.jpg");
 }
 
 void MyApplication::run()

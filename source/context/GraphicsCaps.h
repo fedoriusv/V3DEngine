@@ -26,6 +26,8 @@ namespace renderer
         void    setMaxAnisotropySize(f32 size);
         void    setMaxPatchVertices(u32 size);
 
+        bool    isSupportMultisample() const;
+
     private:
 
         u32     m_samplesCount;

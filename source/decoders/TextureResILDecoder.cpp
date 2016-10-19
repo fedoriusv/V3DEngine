@@ -77,7 +77,7 @@ stream::IResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
         ilConvertImage(IL_BGRA, ilGetInteger(IL_IMAGE_TYPE));
     }
 
-    stream::IStreamPtr data = CStreamManager::createMemoryStream();
+    stream::IStreamPtr data = StreamManager::createMemoryStream();
     data->seekBeg(0);
 
     ILenum format = ilGetInteger(IL_IMAGE_FORMAT);
@@ -108,6 +108,7 @@ stream::IResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     return image;
 #endif //USE_DEVIL
 
+    ASSERT(false, "USE_DEVIL disabled");
     return nullptr;
 }
 

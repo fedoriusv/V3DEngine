@@ -549,6 +549,40 @@ TexturePtr DeviceContextVK::createCubeTexture(EImageFormat format, EImageType ty
 
 void DeviceContextVK::fillGrapthicCaps()
 {
+    if (m_vulkanPropsDevice._features.sampleRateShading)
+    {
+        u32 countSamples = 1;
+        VkSampleCountFlags flag = m_vulkanPropsDevice._properties.limits.sampledImageColorSampleCounts;
+        if (VK_SAMPLE_COUNT_64_BIT & flag)
+        {
+            countSamples = 64;
+        }
+        else if (VK_SAMPLE_COUNT_32_BIT & flag)
+        {
+            countSamples = 32;
+        }
+        else if (VK_SAMPLE_COUNT_16_BIT & flag)
+        {
+            countSamples = 16;
+        }
+        else if (VK_SAMPLE_COUNT_8_BIT & flag)
+        {
+            countSamples = 8;
+        }
+        else if (VK_SAMPLE_COUNT_4_BIT & flag)
+        {
+            countSamples = 4;
+        }
+        else if (VK_SAMPLE_COUNT_2_BIT & flag)
+        {
+            countSamples = 2;
+        }
+
+        m_graphicsCaps.setSamplesCount(countSamples);
+    }
+
+    //vkGetPhysicalDeviceImageFormatProperties();
+    //m_vulkanPropsDevice._properties.limits.maxMipLevels
 }
 
 void DeviceContextVK::printExtensionList() const

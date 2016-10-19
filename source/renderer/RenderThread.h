@@ -16,15 +16,10 @@ namespace renderer
     {
         eCommandInitialize = 0,
 
-        eCommandUpdateTexure1D,
-        eCommandUpdateTexure2D,
-        eCommandUpdateTexure3D,
-        eCommandUpdateTexureCube,
+        eCommadCreateTexture,
+        eCommandUpdateTexure,
         eCommandReadTexture,
-        eCommandReadTextureCube,
-        eCommandFillTexure1D,
-        eCommandFillTexure2D,
-        eCommandFillTexure3D,
+        eCommandFillTexure,
 
         eCommandDestroy,
 
@@ -40,6 +35,8 @@ namespace renderer
     public:
 
         RenderStreamCommand(ERenderCommand cmd);
+        RenderStreamCommand(const RenderStreamCommand&);
+        RenderStreamCommand(RenderStreamCommand&&);
         ~RenderStreamCommand();
 
         template <class T>
@@ -70,7 +67,7 @@ namespace renderer
         explicit RenderThread(const renderer::RendererPtr renderer);
         ~RenderThread();
 
-        void                                pushCommand(const RenderStreamCommand& command);
+        void                                pushCommand(RenderStreamCommand& command);
         void                                submit();
         void                                wait();
 

@@ -9,10 +9,10 @@
 namespace v3d
 {
 
-namespace scene
-{
-    class CTextureManager;
-}
+//namespace scene
+//{
+//    class TextureManager;
+//}
 
 namespace resources
 {
@@ -102,7 +102,7 @@ namespace renderer
         Texture(ETextureTarget target, EImageFormat format, EImageType type, u32 size, const void* data = nullptr, u32 mipCount = 1U);
         Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data = nullptr, u32 mipCount = 1U);
         Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 mipCount = 1U);
-        Texture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6] = {}, u32 mipCount = 1U);
+        Texture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[k_textureCubemapSideCount] = {}, u32 mipCount = 1U);
 
         Texture(const Texture&)               = delete;
         Texture& operator=(const Texture&)    = delete;
@@ -128,11 +128,11 @@ namespace renderer
         virtual void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
 
         virtual ETextureTarget              getTarget() const;
-        virtual ETextureFilter              getMinFiler() const;
-        virtual ETextureFilter              getMagFiler() const;
+        virtual ETextureFilter              getMinFilter() const;
+        virtual ETextureFilter              getMagFilter() const;
         virtual EWrapType                   getWrap() const;
         virtual EAnisotropic                getAnisotropic() const;
-        virtual u32                         getMipmapLevel() const;
+        virtual u32                         getMipmapLevels() const;
         virtual const core::Dimension3D&    getSize() const;
         virtual EImageFormat                getFormat() const;
         virtual EImageType                  getType() const;
@@ -148,12 +148,15 @@ namespace renderer
     protected:
 
         Texture();
+        Texture(const TexturePtr impl);
 
         virtual void                        copyData(const TexturePtr& texture);
 
     private:
 
         friend                              RenderThread;
+
+        void                                immediateCreate();
 
         void                                immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
         void                                immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
@@ -166,7 +169,7 @@ namespace renderer
         void                                immediateFill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
 
 
-        TexturePtr const                    m_impl;
+        TexturePtr                          m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

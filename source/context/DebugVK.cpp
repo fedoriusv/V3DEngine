@@ -64,28 +64,28 @@ VkBool32 DebugVK::messageCallback(VkDebugReportFlagsEXT flags, VkDebugReportObje
     // Error that may result in undefined behaviour
     if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
     {
-        LOG_ERROR("[s%]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
+        LOG_ERROR("[%s]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
     };
     // Warnings may hint at unexpected / non-spec API usage
     if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
     {
-        LOG_WARNING("[s%]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
+        LOG_WARNING("[%s]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
     };
     // May indicate sub-optimal usage of the API
     if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
     {
-        LOG_WARNING("[s%]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
+        LOG_WARNING("[%s]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
     };
     // Informal messages that may become handy during debugging
     if (flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
     {
-        LOG_INFO("[s%]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
+        LOG_INFO("[%s]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
     }
     // Diagnostic info from the Vulkan loader and layers
     // Usually not helpful in terms of API usage, but may help to debug layer and loader problems 
     if (flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
     {
-        LOG_DEBUG("[s%]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
+        LOG_DEBUG("[%s]Object: %d Code %d: %s", layerPrefix, srcObject, msgCode, msg);
     }
 
     // The return value of this callback controls wether the Vulkan call that caused

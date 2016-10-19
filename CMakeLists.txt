@@ -6,7 +6,7 @@ option(BUILD_USE_OPENGL_SDK "Build use OpenGL" OFF)
 option(BUILD_USE_DIRECTX_SDK "Build use DirectX SDK" OFF)
 
 #Optional Libs
-option(BUILD_USE_RESIL_LIB "Build use ResIL libraries" OFF)
+option(BUILD_USE_RESIL_LIB "Build use ResIL libraries" ON)
 option(BUILD_USE_FREE_TYPE_LIB "Build use FreeType2 library" OFF)
 
 #Tested projects

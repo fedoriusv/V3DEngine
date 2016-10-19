@@ -9,7 +9,7 @@ namespace vk
 {
 
 RendererVK::RendererVK(const ContextPtr context)
-    : IRenderer(context, false)
+    : IRenderer(context, true)
     , m_memoryMamager(nullptr)
 {
     m_device = RendererVK::getVulkanContext()->getVulkanDevice();
@@ -33,28 +33,7 @@ void RendererVK::immediateInit()
         m_memoryMamager = new MemoryManagerVK(RendererVK::getVulkanContext());
     }
 
-    //TEST 
-    VkImageCreateInfo imageCreateInfo = {};
-    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageCreateInfo.pNext = nullptr;
-    imageCreateInfo.flags = 0;
-    imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-    imageCreateInfo.format = VK_FORMAT_R8_UNORM;
-    imageCreateInfo.mipLevels = 1;
-    imageCreateInfo.arrayLayers = 1;
-    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
-    imageCreateInfo.queueFamilyIndexCount = 1;
-    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageCreateInfo.extent = { 10, 10, 1};
-    imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-
-    VkImage image;
-    VkResult result = vkCreateImage(m_device, &imageCreateInfo, nullptr, &image);
-    AllocatorVK* alloc = m_memoryMamager->getSimpleAllocator();
-    m_memoryMamager->allocateImage(*alloc, image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    //TODO:
 }
 
 void RendererVK::immediaterBeginFrame()

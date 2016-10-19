@@ -1,5 +1,4 @@
-#ifndef _V3D_TEXTURE_MANAGER_H_
-#define _V3D_TEXTURE_MANAGER_H_
+#pragma once
 
 #include "common.h"
 #include "utils/Singleton.h"
@@ -12,6 +11,7 @@ namespace v3d
 namespace resources
 {
     class CImage;
+
 } //namespace resources
 
 namespace scene
@@ -21,14 +21,14 @@ namespace scene
     /**
     * Texture manager. Provide access to all registered textures in application.
     */
-    class CTextureManager : public utils::TSingleton<CTextureManager>, public stream::TResourceLoader<renderer::TexturePtr>
+    class TextureManager : public utils::TSingleton<TextureManager>, public stream::TResourceLoader<renderer::TexturePtr>
     {
     private:
 
-        friend utils::TSingleton<CTextureManager>;
+        friend utils::TSingleton<TextureManager>;
 
-        CTextureManager();
-        ~CTextureManager();
+        TextureManager();
+        ~TextureManager();
 
     public:
 
@@ -49,5 +49,3 @@ namespace scene
 
 } //namespace scene
 } //namespace v3d
-
-#endif //_V3D_TEXTURE_MANAGER_H_

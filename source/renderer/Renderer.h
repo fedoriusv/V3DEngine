@@ -54,7 +54,7 @@ namespace renderer
 
         void                            draw();
 
-        void                            pushCommand(const RenderStreamCommand& command, bool wait);
+        void                            pushCommand(RenderStreamCommand& command, bool wait);
 
     private:
 

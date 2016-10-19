@@ -54,7 +54,8 @@ void IRenderer::init()
 {
     if (m_isThreaded)
     {
-        m_renderThread->init();
+        RenderStreamCommand command(ERenderCommand::eCommandInitialize);
+        IRenderer::pushCommand(command, true);
     }
     else
     {
@@ -110,7 +111,7 @@ void IRenderer::draw()
     }
 }
 
-void IRenderer::pushCommand(const RenderStreamCommand& command, bool wait)
+void IRenderer::pushCommand(RenderStreamCommand& command, bool wait)
 {
     if (m_isThreaded)
     {
