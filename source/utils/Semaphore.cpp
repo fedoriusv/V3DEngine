@@ -38,7 +38,7 @@ bool Semaphore::tryWait()
     return false;
 }
 
-void Semaphore::post()
+void Semaphore::signal()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
     

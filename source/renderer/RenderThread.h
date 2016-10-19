@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "utils/Thread.h"
+#include "utils/Semaphore.h"
 #include "renderer/Renderer.h"
 #include "stream/MemoryStream.h"
 
@@ -13,23 +14,21 @@ namespace renderer
 
     enum ERenderCommand
     {
-        eRCmdInit = 0,
-        eRCmdBeginFrame,
-        eRCmdEndFrame,
-        eRCmdPresentFrame,
-        eRCmdDraw,
+        eCommandInitialize = 0,
 
         eCommandUpdateTexure1D,
         eCommandUpdateTexure2D,
         eCommandUpdateTexure3D,
         eCommandUpdateTexureCube,
+        eCommandReadTexture,
+        eCommandReadTextureCube,
         eCommandFillTexure1D,
         eCommandFillTexure2D,
         eCommandFillTexure3D,
 
-        eRCmdDestroy,
+        eCommandDestroy,
 
-        eRCmdTerminate,
+        eCommandTerminate,
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,21 +43,19 @@ namespace renderer
         ~RenderStreamCommand();
 
         template <class T>
-        const T&    readValue(u32 count = 1);
-        void*       readValue(u32 size, u32 count = 1);
+        const T             readValue(u32 count = 1) const;
+        void*               readValue(u32 size, u32 count = 1) const;
 
         template <class T>
-        void        writeValue(const T& val, u32 count = 1);
-        void        writeValue(const void* data, u32 size, u32 count = 1);
+        void                writeValue(const T& val, u32 count = 1);
+        void                writeValue(const void* data, u32 size, u32 count = 1);
 
-        void*       getStreamData() const;
-        u32         getStreamSize() const;
+        void*               getStreamData() const;
+        u32                 getStreamSize() const;
+
+        ERenderCommand      getCommand() const;
 
     private:
-
-        friend              RenderThread;
-
-        RenderStreamCommand(const stream::MemoryStream& stream);
 
         stream::MemoryStream m_commandStream;
         ERenderCommand       m_command;
@@ -73,46 +70,48 @@ namespace renderer
         explicit RenderThread(const renderer::RendererPtr renderer);
         ~RenderThread();
 
-        void                        pushCommand(const RenderStreamCommand& command);
+        void                                pushCommand(const RenderStreamCommand& command);
+        void                                submit();
+        void                                wait();
 
-        void                        init();
-                                    
-        void                        beginFrame();
-        void                        endFrame();
-        void                        presentFrame();
-                                    
-        void                        draw();
+        void                                init();
+                                            
+        void                                beginFrame();
+        void                                endFrame();
+        void                                presentFrame();
+                                            
+        void                                draw();
 
         //
 
-        void                        destroy();
+        void                                destroy();
 
-        void                        terminate();
+        void                                terminate();
 
     private:
 
-        const RenderStreamCommand   popCommand();
+        const RenderStreamCommand           popCommand();
 
-        void                        threadWorker(void* data);
-        void                        runCommand(const RenderStreamCommand& command);
+        void                                threadWorker(void* data);
+        void                                runCommand(const RenderStreamCommand& command);
 
-        std::atomic_bool            m_isRunning;
+        std::atomic_bool                    m_isRunning;
 
-        stream::MemoryStream        m_commandBuffer;
+        std::queue<RenderStreamCommand>     m_commandBufferQueue;
 
-        utils::Thread               m_thread;
-        //semophore
+        utils::Thread                       m_thread;
+        utils::Semaphore                    m_waitSemophore;
 
-        renderer::RendererWPtr      m_renderer;
+        renderer::RendererWPtr              m_renderer;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     template<class T>
-    inline const T& RenderStreamCommand::readValue(u32 count)
+    inline const T RenderStreamCommand::readValue(u32 count) const
     {
-        T& value;
-        m_commandStream.read(value, sizeof(T), count);
+        T value;
+        m_commandStream.read(&value, sizeof(T), count);
 
         return value;
     }
@@ -120,7 +119,8 @@ namespace renderer
     template<class T>
     inline void RenderStreamCommand::writeValue(const T& val, u32 count)
     {
-        m_commandStream.write((const void*)val, sizeof(T), count);
+        const void* data = reinterpret_cast<const void*>(&val);
+        m_commandStream.write(data, sizeof(T), count);
     }
 
 } //namespace renderer

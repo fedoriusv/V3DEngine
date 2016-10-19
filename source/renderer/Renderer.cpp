@@ -110,11 +110,17 @@ void IRenderer::draw()
     }
 }
 
-void IRenderer::pushCommand(const RenderStreamCommand& command)
+void IRenderer::pushCommand(const RenderStreamCommand& command, bool wait)
 {
     if (m_isThreaded)
     {
+        m_renderThread->wait();
         m_renderThread->pushCommand(command);
+        m_renderThread->submit();
+        if (wait)
+        {
+            m_renderThread->wait();
+        }
     }
 }
 

@@ -40,7 +40,6 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
         {
             ASSERT(m_impl->getMipmapLevel() == 0, "Unsupported mipmap target");
         }
-
     }
 }
 
@@ -101,16 +100,17 @@ void Texture::update(u32 offset, u32 size, const void* data, u32 mipLevel)
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure1D);
+        command.writeValue<void*>(this);
         command.writeValue<u32>(offset);
         command.writeValue<u32>(size);
         command.writeValue(data, size, 1);
         command.writeValue<u32>(mipLevel);
 
-        ENGINE_RENDERER->pushCommand(command);
+        ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
-        Texture::immidateUpdate(offset, size, data, mipLevel);
+        Texture::immediateUpdate(offset, size, data, mipLevel);
     }
 }
 
@@ -124,11 +124,11 @@ void Texture::update(const core::Dimension2D& offset, const core::Dimension2D& s
         command.writeValue(data, size.getArea(), 1);
         command.writeValue<u32>(mipLevel);
 
-        ENGINE_RENDERER->pushCommand(command);
+        ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
-        Texture::immidateUpdate(offset, size, data, mipLevel);
+        Texture::immediateUpdate(offset, size, data, mipLevel);
     }
 }
 
@@ -141,10 +141,12 @@ void Texture::update(const core::Dimension3D& offset, const core::Dimension3D& s
         command.writeValue<Dimension3D>(size);
         command.writeValue(data, size.getArea(), 1);
         command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
-        Texture::immidateUpdate(offset, size, data, mipLevel);
+        Texture::immediateUpdate(offset, size, data, mipLevel);
     }
 }
 
@@ -157,14 +159,16 @@ void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const cor
         command.writeValue<Dimension2D>(size);
         command.writeValue(data, size.getArea(), 1);
         command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
-        Texture::immidateUpdate(offset, size, data, mipLevel);
+        Texture::immediateUpdate(offset, size, data, mipLevel);
     }
 }
 
-void Texture::immidateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel)
+void Texture::immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -172,7 +176,7 @@ void Texture::immidateUpdate(u32 offset, u32 size, const void* data, u32 mipLeve
     }
 }
 
-void Texture::immidateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
+void Texture::immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -180,7 +184,7 @@ void Texture::immidateUpdate(const core::Dimension2D& offset, const core::Dimens
     }
 }
 
-void Texture::immidateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
+void Texture::immediateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -188,7 +192,7 @@ void Texture::immidateUpdate(const core::Dimension3D& offset, const core::Dimens
     }
 }
 
-void Texture::immidateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D & size, const void* data, u32 mipLevel)
+void Texture::immediateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D & size, const void* data, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -196,31 +200,110 @@ void Texture::immidateUpdate(u32 cubemapSide, const core::Dimension2D& offset, c
     }
 }
 
-void Texture::read(void* data, u32 mipLevel) const
+void Texture::read(void const* data, u32 mipLevel) const
 {
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandReadTexture);
+        command.writeValue<const void*>(data);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, true);
+    }
+    else
+    {
+        Texture::immediateRead(data, mipLevel);
+    }
 }
 
-void Texture::read(u32 cubemapSide, void* data, u32 mipLevel) const
+void Texture::read(u32 cubemapSide, void const* data, u32 mipLevel) const
 {
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandReadTextureCube);
+        command.writeValue<u32>(cubemapSide);
+        command.writeValue<void const*>(data);
+        command.writeValue<u32>(mipLevel);
 
+        ENGINE_RENDERER->pushCommand(command, true);
+    }
+    else
+    {
+        Texture::immediateRead(data, mipLevel);
+    }
+}
+
+void Texture::immediateRead(void const* data, u32 mipLevel) const
+{
+    if (m_impl)
+    {
+        m_impl->read(data, mipLevel);
+    }
+}
+
+void Texture::immediateRead(u32 cubemapSide, void const* data, u32 mipLevel) const
+{
+    if (m_impl)
+    {
+        m_impl->read(cubemapSide, data, mipLevel);
+    }
 }
 
 void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
 {
-    //TODO:
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandFillTexure1D);
+        command.writeValue<u32>(offset);
+        command.writeValue<u32>(size);
+        command.writeValue(data, size, 1);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, false);
+    }
+    else
+    {
+        Texture::immediateFill(data, offset, size, mipLevel);
+    }
 }
 
 void Texture::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
 {
-    //TODO:
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandFillTexure2D);
+        command.writeValue<Dimension2D>(offset);
+        command.writeValue<Dimension2D>(size);
+        command.writeValue(data, size.getArea(), 1);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, false);
+    }
+    else
+    {
+        Texture::immediateUpdate(offset, size, data, mipLevel);
+    }
 }
 
 void Texture::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 mipLevel)
 {
-    //TODO:
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandFillTexure3D);
+        command.writeValue<Dimension3D>(offset);
+        command.writeValue<Dimension3D>(size);
+        command.writeValue(data, size.getArea(), 1);
+        command.writeValue<u32>(mipLevel);
+
+        ENGINE_RENDERER->pushCommand(command, false);
+    }
+    else
+    {
+        Texture::immediateUpdate(offset, size, data, mipLevel);
+    }
 }
 
-void Texture::immidateFill(const void* data, u32 offset, u32 size, u32 mipLevel)
+void Texture::immediateFill(const void* data, u32 offset, u32 size, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -228,7 +311,7 @@ void Texture::immidateFill(const void* data, u32 offset, u32 size, u32 mipLevel)
     }
 }
 
-void Texture::immidateFill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
+void Texture::immediateFill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
 {
     if (m_impl)
     {
@@ -236,7 +319,7 @@ void Texture::immidateFill(const void* data, const core::Dimension2D& offset, co
     }
 }
 
-void Texture::immidateFill(const void * data, const core::Dimension3D & offset, const core::Dimension3D & size, u32 mipLevel)
+void Texture::immediateFill(const void * data, const core::Dimension3D & offset, const core::Dimension3D & size, u32 mipLevel)
 {
     if (m_impl)
     {

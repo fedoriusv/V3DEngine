@@ -353,7 +353,7 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     }
 }
 
-TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D & size, const void * data[6], u32 level)
+TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
     : m_target(eTextureCubeMap)
     , m_format(format)
     , m_type(type)
@@ -477,10 +477,10 @@ void TextureVK::update(const core::Dimension3D & offset, const core::Dimension3D
 void TextureVK::update(u32 cubemapSide, const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
 {
 }
-void TextureVK::read(void * data, u32 level) const
+void TextureVK::read(void const* data, u32 level) const
 {
 }
-void TextureVK::read(u32 cubemapSide, void * data, u32 level) const
+void TextureVK::read(u32 cubemapSide, void const* data, u32 level) const
 {
 }
 void TextureVK::fill(const void * data, u32 offset, u32 size, u32 level)

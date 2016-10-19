@@ -85,11 +85,11 @@ void CTextureD3D::update(u32 cubemapSide, const core::Dimension2D& offset, const
 {
 }
 
-void CTextureD3D::read(void* data, u32 level) const
+void CTextureD3D::read(void const* data, u32 level) const
 {
 }
 
-void CTextureD3D::read(u32 cubemapSide, void* data, u32 level) const
+void CTextureD3D::read(u32 cubemapSide, void const* data, u32 level) const
 {
 }
 

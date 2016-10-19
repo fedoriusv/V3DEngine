@@ -17,7 +17,7 @@ namespace utils
 
         void wait();
         bool tryWait();
-        void post();
+        void signal();
 
     private:
 

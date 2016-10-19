@@ -54,9 +54,11 @@ namespace renderer
 
         void                            draw();
 
-        void                            pushCommand(const RenderStreamCommand& command);
+        void                            pushCommand(const RenderStreamCommand& command, bool wait);
 
     private:
+
+        friend                          RenderThread;
 
         //render thread
         virtual void                    immediateInit() = 0;
