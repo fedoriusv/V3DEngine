@@ -305,15 +305,14 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_format(format)
     , m_type(type)
     , m_size(size)
+    , m_mipmapLevel(mipCount)
 
     , m_enable(false)
 
-    , m_anisotropicLevel(eAnisotropic16x)
-    , m_wrap(eClampToEdge)
-
     , m_minFilter(mipCount > 1 ? eLinearMipmapLinear : eLinear)
     , m_magFilter(eLinear)
-    , m_mipmapLevel(mipCount)
+    , m_anisotropicLevel(eAnisotropic16x)
+    , m_wrap(eClampToEdge)
 
     , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
@@ -327,41 +326,6 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_initialized(false)
 {
     LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
-
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-
-    TextureVK::create();
-    if (data)
-    {
-        switch (m_target)
-        {
-        case ETextureTarget::eTexture1D:
-        case ETextureTarget::eTextureBuffer:
-            for (u32 level = 0; level < m_mipmapLevel; ++level)
-            {
-                TextureVK::update(0, size.width, data, level);
-            }
-            break;
-
-        case ETextureTarget::eTexture1DArray:
-        case ETextureTarget::eTexture2D:
-        case ETextureTarget::eTexture2DMSAA:
-        case ETextureTarget::eTextureRectangle:
-            TextureVK::update(Dimension2D(0U, 0U), Dimension2D(size.width, size.height), data, level);
-            break;
-
-        case ETextureTarget::eTexture2DArray:
-        case ETextureTarget::eTexture3D:
-        case ETextureTarget::eTexture3DMSAA:
-            TextureVK::update(Dimension3D(0U, 0U, 0U), size, data, level);
-            break;
-
-        default:
-            ASSERT(false, "Invalid target");
-            break;
-        }
-    }
 }
 
 TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 mipCount)
@@ -391,18 +355,6 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_initialized(false)
 {
     LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
-
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-
-    TextureVK::create();
-    if (data)
-    {
-        for (u32 cubemapSide = 0; cubemapSide < k_textureCubemapSideCount; ++cubemapSide)
-        {
-            TextureVK::update(cubemapSide, Dimension2D(0U, 0U), size, data[cubemapSide], level);
-        }
-    }
 }
 
 TextureVK::~TextureVK()
@@ -415,17 +367,21 @@ TextureVK::~TextureVK()
 void TextureVK::bind(u32 unit)
 {
 }
+
 void TextureVK::unbind()
 {
 }
+
 bool TextureVK::isValid() const
 {
-    return false;
+    return m_initialized;
 }
+
 bool TextureVK::isEnable() const
 {
-    return false;
+    return m_enable;
 }
+
 void TextureVK::update(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
     VkBufferCreateInfo bufferCreateInfo = {};
@@ -479,33 +435,49 @@ void TextureVK::update(u32 offset, u32 size, const void* data, u32 mipLevel)
 
     //vkCmdCopyBufferToImage();
 
-    //memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
-    //vkDestroyBuffer(m_device, stagingBuffer, nullptr);
+    memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
+    vkDestroyBuffer(m_device, stagingBuffer, nullptr);
+    stagingBuffer = VK_NULL_HANDLE;
 }
 
 void TextureVK::update(const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
 {
+    //TODO:
 }
+
 void TextureVK::update(const core::Dimension3D & offset, const core::Dimension3D & size, const void * data, u32 level)
 {
+    //TODO:
 }
+
 void TextureVK::update(u32 cubemapSide, const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
 {
+    //TODO:
 }
+
 void TextureVK::read(void const* data, u32 level) const
 {
+    //TODO:
 }
+
 void TextureVK::read(u32 cubemapSide, void const* data, u32 level) const
 {
+    //TODO:
 }
+
 void TextureVK::fill(const void * data, u32 offset, u32 size, u32 level)
 {
+    //TODO:
 }
+
 void TextureVK::fill(const void * data, const core::Dimension2D & offset, const core::Dimension2D & size, u32 level)
 {
+    //TODO:
 }
+
 void TextureVK::fill(const void * data, const core::Dimension3D & offset, const core::Dimension3D & size, u32 level)
 {
+    //TODO:
 }
 
 ETextureTarget TextureVK::getTarget() const
@@ -555,33 +527,29 @@ EImageType TextureVK::getType() const
 
 void TextureVK::setFilterType(ETextureFilter min, ETextureFilter mag)
 {
-}
-void TextureVK::setWrap(EWrapType wrap)
-{
-}
-void TextureVK::setAnisotropicLevel(EAnisotropic level)
-{
-}
-void TextureVK::freeMemory(u32 texture)
-{
-}
-u32 TextureVK::getTextureID() const
-{
-    return u32();
-}
-void TextureVK::reset()
-{
-}
-u32 TextureVK::internalFormat(u32 format, u32 type)
-{
-    return u32();
-}
-void TextureVK::copyData(const TexturePtr & texture)
-{
+    //TODO:
 }
 
-bool TextureVK::create()
+void TextureVK::setWrap(EWrapType wrap)
 {
+    //TODO:
+}
+
+void TextureVK::setAnisotropicLevel(EAnisotropic level)
+{
+    //TODO:
+}
+
+void TextureVK::copyData(const TexturePtr & texture)
+{
+    //TODO:
+}
+
+bool TextureVK::create(const void* data, u32 srcSize)
+{
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
     VkImageCreateInfo imageCreateInfo = {};
     imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageCreateInfo.pNext = nullptr;
@@ -621,11 +589,15 @@ bool TextureVK::create()
         return false;
     }
 
+    //TODO: create mipmaps
+    //TODO: staging buffer
+
     return true;
 }
 
 void TextureVK::destroy()
 {
+    //TODO: in another thread
     if (m_memory._memory != VK_NULL_HANDLE)
     {
         MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
@@ -637,26 +609,6 @@ void TextureVK::destroy()
     {
         vkDestroyImage(m_device, m_image, nullptr);
     }
-}
-
-bool TextureVK::bindTexture(ETextureTarget target, u32 texture)
-{
-    return false;
-}
-void TextureVK::bindTexBuffer(u32 format, u32 texture, u32 buffer, u32 offset, u32 size)
-{
-}
-bool TextureVK::bindTextureUnit(u32 unit)
-{
-    return false;
-}
-s32 TextureVK::getActiveTexture(u32 target)
-{
-    return s32();
-}
-s32 TextureVK::getActiveTextureUnit()
-{
-    return s32();
 }
 
 } //namespace vk

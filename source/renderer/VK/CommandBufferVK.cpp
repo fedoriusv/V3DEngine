@@ -132,6 +132,7 @@ void CommandBufferVK::imageMemoryBarrier(VkImage image, VkImageAspectFlags aspec
     else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
     {
         //TODO: async command
+        ASSERT(false, "not implemented");
     }
 }
 
@@ -168,6 +169,7 @@ void CommandBufferVK::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageL
     else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
     {
         //TODO: async command
+        ASSERT(false, "not implemented");
     }
 }
 

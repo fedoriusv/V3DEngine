@@ -14,6 +14,7 @@ namespace renderer
 
     enum ERenderCommand
     {
+        eCommandUnknown = -1,
         eCommandInitialize = 0,
 
         eCommadCreateTexture,
@@ -91,6 +92,8 @@ namespace renderer
 
         void                                threadWorker(void* data);
         void                                runCommand(const RenderStreamCommand& command);
+
+        ERenderCommand                      m_lastCommand;
 
         std::atomic_bool                    m_isRunning;
 

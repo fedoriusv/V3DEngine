@@ -22,8 +22,7 @@ RenderStreamCommand::RenderStreamCommand(RenderStreamCommand&& obj)
     : m_commandStream(std::move(obj.m_commandStream))
     , m_command(obj.m_command)
 {
-    //TODO: test
-    obj.m_command = eCommandTerminate;
+    obj.m_command = eCommandUnknown;
 }
 
 RenderStreamCommand::~RenderStreamCommand()
@@ -62,6 +61,7 @@ ERenderCommand RenderStreamCommand::getCommand() const
 RenderThread::RenderThread(const renderer::RendererPtr renderer)
     : m_renderer(renderer)
     , m_waitSemophore(1)
+    , m_lastCommand(eCommandUnknown)
 {
     bool result = m_thread.run(std::bind(&RenderThread::threadWorker, this, std::placeholders::_1), nullptr);
     if (!result)
@@ -297,35 +297,33 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
     case ERenderCommand::eCommadCreateTexture:
     {
         Texture* texute = command.readValue<Texture*>();
-        ETextureTarget target = command.readValue<ETextureTarget>();
-        EImageFormat format = command.readValue<EImageFormat>();
-        EImageType type = command.readValue<EImageType>();
-        u32 mipCount = command.readValue<u32>();
-        if (target == eTexture1D)
+        u32 size = command.readValue<u32>();
+        bool presentData = command.readValue<bool>();
+        void* data = nullptr;
+        if (presentData)
         {
-            u32 size = command.readValue<u32>(size);
-            bool presentData = command.readValue<bool>();
-            void* data = nullptr;
-            if (presentData)
+            if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
+            {
+                data = command.readValue(size, k_textureCubemapSideCount);
+            }
+            else
             {
                 data = command.readValue(size, 1);
             }
 
-
+            texute->create(data, size);
+            free(data);
         }
-        
 
-        
-        
-
-        
+        texute->create(nullptr, 0);
+        break;
     }
-
-    
 
     default:
         ASSERT(false, "Buffer command is unknown");
     }
+
+    m_lastCommand = cmd;
 }
 
 } //namespace renderer

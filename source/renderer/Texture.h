@@ -148,15 +148,13 @@ namespace renderer
     protected:
 
         Texture();
-        Texture(const TexturePtr impl);
 
         virtual void                        copyData(const TexturePtr& texture);
+        virtual bool                        create(const void* data, u32 srcSize);
 
     private:
 
         friend                              RenderThread;
-
-        void                                immediateCreate();
 
         void                                immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
         void                                immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
@@ -169,7 +167,7 @@ namespace renderer
         void                                immediateFill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
 
 
-        TexturePtr                          m_impl;
+        TexturePtr const                    m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

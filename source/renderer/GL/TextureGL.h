@@ -43,19 +43,19 @@ namespace gl
         void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 level = 0U) override;
         void                        fill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 level = 0U) override;
 
-        ETextureTarget              getTarget()      const override;
-        ETextureFilter              getMinFiler()    const override;
-        ETextureFilter              getMagFiler()    const override;
-        EWrapType                   getWrap()        const override;
+        ETextureTarget              getTarget() const override;
+        ETextureFilter              getMinFilter() const override;
+        ETextureFilter              getMagFilter() const override;
+        EWrapType                   getWrap() const override;
         EAnisotropic                getAnisotropic() const override;
-        u32                         getMipmapLevel() const override;
-        const core::Dimension3D&    getSize()        const override;
-        EImageFormat                getFormat()      const override;
-        EImageType                  getType()        const override;
+        u32                         getMipmapLevels() const override;
+        const core::Dimension3D&    getSize() const override;
+        EImageFormat                getFormat() const override;
+        EImageType                  getType() const override;
 
-        void                        setFilterType(ETextureFilter min, ETextureFilter mag)   override;
-        void                        setWrap(EWrapType wrap)                                 override;
-        void                        setAnisotropicLevel(EAnisotropic level)                 override;
+        void                        setFilterType(ETextureFilter min, ETextureFilter mag) override;
+        void                        setWrap(EWrapType wrap)  override;
+        void                        setAnisotropicLevel(EAnisotropic level) override;
 
         void                        freeMemory(u32 texture);
 
