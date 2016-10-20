@@ -11,8 +11,8 @@ namespace stream
     class IStream
     {
     public:
-        IStream(){};
-        virtual         ~IStream(){};
+        IStream() {}
+        virtual         ~IStream() {}
 
         template <class T>
         u32             read(T& value) const;

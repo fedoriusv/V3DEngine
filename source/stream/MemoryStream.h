@@ -13,6 +13,8 @@ namespace stream
     public:
 
         MemoryStream();
+        MemoryStream(const MemoryStream& stream);
+        MemoryStream(MemoryStream&& stream);
         MemoryStream(const void* data, u32 size);
         ~MemoryStream();
 

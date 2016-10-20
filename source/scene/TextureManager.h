@@ -38,7 +38,12 @@ namespace scene
         renderer::TexturePtr         createTextureFromImage(const resources::CImage* image);
         renderer::TexturePtr         createCubeTextureFromImages(const resources::CImage* image[6]);
 
+        u32                          calculateMipmapDataSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 mipCount);
+        void*                        generateMipMaps(const core::Dimension3D& size, const void* data, renderer::EImageFormat format, renderer::EImageType type, u32 mipCount);
+
     private:
+
+        u32                         culculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level);
 
         std::string                 getFileExtension(const std::string& fullFileName);
 

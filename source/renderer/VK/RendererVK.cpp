@@ -62,6 +62,11 @@ MemoryManagerVK* RendererVK::getMemoryManager()
     return m_memoryMamager;
 }
 
+CommandBufferVK* RendererVK::getCurrentCommandBuffer() const
+{
+    return m_currentCommandBuffer;
+}
+
 void RendererVK::preRender(bool clear)
 {
 }

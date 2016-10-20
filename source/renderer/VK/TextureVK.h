@@ -91,9 +91,8 @@ namespace vk
         VkImageView                     m_imageView;
         VkImageLayout                   m_imageLayout;
         VkImageUsageFlags               m_usage;
-
-        VkDeviceMemory                  m_deviceMemory;
-        bool                            m_mappable;
+        VkImageCreateFlags              m_flags;
+        VkImageFormatProperties         m_imageProps;
 #endif //_VULKAN_RENDER_
 
         std::atomic<bool>               m_initialized;

@@ -14,6 +14,35 @@ MemoryStream::MemoryStream()
 {
 }
 
+MemoryStream::MemoryStream(const MemoryStream& stream)
+    : m_stream(nullptr)
+    , m_length(stream.m_length)
+    , m_allocated(stream.m_allocated)
+    , m_pos(stream.m_pos)
+    , m_mapped(false)
+{
+    ASSERT(!m_mapped, "data is mapped");
+    if (!m_stream && m_allocated > 0)
+    {
+        MemoryStream::allocate(m_allocated);
+        memcpy(m_stream, stream.m_stream, m_length);
+    }
+}
+
+MemoryStream::MemoryStream(MemoryStream&& stream)
+    : m_stream(nullptr)
+    , m_length(0)
+    , m_allocated(0)
+    , m_pos(0)
+    , m_mapped(false)
+{
+    std::swap(m_stream, stream.m_stream);
+    std::swap(m_length, stream.m_length);
+    std::swap(m_allocated, stream.m_allocated);
+    std::swap(m_pos, stream.m_pos);
+    ASSERT(!m_mapped, "data is mapped");
+}
+
 MemoryStream::MemoryStream(const void* data, u32 size)
     : m_stream((u8*)data)
     , m_length(size)

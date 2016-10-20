@@ -580,9 +580,6 @@ void DeviceContextVK::fillGrapthicCaps()
 
         m_graphicsCaps.setSamplesCount(countSamples);
     }
-
-    //vkGetPhysicalDeviceImageFormatProperties();
-    //m_vulkanPropsDevice._properties.limits.maxMipLevels
 }
 
 void DeviceContextVK::printExtensionList() const

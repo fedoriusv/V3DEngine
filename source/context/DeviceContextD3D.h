@@ -1,13 +1,12 @@
 #pragma once
 
 #include "DeviceContext.h"
+
+#ifdef _DIRECT3D_RENDER_
 #if defined(_PLATFORM_WIN_)
 #   include <windows.h>
 #endif //_PLATFORM_WIN_
-
-#ifdef _DIRECT3D_RENDER_
-#   include <d3d11.h>
-#endif //_DIRECT3D_RENDER_
+#include <d3d11.h>
 
 namespace v3d
 {
@@ -63,3 +62,5 @@ namespace d3d
 } //namespace d3d
 } //namespace renderer
 } //namespace v3d
+
+#endif //_DIRECT3D_RENDER_

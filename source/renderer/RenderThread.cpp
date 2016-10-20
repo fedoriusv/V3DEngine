@@ -43,6 +43,11 @@ void RenderStreamCommand::writeValue(const void* data, u32 size, u32 count)
     m_commandStream.write(data, size, count);
 }
 
+void RenderStreamCommand::endCommand()
+{
+    m_commandStream.seekBeg(0);
+}
+
 void* RenderStreamCommand::getStreamData() const
 {
     return m_commandStream.getData();

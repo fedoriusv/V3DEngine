@@ -17,6 +17,7 @@ namespace vk
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class MemoryManagerVK;
+    class CommandBufferVK;
 
     /**
     * Inherited class for general render management. Vulkan render only.
@@ -32,6 +33,7 @@ namespace vk
 
         const ContextVKPtr      getVulkanContext() const;
         MemoryManagerVK*        getMemoryManager();
+        CommandBufferVK*        getCurrentCommandBuffer() const;
 
     private:
 
@@ -44,6 +46,7 @@ namespace vk
         void                    immediateDraw() override;
 
         MemoryManagerVK*        m_memoryMamager;
+        CommandBufferVK*        m_currentCommandBuffer;
 
         VkDevice                m_device;
         u32                     m_queueFamilyIndex;

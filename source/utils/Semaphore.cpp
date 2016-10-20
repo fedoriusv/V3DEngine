@@ -1,4 +1,5 @@
 #include "Semaphore.h"
+#include "utils/Logger.h"
 
 namespace v3d
 {
@@ -19,6 +20,10 @@ void Semaphore::wait()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
     
+    if (m_countThreads < m_maxThreads)
+    {
+        LOG_DEBUG("Semaphore::wait: lock thread");
+    }
     m_cv.wait(lock, [&]
     {
         return m_countThreads >= m_maxThreads;
@@ -45,6 +50,7 @@ void Semaphore::signal()
     
     if (m_maxThreads > m_countThreads)
     {
+        LOG_DEBUG("Semaphore::signal: release thread");
         ++m_countThreads;
     }
 

@@ -48,6 +48,8 @@ namespace renderer
         void                writeValue(const T& val, u32 count = 1);
         void                writeValue(const void* data, u32 size, u32 count = 1);
 
+        void                endCommand();
+
         void*               getStreamData() const;
         u32                 getStreamSize() const;
 

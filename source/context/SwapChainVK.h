@@ -2,13 +2,13 @@
 
 #include "common.h"
 
-#if defined(_VULKAN_RENDER_)
-#   include <vulkan/vulkan.h>
-#   include "DeviceContextVK.h"
+#ifdef _VULKAN_RENDER_
+#include <vulkan/vulkan.h>
+#include "DeviceContextVK.h"
 
-#   if defined(_PLATFORM_WIN_)
+#if defined(_PLATFORM_WIN_)
 #   include <windows.h>
-#   endif //_PLATFORM_WIN_
+#endif //_PLATFORM_WIN_
 
 namespace v3d
 {

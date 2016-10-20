@@ -2,8 +2,8 @@
 
 #include "DeviceContext.h"
 
-#if defined(_VULKAN_RENDER_) 
-#   include <vulkan/vulkan.h>
+#ifdef _VULKAN_RENDER_
+#include <vulkan/vulkan.h>
 
 namespace v3d
 {

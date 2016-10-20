@@ -1,10 +1,12 @@
 #pragma once
 
 #include "DeviceContext.h"
+
+#ifdef _OPENGL_RENDER_
 #if defined(_PLATFORM_WIN_)
-#   include <windows.h>
+#include <windows.h>
 #elif defined(_PLATFORM_MACOSX_)
-#   include <pthread.h>
+#include <pthread.h>
 #endif //_PLATFORM_MACOSX_
 
 namespace v3d
@@ -67,3 +69,5 @@ namespace gl
 } //namespace gl
 } //namespace renderer
 } //namespace v3d
+
+#endif //_OPENGL_RENDER_

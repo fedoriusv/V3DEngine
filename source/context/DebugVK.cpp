@@ -1,6 +1,8 @@
 #include "DebugVK.h"
 #include "utils/Logger.h"
 
+#ifdef _VULKAN_RENDER_
+
 namespace v3d
 {
 namespace renderer
@@ -179,3 +181,5 @@ bool DebugVK::checkValidationLayerSupported(const c8* layerName)
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_

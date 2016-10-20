@@ -1,10 +1,12 @@
 #include "TextureVK.h"
 #include "Engine.h"
 #include "utils/Logger.h"
+#include "scene/TextureManager.h"
 
 #ifdef _VULKAN_RENDER_
 #   include "context/DebugVK.h"
 #   include "RendererVK.h"
+#   include "CommandBufferVK.h"
 
 namespace v3d
 {
@@ -27,6 +29,7 @@ VkImageType getImageTypeVK(ETextureTarget target)
         case ETextureTarget::eTexture1DArray:
         case ETextureTarget::eTexture2D:
         case ETextureTarget::eTexture2DMSAA:
+        case ETextureTarget::eTextureCubeMap:
             return VK_IMAGE_TYPE_2D;
 
         case ETextureTarget::eTexture2DArray:
@@ -98,6 +101,10 @@ u32 getArrayLayersCountVK(ETextureTarget target, const Dimension3D& size)
     case ETextureTarget::eTexture3DMSAA:
         arrayLayer = 1;
         break;
+
+    case ETextureTarget::eTextureCubeMap:
+        arrayLayer = k_textureCubemapSideCount;
+        break;
     }
 
     return arrayLayer;
@@ -131,6 +138,10 @@ VkExtent3D getImageExtentVK(ETextureTarget target, const Dimension3D& size)
     case ETextureTarget::eTexture3D:
     case ETextureTarget::eTexture3DMSAA:
         imageSize = { size.width, size.height, size.depth };
+        break;
+
+    case ETextureTarget::eTextureCubeMap:
+        imageSize = { size.width, size.height, 1 };
         break;
     }
 
@@ -305,7 +316,7 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_format(format)
     , m_type(type)
     , m_size(size)
-    , m_mipmapLevel(mipCount)
+    , m_mipmapLevel(m_target == ETextureTarget::eTexture2DMSAA || m_target == ETextureTarget::eTexture3DMSAA ? 1 : mipCount)
 
     , m_enable(false)
 
@@ -319,17 +330,26 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_image(VK_NULL_HANDLE)
     , m_imageView(VK_NULL_HANDLE)
     , m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
-    , m_usage(VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT)
-    , m_deviceMemory(VK_NULL_HANDLE)
-    , m_mappable(false)
+    , m_usage(0)
+    , m_flags(0)
 
     , m_initialized(false)
 {
     LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
+
+    if (m_target == ETextureTarget::eTextureRectangle || m_target == ETextureTarget::eTexture2DMSAA || m_target == ETextureTarget::eTexture3DMSAA)
+    {
+        ASSERT(!data, "data must be nullptr");
+        m_usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    }
+    else
+    {
+        m_usage  = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    }
 }
 
 TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 mipCount)
-    : m_target(eTextureCubeMap)
+    : m_target(ETextureTarget::eTextureCubeMap)
     , m_format(format)
     , m_type(type)
     , m_size(Dimension3D(size.width, size.height, 1))
@@ -349,8 +369,7 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_imageView(VK_NULL_HANDLE)
     , m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
     , m_usage(VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT)
-    , m_deviceMemory(VK_NULL_HANDLE)
-    , m_mappable(false)
+    , m_flags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT)
 
     , m_initialized(false)
 {
@@ -547,15 +566,36 @@ void TextureVK::copyData(const TexturePtr & texture)
 
 bool TextureVK::create(const void* data, u32 srcSize)
 {
+    if (m_initialized)
+    {
+        return true;
+    }
+
     m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
+    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
+    VkFormat format = getImageFormatVK(m_format, m_type);
+    VkImageType imageType = getImageTypeVK(m_target);
+
+    vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
+    ASSERT(m_mipmapLevel <= m_imageProps.maxMipLevels, "unsupport mipmap level");
+    //ASSERT(m_imageProps.)
+
+    VkFormatProperties formatProperties = {};
+    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
+    
+    if (m_usage & VK_IMAGE_USAGE_SAMPLED_BIT)
+    {
+        ASSERT(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT, "Unsupport used feature");
+    }
 
     VkImageCreateInfo imageCreateInfo = {};
     imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageCreateInfo.pNext = nullptr;
-    imageCreateInfo.flags = 0;
-    imageCreateInfo.imageType = getImageTypeVK(m_target);
-    imageCreateInfo.format = getImageFormatVK(m_format, m_type);
+    imageCreateInfo.flags = m_flags;
+    imageCreateInfo.imageType = imageType;
+    imageCreateInfo.format = format;
     imageCreateInfo.mipLevels = m_mipmapLevel;
     imageCreateInfo.arrayLayers = getArrayLayersCountVK(m_target, m_size);
     imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount(), m_target);
@@ -589,8 +629,53 @@ bool TextureVK::create(const void* data, u32 srcSize)
         return false;
     }
 
-    //TODO: create mipmaps
-    //TODO: staging buffer
+    u32 mipMapSize = scene::TextureManager::getInstance()->calculateMipmapDataSize(m_size, m_format, m_type, m_mipmapLevel);
+    void* mipmapData = scene::TextureManager::getInstance()->generateMipMaps(m_size, data, m_format, m_type, m_mipmapLevel);
+    if (!mipmapData)
+    {
+        LOG_ERROR("TextureVK::create: can't create mipmap data");
+        return false;
+    }
+
+
+    VkBufferCreateInfo bufferCreateInfo = {};
+    bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCreateInfo.pNext = nullptr;
+    bufferCreateInfo.flags = 0;
+    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    bufferCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
+    bufferCreateInfo.queueFamilyIndexCount = 1;
+    bufferCreateInfo.size = mipMapSize;
+    bufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+    VkBuffer stagingBuffer = VK_NULL_HANDLE;
+    result = vkCreateBuffer(m_device, &bufferCreateInfo, nullptr, &stagingBuffer);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("TextureVK::update: vkCreateBuffer. Error %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    SMemoryVK stagingMemory = memoryManager->allocateImage(*memoryManager->getSimpleAllocator(), m_image, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT /*| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/);
+    if (stagingMemory._mapped == VK_NULL_HANDLE)
+    {
+        LOG_ERROR("TextureVK::create: allocateImage return invalid memory");
+        return false;
+    }
+
+    ASSERT(stagingMemory._mapped, "map is nullptr");
+    memcpy(stagingMemory._mapped, data, mipMapSize);
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+    //commandBuffer->imageMemoryBarrier(, );
+    //commandBuffer->copyBufferToImage(stagingBuffer, m_image, ,);
+    //commandBuffer->imageMemoryBarrier();
+
+
+    memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
+    vkDestroyBuffer(m_device, stagingBuffer, nullptr);
+
+    m_initialized = true;
 
     return true;
 }

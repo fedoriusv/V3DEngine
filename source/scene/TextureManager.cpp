@@ -258,6 +258,90 @@ renderer::TexturePtr TextureManager::createCubeTextureFromImages(const resources
     return texure;
 }
 
+u32 TextureManager::calculateMipmapDataSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 mipCount)
+{
+    u32 componentCount = ImageFormat::componentCount(format);
+    u32 typeSize = ImageFormat::typeSize(type);
+    core::Dimension3D mipSize = size;
+
+    u32 value = 0;
+    for (u32 mip = 0; mip < mipCount; ++mip)
+    {
+        value += componentCount * typeSize * mipSize.getArea();
+
+        mipSize.width = core::max<u32>(mipSize.width / 2, 1);
+        mipSize.height = core::max<u32>(mipSize.height / 2, 1);
+        mipSize.depth = core::max<u32>(mipSize.depth / 2, 1);
+    }
+
+    return value;
+}
+
+void* TextureManager::generateMipMaps(const core::Dimension3D& size, const void* data, renderer::EImageFormat format, renderer::EImageType type, u32 mipCount)
+{
+    if (size.isNull() || !data)
+    {
+        return nullptr;
+    }
+
+    u32 componentCount = ImageFormat::componentCount(format);
+    u32 typeSize = ImageFormat::typeSize(type);
+    core::Dimension3D mipSize = size;
+
+    u32 generateSize = TextureManager::calculateMipmapDataSize(size, format, type, mipCount);
+    void* generateData = malloc(generateSize);
+
+    u8* nextGenerateData = reinterpret_cast<u8*>(generateData);
+    const u8* sourceData = reinterpret_cast<const u8*>(data);
+    u32 offset = componentCount * typeSize * mipSize.getArea();
+    memcpy(nextGenerateData, data, offset);
+    nextGenerateData += offset;
+
+    u32 step = 0;
+    for (u32 mip = 1; mip < mipCount; ++mip)
+    {
+        step = mip << 2;
+        u32 mipAllocSize = TextureManager::culculateMipmapLevelSize(size, format, type, mip);
+        u8* allocData = reinterpret_cast<u8*>(malloc(mipAllocSize));
+
+        for (u32 pos = 0; pos < mipSize.getArea(); pos = step)
+        {
+            memcpy(allocData, data, pos * componentCount * typeSize);
+            allocData += componentCount * typeSize;
+        }
+
+        mipSize.width = core::max<u32>(mipSize.width / 2, 1);
+        mipSize.height = core::max<u32>(mipSize.height / 2, 1);
+        mipSize.depth = core::max<u32>(mipSize.depth / 2, 1);
+
+        memcpy(nextGenerateData, allocData, mipAllocSize);
+        offset += mipAllocSize;
+
+        free(allocData);
+    }
+
+    return generateData;
+}
+
+u32 TextureManager::culculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level)
+{
+    u32 componentCount = ImageFormat::componentCount(format);
+    u32 typeSize = ImageFormat::typeSize(type);
+    core::Dimension3D mipSize = size;
+
+    u32 value = 0;
+    for (u32 mip = 0; mip < level; ++mip)
+    {
+        value = componentCount * typeSize * mipSize.getArea();
+
+        mipSize.width = core::max<u32>(mipSize.width / 2, 1);
+        mipSize.height = core::max<u32>(mipSize.height / 2, 1);
+        mipSize.depth = core::max<u32>(mipSize.depth / 2, 1);
+    }
+
+    return value;
+}
+
 std::string TextureManager::getFileExtension(const std::string& fullFileName)
 {
     std::string fileExtension = "";

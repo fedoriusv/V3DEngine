@@ -33,6 +33,7 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u3
         {
             command.writeValue(data, size, 1);
         }
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -62,6 +63,7 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
         {
             command.writeValue(data, size.getArea(), 1);
         }
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -88,6 +90,7 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
         {
             command.writeValue(data, size.getArea(), 1);
         }
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -111,6 +114,7 @@ Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& 
         {
             command.writeValue(data, size.getArea(), k_textureCubemapSideCount);
         }
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -164,6 +168,7 @@ void Texture::update(u32 offset, u32 size, const void* data, u32 mipLevel)
         command.writeValue<u32>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size, 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -184,6 +189,7 @@ void Texture::update(const core::Dimension2D& offset, const core::Dimension2D& s
         command.writeValue<Dimension2D>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size.getArea(), 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -204,6 +210,7 @@ void Texture::update(const core::Dimension3D& offset, const core::Dimension3D& s
         command.writeValue<Dimension3D>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size.getArea(), 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -224,6 +231,7 @@ void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const cor
         command.writeValue<Dimension2D>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size.getArea(), 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -266,6 +274,7 @@ void Texture::read(void const* data, u32 mipLevel) const
         command.writeValue<void const*>(data);
         command.writeValue<u32>(mipLevel);
         ENGINE_RENDERER->pushCommand(command, true);
+        command.endCommand();
     }
     else
     {
@@ -282,6 +291,7 @@ void Texture::read(u32 cubemapSide, void const* data, u32 mipLevel) const
         command.writeValue<void const*>(data);
         command.writeValue<u32>(mipLevel);
         command.writeValue<u32>(cubemapSide);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, true);
     }
@@ -314,6 +324,7 @@ void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
         command.writeValue<u32>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size, 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -334,6 +345,7 @@ void Texture::fill(const void* data, const core::Dimension2D& offset, const core
         command.writeValue<Dimension2D>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size.getArea(), 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
@@ -354,6 +366,7 @@ void Texture::fill(const void* data, const core::Dimension3D& offset, const core
         command.writeValue<Dimension3D>(size);
         ASSERT(data, "data is nullptr");
         command.writeValue(data, size.getArea(), 1);
+        command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }

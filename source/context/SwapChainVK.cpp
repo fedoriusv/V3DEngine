@@ -1,7 +1,7 @@
 #include "SwapChainVK.h"
 #include "utils/Logger.h"
 
-#if defined(_VULKAN_RENDER_)
+#ifdef _VULKAN_RENDER_
 #include "DebugVK.h"
 #include "DeviceContextVK.h"
 
