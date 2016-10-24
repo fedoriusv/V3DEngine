@@ -1,5 +1,6 @@
 #include "RendererVK.h"
 #include "MemoryManagerVK.h"
+#include "CommandPoolVK.h"
 #include "CommandBufferVK.h"
 
 namespace v3d
@@ -12,7 +13,7 @@ namespace vk
 RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
     , m_memoryMamager(nullptr)
-    , m_currentCommandBuffer(nullptr)
+    , m_commandPool(nullptr)
 {
     m_device = RendererVK::getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = RendererVK::getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
@@ -20,7 +21,8 @@ RendererVK::RendererVK(const ContextPtr context)
 
 RendererVK::~RendererVK()
 {
-    ASSERT(!m_memoryMamager, "m_memoryMamager exist");
+    ASSERT(!m_memoryMamager, "m_memoryMamager already exist");
+    ASSERT(!m_commandPool, "m_commandPool already exist");
 }
 
 platform::ERenderType RendererVK::getRenderType() const
@@ -35,7 +37,11 @@ void RendererVK::immediateInit()
         m_memoryMamager = new MemoryManagerVK(RendererVK::getVulkanContext());
     }
 
-    m_currentCommandBuffer = new CommandBufferVK();
+    if (!m_commandPool)
+    {
+        m_commandPool = new CommandPoolVK(RendererVK::getVulkanContext(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    }
+
     //TODO:
 }
 
@@ -67,7 +73,7 @@ MemoryManagerVK* RendererVK::getMemoryManager()
 
 CommandBufferVK* RendererVK::getCurrentCommandBuffer() const
 {
-    return m_currentCommandBuffer;
+    return m_commandPool->commandBuffer();
 }
 
 void RendererVK::preRender(bool clear)

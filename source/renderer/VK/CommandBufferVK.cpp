@@ -16,6 +16,7 @@ namespace vk
 CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     : m_commandBuffer(VK_NULL_HANDLE)
     , m_bufferLevel(level)
+    , m_commandPool(pool)
 
     , m_device(VK_NULL_HANDLE)
 {
@@ -24,8 +25,8 @@ CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     commandBufferAllocateInfo.pNext = nullptr;
-    commandBufferAllocateInfo.commandPool = pool;
-    commandBufferAllocateInfo.level = level;
+    commandBufferAllocateInfo.commandPool = m_commandPool;
+    commandBufferAllocateInfo.level = m_bufferLevel;
     commandBufferAllocateInfo.commandBufferCount = 1;
 
     VkResult result = vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, &m_commandBuffer);
@@ -37,9 +38,58 @@ CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
 
 CommandBufferVK::~CommandBufferVK()
 {
+    if (m_commandBuffer != VK_NULL_HANDLE)
+    {
+        vkFreeCommandBuffers(m_device, m_commandPool, 1, &m_commandBuffer);
+        m_commandBuffer = VK_NULL_HANDLE;
+    }
 }
 
-void CommandBufferVK::imageMemoryBarrier(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange)
+void CommandBufferVK::clearColorImage(VkImage image, VkImageLayout imageLayout, const core::Vector4D& color, const VkImageSubresourceRange& subresourceRange)
+{
+    VkClearColorValue clearColorValue = {};
+    clearColorValue.float32[0] = color[0];
+    clearColorValue.float32[1] = color[1];
+    clearColorValue.float32[2] = color[2];
+    clearColorValue.float32[3] = color[3];
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdClearColorImage(m_commandBuffer, image, imageLayout, &clearColorValue, 1, &subresourceRange);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+}
+
+void CommandBufferVK::clearDepthStencilImage(VkImage image, VkImageLayout imageLayout, f32 depth, u32 stencil, const VkImageSubresourceRange& subresourceRange)
+{
+    VkClearDepthStencilValue clrearDepthStencilValue = {};
+    clrearDepthStencilValue.depth = depth;
+    clrearDepthStencilValue.stencil = stencil;
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdClearDepthStencilImage(m_commandBuffer, image, imageLayout, &clrearDepthStencilValue, 1, &subresourceRange);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+}
+
+void CommandBufferVK::beginRenderPass()
+{
+}
+
+void CommandBufferVK::endRenderPass()
+{
+}
+
+void CommandBufferVK::imageMemoryBarrier(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, const VkImageSubresourceRange& subresourceRange)
 {
     VkImageMemoryBarrier imageMemoryBarrier = {};
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -156,41 +206,45 @@ void CommandBufferVK::imageMemoryBarrier(VkImage image, VkImageAspectFlags aspec
     }
 }
 
-void CommandBufferVK::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageLayout layout, u32 layersCount, u32 mipLevel /*,, const VkExtent3D& extent, */)
+void CommandBufferVK::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageLayout layout, const VkImageSubresourceRange& subresourceRange)
 {
     std::vector<VkBufferImageCopy> bufferCopyRegions;
-    u32 buffOffset = 0;
+    //u32 buffOffset = 0;
 
-    for (u32 layer = 0; layer < layersCount; ++layer)
-    {
-        for (u32 mip = 0; mip < mipLevel; ++mip)
-        {
-            VkBufferImageCopy bufferCopyRegion = {};
-           /* bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            bufferCopyRegion.imageSubresource.mipLevel = mip;
-            bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
-            bufferCopyRegion.imageSubresource.layerCount = layersCount;*/
-            //bufferCopyRegion.imageExtent = extent;
-            //bufferCopyRegion.imageOffset = offset;
-            //bufferCopyRegion.bufferRowLength = ;
-            //bufferCopyRegion.bufferImageHeight = ;
-            //bufferCopyRegion.bufferOffset = buffOffset;
+    //for (u32 layer = 0; layer < layersCount; ++layer)
+    //{
+    //    for (u32 mip = 0; mip < mipLevel; ++mip)
+    //    {
+    //        VkBufferImageCopy bufferCopyRegion = {};
+    //       /* bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    //        bufferCopyRegion.imageSubresource.mipLevel = mip;
+    //        bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
+    //        bufferCopyRegion.imageSubresource.layerCount = layersCount;*/
+    //        //bufferCopyRegion.imageExtent = extent;
+    //        //bufferCopyRegion.imageOffset = offset;
+    //        //bufferCopyRegion.bufferRowLength = ;
+    //        //bufferCopyRegion.bufferImageHeight = ;
+    //        //bufferCopyRegion.bufferOffset = buffOffset;
 
-            bufferCopyRegions.push_back(bufferCopyRegion);
+    //        bufferCopyRegions.push_back(bufferCopyRegion);
 
-           // offset += static_cast<uint32_t>(tex2D[i].size());
-        }
-    }
+    //       // offset += static_cast<uint32_t>(tex2D[i].size());
+    //    }
+    //}
 
     if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
     {
-        vkCmdCopyBufferToImage(m_commandBuffer, buffer, image, layout, bufferCopyRegions.size(), bufferCopyRegions.data());
+        vkCmdCopyBufferToImage(m_commandBuffer, buffer, image, layout, static_cast<u32>(bufferCopyRegions.size()), bufferCopyRegions.data());
     }
     else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
     {
         //TODO: async command
         ASSERT(false, "not implemented");
     }
+}
+
+void CommandBufferVK::copyImageToImage()
+{
 }
 
 void CommandBufferVK::copyImageToBuffer()
@@ -215,51 +269,12 @@ void CommandBufferVK::copyBufferToBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
     }
 }
 
-
-
-CommandPoolVK::CommandPoolVK()
-    : m_commandPool(VK_NULL_HANDLE)
-    , m_creatFlags(0)
-    , m_resetFlags(0)
-
-    , m_device(VK_NULL_HANDLE)
-    , m_queueFamilyIndex(0)
+void CommandBufferVK::blitImage()
 {
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-
-    VkCommandPoolCreateInfo commandPoolCreateInfo = {};
-    commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    commandPoolCreateInfo.pNext = nullptr;
-    commandPoolCreateInfo.flags = m_creatFlags;
-    commandPoolCreateInfo.queueFamilyIndex = m_queueFamilyIndex;
-
-    VkResult result = vkCreateCommandPool(m_device, &commandPoolCreateInfo, nullptr, &m_commandPool);
-    if (result != VK_SUCCESS)
-    {
-        LOG_ERROR("CommandPoolVK::CommandPoolVK: vkCreateCommandPool. Error: %s", DebugVK::errorString(result).c_str());
-    }
 }
 
-CommandPoolVK::~CommandPoolVK()
+void CommandBufferVK::resolveImage()
 {
-    if (m_commandPool != VK_NULL_HANDLE)
-    {
-        vkDestroyCommandPool(m_device, m_commandPool, nullptr);
-        m_commandPool = nullptr;
-    }
-}
-
-bool CommandPoolVK::reset()
-{
-    VkResult result = vkResetCommandPool(m_device, m_commandPool, m_resetFlags);
-    if (result != VK_SUCCESS)
-    {
-        LOG_ERROR("CommandPoolVK::reset: vkResetCommandPool. Error: %s", DebugVK::errorString(result).c_str());
-        return false;
-    }
-
-    return true;
 }
 
 } //namespace vk

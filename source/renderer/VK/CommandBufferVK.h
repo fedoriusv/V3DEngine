@@ -3,8 +3,7 @@
 #include "common.h"
 
 #ifdef _VULKAN_RENDER_
-#   include "vulkan/vulkan.h"
-#endif //_VULKAN_RENDER_
+#include "vulkan/vulkan.h"
 
 namespace v3d
 {
@@ -12,31 +11,6 @@ namespace renderer
 {
 namespace vk
 {
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    class CommandBufferVK;
-
-    class CommandPoolVK
-    {
-    public:
-
-        CommandPoolVK();
-        ~CommandPoolVK();
-
-        bool reset();
-
-    private:
-
-        std::list<CommandBufferVK*> m_commandBufferList;
-
-        VkCommandPool               m_commandPool;
-        VkCommandPoolCreateFlags    m_creatFlags;
-        VkCommandPoolResetFlags     m_resetFlags;
-
-        VkDevice                    m_device;
-        u32                         m_queueFamilyIndex;
-    };
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -49,15 +23,26 @@ namespace vk
         CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level);
         ~CommandBufferVK();
 
-        void                    imageMemoryBarrier(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, VkImageSubresourceRange subresourceRange);
-        void                    copyBufferToImage(VkBuffer buffer, VkImage image, VkImageLayout layout, u32 layersCount, u32 mipLevels /*, const VkExtent3D& extent, */);
+        void                    clearColorImage(VkImage image, VkImageLayout imageLayout, const core::Vector4D& color, const VkImageSubresourceRange& subresourceRange);
+        void                    clearDepthStencilImage(VkImage image, VkImageLayout imageLayout, f32 depth, u32 stencil, const VkImageSubresourceRange& subresourceRange);
+
+        void                    beginRenderPass();
+        void                    endRenderPass();
+
+        void                    imageMemoryBarrier(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, const VkImageSubresourceRange& subresourceRange);
+        
+        void                    copyBufferToImage(VkBuffer buffer, VkImage image, VkImageLayout layout, const VkImageSubresourceRange& subresourceRange);
+        void                    copyImageToImage();
         void                    copyImageToBuffer();
         void                    copyBufferToBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, u64 size);
+        void                    blitImage();
+        void                    resolveImage();
 
     private:
 
         VkCommandBufferLevel    m_bufferLevel;
         VkCommandBuffer         m_commandBuffer;
+        VkCommandPool           m_commandPool;
 
         VkDevice                m_device;
     };
@@ -67,3 +52,5 @@ namespace vk
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_

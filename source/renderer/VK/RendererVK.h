@@ -3,9 +3,8 @@
 #include "renderer/Renderer.h"
 
 #ifdef _VULKAN_RENDER_
-#   include "vulkan/vulkan.h"
-#   include "context/DeviceContextVK.h"
-#endif //_VULKAN_RENDER_
+#include "vulkan/vulkan.h"
+#include "context/DeviceContextVK.h"
 
 namespace v3d
 {
@@ -18,6 +17,7 @@ namespace vk
 
     class MemoryManagerVK;
     class CommandBufferVK;
+    class CommandPoolVK;
 
     /**
     * Inherited class for general render management. Vulkan render only.
@@ -46,7 +46,8 @@ namespace vk
         void                    immediateDraw() override;
 
         MemoryManagerVK*        m_memoryMamager;
-        CommandBufferVK*        m_currentCommandBuffer;
+
+        CommandPoolVK*          m_commandPool;
 
         VkDevice                m_device;
         u32                     m_queueFamilyIndex;
@@ -74,3 +75,5 @@ namespace vk
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_
