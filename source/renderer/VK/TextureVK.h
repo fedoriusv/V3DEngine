@@ -1,12 +1,11 @@
 #pragma once
 
-#include "renderer/Texture.h"
+#include "common.h"
 
 #ifdef _VULKAN_RENDER_
-#   include "vulkan/vulkan.h"
-
-#   include "MemoryManagerVK.h"
-#endif //_VULKAN_RENDER_
+#include "vulkan/vulkan.h"
+#include "renderer/Texture.h"
+#include "MemoryManagerVK.h"
 
 namespace v3d
 {
@@ -64,7 +63,7 @@ namespace vk
     private:
 
         bool                            create(const void* data, u32 srcSize) override;
-        void                            destroy();
+        void                            destroy() override;
 
     private:
 
@@ -82,7 +81,6 @@ namespace vk
         std::atomic<EWrapType>          m_wrap;
 
     private:
-#ifdef _VULKAN_RENDER_
         VkDevice                        m_device;
         u32                             m_queueFamilyIndex;
 
@@ -93,7 +91,6 @@ namespace vk
         VkImageUsageFlags               m_usage;
         VkImageCreateFlags              m_flags;
         VkImageFormatProperties         m_imageProps;
-#endif //_VULKAN_RENDER_
 
         std::atomic<bool>               m_initialized;
    };
@@ -103,3 +100,5 @@ namespace vk
 } //namespace vk
 } //namespace renderer
 } //namespace v3d
+
+#endif //_VULKAN_RENDER_

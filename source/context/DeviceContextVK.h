@@ -40,8 +40,9 @@ namespace vk
 
     protected:
 
-        TexturePtr                              createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
-        TexturePtr                              createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) override;
+        Texture*                                createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
+        Texture*                                createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) override;
+        Buffer*                                 createBuffer(EBufferTarget target, EDataUsageType type) override;
 
         void                                    fillGrapthicCaps() override;
 

@@ -25,24 +25,24 @@ namespace renderer
         ePrimitivesModeCount
     };
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EBufferTarget
-    {
-        eVertexBuffer,
-        eIndexBuffer,
-        eTransformFeedbackBuffer,
-        eTextureStoreBuffer,
+    //enum EBufferTarget
+    //{
+    //    eVertexBuffer,
+    //    eIndexBuffer,
+    //    eTransformFeedbackBuffer,
+    //    eTextureStoreBuffer,
 
-        eBufferTargetCount
-    };
+    //    eBufferTargetCount
+    //};
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum EDataUsageType
     {
-        eDrawStatic,
-        eDrawDynamic,
+        eWriteStatic,
+        eWriteDynamic,
         eReadStatic,
         eReadDynamic,
         eCopyStatic,

@@ -1,48 +1,95 @@
-#ifndef _V3D_BUFFER_H_
-#define _V3D_BUFFER_H_
+#pragma once
 
+#include "utils/RefCounted.h"
+#include "utils/IntrusivePtr.h"
 #include "DataTypes.h"
 #include "GeometryTypes.h"
+
 
 namespace v3d
 {
 namespace renderer
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EBufferTarget
+    {
+        eStagingBuffer = -1,
+
+        eVertexBuffer,
+        eIndexBuffer,
+        eTransformFeedbackBuffer,
+        eTextureStoreBuffer,
+        eUniformsBuffer,
+
+        eBufferTargetCount
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*enum EDataUsageType
+    {
+        eWriteStatic,
+        eWriteDynamic,
+        eReadStatic,
+        eReadDynamic,
+        eCopyStatic,
+        eCopyDynamic,
+
+        eDataUsageTypeCount
+    };*/
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class Buffer;
+    class RenderThread;
+
+
+    using BufferPtr = utils::TIntrusivePtr<Buffer>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Interface for buffer objects management.
+    * Buffer resource.
     */
-    class Buffer
+    class Buffer : public utils::CRefCounted //, public utils::TCloneable<BufferPtr>
     {
     public:
 
-        explicit        Buffer(EBufferTarget target);
-        virtual         ~Buffer();
+        Buffer(EBufferTarget target, EDataUsageType type, u32 size, const void* data);
 
-        virtual void    bind() const = 0;
-        virtual void    bindToTarget(EBufferTarget target, u32 offset, u32 size) const  = 0;
+        Buffer(const Buffer&) = delete;
+        Buffer&                 operator=(const Buffer&) = delete;
 
-        virtual void    unbind() const  = 0;
+        virtual                 ~Buffer();
 
-        virtual void    set(EDataUsageType type, u32 size, const void* data)    = 0;
-        virtual void    update(u32 offset, u32 size, const void* data)          = 0;
-        virtual void    read(u32 offset, u32 size, void* data) const            = 0;
+        virtual void            bind() const;
+        virtual void            bindToTarget(EBufferTarget target, u32 offset, u32 size) const;
 
-        virtual void*   map(u32 access) = 0;
-        virtual bool    unmap() = 0;
+        virtual void            unbind() const;
 
-        EBufferTarget   getTarget() const;
+        virtual void            update(u32 offset, u32 size, const void* data);
+        virtual void            read(u32 offset, u32 size, void* const data);
+
+        virtual void* const     map(u32 offset, u32 size);
+        virtual bool            unmap();
+
+        virtual EBufferTarget   getTarget() const;
 
     protected:
 
-        EBufferTarget   m_target;
+        Buffer();
+
+        friend                  RenderThread;
+        virtual bool            create(u32 size = 0, const void* data = nullptr);
+        virtual void            destroy();
+
+    private:
+
+        Buffer*                 m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_BUFFER_H_

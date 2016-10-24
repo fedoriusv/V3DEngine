@@ -4,6 +4,7 @@
 #include "GraphicsCaps.h"
 #include "platform/Window.h"
 #include "renderer/Texture.h"
+#include "renderer/Buffer.h"
 
 namespace v3d
 {
@@ -46,9 +47,11 @@ namespace renderer
 
         friend                      platform::Platform;
         friend                      Texture;
+        friend                      Buffer;
 
-        virtual TexturePtr          createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
-        virtual TexturePtr          createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) = 0;
+        virtual Texture*            createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
+        virtual Texture*            createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) = 0;
+        virtual Buffer*             createBuffer(EBufferTarget target, EDataUsageType type) = 0;
 
         virtual void                fillGrapthicCaps() = 0;
 

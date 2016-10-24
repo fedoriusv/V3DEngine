@@ -8,6 +8,7 @@
 
 #include "SwapChainVK.h"
 #include "renderer/VK/TextureVK.h"
+#include "renderer/VK/BufferVK.h"
 
 #if defined(_PLATFORM_WIN_)
 #   include <windows.h>
@@ -537,14 +538,20 @@ const VkPhysicalDeviceMemoryProperties& DeviceContextVK::getVulkanPhysicalDevice
     return m_vulkanPropsDevice._memoryProperties;
 }
 
-TexturePtr DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
+Texture* DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
 {
     return new TextureVK(target, format, type, size, data, level);
 }
 
-TexturePtr DeviceContextVK::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
+Texture* DeviceContextVK::createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level)
 {
     return new TextureVK(format, type, size, data, level);
+}
+
+Buffer* DeviceContextVK::createBuffer(EBufferTarget target, EDataUsageType type)
+{
+    bool mappable = false;
+    return new BufferVK(target, type, mappable);
 }
 
 void DeviceContextVK::fillGrapthicCaps()
@@ -580,6 +587,22 @@ void DeviceContextVK::fillGrapthicCaps()
 
         m_graphicsCaps.setSamplesCount(countSamples);
     }
+
+    u32 contemporaneouslyMapping = m_vulkanPropsDevice._properties.limits.nonCoherentAtomSize;
+
+    //
+
+    LOG_INFO("Vuklan driver info:");
+    /*LOG("Render: %s", renderer);
+    LOG("Vendor: %s", vendor);
+    LOG("GLSL: %s", GLSL);
+    LOG("GL Version: %s", version);
+    LOG("Max Texure Units: %d", maxTextureUnits);
+    LOG("Max Texure Samplers: %d", maxTextureSamplers);
+    LOG("Max Anisotropy: %f", maxAnisotropy);
+    LOG("Max Draw Buffers: %d", maxDrawBuffers);
+    LOG("MSAA x%d", samplesCount);
+    LOG("Max supported patch vertices: %d", maxPatchVertices);*/
 }
 
 void DeviceContextVK::printExtensionList() const

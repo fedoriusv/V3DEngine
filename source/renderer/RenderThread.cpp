@@ -1,4 +1,5 @@
 #include "RenderThread.h"
+#include "utils/Logger.h"
 
 namespace v3d
 {
@@ -32,7 +33,7 @@ RenderStreamCommand::~RenderStreamCommand()
 
 void* RenderStreamCommand::readValue(u32 size, u32 count) const
 {
-    void* data = nullptr;
+    void* data = malloc(size * count);
     m_commandStream.read(data, size, count);
 
     return data;
@@ -151,16 +152,13 @@ void RenderThread::threadWorker(void* data)
             m_isRunning = false;
         }
 
+        RenderThread::wait();
         if (!m_commandBufferQueue.empty())
         {
-            RenderThread::wait();
             const RenderStreamCommand& command = RenderThread::popCommand();
             RenderThread::runCommand(command);
         }
-        else
-        {
-            RenderThread::submit();
-        }
+        RenderThread::submit();
     }
 }
 
@@ -299,28 +297,97 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         break;
     }
 
+    case ERenderCommand::eCommandDestoyTexure:
+    {
+        Texture* texuteImpl = command.readValue<Texture*>();
+        texuteImpl->destroy();
+        delete texuteImpl;
+        break;
+    }
+
     case ERenderCommand::eCommadCreateTexture:
     {
         Texture* texute = command.readValue<Texture*>();
+        u32 size = command.readValue<u32>();
+        EImageFormat format = command.readValue<EImageFormat>();
+        EImageType type = command.readValue<EImageType>();
+        bool presentData = command.readValue<bool>();
+        void* data = nullptr;
+        if (presentData)
+        {
+            u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
+            {
+                data = command.readValue(dataSize, k_textureCubemapSideCount);
+            }
+            else
+            {
+                data = command.readValue(dataSize, 1);
+            }
+
+            texute->create(data, dataSize);
+            free(data);
+        }
+
+        texute->create(nullptr, 0);
+        break;
+    }
+
+    case ERenderCommand::eCommandCreateBuffer:
+    {
+        Buffer* buffer = command.readValue<Buffer*>();
         u32 size = command.readValue<u32>();
         bool presentData = command.readValue<bool>();
         void* data = nullptr;
         if (presentData)
         {
-            if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
-            {
-                data = command.readValue(size, k_textureCubemapSideCount);
-            }
-            else
-            {
-                data = command.readValue(size, 1);
-            }
-
-            texute->create(data, size);
-            free(data);
+            data = command.readValue(size, 1);
         }
 
-        texute->create(nullptr, 0);
+        if (!buffer->create(size, data))
+        {
+            LOG_ERROR("ERenderCommand::eCommandCreateBuffer: can't create buffer");
+        }
+
+        free(data);
+        break;
+    }
+
+    case ERenderCommand::eCommandUpdateBuffer:
+    {
+        Buffer* buffer = command.readValue<Buffer*>();
+        u32 offset = command.readValue<u32>();
+        u32 size = command.readValue<u32>();
+        bool presentData = command.readValue<bool>();
+        void* data = nullptr;
+        if (presentData)
+        {
+            data = command.readValue(size, 1);
+        }
+
+        buffer->update(offset, size, data);
+        free(data);
+        break;
+    }
+
+    case ERenderCommand::eCommandReadBuffer:
+    {
+        Buffer* buffer = command.readValue<Buffer*>();
+        u32 offset = command.readValue<u32>();
+        u32 size = command.readValue<u32>();
+        void* data = command.readValue<void*>();
+
+        buffer->read(offset, size, data);
+        break;
+    }
+
+    case ERenderCommand::eCommandDestroyBuffer:
+    {
+        Buffer* buffer = command.readValue<Buffer*>();
+
+        buffer->destroy();
+        delete buffer;
+
         break;
     }
 

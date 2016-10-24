@@ -39,7 +39,7 @@ bool CGeometry::SInterval::operator==(const CGeometry::SInterval& interval)
 
 CGeometry::CGeometry(const CRenderTechnique* technique)
     : m_drawMode(EPrimitivesMode::eTriangles)
-    , m_geometyType(EDataUsageType::eDrawStatic)
+    , m_geometyType(EDataUsageType::eWriteStatic)
     , m_technique(technique)
 
     , m_vertexBuffer(nullptr)

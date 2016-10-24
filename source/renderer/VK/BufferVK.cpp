@@ -1,0 +1,306 @@
+#include "BufferVK.h"
+#include "utils/Logger.h"
+#include "Engine.h"
+
+#ifdef _VULKAN_RENDER_
+#include "context/DebugVK.h"
+#include "RendererVK.h"
+#include "CommandBufferVK.h"
+
+namespace v3d
+{
+namespace renderer
+{
+namespace vk
+{
+
+VkBufferUsageFlags EBufferTargetVK[EBufferTarget::eBufferTargetCount] =
+{
+    VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+    VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+    VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT
+};
+
+VkBufferUsageFlags EDataUsageTypeVK[EDataUsageType::eDataUsageTypeCount] =
+{
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+};
+
+BufferVK::BufferVK(EBufferTarget target, EDataUsageType type, bool mappable)
+    : m_target(target)
+    , m_type(type)
+
+    , m_hostMemory(false)
+    , m_coherentMemory(false)
+    , m_mapped(false)
+
+    , m_device(VK_NULL_HANDLE)
+    , m_queueFamilyIndex(0)
+
+    , m_memory(k_invalidMemory)
+    , m_buffer(VK_NULL_HANDLE)
+    , m_flags(0)
+    , m_usage(0)
+
+    , m_initialized(false)
+{
+    LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
+
+    if (m_target == EBufferTarget::eStagingBuffer)
+    {
+        m_usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        m_hostMemory = true;
+        m_coherentMemory = false;
+
+        return;
+    }
+
+    m_usage = EDataUsageTypeVK[m_type];
+    if (mappable)
+    {
+        m_usage = EBufferTargetVK[m_target];
+        m_hostMemory = true;
+
+        if (m_type == EDataUsageType::eWriteStatic || m_type == EDataUsageType::eReadStatic || m_type == EDataUsageType::eCopyStatic)
+        {
+            m_coherentMemory = false;
+        }
+        else
+        {
+            m_coherentMemory = true;
+        }
+    }
+    else
+    {
+        m_usage |= EBufferTargetVK[m_target];
+        m_hostMemory = false;
+        m_coherentMemory = false;
+    }
+}
+
+BufferVK::~BufferVK()
+{
+    LOG_DEBUG("TextureVK::TextureVK destructor %x", this);
+
+    ASSERT(m_buffer == VK_NULL_HANDLE, "m_buffer already exist");
+    ASSERT(m_memory._memory == VK_NULL_HANDLE, "m_memory already exist");
+}
+
+void BufferVK::bind() const
+{
+    //TODO:
+}
+
+void BufferVK::bindToTarget(EBufferTarget target, u32 offset, u32 size) const
+{
+    //TODO:
+}
+
+void BufferVK::unbind() const
+{
+    //TODO:
+}
+
+void BufferVK::update(u32 offset, u32 size, const void* data)
+{
+    if (!m_initialized)
+    {
+        return;
+    }
+
+    if (m_hostMemory || m_coherentMemory)
+    {
+        void* mappedData = BufferVK::map(offset, size);
+        ASSERT(mappedData, "m_memory._mapped not mapped");
+
+        u8* memPos = reinterpret_cast<u8*>(mappedData);
+        if ((memPos + offset) + size > memPos + m_memory._size)
+        {
+            ASSERT(false, "data range out");
+        }
+        memcpy(memPos + offset, data, size);
+
+        BufferVK::unmap();
+    }
+    else
+    {
+        BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
+        if (stagingBuffer->create(size, data))
+        {
+            CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+            commandBuffer->copyBufferToBuffer(stagingBuffer->m_buffer, m_buffer, size);
+        }
+
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+    }
+}
+
+void BufferVK::read(u32 offset, u32 size, void* const data)
+{
+    if (!m_initialized)
+    {
+        return;
+    }
+
+    if (m_hostMemory || m_coherentMemory)
+    {
+        void* mappedData = BufferVK::map(offset, size);
+        ASSERT(mappedData, "m_memory._mapped not mapped");
+
+        u8* memPos = reinterpret_cast<u8*>(mappedData);
+        if ((memPos + offset) + size > memPos + m_memory._size)
+        {
+            ASSERT(false, "data range out");
+        }
+        memcpy(data, memPos + offset, size);
+
+        BufferVK::unmap();
+    }
+    else
+    {
+        BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eReadStatic);
+        if (stagingBuffer->create())
+        {
+            CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+            commandBuffer->copyBufferToBuffer(m_buffer, stagingBuffer->m_buffer, size);
+
+            stagingBuffer->read(offset, size, data);
+        }
+
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+    }
+}
+
+void* const BufferVK::map(u32 offset, u32 size)
+{
+    if (!m_initialized)
+    {
+        return nullptr;
+    }
+
+    if (!m_hostMemory)
+    {
+        ASSERT(false, "Try mapped not mappable memory");
+        return nullptr;
+    }
+
+    if (!m_mapped && m_memory._mapped)
+    {
+        m_mapped = true;
+
+        if (m_target == EBufferTarget::eStagingBuffer)
+        {
+            return m_memory._mapped;
+        }
+
+        MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+        return memoryManager->beginAccessToDeviceMemory(m_memory);
+    }
+
+    return nullptr;
+}
+
+bool BufferVK::unmap()
+{
+    if (!m_initialized)
+    {
+        return false;
+    }
+
+    if (!m_hostMemory)
+    {
+        ASSERT(false, "Try unmapped not mappable memory");
+        return false;
+    }
+
+    if (m_mapped && m_memory._mapped)
+    {
+        m_mapped = false;
+
+        if (m_target == EBufferTarget::eStagingBuffer)
+        {
+            return true;
+        }
+
+         MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+         return memoryManager->endAccessToDeviceMemory(m_memory);
+    }
+
+    return false;
+}
+
+bool BufferVK::create(u32 size, const void* data)
+{
+    if (m_initialized)
+    {
+        return true;
+    }
+
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
+    VkBufferCreateInfo bufferCreateInfo = {};
+    bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCreateInfo.pNext = nullptr;
+    bufferCreateInfo.flags = m_flags;
+    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    bufferCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
+    bufferCreateInfo.queueFamilyIndexCount = 1;
+    bufferCreateInfo.size = static_cast<VkDeviceSize>(size);
+    bufferCreateInfo.usage = m_usage;
+
+    VkResult result = vkCreateBuffer(m_device, &bufferCreateInfo, nullptr, &m_buffer);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("BufferVK::create. Error %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+    VkMemoryPropertyFlags memFlags = m_hostMemory ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    if (m_coherentMemory)
+    {
+        memFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    }
+
+    m_memory = memoryManager->allocateBuffer(*memoryManager->getSimpleAllocator(), m_buffer, memFlags);
+    if (m_memory._memory == VK_NULL_HANDLE)
+    {
+        LOG_ERROR("BufferVK::create: return invalid memory");
+        return false;
+    }
+
+    m_initialized = true;
+    BufferVK::update(0, size, data);
+
+    return true;
+}
+
+void BufferVK::destroy()
+{
+    if (m_memory._memory != VK_NULL_HANDLE)
+    {
+        MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+        memoryManager->free(*memoryManager->getSimpleAllocator(), m_memory);
+    }
+
+    if (m_buffer != VK_NULL_HANDLE)
+    {
+        vkDestroyBuffer(m_device, m_buffer, nullptr);
+    }
+}
+
+} //namespace vk
+} //namespace renderer
+} //namespace v3d
+
+#endif //_VULKAN_RENDER_

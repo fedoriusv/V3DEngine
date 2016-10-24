@@ -9,11 +9,6 @@
 namespace v3d
 {
 
-//namespace scene
-//{
-//    class TextureManager;
-//}
-
 namespace resources
 {
     class CImage;
@@ -88,12 +83,12 @@ namespace renderer
     class Texture;
     class RenderThread;
 
-    typedef utils::TIntrusivePtr<Texture> TexturePtr;
+    using TexturePtr = utils::TIntrusivePtr<Texture>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Base Interface for texture entity.
+    * Texture resource.
     */
     class Texture : public utils::CRefCounted, public utils::TCloneable<TexturePtr>
     {
@@ -104,10 +99,10 @@ namespace renderer
         Texture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data = nullptr, u32 mipCount = 1U);
         Texture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[k_textureCubemapSideCount] = {}, u32 mipCount = 1U);
 
-        Texture(const Texture&)               = delete;
-        Texture& operator=(const Texture&)    = delete;
+        Texture(const Texture&) = delete;
+        Texture&                            operator=(const Texture&) = delete;
 
-        virtual ~Texture();
+        virtual                             ~Texture();
 
         virtual void                        bind(u32 unit);
         virtual void                        unbind();
@@ -150,11 +145,13 @@ namespace renderer
         Texture();
 
         virtual void                        copyData(const TexturePtr& texture);
-        virtual bool                        create(const void* data, u32 srcSize);
 
-    private:
 
         friend                              RenderThread;
+        virtual bool                        create(const void* data, u32 srcSize);
+        virtual void                        destroy();
+
+    private:
 
         void                                immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
         void                                immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
@@ -167,7 +164,7 @@ namespace renderer
         void                                immediateFill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
 
 
-        TexturePtr const                    m_impl;
+        Texture* const                      m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

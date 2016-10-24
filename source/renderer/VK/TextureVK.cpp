@@ -366,6 +366,7 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
     , m_image(VK_NULL_HANDLE)
+    , m_memory(k_invalidMemory)
     , m_imageView(VK_NULL_HANDLE)
     , m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
     , m_usage(VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT)
@@ -378,9 +379,10 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
 
 TextureVK::~TextureVK()
 {
-    TextureVK::destroy();
-
     LOG_DEBUG("TextureVK::TextureVK destructor %x", this);
+
+    ASSERT(m_image == VK_NULL_HANDLE, "m_image already exist");
+    ASSERT(m_memory._memory == VK_NULL_HANDLE, "m_memory already exist");
 }
 
 void TextureVK::bind(u32 unit)
@@ -580,7 +582,6 @@ bool TextureVK::create(const void* data, u32 srcSize)
 
     vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
     ASSERT(m_mipmapLevel <= m_imageProps.maxMipLevels, "unsupport mipmap level");
-    //ASSERT(m_imageProps.)
 
     VkFormatProperties formatProperties = {};
     vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
@@ -619,6 +620,8 @@ bool TextureVK::create(const void* data, u32 srcSize)
     if (transient)
     {
         memoryProps |= VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
+
+        //vkGetDeviceMemoryCommitment();
     }
 
     MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
@@ -629,14 +632,18 @@ bool TextureVK::create(const void* data, u32 srcSize)
         return false;
     }
 
-    u32 mipMapSize = scene::TextureManager::getInstance()->calculateMipmapDataSize(m_size, m_format, m_type, m_mipmapLevel);
-    void* mipmapData = scene::TextureManager::getInstance()->generateMipMaps(m_size, data, m_format, m_type, m_mipmapLevel);
-    if (!mipmapData)
+    u32 mipMapSize = srcSize;
+    const void* mipmapData = data;
+    if (m_mipmapLevel > 1)
     {
-        LOG_ERROR("TextureVK::create: can't create mipmap data");
-        return false;
+        mipMapSize = scene::TextureManager::getInstance()->calculateMipmapDataSize(m_size, m_format, m_type, m_mipmapLevel);
+        mipmapData = scene::TextureManager::getInstance()->generateMipMaps(m_size, data, m_format, m_type, m_mipmapLevel);
+        if (!mipmapData)
+        {
+            LOG_ERROR("TextureVK::create: can't create mipmap data");
+            return false;
+        }
     }
-
 
     VkBufferCreateInfo bufferCreateInfo = {};
     bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -656,7 +663,7 @@ bool TextureVK::create(const void* data, u32 srcSize)
         return false;
     }
 
-    SMemoryVK stagingMemory = memoryManager->allocateImage(*memoryManager->getSimpleAllocator(), m_image, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT /*| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/);
+    SMemoryVK stagingMemory = memoryManager->allocateBuffer(*memoryManager->getSimpleAllocator(), stagingBuffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT /*| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/);
     if (stagingMemory._mapped == VK_NULL_HANDLE)
     {
         LOG_ERROR("TextureVK::create: allocateImage return invalid memory");
@@ -664,10 +671,10 @@ bool TextureVK::create(const void* data, u32 srcSize)
     }
 
     ASSERT(stagingMemory._mapped, "map is nullptr");
-    memcpy(stagingMemory._mapped, data, mipMapSize);
+    memcpy(stagingMemory._mapped, mipmapData, mipMapSize);
 
-    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
-    //commandBuffer->imageMemoryBarrier(, );
+    //CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+    //commandBuffer->imageMemoryBarrier(m_image, , );
     //commandBuffer->copyBufferToImage(stagingBuffer, m_image, ,);
     //commandBuffer->imageMemoryBarrier();
 

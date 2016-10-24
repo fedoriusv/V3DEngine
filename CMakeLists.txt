@@ -276,20 +276,20 @@ file(GLOB DECODERS_HEADERS ${SOURCE_DIR}/decoders/*.h)
 file(GLOB DECODERS_SOURCES ${SOURCE_DIR}/decoders/*.cpp)
 
 #GL Source
-file(GLOB GL_HEADERS ${SOURCE_DIR}/*/GL/*.h)
-file(GLOB GL_SOURCES ${SOURCE_DIR}/*/GL/*.cpp)
+file(GLOB GL_HEADERS ${SOURCE_DIR}/renderer/GL/*.h)
+file(GLOB GL_SOURCES ${SOURCE_DIR}/renderer/GL/*.cpp)
 
 #D3D Source
-file(GLOB D3D_HEADERS ${SOURCE_DIR}/*/D3D/*.h)
-file(GLOB D3D_SOURCES ${SOURCE_DIR}/*/D3D/*.cpp)
+file(GLOB D3D_HEADERS ${SOURCE_DIR}/renderer/D3D/*.h)
+file(GLOB D3D_SOURCES ${SOURCE_DIR}/renderer/D3D/*.cpp)
 
 #VK Source
-file(GLOB VK_HEADERS ${SOURCE_DIR}/*/VK/*.h)
-file(GLOB VK_SOURCES ${SOURCE_DIR}/*/VK/*.cpp)
+file(GLOB VK_HEADERS ${SOURCE_DIR}/renderer/VK/*.h)
+file(GLOB VK_SOURCES ${SOURCE_DIR}/renderer/VK/*.cpp)
 
 #NULL Source
-file(GLOB NULL_HEADERS ${SOURCE_DIR}/*/NULL/*.h)
-file(GLOB NULL_SOURCES ${SOURCE_DIR}/*/NULL/*.cpp)
+file(GLOB NULL_HEADERS ${SOURCE_DIR}/renderer/NULL/*.h)
+file(GLOB NULL_SOURCES ${SOURCE_DIR}/renderer/NULL/*.cpp)
 
 #Context Source
 file(GLOB CONTEXT_HEADERS ${SOURCE_DIR}/context/*.h)
@@ -332,10 +332,10 @@ source_group(core             FILES ${CORE_HEADERS}        ${CORE_SOURCES}      
 source_group(renderer         FILES ${RENDERER_HEADERS}    ${RENDERER_SOURCES})
 source_group(resources        FILES ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES})
 source_group(decoders         FILES ${DECODERS_HEADERS}    ${DECODERS_SOURCES})
-source_group(gl               FILES ${GL_HEADERS}          ${GL_SOURCES})
-source_group(d3d              FILES ${D3D_HEADERS}         ${D3D_SOURCES})
-source_group(vk               FILES ${VK_HEADERS}          ${VK_SOURCES})
-source_group(null             FILES ${NULL_HEADERS}        ${NULL_SOURCES})
+source_group(renderer/gl      FILES ${GL_HEADERS}          ${GL_SOURCES})
+source_group(renderer/d3d     FILES ${D3D_HEADERS}         ${D3D_SOURCES})
+source_group(renderer/vk      FILES ${VK_HEADERS}          ${VK_SOURCES})
+source_group(renderer/null    FILES ${NULL_HEADERS}        ${NULL_SOURCES})
 source_group(context          FILES ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES})
 source_group(stream           FILES ${STREAM_HEADERS}      ${STREAM_SOURCES}        ${STREAM_INLINES})
 source_group(scene            FILES ${SCENE_HEADERS}       ${SCENE_SOURCES})

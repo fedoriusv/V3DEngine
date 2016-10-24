@@ -1,6 +1,10 @@
 #include "CommandBufferVK.h"
+#include "utils/Logger.h"
+#include "Engine.h"
 
 #ifdef _VULKAN_RENDER_
+#include "context/DebugVK.h"
+#include "RendererVK.h"
 
 namespace v3d
 {
@@ -9,10 +13,26 @@ namespace renderer
 namespace vk
 {
 
-CommandBufferVK::CommandBufferVK()
+CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     : m_commandBuffer(VK_NULL_HANDLE)
-    , m_bufferLevel(VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    , m_bufferLevel(level)
+
+    , m_device(VK_NULL_HANDLE)
 {
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+
+    VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
+    commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    commandBufferAllocateInfo.pNext = nullptr;
+    commandBufferAllocateInfo.commandPool = pool;
+    commandBufferAllocateInfo.level = level;
+    commandBufferAllocateInfo.commandBufferCount = 1;
+
+    VkResult result = vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, &m_commandBuffer);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("CommandBufferVK::CommandBufferVK: vkAllocateCommandBuffers. Error: %s", DebugVK::errorString(result).c_str());
+    }
 }
 
 CommandBufferVK::~CommandBufferVK()
@@ -175,6 +195,71 @@ void CommandBufferVK::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageL
 
 void CommandBufferVK::copyImageToBuffer()
 {
+}
+
+void CommandBufferVK::copyBufferToBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, u64 size)
+{
+    VkBufferCopy bufferCopyRegion = {};
+    bufferCopyRegion.srcOffset = 0;
+    bufferCopyRegion.dstOffset = 0;
+    bufferCopyRegion.size = static_cast<VkDeviceSize>(size);
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdCopyBuffer(m_commandBuffer, srcBuffer, dstBuffer, 1, &bufferCopyRegion);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+}
+
+
+
+CommandPoolVK::CommandPoolVK()
+    : m_commandPool(VK_NULL_HANDLE)
+    , m_creatFlags(0)
+    , m_resetFlags(0)
+
+    , m_device(VK_NULL_HANDLE)
+    , m_queueFamilyIndex(0)
+{
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
+    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+
+    VkCommandPoolCreateInfo commandPoolCreateInfo = {};
+    commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    commandPoolCreateInfo.pNext = nullptr;
+    commandPoolCreateInfo.flags = m_creatFlags;
+    commandPoolCreateInfo.queueFamilyIndex = m_queueFamilyIndex;
+
+    VkResult result = vkCreateCommandPool(m_device, &commandPoolCreateInfo, nullptr, &m_commandPool);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("CommandPoolVK::CommandPoolVK: vkCreateCommandPool. Error: %s", DebugVK::errorString(result).c_str());
+    }
+}
+
+CommandPoolVK::~CommandPoolVK()
+{
+    if (m_commandPool != VK_NULL_HANDLE)
+    {
+        vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+        m_commandPool = nullptr;
+    }
+}
+
+bool CommandPoolVK::reset()
+{
+    VkResult result = vkResetCommandPool(m_device, m_commandPool, m_resetFlags);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("CommandPoolVK::reset: vkResetCommandPool. Error: %s", DebugVK::errorString(result).c_str());
+        return false;
+    }
+
+    return true;
 }
 
 } //namespace vk

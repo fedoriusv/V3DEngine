@@ -20,18 +20,24 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u3
     : m_impl(ENGINE_CONTEXT->createTexture(target, format, type, Dimension3D(size, 1, 1), data, mipCount))
 {
     ASSERT(target == eTexture1D || target == eTextureBuffer, "Invalid target");
-    ASSERT(target == eTextureBuffer && mipCount > 1, "Unsupported mipmap target");
+    if (target == eTextureBuffer)
+    {
+        ASSERT(mipCount == 1, "Unsupported mipmap target for buffer texture");
+    }
 
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
         command.writeValue<Texture const*>(this);
         command.writeValue<u32>(size);
+        command.writeValue<EImageFormat>(format);
+        command.writeValue<EImageType>(type);
         bool presentData = (data != nullptr) ? true : false;
         command.writeValue<bool>(presentData);
         if (presentData)
         {
-            command.writeValue(data, size, 1);
+            u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            command.writeValue(data, dataSize, 1);
         }
         command.endCommand();
 
@@ -39,7 +45,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u3
     }
     else
     {
-        Texture::create(data, size);
+        u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+        Texture::create(data, dataSize);
     }
 }
 
@@ -57,11 +64,14 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
         RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
         command.writeValue<Texture const*>(this);
         command.writeValue<u32>(size.getArea());
+        command.writeValue<EImageFormat>(format);
+        command.writeValue<EImageType>(type);
         bool presentData = (data != nullptr) ? true : false;
         command.writeValue<bool>(presentData);
         if (presentData)
         {
-            command.writeValue(data, size.getArea(), 1);
+            u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            command.writeValue(data, dataSize, 1);
         }
         command.endCommand();
 
@@ -69,7 +79,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
     }
     else
     {
-        Texture::create(data, size.getArea());
+        u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+        Texture::create(data, dataSize);
     }
 }
 
@@ -84,11 +95,14 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
         RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
         command.writeValue<Texture const*>(this);
         command.writeValue<u32>(size.getArea());
+        command.writeValue<EImageFormat>(format);
+        command.writeValue<EImageType>(type);
         bool presentData = (data != nullptr) ? true : false;
         command.writeValue<bool>(presentData);
         if (presentData)
         {
-            command.writeValue(data, size.getArea(), 1);
+            u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            command.writeValue(data, dataSize, 1);
         }
         command.endCommand();
 
@@ -96,7 +110,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
     }
     else
     {
-        Texture::create(data, size.getArea());
+        u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+        Texture::create(data, dataSize);
     }
 }
 
@@ -107,12 +122,15 @@ Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& 
     {
         RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
         command.writeValue<Texture const*>(this);
-        command.writeValue<u32>(size.getArea() * k_textureCubemapSideCount);
+        command.writeValue<u32>(size.getArea());
+        command.writeValue<EImageFormat>(format);
+        command.writeValue<EImageType>(type);
         bool presentData = (data != nullptr) ? true : false;
         command.writeValue<bool>(presentData);
         if (presentData)
         {
-            command.writeValue(data, size.getArea(), k_textureCubemapSideCount);
+            u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            command.writeValue(data, dataSize, k_textureCubemapSideCount);
         }
         command.endCommand();
 
@@ -120,18 +138,38 @@ Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& 
     }
     else
     {
-        Texture::create(data, size.getArea() * k_textureCubemapSideCount);
+        u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+        Texture::create(data, dataSize * k_textureCubemapSideCount);
     }
 }
 
 Texture::~Texture()
 {
+    if (ENGINE_RENDERER->isThreaded())
+    {
+        RenderStreamCommand command(ERenderCommand::eCommandDestoyTexure);
+        command.writeValue<Texture const*>(m_impl);
+        command.endCommand();
+
+        ENGINE_RENDERER->pushCommand(command, false);
+    }
+    else
+    {
+        Texture::destroy();
+        delete m_impl;
+    }
 }
 
 bool Texture::create(const void* data, u32 srcSize)
 {
     ASSERT(m_impl, "m_impl is nullptr");
     return m_impl->create(data, srcSize);
+}
+
+void Texture::destroy()
+{
+    ASSERT(m_impl, "m_impl is nullptr");
+    m_impl->destroy();
 }
 
 void Texture::bind(u32 unit)

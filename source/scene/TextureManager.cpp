@@ -228,8 +228,12 @@ TexturePtr TextureManager::createTextureFromImage(const CImage* image)
 {
     if (image && image->isLoaded())
     {
-        TexturePtr texure = new Texture(k_useTextureBuffer ? ETextureTarget::eTextureBuffer : ETextureTarget::eTexture2D,
-            image->getFormat(), image->getType(),image->getSize(), image->getData(), 0);
+        ETextureTarget target = k_useTextureBuffer ? ETextureTarget::eTextureBuffer : ETextureTarget::eTexture2D;
+        if (image->getSize().height == 1)
+        {
+            target = ETextureTarget::eTexture1D;
+        }
+        TexturePtr texure = new Texture(target, image->getFormat(), image->getType(), image->getSize(), image->getData(), 3);
 
         return texure;
     }
@@ -300,11 +304,11 @@ void* TextureManager::generateMipMaps(const core::Dimension3D& size, const void*
     u32 step = 0;
     for (u32 mip = 1; mip < mipCount; ++mip)
     {
-        step = mip << 2;
+        step = 2 << mip - 1;
         u32 mipAllocSize = TextureManager::culculateMipmapLevelSize(size, format, type, mip);
         u8* allocData = reinterpret_cast<u8*>(malloc(mipAllocSize));
 
-        for (u32 pos = 0; pos < mipSize.getArea(); pos = step)
+        for (u32 pos = 0; pos < mipSize.getArea(); pos += step)
         {
             memcpy(allocData, data, pos * componentCount * typeSize);
             allocData += componentCount * typeSize;

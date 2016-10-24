@@ -11,16 +11,6 @@ namespace renderer
 namespace vk
 {
 
-const SMemoryVK k_InvalidMemory =
-{
-    VK_NULL_HANDLE,
-    0,
-    0,
-    nullptr,
-    -1,
-    0
-};
-
 using namespace utils;
 
 
@@ -29,7 +19,6 @@ MemoryManagerVK::MemoryManagerVK(const ContextVKPtr context)
     , m_bufferPoolAllocator(1 * 1024, 128, 256) //buffer allocator
     , m_device(context->getVulkanDevice())
     , m_physicalDeviceMemoryProperties(context->getVulkanPhysicalDeviceMemoryProperties())
-
 {
 }
 
@@ -59,7 +48,7 @@ SMemoryVK MemoryManagerVK::allocateImage(AllocatorVK& allocator, VkImage image, 
         LOG_ERROR("MemoryManagerVK::allocateImage: invalid image");
         ASSERT(false, "invalid image");
 
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -73,20 +62,20 @@ SMemoryVK MemoryManagerVK::allocateImage(AllocatorVK& allocator, VkImage image, 
         LOG_ERROR("MemoryManagerVK::allocateImage: invalid memoryTypeIndex");
         ASSERT(false, "invalid memoryTypeIndex");
 
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     SMemoryVK memory = allocator.allocate(m_device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
     if (memory._memory == VK_NULL_HANDLE)
     {
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     VkResult result = vkBindImageMemory(m_device, image, memory._memory, memory._offset);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("MemoryManagerVK::allocateImage: vkBindImageMemory. Error %s", DebugVK::errorString(result).c_str());
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     return memory;
@@ -99,7 +88,7 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
         LOG_ERROR("MemoryManagerVK::allocateBuffer: invalid buffer");
         ASSERT(false, "invalid buffer");
 
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -113,20 +102,20 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
         LOG_ERROR("MemoryManagerVK::allocateBuffer: invalid memoryTypeIndex");
         ASSERT(false, "invalid memoryTypeIndex");
 
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     SMemoryVK memory = allocator.allocate(m_device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
     if (memory._memory == VK_NULL_HANDLE)
     {
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     VkResult result = vkBindBufferMemory(m_device, buffer, memory._memory, memory._offset);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("MemoryManagerVK::allocateBuffer: vkBindBufferMemory. Error %s", DebugVK::errorString(result).c_str());
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
     return memory;
@@ -135,6 +124,84 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
 void MemoryManagerVK::free(AllocatorVK& allocator, SMemoryVK& memory)
 {
     allocator.free(m_device, memory);
+}
+
+void* MemoryManagerVK::beginAccessToDeviceMemory(const SMemoryVK& memory)
+{
+    if (memory._memory == VK_NULL_HANDLE || !memory._mapped)
+    {
+        return nullptr;
+    }
+
+    if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    {
+        ASSERT(memory._mapped, "memory._mapped is nullptr");
+        return memory._mapped;
+    }
+    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
+    {
+        //TODO:
+        return nullptr;
+    }
+    if (memory._flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+    {
+        VkMappedMemoryRange range = {};
+        range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+        range.pNext = nullptr;
+        range.offset = memory._offset;
+        range.size = memory._size;
+        range.memory = memory._memory;
+
+        VkResult result = vkInvalidateMappedMemoryRanges(m_device, 1, &range);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("MemoryManagerVK::beginDeviceAccess. Error %s", DebugVK::errorString(result).c_str());
+            return nullptr;
+        }
+
+        ASSERT(memory._mapped, "memory._mapped is nullptr");
+        return memory._mapped;
+    }
+
+    return nullptr;
+}
+
+bool MemoryManagerVK::endAccessToDeviceMemory(const SMemoryVK & memory)
+{
+    if (memory._memory == VK_NULL_HANDLE || !memory._mapped)
+    {
+        return false;
+    }
+
+    if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    {
+        return true;
+    }
+    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
+    {
+        //TODO:
+        return false;
+    }
+    else if (memory._flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+    {
+        VkMappedMemoryRange range = {};
+        range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+        range.pNext = nullptr;
+        range.offset = memory._offset;
+        range.size = memory._size;
+        range.memory = memory._memory;
+
+        VkResult result = vkFlushMappedMemoryRanges(m_device, 1, &range);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("MemoryManagerVK::endDeviceAccess. Error %s", DebugVK::errorString(result).c_str());
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 s32 MemoryManagerVK::findMemoryTypeIndex(const VkMemoryRequirements& memoryRequirements, VkMemoryPropertyFlags memoryPropertyFlags)
@@ -172,16 +239,16 @@ SMemoryVK SimpleAllocatorVK::allocate(VkDevice device, VkMemoryPropertyFlags fla
     memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     memAllocInfo.pNext = nullptr;
     memAllocInfo.memoryTypeIndex = memoryTypeIndex;
-    memAllocInfo.allocationSize = memorySize;
+    memAllocInfo.allocationSize = static_cast<VkDeviceSize>(memorySize);
 
     VkResult result = vkAllocateMemory(device, &memAllocInfo, nullptr, &memory._memory);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SimpleAllocator::allocate: vkAllocateMemory. Error %s", DebugVK::errorString(result).c_str());
-        return k_InvalidMemory;
+        return k_invalidMemory;
     }
 
-    memory._size = memorySize;
+    memory._size = static_cast<VkDeviceSize>(memorySize);
     memory._offset = 0;
     memory._memoryTypeIndex = memoryTypeIndex;
     memory._flags = flags;
@@ -189,9 +256,10 @@ SMemoryVK SimpleAllocatorVK::allocate(VkDevice device, VkMemoryPropertyFlags fla
     if (memory._flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
     {
         VkResult result = vkMapMemory(device, memory._memory, 0, VK_WHOLE_SIZE, 0, &memory._mapped);
+        if (result != VK_SUCCESS)
         {
             LOG_ERROR("SimpleAllocator::allocate: vkMapMemory. Error %s", DebugVK::errorString(result).c_str());
-            return k_InvalidMemory;
+            return k_invalidMemory;
         }
     }
 
@@ -242,7 +310,7 @@ SMemoryVK PoolsAllocatorVK::allocate(VkDevice device, VkMemoryPropertyFlags flag
             memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
             memAllocInfo.pNext = nullptr;
             memAllocInfo.memoryTypeIndex = memoryTypeIndex;
-            memAllocInfo.allocationSize = memorySize;
+            memAllocInfo.allocationSize = static_cast<VkDeviceSize>(memorySize);
 
             VkResult result = vkAllocateMemory(device, &memAllocInfo, nullptr, &deviceMemory);
             if (result != VK_SUCCESS)
@@ -305,7 +373,7 @@ SMemoryVK PoolsAllocatorVK::allocate(VkDevice device, VkMemoryPropertyFlags flag
     memory._memoryTypeIndex = memoryTypeIndex;
     memory._flags = flags;
 
-    return k_InvalidMemory;
+    return k_invalidMemory;
 }
 
 void PoolsAllocatorVK::free(VkDevice device, SMemoryVK& memory)
@@ -343,7 +411,6 @@ void PoolsAllocatorVK::free(VkDevice device, SMemoryVK& memory)
 
 PoolsAllocatorVK::CustomMemoryPoolAllocator::CustomMemoryPoolAllocator()
 {
-
 }
 
 PoolsAllocatorVK::CustomMemoryPoolAllocator::~CustomMemoryPoolAllocator()

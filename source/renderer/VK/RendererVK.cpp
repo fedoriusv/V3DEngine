@@ -1,5 +1,6 @@
 #include "RendererVK.h"
 #include "MemoryManagerVK.h"
+#include "CommandBufferVK.h"
 
 namespace v3d
 {
@@ -11,6 +12,7 @@ namespace vk
 RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
     , m_memoryMamager(nullptr)
+    , m_currentCommandBuffer(nullptr)
 {
     m_device = RendererVK::getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = RendererVK::getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
@@ -33,6 +35,7 @@ void RendererVK::immediateInit()
         m_memoryMamager = new MemoryManagerVK(RendererVK::getVulkanContext());
     }
 
+    m_currentCommandBuffer = new CommandBufferVK();
     //TODO:
 }
 

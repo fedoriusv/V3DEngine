@@ -28,6 +28,10 @@ namespace vk
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const SMemoryVK k_invalidMemory = { VK_NULL_HANDLE, 0, 0, nullptr, -1, 0 };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     class MemoryManagerVK;
 
     class AllocatorVK
@@ -120,6 +124,9 @@ namespace vk
         SMemoryVK           allocateBuffer(AllocatorVK& allocator, VkBuffer buffer, VkMemoryPropertyFlags flags);
 
         void                free(AllocatorVK& allocator, SMemoryVK& memory);
+
+        void*               beginAccessToDeviceMemory(const SMemoryVK& memory);
+        bool                endAccessToDeviceMemory(const SMemoryVK& memory);
 
     private:
 
