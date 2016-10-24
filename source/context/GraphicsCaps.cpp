@@ -37,6 +37,11 @@ u32 GpraphicsCaps::getMaxPatchVertices() const
     return m_maxPatchVertices;
 }
 
+u64 GpraphicsCaps::getMemoryBlockSize() const
+{
+    return m_memoryBlockSize;
+}
+
 void GpraphicsCaps::setSamplesCount(u32 count)
 {
     m_samplesCount = count;
@@ -55,6 +60,11 @@ void GpraphicsCaps::setMaxAnisotropySize(f32 size)
 void GpraphicsCaps::setMaxPatchVertices(u32 size)
 {
     m_maxPatchVertices = size;
+}
+
+void GpraphicsCaps::setMemoryBlockSize(u64 size)
+{
+    m_memoryBlockSize = size;
 }
 
 bool GpraphicsCaps::isSupportMultisample() const

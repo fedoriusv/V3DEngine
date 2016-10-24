@@ -70,5 +70,10 @@ u32 DeviceContext::getMaxPatchVertices() const
     return m_graphicsCaps.getMaxPatchVertices();
 }
 
+u64 DeviceContext::getMemoryBlockSize() const
+{
+    return m_graphicsCaps.getMemoryBlockSize();
+}
+
 } //namespace renderer
 } //namespace v3d

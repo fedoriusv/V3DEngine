@@ -21,10 +21,14 @@ namespace renderer
         f32     getMaxAnisotropySize() const;
         u32     getMaxPatchVertices() const;
 
+        u64     getMemoryBlockSize() const;
+
         void    setSamplesCount(u32 count);
         void    setTextureUnitsCount(u32 count);
         void    setMaxAnisotropySize(f32 size);
         void    setMaxPatchVertices(u32 size);
+
+        void    setMemoryBlockSize(u64 size);
 
         bool    isSupportMultisample() const;
 
@@ -34,6 +38,8 @@ namespace renderer
         u32     m_maxTextureUnits;
         f32     m_maxAnisotropy;
         u32     m_maxPatchVertices;
+
+        u64     m_memoryBlockSize;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

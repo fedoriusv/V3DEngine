@@ -588,8 +588,8 @@ void DeviceContextVK::fillGrapthicCaps()
         m_graphicsCaps.setSamplesCount(countSamples);
     }
 
-    u32 contemporaneouslyMapping = m_vulkanPropsDevice._properties.limits.nonCoherentAtomSize;
-
+    VkDeviceSize memoryBlockSize = m_vulkanPropsDevice._properties.limits.nonCoherentAtomSize;
+    m_graphicsCaps.setMemoryBlockSize(memoryBlockSize);
     //
 
     LOG_INFO("Vuklan driver info:");
