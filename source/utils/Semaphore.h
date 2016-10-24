@@ -22,7 +22,7 @@ namespace utils
     private:
 
         u32                     m_countThreads;
-        u32                     m_maxThreads;
+        s32                     m_maxThreads;
 
         std::condition_variable m_cv;
         std::mutex              m_mutex;

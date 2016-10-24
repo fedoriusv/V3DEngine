@@ -1,15 +1,20 @@
 #include "Semaphore.h"
 #include "utils/Logger.h"
 
+#include <windows.h>
+
 namespace v3d
 {
 namespace utils
 {
 
+    HANDLE hSemaphore;
+
 Semaphore::Semaphore(u32 maxThreads)
     : m_countThreads(0)
     , m_maxThreads(maxThreads)
 {
+    hSemaphore = CreateSemaphore( NULL, m_maxThreads, m_maxThreads,  NULL);
 }
 
 Semaphore::~Semaphore()
@@ -18,7 +23,16 @@ Semaphore::~Semaphore()
 
 void Semaphore::wait()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
+
+    while (true)
+    {
+        DWORD dwWaitResult = WaitForSingleObject(hSemaphore, 1);
+        if (dwWaitResult == WAIT_OBJECT_0)
+        {
+            break;
+        }
+    }
+   /* std::unique_lock<std::mutex> lock(m_mutex);
     
     if (m_countThreads < m_maxThreads)
     {
@@ -28,25 +42,27 @@ void Semaphore::wait()
     {
         return m_countThreads >= m_maxThreads;
     });
-    --m_countThreads;
+    --m_countThreads;*/
 }
 
 bool Semaphore::tryWait()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
+   /* std::unique_lock<std::mutex> lock(m_mutex);
 
     if (m_countThreads >= m_maxThreads)
     {
         --m_countThreads;
         return true;
-    }
+    }*/
 
     return false;
 }
 
 void Semaphore::signal()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
+    ReleaseSemaphore(hSemaphore, 1, NULL);
+
+    /*std::unique_lock<std::mutex> lock(m_mutex);
     
     if (m_maxThreads > m_countThreads)
     {
@@ -54,7 +70,7 @@ void Semaphore::signal()
         ++m_countThreads;
     }
 
-    m_cv.notify_one();
+    m_cv.notify_one();*/
 }
 
 } //namespace utils
