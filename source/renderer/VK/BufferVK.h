@@ -34,10 +34,13 @@ namespace vk
         void                        read(u32 offset, u32 size, void* const data) override;
 
         void* const                 map(u32 offset, u32 size) override;
+        bool                        unmap(u32 offset, u32 size) override;
         bool                        unmap() override;
 
         bool                        create(u32 size = 0, const void* data = nullptr) override;
         void                        destroy() override;
+
+        VkBuffer                    getBuffer() const;
 
     private:
 

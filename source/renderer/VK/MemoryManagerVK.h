@@ -125,8 +125,8 @@ namespace vk
 
         void                free(AllocatorVK& allocator, SMemoryVK& memory);
 
-        void*               beginAccessToDeviceMemory(const SMemoryVK& memory);
-        bool                endAccessToDeviceMemory(const SMemoryVK& memory);
+        void*               beginAccessToHostMemory(const SMemoryVK& memory, u64 offset, u64 size);
+        bool                endAccessToHostMemory(const SMemoryVK& memory, u64 offset, u64 size);
 
     private:
 

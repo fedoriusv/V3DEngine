@@ -1,5 +1,6 @@
 #include "MemoryManagerVK.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 #ifdef _VULKAN_RENDER_
 #include "context/DebugVK.h"
@@ -126,78 +127,89 @@ void MemoryManagerVK::free(AllocatorVK& allocator, SMemoryVK& memory)
     allocator.free(m_device, memory);
 }
 
-void* MemoryManagerVK::beginAccessToDeviceMemory(const SMemoryVK& memory)
+void* MemoryManagerVK::beginAccessToHostMemory(const SMemoryVK& memory, u64 offset, u64 size)
 {
     if (memory._memory == VK_NULL_HANDLE || !memory._mapped)
     {
         return nullptr;
     }
 
-    if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
-    {
-        ASSERT(memory._mapped, "memory._mapped is nullptr");
-        return memory._mapped;
-    }
-    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
-    {
-        //TODO:
-        return nullptr;
-    }
-    if (memory._flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+    if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
     {
         VkMappedMemoryRange range = {};
         range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
         range.pNext = nullptr;
-        range.offset = memory._offset;
+        range.offset = memory._offset + static_cast<VkDeviceSize>(offset);
         range.size = memory._size;
         range.memory = memory._memory;
 
+        if (size == VK_WHOLE_SIZE)
+        {
+            range.size -= static_cast<VkDeviceSize>(offset);
+        }
+        else
+        {
+            range.size = static_cast<VkDeviceSize>(size);
+        }
+
+        //TODO: check multiple of ENGINE_CONTEXT->getMemoryBlockSize();
         VkResult result = vkInvalidateMappedMemoryRanges(m_device, 1, &range);
         if (result != VK_SUCCESS)
         {
-            LOG_ERROR("MemoryManagerVK::beginDeviceAccess. Error %s", DebugVK::errorString(result).c_str());
+            LOG_ERROR("MemoryManagerVK::beginAccessToHostMemory. Error %s", DebugVK::errorString(result).c_str());
             return nullptr;
         }
 
         ASSERT(memory._mapped, "memory._mapped is nullptr");
         return memory._mapped;
     }
+    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    {
+        ASSERT(memory._mapped, "memory._mapped is nullptr");
+        return memory._mapped;
+    }
+    
 
     return nullptr;
 }
 
-bool MemoryManagerVK::endAccessToDeviceMemory(const SMemoryVK & memory)
+bool MemoryManagerVK::endAccessToHostMemory(const SMemoryVK& memory, u64 offset, u64 size)
 {
     if (memory._memory == VK_NULL_HANDLE || !memory._mapped)
     {
         return false;
     }
 
-    if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
-    {
-        return true;
-    }
-    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
-    {
-        //TODO:
-        return false;
-    }
-    else if (memory._flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+    if (memory._flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
     {
         VkMappedMemoryRange range = {};
         range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
         range.pNext = nullptr;
-        range.offset = memory._offset;
+        range.offset = memory._offset + static_cast<VkDeviceSize>(offset);
         range.size = memory._size;
         range.memory = memory._memory;
 
+        if (size == VK_WHOLE_SIZE)
+        {
+            range.size -= static_cast<VkDeviceSize>(offset);
+        }
+        else
+        {
+            range.size = static_cast<VkDeviceSize>(size);
+        }
+
+        //TODO: check multiple of ENGINE_CONTEXT->getMemoryBlockSize();
         VkResult result = vkFlushMappedMemoryRanges(m_device, 1, &range);
         if (result != VK_SUCCESS)
         {
-            LOG_ERROR("MemoryManagerVK::endDeviceAccess. Error %s", DebugVK::errorString(result).c_str());
+            LOG_ERROR("MemoryManagerVK::endAccessToHostMemory. Error %s", DebugVK::errorString(result).c_str());
             return false;
         }
 
+        return true;
+    }
+    else if (memory._flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    {
         return true;
     }
 

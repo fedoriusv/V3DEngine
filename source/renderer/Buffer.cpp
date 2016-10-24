@@ -137,6 +137,12 @@ void* const Buffer::map(u32 offset, u32 size)
     return m_impl->map(offset, size);
 }
 
+bool Buffer::unmap(u32 offset, u32 size)
+{
+    ASSERT(m_impl, "m_impl is nullptr");
+    return m_impl->unmap(offset, size);
+}
+
 bool Buffer::unmap()
 {
     ASSERT(m_impl, "m_impl is nullptr");

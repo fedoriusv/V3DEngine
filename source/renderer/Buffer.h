@@ -72,6 +72,7 @@ namespace renderer
         virtual void            read(u32 offset, u32 size, void* const data);
 
         virtual void* const     map(u32 offset, u32 size);
+        virtual bool            unmap(u32 offset, u32 size);
         virtual bool            unmap();
 
         virtual EBufferTarget   getTarget() const;

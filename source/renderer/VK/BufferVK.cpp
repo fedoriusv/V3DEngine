@@ -23,21 +23,11 @@ VkBufferUsageFlags EBufferTargetVK[EBufferTarget::eBufferTargetCount] =
     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT
 };
 
-VkBufferUsageFlags EDataUsageTypeVK[EDataUsageType::eDataUsageTypeCount] =
-{
-    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-};
-
 BufferVK::BufferVK(EBufferTarget target, EDataUsageType type, bool mappable)
     : m_target(target)
     , m_type(type)
 
-    , m_hostMemory(false)
+    , m_mappableMemory(mappable)
     , m_coherentMemory(false)
     , m_mapped(false)
 
@@ -51,23 +41,20 @@ BufferVK::BufferVK(EBufferTarget target, EDataUsageType type, bool mappable)
 
     , m_initialized(false)
 {
-    LOG_DEBUG("TextureVK::TextureVK constructor %x", this);
+    LOG_DEBUG("BufferVK::BufferVK constructor %x", this);
 
     if (m_target == EBufferTarget::eStagingBuffer)
     {
         m_usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-        m_hostMemory = true;
+        m_mappableMemory = true;
         m_coherentMemory = false;
 
         return;
     }
 
-    m_usage = EDataUsageTypeVK[m_type];
-    if (mappable)
+    if (m_mappableMemory)
     {
-        m_usage = EBufferTargetVK[m_target];
-        m_hostMemory = true;
-
+        m_usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | EBufferTargetVK[m_target];
         if (m_type == EDataUsageType::eWriteStatic || m_type == EDataUsageType::eReadStatic || m_type == EDataUsageType::eCopyStatic)
         {
             m_coherentMemory = false;
@@ -77,17 +64,16 @@ BufferVK::BufferVK(EBufferTarget target, EDataUsageType type, bool mappable)
             m_coherentMemory = true;
         }
     }
-    else
+    else //use staging transfer
     {
-        m_usage |= EBufferTargetVK[m_target];
-        m_hostMemory = false;
+        m_usage = EBufferTargetVK[m_target];
         m_coherentMemory = false;
     }
 }
 
 BufferVK::~BufferVK()
 {
-    LOG_DEBUG("TextureVK::TextureVK destructor %x", this);
+    LOG_DEBUG("BufferVK::~BufferVK destructor %x", this);
 
     ASSERT(m_buffer == VK_NULL_HANDLE, "m_buffer already exist");
     ASSERT(m_memory._memory == VK_NULL_HANDLE, "m_memory already exist");
@@ -115,7 +101,7 @@ void BufferVK::update(u32 offset, u32 size, const void* data)
         return;
     }
 
-    if (m_hostMemory || m_coherentMemory)
+    if (m_mappableMemory || m_coherentMemory)
     {
         void* mappedData = BufferVK::map(offset, size);
         ASSERT(mappedData, "m_memory._mapped not mapped");
@@ -127,7 +113,7 @@ void BufferVK::update(u32 offset, u32 size, const void* data)
         }
         memcpy(memPos + offset, data, size);
 
-        BufferVK::unmap();
+        BufferVK::unmap(offset, size);
     }
     else
     {
@@ -150,7 +136,7 @@ void BufferVK::read(u32 offset, u32 size, void* const data)
         return;
     }
 
-    if (m_hostMemory || m_coherentMemory)
+    if (m_mappableMemory || m_coherentMemory)
     {
         void* mappedData = BufferVK::map(offset, size);
         ASSERT(mappedData, "m_memory._mapped not mapped");
@@ -162,7 +148,7 @@ void BufferVK::read(u32 offset, u32 size, void* const data)
         }
         memcpy(data, memPos + offset, size);
 
-        BufferVK::unmap();
+        BufferVK::unmap(offset, size);
     }
     else
     {
@@ -187,7 +173,7 @@ void* const BufferVK::map(u32 offset, u32 size)
         return nullptr;
     }
 
-    if (!m_hostMemory)
+    if (!m_mappableMemory)
     {
         ASSERT(false, "Try mapped not mappable memory");
         return nullptr;
@@ -203,10 +189,39 @@ void* const BufferVK::map(u32 offset, u32 size)
         }
 
         MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
-        return memoryManager->beginAccessToDeviceMemory(m_memory);
+        return memoryManager->beginAccessToHostMemory(m_memory, offset, size);
     }
 
     return nullptr;
+}
+
+bool BufferVK::unmap(u32 offset, u32 size)
+{
+    if (!m_initialized)
+    {
+        return false;
+    }
+
+    if (!m_mappableMemory)
+    {
+        ASSERT(false, "Try unmapped not mappable memory");
+        return false;
+    }
+
+    if (m_mapped && m_memory._mapped)
+    {
+        m_mapped = false;
+
+        if (m_target == EBufferTarget::eStagingBuffer)
+        {
+            return true;
+        }
+
+        MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+        return memoryManager->endAccessToHostMemory(m_memory, offset, size);
+    }
+
+    return false;
 }
 
 bool BufferVK::unmap()
@@ -216,7 +231,7 @@ bool BufferVK::unmap()
         return false;
     }
 
-    if (!m_hostMemory)
+    if (!m_mappableMemory)
     {
         ASSERT(false, "Try unmapped not mappable memory");
         return false;
@@ -232,7 +247,7 @@ bool BufferVK::unmap()
         }
 
          MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
-         return memoryManager->endAccessToDeviceMemory(m_memory);
+         return memoryManager->endAccessToHostMemory(m_memory, 0, VK_WHOLE_SIZE);
     }
 
     return false;
@@ -266,10 +281,22 @@ bool BufferVK::create(u32 size, const void* data)
     }
 
     MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
-    VkMemoryPropertyFlags memFlags = m_hostMemory ? VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT : VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    if (m_coherentMemory)
+    VkMemoryPropertyFlags memFlags = 0;
+    if (m_mappableMemory)
     {
-        memFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        memFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+        if (m_coherentMemory)
+        {
+            memFlags |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+        }
+        else
+        {
+            memFlags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+        }
+    }
+    else
+    {
+        memFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     }
 
     m_memory = memoryManager->allocateBuffer(*memoryManager->getSimpleAllocator(), m_buffer, memFlags);
@@ -297,6 +324,11 @@ void BufferVK::destroy()
     {
         vkDestroyBuffer(m_device, m_buffer, nullptr);
     }
+}
+
+VkBuffer BufferVK::getBuffer() const
+{
+    return m_buffer;
 }
 
 } //namespace vk
