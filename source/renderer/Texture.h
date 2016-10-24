@@ -153,17 +153,6 @@ namespace renderer
 
     private:
 
-        void                                immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel = 0U);
-        void                                immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
-        void                                immediateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel = 0U);
-        void                                immediateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
-        void                                immediateRead(void const* data, u32 mipLevel = 0U) const;
-        void                                immediateRead(u32 cubemapSide, void const* data, u32 mipLevel = 0U) const;
-        void                                immediateFill(const void* data, u32 offset = 0U, u32 size = 0U, u32 mipLevel = 0U);
-        void                                immediateFill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 mipLevel = 0U);
-        void                                immediateFill(const void* data, const core::Dimension3D& offset = core::Dimension3D(), const core::Dimension3D& size = core::Dimension3D(), u32 mipLevel = 0U);
-
-
         Texture* const                      m_impl;
     };
 

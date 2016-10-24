@@ -27,8 +27,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u3
 
     if (ENGINE_RENDERER->isThreaded())
     {
-        RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
-        command.writeValue<Texture const*>(this);
+        RenderStreamCommand command(ERenderCommand::eCommandCreateTexture);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(size);
         command.writeValue<EImageFormat>(format);
         command.writeValue<EImageType>(type);
@@ -46,7 +46,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, u3
     else
     {
         u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
-        Texture::create(data, dataSize);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->create(data, dataSize);
     }
 }
 
@@ -61,8 +62,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
 
     if (ENGINE_RENDERER->isThreaded())
     {
-        RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
-        command.writeValue<Texture const*>(this);
+        RenderStreamCommand command(ERenderCommand::eCommandCreateTexture);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(size.getArea());
         command.writeValue<EImageFormat>(format);
         command.writeValue<EImageType>(type);
@@ -80,7 +81,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
     else
     {
         u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
-        Texture::create(data, dataSize);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->create(data, dataSize);
     }
 }
 
@@ -92,8 +94,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
 
     if (ENGINE_RENDERER->isThreaded())
     {
-        RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
-        command.writeValue<Texture const*>(this);
+        RenderStreamCommand command(ERenderCommand::eCommandCreateTexture);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(size.getArea());
         command.writeValue<EImageFormat>(format);
         command.writeValue<EImageType>(type);
@@ -111,7 +113,8 @@ Texture::Texture(ETextureTarget target, EImageFormat format, EImageType type, co
     else
     {
         u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
-        Texture::create(data, dataSize);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->create(data, dataSize);
     }
 }
 
@@ -120,8 +123,8 @@ Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& 
 {
     if (ENGINE_RENDERER->isThreaded())
     {
-        RenderStreamCommand command(ERenderCommand::eCommadCreateTexture);
-        command.writeValue<Texture const*>(this);
+        RenderStreamCommand command(ERenderCommand::eCommandCreateTexture);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(size.getArea());
         command.writeValue<EImageFormat>(format);
         command.writeValue<EImageType>(type);
@@ -139,7 +142,8 @@ Texture::Texture(EImageFormat format, EImageType type, const core::Dimension2D& 
     else
     {
         u32 dataSize = size.getArea() * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
-        Texture::create(data, dataSize * k_textureCubemapSideCount);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->create(data, dataSize * k_textureCubemapSideCount);
     }
 }
 
@@ -148,14 +152,15 @@ Texture::~Texture()
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandDestoyTexure);
-        command.writeValue<Texture const*>(m_impl);
+        command.writeValue<Texture* const>(m_impl);
         command.endCommand();
 
         ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
-        Texture::destroy();
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->destroy();
         delete m_impl;
     }
 }
@@ -200,7 +205,7 @@ void Texture::update(u32 offset, u32 size, const void* data, u32 mipLevel)
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<u32>(offset);
         command.writeValue<u32>(size);
@@ -212,7 +217,8 @@ void Texture::update(u32 offset, u32 size, const void* data, u32 mipLevel)
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
@@ -221,7 +227,7 @@ void Texture::update(const core::Dimension2D& offset, const core::Dimension2D& s
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<Dimension2D>(offset);
         command.writeValue<Dimension2D>(size);
@@ -233,7 +239,8 @@ void Texture::update(const core::Dimension2D& offset, const core::Dimension2D& s
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
@@ -242,7 +249,7 @@ void Texture::update(const core::Dimension3D& offset, const core::Dimension3D& s
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<Dimension3D>(offset);
         command.writeValue<Dimension3D>(size);
@@ -254,7 +261,8 @@ void Texture::update(const core::Dimension3D& offset, const core::Dimension3D& s
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->update(offset, size, data, mipLevel);
     }
 }
 
@@ -263,7 +271,7 @@ void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const cor
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandUpdateTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<Dimension2D>(offset);
         command.writeValue<Dimension2D>(size);
@@ -275,32 +283,9 @@ void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const cor
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->update(offset, size, data, mipLevel);
     }
-}
-
-void Texture::immediateUpdate(u32 offset, u32 size, const void* data, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->update(offset, size, data, mipLevel);
-}
-
-void Texture::immediateUpdate(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->update(offset, size, data, mipLevel);
-}
-
-void Texture::immediateUpdate(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->update(offset, size, data, mipLevel);
-}
-
-void Texture::immediateUpdate(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D & size, const void* data, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->update(cubemapSide, offset, size, data, mipLevel);
 }
 
 void Texture::read(void const* data, u32 mipLevel) const
@@ -308,7 +293,7 @@ void Texture::read(void const* data, u32 mipLevel) const
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandReadTexture);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<void const*>(data);
         command.writeValue<u32>(mipLevel);
         ENGINE_RENDERER->pushCommand(command, true);
@@ -316,7 +301,8 @@ void Texture::read(void const* data, u32 mipLevel) const
     }
     else
     {
-        Texture::immediateRead(data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->read(data, mipLevel);
     }
 }
 
@@ -325,7 +311,7 @@ void Texture::read(u32 cubemapSide, void const* data, u32 mipLevel) const
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandReadTexture);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<void const*>(data);
         command.writeValue<u32>(mipLevel);
         command.writeValue<u32>(cubemapSide);
@@ -335,20 +321,9 @@ void Texture::read(u32 cubemapSide, void const* data, u32 mipLevel) const
     }
     else
     {
-        Texture::immediateRead(data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->read(data, mipLevel);
     }
-}
-
-void Texture::immediateRead(void const* data, u32 mipLevel) const
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->read(data, mipLevel);
-}
-
-void Texture::immediateRead(u32 cubemapSide, void const* data, u32 mipLevel) const
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->read(cubemapSide, data, mipLevel);
 }
 
 void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
@@ -356,7 +331,7 @@ void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandFillTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<u32>(offset);
         command.writeValue<u32>(size);
@@ -368,7 +343,8 @@ void Texture::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
     }
     else
     {
-        Texture::immediateFill(data, offset, size, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->fill(data, offset, size, mipLevel);
     }
 }
 
@@ -377,7 +353,7 @@ void Texture::fill(const void* data, const core::Dimension2D& offset, const core
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandFillTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<Dimension2D>(offset);
         command.writeValue<Dimension2D>(size);
@@ -389,7 +365,8 @@ void Texture::fill(const void* data, const core::Dimension2D& offset, const core
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->fill(data, offset, size, mipLevel);
     }
 }
 
@@ -398,7 +375,7 @@ void Texture::fill(const void* data, const core::Dimension3D& offset, const core
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandFillTexure);
-        command.writeValue<Texture const*>(this);
+        command.writeValue<Texture* const>(m_impl);
         command.writeValue<u32>(mipLevel);
         command.writeValue<Dimension3D>(offset);
         command.writeValue<Dimension3D>(size);
@@ -410,26 +387,9 @@ void Texture::fill(const void* data, const core::Dimension3D& offset, const core
     }
     else
     {
-        Texture::immediateUpdate(offset, size, data, mipLevel);
+        ASSERT(m_impl, "m_impl is nullptr");
+        m_impl->fill(data, offset, size, mipLevel);
     }
-}
-
-void Texture::immediateFill(const void* data, u32 offset, u32 size, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->fill(data, offset, size, mipLevel);
-}
-
-void Texture::immediateFill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->fill(data, offset, size, mipLevel);
-}
-
-void Texture::immediateFill(const void * data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 mipLevel)
-{
-    ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->fill(data, offset, size, mipLevel);
 }
 
 ETextureTarget Texture::getTarget() const

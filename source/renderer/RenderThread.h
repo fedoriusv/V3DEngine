@@ -17,7 +17,7 @@ namespace renderer
         eCommandUnknown = -1,
         eCommandInitialize = 0,
 
-        eCommadCreateTexture,
+        eCommandCreateTexture,
         eCommandUpdateTexure,
         eCommandReadTexture,
         eCommandFillTexure,

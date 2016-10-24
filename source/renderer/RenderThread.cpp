@@ -199,6 +199,34 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         m_isRunning = false;
         break;*/
 
+    case ERenderCommand::eCommandCreateTexture:
+    {
+        Texture* texute = command.readValue<Texture*>();
+        u32 size = command.readValue<u32>();
+        EImageFormat format = command.readValue<EImageFormat>();
+        EImageType type = command.readValue<EImageType>();
+        bool presentData = command.readValue<bool>();
+        void* data = nullptr;
+        if (presentData)
+        {
+            u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
+            if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
+            {
+                data = command.readValue(dataSize, k_textureCubemapSideCount);
+            }
+            else
+            {
+                data = command.readValue(dataSize, 1);
+            }
+
+            texute->create(data, dataSize);
+            free(data);
+        }
+
+        texute->create(nullptr, 0);
+        break;
+    }
+
     case ERenderCommand::eCommandUpdateTexure:
     {
         Texture* texute = command.readValue<Texture*>();
@@ -211,7 +239,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size, 1);
             RenderThread::submit();
 
-            texute->immediateUpdate(offset, size, data, mipLevel);
+            texute->update(offset, size, data, mipLevel);
             free(data);
         }
         else if (texute->getTarget() == ETextureTarget::eTexture2D ||
@@ -222,7 +250,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size.getArea(), 1);
             RenderThread::submit();
 
-            texute->immediateUpdate(offset, size, data, mipLevel);
+            texute->update(offset, size, data, mipLevel);
             free(data);
         }
         else if (texute->getTarget() == ETextureTarget::eTexture3D ||
@@ -233,7 +261,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size.getArea(), 1);
             RenderThread::submit();
 
-            texute->immediateUpdate(offset, size, data, mipLevel);
+            texute->update(offset, size, data, mipLevel);
             free(data);
         }
         break;
@@ -269,7 +297,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size, 1);
             RenderThread::submit();
 
-            texute->immediateFill(data, offset, size, mipLevel);
+            texute->fill(data, offset, size, mipLevel);
             free(data);
         }
         else if (texute->getTarget() == ETextureTarget::eTexture2D ||
@@ -280,7 +308,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size.getArea(), 1);
             RenderThread::submit();
 
-            texute->immediateFill(data, offset, size, mipLevel);
+            texute->fill(data, offset, size, mipLevel);
             free(data);
         }
         else if (texute->getTarget() == ETextureTarget::eTexture3D ||
@@ -291,7 +319,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
             void* data = command.readValue(size.getArea(), 1);
             RenderThread::submit();
 
-            texute->immediateFill(data, offset, size, mipLevel);
+            texute->fill(data, offset, size, mipLevel);
             free(data);
         }
         break;
@@ -299,37 +327,9 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
 
     case ERenderCommand::eCommandDestoyTexure:
     {
-        Texture* texuteImpl = command.readValue<Texture*>();
-        texuteImpl->destroy();
-        delete texuteImpl;
-        break;
-    }
-
-    case ERenderCommand::eCommadCreateTexture:
-    {
         Texture* texute = command.readValue<Texture*>();
-        u32 size = command.readValue<u32>();
-        EImageFormat format = command.readValue<EImageFormat>();
-        EImageType type = command.readValue<EImageType>();
-        bool presentData = command.readValue<bool>();
-        void* data = nullptr;
-        if (presentData)
-        {
-            u32 dataSize = size * ImageFormat::typeSize(type) * ImageFormat::componentCount(format);
-            if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
-            {
-                data = command.readValue(dataSize, k_textureCubemapSideCount);
-            }
-            else
-            {
-                data = command.readValue(dataSize, 1);
-            }
-
-            texute->create(data, dataSize);
-            free(data);
-        }
-
-        texute->create(nullptr, 0);
+        texute->destroy();
+        delete texute;
         break;
     }
 

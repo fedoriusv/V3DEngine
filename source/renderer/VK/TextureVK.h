@@ -58,14 +58,14 @@ namespace vk
         void                            setWrap(EWrapType wrap) override;
         void                            setAnisotropicLevel(EAnisotropic level) override;
 
+        bool                            create(const void* data, u32 srcSize) override;
+        bool                            create(VkImage image);
+        void                            destroy() override;
         void                            copyData(const TexturePtr& texture) override;
 
     private:
 
-        bool                            create(const void* data, u32 srcSize) override;
-        void                            destroy() override;
-
-    private:
+        bool                            createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange);
 
         const ETextureTarget            m_target;
         const EImageFormat              m_format;
@@ -86,7 +86,9 @@ namespace vk
 
         SMemoryVK                       m_memory;
         VkImage                         m_image;
+
         VkImageView                     m_imageView;
+        VkImageAspectFlags              m_aspectFlags;
         VkImageLayout                   m_imageLayout;
         VkImageUsageFlags               m_usage;
         VkImageCreateFlags              m_flags;
