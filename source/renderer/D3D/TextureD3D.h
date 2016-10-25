@@ -1,8 +1,8 @@
-#ifndef _V3D_TEXTURE_D3D_H_
-#define _V3D_TEXTURE_D3D_H_
+#pragma once
 
 #include "renderer/Texture.h"
 
+#ifdef _V3D_TEXTURE_D3D_H_
 namespace v3d
 {
 namespace renderer

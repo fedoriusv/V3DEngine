@@ -22,6 +22,7 @@ namespace renderer
         eCommandReadTexture,
         eCommandFillTexure,
         eCommandDestoyTexure,
+        eCommandCopyTexure,
 
         eCommandCreateBuffer,
         eCommandUpdateBuffer,

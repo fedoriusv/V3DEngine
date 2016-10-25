@@ -270,7 +270,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
     case ERenderCommand::eCommandReadTexture:
     {
         Texture* texute = command.readValue<Texture*>();
-        void const* dataDst = command.readValue<void const*>();
+        void* dataDst = command.readValue<void*>();
         u32 mipLevel = command.readValue<u32>();
         if (texute->getTarget() == ETextureTarget::eTextureCubeMap)
         {
@@ -330,6 +330,15 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         Texture* texute = command.readValue<Texture*>();
         texute->destroy();
         delete texute;
+        break;
+    }
+
+    case ERenderCommand::eCommandCopyTexure:
+    {
+        Texture* dstTexute = command.readValue<Texture*>();
+        Texture* srcTexute = command.readValue<Texture*>();
+        dstTexute->copyData(srcTexute);
+
         break;
     }
 

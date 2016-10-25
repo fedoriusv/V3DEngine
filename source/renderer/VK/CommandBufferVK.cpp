@@ -243,12 +243,36 @@ void CommandBufferVK::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageL
     }
 }
 
-void CommandBufferVK::copyImageToImage()
+void CommandBufferVK::copyImageToImage(VkImage srcImage, VkImage dstImage, VkImageLayout srcLayout, VkImageLayout dstLayout, const VkImageSubresourceRange& subresourceRange)
 {
+    std::vector<VkImageCopy> imageCopyRegions;
+    //TODO:
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdCopyImage(m_commandBuffer, srcImage, srcLayout, dstImage, dstLayout, static_cast<u32>(imageCopyRegions.size()), imageCopyRegions.data());
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
 }
 
-void CommandBufferVK::copyImageToBuffer()
+void CommandBufferVK::copyImageToBuffer(VkImage image, VkBuffer buffer, VkImageLayout layout, const VkImageSubresourceRange& subresourceRange)
 {
+    std::vector<VkBufferImageCopy> bufferCopyRegions;
+    //TODO:
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdCopyImageToBuffer(m_commandBuffer, image, layout, buffer, static_cast<u32>(bufferCopyRegions.size()), bufferCopyRegions.data());
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
 }
 
 void CommandBufferVK::copyBufferToBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, u64 size)

@@ -32,8 +32,8 @@ namespace vk
         void                    imageMemoryBarrier(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout oldImageLayout, VkImageLayout newImageLayout, const VkImageSubresourceRange& subresourceRange);
         
         void                    copyBufferToImage(VkBuffer buffer, VkImage image, VkImageLayout layout, const VkImageSubresourceRange& subresourceRange);
-        void                    copyImageToImage();
-        void                    copyImageToBuffer();
+        void                    copyImageToImage(VkImage srcImage, VkImage dstImage, VkImageLayout srcLayout, VkImageLayout dstLayout, const VkImageSubresourceRange& subresourceRange);
+        void                    copyImageToBuffer(VkImage image, VkBuffer buffer, VkImageLayout layout, const VkImageSubresourceRange& subresourceRange);
         void                    copyBufferToBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, u64 size);
         void                    blitImage();
         void                    resolveImage();

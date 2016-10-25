@@ -2,6 +2,8 @@
 
 #include "renderer/Texture.h"
 
+#ifdef _OPENGL_RENDER_
+
 namespace v3d
 {
 namespace renderer
@@ -116,3 +118,5 @@ namespace gl
 } //namespace gl
 } //namespace renderer
 } //namespace v3d
+
+#endif //_OPENGL_RENDER_

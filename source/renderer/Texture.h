@@ -115,8 +115,8 @@ namespace renderer
         virtual void                        update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel = 0U);
         virtual void                        update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U);
 
-        virtual void                        read(void const* data, u32 mipLevel = 0U) const;
-        virtual void                        read(u32 cubemapSide, void const* data, u32 mipLevel = 0U) const;
+        virtual void                        read(void* const data, u32 mipLevel = 0U) const;
+        virtual void                        read(u32 cubemapSide, void* const data, u32 mipLevel = 0U) const;
 
         virtual void                        fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 mipLevel = 0U);
         virtual void                        fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 mipLevel = 0U);
@@ -144,7 +144,7 @@ namespace renderer
 
         Texture();
 
-        virtual void                        copyData(const TexturePtr& texture);
+        virtual void                        copyData(Texture* texture);
 
 
         friend                              RenderThread;

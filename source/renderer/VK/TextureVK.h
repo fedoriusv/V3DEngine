@@ -37,8 +37,8 @@ namespace vk
         void                            update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel = 0U) override;
         void                            update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel = 0U) override;
 
-        void                            read(void const* data, u32 mipLevel = 0U) const override;
-        void                            read(u32 cubemapSide, void const* data, u32 mipLevel = 0U) const override;
+        void                            read(void* const data, u32 mipLevel = 0U) const override;
+        void                            read(u32 cubemapSide, void* const data, u32 mipLevel = 0U) const override;
 
         void                            fill(const void* data, u32 offset = 0U, u32 size = 0U, u32 mipLevel = 0U) override;
         void                            fill(const void* data, const core::Dimension2D& offset = core::Dimension2D(), const core::Dimension2D& size = core::Dimension2D(), u32 mipLevel = 0U) override;
@@ -61,7 +61,9 @@ namespace vk
         bool                            create(const void* data, u32 srcSize) override;
         bool                            create(VkImage image);
         void                            destroy() override;
-        void                            copyData(const TexturePtr& texture) override;
+        void                            copyData(Texture* texture) override;
+
+        VkImage                         getImage() const;
 
     private:
 
@@ -79,6 +81,7 @@ namespace vk
         std::atomic<ETextureFilter>     m_magFilter;
         std::atomic<EAnisotropic>       m_anisotropicLevel;
         std::atomic<EWrapType>          m_wrap;
+        //TODO: add Sampler 
 
     private:
         VkDevice                        m_device;
@@ -89,7 +92,7 @@ namespace vk
 
         VkImageView                     m_imageView;
         VkImageAspectFlags              m_aspectFlags;
-        VkImageLayout                   m_imageLayout;
+        mutable VkImageLayout           m_imageLayout;
         VkImageUsageFlags               m_usage;
         VkImageCreateFlags              m_flags;
         VkImageFormatProperties         m_imageProps;

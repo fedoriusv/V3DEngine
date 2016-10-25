@@ -288,13 +288,13 @@ void Texture::update(u32 cubemapSide, const core::Dimension2D& offset, const cor
     }
 }
 
-void Texture::read(void const* data, u32 mipLevel) const
+void Texture::read(void* const data, u32 mipLevel) const
 {
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandReadTexture);
         command.writeValue<Texture* const>(m_impl);
-        command.writeValue<void const*>(data);
+        command.writeValue<void* const>(data);
         command.writeValue<u32>(mipLevel);
         ENGINE_RENDERER->pushCommand(command, true);
         command.endCommand();
@@ -306,13 +306,13 @@ void Texture::read(void const* data, u32 mipLevel) const
     }
 }
 
-void Texture::read(u32 cubemapSide, void const* data, u32 mipLevel) const
+void Texture::read(u32 cubemapSide, void* const data, u32 mipLevel) const
 {
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandReadTexture);
         command.writeValue<Texture* const>(m_impl);
-        command.writeValue<void const*>(data);
+        command.writeValue<void* const>(data);
         command.writeValue<u32>(mipLevel);
         command.writeValue<u32>(cubemapSide);
         command.endCommand();
@@ -503,10 +503,20 @@ bool Texture::isEnable() const
     return m_impl->isEnable();
 }
 
-void Texture::copyData(const TexturePtr& texture)
+void Texture::copyData(Texture* texture)
 {
-    if (m_impl)
+    if (ENGINE_RENDERER->isThreaded())
     {
+        RenderStreamCommand command(ERenderCommand::eCommandCopyTexure);
+        command.writeValue<Texture* const>(m_impl);
+        command.writeValue<Texture* const>(texture);
+        command.endCommand();
+
+        ENGINE_RENDERER->pushCommand(command, false);
+    }
+    else
+    {
+        ASSERT(m_impl, "m_impl is nullptr");
         m_impl->copyData(texture);
     }
 }

@@ -240,24 +240,25 @@ VkFormat getImageFormatVK(EImageFormat format, EImageType type)
             return VK_FORMAT_UNDEFINED;
         }
 
-    /*case EImageType::eUnsignedShort:
+    case EImageType::eUnsignedShort:
         switch (format)
         {
         case EImageFormat::eRed:
             return VK_FORMAT_R16_UNORM;
         case EImageFormat::eRG:
-            return;
+            return VK_FORMAT_R16G16_UNORM;
         case EImageFormat::eRGB:
-            return;
+            return VK_FORMAT_R16G16B16_UNORM;
         case EImageFormat::eRGBA:
-            return;
+            return VK_FORMAT_R16G16B16A16_UNORM;
+
         case EImageFormat::eDepthComponent:
-            return;
+            return VK_FORMAT_UNDEFINED;
         case EImageFormat::eStencilIndex:
-            return;
+            return VK_FORMAT_UNDEFINED;
         }
 
-    case EImageType::eInt:
+    /*case EImageType::eInt:
         switch (format)
         {
         case EImageFormat::eRed:
@@ -455,11 +456,11 @@ bool TextureVK::create(const void* data, u32 srcSize)
     m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 
-    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
     VkFormat format = getImageFormatVK(m_format, m_type);
     VkImageType imageType = getImageTypeVK(m_target);
     u32 countLayers = getArrayLayersCountVK(m_target, m_size);
 
+    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
     vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
     ASSERT(m_mipmapLevel <= m_imageProps.maxMipLevels, "unsupport mipmap level");
 
@@ -528,7 +529,7 @@ bool TextureVK::create(const void* data, u32 srcSize)
     BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
     if (!stagingBuffer->create(mipMapSize, mipmapData))
     {
-        LOG_ERROR("TextureVK::create: can't stagingBuffer");
+        LOG_ERROR("TextureVK::create: can't create stagingBuffer");
         stagingBuffer->destroy();
         delete stagingBuffer;
 
@@ -582,11 +583,26 @@ bool TextureVK::create(VkImage image)
     m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
     m_image = image;
 
-    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
     VkFormat format = getImageFormatVK(m_format, m_type);
     VkImageType imageType = getImageTypeVK(m_target);
 
-    //TODO:
+    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
+    vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
+
+    VkFormatProperties formatProperties = {};
+    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = 0;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = 0;
+    imageSubresourceRange.layerCount = 1;
+
+    if (!TextureVK::createImageView(format, imageSubresourceRange))
+    {
+        return false;
+    }
 
     m_initialized = true;
 
@@ -595,6 +611,12 @@ bool TextureVK::create(VkImage image)
 
 void TextureVK::destroy()
 {
+    if (m_imageView != VK_NULL_HANDLE)
+    {
+        vkDestroyImageView(m_device, m_imageView, nullptr);
+        m_imageView = nullptr;
+    }
+
     if (m_memory._memory != VK_NULL_HANDLE)
     {
         MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
@@ -610,10 +632,12 @@ void TextureVK::destroy()
 
 void TextureVK::bind(u32 unit)
 {
+    //TODO:
 }
 
 void TextureVK::unbind()
 {
+    //TODO:
 }
 
 bool TextureVK::isValid() const
@@ -628,98 +652,227 @@ bool TextureVK::isEnable() const
 
 void TextureVK::update(u32 offset, u32 size, const void* data, u32 mipLevel)
 {
-    VkBufferCreateInfo bufferCreateInfo = {};
-    bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferCreateInfo.pNext = nullptr;
-    bufferCreateInfo.flags = 0;
-    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    bufferCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
-    bufferCreateInfo.queueFamilyIndexCount = 1;
-    bufferCreateInfo.size = size;
-    bufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-
-    VkBuffer stagingBuffer = VK_NULL_HANDLE;
-    VkResult result = vkCreateBuffer(m_device, &bufferCreateInfo, nullptr, &stagingBuffer);
-    if (result != VK_SUCCESS)
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
+    u32 dataSize = size * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, data))
     {
-        LOG_ERROR("TextureVK::update: vkCreateBuffer. Error %s", DebugVK::errorString(result).c_str());
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
         return;
     }
 
-    MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
-    SMemoryVK stagingMemory = memoryManager->allocateImage(*memoryManager->getSimpleAllocator(), m_image, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT /*| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/);
-    if (stagingMemory._mapped == VK_NULL_HANDLE)
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = 0;
+    imageSubresourceRange.layerCount = 1;
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+    commandBuffer->copyBufferToImage(stagingBuffer->getBuffer(), m_image, m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
+
+    stagingBuffer->destroy();
+    delete stagingBuffer;
+}
+
+void TextureVK::update(const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
+{
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
+    u32 dataSize = size.getArea() * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, data))
     {
-        LOG_ERROR("TextureVK::create: allocateImage return invalid memory");
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
         return;
     }
 
-    ASSERT(stagingMemory._mapped, "map is nullptr");
-    memcpy(stagingMemory._mapped, data, size);
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = (m_target == ETextureTarget::eTexture1DArray) ? size.height : 0;
+    imageSubresourceRange.layerCount = 1;
 
-    //std::vector<VkBufferImageCopy> bufferCopyRegions;
-    //uint32_t offset = 0;
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
 
-    //for (uint32_t i = 0; i < levels; i++)
-    //{
-    //    VkBufferImageCopy bufferCopyRegion = {};
-    //    bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    //    bufferCopyRegion.imageSubresource.mipLevel = i;
-    //    bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
-    //    bufferCopyRegion.imageSubresource.layerCount = 1;
-    //    bufferCopyRegion.imageExtent.width = static_cast<uint32_t>(tex2D[i].dimensions().x);
-    //    bufferCopyRegion.imageExtent.height = static_cast<uint32_t>(tex2D[i].dimensions().y);
-    //    bufferCopyRegion.imageExtent.depth = 1;
-    //    bufferCopyRegion.bufferOffset = offset;
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
-    //    bufferCopyRegions.push_back(bufferCopyRegion);
+    commandBuffer->copyBufferToImage(stagingBuffer->getBuffer(), m_image, m_imageLayout, imageSubresourceRange);
 
-    //    offset += static_cast<uint32_t>(tex2D[i].size());
-    //}
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
 
-    //vkCmdCopyBufferToImage();
-
-    memoryManager->free(*memoryManager->getSimpleAllocator(), stagingMemory);
-    vkDestroyBuffer(m_device, stagingBuffer, nullptr);
-    stagingBuffer = VK_NULL_HANDLE;
+    stagingBuffer->destroy();
+    delete stagingBuffer;
 }
 
-void TextureVK::update(const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
+void TextureVK::update(const core::Dimension3D& offset, const core::Dimension3D& size, const void* data, u32 mipLevel)
+{
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
+    u32 dataSize = size.getArea() * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, data))
+    {
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
+        return;
+    }
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = (m_target == ETextureTarget::eTexture2DArray) ? size.depth : 0;
+    imageSubresourceRange.layerCount = 1;
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+    commandBuffer->copyBufferToImage(stagingBuffer->getBuffer(), m_image, m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
+
+    stagingBuffer->destroy();
+    delete stagingBuffer;
+}
+
+void TextureVK::update(u32 cubemapSide, const core::Dimension2D& offset, const core::Dimension2D& size, const void* data, u32 mipLevel)
+{
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eWriteStatic);
+    u32 dataSize = size.getArea() * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, data))
+    {
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
+        return;
+    }
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = cubemapSide;
+    imageSubresourceRange.layerCount = 1;
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+    commandBuffer->copyBufferToImage(stagingBuffer->getBuffer(), m_image, m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
+
+    stagingBuffer->destroy();
+    delete stagingBuffer;
+}
+
+void TextureVK::read(void* const data, u32 mipLevel) const
+{
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eReadStatic);
+    u32 dataSize = m_size.getArea() * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, nullptr))
+    {
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
+        return;
+    }
+
+    u32 currentLayer = 0; //TODO:
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = currentLayer;
+    imageSubresourceRange.layerCount = 1;
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+    commandBuffer->copyImageToBuffer(m_image, stagingBuffer->getBuffer(), m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
+
+    stagingBuffer->destroy();
+    delete stagingBuffer;
+}
+
+void TextureVK::read(u32 cubemapSide, void* const data, u32 mipLevel) const
+{
+    BufferVK* stagingBuffer = new BufferVK(eStagingBuffer, eReadStatic);
+    u32 dataSize = m_size.getArea() * ImageFormat::componentCount(m_format) * ImageFormat::typeSize(m_type);
+    if (!stagingBuffer->create(dataSize, nullptr))
+    {
+        LOG_ERROR("TextureVK::update: can't create stagingBuffer");
+        stagingBuffer->destroy();
+        delete stagingBuffer;
+
+        return;
+    }
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = mipLevel;
+    imageSubresourceRange.levelCount = 1;
+    imageSubresourceRange.baseArrayLayer = cubemapSide;
+    imageSubresourceRange.layerCount = 1;
+
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    VkImageLayout originImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+    commandBuffer->copyImageToBuffer(m_image, stagingBuffer->getBuffer(), m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originImageLayout, imageSubresourceRange);
+    m_imageLayout = originImageLayout;
+
+    stagingBuffer->destroy();
+    delete stagingBuffer;
+}
+
+void TextureVK::fill(const void* data, u32 offset, u32 size, u32 mipLevel)
 {
     //TODO:
 }
 
-void TextureVK::update(const core::Dimension3D & offset, const core::Dimension3D & size, const void * data, u32 level)
+void TextureVK::fill(const void* data, const core::Dimension2D& offset, const core::Dimension2D& size, u32 mipLevel)
 {
     //TODO:
 }
 
-void TextureVK::update(u32 cubemapSide, const core::Dimension2D & offset, const core::Dimension2D & size, const void * data, u32 level)
-{
-    //TODO:
-}
-
-void TextureVK::read(void const* data, u32 level) const
-{
-    //TODO:
-}
-
-void TextureVK::read(u32 cubemapSide, void const* data, u32 level) const
-{
-    //TODO:
-}
-
-void TextureVK::fill(const void * data, u32 offset, u32 size, u32 level)
-{
-    //TODO:
-}
-
-void TextureVK::fill(const void * data, const core::Dimension2D & offset, const core::Dimension2D & size, u32 level)
-{
-    //TODO:
-}
-
-void TextureVK::fill(const void * data, const core::Dimension3D & offset, const core::Dimension3D & size, u32 level)
+void TextureVK::fill(const void* data, const core::Dimension3D& offset, const core::Dimension3D& size, u32 mipLevel)
 {
     //TODO:
 }
@@ -784,9 +937,42 @@ void TextureVK::setAnisotropicLevel(EAnisotropic level)
     //TODO:
 }
 
-void TextureVK::copyData(const TexturePtr & texture)
+void TextureVK::copyData(Texture* texture)
 {
-    //TODO:
+    CommandBufferVK* commandBuffer = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getCurrentCommandBuffer();
+
+    TextureVK* srcTexture = static_cast<TextureVK*>(texture);
+    ASSERT(m_mipmapLevel == srcTexture->m_mipmapLevel, "Different mipmap level");
+
+    u32 countLayers = 1; //TODO:
+
+    VkImageSubresourceRange imageSubresourceRange = {};
+    imageSubresourceRange.aspectMask = m_aspectFlags;
+    imageSubresourceRange.baseMipLevel = 0;
+    imageSubresourceRange.levelCount = m_mipmapLevel;
+    imageSubresourceRange.baseArrayLayer = 0;
+    imageSubresourceRange.layerCount = countLayers;
+
+    VkImageLayout originSrcImageLayout = srcTexture->m_imageLayout;
+    commandBuffer->imageMemoryBarrier(srcTexture->m_image, srcTexture->m_aspectFlags, srcTexture->m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, imageSubresourceRange);
+    srcTexture->m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+    VkImageLayout originDstImageLayout = m_imageLayout;
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageSubresourceRange);
+    m_imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+    commandBuffer->copyImageToImage(srcTexture->m_image, m_image, srcTexture->m_imageLayout, m_imageLayout, imageSubresourceRange);
+
+    commandBuffer->imageMemoryBarrier(srcTexture->m_image, srcTexture->m_aspectFlags, srcTexture->m_imageLayout, originSrcImageLayout, imageSubresourceRange);
+    srcTexture->m_imageLayout = originSrcImageLayout;
+
+    commandBuffer->imageMemoryBarrier(m_image, m_aspectFlags, m_imageLayout, originDstImageLayout, imageSubresourceRange);
+    m_imageLayout = originDstImageLayout;
+}
+
+VkImage TextureVK::getImage() const
+{
+    return m_image;
 }
 
 bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange)
