@@ -57,8 +57,8 @@ namespace renderer
         void                            setViewport(const core::Rect32& size);
         const core::Rect32&             getViewport() const;
 
-        bool                            isClearColorBuffer()   const;
-        bool                            isClearDepthBuffer()   const;
+        bool                            isClearColorBuffer() const;
+        bool                            isClearDepthBuffer() const;
         bool                            isClearStencilBuffer() const;
 
         void                            setClearColorBuffer(bool clear);
@@ -99,8 +99,11 @@ namespace renderer
             EImageFormat        _format;
             EImageType          _type;
 
-            TexturePtr          _texture;
-            CRenderBuffer*      _buffer;
+            union
+            {
+                Texture*           _texture;
+                CRenderBuffer*     _buffer;
+            };
         };
 
     protected:
