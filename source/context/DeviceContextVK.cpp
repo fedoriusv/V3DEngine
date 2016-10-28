@@ -590,7 +590,8 @@ void DeviceContextVK::fillGrapthicCaps()
 
     VkDeviceSize memoryBlockSize = m_vulkanPropsDevice._properties.limits.nonCoherentAtomSize;
     m_graphicsCaps.setMemoryBlockSize(memoryBlockSize);
-    //
+    
+    m_graphicsCaps.setMaxColorAttachments(m_vulkanPropsDevice._properties.limits.maxColorAttachments);
 
     LOG_INFO("Vuklan driver info:");
     /*LOG("Render: %s", renderer);

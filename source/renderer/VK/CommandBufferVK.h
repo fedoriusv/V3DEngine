@@ -38,6 +38,9 @@ namespace vk
         void                    blitImage();
         void                    resolveImage();
 
+        void                    setViewport(const core::Rect32& viewportPos, f32 minDepth = 0.0f, f32 maxDepth = 1.0);
+
+
     private:
 
         VkCommandBufferLevel    m_bufferLevel;

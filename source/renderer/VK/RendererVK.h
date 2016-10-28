@@ -15,6 +15,7 @@ namespace vk
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class RenderStateVK;
     class MemoryManagerVK;
     class CommandBufferVK;
     class CommandPoolVK;
@@ -44,6 +45,8 @@ namespace vk
         void                    immediatePresentFrame() override;
 
         void                    immediateDraw() override;
+
+        void                    createGraphicPipeline(const RenderStateVK* renderState);
 
         MemoryManagerVK*        m_memoryMamager;
 

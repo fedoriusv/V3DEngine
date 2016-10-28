@@ -8,14 +8,14 @@ namespace v3d
 namespace renderer
 {
 
-const std::string CRenderState::s_renderPolygonMode[eModeCount] =
+const std::string RenderState::s_renderPolygonMode[eModeCount] =
 {
     "fill",
     "line",
     "point"
 };
 
-EPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
+EPolygonMode RenderState::getPolygonModeByName(const std::string& name)
 {
     for (u32 i = 0; i < eModeCount; ++i)
     {
@@ -28,7 +28,7 @@ EPolygonMode CRenderState::getPolygonModeByName(const std::string& name)
     return ePolyModeFill;
 }
 
-const std::string CRenderState::s_blendFactor[eBlendCount] =
+const std::string RenderState::s_blendFactor[eBlendCount] =
 {
     "zero",
     "one",
@@ -43,7 +43,7 @@ const std::string CRenderState::s_blendFactor[eBlendCount] =
     "srcAplhaSaturated"
 };
 
-EBlendFactor CRenderState::getBlendFactorByName(const std::string& name)
+EBlendFactor RenderState::getBlendFactorByName(const std::string& name)
 {
     for (u32 i = 0; i < eBlendCount; ++i)
     {
@@ -56,27 +56,28 @@ EBlendFactor CRenderState::getBlendFactorByName(const std::string& name)
     return eBlendZero;
 }
 
-const std::string CRenderState::s_cullface[eCullfaceCount] =
+const std::string RenderState::s_cullface[eCullfaceCount] =
 {
+    "none",
     "front",
     "back",
     "frontAndBack"
 };
 
-ECullFace CRenderState::getCullFaceByName(const std::string& name)
+ECullMode RenderState::getCullFaceByName(const std::string& name)
 {
     for (u32 i = 0; i < eCullfaceCount; ++i)
     {
         if (s_cullface[i].compare(name) == 0)
         {
-            return (ECullFace)i;
+            return (ECullMode)i;
         }
     }
 
     return eFaceBack;
 }
 
-const std::string CRenderState::s_comparefunc[eCompareCount] =
+const std::string RenderState::s_comparefunc[eCompareCount] =
 {
     "less",
     "lequal",
@@ -88,7 +89,7 @@ const std::string CRenderState::s_comparefunc[eCompareCount] =
     "never"
 };
 
-ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
+ECompareFunc RenderState::getCompareFuncByName(const std::string& name)
 {
     for (u32 i = 0; i < eCompareCount; ++i)
     {
@@ -101,7 +102,15 @@ ECompareFunc CRenderState::getCompareFuncByName(const std::string& name)
     return eCmpLequal;
 }
 
-CRenderState::CRenderState()
+void RenderState::updateHash()
+{
+    if (m_isChanged)
+    {
+
+    }
+}
+
+RenderState::RenderState()
     : m_culling(true)
     , m_cullface(eFaceBack)
     , m_winding(eWindingCCW)
@@ -114,10 +123,14 @@ CRenderState::CRenderState()
     , m_depthWrite(true)
     , m_depthTest(true)
     , m_depthFunc(eCmpLequal)
+
+    , m_isRasterizerEnable(true)
+
+    , m_isChanged(true)
 {
 }
 
-CRenderState::CRenderState(const CRenderState& state)
+RenderState::RenderState(const RenderState& state)
     : m_culling(state.m_culling)
     , m_cullface(state.m_cullface)
     , m_winding(state.m_winding)
@@ -130,10 +143,14 @@ CRenderState::CRenderState(const CRenderState& state)
     , m_depthWrite(state.m_depthWrite)
     , m_depthTest(state.m_depthTest)
     , m_depthFunc(state.m_depthFunc)
+
+    , m_isRasterizerEnable(state.m_isRasterizerEnable)
+
+    , m_isChanged(true)
 {
 }
 
-CRenderState& CRenderState::operator=(const CRenderState& state)
+RenderState& RenderState::operator=(const RenderState& state)
 {
     if (&state == this)
     {
@@ -153,110 +170,164 @@ CRenderState& CRenderState::operator=(const CRenderState& state)
     m_depthTest = state.m_depthTest;
     m_depthFunc = state.m_depthFunc;
 
+    m_isRasterizerEnable = state.m_isRasterizerEnable;
+
+    m_isChanged = true;
+
     return *this;
 }
 
-CRenderState::~CRenderState()
+RenderState::~RenderState()
 {
 }
 
-bool CRenderState::isCulling() const
+bool RenderState::isCulling() const
 {
     return m_culling;
 }
 
-EWinding CRenderState::getWinding() const
+EWinding RenderState::getWinding() const
 {
     return m_winding;
 }
 
-EPolygonMode CRenderState::getPolygonMode() const
+EPolygonMode RenderState::getPolygonMode() const
 {
     return m_polygonMode;
 }
 
-void CRenderState::setCulling(bool enable)
+void RenderState::setCulling(bool enable)
 {
-    m_culling = enable;
+    if (m_culling != enable)
+    {
+        m_culling = enable;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setWinding(EWinding type)
+void RenderState::setWinding(EWinding type)
 {
-    m_winding = type;
+    if (m_winding != type)
+    {
+        m_winding = type;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setPolygonMode(EPolygonMode type)
+void RenderState::setPolygonMode(EPolygonMode type)
 {
-    m_polygonMode = type;
+    if (m_polygonMode != type)
+    {
+        m_polygonMode = type;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setBlend(bool enable)
+void RenderState::setBlend(bool enable)
 {
-    m_blend = enable;
+    if (m_blend != enable)
+    {
+        m_blend = enable;
+        m_isChanged = true;
+    }
 }
 
-bool CRenderState::isBlend() const
+bool RenderState::isBlend() const
 {
     return m_blend;
 }
 
-ECullFace CRenderState::getCullface() const
+ECullMode RenderState::getCullface() const
 {
     return m_cullface;
 }
 
-bool CRenderState::getDepthWrite() const
+bool RenderState::getDepthWrite() const
 {
     return m_depthWrite;
 }
 
-bool CRenderState::getDepthTest() const
+bool RenderState::getDepthTest() const
 {
     return m_depthTest;
 }
 
-ECompareFunc CRenderState::getDepthfunc() const
+ECompareFunc RenderState::getDepthfunc() const
 {
     return m_depthFunc;
 }
 
-void CRenderState::setCullface(ECullFace mode)
+bool RenderState::isRasterizerEnable() const
 {
-    m_cullface = mode;
+    return m_isRasterizerEnable;
 }
 
-void CRenderState::setBlendFactors(EBlendFactor dst, EBlendFactor src)
+void RenderState::setCullface(ECullMode mode)
 {
-    m_blendDst = dst;
-    m_blendSrc = src;
+    if (m_cullface != mode)
+    {
+        m_cullface = mode;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setDepthWrite(bool enable)
+void RenderState::setBlendFactors(EBlendFactor dst, EBlendFactor src)
 {
-    m_depthWrite = enable;
+    if (m_blendDst != dst || m_blendSrc != src)
+    {
+        m_blendDst = dst;
+        m_blendSrc = src;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setDepthTest(bool enable)
+void RenderState::setDepthWrite(bool enable)
 {
-    m_depthTest = enable;
+    if (m_depthWrite != enable)
+    {
+        m_depthWrite = enable;
+        m_isChanged = true;
+    }
 }
 
-void CRenderState::setDepthFunc(ECompareFunc func)
+void RenderState::setDepthTest(bool enable)
 {
-    m_depthFunc = func;
+    if (m_depthTest != enable)
+    {
+        m_depthTest = enable;
+        m_isChanged = true;
+    }
 }
 
-EBlendFactor CRenderState::getBlendFactorSrc() const
+void RenderState::setDepthFunc(ECompareFunc func)
+{
+    if (m_depthFunc != func)
+    {
+        m_depthFunc = func;
+        m_isChanged = true;
+    }
+}
+
+void RenderState::setRasterizerEnable(bool enable)
+{
+    if (m_isRasterizerEnable != enable)
+    {
+        m_isRasterizerEnable = enable;
+        m_isChanged = true;
+    }
+}
+
+EBlendFactor RenderState::getBlendFactorSrc() const
 {
     return m_blendSrc;
 }
 
-EBlendFactor CRenderState::getBlendFactorDst() const
+EBlendFactor RenderState::getBlendFactorDst() const
 {
     return m_blendDst;
 }
 
-bool CRenderState::parse(const tinyxml2::XMLElement* root)
+bool RenderState::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
@@ -270,8 +341,8 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
         if (polygonmodeElement->Attribute("val"))
         {
             const std::string polygonModeStr = polygonmodeElement->Attribute("val");
-            EPolygonMode polygonMode = CRenderState::getPolygonModeByName(polygonModeStr);
-            CRenderState::setPolygonMode(polygonMode);
+            EPolygonMode polygonMode = RenderState::getPolygonModeByName(polygonModeStr);
+            RenderState::setPolygonMode(polygonMode);
         }
     }
 
@@ -283,7 +354,7 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
         {
             const std::string windingStr = windingElement->Attribute("val");
             EWinding  winding = (windingStr == "ccw") ? eWindingCCW : eWindingCW;
-            CRenderState::setWinding(winding);
+            RenderState::setWinding(winding);
         }
     }
 
@@ -295,10 +366,10 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
             const std::string cullfaceStr = cullfaceElement->Attribute("val");
             if (cullfaceStr == "false")
             {
-                CRenderState::setCulling(false);
+                RenderState::setCulling(false);
             }
-            ECullFace cullface = CRenderState::getCullFaceByName(cullfaceStr);
-            CRenderState::setCullface(cullface);
+            ECullMode cullface = RenderState::getCullFaceByName(cullfaceStr);
+            RenderState::setCullface(cullface);
         }
     }
 
@@ -306,30 +377,30 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
     if (blendElement)
     {
         bool blend = blendElement->BoolAttribute("val");
-        CRenderState::setBlend(blend);
+        RenderState::setBlend(blend);
 
         EBlendFactor blendSrc = eBlendInvSrcAlpha;
         if (blendElement->Attribute("src"))
         {
             const std::string blendSrcStr = blendElement->Attribute("src");
-            blendSrc = CRenderState::getBlendFactorByName(blendSrcStr);
+            blendSrc = RenderState::getBlendFactorByName(blendSrcStr);
         }
 
         EBlendFactor blendDst = eBlendDstAlpha;
         if (blendElement->Attribute("dst"))
         {
             const std::string blendDstStr = blendElement->Attribute("dst");
-            blendDst = CRenderState::getBlendFactorByName(blendDstStr);
+            blendDst = RenderState::getBlendFactorByName(blendDstStr);
         }
 
-        CRenderState::setBlendFactors(blendDst, blendSrc);
+        RenderState::setBlendFactors(blendDst, blendSrc);
     }
 
     const tinyxml2::XMLElement* depthElement = root->FirstChildElement("depthWrite");
     if (depthElement)
     {
         bool depth = depthElement->BoolAttribute("val");
-        CRenderState::setDepthWrite(depth);
+        RenderState::setDepthWrite(depth);
     }
 
     const tinyxml2::XMLElement* depthTestElement = root->FirstChildElement("depthTest");
@@ -340,11 +411,11 @@ bool CRenderState::parse(const tinyxml2::XMLElement* root)
             const std::string depthTestStr = depthTestElement->Attribute("val");
             if (depthTestStr == "false")
             {
-                CRenderState::setDepthTest(false);
+                RenderState::setDepthTest(false);
             }
 
-            ECompareFunc depthFunc = CRenderState::getCompareFuncByName(depthTestStr);
-            CRenderState::setDepthFunc(depthFunc);
+            ECompareFunc depthFunc = RenderState::getCompareFuncByName(depthTestStr);
+            RenderState::setDepthFunc(depthFunc);
         }
     }
 

@@ -480,7 +480,7 @@ bool TextureVK::create(const void* data, u32 srcSize)
     imageCreateInfo.format = format;
     imageCreateInfo.mipLevels = m_mipmapLevel;
     imageCreateInfo.arrayLayers = countLayers;
-    imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount(), m_target);
+    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
@@ -555,7 +555,7 @@ bool TextureVK::create(const void* data, u32 srcSize)
     stagingBuffer->destroy();
     delete stagingBuffer;
 
-    if (!TextureVK::createImageView(format, imageSubresourceRange))
+    if (!TextureVK::createImageView(format, imageSubresourceRange, true))
     {
         return false;
     }
@@ -581,7 +581,6 @@ bool TextureVK::create(VkImage image)
 
     m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-    m_image = image;
 
     VkFormat format = getImageFormatVK(m_format, m_type);
     VkImageType imageType = getImageTypeVK(m_target);
@@ -592,6 +591,52 @@ bool TextureVK::create(VkImage image)
     VkFormatProperties formatProperties = {};
     vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
 
+    if (image == VK_NULL_HANDLE)
+    {
+        VkImageCreateInfo imageCreateInfo = {};
+        imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageCreateInfo.pNext = nullptr;
+        imageCreateInfo.flags = 0;
+        imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageCreateInfo.format = format;
+        imageCreateInfo.mipLevels = 1;
+        imageCreateInfo.arrayLayers = 1;
+        imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount(), m_target);
+        imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
+        imageCreateInfo.queueFamilyIndexCount = 1;
+        imageCreateInfo.initialLayout = m_imageLayout;
+        imageCreateInfo.extent = getImageExtentVK(m_target, m_size);
+        imageCreateInfo.usage = m_usage;
+
+        VkResult result = vkCreateImage(m_device, &imageCreateInfo, nullptr, &m_image);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("TextureVK::create: vkCreateImage. Error: %s", DebugVK::errorString(result).c_str());
+            return false;
+        }
+
+        VkMemoryPropertyFlags memoryProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+        const bool transient = (m_usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) ? true : false;
+        if (transient)
+        {
+            memoryProps |= VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
+        }
+
+        MemoryManagerVK* memoryManager = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getMemoryManager();
+        m_memory = memoryManager->allocateImage(*memoryManager->getSimpleAllocator(), m_image, memoryProps);
+        if (m_memory._memory == VK_NULL_HANDLE)
+        {
+            LOG_ERROR("TextureVK::create: allocateImage return invalid memory");
+            return false;
+        }
+    }
+    else
+    {
+        m_image = image;
+    }
+
     VkImageSubresourceRange imageSubresourceRange = {};
     imageSubresourceRange.aspectMask = m_aspectFlags;
     imageSubresourceRange.baseMipLevel = 0;
@@ -599,7 +644,7 @@ bool TextureVK::create(VkImage image)
     imageSubresourceRange.baseArrayLayer = 0;
     imageSubresourceRange.layerCount = 1;
 
-    if (!TextureVK::createImageView(format, imageSubresourceRange))
+    if (!TextureVK::createImageView(format, imageSubresourceRange, false))
     {
         return false;
     }
@@ -975,7 +1020,12 @@ VkImage TextureVK::getImage() const
     return m_image;
 }
 
-bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange)
+VkImageView TextureVK::getImageView() const
+{
+    return m_imageView;
+}
+
+bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange, bool createSubresource)
 {
     if (m_image == VK_NULL_HANDLE)
     {
@@ -989,7 +1039,7 @@ bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& 
     imageViewCreateInfo.flags = 0;
     imageViewCreateInfo.viewType = getImageViewType(m_target);
     imageViewCreateInfo.format = format;
-    imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R , VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+    imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_IDENTITY , VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
     imageViewCreateInfo.subresourceRange = imageSubresourceRange;
     imageViewCreateInfo.image = m_image;
 
@@ -1000,7 +1050,10 @@ bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& 
         return false;
     }
 
-    //TODO: create subresources
+    if (createSubresource)
+    {
+        //TODO: create subresources
+    }
 
     return false;
 }

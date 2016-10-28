@@ -32,7 +32,8 @@ CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     VkResult result = vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, &m_commandBuffer);
     if (result != VK_SUCCESS)
     {
-        LOG_ERROR("CommandBufferVK::CommandBufferVK: vkAllocateCommandBuffers. Error: %s", DebugVK::errorString(result).c_str());
+        
+
     }
 }
 
@@ -299,6 +300,28 @@ void CommandBufferVK::blitImage()
 
 void CommandBufferVK::resolveImage()
 {
+}
+
+void CommandBufferVK::setViewport(const core::Rect32& viewportPos, f32 minDepth, f32 maxDepth)
+{
+    VkViewport viewport = {};
+    viewport.x = viewportPos.getLeftX();
+    viewport.y = viewportPos.getTopY();
+    viewport.width = viewportPos.getWidth();
+    viewport.height = viewportPos.getHeight();
+    viewport.minDepth = core::clamp(minDepth, 0.0f, 1.0f);
+    viewport.maxDepth = core::clamp(maxDepth, 0.0f, 1.0f);
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+    
 }
 
 } //namespace vk

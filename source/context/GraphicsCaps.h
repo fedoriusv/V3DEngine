@@ -20,6 +20,7 @@ namespace renderer
         u32     getTextureUnitsCount() const;
         f32     getMaxAnisotropySize() const;
         u32     getMaxPatchVertices() const;
+        u32     getMaxColorAttachments() const;
 
         u64     getMemoryBlockSize() const;
 
@@ -27,6 +28,7 @@ namespace renderer
         void    setTextureUnitsCount(u32 count);
         void    setMaxAnisotropySize(f32 size);
         void    setMaxPatchVertices(u32 size);
+        void    setMaxColorAttachments(u32 count);
 
         void    setMemoryBlockSize(u64 size);
 
@@ -38,6 +40,7 @@ namespace renderer
         u32     m_maxTextureUnits;
         f32     m_maxAnisotropy;
         u32     m_maxPatchVertices;
+        u32     m_maxColorAttachments;
 
         u64     m_memoryBlockSize;
     };

@@ -43,6 +43,7 @@ namespace renderer
         f32                         getMaxAnisotropySize() const;
         u32                         getMaxPatchVertices() const;
         u64                         getMemoryBlockSize() const;
+        u32                         getMaxColorAttachments() const;
 
     protected:
 

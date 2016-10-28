@@ -59,15 +59,16 @@ namespace vk
         void                            setAnisotropicLevel(EAnisotropic level) override;
 
         bool                            create(const void* data, u32 srcSize) override;
-        bool                            create(VkImage image);
+        bool                            create(VkImage image = VK_NULL_HANDLE);
         void                            destroy() override;
         void                            copyData(Texture* texture) override;
 
         VkImage                         getImage() const;
+        VkImageView                     getImageView() const;
 
     private:
 
-        bool                            createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange);
+        bool                            createImageView(VkFormat format, const VkImageSubresourceRange& imageSubresourceRange, bool createSubresource);
 
         const ETextureTarget            m_target;
         const EImageFormat              m_format;

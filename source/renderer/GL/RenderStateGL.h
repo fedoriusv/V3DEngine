@@ -1,7 +1,8 @@
-#ifndef _V3D_RENDER_STATE_GL_H_
-#define _V3D_RENDER_STATE_GL_H_
+#pragma once
 
 #include "renderer/RenderState.h"
+
+#ifdef _OPENGL_RENDER_
 
 namespace v3d
 {
@@ -74,4 +75,4 @@ namespace gl
 } //namespace renderer
 } //namespace v3d
 
-#endif //_V3D_RENDER_STATE_GL_H_
+#endif //_OPENGL_RENDER_

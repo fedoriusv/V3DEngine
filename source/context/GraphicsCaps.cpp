@@ -10,6 +10,10 @@ GpraphicsCaps::GpraphicsCaps()
     , m_maxTextureUnits(0U)
     , m_maxAnisotropy(0U)
     , m_maxPatchVertices(0U)
+
+
+    , m_maxColorAttachments(0)
+    , m_memoryBlockSize(0)
 {
 }
 
@@ -37,6 +41,11 @@ u32 GpraphicsCaps::getMaxPatchVertices() const
     return m_maxPatchVertices;
 }
 
+u32 GpraphicsCaps::getMaxColorAttachments() const
+{
+    return m_maxColorAttachments;
+}
+
 u64 GpraphicsCaps::getMemoryBlockSize() const
 {
     return m_memoryBlockSize;
@@ -60,6 +69,11 @@ void GpraphicsCaps::setMaxAnisotropySize(f32 size)
 void GpraphicsCaps::setMaxPatchVertices(u32 size)
 {
     m_maxPatchVertices = size;
+}
+
+void GpraphicsCaps::setMaxColorAttachments(u32 count)
+{
+    m_maxColorAttachments = count;
 }
 
 void GpraphicsCaps::setMemoryBlockSize(u64 size)

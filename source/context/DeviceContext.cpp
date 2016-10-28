@@ -75,5 +75,10 @@ u64 DeviceContext::getMemoryBlockSize() const
     return m_graphicsCaps.getMemoryBlockSize();
 }
 
+u32 DeviceContext::getMaxColorAttachments() const
+{
+    return m_graphicsCaps->getMaxColorAttachments();
+}
+
 } //namespace renderer
 } //namespace v3d

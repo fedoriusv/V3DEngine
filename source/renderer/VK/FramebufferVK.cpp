@@ -83,7 +83,7 @@ bool FramebufferVK::create()
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     framebufferCreateInfo.pNext = nullptr;
     framebufferCreateInfo.flags = 0;
-    framebufferCreateInfo.renderPass = ;
+    framebufferCreateInfo.renderPass = ; //TODO:
     framebufferCreateInfo.attachmentCount = static_cast<u32>(m_attacmentsView.size());
     framebufferCreateInfo.pAttachments = m_attacmentsView.data();
     framebufferCreateInfo.width = width;
