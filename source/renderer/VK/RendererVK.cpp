@@ -6,6 +6,8 @@
 #include "CommandPoolVK.h"
 #include "CommandBufferVK.h"
 #include "context/DebugVK.h"
+#include "RenderStateVK.h"
+#include "FramebufferVK.h"
 
 namespace v3d
 {
@@ -13,25 +15,6 @@ namespace renderer
 {
 namespace vk
 {
-
-const std::array<VkDynamicState, 3> k_dynamicStateVK = 
-{
-    VK_DYNAMIC_STATE_VIEWPORT,
-    VK_DYNAMIC_STATE_SCISSOR,
-    VK_DYNAMIC_STATE_STENCIL_REFERENCE
-};
-
-template <class V, typename T>
-bool checkPresentStateVK(const V& container, T value)
-{
-    auto iter = std::find(container.cbegin(), container.cend(), T);
-    if (iter != container.cend())
-    {
-        return true;
-    }
-
-    return false;
-}
 
 RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
@@ -84,7 +67,7 @@ void RendererVK::immediateDraw()
 {
 }
 
-void RendererVK::createGraphicPipeline(const RenderStateVK* renderState)
+void RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
 {
     VkPipeline pipeline;
     VkPipelineCache pipelineCache = VK_NULL_HANDLE;
@@ -108,46 +91,55 @@ void RendererVK::createGraphicPipeline(const RenderStateVK* renderState)
     pipelineViewportStateCreateInfo.pNext = nullptr;
     pipelineViewportStateCreateInfo.flags = 0;
 
-    if (checkPresentStateVK(k_dynamicStateVK, VK_DYNAMIC_STATE_VIEWPORT))
-    {
-        VkViewport viewport = {};
-        //TODO:
-
-        pipelineViewportStateCreateInfo.viewportCount = 1;
-        pipelineViewportStateCreateInfo.pViewports = &viewport;
-    }
-    else
+    if (RendererVK::checkPresentState(k_dynamicStateVK, VK_DYNAMIC_STATE_VIEWPORT))
     {
         pipelineViewportStateCreateInfo.viewportCount = 1;
         pipelineViewportStateCreateInfo.pViewports = nullptr;
     }
-
-    if (checkPresentStateVK(k_dynamicStateVK, VK_DYNAMIC_STATE_SCISSOR))
-    {
-        VkRect2D scissor = {};
-        //TODO:
-
-        pipelineViewportStateCreateInfo.scissorCount = 1;
-        pipelineViewportStateCreateInfo.pScissors = &scissor;
-    }
     else
+    {
+        VkViewport viewport = {};
+        viewport.x = framebuffer->getViewport().getLeftX();
+        viewport.y = framebuffer->getViewport().getTopY();
+        viewport.width = framebuffer->getViewport().getWidth();
+        viewport.height = framebuffer->getViewport().getHeight();
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+
+        pipelineViewportStateCreateInfo.viewportCount = 1;
+        pipelineViewportStateCreateInfo.pViewports = &viewport;
+    }
+
+    if (checkPresentState(k_dynamicStateVK, VK_DYNAMIC_STATE_SCISSOR))
     {
         pipelineViewportStateCreateInfo.scissorCount = 1;
         pipelineViewportStateCreateInfo.pScissors = nullptr;
     }
+    else
+    {
+        VkRect2D scissor = {};
+        scissor.extent = { 0, 0 };
+        scissor.offset = { 0, 0 };
+
+        pipelineViewportStateCreateInfo.scissorCount = 1;
+        pipelineViewportStateCreateInfo.pScissors = &scissor;
+    }
 
     pipelineCreateInfo.pViewportState = &pipelineViewportStateCreateInfo;
+    pipelineCreateInfo.pRasterizationState = &renderState->getPipelineRasterizationStateCreateInfo();
+    pipelineCreateInfo.pColorBlendState = &renderState->getPipelineColorBlendStateCreateInfo(framebuffer);
+    pipelineCreateInfo.pDepthStencilState = &renderState->getPipelineDepthStencilStateCreateInfo();
+    pipelineCreateInfo.pMultisampleState = &renderState->getPipelineMultisampleStateCreateInfo();
 
-    VkPipelineRasterizationStateCreateInfo pipelineRasterizationStateCreateInfo = {};
-    pipelineRasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    pipelineRasterizationStateCreateInfo.pNext = nullptr;
-    pipelineRasterizationStateCreateInfo.flags = 0;
+    VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = {};
+    pipelineInputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
+    pipelineInputAssemblyStateCreateInfo.flags = 0;
+    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
+    pipelineInputAssemblyStateCreateInfo.topology = ;
 
-    pipelineRasterizationStateCreateInfo.cullMode = renderState.
-    
-
-    pipelineCreateInfo.pRasterizationState
-
+    pipelineCreateInfo.pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo;
+    pipelineCreateInfo.pTessellationState = ;
 
     VkResult result = vkCreateGraphicsPipelines(m_device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
     if (result != VK_SUCCESS)

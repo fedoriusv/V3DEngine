@@ -12,7 +12,7 @@ namespace renderer
 
 using namespace core;
 
-CRenderTarget::SAttachments::SAttachments()
+RenderTarget::SAttachments::SAttachments()
     : _index(0U)
     , _active(true)
     , _attachmentType(EAttachmentsType::eEmptyAttach)
@@ -25,7 +25,7 @@ CRenderTarget::SAttachments::SAttachments()
 {
 }
 
-CRenderTarget::SAttachments::SAttachments(const SAttachments&& attach)
+RenderTarget::SAttachments::SAttachments(const SAttachments&& attach)
 {
     _index = attach._index;
     _active = attach._active;
@@ -40,7 +40,7 @@ CRenderTarget::SAttachments::SAttachments(const SAttachments&& attach)
     _buffer = attach._buffer;
 }
 
-CRenderTarget::SAttachments::~SAttachments()
+RenderTarget::SAttachments::~SAttachments()
 {
     /*if (_texture)
     {
@@ -55,7 +55,7 @@ CRenderTarget::SAttachments::~SAttachments()
     }
 }
 
-CRenderTarget::SAttachments& CRenderTarget::SAttachments::operator=(const SAttachments&& attach)
+RenderTarget::SAttachments& RenderTarget::SAttachments::operator=(const SAttachments&& attach)
 {
     if (this == &attach)
     {
@@ -77,9 +77,9 @@ CRenderTarget::SAttachments& CRenderTarget::SAttachments::operator=(const SAttac
     return *this;
 }
 
-const std::string CRenderTarget::k_defaultName = "default";
+const std::string RenderTarget::k_defaultName = "default";
 
-CRenderTarget::CRenderTarget()
+RenderTarget::RenderTarget()
     : m_color(core::Vector4D(0.0f))
     , m_depth(1.0f)
     , m_stencil(0)
@@ -96,15 +96,15 @@ CRenderTarget::CRenderTarget()
 
     u32 width = (u32)(ENGINE_WINDOW->getSize().width);
     u32 height = (u32)(ENGINE_WINDOW->getSize().height);
-    CRenderTarget::setViewport(Rect32(0, 0, width, height));
+    RenderTarget::setViewport(Rect32(0, 0, width, height));
 }
 
-CRenderTarget::~CRenderTarget()
+RenderTarget::~RenderTarget()
 {
     m_attachmentsList.clear();
 }
 
-const TexturePtr CRenderTarget::getColorTexture(u32 index) const
+const TexturePtr RenderTarget::getColorTexture(u32 index) const
 {
     auto findPred = [index](const SAttachments& attach) -> bool
     {
@@ -125,7 +125,7 @@ const TexturePtr CRenderTarget::getColorTexture(u32 index) const
     return nullptr;
 }
 
-TexturePtr CRenderTarget::getColorTexture(u32 index)
+TexturePtr RenderTarget::getColorTexture(u32 index)
 {
     auto findPred = [index](const SAttachments& attach) -> bool
     {
@@ -146,7 +146,7 @@ TexturePtr CRenderTarget::getColorTexture(u32 index)
     return nullptr;
 }
 
-const TexturePtr CRenderTarget::getDepthTexture() const
+const TexturePtr RenderTarget::getDepthTexture() const
 {
     auto findPred = [](const SAttachments& attach) -> bool
     {
@@ -167,7 +167,7 @@ const TexturePtr CRenderTarget::getDepthTexture() const
     return nullptr;
 }
 
-TexturePtr CRenderTarget::getDepthTexture()
+TexturePtr RenderTarget::getDepthTexture()
 {
     auto findPred = [](const SAttachments& attach) -> bool
     {
@@ -188,7 +188,7 @@ TexturePtr CRenderTarget::getDepthTexture()
     return nullptr;
 }
 
-const TexturePtr CRenderTarget::getStencilTexture() const
+const TexturePtr RenderTarget::getStencilTexture() const
 {
     auto findPred = [](const SAttachments& attach) -> bool
     {
@@ -209,7 +209,7 @@ const TexturePtr CRenderTarget::getStencilTexture() const
     return nullptr;
 }
 
-TexturePtr CRenderTarget::getStencilTexture()
+TexturePtr RenderTarget::getStencilTexture()
 {
     auto findPred = [](const SAttachments& attach) -> bool
     {
@@ -230,77 +230,88 @@ TexturePtr CRenderTarget::getStencilTexture()
     return nullptr;
 }
 
-void CRenderTarget::setColorValue(const core::Vector4D& color)
+void RenderTarget::setColorValue(const core::Vector4D& color)
 {
     m_color = color;
 }
 
-const core::Vector4D& CRenderTarget::getColorValue() const
+const core::Vector4D& RenderTarget::getColorValue() const
 {
     return m_color;
 }
 
-void CRenderTarget::setDepthValue(f32 depth)
+void RenderTarget::setDepthValue(f32 depth)
 {
     m_depth = depth;
 }
 
-f32 CRenderTarget::getDepthValue() const
+f32 RenderTarget::getDepthValue() const
 {
     return m_depth;
 }
 
-void CRenderTarget::setStencilValue(s32 stensil)
+void RenderTarget::setStencilValue(s32 stensil)
 {
     m_stencil = stensil;
 }
 
-s32 CRenderTarget::getStencilValue() const
+s32 RenderTarget::getStencilValue() const
 {
     return m_stencil;
 }
 
-void CRenderTarget::setViewport(const core::Rect32& size)
+void RenderTarget::setViewport(const core::Rect32& size)
 {
     m_viewport = size;
 }
 
-const core::Rect32& CRenderTarget::getViewport() const
+const core::Rect32& RenderTarget::getViewport() const
 {
     return m_viewport;
 }
 
-void CRenderTarget::setClearColorBuffer(bool clear)
+void RenderTarget::setClearColorBuffer(bool clear)
 {
     m_clearColorBuffer = clear;
 }
 
-void CRenderTarget::setClearDepthBuffer(bool clear)
+void RenderTarget::setClearDepthBuffer(bool clear)
 {
     m_clearDepthBuffer = clear;
 }
 
-void CRenderTarget::setClearStencilBuffer(bool clear)
+void RenderTarget::setClearStencilBuffer(bool clear)
 {
     m_clearStencilBuffer = clear;
 }
 
-bool CRenderTarget::isClearColorBuffer() const
+bool RenderTarget::isClearColorBuffer() const
 {
     return m_clearColorBuffer;
 }
 
-bool CRenderTarget::isClearDepthBuffer() const
+bool RenderTarget::isClearDepthBuffer() const
 {
     return m_clearDepthBuffer;
 }
 
-bool CRenderTarget::isClearStencilBuffer() const
+bool RenderTarget::isClearStencilBuffer() const
 {
     return m_clearStencilBuffer;
 }
 
-bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
+const RenderTarget::SAttachments& RenderTarget::getAttachment(u32 index) const
+{
+    ASSERT(m_attachmentsList.size() < index, "out from range");
+    return m_attachmentsList[index];
+}
+
+u32 RenderTarget::countAttachments() const
+{
+    return m_attachmentsList.size();
+}
+
+bool RenderTarget::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
@@ -328,7 +339,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         width = (u32)(ENGINE_WINDOW->getSize().width * ratio);
         height = (u32)(ENGINE_WINDOW->getSize().height * ratio);
     }
-    CRenderTarget::setViewport(Rect32(x, y, width, height));
+    RenderTarget::setViewport(Rect32(x, y, width, height));
 
     if (root->Attribute("aa"))
     {
@@ -344,7 +355,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
     if (colorElement)
     {
         bool clearColorBuffer = colorElement->BoolAttribute("clear");
-        CRenderTarget::setClearColorBuffer(clearColorBuffer);
+        RenderTarget::setClearColorBuffer(clearColorBuffer);
 
         if (colorElement->Attribute("color"))
         {
@@ -411,7 +422,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
                 output = getAttachmentOutput(outputStr);
             }
 
-            CRenderTarget::attachTarget(EAttachmentsType::eColorAttach, attachIndex, format, type, output, hasActiveColor);
+            RenderTarget::attachTarget(EAttachmentsType::eColorAttach, attachIndex, format, type, output, hasActiveColor);
 
             attachElement = attachElement->NextSiblingElement("attach");
         }
@@ -424,10 +435,10 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         bool hasActiveDepth = depthElement->BoolAttribute("active");
 
         bool clearDepthBuffer = depthElement->BoolAttribute("clear");
-        CRenderTarget::setClearDepthBuffer(clearDepthBuffer);
+        RenderTarget::setClearDepthBuffer(clearDepthBuffer);
 
         f32 clearValue = depthElement->FloatAttribute("value");
-        CRenderTarget::setDepthValue(clearValue);
+        RenderTarget::setDepthValue(clearValue);
 
         EImageFormat format = EImageFormat::eDepthComponent;
         EImageType type = EImageType::eFloat;
@@ -467,7 +478,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
             output = getAttachmentOutput(outputStr);
         }
 
-        CRenderTarget::attachTarget(EAttachmentsType::eDepthAttach, 0, format, type, output, hasActiveDepth);
+        RenderTarget::attachTarget(EAttachmentsType::eDepthAttach, 0, format, type, output, hasActiveDepth);
     }
 
     //stencil
@@ -477,7 +488,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
         bool hasActiveStencil = stencilElement->BoolAttribute("active");
 
         bool clearStencilBuffer = stencilElement->BoolAttribute("clear");
-        CRenderTarget::setClearStencilBuffer(clearStencilBuffer);
+        RenderTarget::setClearStencilBuffer(clearStencilBuffer);
 
         s32 size = stencilElement->IntAttribute("format");
         if (size)
@@ -523,7 +534,7 @@ bool CRenderTarget::parse(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderTarget::formatParser(const std::string& str, EImageFormat& format, EImageType& type)
+bool RenderTarget::formatParser(const std::string& str, EImageFormat& format, EImageType& type)
 {
     std::string::const_iterator current = str.cbegin();
     bool success = true;
@@ -666,7 +677,7 @@ bool CRenderTarget::formatParser(const std::string& str, EImageFormat& format, E
     return success;
 }
 
-void CRenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output, bool active)
+void RenderTarget::attachTarget(EAttachmentsType attach, u32 index, EImageFormat format, EImageType type, EAttachmentsOutput output, bool active)
 {
     std::deque<SAttachments>::const_iterator iter = std::find_if(m_attachmentsList.cbegin(), m_attachmentsList.cend(), [index, attach](const SAttachments& attachment) -> bool
     {

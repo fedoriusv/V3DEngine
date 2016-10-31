@@ -113,7 +113,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
                 LOG_ERROR("CRenderPass: Target not supported");
                 return false;
             }
-            const RenderTargetPtr& rendertarget = std::static_pointer_cast<CRenderTarget>(target);
+            const RenderTargetPtr& rendertarget = std::static_pointer_cast<RenderTarget>(target);
 
             m_type = ESamplerType::eRenderTargetSampler;
             m_target = rendertarget;

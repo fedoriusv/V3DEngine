@@ -324,6 +324,38 @@ void CommandBufferVK::setViewport(const core::Rect32& viewportPos, f32 minDepth,
     
 }
 
+void CommandBufferVK::setBlendConstant(const core::Vector4D& color)
+{
+    f32 blendConstants[4];
+    blendConstants[0] = color.x;
+    blendConstants[1] = color.y;
+    blendConstants[2] = color.z;
+    blendConstants[3] = color.w;
+
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdSetBlendConstants(m_commandBuffer, blendConstants);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+}
+
+void CommandBufferVK::setDepthBounds(f32 minDepth, f32 maxDepth)
+{
+    if (m_bufferLevel == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+    {
+        vkCmdSetDepthBounds(m_commandBuffer, minDepth, maxDepth);
+    }
+    else //VK_COMMAND_BUFFER_LEVEL_SECONDARY
+    {
+        //TODO: async command
+        ASSERT(false, "not implemented");
+    }
+}
+
 } //namespace vk
 } //namespace renderer
 } //namespace v3d

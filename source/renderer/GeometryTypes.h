@@ -7,23 +7,21 @@ namespace v3d
 {
 namespace renderer
 {
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EPrimitivesMode
-    {
-        ePrimitivesNone = -1,
+    //enum EPrimitivesTopology
+    //{
+    //    eTriangles,
+    //    eTriangleStrip,
+    //    eTriangleFan,
+    //    eLines,
+    //    eLinesStrip,
+    //    eLinesLoop,
+    //    ePoints,
+    //    ePatches,
 
-        eTriangles,
-        eTriangleStrip,
-        eTriangleFan,
-        eLines,
-        eLinesStrip,
-        eLinesLoop,
-        ePoints,
-        ePatches,
-
-        ePrimitivesModeCount
-    };
+    //    ePrimitivesTopologyCount
+    //};
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,17 +51,17 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class GeometryType
-    {
-    public:
+    //class GeometryType
+    //{
+    //public:
 
-        static const std::string&   getStringByPrimitivesMode(EPrimitivesMode type);
-        static EPrimitivesMode      getPrimitivesModeByString(const std::string& name);
+    //    static const std::string&   getStringByPrimitivesTopology(EPrimitivesTopology type);
+    //    static EPrimitivesTopology  getPrimitivesTopologyByString(const std::string& name);
 
-    private:
+    //private:
 
-        static const std::string    s_typeName[EPrimitivesMode::ePrimitivesModeCount];
-    };
+    //    static const std::string    s_typeName[EPrimitivesTopology::ePrimitivesTopologyCount];
+    //};
 
 } //namespace renderer
 } //namespace v3d

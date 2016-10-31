@@ -48,7 +48,7 @@ bool FramebufferVK::create()
 
     m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 
-    const core::Rect32& rect = CRenderTarget::getViewport();
+    const core::Rect32& rect = RenderTarget::getViewport();
     u32 width = rect.getWidth();
     u32 height = rect.getHeight();
     u32 x = rect.getLeftX();
@@ -63,7 +63,7 @@ bool FramebufferVK::create()
         height = ENGINE_CONTEXT->getWindowSize().height;
     }
 
-    CRenderTarget::setViewport(core::Rect32(x, y, x + width, y + height));
+    RenderTarget::setViewport(core::Rect32(x, y, x + width, y + height));
 
     for (auto& attach : m_attachmentsList)
     {

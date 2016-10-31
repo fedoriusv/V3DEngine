@@ -13,7 +13,7 @@ namespace vk
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class FramebufferVK : public CRenderTarget
+    class FramebufferVK : public RenderTarget
     {
     public:
 

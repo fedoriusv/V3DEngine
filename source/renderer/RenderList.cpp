@@ -191,7 +191,7 @@ void CRenderList::refresh()
                         m_drawTransparency.push_back((*iter));
                     }
                 }
-                else if (mesh->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
+                else if (mesh->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlending())
                 {
                     if (m_camera)
                     {
@@ -252,7 +252,7 @@ void CRenderList::refresh()
                 {
                     m_drawTransparency.push_back((*iter));
                 }
-                else if (text->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlend())
+                else if (text->getRenderTechique()->getRenderPass((*iter)._passIndex)->getRenderState()->isBlending())
                 {
                     m_drawAlpha.push_back((*iter));
                 }

@@ -26,15 +26,15 @@ namespace renderer
     * Used output to texture or renderbuffer
     * Next attachmens supported: color, depth and stencil
     */
-    class CRenderTarget : public ITarget
+    class RenderTarget : public ITarget
     {
     public:
 
-        CRenderTarget();
-        CRenderTarget(const CRenderTarget&)             = delete;
-        CRenderTarget& operator=(const CRenderTarget&)  = delete;
+        RenderTarget();
+        RenderTarget(const RenderTarget&) = delete;
+        RenderTarget& operator=(const RenderTarget&)  = delete;
 
-        ~CRenderTarget();
+        ~RenderTarget();
 
         const TexturePtr                getColorTexture(u32 index) const;
         TexturePtr                      getColorTexture(u32 index);
@@ -101,10 +101,13 @@ namespace renderer
 
             union
             {
-                Texture*           _texture;
-                CRenderBuffer*     _buffer;
+                Texture*         _texture;
+                CRenderBuffer*   _buffer;
             };
         };
+
+        const SAttachments&         getAttachment(u32 index) const;
+        u32                         countAttachments() const;
 
     protected:
 
@@ -137,8 +140,8 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderTarget>          RenderTargetPtr;
-    typedef std::weak_ptr<CRenderTarget>            RenderTargetWPtr;
+    typedef std::shared_ptr<RenderTarget>          RenderTargetPtr;
+    typedef std::weak_ptr<RenderTarget>            RenderTargetWPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

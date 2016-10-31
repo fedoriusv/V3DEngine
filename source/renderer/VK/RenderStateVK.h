@@ -13,6 +13,8 @@ namespace vk
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class FramebufferVK;
+
     /**
     * Inherited class for render states management. Vulkan render only.
     */
@@ -26,14 +28,26 @@ namespace vk
 
         ~RenderStateVK();
 
-        VkPipelineRasterizationStateCreateInfo getPipelineRasterizationStateCreateInfo();
+        const VkPipelineRasterizationStateCreateInfo&   getPipelineRasterizationStateCreateInfo() const;
+        const VkPipelineColorBlendStateCreateInfo&      getPipelineColorBlendStateCreateInfo(const FramebufferVK* framebuffer) const;
+        const VkPipelineDepthStencilStateCreateInfo&    getPipelineDepthStencilStateCreateInfo() const;
+        const VkPipelineMultisampleStateCreateInfo&     getPipelineMultisampleStateCreateInfo() const;
 
         void         bind() override;
 
     private:
 
-        VkPipelineRasterizationStateCreateInfo m_pipelineRasterizationStateCreateInfo;
+        void                                            updatePipelineRasterizationStateCreateInfo() const;
+        void                                            updaePipelineColorBlendStateCreateInfo(const FramebufferVK* framebuffer) const;
+        void                                            updatePipelineDepthStencilStateCreateInfo() const;
+        void                                            updatePipelineMultisampleStateCreateInfo() const;
+        void                                            updatePipelineInputAssemblyStateCreateInfo() const;
 
+        mutable VkPipelineRasterizationStateCreateInfo  m_pipelineRasterizationStateCreateInfo;
+        mutable VkPipelineColorBlendStateCreateInfo     m_pipelineColorBlendStateCreateInfo;
+        mutable VkPipelineDepthStencilStateCreateInfo   m_pipelineDepthStencilStateCreateInfo;
+        mutable VkPipelineMultisampleStateCreateInfo    m_pipelineMultisampleStateCreateInfo;
+        mutable VkPipelineInputAssemblyStateCreateInfo  m_pipelineInputAssemblyStateCreateInfo;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

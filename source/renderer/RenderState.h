@@ -20,19 +20,23 @@ namespace renderer
         eWindingCCW
     };
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     enum ECompareFunc
     {
+        eCmpNever,
         eCmpLess,
         eCmpLequal,
         eCmpEqual,
         eCmpGequal,
         eCmpGreater,
-        eCmpNotequal,
+        eCmpNotEqual,
         eCmpAlways,
-        eCmpNever,
 
         eCompareCount
     };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum EPolygonMode
     {
@@ -43,6 +47,8 @@ namespace renderer
         ePolygonModeCount
     };
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     enum ECullMode
     {
         eCullNone,
@@ -52,6 +58,21 @@ namespace renderer
 
         eCullModeCount
     };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EBlendEquation
+    {
+        eFuncAdd,
+        eFuncSubtract,
+        eFuncReverseSubtract,
+        eFuncMin,
+        eFuncMax,
+
+        eFuncBlendEquationCount
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum EBlendFactor
     {
@@ -65,9 +86,29 @@ namespace renderer
         eBlendInvSrcAlpha,
         eBlendDstAlpha,
         eBlendInvDstAlpha,
+        eBlendConstantColor,
+        eBlendConstantInvColor,
+        eBlendConstantAlpha,
+        eBlendConstantInvAlpha,
         eBlendSrcAplhaSaturated,
 
-        eBlendCount
+        eBlendFactorCount
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum EPrimitivesTopology
+    {
+        eTriangles,
+        eTriangleStrip,
+        eTriangleFan,
+        eLines,
+        eLinesStrip,
+        eLinesLoop,
+        ePoints,
+        ePatches,
+
+        ePrimitivesTopologyCount
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,67 +127,93 @@ namespace renderer
         RenderState(const RenderState& state);
         RenderState& operator=(const RenderState& state);
         
-        virtual                   ~RenderState();
+        virtual                     ~RenderState();
 
-        ECullMode                 getCullface() const;
-        bool                      isCulling() const;
-        bool                      isBlend() const;
-        EWinding                  getWinding() const;
-        EPolygonMode              getPolygonMode() const;
-        EBlendFactor              getBlendFactorSrc() const;
-        EBlendFactor              getBlendFactorDst() const;
-        bool                      getDepthWrite() const;
-        bool                      getDepthTest() const;
-        ECompareFunc              getDepthfunc() const;
-        bool                      isRasterizerEnable() const;
+        ECullMode                   getCullface() const;
+        bool                        isCulling() const;
+        bool                        isBlending() const;
+        EWinding                    getWinding() const;
+        EPolygonMode                getPolygonMode() const;
+        EBlendFactor                getBlendColorFactorSrc() const;
+        EBlendFactor                getBlendColorFactorDst() const;
+        EBlendFactor                getBlendAlphaFactorSrc() const;
+        EBlendFactor                getBlendAlphaFactorDst() const;
+        EBlendEquation              getBlendColorEquation() const;
+        EBlendEquation              getBlendAlphaEquation() const;
+        bool                        getDepthWrite() const;
+        bool                        getDepthTest() const;
+        ECompareFunc                getDepthfunc() const;
+        bool                        getStencilTest() const;
+        bool                        isRasterizerEnable() const;
                               
-        void                      setCullface(ECullMode mode);
-        void                      setCulling(bool enable);
-        void                      setBlend(bool enable);
-        void                      setWinding(EWinding type);
-        void                      setPolygonMode(EPolygonMode type);
-        void                      setBlendFactors(EBlendFactor dst, EBlendFactor src);
-        void                      setDepthWrite(bool enable);
-        void                      setDepthTest(bool enable);
-        void                      setDepthFunc(ECompareFunc func);
-        void                      setRasterizerEnable(bool enable);
+        void                        setCullface(ECullMode mode);
+        void                        setCulling(bool enable);
+        void                        setBlending(bool enable);
+        void                        setWinding(EWinding type);
+        void                        setPolygonMode(EPolygonMode type);
+        void                        setBlendColorFactors(EBlendFactor src, EBlendFactor dst);
+        void                        setBlendAlphaFactors(EBlendFactor src, EBlendFactor dst);
+        void                        setBlendColorEquation(EBlendEquation type);
+        void                        setBlendAlphaEquation(EBlendEquation type);
+        void                        setDepthWrite(bool enable);
+        void                        setDepthTest(bool enable);
+        void                        setDepthFunc(ECompareFunc func);
+        void                        setStencilTest(bool enable);
+        void                        setRasterizerEnable(bool enable);
 
-        virtual void              bind() = 0;
+        virtual void                bind() = 0;
 
-        static EPolygonMode       getPolygonModeByName(const std::string& name);
-        static EBlendFactor       getBlendFactorByName(const std::string& name);
-        static ECullMode          getCullFaceByName(const std::string& name);
-        static ECompareFunc       getCompareFuncByName(const std::string& name);
+        static EPolygonMode         getPolygonModeByName(const std::string& name);
+        static EBlendFactor         getBlendFactorByName(const std::string& name);
+        static ECullMode            getCullFaceByName(const std::string& name);
+        static ECompareFunc         getCompareFuncByName(const std::string& name);
+        static EBlendEquation       getCompareBlendEquationByName(const std::string& name);
+        static const std::string&   getStringByPrimitivesTopology(EPrimitivesTopology type);
+        static EPrimitivesTopology  getPrimitivesTopologyByString(const std::string& name);
 
     protected:
 
-        bool                      m_culling;
-        ECullMode                 m_cullface;
-        EWinding                  m_winding;
-        EPolygonMode              m_polygonMode;
+        bool                        m_culling;
+        ECullMode                   m_cullface;
+        EWinding                    m_winding;
+        EPolygonMode                m_polygonMode;
 
-        EBlendFactor              m_blendSrc;
-        EBlendFactor              m_blendDst;
-        bool                      m_blend;
+        EBlendFactor                m_blendColorSrc;
+        EBlendFactor                m_blendColorDst;
+        EBlendEquation              m_blendColorEquation;
 
-        bool                      m_depthWrite;
-        bool                      m_depthTest;
-        ECompareFunc              m_depthFunc;
+        EBlendFactor                m_blendAlphaSrc;
+        EBlendFactor                m_blendAlphaDst;
+        EBlendEquation              m_blendAlphaEquation;
 
-        bool                      m_isChanged;
+        bool                        m_blend;
 
-        bool                      m_isRasterizerEnable;
+        bool                        m_depthWrite;
+        bool                        m_depthTest;
+        ECompareFunc                m_depthFunc;
+
+        bool                        m_stencilTest;
+
+        u32                         m_rasterizationSamples;
+        bool                        m_isRasterizerEnable;
+
+        EPrimitivesTopology         m_topology;
+        u32                         m_instanced;
+
+        bool                        m_isChanged;
 
     private:
 
-        friend                    CRenderPass;
+        friend                      CRenderPass;
 
-        bool                      parse(const tinyxml2::XMLElement* root);
+        bool                        parse(const tinyxml2::XMLElement* root);
 
-        static const std::string  s_renderPolygonMode[EPolygonMode::ePolygonModeCount];
-        static const std::string  s_blendFactor[EBlendFactor::eBlendCount];
-        static const std::string  s_cullface[ECullMode::eCullModeCount];
-        static const std::string  s_comparefunc[ECompareFunc::eCompareCount];
+        static const std::string    s_typeName[EPrimitivesTopology::ePrimitivesTopologyCount];
+        static const std::string    s_renderPolygonMode[EPolygonMode::ePolygonModeCount];
+        static const std::string    s_blendFactor[EBlendFactor::eBlendFactorCount];
+        static const std::string    s_cullface[ECullMode::eCullModeCount];
+        static const std::string    s_comparefunc[ECompareFunc::eCompareCount];
+        static const std::string    s_blendEquation[EBlendEquation::eFuncBlendEquationCount];
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

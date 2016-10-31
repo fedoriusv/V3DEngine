@@ -19,6 +19,18 @@ namespace vk
     class MemoryManagerVK;
     class CommandBufferVK;
     class CommandPoolVK;
+    class FramebufferVK;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const std::array<VkDynamicState, 3> k_dynamicStateVK =
+    {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_STENCIL_REFERENCE,
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Inherited class for general render management. Vulkan render only.
@@ -36,6 +48,18 @@ namespace vk
         MemoryManagerVK*        getMemoryManager();
         CommandBufferVK*        getCurrentCommandBuffer() const;
 
+        template <class V, typename T>
+        static bool checkPresentState(const V& container, T value)
+        {
+            auto iter = std::find(container.cbegin(), container.cend(), T);
+            if (iter != container.cend())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
     private:
 
         void                    immediateInit() override;
@@ -46,7 +70,7 @@ namespace vk
 
         void                    immediateDraw() override;
 
-        void                    createGraphicPipeline(const RenderStateVK* renderState);
+        void                    createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
 
         MemoryManagerVK*        m_memoryMamager;
 

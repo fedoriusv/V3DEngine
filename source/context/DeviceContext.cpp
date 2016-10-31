@@ -77,7 +77,7 @@ u64 DeviceContext::getMemoryBlockSize() const
 
 u32 DeviceContext::getMaxColorAttachments() const
 {
-    return m_graphicsCaps->getMaxColorAttachments();
+    return m_graphicsCaps.getMaxColorAttachments();
 }
 
 } //namespace renderer

@@ -151,7 +151,7 @@ bool CRenderAdvanced::parse(const tinyxml2::XMLElement* root)
         {
             if (CRenderAdvanced::getPrimitiveMode() != EPrimitivesMode::ePatches)
             {
-                LOG_WARNING("If used patches draw mode must be 'ePatches'");
+                LOG_WARNING("If used patches draw mode must be 'Patches'");
                 CRenderAdvanced::setPrimitiveMode(EPrimitivesMode::ePatches);
             }
         }

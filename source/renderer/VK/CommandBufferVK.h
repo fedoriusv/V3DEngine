@@ -39,6 +39,8 @@ namespace vk
         void                    resolveImage();
 
         void                    setViewport(const core::Rect32& viewportPos, f32 minDepth = 0.0f, f32 maxDepth = 1.0);
+        void                    setBlendConstant(const core::Vector4D& color);
+        void                    setDepthBounds(f32 minDepth = 0.0f, f32 maxDepth = 1.0);
 
 
     private:

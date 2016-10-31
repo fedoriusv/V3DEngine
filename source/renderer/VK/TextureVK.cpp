@@ -45,7 +45,7 @@ VkImageType getImageTypeVK(ETextureTarget target)
     return VK_IMAGE_TYPE_MAX_ENUM;
 }
 
-VkImageViewType getImageViewType(ETextureTarget target)
+VkImageViewType getImageViewTypeVK(ETextureTarget target)
 {
     switch (target)
     {
@@ -1037,7 +1037,7 @@ bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& 
     imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     imageViewCreateInfo.pNext = nullptr;
     imageViewCreateInfo.flags = 0;
-    imageViewCreateInfo.viewType = getImageViewType(m_target);
+    imageViewCreateInfo.viewType = getImageViewTypeVK(m_target);
     imageViewCreateInfo.format = format;
     imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_IDENTITY , VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
     imageViewCreateInfo.subresourceRange = imageSubresourceRange;
