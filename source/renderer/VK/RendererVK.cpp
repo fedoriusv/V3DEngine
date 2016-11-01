@@ -29,6 +29,7 @@ RendererVK::~RendererVK()
 {
     ASSERT(!m_memoryMamager, "m_memoryMamager already exist");
     ASSERT(!m_commandPool, "m_commandPool already exist");
+    ASSERT(m_pipelineList.empty(), "m_pipelineList is not empty");
 }
 
 platform::ERenderType RendererVK::getRenderType() const
@@ -67,7 +68,7 @@ void RendererVK::immediateDraw()
 {
 }
 
-void RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
+VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
 {
     VkPipeline pipeline;
     VkPipelineCache pipelineCache = VK_NULL_HANDLE;
@@ -76,12 +77,14 @@ void RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const F
     pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineCreateInfo.pNext = nullptr;
     pipelineCreateInfo.flags = 0; //VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
+    pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
+    pipelineCreateInfo.basePipelineIndex = -1;
 
     VkPipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo = {};
     pipelineDynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     pipelineDynamicStateCreateInfo.pNext = nullptr;
     pipelineDynamicStateCreateInfo.flags = 0;
-    pipelineDynamicStateCreateInfo.dynamicStateCount = k_dynamicStateVK.size();
+    pipelineDynamicStateCreateInfo.dynamicStateCount = static_cast<u32>(k_dynamicStateVK.size());
     pipelineDynamicStateCreateInfo.pDynamicStates = k_dynamicStateVK.data();
 
     pipelineCreateInfo.pDynamicState = &pipelineDynamicStateCreateInfo;
@@ -99,10 +102,10 @@ void RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const F
     else
     {
         VkViewport viewport = {};
-        viewport.x = framebuffer->getViewport().getLeftX();
-        viewport.y = framebuffer->getViewport().getTopY();
-        viewport.width = framebuffer->getViewport().getWidth();
-        viewport.height = framebuffer->getViewport().getHeight();
+        viewport.x = static_cast<f32>(framebuffer->getViewport().getLeftX());
+        viewport.y = static_cast<f32>(framebuffer->getViewport().getTopY());
+        viewport.width = static_cast<f32>(framebuffer->getViewport().getWidth());
+        viewport.height = static_cast<f32>(framebuffer->getViewport().getHeight());
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
 
@@ -130,22 +133,60 @@ void RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const F
     pipelineCreateInfo.pColorBlendState = &renderState->getPipelineColorBlendStateCreateInfo(framebuffer);
     pipelineCreateInfo.pDepthStencilState = &renderState->getPipelineDepthStencilStateCreateInfo();
     pipelineCreateInfo.pMultisampleState = &renderState->getPipelineMultisampleStateCreateInfo();
+    pipelineCreateInfo.pInputAssemblyState = &renderState->getPipelineInputAssemblyStateCreateInfo();
+    pipelineCreateInfo.pTessellationState = &renderState->getPipelineTessellationStateCreateInfo();
 
-    VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo = {};
-    pipelineInputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
-    pipelineInputAssemblyStateCreateInfo.flags = 0;
-    pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
-    pipelineInputAssemblyStateCreateInfo.topology = ;
+    VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo = {};
+    pipelineVertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    pipelineVertexInputStateCreateInfo.pNext = nullptr;
+    pipelineVertexInputStateCreateInfo.flags = 0;
+    pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = ;
+    pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = ;
+    pipelineVertexInputStateCreateInfo.vertexBindingDescriptionCount = ;
+    pipelineVertexInputStateCreateInfo.pVertexBindingDescriptions = ;
 
-    pipelineCreateInfo.pInputAssemblyState = &pipelineInputAssemblyStateCreateInfo;
-    pipelineCreateInfo.pTessellationState = ;
+    pipelineCreateInfo.pVertexInputState = ;
+
+    pipelineCreateInfo.stageCount = ;
+    pipelineCreateInfo.pStages = ;
 
     VkResult result = vkCreateGraphicsPipelines(m_device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("RendererVK::createGraphicPipeline: vkCreateGraphicsPipelines. Error: %s", DebugVK::errorString(result).c_str());
+        return VK_NULL_HANDLE;
     }
+
+    return pipeline;
+}
+
+VkPipeline RendererVK::getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
+{
+    u64 hashPipeline = 0; //TODO: get hash
+    auto pipeline = m_pipelineList.find(hashPipeline);
+    if (pipeline == m_pipelineList.cend())
+    {
+        VkPipeline newPipeline = RendererVK::createGraphicPipeline(renderState, framebuffer);
+        m_pipelineList.insert(std::make_pair(hashPipeline, newPipeline));
+
+        return newPipeline;
+    }
+
+    return pipeline->second;
+}
+
+void RendererVK::destroyGraphicPipelines()
+{
+    for (auto& pipline : m_pipelineList)
+    {
+        if (pipline.second != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(m_device, pipline.second, nullptr);
+            pipline.second = VK_NULL_HANDLE;
+        }
+    }
+
+    m_pipelineList.clear();
 }
 
 const ContextVKPtr RendererVK::getVulkanContext() const
@@ -181,7 +222,7 @@ ShaderProgramPtr RendererVK::makeSharedProgram()
     return ShaderProgramPtr();
 }
 
-GeometryPtr RendererVK::makeSharedGeometry(const CRenderTechnique * technique)
+GeometryPtr RendererVK::makeSharedGeometry(const CRenderTechnique* technique)
 {
     return GeometryPtr();
 }

@@ -1,8 +1,8 @@
-#ifndef _V3D_GEOMETRY_H_
-#define _V3D_GEOMETRY_H_
+#pragma once
 
 #include "Vertex.h"
 #include "GeometryTypes.h"
+#include "RenderState.h"
 
 namespace v3d
 {
@@ -13,39 +13,24 @@ namespace renderer
     class Buffer;
     class CRenderTechnique;
 
-    class CGeometry
+    class Geometry
     {
     public:
 
-        struct SInterval
-        {
-            SInterval();
-            SInterval(const SInterval& interval);
-            SInterval& operator=(const SInterval& interval);
+        explicit Geometry(const CRenderTechnique* technique);
+        virtual                 ~Geometry();
 
-            bool operator==(const SInterval& interval);
-
-            u32 _begin;
-            u32 _count;
-        };
-
-        explicit CGeometry(const CRenderTechnique* technique);
-        virtual                 ~CGeometry();
-
-        virtual void            init()      = 0;
-        virtual void            free()      = 0;
-        virtual void            draw()      = 0;
-        virtual void            refresh()   = 0;
+        virtual void            init() = 0;
+        virtual void            free() = 0;
+        virtual void            draw() = 0;
+        virtual void            refresh() = 0;
 
         bool                    updated() const;
 
         SVertexData&            getData();
 
-        EPrimitivesMode         getDrawMode() const;
-        void                    setDrawMode(EPrimitivesMode mode);
-
-        void                    setInterval(u32 begin, u32 count);
-        const SInterval&        getInterval() const;
+        EPrimitivesTopology     getDrawMode() const;
+        void                    setDrawMode(EPrimitivesTopology mode);
 
         void                    addVertex(const core::Vector3D& vertex);
         void                    addNormal(const core::Vector3D& normal);
@@ -59,7 +44,7 @@ namespace renderer
 
         void                    setVertexMask(u32 mask);
 
-        EPrimitivesMode         m_drawMode;
+        EPrimitivesTopology     m_drawMode;
         EDataUsageType          m_geometyType;
         SVertexData             m_data;
         const CRenderTechnique* m_technique;
@@ -69,17 +54,14 @@ namespace renderer
 
     private:
 
-        SInterval               m_interval;
         u32                     m_currentVertexMask;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CGeometry> GeometryPtr;
+    //typedef std::shared_ptr<Geometry> GeometryPtr;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_GEOMETRY_H_

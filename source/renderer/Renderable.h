@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include "RenderJob.h"
 #include "Material.h"
+#include "RenderState.h"
 
 namespace v3d
 {

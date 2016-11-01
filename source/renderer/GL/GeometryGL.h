@@ -1,7 +1,8 @@
-#ifndef _V3D_GEOMETRY_GL_H_
-#define _V3D_GEOMETRY_GL_H_
+#pragma once
 
 #include "renderer/Geometry.h"
+
+#ifdef _OPENGL_RENDER_
 #include "renderer/DataTypes.h"
 #include "renderer/RenderTechnique.h"
 
@@ -49,8 +50,8 @@ namespace gl
         static void         vertexAttribArray(s32 attrib, bool enable);
         static void         vertexAttribDivisior(s32 attrib, u32 value);
 
-        static void         drawElements(EPrimitivesMode mode, u32 count, u32 primCount);
-        static void         drawArrays(EPrimitivesMode mode, u32 first, u32 count, u32 primCount);
+        static void         drawElements(EPrimitivesTopology mode, u32 count, u32 primCount);
+        static void         drawArrays(EPrimitivesTopology mode, u32 first, u32 count, u32 primCount);
 
         static u32          s_currentArray;
     };
@@ -61,4 +62,4 @@ namespace gl
 } //namespace renderer
 } //namespace v3d
 
-#endif //_V3D_GEOMETRY_GL_H_
+#endif //_OPENGL_RENDER_

@@ -5,7 +5,6 @@
 #include "ShaderData.h"
 #include "RenderState.h"
 #include "RenderLOD.h"
-#include "RenderAdvanced.h"
 #include "Target.h"
 #include "utils/Cloneable.h"
 
@@ -58,9 +57,6 @@ namespace renderer
         const RenderLODPtr      getRenderLOD() const;
         void                    setRenderLOD(const RenderLODPtr& lod);
 
-        const RenderAdvancedPtr getRenderAdvanced() const;
-        void                    setRenderAdvanced(const RenderAdvancedPtr& advanced);
-
         const TargetPtr         getTarget(u32 index) const;
         const TargetPtr         getTarget(const std::string& target) const;
 
@@ -100,7 +96,6 @@ namespace renderer
         bool                    parseRenderTarget  (const tinyxml2::XMLElement* root);
         bool                    parseRenderState   (const tinyxml2::XMLElement* root);
         bool                    parseRenderLOD     (const tinyxml2::XMLElement* root);
-        bool                    parseRenderAdvanced(const tinyxml2::XMLElement* root);
 
         const std::string       attachIndexToUniform(const std::string& name, s32 idx);
 
@@ -108,7 +103,6 @@ namespace renderer
         ShaderDataPtr           m_defaultShaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
-        RenderAdvancedPtr       m_advanced;
         TargetList              m_targetList;
         ShaderProgramPtr        m_program;
 

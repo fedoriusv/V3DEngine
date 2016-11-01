@@ -104,7 +104,6 @@ namespace renderer
         eTriangleFan,
         eLines,
         eLinesStrip,
-        eLinesLoop,
         ePoints,
         ePatches,
 
@@ -145,6 +144,13 @@ namespace renderer
         ECompareFunc                getDepthfunc() const;
         bool                        getStencilTest() const;
         bool                        isRasterizerEnable() const;
+
+        u32                         getCountInstance() const;
+        EPrimitivesTopology         getPrimitiveTopology() const;
+        const core::Point2DU&       getDrawInterval()  const;
+        u32                         getCountPatches()  const;
+        f32                         getPatchInnerLevel() const;
+        f32                         getPatchOuterLevel() const;
                               
         void                        setCullface(ECullMode mode);
         void                        setCulling(bool enable);
@@ -160,6 +166,13 @@ namespace renderer
         void                        setDepthFunc(ECompareFunc func);
         void                        setStencilTest(bool enable);
         void                        setRasterizerEnable(bool enable);
+
+
+        void                        setPrimitiveTopology(EPrimitivesTopology topology);
+        void                        setDrawInterval(u32 begin, u32 count);
+        void                        setCountInstance(u32 count);
+        void                        setCountPatches(u32 patches);
+        void                        setPatchLevel(f32 inner, f32 outer);
 
         virtual void                bind() = 0;
 
@@ -199,6 +212,11 @@ namespace renderer
 
         EPrimitivesTopology         m_topology;
         u32                         m_instanced;
+        core::Point2DU              m_interval;
+
+        u32                         m_patches;
+        f32                         m_patchInnerLevel;
+        f32                         m_patchOuterLevel;
 
         bool                        m_isChanged;
 

@@ -51,7 +51,7 @@ CGeometryTarget::SBufferData& CGeometryTarget::SBufferData::operator=(const SBuf
 CGeometryTarget::CGeometryTarget()
     : ITarget()
     , m_separated(false)
-    , m_mode(EPrimitivesMode::eTriangles)
+    , m_mode(EPrimitivesTopology::eTriangles)
 {
     m_targetType = ITarget::ETagetType::eGeometryTarget;
     m_name = "";
@@ -151,12 +151,7 @@ bool CGeometryTarget::parse(const tinyxml2::XMLElement* root)
     if (root->Attribute("primitive"))
     {
         std::string mode = root->Attribute("primitive");
-        m_mode = GeometryType::getPrimitivesModeByString(mode);
-        if (m_mode == EPrimitivesMode::ePrimitivesNone)
-        {
-            LOG_WARNING("CGeometryTarget: Transformfeedback have invalid primitive mode. Set Triangles primitive");
-            m_mode = EPrimitivesMode::eTriangles;
-        }
+        m_mode = RenderState::getPrimitivesTopologyByString(mode);
     }
 
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");

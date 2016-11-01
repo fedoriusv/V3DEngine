@@ -3,7 +3,7 @@
 
 #include "Target.h"
 #include "DataTypes.h"
-#include "GeometryTypes.h"
+#include "RenderState.h"
 
 namespace tinyxml2
 {
@@ -64,7 +64,7 @@ namespace renderer
         std::vector<const c8*>          m_bufferStrings;
         std::vector<SBufferData>        m_bufferList;
 
-        EPrimitivesMode                 m_mode;
+        EPrimitivesTopology             m_mode;
         bool                            m_separated;
     };
 

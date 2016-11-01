@@ -135,7 +135,6 @@ const std::string RenderState::s_typeName[EPrimitivesTopology::ePrimitivesTopolo
     "trianglefan",
     "lines",
     "linesstrip",
-    "linesloop",
     "points",
     "patches"
 };
@@ -182,6 +181,11 @@ RenderState::RenderState()
 
     , m_topology(eTriangles)
     , m_instanced(1U)
+    , m_interval(0, 0)
+
+    , m_patches(0U)
+    , m_patchInnerLevel(0U)
+    , m_patchOuterLevel(0U)
 
     , m_isChanged(true)
 {
@@ -208,6 +212,14 @@ RenderState::RenderState(const RenderState& state)
 
     , m_rasterizationSamples(state.m_rasterizationSamples)
     , m_isRasterizerEnable(state.m_isRasterizerEnable)
+
+    , m_topology(state.m_topology)
+    , m_instanced(state.m_instanced)
+    , m_interval(state.m_interval)
+
+    , m_patches(state.m_patches)
+    , m_patchInnerLevel(state.m_patchInnerLevel)
+    , m_patchOuterLevel(state.m_patchOuterLevel)
 
     , m_isChanged(true)
 {
@@ -240,6 +252,14 @@ RenderState& RenderState::operator=(const RenderState& state)
 
     m_rasterizationSamples = state.m_rasterizationSamples;
     m_isRasterizerEnable = state.m_isRasterizerEnable;
+
+    m_topology = state.m_topology;
+    m_instanced = state.m_instanced;
+    m_interval = state.m_interval;
+
+    m_patches = state.m_patches;
+    m_patchInnerLevel = state.m_patchInnerLevel;
+    m_patchOuterLevel = state.m_patchOuterLevel;
 
     m_isChanged = true;
 
@@ -366,6 +386,21 @@ bool RenderState::isRasterizerEnable() const
     return m_isRasterizerEnable;
 }
 
+u32 RenderState::getCountInstance() const
+{
+    return m_instanced;
+}
+
+EPrimitivesTopology RenderState::getPrimitiveTopology() const
+{
+    return m_topology;
+}
+
+const core::Point2DU& RenderState::getDrawInterval() const
+{
+    return m_interval;
+}
+
 void RenderState::setCullface(ECullMode mode)
 {
     if (m_cullface != mode)
@@ -456,6 +491,62 @@ void RenderState::setRasterizerEnable(bool enable)
         m_isRasterizerEnable = enable;
         m_isChanged = true;
     }
+}
+
+void RenderState::setPrimitiveTopology(EPrimitivesTopology topology)
+{
+    if (m_topology != topology)
+    {
+        m_topology = topology;
+        m_isChanged = true;
+    }
+}
+
+void RenderState::setDrawInterval(u32 begin, u32 count)
+{
+    m_interval[0] = begin;
+    m_interval[1] = count;
+    //m_isChanged = true; not need
+}
+
+void RenderState::setCountInstance(u32 count)
+{
+    if (m_instanced != count)
+    {
+        m_instanced = count;
+        m_isChanged = true;
+    }
+}
+
+void RenderState::setCountPatches(u32 patches)
+{
+    if (m_patches != patches)
+    {
+        m_patches = patches;
+        m_isChanged = true;
+    }
+}
+
+void RenderState::setPatchLevel(f32 inner, f32 outer)
+{
+    m_patchInnerLevel = inner;
+    m_patchOuterLevel = outer;
+    // m_isChanged = true; not need
+}
+
+u32 RenderState::getCountPatches() const
+{
+    return m_patches;
+}
+
+f32 RenderState::getPatchInnerLevel() const
+{
+    return m_patchInnerLevel;
+}
+
+f32 RenderState::getPatchOuterLevel() const
+{
+    return m_patchOuterLevel;
 }
 
 bool RenderState::parse(const tinyxml2::XMLElement* root)
@@ -601,13 +692,13 @@ bool RenderState::parse(const tinyxml2::XMLElement* root)
     if (primitiveElement && primitiveElement->Attribute("val"))
     {
         std::string primitive = primitiveElement->Attribute("val");
-        EPrimitivesMode mode = GeometryType::getPrimitivesModeByString(primitive);
-        if (mode == EPrimitivesMode::ePrimitivesNone)
+        EPrimitivesTopology mode = RenderState::getPrimitivesTopologyByString(primitive);
+        if (mode == EPrimitivesTopology::eTriangles)
         {
-            LOG_WARNING("CRenderAdvanced: Invalid primitive mode");
+            LOG_WARNING("RenderState: Invalid primitive mode");
         }
 
-        RenderState::setPrimitiveMode(mode);
+        RenderState::setPrimitiveTopology(mode);
     }
 
     const tinyxml2::XMLElement* drawintervalElement = root->FirstChildElement("drawinterval");
@@ -625,10 +716,10 @@ bool RenderState::parse(const tinyxml2::XMLElement* root)
         u32 patches = patchesElement->UnsignedAttribute("val");
         if (patches > 0)
         {
-            if (RenderState::getPrimitiveMode() != EPrimitivesMode::ePatches)
+            if (RenderState::getPrimitiveTopology() != EPrimitivesTopology::ePatches)
             {
-                LOG_WARNING("If used patches draw mode must be 'Patches'");
-                RenderState::setPrimitiveMode(EPrimitivesMode::ePatches);
+                LOG_WARNING("RenderState: If used patches draw mode must be 'Patches'");
+                RenderState::setPrimitiveTopology(EPrimitivesTopology::ePatches);
             }
         }
 

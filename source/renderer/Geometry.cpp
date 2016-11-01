@@ -7,38 +7,8 @@ namespace v3d
 namespace renderer
 {
 
-CGeometry::SInterval::SInterval()
-    : _begin(0)
-    , _count(0)
-{
-}
-
-CGeometry::SInterval::SInterval(const CGeometry::SInterval& interval)
-    : _begin(interval._begin)
-    , _count(interval._count)
-{
-}
-
-CGeometry::SInterval& CGeometry::SInterval::operator=(const CGeometry::SInterval& interval)
-{
-    if (&interval == this)
-    {
-        return *this;
-    }
-
-    _begin = interval._begin;
-    _count = interval._count;
-
-    return *this;
-}
-
-bool CGeometry::SInterval::operator==(const CGeometry::SInterval& interval)
-{
-    return _begin == interval._begin && _count == interval._count;
-}
-
-CGeometry::CGeometry(const CRenderTechnique* technique)
-    : m_drawMode(EPrimitivesMode::eTriangles)
+Geometry::Geometry(const CRenderTechnique* technique)
+    : m_drawMode(EPrimitivesTopology::eTriangles)
     , m_geometyType(EDataUsageType::eWriteStatic)
     , m_technique(technique)
 
@@ -49,57 +19,51 @@ CGeometry::CGeometry(const CRenderTechnique* technique)
 {
 }
 
-CGeometry::~CGeometry()
+Geometry::~Geometry()
 {
     m_data.clear();
 }
 
-SVertexData& CGeometry::getData()
+SVertexData& Geometry::getData()
 {
     return m_data;
 }
 
-EPrimitivesMode CGeometry::getDrawMode() const
+EPrimitivesTopology Geometry::getDrawMode() const
 {
     return m_drawMode;
 }
 
-void CGeometry::setDrawMode(EPrimitivesMode mode)
+void Geometry::setDrawMode(EPrimitivesTopology mode)
 {
     m_drawMode = mode;
 }
 
-void CGeometry::setInterval(u32 begin, u32 count)
-{
-    m_interval._begin = begin;
-    m_interval._count = count;
-}
-
-void CGeometry::addVertex(const core::Vector3D& vertex)
+void Geometry::addVertex(const core::Vector3D& vertex)
 {
     m_data._vertices.push_back(vertex);
 }
-void CGeometry::addNormal(const core::Vector3D& normal)
+void Geometry::addNormal(const core::Vector3D& normal)
 {
     m_data._normals.push_back(normal);
 }
 
-void CGeometry::addBinormal(const core::Vector3D& binormal)
+void Geometry::addBinormal(const core::Vector3D& binormal)
 {
     m_data._binormals.push_back(binormal);
 }
 
-void CGeometry::addTangent(const core::Vector3D& tangent)
+void Geometry::addTangent(const core::Vector3D& tangent)
 {
     m_data._tangents.push_back(tangent);
 }
 
-void CGeometry::addColor(const core::Vector3D& color)
+void Geometry::addColor(const core::Vector3D& color)
 {
     m_data._colors.push_back(color);
 }
 
-void CGeometry::addTexCoord(u32 layer, const core::Vector2D& texCoord)
+void Geometry::addTexCoord(u32 layer, const core::Vector2D& texCoord)
 {
     if (layer >= m_data._texCoords.size())
     {
@@ -108,30 +72,25 @@ void CGeometry::addTexCoord(u32 layer, const core::Vector2D& texCoord)
     m_data._texCoords[layer].push_back(texCoord);
 }
 
-void CGeometry::addIndex(u32 index)
+void Geometry::addIndex(u32 index)
 {
     m_data._indices.push_back(index);
 }
 
-void CGeometry::setVertexMask(u32 mask)
+void Geometry::setVertexMask(u32 mask)
 {
     m_currentVertexMask = mask;
 }
 
-const CGeometry::SInterval& CGeometry::getInterval() const
-{
-    return m_interval;
-}
-
-void CGeometry::draw()
+void Geometry::draw()
 {
     u32 passIndex = m_technique->getCurrentPass();
     const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
-    CGeometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
+    Geometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
 }
 
-bool CGeometry::updated() const
+bool Geometry::updated() const
 {
     u32 passIndex = m_technique->getCurrentPass();
     const RenderPassPtr pass = m_technique->getRenderPass(passIndex);

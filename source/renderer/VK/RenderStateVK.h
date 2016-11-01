@@ -32,8 +32,10 @@ namespace vk
         const VkPipelineColorBlendStateCreateInfo&      getPipelineColorBlendStateCreateInfo(const FramebufferVK* framebuffer) const;
         const VkPipelineDepthStencilStateCreateInfo&    getPipelineDepthStencilStateCreateInfo() const;
         const VkPipelineMultisampleStateCreateInfo&     getPipelineMultisampleStateCreateInfo() const;
+        const VkPipelineInputAssemblyStateCreateInfo&   getPipelineInputAssemblyStateCreateInfo() const;
+        const VkPipelineTessellationStateCreateInfo&    getPipelineTessellationStateCreateInfo() const;
 
-        void         bind() override;
+        void                                            bind() override;
 
     private:
 
@@ -42,12 +44,14 @@ namespace vk
         void                                            updatePipelineDepthStencilStateCreateInfo() const;
         void                                            updatePipelineMultisampleStateCreateInfo() const;
         void                                            updatePipelineInputAssemblyStateCreateInfo() const;
+        void                                            updateVkPipelineTessellationStateCreateInfo() const;
 
         mutable VkPipelineRasterizationStateCreateInfo  m_pipelineRasterizationStateCreateInfo;
         mutable VkPipelineColorBlendStateCreateInfo     m_pipelineColorBlendStateCreateInfo;
         mutable VkPipelineDepthStencilStateCreateInfo   m_pipelineDepthStencilStateCreateInfo;
         mutable VkPipelineMultisampleStateCreateInfo    m_pipelineMultisampleStateCreateInfo;
         mutable VkPipelineInputAssemblyStateCreateInfo  m_pipelineInputAssemblyStateCreateInfo;
+        mutable VkPipelineTessellationStateCreateInfo   m_pipelineTessellationStateCreateInfo;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

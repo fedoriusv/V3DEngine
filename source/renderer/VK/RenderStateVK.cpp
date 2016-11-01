@@ -14,7 +14,7 @@ namespace vk
 
 extern VkSampleCountFlagBits getSampleCountVK(u32 size, ETextureTarget target);
 
-VkCullModeFlagBits ECullfaceVK[ECullMode::eCullModeCount] =
+const VkCullModeFlagBits ECullfaceVK[ECullMode::eCullModeCount] =
 {
     VK_CULL_MODE_NONE,
     VK_CULL_MODE_FRONT_BIT,
@@ -22,20 +22,20 @@ VkCullModeFlagBits ECullfaceVK[ECullMode::eCullModeCount] =
     VK_CULL_MODE_FRONT_AND_BACK
 };
 
-VkPolygonMode EPolygonModeVK[EPolygonMode::ePolygonModeCount] =
+const VkPolygonMode EPolygonModeVK[EPolygonMode::ePolygonModeCount] =
 {
     VK_POLYGON_MODE_FILL,
     VK_POLYGON_MODE_LINE,
     VK_POLYGON_MODE_POINT
 };
 
-VkFrontFace EWindingGL[] =
+const VkFrontFace EWindingGL[] =
 {
     VK_FRONT_FACE_CLOCKWISE,
     VK_FRONT_FACE_COUNTER_CLOCKWISE
 };
 
-VkBlendFactor EBlendFactorVK[EBlendFactor::eBlendFactorCount] =
+const VkBlendFactor EBlendFactorVK[EBlendFactor::eBlendFactorCount] =
 {
     VK_BLEND_FACTOR_ZERO,
     VK_BLEND_FACTOR_ONE,
@@ -54,7 +54,7 @@ VkBlendFactor EBlendFactorVK[EBlendFactor::eBlendFactorCount] =
     VK_BLEND_FACTOR_SRC_ALPHA_SATURATE
 };
 
-VkBlendOp EBlendEquationVK[EBlendEquation::eFuncBlendEquationCount] =
+const VkBlendOp EBlendEquationVK[EBlendEquation::eFuncBlendEquationCount] =
 {
     VK_BLEND_OP_ADD,
     VK_BLEND_OP_SUBTRACT,
@@ -63,7 +63,7 @@ VkBlendOp EBlendEquationVK[EBlendEquation::eFuncBlendEquationCount] =
     VK_BLEND_OP_MAX
 };
 
-VkCompareOp ECompareFuncVK[ECompareFunc::eCompareCount] =
+const VkCompareOp ECompareFuncVK[ECompareFunc::eCompareCount] =
 {
     VK_COMPARE_OP_NEVER,
     VK_COMPARE_OP_LESS,
@@ -73,6 +73,17 @@ VkCompareOp ECompareFuncVK[ECompareFunc::eCompareCount] =
     VK_COMPARE_OP_GREATER,
     VK_COMPARE_OP_NOT_EQUAL,
     VK_COMPARE_OP_ALWAYS
+};
+
+const VkPrimitiveTopology EPrimitivesModeVK[EPrimitivesTopology::ePrimitivesTopologyCount] =
+{
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
+    VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+    VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+    VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
+    VK_PRIMITIVE_TOPOLOGY_PATCH_LIST
 };
 
 RenderStateVK::RenderStateVK()
@@ -105,16 +116,47 @@ const VkPipelineColorBlendStateCreateInfo& RenderStateVK::getPipelineColorBlendS
 
 const VkPipelineDepthStencilStateCreateInfo& RenderStateVK::getPipelineDepthStencilStateCreateInfo() const
 {
+    if (m_isChanged)
+    {
+        RenderStateVK::updatePipelineDepthStencilStateCreateInfo();
+    }
+
     return m_pipelineDepthStencilStateCreateInfo;
 }
 
-const VkPipelineMultisampleStateCreateInfo & RenderStateVK::getPipelineMultisampleStateCreateInfo() const
+const VkPipelineMultisampleStateCreateInfo& RenderStateVK::getPipelineMultisampleStateCreateInfo() const
 {
+    if (m_isChanged)
+    {
+        RenderStateVK::updatePipelineMultisampleStateCreateInfo();
+    }
+
     return m_pipelineMultisampleStateCreateInfo;
+}
+
+const VkPipelineInputAssemblyStateCreateInfo& RenderStateVK::getPipelineInputAssemblyStateCreateInfo() const
+{
+    if (m_isChanged)
+    {
+        RenderStateVK::updatePipelineInputAssemblyStateCreateInfo();
+    }
+
+    return m_pipelineInputAssemblyStateCreateInfo;
+}
+
+const VkPipelineTessellationStateCreateInfo& RenderStateVK::getPipelineTessellationStateCreateInfo() const
+{
+    if (m_isChanged)
+    {
+        RenderStateVK::updateVkPipelineTessellationStateCreateInfo();
+    }
+
+    return m_pipelineTessellationStateCreateInfo;
 }
 
 void RenderStateVK::bind()
 {
+    //TODO:
 }
 
 void RenderStateVK::updatePipelineRasterizationStateCreateInfo() const
@@ -265,8 +307,8 @@ void RenderStateVK::updatePipelineMultisampleStateCreateInfo() const
     {
         pipelineMultisampleStateCreateInfo.rasterizationSamples = getSampleCountVK(m_rasterizationSamples, ETextureTarget::eTexture2DMSAA);
         pipelineMultisampleStateCreateInfo.pSampleMask = nullptr;
-        pipelineMultisampleStateCreateInfo.sampleShadingEnable = m_rasterizationSamples > 1 ? VK_TRUE : VK_FALSE;
-        pipelineMultisampleStateCreateInfo.minSampleShading = 1.0f;
+        pipelineMultisampleStateCreateInfo.sampleShadingEnable = VK_FALSE;
+        pipelineMultisampleStateCreateInfo.minSampleShading = 0.25f;
         pipelineMultisampleStateCreateInfo.alphaToOneEnable = VK_FALSE;
         pipelineMultisampleStateCreateInfo.alphaToCoverageEnable = VK_FALSE;
     }
@@ -290,9 +332,28 @@ void RenderStateVK::updatePipelineInputAssemblyStateCreateInfo() const
     pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
     pipelineInputAssemblyStateCreateInfo.flags = 0;
     pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
-    pipelineInputAssemblyStateCreateInfo.topology = ;
+    pipelineInputAssemblyStateCreateInfo.topology = EPrimitivesModeVK[m_topology];
 
     m_pipelineInputAssemblyStateCreateInfo = pipelineInputAssemblyStateCreateInfo;
+}
+
+void RenderStateVK::updateVkPipelineTessellationStateCreateInfo() const
+{
+    VkPipelineTessellationStateCreateInfo pipelineTessellationStateCreateInfo = {};
+    pipelineTessellationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+    pipelineTessellationStateCreateInfo.pNext = nullptr;
+    pipelineTessellationStateCreateInfo.flags = 0;
+
+    if (EPrimitivesModeVK[m_topology] == EPrimitivesTopology::ePatches)
+    {
+        pipelineTessellationStateCreateInfo.patchControlPoints = m_patches;
+    }
+    else
+    {
+        pipelineTessellationStateCreateInfo.patchControlPoints = 0U;
+    }
+
+    m_pipelineTessellationStateCreateInfo = pipelineTessellationStateCreateInfo;
 }
 
 } //namespace vk

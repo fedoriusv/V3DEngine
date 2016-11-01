@@ -70,7 +70,9 @@ namespace vk
 
         void                    immediateDraw() override;
 
-        void                    createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
+        VkPipeline              createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
+        VkPipeline              getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
+        void                    destroyGraphicPipelines();
 
         MemoryManagerVK*        m_memoryMamager;
 
@@ -78,6 +80,8 @@ namespace vk
 
         VkDevice                m_device;
         u32                     m_queueFamilyIndex;
+
+        std::map<u64, VkPipeline> m_pipelineList;
 
     public:
 
