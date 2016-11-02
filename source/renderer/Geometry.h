@@ -43,6 +43,7 @@ namespace renderer
     protected:
 
         void                    setVertexMask(u32 mask);
+        s32                     computeBufferSize(const ShaderDataList& shaderDataList);
 
         EPrimitivesTopology     m_drawMode;
         EDataUsageType          m_geometyType;

@@ -21,6 +21,8 @@ Geometry::Geometry(const CRenderTechnique* technique)
 
 Geometry::~Geometry()
 {
+    ASSERT(!m_vertexBuffer, "m_vertexBuffer already exist");
+    ASSERT(!m_indexBuffer, "m_indexBuffer already exist");
     m_data.clear();
 }
 
@@ -96,6 +98,73 @@ bool Geometry::updated() const
     const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
     return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
+}
+
+s32 Geometry::computeBufferSize(const ShaderDataList& shaderDataList)
+{
+    s32 bufferSize = 0;
+
+    for (auto& shaderData : shaderDataList)
+    {
+        for (const AttributePair& attr : shaderData.lock()->getAttributeList())
+        {
+            ShaderAttribute::EShaderAttribute attribute = attr.second->getChannel();
+            if (attr.second->getLocation() < 0 || attr.second->getBinding() < 0)
+            {
+                continue;
+            }
+
+            switch (attribute)
+            {
+            case ShaderAttribute::eAttribVertexPosition:
+            case ShaderAttribute::eAttribVertexNormal:
+            case ShaderAttribute::eAttribVertexBinormal:
+            case ShaderAttribute::eAttribVertexColor:
+            case ShaderAttribute::eAttribVertexTangent:
+            case ShaderAttribute::eAttribParticalPosition:
+            case ShaderAttribute::eAttribParticalColor:
+            case ShaderAttribute::eAttribParticalVelocity:
+
+                bufferSize += sizeof(f32)* m_data.verticesSize() * 3;
+                break;
+
+            case ShaderAttribute::eAttribVertexTexture0:
+            case ShaderAttribute::eAttribVertexTexture1:
+            case ShaderAttribute::eAttribVertexTexture2:
+            case ShaderAttribute::eAttribVertexTexture3:
+
+                for (v3d::u32 layer = 0; layer < m_data._texCoords.size(); ++layer)
+                {
+                    bufferSize += sizeof(f32)* m_data.verticesSize() * 2;
+                }
+                break;
+
+            case ShaderAttribute::eAttribParticalSize:
+            case ShaderAttribute::eAttribParticalLifeTime:
+
+                bufferSize += sizeof(f32)* m_data.verticesSize();
+                break;
+
+            case ShaderAttribute::eAttribParticalType:
+
+                bufferSize += sizeof(s32)* m_data.verticesSize();
+                break;
+
+            case ShaderAttribute::eAttribUser:
+
+                if (attr.second->getUserDataSize() > 0 && attr.second->getUserDataCount() > 0)
+                {
+                    bufferSize += attr.second->getUserDataSize() * attr.second->getUserDataCount();
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    return bufferSize;
 }
 
 } //namespace renderer

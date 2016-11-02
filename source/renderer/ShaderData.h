@@ -2,7 +2,6 @@
 #define _V3D_SHADER_DATA_H_
 
 #include "ShaderUniform.h"
-#include "ShaderAttribute.h"
 #include "ShaderSampler.h"
 
 
@@ -13,6 +12,7 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderPass;
+    class ShaderAttribute;
 
     class CShaderData final
     {
@@ -61,9 +61,9 @@ namespace renderer
         friend                  CRenderPass;
 
         void                    addUniform(const CShaderUniform* uniform);
-        void                    addAttribute(const CShaderAttribute* attribute);
+        void                    addAttribute(const ShaderAttribute* attribute);
         void                    addSampler(const CShaderSampler* sampler);
-        void                    addFragData(const CShaderAttribute* fragData);
+        void                    addFragData(const ShaderAttribute* fragData);
 
         void                    clear();
 

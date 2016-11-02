@@ -20,6 +20,7 @@ namespace vk
     class CommandBufferVK;
     class CommandPoolVK;
     class FramebufferVK;
+    class GeometryVK;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +71,7 @@ namespace vk
 
         void                    immediateDraw() override;
 
-        VkPipeline              createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
+        VkPipeline              createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry);
         VkPipeline              getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer);
         void                    destroyGraphicPipelines();
 
@@ -92,7 +93,6 @@ namespace vk
 
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
-        GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
 
         RenderTargetPtr     makeSharedRenderTarget()                                                override;

@@ -8,6 +8,7 @@
 #include "context/DebugVK.h"
 #include "RenderStateVK.h"
 #include "FramebufferVK.h"
+#include "GeometryVK.h"
 
 namespace v3d
 {
@@ -68,7 +69,7 @@ void RendererVK::immediateDraw()
 {
 }
 
-VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
+VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry)
 {
     VkPipeline pipeline;
     VkPipelineCache pipelineCache = VK_NULL_HANDLE;
@@ -135,20 +136,22 @@ VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, c
     pipelineCreateInfo.pMultisampleState = &renderState->getPipelineMultisampleStateCreateInfo();
     pipelineCreateInfo.pInputAssemblyState = &renderState->getPipelineInputAssemblyStateCreateInfo();
     pipelineCreateInfo.pTessellationState = &renderState->getPipelineTessellationStateCreateInfo();
-
-    VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo = {};
-    pipelineVertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    pipelineVertexInputStateCreateInfo.pNext = nullptr;
-    pipelineVertexInputStateCreateInfo.flags = 0;
-    pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = ;
-    pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = ;
-    pipelineVertexInputStateCreateInfo.vertexBindingDescriptionCount = ;
-    pipelineVertexInputStateCreateInfo.pVertexBindingDescriptions = ;
-
-    pipelineCreateInfo.pVertexInputState = ;
+    pipelineCreateInfo.pVertexInputState = &geometry->getPipelineVertexInputStateCreateInfo();
 
     pipelineCreateInfo.stageCount = ;
+
+    VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
+    pipelineShaderStageCreateInfo.sType = ;
+    pipelineShaderStageCreateInfo.pNext = nullptr;
+    pipelineShaderStageCreateInfo.flags = 0;
+    pipelineShaderStageCreateInfo.;
+
     pipelineCreateInfo.pStages = ;
+
+    pipelineCreateInfo.layout = ;
+
+    pipelineCreateInfo.renderPass = ;
+    pipelineCreateInfo.subpass = ;
 
     VkResult result = vkCreateGraphicsPipelines(m_device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
     if (result != VK_SUCCESS)
@@ -220,11 +223,6 @@ ShaderPtr RendererVK::makeSharedShader()
 ShaderProgramPtr RendererVK::makeSharedProgram()
 {
     return ShaderProgramPtr();
-}
-
-GeometryPtr RendererVK::makeSharedGeometry(const CRenderTechnique* technique)
-{
-    return GeometryPtr();
 }
 
 RenderStatePtr RendererVK::makeSharedRenderState()

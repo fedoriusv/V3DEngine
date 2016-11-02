@@ -1,4 +1,5 @@
 #include "ShaderData.h"
+#include "ShaderAttribute.h"
 
 namespace v3d
 {

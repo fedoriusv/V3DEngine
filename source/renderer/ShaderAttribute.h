@@ -1,5 +1,4 @@
-#ifndef _V3D_SHADER_ATTRIBUTE_H_
-#define _V3D_SHADER_ATTRIBUTE_H_
+#pragma once
 
 #include "common.h"
 #include "DataTypes.h"
@@ -18,9 +17,9 @@ namespace renderer
     class CShaderData;
 
     /**
-    * Shader Attribute.
+    * Shader Attribute(Channel).
     */
-    class CShaderAttribute final
+    class ShaderAttribute final
     {
     public:
 
@@ -50,16 +49,20 @@ namespace renderer
             eAttribCount,
         };
 
-        CShaderAttribute();
-        CShaderAttribute(const CShaderAttribute& attribute);
-        CShaderAttribute& operator=(const CShaderAttribute& other);
-        ~CShaderAttribute();
+        ShaderAttribute();
+        ShaderAttribute(const ShaderAttribute& attribute);
+        ShaderAttribute& operator=(const ShaderAttribute& other);
+        ~ShaderAttribute();
 
-        const std::string&              getName()           const;
-        u32                             getDivisor()        const;
-        EDataType                       getType()           const;
-        EShaderAttribute                getData()           const;
-        s32                             getID()             const;
+
+
+        const std::string&              getName() const;
+
+
+        EShaderAttribute                getChannel() const;
+        EDataType                       getDataType() const;
+
+        u32                             getLocation() const;
 
         void*                           getUserData()       const;
         u32                             getUserDataSize()   const;
@@ -67,23 +70,23 @@ namespace renderer
 
         bool                            parse(const tinyxml2::XMLElement* root);
 
-        void                            setID(s32 id);
-
-        static const std::string&       getNameByValue(EShaderAttribute type);
-        static const EShaderAttribute   getValueByName(const std::string& name);
+        static const std::string&       getAttributeNameByValue(EShaderAttribute type);
+        static const EShaderAttribute   getValueByAttributeName(const std::string& name);
 
     private:
 
         friend                          CShaderData;
 
         void                            setAttribute(const std::string& name, EShaderAttribute data);
-        void                            setAttribute(EDataType type, const std::string& name, u32 divisor, u32 size, u32 count, const void* data);
+        void                            setAttribute(EDataType type, const std::string& name, u32 size, u32 count, const void* data);
+
+
+        std::string                     m_name;
 
         EDataType                       m_type;
-        EShaderAttribute                m_data;
-        std::string                     m_name;
-        u32                             m_divisor;
-        s32                             m_id;
+        EShaderAttribute                m_channel;
+
+        s32                             m_location;
 
         struct SUserData
         {
@@ -103,17 +106,15 @@ namespace renderer
 
         SUserData*                      m_userData;
 
-        static const std::string        s_attributeName[eAttribCount];
+        static const std::string        s_attributeName[EShaderAttribute::eAttribCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair<const std::string, CShaderAttribute*> AttributePair;
-    typedef std::map<const std::string, CShaderAttribute*>  AttributeList;
+    typedef std::pair<const std::string, ShaderAttribute*> AttributePair;
+    typedef std::map<const std::string, ShaderAttribute*>  AttributeList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_SHADER_ATTRIBUTE_H_

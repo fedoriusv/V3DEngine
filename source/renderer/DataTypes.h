@@ -1,5 +1,4 @@
-#ifndef _V3D_DATA_TYPES_H_
-#define _V3D_DATA_TYPES_H_
+#pragma once
 
 #include "common.h"
 
@@ -42,5 +41,3 @@ namespace renderer
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_DATA_TYPES_H_

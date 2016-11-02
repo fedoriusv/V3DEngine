@@ -65,7 +65,7 @@ namespace renderer
 
     private:
 
-        friend                          renderer::IShaderProgram;
+        friend                          renderer::ShaderProgram;
         friend                          renderer::IShader;
 
         static std::string              buildHeader(const ShaderDefinesList& list, const std::string& body);

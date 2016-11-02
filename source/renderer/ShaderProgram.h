@@ -1,5 +1,4 @@
-#ifndef _V3D_SHADER_PROGRAM_H_
-#define _V3D_SHADER_PROGRAM_H_
+#pragma once
 
 #include "Shader.h"
 #include "ShaderData.h"
@@ -24,7 +23,7 @@ namespace renderer
     /**
     * Shader Program Interface.
     */
-    class IShaderProgram : public utils::TCloneable<ShaderProgramPtr>
+    class ShaderProgram : public utils::TCloneable<ShaderProgramPtr>
     {
     public:
 
@@ -37,22 +36,31 @@ namespace renderer
             eDeleted   = 1 << 5
         };
 
-        IShaderProgram();
-        virtual                             ~IShaderProgram();
+        ShaderProgram();
+        virtual                             ~ShaderProgram();
 
         bool                                isEnable() const;
         void                                setEnable(bool enable);
 
-        bool                                getCompileStatus() const;
-
         bool                                setDefine(const std::string& name, const std::string& value = "");
         bool                                setUndefine(const std::string& name);
+
+        bool                                applyUniform(CShaderUniform* uniform);
+        void                                applyUniformInt(s32 location, s32 value);
+        void                                applyUniformFloat(s32 location, f32 value);
+        void                                applyUniformVector2(s32 location, const core::Vector2D& vector);
+        void                                applyUniformVector3(s32 location, const core::Vector3D& vector);
+        void                                applyUniformVector4(s32 location, const core::Vector4D& vector);
+        void                                applyUniformMatrix3(s32 location, const core::Matrix3D& matrix);
+        void                                applyUniformMatrix4(s32 location, const core::Matrix4D& matrix);
 
         virtual bool                        create()    = 0;
         virtual void                        destroy()   = 0;
         virtual void                        bind()      = 0;
         virtual void                        unbind()    = 0;
 
+        bool                                create(const std::vector<u8>& vertexBin, const std::vector<u8>& fragmentBin, u32 arg = 0, ...);
+        bool                                create(const std::vector<u8>& computeBin);
         bool                                create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
         bool                                create(const std::string& compute);
 
@@ -62,8 +70,8 @@ namespace renderer
 
     protected:
 
-        IShaderProgram(const IShaderProgram& program);
-        IShaderProgram& operator=(const IShaderProgram& program);
+        ShaderProgram(const ShaderProgram& program);
+        ShaderProgram& operator=(const ShaderProgram& program);
 
         void                                setFlag(EProgramFlags flag);
         void                                addFlag(EProgramFlags flag);
@@ -80,29 +88,19 @@ namespace renderer
 
         bool                                updateShaderList();
 
-        virtual bool                        applyUniform       (CShaderUniform* uniform)                    = 0;
-        virtual void                        applyUniformInt    (s32 location, s32 value)                    = 0;
-        virtual void                        applyUniformFloat  (s32 location, f32 value)                    = 0;
-        virtual void                        applyUniformVector2(s32 location, const core::Vector2D& vector) = 0;
-        virtual void                        applyUniformVector3(s32 location, const core::Vector3D& vector) = 0;
-        virtual void                        applyUniformVector4(s32 location, const core::Vector4D& vector) = 0;
-        virtual void                        applyUniformMatrix3(s32 location, const core::Matrix3D& matrix) = 0;
-        virtual void                        applyUniformMatrix4(s32 location, const core::Matrix4D& matrix) = 0;
-
         void                                clear();
 
         bool                                m_enable;
         u16                                 m_flags;
 
+        //TODO: add: ConstantBuffers
         ShaderDataList                      m_shaderDataList;
         ShaderList                          m_shaderList;
         ShaderDefinesList                   m_defines;
-        std::vector<const c8*>              m_varyingsList;
+        std::vector<const c8*>              m_varyingsList; //?
 };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_SHADER_PROGRAM_H_

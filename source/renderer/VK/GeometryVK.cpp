@@ -1,6 +1,8 @@
 #include "GeometryVK.h"
+#include "utils/Logger.h"
 
 #ifdef _VULKAN_RENDER_
+#include "BufferVK.h"
 
 namespace v3d
 {
@@ -8,6 +10,9 @@ namespace renderer
 {
 namespace vk
 {
+
+extern VkFormat getImageFormatVK(EImageFormat format, EImageType type);
+
 GeometryVK::GeometryVK(const CRenderTechnique* technique)
     : Geometry(technique)
 {
@@ -24,6 +29,12 @@ void GeometryVK::init()
         return;
     }
 
+    if (m_data.empty())
+    {
+        LOG_WARNING("GeometryVK::init: Data empty");
+        return;
+    }
+
     const RenderPassPtr pass = m_technique->getRenderPass(m_technique->getCurrentPass());
     u32 mask = pass->getDefaultShaderData()->getVertexFormatMask() | pass->getUserShaderData()->getVertexFormatMask();
     Geometry::setVertexMask(mask);
@@ -32,6 +43,15 @@ void GeometryVK::init()
     shaderData.push_back(pass->getDefaultShaderData());
     shaderData.push_back(pass->getUserShaderData());
 
+    m_vertexBuffer = new BufferVK(eVertexBuffer, eWriteStatic, false);
+    static_cast<BufferVK*>(m_vertexBuffer)->create();
+
+    if (m_data.indicesSize() > 0)
+    {
+        m_indexBuffer = new BufferVK(eIndexBuffer, eWriteStatic, false);
+        static_cast<BufferVK*>(m_indexBuffer)->create();
+    }
+    
     GeometryVK::updatePipelineVertexInputStateCreateInfo(shaderData);
 
     m_initialized = true;
@@ -39,6 +59,21 @@ void GeometryVK::init()
 
 void GeometryVK::free()
 {
+    if (m_vertexBuffer)
+    {
+        static_cast<BufferVK*>(m_vertexBuffer)->destroy();
+
+        delete m_vertexBuffer;
+        m_vertexBuffer = nullptr;
+    }
+
+    if (m_indexBuffer)
+    {
+        static_cast<BufferVK*>(m_indexBuffer)->destroy();
+
+        delete m_indexBuffer;
+        m_indexBuffer = nullptr;
+    }
 }
 
 void GeometryVK::draw()
@@ -48,7 +83,25 @@ void GeometryVK::draw()
 
 void GeometryVK::refresh()
 {
-    GeometryVK::updatePipelineVertexInputStateCreateInfo();
+    if (!m_initialized)
+    {
+        return;
+    }
+
+    if (m_data.empty())
+    {
+        LOG_WARNING("GeometryVK::refresh: Data empty");
+        return;
+    }
+
+    u32 passIdx = m_technique->getCurrentPass();
+    const RenderPassPtr pass = m_technique->getRenderPass(passIdx);
+
+    ShaderDataList shaderData;
+    shaderData.push_back(pass->getDefaultShaderData());
+    shaderData.push_back(pass->getUserShaderData());
+
+    GeometryVK::updatePipelineVertexInputStateCreateInfo(shaderData);
 }
 
 const VkPipelineVertexInputStateCreateInfo& GeometryVK::getPipelineVertexInputStateCreateInfo() const
@@ -62,35 +115,200 @@ void GeometryVK::updatePipelineVertexInputStateCreateInfo(const ShaderDataList& 
     pipelineVertexInputStateCreateInfo.pNext = nullptr;
     pipelineVertexInputStateCreateInfo.flags = 0;
 
+    s32 offset = 0;
+    s32 size = 0;
+    u32 layer = 0;
+    u32 bufferSize = Geometry::computeBufferSize(shaderDataList);
+    ASSERT(bufferSize > 0, "invalid size");
+    u8* tempData = reinterpret_cast<u8*>(std::malloc(bufferSize));
+
+    u32 binding = 0;
     std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions;
+    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
     for (auto& shaderData : shaderDataList)
     {
         for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
-            CShaderAttribute::EShaderAttribute attribute = attr.second->getData();
-            if (attr.second->getID() < 0)
+            ShaderAttribute::EShaderAttribute attribute = attr.second->getChannel();
+            if (attr.second->getLocation() < 0)
             {
+                LOG_WARNING("GeometryVK: invalid location or binding. Attribute [%s]. Skip", attr.second->getName());
                 continue;
             }
 
-            //TODO:
-
             VkVertexInputAttributeDescription vertexInputAttributeDescription = {};
-            vertexInputAttributeDescription.location = ;
-            vertexInputAttributeDescription.binding = ;
-            vertexInputAttributeDescription.offset = ;
-            vertexInputAttributeDescription.format = ;
+            vertexInputAttributeDescription.location = attr.second->getLocation();
+            vertexInputAttributeDescription.binding = binding;
+
+            VkVertexInputBindingDescription vertexInputBindingDescription = {};
+            vertexInputBindingDescription.binding = binding;
+
+            binding++;
+
+            switch (attribute)
+            {
+            case ShaderAttribute::eAttribVertexPosition:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 3;
+                memcpy(tempData + offset, m_data._vertices.data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+                offset += size;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribVertexNormal:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 3;
+                memcpy(tempData + offset, m_data._normals.data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+                offset += size;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribVertexColor:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 3;
+                memcpy(tempData + offset, m_data._colors.data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+                offset += size;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribVertexBinormal:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 3;
+                memcpy(tempData + offset, m_data._binormals.data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+                offset += size;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribVertexTangent:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 3;
+                memcpy(tempData + offset, m_data._tangents.data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+                offset += size;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribVertexTexture0:
+            case ShaderAttribute::eAttribVertexTexture1:
+            case ShaderAttribute::eAttribVertexTexture2:
+            case ShaderAttribute::eAttribVertexTexture3:
+            {
+                size = sizeof(f32)* m_data.verticesSize() * 2;
+                memcpy(tempData + offset, m_data._texCoords[layer].data(), size);
+
+                vertexInputAttributeDescription.offset = offset;
+                vertexInputAttributeDescription.format = VK_FORMAT_R32G32_SFLOAT;
+                offset += size;
+                ++layer;
+
+                vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+                vertexInputBindingDescription.stride = size;
+            }
+            break;
+
+            case ShaderAttribute::eAttribParticalPosition:
+            case ShaderAttribute::eAttribParticalColor:
+            case ShaderAttribute::eAttribParticalVelocity:
+            case ShaderAttribute::eAttribParticalLifeTime:
+            case ShaderAttribute::eAttribParticalSize:
+            case ShaderAttribute::eAttribParticalType:
+            case ShaderAttribute::eAttribUser:
+            {
+                if (attr.second->getUserDataCount() <= 0)
+                {
+                    LOG_WARNING("GeometryVK: User data have diferent size [%d]", attr.second->getUserDataCount());
+                }
+
+                size = attr.second->getUserDataSize() * attr.second->getUserDataCount();
+                if (size > 0)
+                {
+                    memcpy(tempData + offset, attr.second->getUserData(), size);
+                    auto formatFunc = [](EDataType type) -> VkFormat
+                    {
+                        switch (type)
+                        {
+                        case EDataType::eTypeInt:
+                            return VK_FORMAT_R32_SINT;
+
+                        case EDataType::eTypeFloat:
+                            return VK_FORMAT_R32_SFLOAT;
+
+                        case EDataType::eTypeVector2:
+                            return VK_FORMAT_R32G32_SFLOAT;
+
+                        case EDataType::eTypeVector3:
+                            return VK_FORMAT_R32G32B32_SFLOAT;
+
+                        case EDataType::eTypeVector4:
+                            return VK_FORMAT_R32G32B32A32_SFLOAT;
+
+                        case EDataType::ETypeDouble:
+                        case EDataType::eTypeMatrix3:
+                        case EDataType::eTypeMatrix4:
+                        default:
+                            ASSERT(false, "unsupported format");
+                            return VK_FORMAT_UNDEFINED;
+                        }
+                    };
+
+                    vertexInputAttributeDescription.offset = offset;
+                    vertexInputAttributeDescription.format = formatFunc(attr.second->getDataType());
+                    offset += size;
+
+                    vertexInputBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+                    vertexInputBindingDescription.stride = size;
+                }
+                else
+                {
+                    ASSERT(false, "invalid data");
+                }
+            }
+            break;
+
+            default:
+                break;
+            }
 
             vertexInputAttributeDescriptions.push_back(vertexInputAttributeDescription);
         }
     }
 
+    m_vertexBuffer->update(0, bufferSize, tempData);
+
+    std::free(tempData);
+    tempData = nullptr;
+
     pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = static_cast<u32>(vertexInputAttributeDescriptions.size());
     pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data();
-
-    std::vector<VkVertexInputBindingDescription> vertexInputBindingDescriptions;
-
-    //TODO:
 
     pipelineVertexInputStateCreateInfo.vertexBindingDescriptionCount = static_cast<u32>(vertexInputBindingDescriptions.size());
     pipelineVertexInputStateCreateInfo.pVertexBindingDescriptions = vertexInputBindingDescriptions.data();

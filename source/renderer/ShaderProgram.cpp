@@ -11,15 +11,15 @@ namespace renderer
 
 using namespace scene;
 
-IShaderProgram::IShaderProgram()
+ShaderProgram::ShaderProgram()
     : m_enable(true)
-    , m_flags(IShaderProgram::eInvalid)
+    , m_flags(ShaderProgram::eInvalid)
 {
 }
 
-IShaderProgram::IShaderProgram(const IShaderProgram& program)
+ShaderProgram::ShaderProgram(const ShaderProgram& program)
     : m_enable(program.m_enable)
-    , m_flags(IShaderProgram::eInvalid)
+    , m_flags(ShaderProgram::eInvalid)
 {
     m_shaderList = program.m_shaderList;
     m_defines = program.m_defines;
@@ -28,7 +28,7 @@ IShaderProgram::IShaderProgram(const IShaderProgram& program)
     std::copy(program.m_varyingsList.cbegin(), program.m_varyingsList.cend(), m_varyingsList.begin());
 }
 
-IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
+ShaderProgram& ShaderProgram::operator=(const ShaderProgram& program)
 {
     if (&program == this)
     {
@@ -36,7 +36,7 @@ IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
     }
 
     m_enable = program.m_enable;
-    m_flags = IShaderProgram::eInvalid;
+    m_flags = ShaderProgram::eInvalid;
 
     m_shaderDataList.clear(); //filled form render pass
     m_shaderList = program.m_shaderList;
@@ -49,27 +49,27 @@ IShaderProgram& IShaderProgram::operator=(const IShaderProgram& program)
     return *this;
 }
 
-IShaderProgram::~IShaderProgram()
+ShaderProgram::~ShaderProgram()
 {
-    IShaderProgram::clear();
+    ShaderProgram::clear();
 
-    if (!IShaderProgram::isFlagPresent(IShaderProgram::eDeleted))
+    if (!ShaderProgram::isFlagPresent(ShaderProgram::eDeleted))
     {
         ASSERT(false, "Program incorrect deleted");
     }
 }
 
-bool IShaderProgram::isEnable() const
+bool ShaderProgram::isEnable() const
 {
     return m_enable;
 }
 
-void IShaderProgram::setEnable(bool enable)
+void ShaderProgram::setEnable(bool enable)
 {
     m_enable = enable;
 }
 
-bool IShaderProgram::setDefine(const std::string& name, const std::string& value)
+bool ShaderProgram::setDefine(const std::string& name, const std::string& value)
 {
     auto iter = m_defines.find(name);
     if (iter != m_defines.cend())
@@ -80,24 +80,24 @@ bool IShaderProgram::setDefine(const std::string& name, const std::string& value
         }
 
         (*iter).second = value;
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
 
         return true;
     }
 
     m_defines.insert(ShaderDefinesList::value_type(name, value));
-    m_flags &= ~IShaderProgram::eLinked;
+    m_flags &= ~ShaderProgram::eLinked;
 
     return true;
 }
 
-bool IShaderProgram::setUndefine(const std::string& name)
+bool ShaderProgram::setUndefine(const std::string& name)
 {
     auto iter = m_defines.find(name);
     if (iter != m_defines.cend())
     {
         m_defines.erase(name);
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
 
         return true;
     }
@@ -105,16 +105,16 @@ bool IShaderProgram::setUndefine(const std::string& name)
     return false;
 }
 
-void IShaderProgram::attachShader(const ShaderWPtr& shader)
+void ShaderProgram::attachShader(const ShaderWPtr& shader)
 {
     if (!shader.expired())
     {
         m_shaderList.push_back(shader);
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
     }
 }
 
-void IShaderProgram::detachShader(const ShaderWPtr& shader)
+void ShaderProgram::detachShader(const ShaderWPtr& shader)
 {
     if (!shader.expired())
     {
@@ -130,40 +130,40 @@ void IShaderProgram::detachShader(const ShaderWPtr& shader)
 
         if (current == m_shaderList.cend())
         {
-            LOG_WARNING("IShaderProgram: Shader Program not found");
+            LOG_WARNING("ShaderProgram: Shader Program not found");
             return;
         }
 
         m_shaderList.erase(current);
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
     }
 }
 
-void IShaderProgram::addShaderData(const ShaderDataPtr& data)
+void ShaderProgram::addShaderData(const ShaderDataPtr& data)
 {
     if (data)
     {
         m_shaderDataList.push_back(data);
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
     }
 }
 
-void IShaderProgram::addVaryingsAttibutes(const std::vector<const c8*>& list)
+void ShaderProgram::addVaryingsAttibutes(const std::vector<const c8*>& list)
 {
     if (!list.empty())
     {
         m_varyingsList = list;
-        m_flags &= ~IShaderProgram::eLinked;
+        m_flags &= ~ShaderProgram::eLinked;
     }
 }
 
-void IShaderProgram::addDefines(const ShaderDefinesList& list)
+void ShaderProgram::addDefines(const ShaderDefinesList& list)
 {
     m_defines = list;
-    m_flags &= ~IShaderProgram::eLinked;
+    m_flags &= ~ShaderProgram::eLinked;
 }
 
-bool IShaderProgram::updateShaderList()
+bool ShaderProgram::updateShaderList()
 {
     bool result = false;
     for (ShaderList::iterator iter = m_shaderList.begin(), end = m_shaderList.end(); iter != end;)
@@ -182,12 +182,12 @@ bool IShaderProgram::updateShaderList()
 
             ShaderWPtr shader = (*iter);
             //m_shaderList.erase(iter++);
-            LOG_DEBUG("CIShaderProgram::updateShaderList: Shader Program must be relinked");
+            LOG_DEBUG("CShaderProgram::updateShaderList: Shader Program must be relinked");
 
             ShaderWPtr hashedShader = CShaderManager::getInstance()->get(hash);
             if (!hashedShader.expired())
             {
-                //IShaderProgram::attachShader(hashedShader);
+                //ShaderProgram::attachShader(hashedShader);
                 (*iter) = hashedShader;
             }
             else
@@ -195,12 +195,12 @@ bool IShaderProgram::updateShaderList()
                 ShaderPtr newShader = shader.lock()->clone();
                 if (!newShader->create(data.getType(), data.getBody(), m_defines))
                 {
-                    LOG_ERROR("IShaderProgram::updateShaderList: Error Create Shader Program");
+                    LOG_ERROR("ShaderProgram::updateShaderList: Error Create Shader Program");
                     return false;
                 }
 
                 CShaderManager::getInstance()->add(newShader);
-                //IShaderProgram::attachShader(newShader);
+                //ShaderProgram::attachShader(newShader);
                 (*iter) = newShader;
 
                 result = true;
@@ -211,7 +211,7 @@ bool IShaderProgram::updateShaderList()
     return result;
 }
 
-bool IShaderProgram::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
+bool ShaderProgram::create(const std::string& vertex, const std::string& fragment, u32 arg, ...)
 {
     if (vertex.empty() || fragment.empty())
     {
@@ -219,14 +219,14 @@ bool IShaderProgram::create(const std::string& vertex, const std::string& fragme
         return false;
     }
 
-    IShaderProgram::clear();
+    ShaderProgram::clear();
 
     ShaderPtr vshader = ENGINE_RENDERER->makeSharedShader();
-    IShaderProgram::attachShader(vshader);
+    ShaderProgram::attachShader(vshader);
     vshader->create(EShaderType::eVertex, vertex);
 
     ShaderPtr fshader = ENGINE_RENDERER->makeSharedShader();
-    IShaderProgram::attachShader(fshader);
+    ShaderProgram::attachShader(fshader);
     fshader->create(EShaderType::eFragment, fragment);
 
     va_list argList;
@@ -237,7 +237,7 @@ bool IShaderProgram::create(const std::string& vertex, const std::string& fragme
         s32 type = va_arg(argList, s32);
 
         ShaderPtr shader = ENGINE_RENDERER->makeSharedShader();
-        IShaderProgram::attachShader(shader);
+        ShaderProgram::attachShader(shader);
         shader->create((EShaderType)type, strName);
     }
     va_end(argList);
@@ -247,7 +247,7 @@ bool IShaderProgram::create(const std::string& vertex, const std::string& fragme
     return status;
 }
 
-bool IShaderProgram::create(const std::string& compute)
+bool ShaderProgram::create(const std::string& compute)
 {
     if (compute.empty())
     {
@@ -255,10 +255,10 @@ bool IShaderProgram::create(const std::string& compute)
         return false;
     }
 
-    IShaderProgram::clear();
+    ShaderProgram::clear();
 
     ShaderPtr cshader = ENGINE_RENDERER->makeSharedShader();
-    IShaderProgram::attachShader(cshader);
+    ShaderProgram::attachShader(cshader);
     cshader->create(EShaderType::eCompute, compute);
 
     bool status = create();
@@ -266,27 +266,27 @@ bool IShaderProgram::create(const std::string& compute)
     return status;
 }
 
-u16 IShaderProgram::getFlags() const
+u16 ShaderProgram::getFlags() const
 {
     return m_flags;
 }
 
-bool IShaderProgram::isFlagPresent(EProgramFlags flag)
+bool ShaderProgram::isFlagPresent(EProgramFlags flag)
 {
     return (m_flags & flag) != 0;
 }
 
-void IShaderProgram::setFlag(EProgramFlags flag)
+void ShaderProgram::setFlag(EProgramFlags flag)
 {
     m_flags = flag;
 }
 
-void IShaderProgram::addFlag(EProgramFlags flag)
+void ShaderProgram::addFlag(EProgramFlags flag)
 {
     m_flags |= flag;
 }
 
-void IShaderProgram::clear()
+void ShaderProgram::clear()
 {
     m_shaderList.clear();
     m_shaderDataList.clear();

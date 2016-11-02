@@ -10,7 +10,8 @@ namespace renderer
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttribCount] = {
+const std::string ShaderAttribute::s_attributeName[ShaderAttribute::eAttribCount] = 
+{
 
     "mesh.position",
     "mesh.color",
@@ -33,14 +34,14 @@ const std::string CShaderAttribute::s_attributeName[EShaderAttribute::eAttribCou
 };
 
 
-const std::string& CShaderAttribute::getNameByValue(EShaderAttribute type)
+const std::string& ShaderAttribute::getAttributeNameByValue(EShaderAttribute type)
 {
     return s_attributeName[type];
 }
 
-const CShaderAttribute::EShaderAttribute CShaderAttribute::getValueByName(const std::string& name)
+const ShaderAttribute::EShaderAttribute ShaderAttribute::getValueByAttributeName(const std::string& name)
 {
-    for (int i = 0; i < eAttribCount; ++i)
+    for (int i = 0; i < EShaderAttribute::eAttribCount; ++i)
     {
         if (s_attributeName[i].compare(name) == 0)
         {
@@ -48,29 +49,29 @@ const CShaderAttribute::EShaderAttribute CShaderAttribute::getValueByName(const 
         }
     }
 
-    return eAttribUser;
+    return EShaderAttribute::eAttribUser;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CShaderAttribute::SUserData::SUserData()
+ShaderAttribute::SUserData::SUserData()
     : _size(0U)
     , _count(0U)
     , _data(nullptr)
 {
 }
 
-CShaderAttribute::SUserData::SUserData(u32 size, u32 count, const void* data)
+ShaderAttribute::SUserData::SUserData(u32 size, u32 count, const void* data)
 {
     SUserData::copy(size, count, data);
 }
 
-CShaderAttribute::SUserData::~SUserData()
+ShaderAttribute::SUserData::~SUserData()
 {
     SUserData::free();
 }
 
-CShaderAttribute::SUserData& CShaderAttribute::SUserData::operator=(const SUserData& other)
+ShaderAttribute::SUserData& ShaderAttribute::SUserData::operator=(const SUserData& other)
 {
     if (this == &other)
     {
@@ -83,7 +84,7 @@ CShaderAttribute::SUserData& CShaderAttribute::SUserData::operator=(const SUserD
     return *this;
 }
 
-void CShaderAttribute::SUserData::copy(u32 size, u32 count, const void* data)
+void ShaderAttribute::SUserData::copy(u32 size, u32 count, const void* data)
 {
     if (count * size > 0 && data)
     {
@@ -95,7 +96,7 @@ void CShaderAttribute::SUserData::copy(u32 size, u32 count, const void* data)
     }
 }
 
-void CShaderAttribute::SUserData::free()
+void ShaderAttribute::SUserData::free()
 {
     if (_data != nullptr)
     {
@@ -110,41 +111,42 @@ void CShaderAttribute::SUserData::free()
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-CShaderAttribute::CShaderAttribute()
-    : m_type(eTypeNone)
-    , m_data(eAttribUser)
-    , m_name("")
-    , m_divisor(0U)
-    , m_userData(nullptr)
+ShaderAttribute::ShaderAttribute()
+    : m_name("")
 
-    , m_id(-1)
+    , m_type(eTypeNone)
+    , m_channel(eAttribUser)
+
+    , m_location(-1)
+
+    , m_userData(nullptr)
 {
 }
 
-CShaderAttribute::CShaderAttribute(const CShaderAttribute& attribute)
-    : m_type(eTypeNone)
-    , m_data(eAttribUser)
-    , m_name("")
-    , m_divisor(0U)
-    , m_userData(nullptr)
+ShaderAttribute::ShaderAttribute(const ShaderAttribute& attribute)
+    : m_name(attribute.m_name)
 
-    , m_id(-1)
+    , m_type(attribute.m_type)
+    , m_channel(attribute.m_channel)
+
+    , m_location(attribute.m_location)
+
+    , m_userData(nullptr)
 {
-    if (attribute.m_data != EShaderAttribute::eAttribUser)
+    if (attribute.m_channel != EShaderAttribute::eAttribUser)
     {
-        CShaderAttribute::setAttribute(attribute.m_name, attribute.m_data);
+        ShaderAttribute::setAttribute(attribute.m_name, attribute.m_channel);
     }
     else
     {
         if (attribute.m_userData)
         {
-            CShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_divisor, 
-                attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
+            ShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
         }
     }
 }
 
-CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& attribute)
+ShaderAttribute& ShaderAttribute::operator=(const ShaderAttribute& attribute)
 {
     if (this == &attribute)
     {
@@ -157,25 +159,24 @@ CShaderAttribute& CShaderAttribute::operator=(const CShaderAttribute& attribute)
         m_userData = nullptr;
     }
 
-    if (attribute.m_data != EShaderAttribute::eAttribUser)
+    if (attribute.m_channel != EShaderAttribute::eAttribUser)
     {
-        CShaderAttribute::setAttribute(attribute.m_name, attribute.m_data);
+        ShaderAttribute::setAttribute(attribute.m_name, attribute.m_channel);
     }
     else
     {
         if (attribute.m_userData)
         {
-            CShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_divisor,
-                attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
+            ShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
         }
     }
 
-    m_id = -1;
+    m_location = attribute.m_location;
 
     return *this;
 }
 
-CShaderAttribute::~CShaderAttribute()
+ShaderAttribute::~ShaderAttribute()
 {
     if (m_userData)
     {
@@ -184,22 +185,12 @@ CShaderAttribute::~CShaderAttribute()
     }
 }
 
-void CShaderAttribute::setID(s32 id)
-{
-    m_id = id;
-}
-
-const std::string& CShaderAttribute::getName() const
+const std::string& ShaderAttribute::getName() const
 {
     return m_name;
 }
 
-u32 CShaderAttribute::getDivisor() const
-{
-    return m_divisor;
-}
-
-void* CShaderAttribute::getUserData() const
+void* ShaderAttribute::getUserData() const
 {
     if (m_userData)
     {
@@ -209,7 +200,7 @@ void* CShaderAttribute::getUserData() const
     return nullptr;
 }
 
-u32 CShaderAttribute::getUserDataSize() const
+u32 ShaderAttribute::getUserDataSize() const
 {
     if (m_userData)
     {
@@ -219,7 +210,7 @@ u32 CShaderAttribute::getUserDataSize() const
     return 0;
 }
 
-u32 CShaderAttribute::getUserDataCount() const
+u32 ShaderAttribute::getUserDataCount() const
 {
     if (m_userData)
     {
@@ -229,33 +220,33 @@ u32 CShaderAttribute::getUserDataCount() const
     return 0;
 }
 
-CShaderAttribute::EShaderAttribute CShaderAttribute::getData() const
+ShaderAttribute::EShaderAttribute ShaderAttribute::getChannel() const
 {
-    return m_data;
+    return m_channel;
 }
 
-EDataType CShaderAttribute::getType() const
+EDataType ShaderAttribute::getDataType() const
 {
     return m_type;
 }
 
-s32 CShaderAttribute::getID() const
+u32 ShaderAttribute::getLocation() const
 {
-    return m_id;
+    return m_location;
 }
 
-bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
+bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CShaderAttribute: Not exist xml attributes element");
+        LOG_ERROR("ShaderAttribute: Not exist xml attributes element");
         return false;
     }
 
     const std::string varName = root->Attribute("name");
     if (varName.empty())
     {
-        LOG_ERROR("CShaderAttribute: Cannot find attribute name");
+        LOG_ERROR("ShaderAttribute: Cannot find attribute name");
         return false;
     }
 
@@ -268,14 +259,14 @@ bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
             return false;
         }
 
-        EShaderAttribute attribureData = CShaderAttribute::getValueByName(varVal);
-        if (attribureData == eAttribUser)
+        EShaderAttribute attribureData = ShaderAttribute::getValueByAttributeName(varVal);
+        if (attribureData == EShaderAttribute::eAttribUser)
         {
             LOG_ERROR("CRenderPass: Attribute type not found [%s]", varName.c_str());
             return false;
         }
 
-        CShaderAttribute::setAttribute(varName, attribureData);
+        ShaderAttribute::setAttribute(varName, attribureData);
     }
     else
     {
@@ -296,18 +287,18 @@ bool CShaderAttribute::parse(const tinyxml2::XMLElement* root)
         }
 
         u32 varDiv = root->UnsignedAttribute("div");
-        CShaderAttribute::setAttribute(attributeType, varName, varDiv, 0, 0, nullptr);
+        ShaderAttribute::setAttribute(attributeType, varName, 0, 0, nullptr);
     }
 
     return true;
 }
 
-void CShaderAttribute::setAttribute(const std::string& name, EShaderAttribute data)
+void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute data)
 {
     m_name = name;
-    m_data = data;
+    m_channel = data;
 
-    switch (m_data)
+    switch (m_channel)
     {
     case EShaderAttribute::eAttribVertexPosition:
     case EShaderAttribute::eAttribVertexNormal:
@@ -342,13 +333,12 @@ void CShaderAttribute::setAttribute(const std::string& name, EShaderAttribute da
     }
 }
 
-void CShaderAttribute::setAttribute(EDataType type, const std::string & name, u32 divisor, u32 size, u32 count, const void* data)
+void ShaderAttribute::setAttribute(EDataType type, const std::string& name, u32 size, u32 count, const void* data)
 {
     m_name = name;
-    m_data = eAttribUser;
+    m_channel = eAttribUser;
     m_type = type;
 
-    m_divisor = divisor;
     if (count > 0 && data != nullptr)
     {
         if (m_userData)
