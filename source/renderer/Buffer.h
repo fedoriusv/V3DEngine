@@ -50,6 +50,7 @@ namespace renderer
 
     /**
     * Buffer resource.
+    * Client thread. Provide transfer data to render thread
     */
     class Buffer : public utils::CRefCounted //, public utils::TCloneable<BufferPtr>
     {
@@ -76,6 +77,8 @@ namespace renderer
 
         virtual EBufferTarget   getTarget() const;
 
+        //BufferPtr               clone() const override;
+
     protected:
 
         Buffer();
@@ -86,7 +89,7 @@ namespace renderer
 
     private:
 
-        Buffer*                 m_impl;
+        Buffer* const           m_impl;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
