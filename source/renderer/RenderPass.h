@@ -1,5 +1,4 @@
-#ifndef _V3D_RENDER_PASS_H_
-#define _V3D_RENDER_PASS_H_
+#pragma once
 
 #include "ShaderProgram.h"
 #include "ShaderData.h"
@@ -21,26 +20,29 @@ namespace renderer
 
     class CRenderer;
     class CRenderTechnique;
-    class CRenderPass;
+    class RenderPass;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderPass>    RenderPassPtr;
-    typedef std::weak_ptr<CRenderPass>      RenderPassWPtr;
-    typedef std::vector<RenderPassPtr>      RenderPassList;
+    typedef std::shared_ptr<RenderPass>    RenderPassPtr;
+    typedef std::weak_ptr<RenderPass>      RenderPassWPtr;
+    typedef std::vector<RenderPassPtr>     RenderPassList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
     * Render pass class.
     * Parse and stored all shaders info and targets
+    * Client thread
     */
-    class CRenderPass final : public utils::TCloneable<RenderPassPtr>
+    class RenderPass final : public utils::TCloneable<RenderPassPtr>
     {
     public:
 
-        CRenderPass();
-        ~CRenderPass();
+        RenderPass();
+        RenderPass(const RenderPass& pass) = delete;
+        RenderPass&             operator=(const RenderPass& pass) = delete;
+        ~RenderPass();
 
         const ShaderProgramPtr  getShaderProgram() const;
         void                    setShaderProgram(const ShaderProgramPtr& program);
@@ -73,11 +75,6 @@ namespace renderer
 
         RenderPassPtr           clone() const override;
 
-    protected:
-
-        CRenderPass(const CRenderPass& pass);
-        CRenderPass&            operator=(const CRenderPass& pass);
-
     private:
 
         friend                  CRenderer;
@@ -86,16 +83,16 @@ namespace renderer
 
         void                    init();
 
-        bool                    parse              (const tinyxml2::XMLElement* root);
-                                                   
-        bool                    parseUniforms      (const tinyxml2::XMLElement* root);
-        bool                    parseAttributes    (const tinyxml2::XMLElement* root);
-        bool                    parseFragdata      (const tinyxml2::XMLElement* root);
-        bool                    parseSamplers      (const tinyxml2::XMLElement* root);
-        bool                    parseShaders       (const tinyxml2::XMLElement* root);
-        bool                    parseRenderTarget  (const tinyxml2::XMLElement* root);
-        bool                    parseRenderState   (const tinyxml2::XMLElement* root);
-        bool                    parseRenderLOD     (const tinyxml2::XMLElement* root);
+        bool                    parse(const tinyxml2::XMLElement* root);
+
+        bool                    parseUniforms(const tinyxml2::XMLElement* root);
+        bool                    parseAttributes(const tinyxml2::XMLElement* root);
+        bool                    parseFragdata(const tinyxml2::XMLElement* root);
+        bool                    parseSamplers(const tinyxml2::XMLElement* root);
+        bool                    parseShaders(const tinyxml2::XMLElement* root);
+        bool                    parseRenderTarget(const tinyxml2::XMLElement* root);
+        bool                    parseRenderState(const tinyxml2::XMLElement* root);
+        bool                    parseRenderLOD(const tinyxml2::XMLElement* root);
 
         const std::string       attachIndexToUniform(const std::string& name, s32 idx);
 
@@ -115,5 +112,3 @@ namespace renderer
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_RENDER_PASS_H_

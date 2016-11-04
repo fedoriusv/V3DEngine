@@ -1,8 +1,10 @@
 #include "GeometryVK.h"
 #include "utils/Logger.h"
+#include "renderer/ShaderAttribute.h"
 
 #ifdef _VULKAN_RENDER_
 #include "BufferVK.h"
+
 
 namespace v3d
 {

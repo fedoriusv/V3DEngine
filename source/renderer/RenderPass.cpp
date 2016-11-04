@@ -17,7 +17,7 @@ namespace renderer
 using namespace scene;
 using namespace resources;
 
-CRenderPass::CRenderPass()
+RenderPass::RenderPass()
     : m_userShaderData(nullptr)
     , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
@@ -27,12 +27,12 @@ CRenderPass::CRenderPass()
     , m_enable(true)
     , m_name("")
 {
-    CRenderPass::init();
+    RenderPass::init();
 
     m_program = ENGINE_RENDERER->makeSharedProgram();
 }
 
-CRenderPass::CRenderPass(const CRenderPass& pass)
+RenderPass::RenderPass(const RenderPass& pass)
     : m_userShaderData(nullptr)
     , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
@@ -42,7 +42,7 @@ CRenderPass::CRenderPass(const CRenderPass& pass)
     , m_enable(pass.m_enable)
     , m_name(pass.m_name)
 {
-    CRenderPass::init();
+    RenderPass::init();
 
     m_targetList = pass.m_targetList;
 
@@ -67,7 +67,7 @@ CRenderPass::CRenderPass(const CRenderPass& pass)
     }
 }
 
-CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
+RenderPass& RenderPass::operator=(const RenderPass& pass)
 {
     if (&pass == this)
     {
@@ -100,63 +100,63 @@ CRenderPass& CRenderPass::operator=(const CRenderPass& pass)
     return *this;
 }
 
-CRenderPass::~CRenderPass()
+RenderPass::~RenderPass()
 {
     m_targetList.clear();
 }
 
-const ShaderProgramPtr CRenderPass::getShaderProgram() const
+const ShaderProgramPtr RenderPass::getShaderProgram() const
 {
     return m_program;
 }
 
-void CRenderPass::setShaderProgram(const ShaderProgramPtr& program)
+void RenderPass::setShaderProgram(const ShaderProgramPtr& program)
 {
     m_program = program;
 }
 
-const ShaderDataPtr CRenderPass::getUserShaderData() const
+const ShaderDataPtr RenderPass::getUserShaderData() const
 {
     return m_userShaderData;
 }
 
-void CRenderPass::setUserShaderData(const ShaderDataPtr& data)
+void RenderPass::setUserShaderData(const ShaderDataPtr& data)
 {
     m_userShaderData = data;
 }
 
-const ShaderDataPtr CRenderPass::getDefaultShaderData() const
+const ShaderDataPtr RenderPass::getDefaultShaderData() const
 {
     return m_defaultShaderData;
 }
 
-void CRenderPass::setDefaultShaderData(const ShaderDataPtr& data)
+void RenderPass::setDefaultShaderData(const ShaderDataPtr& data)
 {
     m_defaultShaderData = data;
 }
 
-const RenderStatePtr CRenderPass::getRenderState() const
+const RenderStatePtr RenderPass::getRenderState() const
 {
     return m_renderState;
 }
 
-void CRenderPass::setRenderState(const RenderStatePtr& state)
+void RenderPass::setRenderState(const RenderStatePtr& state)
 {
     m_renderState = state;
 }
 
-bool CRenderPass::parse(const tinyxml2::XMLElement* root)
+bool RenderPass::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Cannot read render pass element");
+        LOG_ERROR("RenderPass: Cannot read render pass element");
         return false;
     }
 
     const std::string passName = root->Attribute("name");
     if (passName.empty())
     {
-        LOG_ERROR("CRenderPass: Cannot read render pass name");
+        LOG_ERROR("RenderPass: Cannot read render pass name");
         return false;
     }
 
@@ -245,11 +245,11 @@ bool CRenderPass::parse(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
+bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml uniforms element");
+        LOG_ERROR("RenderPass: Not exist xml uniforms element");
         return false;
     }
 
@@ -263,7 +263,7 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
             delete uniform;
             uniform = nullptr;
 
-            LOG_ERROR("CRenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
+            LOG_ERROR("RenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
@@ -284,11 +284,11 @@ bool CRenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
+bool RenderPass::parseAttributes(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml attributes element");
+        LOG_ERROR("RenderPass: Not exist xml attributes element");
         return false;
     }
 
@@ -301,7 +301,7 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             delete attribute;
             attribute = nullptr;
 
-            LOG_ERROR("CRenderPass: Parse error attribute element");
+            LOG_ERROR("RenderPass: Parse error attribute element");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
@@ -322,7 +322,7 @@ bool CRenderPass::parseAttributes(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseFragdata(const tinyxml2::XMLElement* root)
+bool RenderPass::parseFragdata(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
@@ -338,7 +338,7 @@ bool CRenderPass::parseFragdata(const tinyxml2::XMLElement* root)
             delete fragData;
             fragData = nullptr;
 
-            LOG_ERROR("CRenderPass: Parse error fragData element");
+            LOG_ERROR("RenderPass: Parse error fragData element");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
@@ -359,11 +359,11 @@ bool CRenderPass::parseFragdata(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
+bool RenderPass::parseSamplers(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml samplers element");
+        LOG_ERROR("RenderPass: Not exist xml samplers element");
         return false;
     }
 
@@ -376,7 +376,7 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
             delete sampler;
             sampler = nullptr;
 
-            LOG_ERROR("CRenderPass: Parse error samplers element");
+            LOG_ERROR("RenderPass: Parse error samplers element");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
@@ -397,11 +397,11 @@ bool CRenderPass::parseSamplers(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
+bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml shader element");
+        LOG_ERROR("RenderPass: Not exist xml shader element");
         return false;
     }
 
@@ -435,7 +435,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
         CShaderSource shaderData;
         if (!IShader::parse(shaderElement, shaderData))
         {
-            LOG_ERROR("CRenderPass: Shader parse error");
+            LOG_ERROR("RenderPass: Shader parse error");
             ASSERT(false, "Shader parse error");
 
             shaderElement = shaderElement->NextSiblingElement("var");
@@ -455,7 +455,7 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
             if (!newShader->create(std::move(shaderData)))
             {
-                LOG_ERROR("CRenderPass: Error create shader");
+                LOG_ERROR("RenderPass: Error create shader");
                 shaderElement = shaderElement->NextSiblingElement("var");
                 continue;
             }
@@ -474,14 +474,14 @@ bool CRenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
     if (!m_program->create())
     {
-        LOG_ERROR("CRenderPass: Error Create Shader Program");
+        LOG_ERROR("RenderPass: Error Create Shader Program");
         return false;
     }
 
     return true;
 }
 
-void CRenderPass::init()
+void RenderPass::init()
 {
     m_userShaderData = std::make_shared<CShaderData>();
     m_defaultShaderData = std::make_shared<CShaderData>();
@@ -489,11 +489,11 @@ void CRenderPass::init()
     m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }
 
-bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
+bool RenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml element");
+        LOG_ERROR("RenderPass: Not exist xml element");
         return false;
     }
 
@@ -512,7 +512,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         }
         else
         {
-            LOG_ERROR("CRenderPass: Render Target have not name");
+            LOG_ERROR("RenderPass: Render Target have not name");
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
@@ -520,7 +520,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         if (isDefault)
         {
             LOG_INFO("CRenderTarget: Set default setting for render target");
-            CRenderPass::addTarget(ENGINE_RENDERER->getDefaultRenderTarget());
+            RenderPass::addTarget(ENGINE_RENDERER->getDefaultRenderTarget());
         }
         else
         {
@@ -535,7 +535,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
             else
             {
                 LOG_INFO("CRenderTarget: Set target with name '%s'", name.c_str());
-                CRenderPass::addTarget(target);
+                RenderPass::addTarget(target);
 
                 if (target->getTagetType() == ITarget::ETagetType::eGeometryTarget)
                 {
@@ -556,7 +556,7 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
         varElement = varElement->NextSiblingElement("var");
     }
 
-    if (CRenderPass::getTargetCount() == 0)
+    if (RenderPass::getTargetCount() == 0)
     {
         LOG_WARNING("CRenderTarget: Current pass hasn't no one of Target");
     }
@@ -564,28 +564,28 @@ bool CRenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool CRenderPass::parseRenderState(const tinyxml2::XMLElement* root)
+bool RenderPass::parseRenderState(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml renderstate element");
+        LOG_ERROR("RenderPass: Not exist xml renderstate element");
         return false;
     }
 
     if (!m_renderState->parse(root))
     {
-        LOG_ERROR("CRenderPass: Renderstate parse error");
+        LOG_ERROR("RenderPass: Renderstate parse error");
         return false;
     }
 
     return true;
 }
 
-bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
+bool RenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
 {
     if (!root)
     {
-        LOG_ERROR("CRenderPass: Not exist xml lod element");
+        LOG_ERROR("RenderPass: Not exist xml lod element");
         return false;
     }
 
@@ -598,7 +598,7 @@ bool CRenderPass::parseRenderLOD(const tinyxml2::XMLElement* root)
     return true;
 }
 
-void CRenderPass::bind(u32 target)
+void RenderPass::bind(u32 target)
 {
     m_renderState->bind();
 
@@ -612,7 +612,7 @@ void CRenderPass::bind(u32 target)
     {
         if (!m_program->create())
         {
-            LOG_ERROR("CRenderPass: Error Create Shader Program");
+            LOG_ERROR("RenderPass: Error Create Shader Program");
             return;
         }
     }
@@ -635,7 +635,7 @@ void CRenderPass::bind(u32 target)
     m_targetList[target]->bind();*/
 }
 
-void CRenderPass::unbind(u32 target)
+void RenderPass::unbind(u32 target)
 {
 
     //m_program->unbind();
@@ -646,13 +646,13 @@ void CRenderPass::unbind(u32 target)
 
 }
 
-RenderPassPtr CRenderPass::clone() const
+RenderPassPtr RenderPass::clone() const
 {
-    RenderPassPtr pass = std::make_shared<CRenderPass>(*this);
+    RenderPassPtr pass = std::make_shared<RenderPass>(*this);
     return pass;
 }
 
-const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32 idx)
+const std::string RenderPass::attachIndexToUniform(const std::string& name, s32 idx)
 {
     size_t pos = name.find_first_of(".");
     if (pos == std::string::npos)
@@ -667,17 +667,17 @@ const std::string CRenderPass::attachIndexToUniform(const std::string& name, s32
     return idxName;
 }
 
-const RenderLODPtr CRenderPass::getRenderLOD() const
+const RenderLODPtr RenderPass::getRenderLOD() const
 {
     return m_lods;
 }
 
-void CRenderPass::setRenderLOD(const RenderLODPtr& lod)
+void RenderPass::setRenderLOD(const RenderLODPtr& lod)
 {
     m_lods = lod;
 }
 
-const TargetPtr CRenderPass::getTarget(u32 index) const
+const TargetPtr RenderPass::getTarget(u32 index) const
 {
     ASSERT(m_targetList.size() > index, "Invalid Render Target index");
     if (m_targetList.size() <= index)
@@ -693,7 +693,7 @@ const TargetPtr CRenderPass::getTarget(u32 index) const
     return m_targetList[index].lock();
 }
 
-const TargetPtr CRenderPass::getTarget(const std::string& target) const
+const TargetPtr RenderPass::getTarget(const std::string& target) const
 {
     TargetList::const_iterator iter = std::find_if(m_targetList.begin(), m_targetList.end(), [&target](const TargetWPtr& item) -> bool
     {
@@ -718,7 +718,7 @@ const TargetPtr CRenderPass::getTarget(const std::string& target) const
     return (*iter).lock();
 }
 
-bool CRenderPass::addTarget(const TargetPtr& target)
+bool RenderPass::addTarget(const TargetPtr& target)
 {
     if (target)
     {
@@ -729,7 +729,7 @@ bool CRenderPass::addTarget(const TargetPtr& target)
 
         if (iter != m_targetList.cend())
         {
-            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", (*iter).lock()->getName().c_str());
+            LOG_WARNING("RenderPass: Added target alredy exist '%s'", (*iter).lock()->getName().c_str());
             return false;
         }
 
@@ -741,7 +741,7 @@ bool CRenderPass::addTarget(const TargetPtr& target)
     return false;
 }
 
-bool CRenderPass::removeTarget(const TargetPtr& target)
+bool RenderPass::removeTarget(const TargetPtr& target)
 {
     if (target)
     {
@@ -752,7 +752,7 @@ bool CRenderPass::removeTarget(const TargetPtr& target)
 
         if (iter == m_targetList.end())
         {
-            LOG_WARNING("CRenderPass: Romoved target not found '%s'", target->getName().c_str());
+            LOG_WARNING("RenderPass: Romoved target not found '%s'", target->getName().c_str());
             return false;
         }
         m_targetList.erase(iter, m_targetList.end());
@@ -763,20 +763,20 @@ bool CRenderPass::removeTarget(const TargetPtr& target)
     return false;
 }
 
-bool CRenderPass::addTarget(const std::string& target)
+bool RenderPass::addTarget(const std::string& target)
 {
     if (!target.empty())
     {
-        if (CRenderPass::getTarget(target))
+        if (RenderPass::getTarget(target))
         {
-            LOG_WARNING("CRenderPass: Added target alredy exist '%s'", target.c_str());
+            LOG_WARNING("RenderPass: Added target alredy exist '%s'", target.c_str());
             return false;
         }
 
         const TargetPtr newTarget = CTargetManager::getInstance()->get(target);
         if (!newTarget)
         {
-            LOG_WARNING("CRenderPass: Can't find target '%s' in manager", target.c_str());
+            LOG_WARNING("RenderPass: Can't find target '%s' in manager", target.c_str());
             return false;
         }
 
@@ -788,7 +788,7 @@ bool CRenderPass::addTarget(const std::string& target)
     return false;
 }
 
-bool CRenderPass::removeTarget(const std::string& target)
+bool RenderPass::removeTarget(const std::string& target)
 {
     if (!target.empty())
     {
@@ -799,7 +799,7 @@ bool CRenderPass::removeTarget(const std::string& target)
 
         if (iter == m_targetList.end())
         {
-            LOG_WARNING("CRenderPass: Romoved target not found '%s'", target.c_str());
+            LOG_WARNING("RenderPass: Romoved target not found '%s'", target.c_str());
             return false;
         }
         m_targetList.erase(iter, m_targetList.end());
@@ -810,7 +810,7 @@ bool CRenderPass::removeTarget(const std::string& target)
     return false;
 }
 
-u32 CRenderPass::getTargetCount() const
+u32 RenderPass::getTargetCount() const
 {
     return (u32)m_targetList.size();
 }

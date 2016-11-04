@@ -1,5 +1,4 @@
-#ifndef _V3D_SHADER_UNIFORM_H_
-#define _V3D_SHADER_UNIFORM_H_
+#pragma once
 
 #include "common.h"
 #include "DataTypes.h"
@@ -15,13 +14,14 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderData;
-
+    class ShaderData;
+    class ConstantBuffer;
 
     /**
     * Shader Uniform.
+    * Client thread
     */
-    class CShaderUniform final
+    class ShaderUniform final
     {
     public:
 
@@ -58,56 +58,55 @@ namespace renderer
             eUniformsCount,
         };
 
-        CShaderUniform();
-        CShaderUniform(const CShaderUniform& uniform);
-        CShaderUniform& operator=(const CShaderUniform& uniform);
-        ~CShaderUniform();
+        explicit ShaderUniform(ConstantBuffer* buffer);
+        ShaderUniform(const ShaderUniform& uniform);
+        ShaderUniform& operator=(const ShaderUniform& uniform);
+        ~ShaderUniform();
 
-        const std::string&          getName()       const;
-        EDataType                   getType()       const;
-        void*                       getValue()      const;
+        const std::string&          getName() const;
+
+        EDataType                   getDataType() const;
         EUniformData                getData()       const;
-        s32                         getID()         const;
 
         bool                        parse(const tinyxml2::XMLElement* root);
 
-        void                        setID(s32 id);
-
-        static const std::string&   getNameByValue(EUniformData type);
-        static EUniformData         getValueByName(const std::string& name);
+        static const std::string&   getUniformNameByValue(EUniformData type);
+        static EUniformData         getValueByUniformName(const std::string& name);
 
     private:
 
-        friend                      CShaderData;
+        friend                      ShaderData;
 
         void                        setUniform(const std::string& name, EUniformData data);
-        void                        setUniform(EDataType type, const std::string& name, void* value);
+        void                        setUniform(const std::string& name, EDataType type, ,);
 
         bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
         void                        parseArrayValue(const std::string& val, f32* array, u32 count);
 
-        EDataType                   m_type;
-        void*                       m_value;
         std::string                 m_name;
+
+        EDataType                   m_type;
         EUniformData                m_data;
 
-        s32                         m_id;
+        s32                         m_set;
+        s32                         m_binding;
 
-        void                        allocMemory(EDataType type, void* value);
-        void                        deallocMemory();
+        u32                         m_offset;
+        u32                         m_size;
+        u32                         m_count;
 
-        static const std::string    s_uniformName[eUniformsCount];
+        ConstantBuffer*             m_buffer;
+
+        static const std::string    s_uniformName[EUniformData::eUniformsCount];
 
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair<const std::string, CShaderUniform*>   UniformPair;
-    typedef std::map<const std::string, CShaderUniform*>    UniformList;
+    //typedef std::pair<const std::string, ShaderUniform*>   UniformPair;
+    //typedef std::map<const std::string, ShaderUniform*>    UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_SHADER_UNIFORM_H_

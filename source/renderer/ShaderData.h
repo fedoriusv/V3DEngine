@@ -14,29 +14,34 @@ namespace renderer
     class CRenderPass;
     class ShaderAttribute;
 
-    class CShaderData final
+    /**
+    * ShaderData
+    * Class provides shader data management. 
+    * Used in client thread, provide transfer to render thread
+    */
+    class ShaderData final
     {
     public:
 
-        CShaderData();
-        CShaderData(const CShaderData& data);
-        CShaderData& operator=(const CShaderData& data);
+        ShaderData();
+        ShaderData(const ShaderData& data);
+        ShaderData& operator=(const ShaderData& data);
 
-        ~CShaderData();
+        ~ShaderData();
 
-        void                    setUniform(const std::string& name, const s32             value);
-        void                    setUniform(const std::string& name, const f32             value);
+        void                    setUniform(const std::string& name, const s32 value);
+        void                    setUniform(const std::string& name, const f32 value);
         void                    setUniform(const std::string& name, const core::Vector2D& vector);
         void                    setUniform(const std::string& name, const core::Vector3D& vector);
         void                    setUniform(const std::string& name, const core::Vector4D& vector);
         void                    setUniform(const std::string& name, const core::Matrix3D& matrix);
         void                    setUniform(const std::string& name, const core::Matrix4D& matrix);
 
-        void                    setAttribute(const std::string& name, u32 divisor, const std::vector<s32>&            data);
-        void                    setAttribute(const std::string& name, u32 divisor, const std::vector<f32>&            data);
-        void                    setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector2D>& data);
-        void                    setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector3D>& data);
-        void                    setAttribute(const std::string& name, u32 divisor, const std::vector<core::Vector4D>& data);
+        void                    setAttribute(const std::string& name, const std::vector<s32>& data);
+        void                    setAttribute(const std::string& name, const std::vector<f32>&  data);
+        void                    setAttribute(const std::string& name, const std::vector<core::Vector2D>& data);
+        void                    setAttribute(const std::string& name, const std::vector<core::Vector3D>& data);
+        void                    setAttribute(const std::string& name, const std::vector<core::Vector4D>& data);
 
         const AttributeList&    getAttributeList() const;
         const AttributeList&    getFragDataList() const;
@@ -67,6 +72,8 @@ namespace renderer
 
         void                    clear();
 
+        std::recursive_mutex    m_mutex;
+
         UniformList             m_uniformList;
         AttributeList           m_attributeList;
         AttributeList           m_fragDataList;
@@ -76,9 +83,9 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CShaderData>    ShaderDataPtr;
-    typedef std::weak_ptr<CShaderData>      ShaderDataWPtr;
-    typedef std::vector<ShaderDataWPtr>     ShaderDataList;
+    typedef std::shared_ptr<ShaderData>    ShaderDataPtr;
+    typedef std::weak_ptr<ShaderData>      ShaderDataWPtr;
+    typedef std::vector<ShaderDataWPtr>    ShaderDataList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

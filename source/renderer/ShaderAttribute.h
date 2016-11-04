@@ -18,6 +18,7 @@ namespace renderer
 
     /**
     * Shader Attribute(Channel).
+    * Client thread
     */
     class ShaderAttribute final
     {

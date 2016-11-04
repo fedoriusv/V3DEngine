@@ -3,9 +3,9 @@
     <!-- Render Passes -->
     <pass name="pass0">
         <uniforms>
-            <var name="transform.projectionMatrix" type="mat4" val="transform.projectionMatrix"/>
-            <var name="transform.modelMatrix" type="mat4" val="transform.modelMatrix"/>
-            <var name="transform.viewMatrix" type="mat4" val="transform.viewMatrix"/>
+			<var name="transform.projectionMatrix" val="transform.projectionMatrix"/>
+			<var name="transform.modelMatrix" val="transform.modelMatrix"/>
+			<var name="transform.viewMatrix" val="transform.viewMatrix"/>
         </uniforms>
         <attributes>
             <var name="position" type="vec3" val="mesh.position"/>
@@ -31,13 +31,12 @@
                     
                     layout (location = POSITION) in vec3 position;
                     
-                    struct Transform
+                    layout(std430, binding = 0) buffer transform
                     {
                         mat4 projectionMatrix;
                         mat4 modelMatrix;
                         mat4 viewMatrix;
                     };
-                    uniform Transform transform;
                     
                     void main()
                     {

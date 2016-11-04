@@ -139,7 +139,7 @@ namespace renderer
         TexturePtr                          getImpl() const;
 
         TexturePtr                          clone() const override;
-        
+
     protected:
 
         Texture();
