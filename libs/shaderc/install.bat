@@ -8,12 +8,12 @@ git clone https://github.com/KhronosGroup/SPIRV-Tools.git spirv-tools
 git clone https://github.com/KhronosGroup/SPIRV-Headers.git spirv-tools/external/spirv-headers
 cd ../
 
-cmake -G"Visual Studio 14 2015 Win64" -DSHADERC_SKIP_TESTS=ON 
+cmake -DSHADERC_SKIP_TESTS=ON -G"Visual Studio 14 Win64"
 REM cmake --build . --config {Debug}
 REM cmake --build . --config {Realese}
 
 @echo on
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64
+call vcvarsall.bat x64
 echo "Starting Build for all Projects with proposed changes"
 echo "Shaderc builds started..." 
 devenv "%CD%\shaderc.sln" /build "Debug|x64"
