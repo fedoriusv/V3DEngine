@@ -1,5 +1,4 @@
-#ifndef _V3D_TEXTURE_RESIL_DECODER_H_
-#define _V3D_TEXTURE_RESIL_DECODER_H_
+#pragma once
 
 #include "ResourceDecoder.h"
 #include "renderer/Texture.h"
@@ -10,16 +9,16 @@ namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CTextureResILDecoder : public CResourceDecoder
+    class TextureResILDecoder : public ResourceDecoder
     {
     public:
 
-        CTextureResILDecoder();
-        explicit CTextureResILDecoder(std::initializer_list<std::string> supportedExtensions);
+        TextureResILDecoder();
+        explicit TextureResILDecoder(std::initializer_list<std::string> supportedExtensions);
 
-        virtual                 ~CTextureResILDecoder();
+        virtual                 ~TextureResILDecoder();
 
-        stream::IResource*      decode(const stream::IStreamPtr& stream) override;
+        stream::IResource*      decode(const stream::IStreamPtr stream) override;
 
     private:
 
@@ -31,5 +30,3 @@ namespace decoders
 
 } //namespace decoders
 } //namespace v3d
-
-#endif //_V3D_TEXTURE_RESIL_DECODER_H_

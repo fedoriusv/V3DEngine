@@ -1,5 +1,4 @@
-#ifndef _V3D_SHADER_SOURCE_DATA_H_
-#define _V3D_SHADER_SOURCE_DATA_H_
+#pragma once
 
 #include "stream/Resource.h"
 
@@ -9,13 +8,13 @@ namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderSourceData : public stream::IResource
+    class ShaderData : public stream::IResource
     {
 
     public:
 
-        CShaderSourceData();
-        virtual             ~CShaderSourceData();
+        ShaderData();
+        virtual             ~ShaderData();
 
         void                init(const stream::IStreamPtr& stream)  override;
         bool                load()                                  override;
@@ -34,5 +33,3 @@ namespace resources
 
 } //namespace resources
 } //namespace v3d
-
-#endif //_V3D_SHADER_SOURCE_DATA_H_

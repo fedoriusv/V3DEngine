@@ -1,4 +1,4 @@
-#include "ShaderSouceData.h"
+#include "ShaderData.h"
 #include "utils/Logger.h"
 
 namespace v3d
@@ -6,22 +6,22 @@ namespace v3d
 namespace resources
 {
 
-CShaderSourceData::CShaderSourceData()
+    ShaderData::ShaderData()
     : m_body("")
     , m_name("")
 {
 }
 
-CShaderSourceData::~CShaderSourceData()
+    ShaderData::~ShaderData()
 {
 }
 
-void CShaderSourceData::init(const stream::IStreamPtr& stream)
+void ShaderData::init(const stream::IStreamPtr& stream)
 {
     IResource::setStream(stream);
 }
 
-bool CShaderSourceData::load()
+bool ShaderData::load()
 {
     const stream::IStreamPtr& stream = IResource::getStream();
     if (!stream)
@@ -39,12 +39,12 @@ bool CShaderSourceData::load()
 }
 
 
-const std::string& CShaderSourceData::getName() const
+const std::string& ShaderData::getName() const
 {
     return m_name;
 }
 
-const std::string& CShaderSourceData::getBody() const
+const std::string& ShaderData::getBody() const
 {
     return m_body;
 }

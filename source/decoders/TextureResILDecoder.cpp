@@ -17,21 +17,21 @@ using namespace renderer;
 using namespace resources;
 using namespace core;
 
-CTextureResILDecoder::CTextureResILDecoder()
-    : CResourceDecoder()
+TextureResILDecoder::TextureResILDecoder()
+    : ResourceDecoder()
 {
 }
 
-CTextureResILDecoder::CTextureResILDecoder(std::initializer_list<std::string> supportedExtensions)
-    : CResourceDecoder(supportedExtensions)
+TextureResILDecoder::TextureResILDecoder(std::initializer_list<std::string> supportedExtensions)
+    : ResourceDecoder(supportedExtensions)
 {
 }
 
-CTextureResILDecoder::~CTextureResILDecoder()
+TextureResILDecoder::~TextureResILDecoder()
 {
 }
 
-stream::IResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream)
+stream::IResource* TextureResILDecoder::decode(const stream::IStreamPtr stream)
 {
 #ifdef _UNICODE
     auto charToChar = [](const char* text) -> const wchar_t*
@@ -112,7 +112,7 @@ stream::IResource* CTextureResILDecoder::decode(const stream::IStreamPtr& stream
     return nullptr;
 }
 
-EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
+EImageFormat TextureResILDecoder::convertILFormat(u32 format)
 {
 #ifdef USE_DEVIL
     switch (format)
@@ -143,7 +143,7 @@ EImageFormat CTextureResILDecoder::convertILFormat(u32 format)
     return EImageFormat::eRGB;
 }
 
-EImageType CTextureResILDecoder::convertILType(u32 type)
+EImageType TextureResILDecoder::convertILType(u32 type)
 {
 #ifdef USE_DEVIL
     switch (type)

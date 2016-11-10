@@ -105,6 +105,10 @@
 #   define VULKAN_USE_VALIDATION_LAYERS 0
 #   define VULKAN_USE_DEBUG_MARKERS 0
 
+#if USED_SPIRV
+#   define USE_SPIRV
+#endif //USED_SPIRV
+
 #   ifdef _PLATFORM_WIN_
 #       define VK_USE_PLATFORM_WIN32_KHR
 #   endif //_PLATFORM_WIN_

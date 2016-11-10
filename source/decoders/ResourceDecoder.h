@@ -1,5 +1,4 @@
-#ifndef _V3D_RESOURCE_DECODER_H_
-#define _V3D_RESOURCE_DECODER_H_
+#pragma once
 
 #include "stream/IStream.h"
 
@@ -13,16 +12,16 @@ namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CResourceDecoder
+    class ResourceDecoder
     {
     public:
     
-        CResourceDecoder();
-        explicit CResourceDecoder(std::initializer_list<std::string> supportedExtensions);
+        ResourceDecoder();
+        explicit ResourceDecoder(std::initializer_list<std::string> supportedExtensions);
 
-        virtual                         ~CResourceDecoder();
+        virtual                         ~ResourceDecoder();
 
-        virtual stream::IResource*      decode(const stream::IStreamPtr& stream) = 0;
+        virtual stream::IResource*      decode(const stream::IStreamPtr stream) = 0;
 
         bool                            isExtensionSupported(const std::string& extension) const;
         void                            setSupportedExtensions(const std::string supportedExtensions[]);
@@ -35,12 +34,10 @@ namespace decoders
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CResourceDecoder>   DecoderPtr;
-    typedef std::vector<DecoderPtr>             DecoderList;
+    using DecoderPtr = std::shared_ptr<ResourceDecoder>;
+    using DecoderList = std::vector<DecoderPtr>;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace decoders
 } //namespace v3d
-
-#endif //_V3D_RESOURCE_DECODER_H_
