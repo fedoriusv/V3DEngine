@@ -36,7 +36,7 @@ namespace renderer
     /**
     * Base class for shader interface.
     */
-    class IShader: public utils::TCloneable<ShaderPtr>
+    class IShader: public utils::TCloneable<ShaderPtr> //TODO: remove to shader program
     {
     public:
 

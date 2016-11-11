@@ -1,5 +1,4 @@
-#ifndef _V3D_IMAGE_H_
-#define _V3D_IMAGE_H_
+#pragma once
 
 #include "stream/Resource.h"
 #include "renderer/ImageFormats.h"
@@ -70,6 +69,3 @@ namespace resources
 
 } //namespace resources
 } //namespace v3d
-
-#endif //_V3D_TEXTURE_H_
-

@@ -37,6 +37,8 @@ namespace renderer
         void                    setUniform(const std::string& name, const core::Matrix3D& matrix);
         void                    setUniform(const std::string& name, const core::Matrix4D& matrix);
 
+        //TODO: getUniform()
+
         void                    setAttribute(const std::string& name, const std::vector<s32>& data);
         void                    setAttribute(const std::string& name, const std::vector<f32>&  data);
         void                    setAttribute(const std::string& name, const std::vector<core::Vector2D>& data);

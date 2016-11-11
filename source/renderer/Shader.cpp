@@ -1,7 +1,7 @@
 #include "Shader.h"
 #include "utils/Logger.h"
 #include "scene/ShaderManager.h"
-#include "resources/ShaderSouceData.h"
+#include "resources/ShaderData.h"
 #include "Engine.h"
 
 #include "tinyxml2.h"
@@ -117,7 +117,7 @@ bool IShader::parse(const tinyxml2::XMLElement* root, CShaderSource& data)
         const std::string shaderPath = root->Attribute("file");
         LOG_INFO("IShader: Create shader from file: %s", shaderPath.c_str());
 
-        const CShaderSourceData* source = CShaderManager::getInstance()->load(shaderPath);
+        const ShaderData* source = ShaderManager::getInstance()->load(shaderPath);
         if (!source)
         {
             LOG_ERROR("IShader: Error load shader %s", shaderPath.c_str());

@@ -5,27 +5,29 @@
 #include "scene/Mesh.h"
 #include "renderer/Material.h"
 
-using namespace v3d;
-using namespace decoders;
+namespace v3d
+{
+namespace decoders
+{
 using namespace scene;
 using namespace stream;
 using namespace renderer;
 
-CModelF3DDecoder::CModelF3DDecoder()
-    : CResourceDecoder()
+ModelF3DDecoder::ModelF3DDecoder()
+    : ResourceDecoder()
 {
 }
 
-CModelF3DDecoder::CModelF3DDecoder(std::initializer_list<std::string> supportedExtensions)
-    : CResourceDecoder(supportedExtensions)
+ModelF3DDecoder::ModelF3DDecoder(std::initializer_list<std::string> supportedExtensions)
+    : ResourceDecoder(supportedExtensions)
 {
 }
 
-CModelF3DDecoder::~CModelF3DDecoder()
+ModelF3DDecoder::~ModelF3DDecoder()
 {
 }
 
-stream::IResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
+stream::IResource* ModelF3DDecoder::decode(const IStreamPtr stream)
 {
     if (!stream)
     {
@@ -45,7 +47,7 @@ stream::IResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
 
         if (version == F3D_MODEL_LOADER_VERSION)
         {
-            return CModelF3DDecoder::decode100(data);
+            return ModelF3DDecoder::decode100(data);
         }
         else
         {
@@ -58,7 +60,7 @@ stream::IResource* CModelF3DDecoder::decode(const IStreamPtr& stream)
     return nullptr;
 }
 
-stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
+stream::IResource* ModelF3DDecoder::decode100(const stream::IStreamPtr stream)
 {
     CModel* model = new CModel();
     s32 id;
@@ -157,3 +159,6 @@ stream::IResource* CModelF3DDecoder::decode100(const stream::IStreamPtr& stream)
 
     return model;
 }
+
+} //namespace decoders
+} //namespace v3d

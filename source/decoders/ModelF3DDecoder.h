@@ -1,5 +1,4 @@
-#ifndef _V3D_MODEL_F3D_DECODER_H_
-#define _V3D_MODEL_F3D_DECODER_H_
+#pragma once
 
 #include "ResourceDecoder.h"
 
@@ -9,24 +8,22 @@ namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CModelF3DDecoder : public CResourceDecoder
+    class ModelF3DDecoder : public ResourceDecoder
     {
     public:
 
-        CModelF3DDecoder();
-        explicit CModelF3DDecoder(std::initializer_list<std::string> supportedExtensions);
+        ModelF3DDecoder();
+        explicit ModelF3DDecoder(std::initializer_list<std::string> supportedExtensions);
 
-        virtual                 ~CModelF3DDecoder();
+        virtual                 ~ModelF3DDecoder();
 
-        stream::IResource*      decode(const stream::IStreamPtr& stream) override;
+        stream::IResource*      decode(const stream::IStreamPtr stream) override;
 
     private:
 
-        stream::IResource*     decode100(const stream::IStreamPtr& stream);
+        stream::IResource*     decode100(const stream::IStreamPtr stream);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
-
-#endif //_V3D_MODEL_F3D_DECODER_H_
+} //namespace decoders
+} //namespace v3d

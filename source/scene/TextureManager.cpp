@@ -23,7 +23,7 @@ TextureManager::TextureManager()
     TResourceLoader::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".png", ".bmp", ".tga", ".jpg" };
-    TResourceLoader::registerDecoder(std::make_shared<CTextureResILDecoder>(ext));
+    TResourceLoader::registerDecoder(std::make_shared<TextureResILDecoder>(ext));
 }
 
 TextureManager::~TextureManager()

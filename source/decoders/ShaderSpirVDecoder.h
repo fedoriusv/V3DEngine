@@ -27,7 +27,7 @@ namespace decoders
 
     private:
 
-        void                    parseReflactions(const std::string& assembly, stream::IStreamPtr stream);
+        void                    parseReflactions(const std::vector<u32>& spirv, stream::IStreamPtr stream);
 
         ESourceLanguage         m_lang;
         bool                    m_reflections;

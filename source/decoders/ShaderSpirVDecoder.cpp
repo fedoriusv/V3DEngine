@@ -6,6 +6,7 @@
 
 #ifdef USE_SPIRV
 #include "shaderc/shaderc.hpp"
+#include "spirv_glsl.hpp"
 #endif //USE_SPIRV
 
 namespace v3d
@@ -152,46 +153,37 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
                 return nullptr;
             }
 
-            u32 byteCodeSize = (result.cend() - result.cbegin()) * sizeof(u32);
+            u32 byteCodeSize = (result.cend() - result.cbegin());
             const u32* byteCode = result.cbegin();
-            stream::MemoryStreamPtr spirv = stream::StreamManager::createMemoryStream(byteCode, byteCodeSize);
+            stream::MemoryStreamPtr memory = stream::StreamManager::createMemoryStream(byteCode, byteCodeSize * sizeof(u32));
 
             if (m_reflections)
             {
-                shaderc::AssemblyCompilationResult result = compiler.CompileGlslToSpvAssembly(source, shaderType, nullptr, options);
-                if (!compiler.IsValid())
-                {
-                    LOG_ERROR("ShaderSpirVDecoder::decode: CompileGlslToSpvAssembly is invalid");
-                    return nullptr;
-                }
-
-                shaderc_compilation_status status = result.GetCompilationStatus();
-                if (!status)
-                {
-                    LOG_ERROR("ShaderSpirVDecoder::decode: Shader [%s]%s, Assembly error %s", stringType.c_str(), file.c_str(), getCompileError(status).c_str());
-                }
-
-                //TODO: check on error and log
-
-                u32 assemblySize = (result.cend() - result.cbegin());
-                std::string assembly(result.cbegin(), assemblySize);
-
-                ShaderSpirVDecoder::parseReflactions(assembly, spirv);
+                std::vector<u32> spirv(byteCodeSize);
+                std::copy(result.cbegin(), result.cend(), spirv);
+                ShaderSpirVDecoder::parseReflactions(spirv, memory);
             }
 
             shaderData = new resources::ShaderData();
-            shaderData->init(spirv);
+            shaderData->init(memory);
         }
         else
         {
-            stream::MemoryStreamPtr spirv = stream::StreamManager::createMemoryStream(source.c_str(), source.size());
+            stream::MemoryStreamPtr memory = stream::StreamManager::createMemoryStream(source.c_str(), source.size());
             if (m_reflections)
             {
-                //TODO:
+                u32 byteCodeSize = source.size() / sizeof(u32);
+                std::vector<u32> spirv(byteCodeSize);
+                const c8* data = source.data();
+                for (u32 i = 0; i < byteCodeSize; ++i)
+                {
+                    spirv[i] = reinterpret_cast<u32>(data + (i * sizeof(u32)));
+                }
+                ShaderSpirVDecoder::parseReflactions(spirv, memory);
             }
 
             shaderData = new resources::ShaderData();
-            shaderData->init(spirv);
+            shaderData->init(memory);
         }
 
 
@@ -201,8 +193,11 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
     return nullptr;
 }
 
-void ShaderSpirVDecoder::parseReflactions(const std::string& assembly, stream::IStreamPtr stream)
+void ShaderSpirVDecoder::parseReflactions(const std::vector<u32>& spirv, stream::IStreamPtr stream)
 {
+    spirv_cross::CompilerGLSL glsl(spirv);
+    spirv_cross::ShaderResources resources = glsl.get_shader_resources();
+
     //TODO: SPRIV-cross
 }
 

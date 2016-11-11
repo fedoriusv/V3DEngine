@@ -24,8 +24,10 @@ option(BUILD_TEST_PROJECT_8 "Build Test_Tessellation." OFF)
 
 set(SOLUTION_NAME GameEngineV3D)
 set(ENGINE_NAME V3DEngine)
-set(GLEW_PLOJECT glew_static)
+
+#Require libs
 set(TINYXML_PLOJECT tinyxml2)
+set(GLEW_PLOJECT glew_static)
 
 ##############################################################
 
@@ -91,7 +93,7 @@ else()
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	message(FATAL_ERROR "Only support x64 Architecture")
+    message(FATAL_ERROR "Only support x64 Architecture")
 endif()
 
 ##############################################################
@@ -129,28 +131,34 @@ else(BUILD_USE_RESIL_LIB)
 endif(BUILD_USE_RESIL_LIB)
 
 if(BUILD_USE_VULKAN_SDK AND NOT APPLE)
-	set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=1")
-	#VK_SDK_PATH - must be added to system variables
-	set(VULKAN_SDK_PATH $ENV{VK_SDK_PATH})
-	set(VULKAN_SDK_INCLUDE_DIRECTORY ${VULKAN_SDK_PATH}/include)
-	set(VULKAN_SDK_LIB_DIRECTORY ${VULKAN_SDK_PATH}/Bin)
-	set(LIB_INCLUDE_DIRECTORY ${LIB_INCLUDE_DIRECTORY} ${ENGINE_PROJECT_DIR}/libs/shaderc/shaderc/libshaderc/include)
-	set(SPIRV_DEFINE "-DUSED_SPIRV=1")
+    set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=1")
+    #VK_SDK_PATH - must be added to system variables
+    set(VULKAN_SDK_PATH $ENV{VK_SDK_PATH})
+    set(VULKAN_SDK_INCLUDE_DIRECTORY ${VULKAN_SDK_PATH}/include)
+    set(VULKAN_SDK_LIB_DIRECTORY ${VULKAN_SDK_PATH}/Bin)
+    if (IS_DIRECTORY ${ENGINE_PROJECT_DIR}/libs/spirv/shaderc AND IS_DIRECTORY ${ENGINE_PROJECT_DIR}/libs/spirv/SPIRV-Cross) 
+        set(LIB_INCLUDE_DIRECTORY ${LIB_INCLUDE_DIRECTORY} ${ENGINE_PROJECT_DIR}/libs/spirv/shaderc/libshaderc/include)
+        set(LIB_INCLUDE_DIRECTORY ${LIB_INCLUDE_DIRECTORY} ${ENGINE_PROJECT_DIR}/libs/spirv/SPIRV-Cross)
+        set(SPIRV_DEFINE "-DUSED_SPIRV=1")
+    else()
+        message(WARNING "spirv libs not found. Please run install script")
+        set(SPIRV_DEFINE "-DUSED_SPIRV=0")
+    endif()
 else(BUILD_USE_VULKAN_SDK AND NOT APPLE)
-	set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=0")
-	set(SPIRV_DEFINE "-DUSED_SPIRV=0")
+    set(VULKAN_SDK_DEFINE "-DUSED_VULKAN_RENDER=0")
+    set(SPIRV_DEFINE "-DUSED_SPIRV=0")
 endif(BUILD_USE_VULKAN_SDK AND NOT APPLE)
 
 if (BUILD_USE_DIRECTX_SDK AND WIN32)
-	set(DIRECTX_SDK_DEFINE "-DUSED_D3D_RENDER=1")
+    set(DIRECTX_SDK_DEFINE "-DUSED_D3D_RENDER=1")
 else(BUILD_USE_DIRECTX_SDK AND WIN32)
-	set(DIRECTX_SDK_DEFINE "-DUSED_D3D_RENDER=0")
+    set(DIRECTX_SDK_DEFINE "-DUSED_D3D_RENDER=0")
 endif(BUILD_USE_DIRECTX_SDK AND WIN32)
 
 if (BUILD_USE_OPENGL_SDK)
-	set(OPENGL_SDK_DEFINE "-DUSED_GL_RENDER=1")
+    set(OPENGL_SDK_DEFINE "-DUSED_GL_RENDER=1")
 else(BUILD_USE_OPENGL_SDK)
-	set(OPENGL_SDK_DEFINE "-DUSED_GL_RENDER=0")
+    set(OPENGL_SDK_DEFINE "-DUSED_GL_RENDER=0")
 endif(BUILD_USE_OPENGL_SDK)
 
 ##############################################################
@@ -175,7 +183,7 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${FREETYPE_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
     set(CMAKE_DEBUG_POSTFIX "_d")
@@ -184,7 +192,7 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${FREETYPE_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_DIRECTORY}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${RESIL_INCLUDE_SOURCE_DIRECTORY}")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -I${VULKAN_SDK_INCLUDE_DIRECTORY}")
 elseif(APPLE)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -x objective-c++" )
@@ -223,16 +231,16 @@ endif(WIN32)
 ##############################################################
 
 #Platform Source
-	set(PLATFORM_HEADERS
-		${SOURCE_DIR}/platform/Platform.h
-		${SOURCE_DIR}/platform/Window.h
-		)
-		
-	set(PLATFORM_SOURCES
+    set(PLATFORM_HEADERS
+        ${SOURCE_DIR}/platform/Platform.h
+        ${SOURCE_DIR}/platform/Window.h
+        )
+        
+    set(PLATFORM_SOURCES
         ${SOURCE_DIR}/platform/Platform.cpp	
-		${SOURCE_DIR}/platform/Window.cpp
-		)
-		
+        ${SOURCE_DIR}/platform/Window.cpp
+        )
+
 if(WIN32)
     set(PLATFORM_HEADERS ${PLATFORM_HEADERS}
         ${SOURCE_DIR}/platform/WindowWinApi.h
@@ -359,7 +367,7 @@ add_library(
     ${RESOURCES_HEADERS}   ${RESOURCES_SOURCES}
     ${GL_HEADERS}          ${GL_SOURCES}
     ${D3D_HEADERS}         ${D3D_SOURCES}
-	${VK_HEADERS}		   ${VK_SOURCES}
+    ${VK_HEADERS}          ${VK_SOURCES}
     ${NULL_HEADERS}        ${NULL_SOURCES}
     ${CONTEXT_HEADERS}     ${CONTEXT_SOURCES}
     ${STREAM_HEADERS}      ${STREAM_SOURCES}
@@ -391,7 +399,7 @@ if(BUILD_USE_RESIL_LIB)
 endif(BUILD_USE_RESIL_LIB)
 
 if(BUILD_USE_VULKAN_SDK)
-	set(LINK_DERICTORIES ${LINK_DERICTORIES} ${VULKAN_SDK_LIB_DIRECTORY})
+    set(LINK_DERICTORIES ${LINK_DERICTORIES} ${VULKAN_SDK_LIB_DIRECTORY})
 endif(BUILD_USE_VULKAN_SDK)
 
 link_directories(${ENGINE_NAME} ${LINK_DERICTORIES})
@@ -399,13 +407,13 @@ link_directories(${ENGINE_NAME} ${LINK_DERICTORIES})
 ##############################################################
 
 #Additional Libs
-if (BUILD_USE_OPENGL_SDK)
-	message("-- Include Source Lib GLEW")
-	add_subdirectory(libs/glew)
-endif(BUILD_USE_OPENGL_SDK)
-
 message("-- Include Source Lib TINYXML2")
 add_subdirectory(libs/tinyxml2)
+
+if (BUILD_USE_OPENGL_SDK)
+    message("-- Include Source Lib GLEW")
+    add_subdirectory(libs/glew)
+endif(BUILD_USE_OPENGL_SDK)
 
 if(BUILD_USE_FREE_TYPE_LIB)
     message("-- Include Source Lib FREETYPE2")
@@ -470,7 +478,7 @@ endif (BUILD_TEST_PROJECT_8)
 set(BUILD_DEPENDENCIES ${TINYXML_PLOJECT})
 
 if (BUILD_USE_OPENGL_SDK)
-	set(BUILD_DEPENDENCIES ${BUILD_DEPENDENCIES} ${GLEW_PLOJECT})
+    set(BUILD_DEPENDENCIES ${BUILD_DEPENDENCIES} ${GLEW_PLOJECT})
 endif (BUILD_USE_OPENGL_SDK)
 
 if(BUILD_USE_FREE_TYPE_LIB)
