@@ -255,14 +255,14 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         const std::string varVal = root->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("CRenderPass: Cannot find attribute val '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Cannot find attribute val '%s'", varName.c_str());
             return false;
         }
 
         EShaderAttribute attribureData = ShaderAttribute::getValueByAttributeName(varVal);
         if (attribureData == EShaderAttribute::eAttribUser)
         {
-            LOG_ERROR("CRenderPass: Attribute type not found [%s]", varName.c_str());
+            LOG_ERROR("RenderPass: Attribute type not found [%s]", varName.c_str());
             return false;
         }
 
@@ -270,11 +270,11 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
     }
     else
     {
-        LOG_INFO("CRenderPass: User attribute type '%s'", varName.c_str());
+        LOG_INFO("RenderPass: User attribute type '%s'", varName.c_str());
 
         if (!root->Attribute("type"))
         {
-            LOG_ERROR("CRenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
             return false;
         }
         const std::string varType = root->Attribute("type");
@@ -282,7 +282,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         EDataType attributeType = DataType::getDataTypeByString(varType);
         if (attributeType == EDataType::eTypeNone)
         {
-            LOG_ERROR("CRenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
             return false;
         }
 

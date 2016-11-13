@@ -72,7 +72,7 @@ void CMesh::init()
         return;
     }
 
-    Renderable::setGeometry(ENGINE_RENDERER->makeSharedGeometry(technique));
+//    Renderable::setGeometry(ENGINE_RENDERER->makeSharedGeometry(technique));
     Renderable::setRenderJob(std::make_shared<CRenderJob>(this, CNode::getAbsTransform()));
 
     if (!CMesh::load())

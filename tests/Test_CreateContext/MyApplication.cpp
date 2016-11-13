@@ -4,6 +4,7 @@
 #include "stream/StreamManager.h"
 #include "scene/TextureManager.h"
 #include  "renderer/Buffer.h"
+#include "scene/ShaderManager.h"
 
 using namespace v3d;
 using namespace core;
@@ -27,9 +28,11 @@ void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
 
-    void* data = malloc(64);
+    scene::ShaderManager::getInstance()->load("shaders/test.vert");
+
+    /*void* data = malloc(64);
     memset(data, 1, 64);
-    BufferPtr buff = new Buffer(eVertexBuffer, eWriteStatic, 64, data);
+    BufferPtr buff = new Buffer(eVertexBuffer, eWriteStatic, 64, data);*/
 
     //TexturePtr tt = new Texture(ETextureTarget::eTexture1D, EImageFormat::eRed, EImageType::eUnsignedByte, 0, nullptr, 1);
     

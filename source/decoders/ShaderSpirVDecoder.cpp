@@ -13,15 +13,15 @@ namespace v3d
 {
 namespace decoders
 {
-ShaderSpirVDecoder::ShaderSpirVDecoder(ESourceLanguage lang, bool reflections)
-    : m_lang(lang)
+ShaderSpirVDecoder::ShaderSpirVDecoder(ESpirVResource resource, bool reflections)
+    : m_resourceType(resource)
     , m_reflections(reflections)
 {
 }
 
-ShaderSpirVDecoder::ShaderSpirVDecoder(std::initializer_list<std::string> supportedExtensions, ESourceLanguage lang, bool reflections)
+ShaderSpirVDecoder::ShaderSpirVDecoder(std::initializer_list<std::string> supportedExtensions, ESpirVResource resource, bool reflections)
     : ResourceDecoder(supportedExtensions)
-    , m_lang(lang)
+    , m_resourceType(resource)
     , m_reflections(reflections)
 {
 }
@@ -48,12 +48,14 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
 
         resources::ShaderData* shaderData = nullptr;
 
-        std::string file = std::static_pointer_cast<stream::FileStream>(stream)->getName();
+       const  std::string& file = std::static_pointer_cast<stream::FileStream>(stream)->getName();
         bool validShaderType = true;
         bool needCompile = true;
         auto getShaderType = [&validShaderType](const std::string& name) -> shaderc_shader_kind
         {
             //
+
+            return shaderc_shader_kind::shaderc_spirv_assembly;
         };
         shaderc_shader_kind shaderType = getShaderType(file);
 
@@ -94,15 +96,25 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
         if (needCompile)
         {
             shaderc::CompileOptions options;
-            options.SetSourceLanguage(m_lang == ESourceLanguage::eHLSLLang ? shaderc_source_language_hlsl : shaderc_source_language_glsl);
             options.SetOptimizationLevel(shaderc_optimization_level_zero);
             if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderVulkan)
             {
                 options.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
+                options.SetSourceLanguage(shaderc_source_language_glsl);
+            }
+            else if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderOpenGL)
+            {
+                options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
+                options.SetSourceLanguage(shaderc_source_language_glsl);
+            }
+            else if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderDirect3D)
+            {
+                options.SetTargetEnvironment(shaderc_target_env_default, 0);
+                options.SetSourceLanguage(shaderc_source_language_hlsl);
             }
             else
             {
-                options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
+                ASSERT(false, "unknown render");
             }
 
             shaderc::Compiler compiler;
@@ -160,7 +172,7 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
             if (m_reflections)
             {
                 std::vector<u32> spirv(byteCodeSize);
-                std::copy(result.cbegin(), result.cend(), spirv);
+                //std::copy(result.cbegin(), result.cend(), spirv);
                 ShaderSpirVDecoder::parseReflactions(spirv, memory);
             }
 

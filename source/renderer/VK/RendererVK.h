@@ -52,11 +52,11 @@ namespace vk
         template <class V, typename T>
         static bool checkPresentState(const V& container, T value)
         {
-            auto iter = std::find(container.cbegin(), container.cend(), T);
+            /*auto iter = std::find(container.cbegin(), container.cend(), T);
             if (iter != container.cend())
             {
                 return true;
-            }
+            }*/
 
             return false;
         }

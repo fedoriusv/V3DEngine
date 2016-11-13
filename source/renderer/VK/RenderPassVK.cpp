@@ -38,10 +38,10 @@ bool RenderPassVK::create()
     renderPassCreateInfo.flags = 0;
     renderPassCreateInfo.attachmentCount = static_cast<u32>(attachments.size());
     renderPassCreateInfo.pAttachments = attachments.data();
-    renderPassCreateInfo.dependencyCount = ;
-    renderPassCreateInfo.pDependencies = ;
-    renderPassCreateInfo.subpassCount = ;
-    renderPassCreateInfo.pSubpasses = ;
+    //renderPassCreateInfo.dependencyCount = ;
+    //renderPassCreateInfo.pDependencies = ;
+    //renderPassCreateInfo.subpassCount = ;
+    //renderPassCreateInfo.pSubpasses = ;
 
     VkResult result = vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &m_renderPass);
     if (result != VK_SUCCESS)

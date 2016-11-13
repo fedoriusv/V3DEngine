@@ -78,7 +78,7 @@ namespace renderer
         friend                      ShaderData;
 
         void                        setUniform(const std::string& name, EUniformData data);
-        void                        setUniform(const std::string& name, EDataType type, ,);
+        //void                        setUniform(const std::string& name, EDataType type, ,);
 
         bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
         void                        parseArrayValue(const std::string& val, f32* array, u32 count);
@@ -103,8 +103,8 @@ namespace renderer
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //typedef std::pair<const std::string, ShaderUniform*>   UniformPair;
-    //typedef std::map<const std::string, ShaderUniform*>    UniformList;
+    typedef std::pair<const std::string, ShaderUniform*>   UniformPair;
+    typedef std::map<const std::string, ShaderUniform*>    UniformList;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

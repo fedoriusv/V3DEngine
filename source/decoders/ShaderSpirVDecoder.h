@@ -12,14 +12,14 @@ namespace decoders
     {
     public:
 
-        enum ESourceLanguage
+        enum ESpirVResource
         {
-            eGLSLLang,
-            eHLSLLang
+            eSpirVSource,
+            eSpirVBitecode
         };
 
-        ShaderSpirVDecoder(ESourceLanguage lang, bool reflections);
-        explicit ShaderSpirVDecoder(std::initializer_list<std::string> supportedExtensions, ESourceLanguage lang, bool reflections);
+        ShaderSpirVDecoder(ESpirVResource resource, bool reflections);
+        explicit ShaderSpirVDecoder(std::initializer_list<std::string> supportedExtensions, ESpirVResource resource, bool reflections);
 
         virtual                 ~ShaderSpirVDecoder();
 
@@ -29,7 +29,7 @@ namespace decoders
 
         void                    parseReflactions(const std::vector<u32>& spirv, stream::IStreamPtr stream);
 
-        ESourceLanguage         m_lang;
+        ESpirVResource          m_resourceType;
         bool                    m_reflections;
 
     };

@@ -10,13 +10,13 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
+    class RenderPass;
     class IRenderer;
-    class IShaderProgram;
+    class ShaderProgram;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<IShaderProgram> ShaderProgramPtr;
+    typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +45,7 @@ namespace renderer
         bool                                setDefine(const std::string& name, const std::string& value = "");
         bool                                setUndefine(const std::string& name);
 
-        bool                                applyUniform(CShaderUniform* uniform);
+        bool                                applyUniform(ShaderUniform* uniform);
         void                                applyUniformInt(s32 location, s32 value);
         void                                applyUniformFloat(s32 location, f32 value);
         void                                applyUniformVector2(s32 location, const core::Vector2D& vector);
@@ -76,7 +76,7 @@ namespace renderer
         void                                setFlag(EProgramFlags flag);
         void                                addFlag(EProgramFlags flag);
 
-        friend                              CRenderPass;
+        friend                              RenderPass;
         friend                              IRenderer;
 
         void                                attachShader(const ShaderWPtr& shader);

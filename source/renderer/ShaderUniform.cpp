@@ -75,18 +75,13 @@ ShaderUniform::ShaderUniform(ConstantBuffer* buffer)
 
     , m_set(-1)
     , m_binding(-1)
-
-    , 
 {
 }
 
 ShaderUniform::ShaderUniform(const ShaderUniform& uniform)
     : m_type(EDataType::eTypeNone)
-    , m_value(nullptr)
     , m_name("")
     , m_data(EUniformData::eUserUniform)
-
-    , m_id(-1)
 {
     if (uniform.m_data != EUniformData::eUserUniform)
     {
@@ -94,7 +89,7 @@ ShaderUniform::ShaderUniform(const ShaderUniform& uniform)
     }
     else
     {
-        ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
+        //ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
     }
 }
 
@@ -111,10 +106,10 @@ ShaderUniform& ShaderUniform::operator=(const ShaderUniform& uniform)
     }
     else
     {
-        ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
+        //ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
     }
 
-    m_id = -1;
+    //m_id = -1;
 
     return *this;
 }
@@ -123,11 +118,11 @@ ShaderUniform::~ShaderUniform()
 {
 }
 
-void ShaderUniform::setUniform(EDataType type, const std::string& name)
-{
-    m_type  = type;
-    m_name = name;
-}
+//void ShaderUniform::setUniform(EDataType type, const std::string& name)
+//{
+//    m_type  = type;
+//    m_name = name;
+//}
 
 void ShaderUniform::setUniform(const std::string& name, EUniformData data)
 {
@@ -223,7 +218,7 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
     {
         if (!root->Attribute("type"))
         {
-            LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Cannot find uniform type in '%s'", varName.c_str());
             return false;
         }
         const std::string varType = root->Attribute("type");
@@ -231,7 +226,7 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
         uniformType = DataType::getDataTypeByString(varType);
         if (uniformType == EDataType::eTypeNone)
         {
-            LOG_ERROR("CRenderPass: Cannot find uniform type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Cannot find uniform type in '%s'", varName.c_str());
             return false;
         }
         ShaderUniform::parseUserUniform(root, varName, uniformType);
@@ -252,7 +247,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
         case EDataType::eTypeInt:
         {
             const s32 value = root->IntAttribute("val");
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -260,7 +255,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
         case EDataType::eTypeFloat:
         {
             const f32 value = root->FloatAttribute("val");
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -280,7 +275,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
                 delete[] val;
                 val = nullptr;
             }
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -301,7 +296,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
                 delete[] val;
                 val = nullptr;
             }
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -323,7 +318,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
                 delete[] val;
                 val = nullptr;
             }
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -343,7 +338,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
                 delete[] val;
                 val = nullptr;
             }
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }
@@ -363,7 +358,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
                 delete[] val;
                 val = nullptr;
             }
-            ShaderUniform::setUniform(type, name, (void*)&value);
+            //ShaderUniform::setUniform(type, name, (void*)&value);
 
             return true;
         }

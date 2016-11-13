@@ -3,7 +3,8 @@
 
 #include "ShaderUniform.h"
 #include "ShaderSampler.h"
-
+#include "ShaderAttribute.h"
+#include "ShaderUniform.h"
 
 namespace v3d
 {
@@ -11,7 +12,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
+    class RenderPass;
     class ShaderAttribute;
 
     /**
@@ -56,7 +57,7 @@ namespace renderer
         SamplerList&            getSamplerList();
 
         bool                    isExistUniform(const std::string& name);
-        bool                    isExistUniform(CShaderUniform::EUniformData type);
+        bool                    isExistUniform(ShaderUniform::EUniformData type);
         bool                    isExistAttribute(const std::string& name);
         bool                    isExistSampler(const std::string& name);
         bool                    isExistFragData(const std::string& name);
@@ -65,9 +66,9 @@ namespace renderer
 
     protected:
 
-        friend                  CRenderPass;
+        friend                  RenderPass;
 
-        void                    addUniform(const CShaderUniform* uniform);
+        void                    addUniform(const ShaderUniform* uniform);
         void                    addAttribute(const ShaderAttribute* attribute);
         void                    addSampler(const CShaderSampler* sampler);
         void                    addFragData(const ShaderAttribute* fragData);

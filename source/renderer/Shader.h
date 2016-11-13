@@ -22,7 +22,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
+    class RenderPass;
     class IShader;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,8 +82,8 @@ namespace renderer
     private:
 
         friend                      scene::CShaderManager;
-        friend                      IShaderProgram;
-        friend                      CRenderPass;
+        friend                      ShaderProgram;
+        friend                      RenderPass;
 
         const CShaderSource&        getShaderSource() const;
 

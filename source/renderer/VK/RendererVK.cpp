@@ -138,20 +138,20 @@ VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, c
     pipelineCreateInfo.pTessellationState = &renderState->getPipelineTessellationStateCreateInfo();
     pipelineCreateInfo.pVertexInputState = &geometry->getPipelineVertexInputStateCreateInfo();
 
-    pipelineCreateInfo.stageCount = ;
+    //pipelineCreateInfo.stageCount = ;
 
     VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
-    pipelineShaderStageCreateInfo.sType = ;
+    //pipelineShaderStageCreateInfo.sType = ;
     pipelineShaderStageCreateInfo.pNext = nullptr;
     pipelineShaderStageCreateInfo.flags = 0;
-    pipelineShaderStageCreateInfo.;
+    //pipelineShaderStageCreateInfo.;
 
-    pipelineCreateInfo.pStages = ;
+    //pipelineCreateInfo.pStages = ;
 
-    pipelineCreateInfo.layout = ;
+    //pipelineCreateInfo.layout = ;
 
-    pipelineCreateInfo.renderPass = ;
-    pipelineCreateInfo.subpass = ;
+    //pipelineCreateInfo.renderPass = ;
+    //pipelineCreateInfo.subpass = ;
 
     VkResult result = vkCreateGraphicsPipelines(m_device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
     if (result != VK_SUCCESS)
@@ -169,7 +169,7 @@ VkPipeline RendererVK::getGraphicPipeline(const RenderStateVK* renderState, cons
     auto pipeline = m_pipelineList.find(hashPipeline);
     if (pipeline == m_pipelineList.cend())
     {
-        VkPipeline newPipeline = RendererVK::createGraphicPipeline(renderState, framebuffer);
+        VkPipeline newPipeline = RendererVK::createGraphicPipeline(renderState, framebuffer, nullptr);
         m_pipelineList.insert(std::make_pair(hashPipeline, newPipeline));
 
         return newPipeline;

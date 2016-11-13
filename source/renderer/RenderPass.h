@@ -79,7 +79,7 @@ namespace renderer
 
         friend                  CRenderer;
         friend                  CRenderTechnique;
-        friend                  std::_Ref_count_obj<CRenderPass>;
+        friend                  std::_Ref_count_obj<RenderPass>;
 
         void                    init();
 

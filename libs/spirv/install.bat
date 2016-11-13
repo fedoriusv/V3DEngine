@@ -25,7 +25,7 @@ cd ../
 @echo off
 git clone https://github.com/KhronosGroup/SPIRV-Cross.git
 cd SPIRV-Cross
-cmake -G"Visual Studio 14 Win64"
+cmake -DCMAKE_CXX_FLAGS_DEBUG="/Zi /MTd" -DCMAKE_CXX_FLAGS_RELEASE="/MT" -G"Visual Studio 14 Win64"
 @echo on
 call vcvarsall.bat x64
 echo "SPIRV-Cross builds started..." 

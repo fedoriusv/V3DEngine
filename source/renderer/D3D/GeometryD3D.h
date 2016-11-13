@@ -12,7 +12,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CGeometryD3D : public CGeometry
+    class CGeometryD3D : public Geometry
     {
     public:
 

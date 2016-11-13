@@ -28,8 +28,8 @@ namespace resources
         CImage& operator=(const CImage& image);
         bool operator==(const CImage& image);
 
-        void                        init(const stream::IStreamPtr& stream)  override;
-        bool                        load()                                  override;
+        void                        init(const stream::IStreamPtr& stream) override;
+        bool                        load() override;
 
         u32                         getByteCount() const;
         u32                         getPixelCount() const;

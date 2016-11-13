@@ -5,6 +5,10 @@
 #include "scene/Light.h"
 #include "scene/Camera.h"
 #include "utils/Timer.h"
+#include "ShaderProgram.h"
+#include "Geometry.h"
+#include "ShaderData.h"
+
 
 namespace v3d
 {
@@ -233,7 +237,7 @@ void IRenderer::draw(const RenderJobPtr& job)
         }
 
         const RenderPassPtr pass = techique->getRenderPass((*passIter));
-        pass->bind(targetIndex);
+        //pass->bind(targetIndex);
 
         techique->setCurrentPass((*passIter));
 
@@ -275,11 +279,11 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const CShaderUniform::EUniformData type = uniform.second->getData();
-        s32 id = uniform.second->getID();
+        const ShaderUniform::EUniformData type = uniform.second->getData();
+        s32 id = 0;// uniform.second->getID();
         switch (type)
         {
-        case CShaderUniform::eTransformProjectionMatrix:
+        case ShaderUniform::eTransformProjectionMatrix:
         {
             if (!m_camera)
             {
@@ -290,7 +294,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         }
         break;
 
-        case CShaderUniform::eTransformModelMatrix:
+        case ShaderUniform::eTransformModelMatrix:
         {
             core::Matrix4D modelMatrix(transform);
             modelMatrix.makeTransposed();
@@ -299,7 +303,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         }
         break;
 
-        case CShaderUniform::eTransformViewMatrix:
+        case ShaderUniform::eTransformViewMatrix:
         {
             if (!m_camera)
             {
@@ -311,7 +315,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         }
         break;
 
-        case CShaderUniform::eTransformViewPosition:
+        case ShaderUniform::eTransformViewPosition:
         {
             if (!m_camera)
             {
@@ -322,7 +326,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         }
         break;
 
-        case CShaderUniform::eTransformViewUpVector:
+        case ShaderUniform::eTransformViewUpVector:
         {
             if (!m_camera)
             {
@@ -333,7 +337,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
         }
         break;
 
-        case CShaderUniform::eTransformNormalMatrix:
+        case ShaderUniform::eTransformNormalMatrix:
         {
             core::Matrix4D normalMatrix;
             transform.getInverse(normalMatrix);
@@ -351,42 +355,42 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
 
 void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr& data = pass->getDefaultShaderData();
+    const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const CShaderUniform::EUniformData type = uniform.second->getData();
-        s32 id = uniform.second->getID();
+        const ShaderUniform::EUniformData type = uniform.second->getData();
+        s32 id = 0;// uniform.second->getID();
         switch (type)
         {
-        case CShaderUniform::eMaterialAmbient:
+        case ShaderUniform::eMaterialAmbient:
     
             program->applyUniformVector4(id, material->getAmbientColor());
             break;
 
-        case CShaderUniform::eMaterialDiffuse:
+        case ShaderUniform::eMaterialDiffuse:
 
             program->applyUniformVector4(id, material->getDiffuseColor());
             break;
 
-        case CShaderUniform::eMaterialSpecular:
+        case ShaderUniform::eMaterialSpecular:
 
             program->applyUniformVector4(id, material->getSpecularColor());
             break;
 
-        case CShaderUniform::eMaterialEmission:
+        case ShaderUniform::eMaterialEmission:
 
             program->applyUniformVector4(id, material->getEmissionColor());
             break;
 
-        case CShaderUniform::eMaterialShininess:
+        case ShaderUniform::eMaterialShininess:
 
             program->applyUniformFloat(id, material->getShininess());
             break;
 
-        case CShaderUniform::eMaterialTransparency:
+        case ShaderUniform::eMaterialTransparency:
 
             program->applyUniformFloat(id, material->getTransparency());
             break;
@@ -430,7 +434,7 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         return;
     }
 
-    const ShaderDataPtr& data = pass->getDefaultShaderData();
+    const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
@@ -438,46 +442,46 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         const UniformList& list = data->getUniformList();
         for (auto& uniform : list)
         {
-            const CShaderUniform::EUniformData type = uniform.second->getData();
-            s32 id = uniform.second->getID();
+            const ShaderUniform::EUniformData type = uniform.second->getData();
+            s32 id = 0;// uniform.second->getID();
             switch (type)
             {
-            case CShaderUniform::eLightsCount:
+            case ShaderUniform::eLightsCount:
 
                 program->applyUniformInt(id, (s32)lights.size());
                 break;
 
-            case CShaderUniform::eLightPosition:
+            case ShaderUniform::eLightPosition:
 
                 program->applyUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
                 break;
 
-            case CShaderUniform::eLightAmbient:
+            case ShaderUniform::eLightAmbient:
 
                 program->applyUniformVector4(id, (*light)->getAmbient());
                 break;
 
-            case CShaderUniform::eLightDiffuse:
+            case ShaderUniform::eLightDiffuse:
 
                 program->applyUniformVector4(id, (*light)->getDiffuse());
                 break;
 
-            case CShaderUniform::eLightSpecular:
+            case ShaderUniform::eLightSpecular:
 
                 program->applyUniformVector4(id, (*light)->getSpecular());
                 break;
 
-            case CShaderUniform::eLightDirection:
+            case ShaderUniform::eLightDirection:
 
                 program->applyUniformVector3(id, (*light)->getDirection());
                 break;
 
-            case CShaderUniform::eLightAttenuation:
+            case ShaderUniform::eLightAttenuation:
 
                 program->applyUniformVector3(id, (*light)->getAttenuation());
                 break;
 
-            case CShaderUniform::eLightRadius:
+            case ShaderUniform::eLightRadius:
 
                 program->applyUniformFloat(id, (*light)->getRadius());
                 break;
@@ -492,7 +496,7 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
 
 void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr& defaultData = pass->getDefaultShaderData();
+    const ShaderDataPtr defaultData = pass->getDefaultShaderData();
     const SamplerList& samplerList = defaultData->getSamplerList();
 
     bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
@@ -562,32 +566,32 @@ void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
 
 void IRenderer::updateAdvanced(const RenderPassPtr & pass)
 {
-    const ShaderDataPtr& data = pass->getDefaultShaderData();
+    const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const CShaderUniform::EUniformData type = uniform.second->getData();
-        s32 id = uniform.second->getID();
+        const ShaderUniform::EUniformData type = uniform.second->getData();
+        s32 id = 0;// uniform.second->getID();
         switch (type)
         {
-        case CShaderUniform::eCurrentTime:
+            case ShaderUniform::eCurrentTime:
             {
                 u32 time = (u32)utils::CTimer::getCurrentTime();
                 program->applyUniformInt(id, time);
             }
             break;
 
-        case CShaderUniform::eViewportSize:
-        {
-            const core::Rect32& rect = IRenderer::getCurrentRenderTarget()->getViewport();
-            program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
-        }
-        break;
-
-        default:
+            case ShaderUniform::eViewportSize:
+            {
+                const core::Rect32& rect = IRenderer::getCurrentRenderTarget()->getViewport();
+                program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
+            }
             break;
+
+            default:
+                break;
         }
     }
 }

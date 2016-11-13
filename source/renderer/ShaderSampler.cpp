@@ -96,7 +96,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
 
     if (!root->Attribute("name"))
     {
-        LOG_ERROR("CRenderPass: Cannot find sampler name");
+        LOG_ERROR("RenderPass: Cannot find sampler name");
         return false;
     }
     const std::string varName = root->Attribute("name");
@@ -110,7 +110,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
         {
             if (target->getTagetType() != ITarget::ETagetType::eRenderTarget)
             {
-                LOG_ERROR("CRenderPass: Target not supported");
+                LOG_ERROR("RenderPass: Target not supported");
                 return false;
             }
             const RenderTargetPtr& rendertarget = std::static_pointer_cast<RenderTarget>(target);
@@ -135,7 +135,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
                     return true;
                 }
 
-                LOG_ERROR("CRenderPass: Color Texture %d not found", index);
+                LOG_ERROR("RenderPass: Color Texture %d not found", index);
                 return false;
             }
             else if (attachVal[0] == 'd')
@@ -150,7 +150,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             }
             else
             {
-                LOG_ERROR("CRenderPass: Unknown key '%c'", attachVal[0]);
+                LOG_ERROR("RenderPass: Unknown key '%c'", attachVal[0]);
                 return false;
             }
 
@@ -165,7 +165,7 @@ bool CShaderSampler::parse(const tinyxml2::XMLElement* root)
             return true;
         }
 
-        LOG_ERROR("CRenderPass: Texture with val '%s' not found", varVal.c_str());
+        LOG_ERROR("RenderPass: Texture with val '%s' not found", varVal.c_str());
         m_type = ESamplerType::eUserSampler;
         return true;
     }

@@ -6,13 +6,45 @@ namespace v3d
 namespace resources
 {
 
-    ShaderData::ShaderData()
-    : m_body("")
-    , m_name("")
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const std::string ShaderData::s_shaderTypeName[EShaderType::eShaderCount] =
+{
+    "vertex",
+    "fragment",
+    "geometry",
+    "control",
+    "evaluation",
+    "compute"
+};
+
+const std::string& ShaderData::getShaderTypeNameByType(EShaderType type)
+{
+    return s_shaderTypeName[type];
+}
+
+EShaderType ShaderData::getShaderTypeByName(const std::string& name)
+{
+    for (u32 i = 0; i < EShaderType::eShaderCount; ++i)
+    {
+        if (s_shaderTypeName[i].compare(name) == 0)
+        {
+            return (EShaderType)i;
+        }
+    }
+
+    return EShaderType::eShaderUnknown;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ShaderData::ShaderData()
+    //: m_body("")
+    : m_name("")
 {
 }
 
-    ShaderData::~ShaderData()
+ShaderData::~ShaderData()
 {
 }
 
@@ -33,7 +65,7 @@ bool ShaderData::load()
     m_name = IResource::getResourseName();
     
     stream->seekBeg(0);
-    stream->read(m_body);
+//    stream->read(m_body);
 
     return true;
 }
@@ -46,7 +78,7 @@ const std::string& ShaderData::getName() const
 
 const std::string& ShaderData::getBody() const
 {
-    return m_body;
+    return "";
 }
 
 } //namespace resources

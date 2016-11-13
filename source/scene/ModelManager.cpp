@@ -17,7 +17,7 @@ CModelManager::CModelManager()
     TResourceLoader::registerPath("data/");
 
     std::initializer_list<std::string> ext = { ".f3d"};
-    TResourceLoader::registerDecoder(std::make_shared<CModelF3DDecoder>(ext));
+    TResourceLoader::registerDecoder(std::make_shared<ModelF3DDecoder>(ext));
 }
 
 CModelManager::~CModelManager()

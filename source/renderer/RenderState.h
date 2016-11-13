@@ -112,7 +112,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
+    class RenderPass;
 
 
     /**
@@ -222,7 +222,7 @@ namespace renderer
 
     private:
 
-        friend                      CRenderPass;
+        friend                      RenderPass;
 
         bool                        parse(const tinyxml2::XMLElement* root);
 

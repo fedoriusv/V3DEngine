@@ -11,7 +11,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class IShader;
-    class IShaderProgram;
+    class ShaderProgram;
 
     using ShaderDefinesList = std::map<const std::string, std::string>;
 

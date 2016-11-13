@@ -11,7 +11,7 @@ using namespace renderer;
 
 
 CGeometryNull::CGeometryNull(const CRenderTechnique* technique)
-    : CGeometry(technique)
+    : Geometry(technique)
 {
 }
 

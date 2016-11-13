@@ -16,7 +16,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderPass;
+    class RenderPass;
     class CRenderTechnique;
     class Buffer;
 
@@ -55,7 +55,7 @@ namespace renderer
 
     protected:
 
-        friend                          CRenderPass;
+        friend                          RenderPass;
         friend                          CRenderTechnique;
 
         void                            addBuffer(const std::string& name, EDataType type, u32 amount);

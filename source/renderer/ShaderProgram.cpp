@@ -105,6 +105,39 @@ bool ShaderProgram::setUndefine(const std::string& name)
     return false;
 }
 
+bool ShaderProgram::applyUniform(ShaderUniform * uniform)
+{
+    return false;
+}
+
+void ShaderProgram::applyUniformInt(s32 location, s32 value)
+{
+}
+
+void ShaderProgram::applyUniformFloat(s32 location, f32 value)
+{
+}
+
+void ShaderProgram::applyUniformVector2(s32 location, const core::Vector2D & vector)
+{
+}
+
+void ShaderProgram::applyUniformVector3(s32 location, const core::Vector3D & vector)
+{
+}
+
+void ShaderProgram::applyUniformVector4(s32 location, const core::Vector4D & vector)
+{
+}
+
+void ShaderProgram::applyUniformMatrix3(s32 location, const core::Matrix3D & matrix)
+{
+}
+
+void ShaderProgram::applyUniformMatrix4(s32 location, const core::Matrix4D & matrix)
+{
+}
+
 void ShaderProgram::attachShader(const ShaderWPtr& shader)
 {
     if (!shader.expired())
@@ -184,7 +217,7 @@ bool ShaderProgram::updateShaderList()
             //m_shaderList.erase(iter++);
             LOG_DEBUG("CShaderProgram::updateShaderList: Shader Program must be relinked");
 
-            ShaderWPtr hashedShader = CShaderManager::getInstance()->get(hash);
+            ShaderWPtr hashedShader = ShaderManager::getInstance()->get(hash);
             if (!hashedShader.expired())
             {
                 //ShaderProgram::attachShader(hashedShader);
@@ -199,7 +232,7 @@ bool ShaderProgram::updateShaderList()
                     return false;
                 }
 
-                CShaderManager::getInstance()->add(newShader);
+                ShaderManager::getInstance()->add(newShader);
                 //ShaderProgram::attachShader(newShader);
                 (*iter) = newShader;
 

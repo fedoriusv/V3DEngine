@@ -117,14 +117,14 @@ bool IShader::parse(const tinyxml2::XMLElement* root, CShaderSource& data)
         const std::string shaderPath = root->Attribute("file");
         LOG_INFO("IShader: Create shader from file: %s", shaderPath.c_str());
 
-        const ShaderData* source = ShaderManager::getInstance()->load(shaderPath);
+        const ShaderData* source = 0;//ShaderManager::getInstance()->load(shaderPath);
         if (!source)
         {
             LOG_ERROR("IShader: Error load shader %s", shaderPath.c_str());
             return false;
         }
 
-        std::string shaderBody(source->getBody());
+        std::string shaderBody(0 /*source->getBody()*/);
         if (shaderBody.empty())
         {
             LOG_ERROR("IShader: Error load shader %s", shaderPath.c_str());

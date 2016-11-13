@@ -9,7 +9,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CGeometryNull : public CGeometry
+    class CGeometryNull : public Geometry
     {
     public:
 

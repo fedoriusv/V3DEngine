@@ -3,6 +3,8 @@
 
 #include "renderer/ShaderProgram.h"
 
+#ifdef _OPENGL_RENDER_
+
 namespace v3d
 {
 namespace renderer
@@ -12,7 +14,7 @@ namespace renderer
     /**
     * Inherited class for shader program management. GL render only.
     */
-    class CShaderProgramGL final : public IShaderProgram
+    class CShaderProgramGL final : public ShaderProgram
     {
     public:
 
@@ -42,7 +44,7 @@ namespace renderer
 
         void                getShaderIDArray(std::vector<u32>& shaders);
 
-        bool                applyUniform       (CShaderUniform* uniform)                    override;
+        bool                applyUniform       (ShaderUniform* uniform)                    override;
         void                applyUniformInt    (s32 location, s32 value)                    override;
         void                applyUniformFloat  (s32 location, f32 value)                    override;
         void                applyUniformVector2(s32 location, const core::Vector2D& vector) override;
@@ -61,5 +63,7 @@ namespace renderer
 
 } //namespace renderer
 } //namespace v3d
+
+#endif //_OPENGL_RENDER_
 
 #endif //_V3D_SHADER_PROGRAM_GL_H_

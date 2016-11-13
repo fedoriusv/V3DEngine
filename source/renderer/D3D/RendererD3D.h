@@ -36,7 +36,7 @@ namespace d3d
 
         ShaderPtr           makeSharedShader()                                                      override;
         ShaderProgramPtr    makeSharedProgram()                                                     override;
-        GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
+//        GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   override;
         RenderStatePtr      makeSharedRenderState()                                                 override;
 
         RenderTargetPtr     makeSharedRenderTarget()                                                override;

@@ -11,6 +11,7 @@ namespace scene
 using namespace stream;
 using namespace resources;
 using namespace renderer;
+using namespace decoders;
 
 ShaderManager::ShaderManager()
 {
@@ -19,8 +20,10 @@ ShaderManager::ShaderManager()
     TResourceLoader::registerPath("data/shaders/");
 
     std::initializer_list<std::string> extSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
-    std::initializer_list<std::string> extBin = { ".spirv" };
-    TResourceLoader::registerDecoder(std::make_shared<decoders::ShaderSpirVDecoder>(extSrc, extBin));
+    TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extSrc, ShaderSpirVDecoder::ESpirVResource::eSpirVSource, true));
+
+    std::initializer_list<std::string> extBin = { ".spv" };
+    TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extBin, ShaderSpirVDecoder::ESpirVResource::eSpirVBitecode, true));
 }
 
 ShaderManager::~ShaderManager()
@@ -100,21 +103,21 @@ const ShaderData* ShaderManager::load(const std::string& name, const std::string
 
 void ShaderManager::add(const ShaderPtr shader)
 {
-    std::size_t hash = shader->m_data.getHash();
+   /* std::size_t hash = shader->m_data.getHash();
     if (m_shaderList.find(hash) == m_shaderList.cend())
     {
         m_shaderList.insert(std::map<std::size_t, ShaderPtr>::value_type(hash, shader));
-    }
+    }*/
 }
 
 const ShaderWPtr ShaderManager::get(const ShaderPtr shader) const
 {
-    std::size_t hash = shader->m_data.getHash();
+    /*std::size_t hash = shader->m_data.getHash();
     ShaderHashMap::const_iterator iter = m_shaderList.find(hash);
     if (iter != m_shaderList.cend())
     {
         return (*iter).second;
-    }
+    }*/
 
     return ShaderWPtr();
 }

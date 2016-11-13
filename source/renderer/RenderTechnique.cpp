@@ -167,7 +167,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
             if (!target->create())
             {
-                LOG_ERROR("CRenderPass: Can't create render target");
+                LOG_ERROR("RenderPass: Can't create render target");
                 targetElement = targetElement->NextSiblingElement("target");
                 continue;
             }
@@ -203,7 +203,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
             if (!target->create())
             {
-                LOG_ERROR("CRenderPass: Can't create render transformfeedback target");
+                LOG_ERROR("RenderPass: Can't create render transformfeedback target");
                 transformfeedbackElement = transformfeedbackElement->NextSiblingElement("target");
                 continue;
             }
@@ -256,7 +256,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
 
     while (passElement)
     {
-        RenderPassPtr pass = std::make_shared<CRenderPass>();
+        RenderPassPtr pass = std::make_shared<RenderPass>();
         if (!pass->parse(passElement))
         {
             LOG_ERROR("CRenderTechnique: Error parse pass section");

@@ -1,6 +1,7 @@
 #include "Geometry.h"
 #include "Buffer.h"
 #include "renderer/RenderTechnique.h"
+#include "ShaderAttribute.h"
 
 namespace v3d
 {
@@ -109,7 +110,7 @@ s32 Geometry::computeBufferSize(const ShaderDataList& shaderDataList)
         for (const AttributePair& attr : shaderData.lock()->getAttributeList())
         {
             ShaderAttribute::EShaderAttribute attribute = attr.second->getChannel();
-            if (attr.second->getLocation() < 0 || attr.second->getBinding() < 0)
+            if (attr.second->getLocation() < 0)
             {
                 continue;
             }

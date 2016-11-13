@@ -49,7 +49,7 @@ Engine::~Engine()
     CModelManager::freeInstance();
     CEventManager::freeInstance();
     CTargetManager::freeInstance();
-    CShaderManager::freeInstance();
+    ShaderManager::freeInstance();
 }
 
 bool Engine::init()

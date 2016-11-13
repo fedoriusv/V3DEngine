@@ -14,7 +14,7 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CShaderData;
+    class ShaderData;
 
     /**
     * Shader Attribute(Channel).
@@ -76,7 +76,7 @@ namespace renderer
 
     private:
 
-        friend                          CShaderData;
+        friend                          ShaderData;
 
         void                            setAttribute(const std::string& name, EShaderAttribute data);
         void                            setAttribute(EDataType type, const std::string& name, u32 size, u32 count, const void* data);

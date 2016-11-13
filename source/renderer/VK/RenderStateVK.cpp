@@ -188,8 +188,8 @@ void RenderStateVK::updaePipelineColorBlendStateCreateInfo(const FramebufferVK* 
     pipelineColorBlendStateCreateInfo.pNext = nullptr;
     pipelineColorBlendStateCreateInfo.flags = 0;
 
-    pipelineColorBlendStateCreateInfo.logicOpEnable = ;
-    pipelineColorBlendStateCreateInfo.logicOp = ;
+    //pipelineColorBlendStateCreateInfo.logicOpEnable = ;
+    //pipelineColorBlendStateCreateInfo.logicOp = ;
 
     if (RendererVK::checkPresentState(k_dynamicStateVK, VK_DYNAMIC_STATE_BLEND_CONSTANTS))
     {

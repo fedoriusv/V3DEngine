@@ -5,7 +5,7 @@
 #include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
 #include "GeometryTarget.h"
-#include "resources/ShaderSouceData.h"
+#include "resources/ShaderData.h"
 
 #include "tinyxml2.h"
 
@@ -32,73 +32,73 @@ RenderPass::RenderPass()
     m_program = ENGINE_RENDERER->makeSharedProgram();
 }
 
-RenderPass::RenderPass(const RenderPass& pass)
-    : m_userShaderData(nullptr)
-    , m_defaultShaderData(nullptr)
-    , m_renderState(nullptr)
-    , m_lods(nullptr)
-    , m_program(nullptr)
+//RenderPass::RenderPass(const RenderPass& pass)
+//    : m_userShaderData(nullptr)
+//    , m_defaultShaderData(nullptr)
+//    , m_renderState(nullptr)
+//    , m_lods(nullptr)
+//    , m_program(nullptr)
+//
+//    , m_enable(pass.m_enable)
+//    , m_name(pass.m_name)
+//{
+//    RenderPass::init();
+//
+//    m_targetList = pass.m_targetList;
+//
+//    m_lods->operator=(*pass.m_lods);
+//    m_renderState->operator=(*pass.m_renderState);
+//    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+//    m_userShaderData->operator=(*pass.m_userShaderData);
+//
+//    m_program = pass.m_program->clone();
+//    if (!m_program)
+//    {
+//        ASSERT(false, "Copy program is failed");
+//        return;
+//    }
+//
+//   /* m_program->addShaderData(m_defaultShaderData);
+//    m_program->addShaderData(m_userShaderData);*/
+//
+//    if (!m_program->create())
+//    {
+//        ASSERT(false, "CShaderProgramGL::clone fail");
+//    }
+//}
 
-    , m_enable(pass.m_enable)
-    , m_name(pass.m_name)
-{
-    RenderPass::init();
-
-    m_targetList = pass.m_targetList;
-
-    m_lods->operator=(*pass.m_lods);
-    m_renderState->operator=(*pass.m_renderState);
-    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-    m_userShaderData->operator=(*pass.m_userShaderData);
-
-    m_program = pass.m_program->clone();
-    if (!m_program)
-    {
-        ASSERT(false, "Copy program is failed");
-        return;
-    }
-
-    m_program->addShaderData(m_defaultShaderData);
-    m_program->addShaderData(m_userShaderData);
-
-    if (!m_program->create())
-    {
-        ASSERT(false, "CShaderProgramGL::clone fail");
-    }
-}
-
-RenderPass& RenderPass::operator=(const RenderPass& pass)
-{
-    if (&pass == this)
-    {
-        return *this;
-    }
-
-    m_targetList = pass.m_targetList;
-
-    m_lods->operator=(*pass.m_lods);
-    m_renderState->operator=(*pass.m_renderState);
-    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-    m_userShaderData->operator=(*pass.m_userShaderData);
-
-    m_program = pass.m_program->clone();
-    ASSERT(m_program, "Copy program is failed");
-    if (m_program)
-    {
-        m_program->addShaderData(m_defaultShaderData);
-        m_program->addShaderData(m_userShaderData);
-
-        if (!m_program->create())
-        {
-            ASSERT(false, "CShaderProgramGL::clone fail");
-        }
-    }
-
-    m_enable = pass.m_enable;
-    m_name = pass.m_name;
-
-    return *this;
-}
+//RenderPass& RenderPass::operator=(const RenderPass& pass)
+//{
+//    if (&pass == this)
+//    {
+//        return *this;
+//    }
+//
+//    m_targetList = pass.m_targetList;
+//
+//    m_lods->operator=(*pass.m_lods);
+//    m_renderState->operator=(*pass.m_renderState);
+//    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+//    m_userShaderData->operator=(*pass.m_userShaderData);
+//
+//    m_program = pass.m_program->clone();
+//    ASSERT(m_program, "Copy program is failed");
+//    if (m_program)
+//    {
+//       /* m_program->addShaderData(m_defaultShaderData);
+//        m_program->addShaderData(m_userShaderData);*/
+//
+//        if (!m_program->create())
+//        {
+//            ASSERT(false, "CShaderProgramGL::clone fail");
+//        }
+//    }
+//
+//    m_enable = pass.m_enable;
+//    m_name = pass.m_name;
+//
+//    return *this;
+//}
 
 RenderPass::~RenderPass()
 {
@@ -256,7 +256,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        CShaderUniform* uniform = new CShaderUniform();
+        ShaderUniform* uniform = new ShaderUniform(nullptr);
 
         if (!uniform->parse(varElement))
         {
@@ -268,7 +268,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (uniform->getData() != CShaderUniform::eUserUniform);
+        /*bool isDefault = (uniform->getData() != ShaderUniform::eUserUniform);
         if (isDefault)
         {
             m_defaultShaderData->addUniform(uniform);
@@ -276,7 +276,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
         else
         {
             m_userShaderData->addUniform(uniform);
-        }
+        }*/
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -295,7 +295,7 @@ bool RenderPass::parseAttributes(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        CShaderAttribute* attribute = new CShaderAttribute();
+        ShaderAttribute* attribute = new ShaderAttribute();
         if (!attribute->parse(varElement))
         {
             delete attribute;
@@ -306,7 +306,7 @@ bool RenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (attribute->getData() != CShaderAttribute::eAttribUser);
+        /*bool isDefault = (attribute->getData() != ShaderAttribute::eAttribUser);
         if (isDefault)
         {
             m_defaultShaderData->addAttribute(attribute);
@@ -314,7 +314,7 @@ bool RenderPass::parseAttributes(const tinyxml2::XMLElement* root)
         else
         {
             m_userShaderData->addAttribute(attribute);
-        }
+        }*/
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -332,7 +332,7 @@ bool RenderPass::parseFragdata(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        CShaderAttribute* fragData = new CShaderAttribute();
+        ShaderAttribute* fragData = new ShaderAttribute();
         if (!fragData->parse(varElement))
         {
             delete fragData;
@@ -343,7 +343,7 @@ bool RenderPass::parseFragdata(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = (fragData->getData() != CShaderAttribute::eAttribUser);
+        /*bool isDefault = (fragData->getData() != ShaderAttribute::eAttribUser);
         if (isDefault)
         {
             m_defaultShaderData->addFragData(fragData);
@@ -351,7 +351,7 @@ bool RenderPass::parseFragdata(const tinyxml2::XMLElement* root)
         else
         {
             m_userShaderData->addFragData(fragData);
-        }
+        }*/
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -381,7 +381,7 @@ bool RenderPass::parseSamplers(const tinyxml2::XMLElement* root)
             continue;
         }
 
-        bool isDefault = sampler->getType() != CShaderSampler::ESamplerType::eUserSampler;
+        /*bool isDefault = sampler->getType() != CShaderSampler::ESamplerType::eUserSampler;
         if (isDefault)
         {
             m_defaultShaderData->addSampler(sampler);
@@ -389,7 +389,7 @@ bool RenderPass::parseSamplers(const tinyxml2::XMLElement* root)
         else
         {
             m_userShaderData->addSampler(sampler);
-        }
+        }*/
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -423,31 +423,31 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
             defineElement = defineElement->NextSiblingElement("var");
         }
 
-        if (!definesList.empty())
+        /*if (!definesList.empty())
         {
             m_program->addDefines(definesList);
-        }
+        }*/
     }
 
     const tinyxml2::XMLElement* shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
         CShaderSource shaderData;
-        if (!IShader::parse(shaderElement, shaderData))
+       /* if (!IShader::parse(shaderElement, shaderData))
         {
             LOG_ERROR("RenderPass: Shader parse error");
             ASSERT(false, "Shader parse error");
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
-        }
+        }*/
 
         if (!definesList.empty())
         {
             shaderData.setDefines(definesList);
         }
 
-        ShaderWPtr shader = CShaderManager::getInstance()->get(shaderData.getHash());
+        /*ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
         if (shader.expired())
         {
             ShaderPtr newShader = ENGINE_RENDERER->makeSharedShader();
@@ -460,17 +460,17 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
                 continue;
             }
 
-            CShaderManager::getInstance()->add(newShader);
+            ShaderManager::getInstance()->add(newShader);
             shader = newShader;
         }
 
-        m_program->attachShader(shader);
+        m_program->attachShader(shader);*/
 
         shaderElement = shaderElement->NextSiblingElement("var");
     }
 
-    m_program->addShaderData(m_defaultShaderData);
-    m_program->addShaderData(m_userShaderData);
+    /*m_program->addShaderData(m_defaultShaderData);
+    m_program->addShaderData(m_userShaderData);*/
 
     if (!m_program->create())
     {
@@ -483,8 +483,8 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
 void RenderPass::init()
 {
-    m_userShaderData = std::make_shared<CShaderData>();
-    m_defaultShaderData = std::make_shared<CShaderData>();
+    m_userShaderData = std::make_shared<ShaderData>();
+    m_defaultShaderData = std::make_shared<ShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
     m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }
@@ -547,7 +547,7 @@ bool RenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)
                     }
                     else
                     {
-                        m_program->addVaryingsAttibutes(geomtarget->getBufferStrings());
+                        //m_program->addVaryingsAttibutes(geomtarget->getBufferStrings());
                     }
                 }
             }
@@ -572,11 +572,11 @@ bool RenderPass::parseRenderState(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    if (!m_renderState->parse(root))
+   /* if (!m_renderState->parse(root))
     {
         LOG_ERROR("RenderPass: Renderstate parse error");
         return false;
-    }
+    }*/
 
     return true;
 }
@@ -608,7 +608,7 @@ void RenderPass::bind(u32 target)
         return;
     }
 
-    if (!m_program->isFlagPresent(IShaderProgram::eLinked))
+    if (!m_program->isFlagPresent(ShaderProgram::eLinked))
     {
         if (!m_program->create())
         {
@@ -619,16 +619,16 @@ void RenderPass::bind(u32 target)
 
     m_program->bind();
 
-    const UniformList& list = m_userShaderData->m_uniformList;
+    /*const UniformList& list = m_userShaderData->m_uniformList;
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)
     {
-        CShaderUniform::EUniformData data = uniform->second->getData();
-        if (data != CShaderUniform::eUserUniform || uniform->second->getID() < 0)
+        ShaderUniform::EUniformData data = uniform->second->getData();
+        if (data != ShaderUniform::eUserUniform || uniform->second->getID() < 0)
         {
             continue;
         }
         m_program->applyUniform(uniform->second);
-    }
+    }*/
 
     //Replaced to render lists
     /*ASSERT(m_targetList.size() > target, "Invalid target index");
@@ -648,8 +648,10 @@ void RenderPass::unbind(u32 target)
 
 RenderPassPtr RenderPass::clone() const
 {
-    RenderPassPtr pass = std::make_shared<RenderPass>(*this);
-    return pass;
+    //RenderPassPtr pass = std::make_shared<RenderPass>(*this);
+    //return pass;
+
+    return nullptr;
 }
 
 const std::string RenderPass::attachIndexToUniform(const std::string& name, s32 idx)
