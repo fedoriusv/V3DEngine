@@ -1,7 +1,7 @@
 #pragma once
 
 #include "utils/Singleton.h"
-#include "resources/ShaderData.h"
+#include "resources/ShaderResource.h"
 #include "renderer/Shader.h"
 #include "stream/ResourceLoader.h"
 
@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ShaderManager : public utils::TSingleton<ShaderManager>, public stream::TResourceLoader<const resources::ShaderData*>
+    class ShaderManager : public utils::TSingleton<ShaderManager>, public stream::TResourceLoader<const resources::ShaderResource*>
     {
     private:
 
@@ -22,8 +22,8 @@ namespace scene
 
     public:
 
-        void                                        add(const resources::ShaderData* source);
-        const resources::ShaderData*                load(const std::string& name, const std::string& alias = "") override;
+        void                                        add(const resources::ShaderResource* source);
+        const resources::ShaderResource*            load(const std::string& name, const std::string& alias = "") override;
 
         void                                        add(renderer::ShaderPtr shader);
         const renderer::ShaderWPtr                  get(renderer::ShaderPtr shader) const;

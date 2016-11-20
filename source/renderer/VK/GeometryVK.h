@@ -4,7 +4,7 @@
 
 #ifdef _VULKAN_RENDER_
 #include "vulkan/vulkan.h"
-#include "renderer/DataTypes.h"
+#include "renderer/ShaderDataTypes.h"
 #include "renderer/RenderTechnique.h"
 
 namespace v3d

@@ -15,33 +15,38 @@ using namespace decoders;
 
 ShaderManager::ShaderManager()
 {
-    TResourceLoader::registerPath("../../../../data/shaders/");
-    TResourceLoader::registerPath("../../../../../data/shaders/");
-    TResourceLoader::registerPath("data/shaders/");
+    TResourceLoader::registerPath("../../../../data/");
+    TResourceLoader::registerPath("../../../../../data/");
+    TResourceLoader::registerPath("data/");
 
+#ifdef USE_SPIRV
     std::initializer_list<std::string> extSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
     TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extSrc, ShaderSpirVDecoder::ESpirVResource::eSpirVSource, true));
 
     std::initializer_list<std::string> extBin = { ".spv" };
     TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extBin, ShaderSpirVDecoder::ESpirVResource::eSpirVBitecode, true));
+#else //USE_SPIRV
+    std::initializer_list<std::string> extSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
+    TResourceLoader::registerDecoder(std::make_shared<ShaderSourceDecoder>(extSrc);
+#endif //USE_SPIRV
 }
 
 ShaderManager::~ShaderManager()
 {
 }
 
-void ShaderManager::add(const ShaderData* shader)
+void ShaderManager::add(const ShaderResource* shader)
 {
     std::string name = shader->getName();
     TResourceLoader::insert(shader, name);
 }
 
-const ShaderData* ShaderManager::load(const std::string& name, const std::string& alias)
+const ShaderResource* ShaderManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    const ShaderData* findShader = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    const ShaderResource* findShader = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findShader)
     {
         return findShader;
@@ -74,8 +79,7 @@ const ShaderData* ShaderManager::load(const std::string& name, const std::string
                         return nullptr;
                     }
 
-                    ShaderData* shader = static_cast<ShaderData*>(resource);
-                    shader->init(stream);
+                    ShaderResource* shader = static_cast<ShaderResource*>(resource);
                     shader->setResourseName(fullName);
                     const std::string fullPath = fullName.substr(0, fullName.find_last_of("/") + 1);
                     shader->setResourseFolder(fullPath);

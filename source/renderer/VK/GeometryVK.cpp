@@ -254,28 +254,28 @@ void GeometryVK::updatePipelineVertexInputStateCreateInfo(const ShaderDataList& 
                 if (size > 0)
                 {
                     memcpy(tempData + offset, attr.second->getUserData(), size);
-                    auto formatFunc = [](EDataType type) -> VkFormat
+                    auto formatFunc = [](ShaderDataType::EShaderDataType type) -> VkFormat
                     {
                         switch (type)
                         {
-                        case EDataType::eTypeInt:
+                        case ShaderDataType::eInt:
                             return VK_FORMAT_R32_SINT;
 
-                        case EDataType::eTypeFloat:
+                        case ShaderDataType::eFloat:
                             return VK_FORMAT_R32_SFLOAT;
 
-                        case EDataType::eTypeVector2:
+                        case ShaderDataType::eVector2f:
                             return VK_FORMAT_R32G32_SFLOAT;
 
-                        case EDataType::eTypeVector3:
+                        case ShaderDataType::eVector3f:
                             return VK_FORMAT_R32G32B32_SFLOAT;
 
-                        case EDataType::eTypeVector4:
+                        case ShaderDataType::eVector4f:
                             return VK_FORMAT_R32G32B32A32_SFLOAT;
 
-                        case EDataType::ETypeDouble:
-                        case EDataType::eTypeMatrix3:
-                        case EDataType::eTypeMatrix4:
+                        case ShaderDataType::eDouble:
+                        case ShaderDataType::eMatrix3f:
+                        case ShaderDataType::eMatrix4f:
                         default:
                             ASSERT(false, "unsupported format");
                             return VK_FORMAT_UNDEFINED;

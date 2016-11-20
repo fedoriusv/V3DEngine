@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "DataTypes.h"
+#include "ShaderDataTypes.h"
 
 namespace tinyxml2
 {
@@ -65,7 +65,7 @@ namespace renderer
 
         const std::string&          getName() const;
 
-        EDataType                   getDataType() const;
+        ShaderDataType::EShaderDataType                   getDataType() const;
         EUniformData                getData()       const;
 
         bool                        parse(const tinyxml2::XMLElement* root);
@@ -78,14 +78,14 @@ namespace renderer
         friend                      ShaderData;
 
         void                        setUniform(const std::string& name, EUniformData data);
-        //void                        setUniform(const std::string& name, EDataType type, ,);
+        //void                        setUniform(const std::string& name, EShaderDataType type, ,);
 
-        bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type);
+        bool                        parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EShaderDataType type);
         void                        parseArrayValue(const std::string& val, f32* array, u32 count);
 
         std::string                 m_name;
 
-        EDataType                   m_type;
+        ShaderDataType::EShaderDataType                   m_type;
         EUniformData                m_data;
 
         s32                         m_set;

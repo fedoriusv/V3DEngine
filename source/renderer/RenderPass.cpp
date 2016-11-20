@@ -5,7 +5,7 @@
 #include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
 #include "GeometryTarget.h"
-#include "resources/ShaderData.h"
+#include "resources/ShaderResource.h"
 
 #include "tinyxml2.h"
 

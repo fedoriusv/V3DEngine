@@ -114,7 +114,7 @@ void ShaderAttribute::SUserData::free()
 ShaderAttribute::ShaderAttribute()
     : m_name("")
 
-    , m_type(eTypeNone)
+    , m_type(ShaderDataType::eUnknown)
     , m_channel(eAttribUser)
 
     , m_location(-1)
@@ -225,7 +225,7 @@ ShaderAttribute::EShaderAttribute ShaderAttribute::getChannel() const
     return m_channel;
 }
 
-EDataType ShaderAttribute::getDataType() const
+ShaderDataType::EShaderDataType ShaderAttribute::getDataType() const
 {
     return m_type;
 }
@@ -279,8 +279,8 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        EDataType attributeType = DataType::getDataTypeByString(varType);
-        if (attributeType == EDataType::eTypeNone)
+        ShaderDataType::EShaderDataType attributeType = ShaderDataType::getDataTypeByString(varType);
+        if (attributeType == ShaderDataType::eUnknown)
         {
             LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
             return false;
@@ -308,32 +308,32 @@ void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute dat
     case EShaderAttribute::eAttribParticalPosition:
     case EShaderAttribute::eAttribParticalColor:
     case EShaderAttribute::eAttribParticalVelocity:
-        m_type = eTypeVector3;
+        m_type = ShaderDataType::eVector3f;
         break;
 
     case EShaderAttribute::eAttribVertexTexture0:
     case EShaderAttribute::eAttribVertexTexture1:
     case EShaderAttribute::eAttribVertexTexture2:
     case EShaderAttribute::eAttribVertexTexture3:
-        m_type = eTypeVector2;
+        m_type = ShaderDataType::eVector2f;
         break;
 
     case EShaderAttribute::eAttribParticalLifeTime:
     case EShaderAttribute::eAttribParticalSize:
-        m_type = eTypeFloat;
+        m_type = ShaderDataType::eFloat;
         break;
 
     case EShaderAttribute::eAttribParticalType:
-        m_type = eTypeInt;
+        m_type = ShaderDataType::eInt;
         break;
 
     default:
-        m_type = eTypeNone;
+        m_type = ShaderDataType::eUnknown;
         break;
     }
 }
 
-void ShaderAttribute::setAttribute(EDataType type, const std::string& name, u32 size, u32 count, const void* data)
+void ShaderAttribute::setAttribute(ShaderDataType::EShaderDataType type, const std::string& name, u32 size, u32 count, const void* data)
 {
     m_name = name;
     m_channel = eAttribUser;

@@ -350,7 +350,7 @@ std::string TextureManager::getFileExtension(const std::string& fullFileName)
 {
     std::string fileExtension = "";
 
-    const size_t pos = fullFileName.find('.');
+    const size_t pos = fullFileName.find_last_of('.');
     if (pos != std::string::npos)
     {
         fileExtension = std::string(fullFileName.begin() + pos, fullFileName.end());

@@ -22,7 +22,7 @@ namespace renderer
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum ETextureTarget
+    enum ETextureTarget : s16
     {
         eTextureNull = -1,
 
@@ -35,6 +35,7 @@ namespace renderer
         eTexture3D,
         eTexture3DMSAA,
         eTextureCubeMap,
+        eTextureCubeMapArray,
         eTextureBuffer,
 
         eTargetCount

@@ -1,7 +1,7 @@
 #include "Shader.h"
 #include "utils/Logger.h"
 #include "scene/ShaderManager.h"
-#include "resources/ShaderData.h"
+#include "resources/ShaderResource.h"
 #include "Engine.h"
 
 #include "tinyxml2.h"

@@ -70,7 +70,7 @@ ShaderUniform::EUniformData ShaderUniform::getValueByUniformName(const std::stri
 
 ShaderUniform::ShaderUniform(ConstantBuffer* buffer)
     : m_name("")
-    , m_type(EDataType::eTypeNone)
+    , m_type(ShaderDataType::eUnknown)
     , m_data(EUniformData::eUserUniform)
 
     , m_set(-1)
@@ -79,7 +79,7 @@ ShaderUniform::ShaderUniform(ConstantBuffer* buffer)
 }
 
 ShaderUniform::ShaderUniform(const ShaderUniform& uniform)
-    : m_type(EDataType::eTypeNone)
+    : m_type(ShaderDataType::eUnknown)
     , m_name("")
     , m_data(EUniformData::eUserUniform)
 {
@@ -118,7 +118,7 @@ ShaderUniform::~ShaderUniform()
 {
 }
 
-//void ShaderUniform::setUniform(EDataType type, const std::string& name)
+//void ShaderUniform::setUniform(EShaderDataType type, const std::string& name)
 //{
 //    m_type  = type;
 //    m_name = name;
@@ -135,7 +135,7 @@ void ShaderUniform::setUniform(const std::string& name, EUniformData data)
     case ShaderUniform::eTransformModelMatrix:
     case ShaderUniform::eTransformViewMatrix:
     case ShaderUniform::eTransformNormalMatrix:
-        m_type = eTypeMatrix4;
+        m_type = ShaderDataType::eMatrix4f;
         break;
 
     case ShaderUniform::eTransformViewPosition:
@@ -144,7 +144,7 @@ void ShaderUniform::setUniform(const std::string& name, EUniformData data)
     case ShaderUniform::eLightDirection:
     case ShaderUniform::eLightAttenuation:
 
-        m_type = eTypeVector3;
+        m_type = ShaderDataType::eVector3f;
         break;
 
     case ShaderUniform::eMaterialAmbient:
@@ -154,27 +154,27 @@ void ShaderUniform::setUniform(const std::string& name, EUniformData data)
     case ShaderUniform::eLightAmbient:
     case ShaderUniform::eLightDiffuse:
     case ShaderUniform::eLightSpecular:
-        m_type = eTypeVector4;
+        m_type = ShaderDataType::eVector4f;
         break;
 
     case ShaderUniform::eMaterialShininess:
     case ShaderUniform::eMaterialTransparency:
     case ShaderUniform::eLightRadius:
-        m_type = eTypeFloat;
+        m_type = ShaderDataType::eFloat;
         break;
 
     case ShaderUniform::eLightsCount:
     case ShaderUniform::eCurrentTime:
-        m_type = eTypeInt;
+        m_type = ShaderDataType::eInt;
         break;
 
     default:
-        m_type = eTypeNone;
+        m_type = ShaderDataType::eUnknown;
         break;
     }
 }
 
-EDataType ShaderUniform::getDataType() const
+ShaderDataType::EShaderDataType ShaderUniform::getDataType() const
 {
     return m_type;
 }
@@ -211,7 +211,7 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
     }
     const std::string varVal = root->Attribute("val");
 
-    EDataType uniformType = EDataType::eTypeNone;
+    ShaderDataType::EShaderDataType uniformType = ShaderDataType::eUnknown;
     EUniformData uniformName = ShaderUniform::getValueByUniformName(varVal);
     bool defaultUniform = (uniformName != EUniformData::eUserUniform);
     if (!defaultUniform)
@@ -223,8 +223,8 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        uniformType = DataType::getDataTypeByString(varType);
-        if (uniformType == EDataType::eTypeNone)
+        uniformType = ShaderDataType::getDataTypeByString(varType);
+        if (uniformType == ShaderDataType::eUnknown)
         {
             LOG_ERROR("RenderPass: Cannot find uniform type in '%s'", varName.c_str());
             return false;
@@ -240,11 +240,11 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
     return true;
 }
 
-bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, EDataType type)
+bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EShaderDataType type)
 {
     switch (type)
     {
-        case EDataType::eTypeInt:
+        case ShaderDataType::eInt:
         {
             const s32 value = root->IntAttribute("val");
             //ShaderUniform::setUniform(type, name, (void*)&value);
@@ -252,7 +252,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeFloat:
+        case ShaderDataType::eFloat:
         {
             const f32 value = root->FloatAttribute("val");
             //ShaderUniform::setUniform(type, name, (void*)&value);
@@ -260,7 +260,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeVector2:
+        case ShaderDataType::eVector2f:
         {
             Vector2D value(0.f, 0.f);
             if (root->Attribute("val"))
@@ -280,7 +280,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeVector3:
+        case ShaderDataType::eVector3f:
         {
             Vector3D value(0.f, 0.f, 0.f);
             if (root->Attribute("val"))
@@ -301,7 +301,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeVector4:
+        case ShaderDataType::eVector4f:
         {
             Vector4D value(0.f, 0.f, 0.f, 0.f);
             if (root->Attribute("val"))
@@ -323,7 +323,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeMatrix3:
+        case ShaderDataType::eMatrix3f:
         {
             Matrix3D value;
             if (root->Attribute("val"))
@@ -343,7 +343,7 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
             return true;
         }
 
-        case EDataType::eTypeMatrix4:
+        case ShaderDataType::eMatrix4f:
         {
             Matrix4D value;
             if (root->Attribute("val"))

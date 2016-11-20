@@ -122,30 +122,30 @@ bool CGeometryTargetGL::create()
                 buff._buffer = new BufferGL(EBufferTarget::eTransformFeedbackBuffer);
             }
 
-            auto componentSize = [](EDataType type) -> u32
+            auto componentSize = [](EShaderDataType type) -> u32
             {
                 switch (type)
                 {
-                case EDataType::eTypeInt:
+                case EShaderDataType::eTypeInt:
                     return sizeof(GLint);
 
-                case EDataType::eTypeFloat:
+                case EShaderDataType::eTypeFloat:
                     return sizeof(GLfloat);
 
-                case EDataType::ETypeDouble:
+                case EShaderDataType::ETypeDouble:
                     return sizeof(GLdouble);
 
-                case EDataType::eTypeVector2:
+                case EShaderDataType::eTypeVector2:
                     return sizeof(GLfloat) * 2;
 
-                case EDataType::eTypeVector3:
+                case EShaderDataType::eTypeVector3:
                     return sizeof(GLfloat) * 3;
 
-                case EDataType::eTypeVector4:
+                case EShaderDataType::eTypeVector4:
                     return sizeof(GLfloat) * 4;
 
-                case EDataType::eTypeMatrix3:
-                case EDataType::eTypeMatrix4:
+                case EShaderDataType::eTypeMatrix3:
+                case EShaderDataType::eTypeMatrix4:
                 default:
                     return 0;
                 }

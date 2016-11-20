@@ -12,7 +12,7 @@ namespace renderer
 
 CGeometryTarget::SBufferData::SBufferData()
     : _name("")
-    , _type(EDataType::eTypeNone)
+    , _type(ShaderDataType::eUnknown)
     , _size(0U)
     , _buffer(nullptr)
 
@@ -93,7 +93,7 @@ const CGeometryTarget::SBufferData* CGeometryTarget::getBuffer(const std::string
     return nullptr;
 }
 
-void CGeometryTarget::addBuffer(const std::string& name, EDataType type, u32 amount)
+void CGeometryTarget::addBuffer(const std::string& name, ShaderDataType::EShaderDataType type, u32 amount)
 {
     auto findPred = [name](const SBufferData& item) -> bool
     {
@@ -169,8 +169,8 @@ bool CGeometryTarget::parse(const tinyxml2::XMLElement* root)
             LOG_ERROR("CGeometryTarget: Attribute '%s' have not type", name.c_str());
             return false;
         }
-        EDataType type = DataType::getDataTypeByString(varElement->Attribute("type"));
-        if (type == EDataType::eTypeNone)
+        ShaderDataType::EShaderDataType type = ShaderDataType::getDataTypeByString(varElement->Attribute("type"));
+        if (type == ShaderDataType::eUnknown)
         {
             LOG_ERROR("CGeometryTarget: Attribute '%s' have invalid type", name.c_str());
             return false;

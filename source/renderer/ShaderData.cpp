@@ -152,13 +152,13 @@ void ShaderData::setUniform(const std::string& name, const s32 value)
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeInt, name, (void*)(&value));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeInt, name, (void*)(&value));
     }
     else
     {
        /* ShaderUniform* uniform = new ShaderUniform();
 
-        uniform->setUniform(EDataType::eTypeInt, name, (void*)(&value));
+        uniform->setUniform(EShaderDataType::eTypeInt, name, (void*)(&value));
         m_uniformList[name] = uniform;*/
     }
 }
@@ -167,13 +167,13 @@ void ShaderData::setUniform(const std::string& name, const f32 value)
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeFloat, name, (void*)(&value));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeFloat, name, (void*)(&value));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeFloat, name, (void*)(&value));
+        ////uniform->setUniform(EShaderDataType::eTypeFloat, name, (void*)(&value));
         //m_uniformList[name] = uniform;
     }
 }
@@ -182,13 +182,13 @@ void ShaderData::setUniform(const std::string& name, const core::Vector2D& vecto
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeVector2, name, (void*)(&vector));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeVector2, name, (void*)(&vector));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeVector2, name, (void*)(&vector));
+        ////uniform->setUniform(EShaderDataType::eTypeVector2, name, (void*)(&vector));
         //m_uniformList[name] = uniform;
     }
 }
@@ -197,13 +197,13 @@ void ShaderData::setUniform(const std::string& name, const core::Vector3D& vecto
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeVector3, name, (void*)(&vector));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeVector3, name, (void*)(&vector));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeVector3, name, (void*)(&vector));
+        ////uniform->setUniform(EShaderDataType::eTypeVector3, name, (void*)(&vector));
         //m_uniformList[name] = uniform;
     }
 }
@@ -212,13 +212,13 @@ void ShaderData::setUniform(const std::string& name, const core::Vector4D& vecto
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeVector4, name, (void*)(&vector));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeVector4, name, (void*)(&vector));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeVector4, name, (void*)(&vector));
+        ////uniform->setUniform(EShaderDataType::eTypeVector4, name, (void*)(&vector));
         //m_uniformList[name] = uniform;
     }
 }
@@ -227,13 +227,13 @@ void ShaderData::setUniform(const std::string& name, const core::Matrix3D& matri
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeMatrix3, name, (void*)(&matrix));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeMatrix3, name, (void*)(&matrix));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeMatrix3, name, (void*)(&matrix));
+        ////uniform->setUniform(EShaderDataType::eTypeMatrix3, name, (void*)(&matrix));
         //m_uniformList[name] = uniform;
     }
 }
@@ -242,13 +242,13 @@ void ShaderData::setUniform(const std::string& name, const core::Matrix4D& matri
 {
     if (isExistUniform(name))
     {
-        //m_uniformList[name]->setUniform(EDataType::eTypeMatrix4, name, (void*)(&matrix));
+        //m_uniformList[name]->setUniform(EShaderDataType::eTypeMatrix4, name, (void*)(&matrix));
     }
     else
     {
         //ShaderUniform* uniform = new ShaderUniform();
 
-        ////uniform->setUniform(EDataType::eTypeMatrix4, name, (void*)(&matrix));
+        ////uniform->setUniform(EShaderDataType::eTypeMatrix4, name, (void*)(&matrix));
         //m_uniformList[name] = uniform;
     }
 }
@@ -259,13 +259,13 @@ void ShaderData::setAttribute(const std::string& name, const std::vector<s32>& d
 
     if (isExistAttribute(name))
     {
-        m_attributeList[name]->setAttribute(EDataType::eTypeInt, name, sizeof(s32), (u32)data.size(), data.data());
+        //m_attributeList[name]->setAttribute(EShaderDataType::eTypeInt, name, sizeof(s32), (u32)data.size(), data.data());
     }
     else
     {
         ShaderAttribute* attribute = new ShaderAttribute();
 
-        attribute->setAttribute(EDataType::eTypeInt, name, sizeof(s32), (u32)data.size(), data.data());
+        //attribute->setAttribute(EShaderDataType::eTypeInt, name, sizeof(s32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -274,13 +274,13 @@ void ShaderData::setAttribute(const std::string& name, const std::vector<f32>& d
 {
     if (isExistAttribute(name))
     {
-        //m_attributeList[name]->setAttribute(EDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
+        //m_attributeList[name]->setAttribute(EShaderDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
     }
     else
     {
         ShaderAttribute* attribute = new ShaderAttribute();
 
-        //attribute->setAttribute(EDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
+        //attribute->setAttribute(EShaderDataType::eTypeFloat, name, divisor, sizeof(f32), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -289,13 +289,13 @@ void ShaderData::setAttribute(const std::string& name, const std::vector<core::V
 {
     if (isExistAttribute(name))
     {
-        //m_attributeList[name]->setAttribute(EDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
+        //m_attributeList[name]->setAttribute(EShaderDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
     }
     else
     {
         ShaderAttribute* attribute = new ShaderAttribute();
 
-        //attribute->setAttribute(EDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
+        //attribute->setAttribute(EShaderDataType::eTypeVector2, name, divisor, sizeof(core::Vector2D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -304,13 +304,13 @@ void ShaderData::setAttribute(const std::string& name, const std::vector<core::V
 {
     if (isExistAttribute(name))
     {
-        //m_attributeList[name]->setAttribute(EDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
+        //m_attributeList[name]->setAttribute(EShaderDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
     }
     else
     {
         ShaderAttribute* attribute = new ShaderAttribute();
 
-        //attribute->setAttribute(EDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
+        //attribute->setAttribute(EShaderDataType::eTypeVector3, name, divisor, sizeof(core::Vector3D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }
@@ -319,13 +319,13 @@ void ShaderData::setAttribute(const std::string& name, const std::vector<core::V
 {
     if (isExistAttribute(name))
     {
-        //m_attributeList[name]->setAttribute(EDataType::eTypeVector4, name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
+        //m_attributeList[name]->setAttribute(EShaderDataType::eTypeVector4, name, divisor, sizeof(core::Vector4D), (u32)data.size(), data.data());
     }
     else
     {
         ShaderAttribute* attribute = new ShaderAttribute();
 
-        attribute->setAttribute(EDataType::eTypeVector4, name, sizeof(core::Vector4D), (u32)data.size(), data.data());
+        //attribute->setAttribute(ShaderDataType::EShaderDataType::eTypeVector4, name, sizeof(core::Vector4D), (u32)data.size(), data.data());
         m_attributeList[name] = attribute;
     }
 }

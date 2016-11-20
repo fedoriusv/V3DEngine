@@ -9,7 +9,7 @@ namespace stream
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Base Interface for Resource class.
+    * Base Interface for Resource class
     */
     class IResource
     {

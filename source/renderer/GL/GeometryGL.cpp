@@ -288,7 +288,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
                     m_vertexBuffer->update(offset, size, m_data._vertices.data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
                     ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexPosition Error");
@@ -299,7 +299,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
                     m_vertexBuffer->update(offset, size, m_data._normals.data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
                     ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexNormal Error");
@@ -310,7 +310,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
                     m_vertexBuffer->update(offset, size, m_data._colors.data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
                     ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexColor Error");
@@ -321,7 +321,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
                     m_vertexBuffer->update(offset, size, m_data._binormals.data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
                     ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexBinormal Error");
@@ -332,7 +332,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 3;
                     m_vertexBuffer->update(offset, size, m_data._tangents.data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector3, 3, sizeof(GLfloat) * 3, offset);
                     offset += size;
 
                     ENGINE_RENDERER->checkForErrors("GeometryGL: init eAttribVertexTangent Error");
@@ -346,7 +346,7 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                 {
                     size = sizeof(GLfloat)* m_data.verticesSize() * 2;
                     m_vertexBuffer->update(offset, size, m_data._texCoords.at(layer).data());
-                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EDataType::eTypeVector2, 2, sizeof(GLfloat) * 2, offset);
+                    CGeometryGL::initVertexAttribPointer(attr.second->getID(), EShaderDataType::eTypeVector2, 2, sizeof(GLfloat) * 2, offset);
                     offset += size;
                     ++layer;
 
@@ -372,33 +372,33 @@ void CGeometryGL::initBufferData(const ShaderDataList& shaderDataList)
                     {
                         m_vertexBuffer->update(offset, size, attr.second->getUserData());
 
-                       auto componentsCount = [](EDataType type) -> u32
+                       auto componentsCount = [](EShaderDataType type) -> u32
                         {
                             switch (type)
                             {
-                            case EDataType::eTypeInt:
-                            case EDataType::eTypeFloat:
-                            case EDataType::ETypeDouble:
+                            case EShaderDataType::eTypeInt:
+                            case EShaderDataType::eTypeFloat:
+                            case EShaderDataType::ETypeDouble:
                                 return 1;
 
-                            case EDataType::eTypeVector2:
+                            case EShaderDataType::eTypeVector2:
                                 return 2;
 
-                            case EDataType::eTypeVector3:
+                            case EShaderDataType::eTypeVector3:
                                 return 3;
 
-                            case EDataType::eTypeVector4:
+                            case EShaderDataType::eTypeVector4:
                                 return 4;
 
-                            case EDataType::eTypeMatrix3:
-                            case EDataType::eTypeMatrix4:
+                            case EShaderDataType::eTypeMatrix3:
+                            case EShaderDataType::eTypeMatrix4:
                             default:
                                 return 0;
                             }
                         };
 
                         s32 userLayer = attr.second->getID();
-                        EDataType type = attr.second->getType();
+                        EShaderDataType type = attr.second->getType();
                         CGeometryGL::initVertexAttribPointer(userLayer, type, componentsCount(type), attr.second->getUserDataSize(), offset);
                         offset += size;
 
@@ -486,24 +486,24 @@ void CGeometryGL::deleteVertexArray(u32& buffer)
     }
 }
 
-void CGeometryGL::initVertexAttribPointer(s32 attrib, EDataType type, u32 count, u32 size, u32 offset)
+void CGeometryGL::initVertexAttribPointer(s32 attrib, EShaderDataType type, u32 count, u32 size, u32 offset)
 {
-    auto format = [](EDataType type) -> u32
+    auto format = [](EShaderDataType type) -> u32
     {
         switch (type)
         {
-        case EDataType::eTypeInt:
+        case EShaderDataType::eTypeInt:
             return GL_INT;
 
-        case EDataType::eTypeFloat:
-        case EDataType::eTypeVector2:
-        case EDataType::eTypeVector3:
-        case EDataType::eTypeVector4:
-        case EDataType::eTypeMatrix3:
-        case EDataType::eTypeMatrix4:
+        case EShaderDataType::eTypeFloat:
+        case EShaderDataType::eTypeVector2:
+        case EShaderDataType::eTypeVector3:
+        case EShaderDataType::eTypeVector4:
+        case EShaderDataType::eTypeMatrix3:
+        case EShaderDataType::eTypeMatrix4:
             return GL_FLOAT;
 
-        case EDataType::ETypeDouble:
+        case EShaderDataType::ETypeDouble:
             return GL_DOUBLE;
 
         default:

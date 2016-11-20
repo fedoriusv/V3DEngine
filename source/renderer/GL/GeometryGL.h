@@ -46,7 +46,7 @@ namespace gl
         static void         bindVertexArray(u32 buffer);
         static void         deleteVertexArray(u32& buffer);
 
-        static void         initVertexAttribPointer(s32 attrib, EDataType type, u32 count, u32 size = 0, u32 offset = 0);
+        static void         initVertexAttribPointer(s32 attrib, EShaderDataType type, u32 count, u32 size = 0, u32 offset = 0);
         static void         vertexAttribArray(s32 attrib, bool enable);
         static void         vertexAttribDivisior(s32 attrib, u32 value);
 

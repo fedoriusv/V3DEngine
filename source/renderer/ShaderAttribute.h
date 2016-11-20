@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "DataTypes.h"
+#include "ShaderDataTypes.h"
 
 namespace tinyxml2
 {
@@ -61,7 +61,7 @@ namespace renderer
 
 
         EShaderAttribute                getChannel() const;
-        EDataType                       getDataType() const;
+        ShaderDataType::EShaderDataType                       getDataType() const;
 
         u32                             getLocation() const;
 
@@ -79,12 +79,12 @@ namespace renderer
         friend                          ShaderData;
 
         void                            setAttribute(const std::string& name, EShaderAttribute data);
-        void                            setAttribute(EDataType type, const std::string& name, u32 size, u32 count, const void* data);
+        void                            setAttribute(ShaderDataType::EShaderDataType type, const std::string& name, u32 size, u32 count, const void* data);
 
 
         std::string                     m_name;
 
-        EDataType                       m_type;
+        ShaderDataType::EShaderDataType                       m_type;
         EShaderAttribute                m_channel;
 
         s32                             m_location;

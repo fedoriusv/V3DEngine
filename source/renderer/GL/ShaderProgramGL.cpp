@@ -425,55 +425,55 @@ bool CShaderProgramGL::applyUniform(CShaderUniform* uniform)
         void* value = uniform->getValue();
         switch (uniform->getType())
         {
-            case EDataType::eTypeNone:
+            case EShaderDataType::eTypeNone:
             {
                 location = -1;
             }
                 break;
 
-            case EDataType::eTypeInt:
+            case EShaderDataType::eTypeInt:
             {
                 GLint& val = *(GLint*)value;
                 CShaderProgramGL::applyUniformInt(location, val);
             }
                 break;
 
-            case EDataType::eTypeFloat:
+            case EShaderDataType::eTypeFloat:
             {
                 GLfloat& val = *(GLfloat*)value;
                 CShaderProgramGL::applyUniformFloat(location, val);
             }
                 break;
 
-            case EDataType::eTypeVector2:
+            case EShaderDataType::eTypeVector2:
             {
                 Vector2D& val = *(Vector2D*)value;
                 CShaderProgramGL::applyUniformVector2(location, val);
             }
                 break;
 
-            case EDataType::eTypeVector3:
+            case EShaderDataType::eTypeVector3:
             {
                 Vector3D& val = *(Vector3D*)value;
                 CShaderProgramGL::applyUniformVector3(location, val);
             }
                 break;
 
-            case EDataType::eTypeVector4:
+            case EShaderDataType::eTypeVector4:
             {
                 Vector4D& val = *(Vector4D*)value;
                 CShaderProgramGL::applyUniformVector4(location, val);
             }
                 break;
 
-            case EDataType::eTypeMatrix3:
+            case EShaderDataType::eTypeMatrix3:
             {
                 Matrix3D& val = *(Matrix3D*)value;
                 CShaderProgramGL::applyUniformMatrix3(location, val);
             }
                 break;
 
-            case EDataType::eTypeMatrix4:
+            case EShaderDataType::eTypeMatrix4:
             {
                 Matrix4D& val = *(Matrix4D*)value;
                 CShaderProgramGL::applyUniformMatrix4(location, val);
