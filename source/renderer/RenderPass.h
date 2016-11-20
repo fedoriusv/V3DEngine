@@ -40,8 +40,6 @@ namespace renderer
     public:
 
         RenderPass();
-        RenderPass(const RenderPass& pass) = delete;
-        RenderPass&             operator=(const RenderPass& pass) = delete;
         ~RenderPass();
 
         const ShaderProgramPtr  getShaderProgram() const;
@@ -76,6 +74,9 @@ namespace renderer
         RenderPassPtr           clone() const override;
 
     private:
+
+        RenderPass(const RenderPass& pass);
+        RenderPass&             operator=(const RenderPass& pass);
 
         friend                  CRenderer;
         friend                  CRenderTechnique;

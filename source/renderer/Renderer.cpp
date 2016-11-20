@@ -279,7 +279,7 @@ void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPas
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const ShaderUniform::EUniformData type = uniform.second->getData();
+        const ShaderUniform::EUniformData type = uniform.second->getKindData();
         s32 id = 0;// uniform.second->getID();
         switch (type)
         {
@@ -361,7 +361,7 @@ void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr&
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const ShaderUniform::EUniformData type = uniform.second->getData();
+        const ShaderUniform::EUniformData type = uniform.second->getKindData();
         s32 id = 0;// uniform.second->getID();
         switch (type)
         {
@@ -442,7 +442,7 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         const UniformList& list = data->getUniformList();
         for (auto& uniform : list)
         {
-            const ShaderUniform::EUniformData type = uniform.second->getData();
+            const ShaderUniform::EUniformData type = uniform.second->getKindData();
             s32 id = 0;// uniform.second->getID();
             switch (type)
             {
@@ -572,7 +572,7 @@ void IRenderer::updateAdvanced(const RenderPassPtr & pass)
     const UniformList& list = data->getUniformList();
     for (auto& uniform : list)
     {
-        const ShaderUniform::EUniformData type = uniform.second->getData();
+        const ShaderUniform::EUniformData type = uniform.second->getKindData();
         s32 id = 0;// uniform.second->getID();
         switch (type)
         {

@@ -8,7 +8,7 @@ namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ShaderSpirVDecoder : public ResourceDecoder
+    class ShaderSpirVDecoder final : public ResourceDecoder
     {
     public:
 
@@ -21,7 +21,7 @@ namespace decoders
         ShaderSpirVDecoder(ESpirVResource resource, bool reflections);
         explicit ShaderSpirVDecoder(std::initializer_list<std::string> supportedExtensions, ESpirVResource resource, bool reflections);
 
-        virtual                 ~ShaderSpirVDecoder();
+        ~ShaderSpirVDecoder();
 
         stream::IResource*      decode(const stream::IStreamPtr stream) override;
 

@@ -49,7 +49,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Buffer resource.
+    * Buffer interface
     * Client thread. Provide transfer data to render thread
     */
     class Buffer : public utils::CRefCounted //, public utils::TCloneable<BufferPtr>

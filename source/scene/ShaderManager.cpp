@@ -92,6 +92,7 @@ const ShaderResource* ShaderManager::load(const std::string& name, const std::st
                         return nullptr;
                     }
                     stream->close();
+                    //Shader* gpushader = new Shader(shader);
 
                     TResourceLoader::insert(shader, alias.empty() ? nameStr : alias);
                     LOG_INFO("ShaderManager: File [%s] success loaded", fullName.c_str());

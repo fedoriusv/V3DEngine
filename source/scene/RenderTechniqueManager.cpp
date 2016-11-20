@@ -2,29 +2,32 @@
 #include "utils/Logger.h"
 #include "stream/StreamManager.h"
 
-using namespace v3d;
-using namespace scene;
+namespace v3d
+{
+namespace scene
+{
+
 using namespace stream;
 using namespace renderer;
 
-CRenderTechniqueManager::CRenderTechniqueManager()
+RenderTechniqueManager::RenderTechniqueManager()
 {
     TResourceLoader::registerPath("../../../../data/");
     TResourceLoader::registerPath("../../../../../data/");
     TResourceLoader::registerPath("data/");
 }
 
-CRenderTechniqueManager::~CRenderTechniqueManager()
+RenderTechniqueManager::~RenderTechniqueManager()
 {
 }
 
-void CRenderTechniqueManager::add(const renderer::CRenderTechnique* technique)
+void RenderTechniqueManager::add(const renderer::CRenderTechnique* technique)
 {
     std::string name = technique->getResourseName();
     TResourceLoader::insert(technique, name);
 }
 
-const CRenderTechnique* CRenderTechniqueManager::load(const std::string& name, const std::string& alias)
+const CRenderTechnique* RenderTechniqueManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
@@ -84,3 +87,6 @@ const CRenderTechnique* CRenderTechniqueManager::load(const std::string& name, c
 
     return nullptr;
 }
+
+} //namespace scene
+} //namespace v3d

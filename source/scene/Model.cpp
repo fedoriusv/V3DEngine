@@ -189,7 +189,7 @@ bool CModel::load()
 
 bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
 {
-    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    const CRenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
     if (!technique)
     {
         LOG_ERROR("CModel: Error read file [%s]", file.c_str());

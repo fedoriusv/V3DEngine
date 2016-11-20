@@ -1,5 +1,4 @@
-#ifndef _V3D_RENDER_TECHNIQUE_MANAGER_H_
-#define _V3D_RENDER_TECHNIQUE_MANAGER_H_
+#pragma once
 
 #include "renderer/RenderTechnique.h"
 #include "stream/ResourceLoader.h"
@@ -11,14 +10,14 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechniqueManager : public utils::TSingleton<CRenderTechniqueManager>, public stream::TResourceLoader<const renderer::CRenderTechnique*>
+    class RenderTechniqueManager : public utils::TSingleton<RenderTechniqueManager>, public stream::TResourceLoader<const renderer::CRenderTechnique*>
     {
     private:
 
-        friend utils::TSingleton<CRenderTechniqueManager>;
+        friend utils::TSingleton<RenderTechniqueManager>;
 
-        CRenderTechniqueManager();
-        virtual                             ~CRenderTechniqueManager();
+        RenderTechniqueManager();
+        ~RenderTechniqueManager();
 
     public:
 
@@ -27,7 +26,6 @@ namespace scene
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-}
 
-#endif //_V3D_RENDER_TECHNIQUE_MANAGER_H_
+} //namespace scene
+} //namespace v3d

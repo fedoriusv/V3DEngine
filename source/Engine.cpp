@@ -43,7 +43,7 @@ Engine::~Engine()
 
     m_inputEventHandler->setEnableEvents(false);
 
-    CRenderTechniqueManager::freeInstance();
+    RenderTechniqueManager::freeInstance();
     TextureManager::freeInstance();
     CFontManager::freeInstance();
     CModelManager::freeInstance();

@@ -89,7 +89,8 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Texture resource.
+    * Texture interface
+    * Client side. Provide transfer data to render thread
     */
     class Texture : public utils::CRefCounted, public utils::TCloneable<TexturePtr>
     {

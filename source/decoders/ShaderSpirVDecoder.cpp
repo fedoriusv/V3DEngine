@@ -185,7 +185,8 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
                     return "unknown";
                 }
             };
-            if (!status)
+
+            if (status != shaderc_compilation_status_success)
             {
                 LOG_ERROR("ShaderSpirVDecoder::decode: Shader [%s]%s, compile error %s", stringType.c_str(), file.c_str(), getCompileError(status).c_str());
             }

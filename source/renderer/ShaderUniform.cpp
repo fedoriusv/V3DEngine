@@ -179,7 +179,7 @@ ShaderDataType::EShaderDataType ShaderUniform::getDataType() const
     return m_type;
 }
 
-ShaderUniform::EUniformData ShaderUniform::getData() const
+ShaderUniform::EUniformData ShaderUniform::getKindData() const
 {
     return m_data;
 }

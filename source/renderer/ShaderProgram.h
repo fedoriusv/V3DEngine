@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "ShaderData.h"
 #include "utils/Cloneable.h"
+#include "utils/RefCounted.h"
 
 namespace v3d
 {
@@ -14,16 +15,15 @@ namespace renderer
     class IRenderer;
     class ShaderProgram;
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
+    using ShaderProgramPtr = utils::TIntrusivePtr<Texture>;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-    * Shader Program Interface.
+    * Shader Program Interface
+    * Client side. Provide transfer data to render thread
     */
-    class ShaderProgram : public utils::TCloneable<ShaderProgramPtr>
+    class ShaderProgram : public utils::CRefCounted, public utils::TCloneable<ShaderProgramPtr>
     {
     public:
 
@@ -46,7 +46,11 @@ namespace renderer
         bool                                setUndefine(const std::string& name);
 
         bool                                applyUniform(ShaderUniform* uniform);
-        void                                applyUniformInt(s32 location, s32 value);
+
+        template<typename T>
+        void                                applyUniform(const std::string& name, T& value);
+
+
         void                                applyUniformFloat(s32 location, f32 value);
         void                                applyUniformVector2(s32 location, const core::Vector2D& vector);
         void                                applyUniformVector3(s32 location, const core::Vector3D& vector);
@@ -84,7 +88,7 @@ namespace renderer
 
         void                                addShaderData(const ShaderDataPtr& data);
         void                                addVaryingsAttibutes(const std::vector<const c8*>& list);
-        void                                addDefines(const ShaderDefinesList& list = {});
+        void                                setMacroDefinition(const ShaderDefinesList& list);
 
         bool                                updateShaderList();
 
@@ -99,6 +103,17 @@ namespace renderer
         ShaderDefinesList                   m_defines;
         std::vector<const c8*>              m_varyingsList; //?
 };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    template <typename T>
+    inline void ShaderProgram::applyUniform(const std::string& name, T& value)
+    {
+        //findUniform;
+        // getBuffer
+        //getoffset, size
+        //set to buffer the data
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

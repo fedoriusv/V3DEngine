@@ -74,7 +74,7 @@ CRenderTechnique* Renderable::getRenderTechique()
 
 bool Renderable::setRenderTechnique(const std::string& file)
 {
-    const CRenderTechnique* technique = scene::CRenderTechniqueManager::getInstance()->load(file);
+    const CRenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
     if (!technique)
     {
         LOG_ERROR("CMaterial: Error read file [%s]", file.c_str());
@@ -96,7 +96,7 @@ bool Renderable::setRenderTechnique(const stream::IStreamPtr& stream)
         return false;
     }
 
-    scene::CRenderTechniqueManager::getInstance()->add(technique);
+    scene::RenderTechniqueManager::getInstance()->add(technique);
     m_renderTechnique = technique;
 
     return true;

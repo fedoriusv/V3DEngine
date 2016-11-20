@@ -52,7 +52,7 @@ CRenderTechnique& CRenderTechnique::operator=(const CRenderTechnique& technique)
     std::string generatedName = technique.m_name + k_diff;
     while (finding)
     {
-        if (!CRenderTechniqueManager::getInstance()->get(generatedName + std::to_string(index)))
+        if (!RenderTechniqueManager::getInstance()->get(generatedName + std::to_string(index)))
         {
             finding = false;
         }
@@ -250,7 +250,7 @@ bool CRenderTechnique::parse(tinyxml2::XMLElement* root)
     tinyxml2::XMLElement* passElement = root->FirstChildElement("pass");
     if (!passElement)
     {
-        LOG_ERROR("CRenderTechnique: Pass section have't exist");
+        LOG_ERROR("CRenderTechnique: Pass section hasn't exist");
         return false;
     }
 
@@ -323,7 +323,7 @@ CRenderTechnique* CRenderTechnique::clone() const
     CRenderTechnique* technique = new CRenderTechnique();
     technique->operator=(*this);
 
-    CRenderTechniqueManager::getInstance()->add(technique);
+    RenderTechniqueManager::getInstance()->add(technique);
 
     return technique;
 }

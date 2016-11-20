@@ -5,6 +5,7 @@
 #include "scene/TextureManager.h"
 #include  "renderer/Buffer.h"
 #include "scene/ShaderManager.h"
+#include "scene/RenderTechniqueManager.h"
 
 using namespace v3d;
 using namespace core;
@@ -27,16 +28,11 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
+    scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
 
-    scene::ShaderManager::getInstance()->load("shaders/test.vert");
 
-    /*void* data = malloc(64);
-    memset(data, 1, 64);
-    BufferPtr buff = new Buffer(eVertexBuffer, eWriteStatic, 64, data);*/
+    //scene::ShaderManager::getInstance()->load("shaders/test.frag");
 
-    //TexturePtr tt = new Texture(ETextureTarget::eTexture1D, EImageFormat::eRed, EImageType::eUnsignedByte, 0, nullptr, 1);
-    
-    //TexturePtr tex = TextureManager::getInstance()->load("textures/box.jpg");
 }
 
 void MyApplication::run()

@@ -190,7 +190,7 @@ void ShaderProgram::addVaryingsAttibutes(const std::vector<const c8*>& list)
     }
 }
 
-void ShaderProgram::addDefines(const ShaderDefinesList& list)
+void ShaderProgram::setMacroDefinition(const ShaderDefinesList& list)
 {
     m_defines = list;
     m_flags &= ~ShaderProgram::eLinked;

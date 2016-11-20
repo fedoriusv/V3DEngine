@@ -32,73 +32,71 @@ RenderPass::RenderPass()
     m_program = ENGINE_RENDERER->makeSharedProgram();
 }
 
-//RenderPass::RenderPass(const RenderPass& pass)
-//    : m_userShaderData(nullptr)
-//    , m_defaultShaderData(nullptr)
-//    , m_renderState(nullptr)
-//    , m_lods(nullptr)
-//    , m_program(nullptr)
-//
-//    , m_enable(pass.m_enable)
-//    , m_name(pass.m_name)
-//{
-//    RenderPass::init();
-//
-//    m_targetList = pass.m_targetList;
-//
-//    m_lods->operator=(*pass.m_lods);
-//    m_renderState->operator=(*pass.m_renderState);
-//    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-//    m_userShaderData->operator=(*pass.m_userShaderData);
-//
-//    m_program = pass.m_program->clone();
-//    if (!m_program)
-//    {
-//        ASSERT(false, "Copy program is failed");
-//        return;
-//    }
-//
-//   /* m_program->addShaderData(m_defaultShaderData);
-//    m_program->addShaderData(m_userShaderData);*/
-//
-//    if (!m_program->create())
-//    {
-//        ASSERT(false, "CShaderProgramGL::clone fail");
-//    }
-//}
+RenderPass::RenderPass(const RenderPass& pass)
+    : m_userShaderData(nullptr)
+    , m_defaultShaderData(nullptr)
+    , m_renderState(nullptr)
+    , m_lods(nullptr)
+    , m_program(nullptr)
 
-//RenderPass& RenderPass::operator=(const RenderPass& pass)
-//{
-//    if (&pass == this)
-//    {
-//        return *this;
-//    }
-//
-//    m_targetList = pass.m_targetList;
-//
-//    m_lods->operator=(*pass.m_lods);
-//    m_renderState->operator=(*pass.m_renderState);
-//    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-//    m_userShaderData->operator=(*pass.m_userShaderData);
-//
-//    m_program = pass.m_program->clone();
-//    ASSERT(m_program, "Copy program is failed");
-//    if (m_program)
-//    {
-//       /* m_program->addShaderData(m_defaultShaderData);
-//        m_program->addShaderData(m_userShaderData);*/
-//
-//        if (!m_program->create())
-//        {
-//            ASSERT(false, "CShaderProgramGL::clone fail");
-//        }
-//    }
-//
-//    m_enable = pass.m_enable;
-//    m_name = pass.m_name;
-//
-//    return *this;
-//}
+    , m_enable(pass.m_enable)
+    , m_name(pass.m_name)
+{
+    RenderPass::init();
+
+    m_targetList = pass.m_targetList;
+
+    m_lods->operator=(*pass.m_lods);
+    m_renderState->operator=(*pass.m_renderState);
+    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+    m_userShaderData->operator=(*pass.m_userShaderData);
+
+    m_program = pass.m_program->clone();
+    ASSERT(m_program, "RenderPass: Copy program is failed");
+    if (m_program)
+    {
+        m_program->addShaderData(m_defaultShaderData);
+        m_program->addShaderData(m_userShaderData);
+
+        if (!m_program->create())
+        {
+            ASSERT(false, "RenderPass::clone fail");
+        }
+    }
+}
+
+RenderPass& RenderPass::operator=(const RenderPass& pass)
+{
+    if (&pass == this)
+    {
+        return *this;
+    }
+
+    m_targetList = pass.m_targetList;
+
+    m_lods->operator=(*pass.m_lods);
+    m_renderState->operator=(*pass.m_renderState);
+    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
+    m_userShaderData->operator=(*pass.m_userShaderData);
+
+    m_program = pass.m_program->clone();
+    ASSERT(m_program, "Copy program is failed");
+    if (m_program)
+    {
+        m_program->addShaderData(m_defaultShaderData);
+        m_program->addShaderData(m_userShaderData);
+
+        if (!m_program->create())
+        {
+            ASSERT(false, "CShaderProgramGL::clone fail");
+        }
+    }
+
+    m_enable = pass.m_enable;
+    m_name = pass.m_name;
+
+    return *this;
+}
 
 RenderPass::~RenderPass()
 {
@@ -162,6 +160,16 @@ bool RenderPass::parse(const tinyxml2::XMLElement* root)
 
     m_name = passName;
 
+    //shaders
+    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
+    if (shadersElement)
+    {
+        if (!parseShaders(shadersElement))
+        {
+            return false;
+        }
+    }
+
     //uniforms
     const tinyxml2::XMLElement* uniformsElement = root->FirstChildElement("uniforms");
     if (uniformsElement)
@@ -207,16 +215,6 @@ bool RenderPass::parse(const tinyxml2::XMLElement* root)
     if (rendertargetElement)
     {
         if (!parseRenderTarget(rendertargetElement))
-        {
-            return false;
-        }
-    }
-
-    //shaders
-    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
-    if (shadersElement)
-    {
-        if (!parseShaders(shadersElement))
         {
             return false;
         }
@@ -423,31 +421,30 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
             defineElement = defineElement->NextSiblingElement("var");
         }
 
-        /*if (!definesList.empty())
+        if (!definesList.empty())
         {
-            m_program->addDefines(definesList);
-        }*/
+            m_program->setMacroDefinition(definesList);
+        }
     }
 
     const tinyxml2::XMLElement* shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
-        CShaderSource shaderData;
-       /* if (!IShader::parse(shaderElement, shaderData))
+        /*ShaderResource shaderData;
+        if (!IShader::parse(shaderElement, shaderData))
         {
             LOG_ERROR("RenderPass: Shader parse error");
             ASSERT(false, "Shader parse error");
 
             shaderElement = shaderElement->NextSiblingElement("var");
             continue;
-        }*/
 
         if (!definesList.empty())
         {
             shaderData.setDefines(definesList);
-        }
+        }*/
 
-        /*ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
+        ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
         if (shader.expired())
         {
             ShaderPtr newShader = ENGINE_RENDERER->makeSharedShader();
@@ -648,10 +645,8 @@ void RenderPass::unbind(u32 target)
 
 RenderPassPtr RenderPass::clone() const
 {
-    //RenderPassPtr pass = std::make_shared<RenderPass>(*this);
-    //return pass;
-
-    return nullptr;
+    RenderPassPtr pass = std::make_shared<RenderPass>(*this);
+    return pass;
 }
 
 const std::string RenderPass::attachIndexToUniform(const std::string& name, s32 idx)
