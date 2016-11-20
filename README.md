@@ -1,27 +1,26 @@
-V3DEngine
-===============
+##V3DEngine
 
-Next level after GLliba
-Small modified Valera Engine
+TODO:
+...
 
-Render Technique
-
-RenderTechnique structure represent in xml format:
+##Render Technique
+RenderTechnique structure represented in xml format:
 
 technique tag:
-name - name of render technique;
-version - version of file
+- name - name of render technique;
+- version - version of file
 
 Example:
-<technique name="techniqueName" version="100">...</technique>
+"<technique name="techniqueName" version="100">...</technique>"
 
+TODO:
 ...
 
 pass tag:
-name - [required] name of render pass
+ - name - [required] name of render pass
 
 Example:
- <pass name="pass0">...</pass>
+"<pass name="pass0">...</pass>"
  
 included tags:
 <uniforms></uniforms>
