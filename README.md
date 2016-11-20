@@ -1,4 +1,4 @@
-##V3DEngine
+#V3DEngine
 
 TODO:
 ...
@@ -26,7 +26,7 @@ Example:
 <br>
 Contains uniforms, attributes, samplers, render states, render targets and shaders tags.
 
-##Uniforms
+###Uniforms
 List of uniforms which will be used in shader program. Included in Pass tag
 
 var tag:
@@ -47,11 +47,11 @@ Example:<br>
     &lt;var name="finPosition" type="vec3" val="1.0, 1.0, 1.0"/&gt;<br>
 &lt;/uniforms><br>
 
-##Attributes
+###Attributes
 TODO:
 ...
 
-##Samplers
+###Samplers
 TODO:
 ...
 
