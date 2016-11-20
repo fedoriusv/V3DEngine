@@ -17,6 +17,7 @@ Contains render passes, render targets, and textures tags.
 
 ##Render Pass
 Single pass of render. Included in RenderTechnique tag
+
 pass tag:
  - name - [required] name of render pass
 
@@ -34,31 +35,9 @@ var tag:
 Used next fixed types: "int", "uint", "int64_t", "uint64_t", "float", "double", "ivec2", "uvec2", "i64vec2", "u64vec2", "vec2", "dvec2",
  "ivec3", "uvec3", "i64vec3", "u64vec3", "vec3", "dvec3", "ivec4", "uvec4", "i64vec4", "u64vec4", "vec4", "dvec4", "mat3", "dmat3", "mat4", "dmat4",
 	
-val - [required/optional] initial value of uniform. If used user data, then need to specify type of data value  
-Used next fixed values:
-   "transform.projectionMatrix"
-    "transform.modelMatrix"
-    "transform.viewMatrix"
-    "transform.normalMatrix"
-    "transform.viewPosition"
-    "transform.viewUpVector"
-    "material.ambient"
-    "material.diffuse"
-    "material.specular"
-    "material.emission"
-    "material.shininess"
-    "material.transparency"
-    "lights.count"
-    "light.position"
-    "light.ambient"
-    "light.diffuse"
-    "light.specular"
-    "light.direction"
-    "light.attenuation"
-    "light.radius"
-    "currentTime"
-    "viewportSize"
-<br>   
+- val - [required/optional] initial value of uniform. If used user data, then need to specify type of data value.
+Used next fixed values:"transform.projectionMatrix", "transform.modelMatrix", "transform.viewMatrix", "transform.normalMatrix",   "transform.viewPosition", "transform.viewUpVector", "material.ambient", "material.diffuse", "material.specular", "material.emission",  "material.shininess", "material.transparency", "lights.count", "light.position", "light.ambient", "light.diffuse", "light.specular",  "light.direction", "light.attenuation", "light.radius", "currentTime", "viewportSize"
+
 Example:<br>
 &lt;uniforms&gt;<br>
     &lt;var name="projectionMatrix" val="transform.projectionMatrix"/&gt;<br>
