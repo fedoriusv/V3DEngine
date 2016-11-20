@@ -46,4 +46,13 @@ Example:<br>
     &lt;var name="finSize" type="float" val="5.5"/&gt;<br>
     &lt;var name="finPosition" type="vec3" val="1.0, 1.0, 1.0"/&gt;<br>
 &lt;/uniforms><br>
+
+##Attributes
+TODO:
+...
+
+##Samplers
+TODO:
+...
+
 ...
