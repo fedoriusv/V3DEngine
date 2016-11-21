@@ -2,21 +2,12 @@
 
 #include "common.h"
 #include "event/InputEventKeyboard.h"
+#include "renderer/Renderer.h"
 
 namespace v3d
 {
 namespace platform
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum class ERenderType
-    {
-        eRenderNull = -1,
-        eRenderOpenGL,
-        eRenderDirect3D,
-        eRenderVulkan
-    };
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     enum class EPlatformType
@@ -31,12 +22,12 @@ namespace platform
 
     struct WindowParam
     {
-        ERenderType       _renderType;
-        core::Dimension2D _size;
-        core::Point2D     _position;
-        bool              _isFullscreen;
-        bool              _isResizeble;
-        bool              _isVisible;
+        renderer::ERenderType   _renderType;
+        core::Dimension2D       _size;
+        core::Point2D           _position;
+        bool                    _isFullscreen;
+        bool                    _isResizeble;
+        bool                    _isVisible;
 
         WindowParam()
             : _size(core::Dimension2D(1024U, 768U))

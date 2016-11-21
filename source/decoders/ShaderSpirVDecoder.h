@@ -15,7 +15,7 @@ namespace decoders
         enum ESpirVResource
         {
             eSpirVSource,
-            eSpirVBitecode
+            eSpirVBytecode
         };
 
         ShaderSpirVDecoder(ESpirVResource resource, bool reflections);

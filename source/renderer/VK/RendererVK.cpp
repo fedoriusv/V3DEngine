@@ -33,9 +33,9 @@ RendererVK::~RendererVK()
     ASSERT(m_pipelineList.empty(), "m_pipelineList is not empty");
 }
 
-platform::ERenderType RendererVK::getRenderType() const
+ERenderType RendererVK::getRenderType() const
 {
-    return platform::ERenderType::eRenderVulkan;
+    return ERenderType::eRenderVulkan;
 }
 
 void RendererVK::immediateInit()

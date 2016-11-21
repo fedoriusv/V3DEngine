@@ -24,7 +24,7 @@ ShaderManager::ShaderManager()
     TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extSrc, ShaderSpirVDecoder::ESpirVResource::eSpirVSource, true));
 
     std::initializer_list<std::string> extBin = { ".spv" };
-    TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extBin, ShaderSpirVDecoder::ESpirVResource::eSpirVBitecode, true));
+    TResourceLoader::registerDecoder(std::make_shared<ShaderSpirVDecoder>(extBin, ShaderSpirVDecoder::ESpirVResource::eSpirVBytecode, true));
 #else //USE_SPIRV
     std::initializer_list<std::string> extSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
     TResourceLoader::registerDecoder(std::make_shared<ShaderSourceDecoder>(extSrc);

@@ -133,17 +133,17 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
         {
             shaderc::CompileOptions options;
             options.SetOptimizationLevel(shaderc_optimization_level_zero);
-            if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderVulkan)
+            if (ENGINE_RENDERER->getRenderType() == ERenderType::eRenderVulkan)
             {
                 options.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
                 options.SetSourceLanguage(shaderc_source_language_glsl);
             }
-            else if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderOpenGL)
+            else if (ENGINE_RENDERER->getRenderType() == ERenderType::eRenderOpenGL)
             {
                 options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
                 options.SetSourceLanguage(shaderc_source_language_glsl);
             }
-            else if (ENGINE_RENDERER->getRenderType() == platform::ERenderType::eRenderDirect3D)
+            else if (ENGINE_RENDERER->getRenderType() == ERenderType::eRenderDirect3D)
             {
                 options.SetTargetEnvironment(shaderc_target_env_default, 0);
                 options.SetSourceLanguage(shaderc_source_language_hlsl);
@@ -236,7 +236,7 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
             resources::EShaderType innerShaderType = getInnerShaderType(shaderType);
             memory->write<resources::EShaderType>(innerShaderType);
 
-            u16 represent = static_cast<u16>(ShaderResource::eBitecodeSpirV);
+            u16 represent = static_cast<u16>(ShaderResource::eBytecodeSpirV);
             memory->write<u16>(represent);
 
             memory->write<u64>(byteCodeSizeInByte);

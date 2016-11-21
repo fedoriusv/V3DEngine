@@ -29,7 +29,7 @@ namespace renderer
 
     typedef std::shared_ptr<IShader>            ShaderPtr;
     typedef std::weak_ptr<IShader>              ShaderWPtr;
-    typedef std::vector<ShaderWPtr>             ShaderList;
+    typedef std::vector<ShaderPtr>              ShaderList;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

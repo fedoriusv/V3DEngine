@@ -22,6 +22,15 @@ namespace scene
 }
 namespace renderer
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    enum class ERenderType
+    {
+        eRenderNull = -1,
+        eRenderOpenGL,
+        eRenderDirect3D,
+        eRenderVulkan
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +50,7 @@ namespace renderer
 
         bool                            create();
 
-        virtual platform::ERenderType   getRenderType() const = 0;
+        virtual renderer::ERenderType   getRenderType() const = 0;
 
         bool                            isThreaded() const;
 

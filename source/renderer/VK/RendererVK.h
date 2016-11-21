@@ -43,7 +43,7 @@ namespace vk
         explicit RendererVK(const ContextPtr context);
         ~RendererVK();
 
-        platform::ERenderType   getRenderType() const override;
+        ERenderType             getRenderType() const override;
 
         const ContextVKPtr      getVulkanContext() const;
         MemoryManagerVK*        getMemoryManager();

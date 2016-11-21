@@ -1,44 +1,33 @@
 #pragma once
 
-#include "stream/Resource.h"
+#include "common.h"
 #include "renderer/ShaderDataTypes.h"
+#include "renderer/Renderer.h"
+#include "renderer/ShaderSouce.h"
 #include "renderer/Texture.h"
+
+#ifdef USE_SPIRV
 
 namespace v3d
 {
-namespace resources
+namespace utils
 {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum EShaderType : s16
+    class SpirVCompileWrapper
     {
-        eShaderUnknown = -1,
-        eVertex,
-        eFragment,
-        eGeometry,
-        eTessellationControl,
-        eTessellationEvaluation,
-        eCompute,
-
-        eShaderCount
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-    * ShaderResource class
-    */
-    class ShaderResource : public stream::IResource
-    {
-
     public:
 
-        enum EShaderDataRepresent : u16
+        enum ECompileError
         {
-            eBytecode,
-            eBytecodeSpirV,
-            eSourceGLSL,
-            eSourceHLSL
+            eNoErrors = 0,
+            eInvalidShaderType,
+            eInvalidCompiler,
+            eInvalidStage,
+            eCompilationError,
+            eInternalError,
+            eNullResultObject,
+            eInvalidAssembly
         };
 
         struct Reflection
@@ -88,39 +77,25 @@ namespace resources
 
         };
 
-        ShaderResource();
-        ~ShaderResource();
+        SpirVCompileWrapper(renderer::ERenderType vendor, const renderer::ShaderDefinesList& defines);
+        ~SpirVCompileWrapper();
 
-        void                        init(const stream::IStreamPtr& stream) override;
-        bool                        load() override;
+        ECompileError                   compile(const std::string& source, renderer::EShaderType type, std::vector<u32>& bytecode);
+        Reflection                      reflection();
 
-        const std::string&  getName() const;
-        const std::string&  getBody() const;
-
-        static const std::string&   getShaderTypeNameByType(EShaderType type);
-        static EShaderType          getShaderTypeByName(const std::string& name);
+        const std::string&              errorMessages();
 
     private:
 
-        std::string                 m_name;
-
-        Reflection                  m_reflaction;
-
-        union
-        {
-            std::string*            m_source;
-            std::vector<u32>*       m_bytecode;
-        };
-
-        u64                         m_hash;
-
-        EShaderDataRepresent        m_dataRepresent;
-        EShaderType                 m_shaderType;
-
-        static const std::string    s_shaderTypeName[EShaderType::eShaderCount];
+        std::string                     m_errors;
+        std::vector<u32>*               m_spirv;
+        renderer::ShaderDefinesList     m_defines;
+        renderer::ERenderType           m_vendor;
     };
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} //namespace resources
+} //namespace utils
 } //namespace v3d
+
+#endif //USE_SPIRV

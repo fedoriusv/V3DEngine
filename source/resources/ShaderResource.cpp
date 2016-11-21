@@ -43,9 +43,9 @@ EShaderType ShaderResource::getShaderTypeByName(const std::string& name)
 ShaderResource::ShaderResource()
     : m_name("")
     , m_source(nullptr)
-    , m_bitecode(nullptr)
+    , m_bytecode(nullptr)
     , m_hash(0)
-    , m_dataRepresent(EShaderDataRepresent::eBitecode)
+    , m_dataRepresent(EShaderDataRepresent::eBytecode)
     , m_shaderType(EShaderType::eShaderUnknown)
 {
 }
@@ -73,13 +73,13 @@ bool ShaderResource::load()
     stream->read<EShaderType>(m_shaderType);
     stream->read<EShaderDataRepresent>(m_dataRepresent);
 
-    if (m_dataRepresent == EShaderDataRepresent::eBitecode || m_dataRepresent == EShaderDataRepresent::eBitecodeSpirV)
+    if (m_dataRepresent == EShaderDataRepresent::eBytecode || m_dataRepresent == EShaderDataRepresent::eBytecodeSpirV)
     {
         u64 size = 0;
         stream->read<u64>(size);
 
-        m_bitecode = new std::vector<u32>(size);
-        stream->read(m_bitecode->data(), size, 1);
+        m_bytecode = new std::vector<u32>(size);
+        stream->read(m_bytecode->data(), size, 1);
     }
     else
     {

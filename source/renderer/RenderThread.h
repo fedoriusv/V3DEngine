@@ -29,6 +29,11 @@ namespace renderer
         eCommandReadBuffer,
         eCommandDestroyBuffer,
 
+        eCommandCreateProgram,
+        eCommandCompileProgram,
+        eCommandDestroyProgram,
+        eCommandBindProgram,
+
         eCommandDestroy,
 
         eCommandTerminate,

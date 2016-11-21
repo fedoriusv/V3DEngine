@@ -400,6 +400,28 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         break;
     }
 
+    case ERenderCommand::eCommandCompileProgram:
+    {
+        ShaderProgram* program = command.readValue<ShaderProgram*>();
+        const ShaderDefinesList* defines = command.readValue<const ShaderDefinesList*>();
+        const ShaderList* shaders = command.readValue<const ShaderList*>();
+        ShaderProgram::ShaderParameters* const params = command.readValue<ShaderProgram::ShaderParameters* const>();
+        bool* const result = command.readValue<bool* const>();
+
+        *result = program->compile(*defines, *shaders, *params);
+        break;
+    }
+
+    case ERenderCommand::eCommandDestroyProgram:
+    {
+        ShaderProgram* program = command.readValue<ShaderProgram*>();
+
+        program->destroy();
+        delete program;
+
+        break;
+    }
+
     default:
         ASSERT(false, "Buffer command is unknown");
     }

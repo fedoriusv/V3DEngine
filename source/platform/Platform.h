@@ -21,7 +21,7 @@ namespace platform
 
         static renderer::ContextPtr     createContext(
                                             const platform::WindowPtr window,
-                                            ERenderType driverType);
+                                            renderer::ERenderType driverType);
 
         static renderer::RendererPtr    createRenderer(
                                             const renderer::ContextPtr,

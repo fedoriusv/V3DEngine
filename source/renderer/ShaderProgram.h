@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shader.h"
-#include "ShaderData.h"
 #include "utils/Cloneable.h"
 #include "utils/RefCounted.h"
+#include "Shader.h"
+#include "Texture.h"
 
 namespace v3d
 {
@@ -12,8 +12,8 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class RenderPass;
-    class IRenderer;
     class ShaderProgram;
+    class Texture;
 
     using ShaderProgramPtr = utils::TIntrusivePtr<Texture>;
 
@@ -27,92 +27,80 @@ namespace renderer
     {
     public:
 
-        enum EProgramFlags
+        enum EProgramFlags : u16
         {
             eInvalid   = 1 << 1,
             eCreated   = 1 << 2,
-            eLinked    = 1 << 3,
-            eValidated = 1 << 4, 
-            eDeleted   = 1 << 5
+            eCompiled  = 1 << 3,
+/*            eLinked    = 1 << 4,
+            eValidated = 1 << 5,*/ 
+            eDeleted   = 1 << 6
         };
 
-        ShaderProgram();
+        struct ShaderParameters
+        {
+            //TODO:
+        };
+
+        ShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines = {});
         virtual                             ~ShaderProgram();
 
-        bool                                isEnable() const;
-        void                                setEnable(bool enable);
+        ShaderProgram(const ShaderProgram& program) = delete;
+        ShaderProgram& operator=(const ShaderProgram& program) = delete;
 
-        bool                                setDefine(const std::string& name, const std::string& value = "");
-        bool                                setUndefine(const std::string& name);
-
-        bool                                applyUniform(ShaderUniform* uniform);
+        virtual bool                        setDefine(const std::string& name, const std::string& value = "");
+        virtual bool                        setUndefine(const std::string& name);
 
         template<typename T>
-        void                                applyUniform(const std::string& name, T& value);
+        void                                applyUniform(const std::string& name, const T& value);
+        template<typename T>
+        void                                applyAttribute(const std::string& name, const T& data);
+        virtual void                        applyTexture(const std::string& name, const TexturePtr texure);
 
+        virtual void                        attachShader(const ShaderPtr shader);
+        virtual void                        detachShader(const ShaderPtr shader);
 
-        void                                applyUniformFloat(s32 location, f32 value);
-        void                                applyUniformVector2(s32 location, const core::Vector2D& vector);
-        void                                applyUniformVector3(s32 location, const core::Vector3D& vector);
-        void                                applyUniformVector4(s32 location, const core::Vector4D& vector);
-        void                                applyUniformMatrix3(s32 location, const core::Matrix3D& matrix);
-        void                                applyUniformMatrix4(s32 location, const core::Matrix4D& matrix);
+        bool                                compile();
 
-        virtual bool                        create()    = 0;
-        virtual void                        destroy()   = 0;
-        virtual void                        bind()      = 0;
-        virtual void                        unbind()    = 0;
+        virtual u16                         getFlags() const;
+        virtual bool                        isFlagPresent(EProgramFlags flag);
 
-        bool                                create(const std::vector<u8>& vertexBin, const std::vector<u8>& fragmentBin, u32 arg = 0, ...);
-        bool                                create(const std::vector<u8>& computeBin);
-        bool                                create(const std::string& vertex, const std::string& fragment, u32 arg = 0, ...);
-        bool                                create(const std::string& compute);
-
-        u16                                 getFlags() const;
-
-        bool                                isFlagPresent(EProgramFlags flag);
+        virtual ShaderProgramPtr            clone() const override;
 
     protected:
 
-        ShaderProgram(const ShaderProgram& program);
-        ShaderProgram& operator=(const ShaderProgram& program);
+        ShaderProgram();
 
-        void                                setFlag(EProgramFlags flag);
-        void                                addFlag(EProgramFlags flag);
+        virtual void                        applyUniform(const std::string& name, const void* value, u32 size);
+        virtual void                        applyAttribute(const std::string& name, const void* value, u32 size);
 
-        friend                              RenderPass;
-        friend                              IRenderer;
+        virtual const ShaderDefinesList&    getMacroDefinitions() const;
+        virtual const ShaderList&           getShaders() const;
 
-        void                                attachShader(const ShaderWPtr& shader);
-        void                                detachShader(const ShaderWPtr& shader);
+        virtual void                        setMacroDefinitions(const ShaderDefinesList& list);
+        virtual void                        setShaderParams(ShaderParameters& params);
 
-        void                                addShaderData(const ShaderDataPtr& data);
-        void                                addVaryingsAttibutes(const std::vector<const c8*>& list);
-        void                                setMacroDefinition(const ShaderDefinesList& list);
+        friend                              RenderThread;
+        virtual bool                        compile(const ShaderDefinesList& defines, const ShaderList& shaders, ShaderParameters& outParameters);
+        virtual void                        destroy();
 
-        bool                                updateShaderList();
+    private:
 
-        void                                clear();
-
-        bool                                m_enable;
-        u16                                 m_flags;
-
-        //TODO: add: ConstantBuffers
-        ShaderDataList                      m_shaderDataList;
-        ShaderList                          m_shaderList;
-        ShaderDefinesList                   m_defines;
-        std::vector<const c8*>              m_varyingsList; //?
+        ShaderProgram* const                m_impl;
 };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     template <typename T>
-    inline void ShaderProgram::applyUniform(const std::string& name, T& value)
+    inline void ShaderProgram::applyUniform(const std::string& name, const T& value)
     {
-        //findUniform;
-        // getBuffer
-        //getoffset, size
-        //set to buffer the data
+        ShaderProgram::applyUniform(name, &value, sizeof(T));
+    }
+
+    template <typename T>
+    inline void ShaderProgram::applyAttribute(const std::string& name, const T& data)
+    {
+        ShaderProgram::applyAttribute(name, &value, sizeof(T));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

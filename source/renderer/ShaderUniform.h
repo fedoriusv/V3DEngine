@@ -15,7 +15,6 @@ namespace renderer
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class ShaderData;
-    class ConstantBuffer;
 
     /**
     * Shader Uniform
@@ -58,7 +57,6 @@ namespace renderer
             eUniformsCount,
         };
 
-        explicit ShaderUniform(ConstantBuffer* buffer);
         ShaderUniform(const ShaderUniform& uniform);
         ShaderUniform& operator=(const ShaderUniform& uniform);
         ~ShaderUniform();
@@ -86,15 +84,6 @@ namespace renderer
 
         ShaderDataType::EShaderDataType m_type;
         EUniformData                    m_data;
-
-        s32                             m_set;
-        s32                             m_binding;
-
-        u32                             m_offset;
-        u32                             m_size;
-        u32                             m_count;
-
-        ConstantBuffer*                 m_buffer;
 
         static const std::string        s_uniformName[EUniformData::eUniformsCount];
     };
