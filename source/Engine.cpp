@@ -64,7 +64,7 @@ bool Engine::init()
     return true;
 }
 
-bool Engine::createWindowWithContext(const core::Dimension2D& size, const core::Point2D& pos, bool isFullscreen, bool isResizeble, platform::ERenderType driverType)
+bool Engine::createWindowWithContext(const core::Dimension2D& size, const core::Point2D& pos, bool isFullscreen, bool isResizeble, renderer::ERenderType driverType)
 {
     m_window = platform::Platform::createWindow(size, pos, isFullscreen, isResizeble);
     if (!m_window)

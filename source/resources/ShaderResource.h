@@ -28,7 +28,7 @@ namespace resources
     /**
     * ShaderResource class
     */
-    class ShaderResource : public stream::IResource
+    class Shader/*Resource*/ : public stream::IResource //rename to Shader
     {
 
     public:
@@ -41,7 +41,7 @@ namespace resources
             eSourceHLSL
         };
 
-        struct Reflection
+        /*struct Reflection
         {
             struct Channel
             {
@@ -86,10 +86,10 @@ namespace resources
             std::vector<UniformParameter>                   uniforms;
             std::vector<UniformBlockParameter>              constantBuffers;
 
-        };
+        };*/
 
-        ShaderResource();
-        ~ShaderResource();
+        Shader/*Resource*/();
+        ~Shader/*Resource*/();
 
         void                        init(const stream::IStreamPtr& stream) override;
         bool                        load() override;
@@ -104,7 +104,7 @@ namespace resources
 
         std::string                 m_name;
 
-        Reflection                  m_reflaction;
+        //Reflection                  m_reflaction;
 
         union
         {

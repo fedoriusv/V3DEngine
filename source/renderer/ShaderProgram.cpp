@@ -18,7 +18,7 @@ ShaderProgram::ShaderProgram()
 }
 
 ShaderProgram::ShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines)
-    : m_impl(ENGINE_CONTEXT->createProgram(shaders, defines))
+    : m_impl(ENGINE_CONTEXT->createShaderProgram(shaders, defines))
 {
 }
 
@@ -106,7 +106,7 @@ bool ShaderProgram::compile()
 u16 ShaderProgram::getFlags() const
 {
     ASSERT(m_impl, "m_impl is nullptr");
-    m_impl->getFlags();
+    return m_impl->getFlags();
 }
 
 bool ShaderProgram::isFlagPresent(EProgramFlags flag)
@@ -135,17 +135,20 @@ void ShaderProgram::applyAttribute(const std::string& name, const void* value, u
 
 const ShaderDefinesList& ShaderProgram::getMacroDefinitions() const
 {
-    ASSERT(false, "call from impl");
+    ASSERT(m_impl, "m_impl is nullptr");
+    return m_impl->getMacroDefinitions();
 }
 
 const ShaderList& ShaderProgram::getShaders() const
 {
-    ASSERT(false, "call from impl");
+    ASSERT(m_impl, "m_impl is nullptr");
+    return m_impl->getShaders();
 }
 
 void ShaderProgram::setShaderParams(ShaderParameters& params)
 {
-    ASSERT(false, "call from impl");
+    ASSERT(m_impl, "m_impl is nullptr");
+    return m_impl->setShaderParams(params);
 }
 
 void ShaderProgram::setMacroDefinitions(const ShaderDefinesList& list)

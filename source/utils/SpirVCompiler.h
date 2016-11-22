@@ -81,14 +81,13 @@ namespace utils
         ~SpirVCompileWrapper();
 
         ECompileError                   compile(const std::string& source, renderer::EShaderType type, std::vector<u32>& bytecode);
-        Reflection                      reflection();
+        Reflection                      reflection(const std::vector<u32>& bytecode);
 
         const std::string&              errorMessages();
 
     private:
 
         std::string                     m_errors;
-        std::vector<u32>*               m_spirv;
         renderer::ShaderDefinesList     m_defines;
         renderer::ERenderType           m_vendor;
     };

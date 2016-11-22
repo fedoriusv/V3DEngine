@@ -55,13 +55,13 @@ RenderPass::RenderPass(const RenderPass& pass)
     ASSERT(m_program, "RenderPass: Copy program is failed");
     if (m_program)
     {
-        m_program->addShaderData(m_defaultShaderData);
+       /* m_program->addShaderData(m_defaultShaderData);
         m_program->addShaderData(m_userShaderData);
 
         if (!m_program->create())
         {
             ASSERT(false, "RenderPass::clone fail");
-        }
+        }*/
     }
 }
 
@@ -83,13 +83,13 @@ RenderPass& RenderPass::operator=(const RenderPass& pass)
     ASSERT(m_program, "Copy program is failed");
     if (m_program)
     {
-        m_program->addShaderData(m_defaultShaderData);
+       /* m_program->addShaderData(m_defaultShaderData);
         m_program->addShaderData(m_userShaderData);
 
         if (!m_program->create())
         {
             ASSERT(false, "CShaderProgramGL::clone fail");
-        }
+        }*/
     }
 
     m_enable = pass.m_enable;
@@ -254,7 +254,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-        ShaderUniform* uniform = new ShaderUniform(nullptr);
+       /* ShaderUniform* uniform = new ShaderUniform();
 
         if (!uniform->parse(varElement))
         {
@@ -264,7 +264,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
             LOG_ERROR("RenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
             varElement = varElement->NextSiblingElement("var");
             continue;
-        }
+        }*/
 
         /*bool isDefault = (uniform->getData() != ShaderUniform::eUserUniform);
         if (isDefault)
@@ -423,7 +423,7 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
         if (!definesList.empty())
         {
-            m_program->setMacroDefinition(definesList);
+            m_program->setMacroDefinitions(definesList);
         }
     }
 
@@ -444,7 +444,7 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
             shaderData.setDefines(definesList);
         }*/
 
-        ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
+        /*ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
         if (shader.expired())
         {
             ShaderPtr newShader = ENGINE_RENDERER->makeSharedShader();
@@ -469,11 +469,11 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
     /*m_program->addShaderData(m_defaultShaderData);
     m_program->addShaderData(m_userShaderData);*/
 
-    if (!m_program->create())
+   /* if (!m_program->create())
     {
         LOG_ERROR("RenderPass: Error Create Shader Program");
         return false;
-    }
+    }*/
 
     return true;
 }
@@ -599,13 +599,13 @@ void RenderPass::bind(u32 target)
 {
     m_renderState->bind();
 
-    if (!m_enable || !m_program->isEnable())
+    /*if (!m_enable || !m_program->isEnable())
     {
         m_program->unbind();
         return;
-    }
+    }*/
 
-    if (!m_program->isFlagPresent(ShaderProgram::eLinked))
+   /* if (!m_program->isFlagPresent(ShaderProgram::eLinked))
     {
         if (!m_program->create())
         {
@@ -614,7 +614,7 @@ void RenderPass::bind(u32 target)
         }
     }
 
-    m_program->bind();
+    m_program->bind();*/
 
     /*const UniformList& list = m_userShaderData->m_uniformList;
     for (UniformList::const_iterator uniform = list.begin(); uniform != list.end(); ++uniform)

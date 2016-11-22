@@ -11,7 +11,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ShaderManager : public utils::TSingleton<ShaderManager>, public stream::TResourceLoader<const resources::ShaderResource*>
+    class ShaderManager : public utils::TSingleton<ShaderManager>, public stream::TResourceLoader<const resources::ShaderPtr>
     {
     private:
 
@@ -22,8 +22,8 @@ namespace scene
 
     public:
 
-        void                                        add(const resources::ShaderResource* source);
-        const resources::ShaderResource*            load(const std::string& name, const std::string& alias = "") override;
+        void                                        add(const resources::ShaderPtr source);
+        const resources::ShaderPtr                  load(const std::string& name, const std::string& alias = "") override;
 
         void                                        add(renderer::ShaderPtr shader);
         const renderer::ShaderWPtr                  get(renderer::ShaderPtr shader) const;

@@ -13,11 +13,6 @@ namespace tinyxml2
 namespace v3d
 {
 
-namespace scene
-{
-    class CShaderManager;
-} //namespace scene
-
 namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +76,6 @@ namespace renderer
 
     private:
 
-        friend                      scene::CShaderManager;
         friend                      ShaderProgram;
         friend                      RenderPass;
 

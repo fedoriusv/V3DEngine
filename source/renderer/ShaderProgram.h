@@ -15,7 +15,7 @@ namespace renderer
     class ShaderProgram;
     class Texture;
 
-    using ShaderProgramPtr = utils::TIntrusivePtr<Texture>;
+    using ShaderProgramPtr = utils::TIntrusivePtr<ShaderProgram>;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +85,9 @@ namespace renderer
         virtual void                        destroy();
 
     private:
+
+        friend                              RenderPass;
+
 
         ShaderProgram* const                m_impl;
 };

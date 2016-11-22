@@ -68,13 +68,10 @@ ShaderUniform::EUniformData ShaderUniform::getValueByUniformName(const std::stri
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-ShaderUniform::ShaderUniform(ConstantBuffer* buffer)
+ShaderUniform::ShaderUniform()
     : m_name("")
     , m_type(ShaderDataType::eUnknown)
     , m_data(EUniformData::eUserUniform)
-
-    , m_set(-1)
-    , m_binding(-1)
 {
 }
 

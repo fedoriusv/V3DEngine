@@ -2,7 +2,6 @@
 
 #include "common.h"
 #include "event/InputEventKeyboard.h"
-#include "renderer/Renderer.h"
 
 namespace v3d
 {
@@ -22,7 +21,6 @@ namespace platform
 
     struct WindowParam
     {
-        renderer::ERenderType   _renderType;
         core::Dimension2D       _size;
         core::Point2D           _position;
         bool                    _isFullscreen;

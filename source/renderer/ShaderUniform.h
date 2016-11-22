@@ -57,6 +57,7 @@ namespace renderer
             eUniformsCount,
         };
 
+        ShaderUniform();
         ShaderUniform(const ShaderUniform& uniform);
         ShaderUniform& operator=(const ShaderUniform& uniform);
         ~ShaderUniform();

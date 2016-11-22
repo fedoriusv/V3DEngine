@@ -405,8 +405,8 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         ShaderProgram* program = command.readValue<ShaderProgram*>();
         const ShaderDefinesList* defines = command.readValue<const ShaderDefinesList*>();
         const ShaderList* shaders = command.readValue<const ShaderList*>();
-        ShaderProgram::ShaderParameters* const params = command.readValue<ShaderProgram::ShaderParameters* const>();
-        bool* const result = command.readValue<bool* const>();
+        ShaderProgram::ShaderParameters* params = command.readValue<ShaderProgram::ShaderParameters*>();
+        bool* result = command.readValue<bool*>();
 
         *result = program->compile(*defines, *shaders, *params);
         break;

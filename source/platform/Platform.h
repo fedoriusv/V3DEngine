@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "context/DeviceContext.h"
 #include "renderer/Renderer.h"
 
 namespace v3d
@@ -25,7 +26,7 @@ namespace platform
 
         static renderer::RendererPtr    createRenderer(
                                             const renderer::ContextPtr,
-                                            ERenderType type = ERenderType::eRenderOpenGL);
+                                            renderer::ERenderType type = renderer::ERenderType::eRenderOpenGL);
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

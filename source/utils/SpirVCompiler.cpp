@@ -11,7 +11,6 @@ namespace utils
 
 SpirVCompileWrapper::SpirVCompileWrapper(renderer::ERenderType vendor, const renderer::ShaderDefinesList& defines)
     : m_defines(defines)
-    , m_spirv(nullptr)
     , m_vendor(vendor)
 {
 }
@@ -23,7 +22,6 @@ SpirVCompileWrapper::~SpirVCompileWrapper()
 SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::string& source, renderer::EShaderType type, std::vector<u32>& bytecode)
 {
     m_errors.clear();
-    m_spirv = &bytecode;
 
     bool validShaderType = true;
     auto getShaderType = [&validShaderType](renderer::EShaderType type) -> shaderc_shader_kind
@@ -122,21 +120,16 @@ SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::strin
 
     u64 byteCodeSize = (result.cend() - result.cbegin());
 
-    m_spirv->clear();
-    m_spirv->resize(byteCodeSize);
-    std::copy(result.cbegin(), result.cend(), m_spirv->begin());
+    bytecode.clear();
+    bytecode.resize(byteCodeSize);
+    std::copy(result.cbegin(), result.cend(), bytecode.begin());
 
     return SpirVCompileWrapper::eNoErrors;
 }
 
-SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection()
+SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vector<u32>& bytecode)
 {
-    if (!m_spirv)
-    {
-        return SpirVCompileWrapper::Reflection();
-    }
-
-    spirv_cross::CompilerGLSL glsl(*m_spirv);
+    spirv_cross::CompilerGLSL glsl(bytecode);
     spirv_cross::ShaderResources resources = glsl.get_shader_resources();
 
     auto getInnerDataType = [](const spirv_cross::SPIRType& type) -> renderer::ShaderDataType::EShaderDataType

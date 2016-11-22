@@ -30,7 +30,19 @@ void MyApplication::init()
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
 
+    ShaderProgram* program = new ShaderProgram(shaderList);
+    program->attach(shader);
+    program->dettach(shader);
+    program->setDefine("ddd");
 
+    bool a = program->compile();
+
+    program->applyAttribute();
+    program->applyUniform();
+
+    program->execute();
+
+    Texture* tex = new Texture();
     //scene::ShaderManager::getInstance()->load("shaders/test.frag");
 
 }

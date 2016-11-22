@@ -273,133 +273,133 @@ bool IRenderer::isDebugMode() const
 
 void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr data = pass->getDefaultShaderData();
-    const ShaderProgramPtr program = pass->getShaderProgram();
+    //const ShaderDataPtr data = pass->getDefaultShaderData();
+    //const ShaderProgramPtr program = pass->getShaderProgram();
 
-    const UniformList& list = data->getUniformList();
-    for (auto& uniform : list)
-    {
-        const ShaderUniform::EUniformData type = uniform.second->getKindData();
-        s32 id = 0;// uniform.second->getID();
-        switch (type)
-        {
-        case ShaderUniform::eTransformProjectionMatrix:
-        {
-            if (!m_camera)
-            {
-                ASSERT(false, "Camera doesn't exist");
-                break;
-            }
-            program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
-        }
-        break;
+    //const UniformList& list = data->getUniformList();
+    //for (auto& uniform : list)
+    //{
+    //    const ShaderUniform::EUniformData type = uniform.second->getKindData();
+    //    s32 id = 0;// uniform.second->getID();
+    //    switch (type)
+    //    {
+    //    case ShaderUniform::eTransformProjectionMatrix:
+    //    {
+    //        if (!m_camera)
+    //        {
+    //            ASSERT(false, "Camera doesn't exist");
+    //            break;
+    //        }
+    //        program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
+    //    }
+    //    break;
 
-        case ShaderUniform::eTransformModelMatrix:
-        {
-            core::Matrix4D modelMatrix(transform);
-            modelMatrix.makeTransposed();
+    //    case ShaderUniform::eTransformModelMatrix:
+    //    {
+    //        core::Matrix4D modelMatrix(transform);
+    //        modelMatrix.makeTransposed();
 
-            program->applyUniformMatrix4(id, modelMatrix);
-        }
-        break;
+    //        program->applyUniformMatrix4(id, modelMatrix);
+    //    }
+    //    break;
 
-        case ShaderUniform::eTransformViewMatrix:
-        {
-            if (!m_camera)
-            {
-                ASSERT(false, "Camera doesn't exist");
-                break;
-            }
+    //    case ShaderUniform::eTransformViewMatrix:
+    //    {
+    //        if (!m_camera)
+    //        {
+    //            ASSERT(false, "Camera doesn't exist");
+    //            break;
+    //        }
 
-            program->applyUniformMatrix4(id, m_camera->getViewMatrix());
-        }
-        break;
+    //        program->applyUniformMatrix4(id, m_camera->getViewMatrix());
+    //    }
+    //    break;
 
-        case ShaderUniform::eTransformViewPosition:
-        {
-            if (!m_camera)
-            {
-                ASSERT(false, "Camera doesn't exist");
-                break;
-            }
-            program->applyUniformVector3(id, m_camera->getPosition());
-        }
-        break;
+    //    case ShaderUniform::eTransformViewPosition:
+    //    {
+    //        if (!m_camera)
+    //        {
+    //            ASSERT(false, "Camera doesn't exist");
+    //            break;
+    //        }
+    //        program->applyUniformVector3(id, m_camera->getPosition());
+    //    }
+    //    break;
 
-        case ShaderUniform::eTransformViewUpVector:
-        {
-            if (!m_camera)
-            {
-                ASSERT(false, "Camera doesn't exist");
-                break;
-            }
-            program->applyUniformVector3(id, m_camera->getUpVector());
-        }
-        break;
+    //    case ShaderUniform::eTransformViewUpVector:
+    //    {
+    //        if (!m_camera)
+    //        {
+    //            ASSERT(false, "Camera doesn't exist");
+    //            break;
+    //        }
+    //        program->applyUniformVector3(id, m_camera->getUpVector());
+    //    }
+    //    break;
 
-        case ShaderUniform::eTransformNormalMatrix:
-        {
-            core::Matrix4D normalMatrix;
-            transform.getInverse(normalMatrix);
+    //    case ShaderUniform::eTransformNormalMatrix:
+    //    {
+    //        core::Matrix4D normalMatrix;
+    //        transform.getInverse(normalMatrix);
 
-            program->applyUniformMatrix4(id, normalMatrix);
-        }
-        break;
+    //        program->applyUniformMatrix4(id, normalMatrix);
+    //    }
+    //    break;
 
-        case -1:
-        default:
-            break;
-        }
-    }
+    //    case -1:
+    //    default:
+    //        break;
+    //    }
+    //}
 }
 
 void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr data = pass->getDefaultShaderData();
-    const ShaderProgramPtr& program = pass->getShaderProgram();
+    //const ShaderDataPtr data = pass->getDefaultShaderData();
+    //const ShaderProgramPtr& program = pass->getShaderProgram();
 
-    const UniformList& list = data->getUniformList();
-    for (auto& uniform : list)
-    {
-        const ShaderUniform::EUniformData type = uniform.second->getKindData();
-        s32 id = 0;// uniform.second->getID();
-        switch (type)
-        {
-        case ShaderUniform::eMaterialAmbient:
-    
-            program->applyUniformVector4(id, material->getAmbientColor());
-            break;
+    //const UniformList& list = data->getUniformList();
+    //for (auto& uniform : list)
+    //{
+    //    const ShaderUniform::EUniformData type = uniform.second->getKindData();
+    //    s32 id = 0;// uniform.second->getID();
+    //    switch (type)
+    //    {
+    //    case ShaderUniform::eMaterialAmbient:
+    //
+    //        program->applyUniformVector4(id, material->getAmbientColor());
+    //        break;
 
-        case ShaderUniform::eMaterialDiffuse:
+    //    case ShaderUniform::eMaterialDiffuse:
 
-            program->applyUniformVector4(id, material->getDiffuseColor());
-            break;
+    //        program->applyUniformVector4(id, material->getDiffuseColor());
+    //        break;
 
-        case ShaderUniform::eMaterialSpecular:
+    //    case ShaderUniform::eMaterialSpecular:
 
-            program->applyUniformVector4(id, material->getSpecularColor());
-            break;
+    //        program->applyUniformVector4(id, material->getSpecularColor());
+    //        break;
 
-        case ShaderUniform::eMaterialEmission:
+    //    case ShaderUniform::eMaterialEmission:
 
-            program->applyUniformVector4(id, material->getEmissionColor());
-            break;
+    //        program->applyUniformVector4(id, material->getEmissionColor());
+    //        break;
 
-        case ShaderUniform::eMaterialShininess:
+    //    case ShaderUniform::eMaterialShininess:
 
-            program->applyUniformFloat(id, material->getShininess());
-            break;
+    //        program->applyUniformFloat(id, material->getShininess());
+    //        break;
 
-        case ShaderUniform::eMaterialTransparency:
+    //    case ShaderUniform::eMaterialTransparency:
 
-            program->applyUniformFloat(id, material->getTransparency());
-            break;
+    //        program->applyUniformFloat(id, material->getTransparency());
+    //        break;
 
-        case -1:
-        default:
-            break;
-        }
-    }
+    //    case -1:
+    //    default:
+    //        break;
+    //    }
+    //}
 }
 
 void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass)
@@ -437,61 +437,61 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
     const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
-    for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
-    {
-        const UniformList& list = data->getUniformList();
-        for (auto& uniform : list)
-        {
-            const ShaderUniform::EUniformData type = uniform.second->getKindData();
-            s32 id = 0;// uniform.second->getID();
-            switch (type)
-            {
-            case ShaderUniform::eLightsCount:
+    //for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
+    //{
+    //    const UniformList& list = data->getUniformList();
+    //    for (auto& uniform : list)
+    //    {
+    //        const ShaderUniform::EUniformData type = uniform.second->getKindData();
+    //        s32 id = 0;// uniform.second->getID();
+    //        switch (type)
+    //        {
+    //        case ShaderUniform::eLightsCount:
 
-                program->applyUniformInt(id, (s32)lights.size());
-                break;
+    //            program->applyUniformInt(id, (s32)lights.size());
+    //            break;
 
-            case ShaderUniform::eLightPosition:
+    //        case ShaderUniform::eLightPosition:
 
-                program->applyUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
-                break;
+    //            program->applyUniformVector4(id, Vector4D((*light)->getPosition(), 0.0f));
+    //            break;
 
-            case ShaderUniform::eLightAmbient:
+    //        case ShaderUniform::eLightAmbient:
 
-                program->applyUniformVector4(id, (*light)->getAmbient());
-                break;
+    //            program->applyUniformVector4(id, (*light)->getAmbient());
+    //            break;
 
-            case ShaderUniform::eLightDiffuse:
+    //        case ShaderUniform::eLightDiffuse:
 
-                program->applyUniformVector4(id, (*light)->getDiffuse());
-                break;
+    //            program->applyUniformVector4(id, (*light)->getDiffuse());
+    //            break;
 
-            case ShaderUniform::eLightSpecular:
+    //        case ShaderUniform::eLightSpecular:
 
-                program->applyUniformVector4(id, (*light)->getSpecular());
-                break;
+    //            program->applyUniformVector4(id, (*light)->getSpecular());
+    //            break;
 
-            case ShaderUniform::eLightDirection:
+    //        case ShaderUniform::eLightDirection:
 
-                program->applyUniformVector3(id, (*light)->getDirection());
-                break;
+    //            program->applyUniformVector3(id, (*light)->getDirection());
+    //            break;
 
-            case ShaderUniform::eLightAttenuation:
+    //        case ShaderUniform::eLightAttenuation:
 
-                program->applyUniformVector3(id, (*light)->getAttenuation());
-                break;
+    //            program->applyUniformVector3(id, (*light)->getAttenuation());
+    //            break;
 
-            case ShaderUniform::eLightRadius:
+    //        case ShaderUniform::eLightRadius:
 
-                program->applyUniformFloat(id, (*light)->getRadius());
-                break;
+    //            program->applyUniformFloat(id, (*light)->getRadius());
+    //            break;
 
-            case -1:
-            default:
-                break;
-            }
-        }
-    }
+    //        case -1:
+    //        default:
+    //            break;
+    //        }
+    //    }
+    //}
 }
 
 void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
@@ -569,31 +569,31 @@ void IRenderer::updateAdvanced(const RenderPassPtr & pass)
     const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
-    const UniformList& list = data->getUniformList();
-    for (auto& uniform : list)
-    {
-        const ShaderUniform::EUniformData type = uniform.second->getKindData();
-        s32 id = 0;// uniform.second->getID();
-        switch (type)
-        {
-            case ShaderUniform::eCurrentTime:
-            {
-                u32 time = (u32)utils::CTimer::getCurrentTime();
-                program->applyUniformInt(id, time);
-            }
-            break;
+    //const UniformList& list = data->getUniformList();
+    //for (auto& uniform : list)
+    //{
+    //    const ShaderUniform::EUniformData type = uniform.second->getKindData();
+    //    s32 id = 0;// uniform.second->getID();
+    //    switch (type)
+    //    {
+    //        case ShaderUniform::eCurrentTime:
+    //        {
+    //            u32 time = (u32)utils::CTimer::getCurrentTime();
+    //            program->applyUniformInt(id, time);
+    //        }
+    //        break;
 
-            case ShaderUniform::eViewportSize:
-            {
-                const core::Rect32& rect = IRenderer::getCurrentRenderTarget()->getViewport();
-                program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
-            }
-            break;
+    //        case ShaderUniform::eViewportSize:
+    //        {
+    //            const core::Rect32& rect = IRenderer::getCurrentRenderTarget()->getViewport();
+    //            program->applyUniformVector2(id, core::Vector2D(static_cast<f32>(rect.getWidth()), static_cast<f32>(rect.getHeight())));
+    //        }
+    //        break;
 
-            default:
-                break;
-        }
-    }
+    //        default:
+    //            break;
+    //    }
+    //}
 }
 
 } //namespace renderer

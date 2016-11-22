@@ -1,8 +1,13 @@
 #include "ShaderProgramVK.h"
 #include "utils/Logger.h"
+#include "Engine.h"
+#include "scene/ShaderManager.h"
 
 #ifdef _VULKAN_RENDER_
 #include "context/DebugVK.h"
+#ifdef USE_SPIRV
+#   include "utils/SpirVCompiler.h"
+#endif //USE_SPIRV
 
 namespace v3d
 {
@@ -163,10 +168,42 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
     m_flags = ShaderProgram::eCreated;
     ShaderProgramVK::destoryAllModules();
 
+#ifdef USE_SPIRV
+    utils::SpirVCompileWrapper compiler(ENGINE_RENDERER->getRenderType(), defines);
     for (auto& shader : m_shaderList)
     {
         std::vector<u32> bytecode;
-        //TODO: compile, reflection
+
+        u64 hash = scene::ShaderManager::generateShaderHash(defines, shader);
+        IShader* findedShader = scene::ShaderManager::get(hash);
+        if (findedShader)
+        {
+            ASSERT(kindisbytecode, "");
+            bytecode = shader->bytecode();
+        }
+        else
+        {
+            EShaderType type = shader->getType();
+            if () //TODO: kinddata(source or bitecode)
+            {
+                utils::SpirVCompileWrapper::ECompileError error = compiler.compile(shader->source(), type, bytecode);
+                if (error != utils::SpirVCompileWrapper::eNoErrors)
+                {
+                    LOG_ERROR("ShaderProgramVK::compile: %s[%s] has compile error %d.", shader->getName().c_str(), CShaderSource::getShaderTypeNameByType(type).c_str(), error);
+                    if (!compiler.errorMessages().empty())
+                    {
+                        LOG("\n%s\n", compiler.errorMessages().c_str());
+                    }
+                }
+            }
+            else
+            {
+                bytecode = shader->bytecode();
+            }
+        }
+
+        utils::SpirVCompileWrapper::Reflection reflection = compiler.reflection(bytecode);
+        //parse reflection to outParameters
 
         VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
         shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -191,6 +228,10 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
 
     m_flags |= ShaderProgram::eCompiled;
     return true;
+#else //USE_SPIRV
+    ASSERT(false, "shader compiler not found");
+    return false;
+#endif //USE_SPIRV
 }
 
 void ShaderProgramVK::destroy()

@@ -9,6 +9,7 @@
 #include "SwapChainVK.h"
 #include "renderer/VK/TextureVK.h"
 #include "renderer/VK/BufferVK.h"
+#include "renderer/VK/ShaderProgramVK.h"
 
 #if defined(_PLATFORM_WIN_)
 #   include <windows.h>
@@ -552,6 +553,11 @@ Buffer* DeviceContextVK::createBuffer(EBufferTarget target, EDataUsageType type)
 {
     bool mappable = false;
     return new BufferVK(target, type, mappable);
+}
+
+ShaderProgram* DeviceContextVK::createShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines)
+{
+    return new ShaderProgramVK(shaders, defines);
 }
 
 void DeviceContextVK::fillGrapthicCaps()

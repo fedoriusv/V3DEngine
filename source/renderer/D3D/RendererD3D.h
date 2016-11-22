@@ -3,6 +3,8 @@
 
 #include "renderer/Renderer.h"
 
+#ifdef _V3D_TEXTURE_D3D_H_
+
 namespace v3d
 {
 namespace renderer
@@ -59,4 +61,8 @@ namespace d3d
 } //namespace renderer
 } //namespace v3d
 
+#endif //_V3D_TEXTURE_D3D_H_
+
 #endif //_V3D_RENDERER_D3D_H_
+
+

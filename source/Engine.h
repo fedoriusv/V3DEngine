@@ -30,7 +30,7 @@ namespace v3d
                                                 const core::Point2D& pos = core::Point2D(100U, 100U),
                                                 bool isFullscreen = false,
                                                 bool isResizeble = false,
-                                                platform::ERenderType driverType = platform::ERenderType::eRenderOpenGL);
+                                                renderer::ERenderType driverType = renderer::ERenderType::eRenderOpenGL);
 
         const event::InputEventHandlerPtr   getInputEventHandler() const;
         const scene::SceneManagerPtr        getSceneManager()const;
