@@ -18,10 +18,10 @@ namespace stream
         IResource();
         virtual             ~IResource();
 
-        virtual void        init(const IStreamPtr& stream) = 0;
+        virtual void        init(const IStreamPtr stream) = 0;
         virtual bool        load() = 0;
 
-        const IStreamPtr&   getStream() const;
+        const IStreamPtr    getStream() const;
         bool                isLoaded()  const;
 
         const std::string&  getResourseName() const;
@@ -35,7 +35,7 @@ namespace stream
         IResource(const IResource& other);
         IResource&          operator=(const IResource& other);
 
-        void                setStream(const IStreamPtr& stream);
+        void                setStream(const IStreamPtr stream);
         void                swapContent(IResource& other);
         void                setLoaded(bool loaded);
 

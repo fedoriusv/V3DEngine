@@ -168,6 +168,7 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
     m_flags = ShaderProgram::eCreated;
     ShaderProgramVK::destoryAllModules();
 
+    //TODO: replace to async thread
 #ifdef USE_SPIRV
     utils::SpirVCompileWrapper compiler(ENGINE_RENDERER->getRenderType(), defines);
     for (auto& shader : m_shaderList)

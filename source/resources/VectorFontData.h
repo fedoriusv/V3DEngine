@@ -25,7 +25,7 @@ namespace resources
         explicit CVectorFontData(const std::string& font);
         ~CVectorFontData();
 
-        void                        init(const stream::IStreamPtr& stream)  override;
+        void                        init(const stream::IStreamPtr stream)  override;
         bool                        load()                                  override;
 
     private:

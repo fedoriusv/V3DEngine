@@ -1,8 +1,7 @@
 #pragma once
 
 #include "utils/Singleton.h"
-#include "resources/ShaderResource.h"
-#include "renderer/Shader.h"
+#include "resources/Shader.h"
 #include "stream/ResourceLoader.h"
 
 namespace v3d

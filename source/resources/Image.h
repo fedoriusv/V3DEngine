@@ -19,16 +19,16 @@ namespace resources
     public:
 
         CImage();
-        CImage(renderer::EImageFormat format, renderer::EImageType type, const stream::IStreamPtr& stream);
+        CImage(renderer::EImageFormat format, renderer::EImageType type, const stream::IStreamPtr stream);
         CImage(renderer::EImageFormat format, renderer::EImageType type, const core::Dimension2D& size, const u8* data);
 
         CImage(const CImage&) = delete;
         ~CImage();
 
-        CImage& operator=(const CImage& image);
-        bool operator==(const CImage& image);
+        CImage&                     operator=(const CImage& image);
+        bool                        operator==(const CImage& image);
 
-        void                        init(const stream::IStreamPtr& stream) override;
+        void                        init(const stream::IStreamPtr stream) override;
         bool                        load() override;
 
         u32                         getByteCount() const;

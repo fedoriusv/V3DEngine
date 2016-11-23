@@ -103,6 +103,8 @@ void TResourceLoader<T>::unload(const std::string& name, std::false_type)
     auto it = m_resources.find(name);
     if (it != m_resources.end())
     {
+        it->second = nullptr;
+
         m_resources.erase(it);
     }
 }

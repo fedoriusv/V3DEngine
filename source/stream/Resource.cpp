@@ -42,7 +42,7 @@ IResource::~IResource()
 {
 }
 
-const IStreamPtr& IResource::getStream() const
+const IStreamPtr IResource::getStream() const
 {
     return m_stream;
 }
@@ -72,7 +72,7 @@ void IResource::setResourseFolder(const std::string& folder)
     m_resourceFolder = folder;
 }
 
-void IResource::setStream(const stream::IStreamPtr& stream)
+void IResource::setStream(const stream::IStreamPtr stream)
 {
     m_stream = stream;
 }

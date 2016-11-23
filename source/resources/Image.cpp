@@ -17,7 +17,7 @@ CImage::CImage()
 {
 }
 
-CImage::CImage(EImageFormat format, EImageType type, const IStreamPtr& stream)
+CImage::CImage(EImageFormat format, EImageType type, const IStreamPtr stream)
     : m_format(format)
     , m_type(type)
     , m_size(core::Dimension2D(0, 0))
@@ -100,14 +100,14 @@ bool CImage::operator==(const CImage& image)
     return false;
 }
 
-void CImage::init(const IStreamPtr& stream)
+void CImage::init(const IStreamPtr stream)
 {
     IResource::setStream(stream);
 }
 
 bool CImage::load()
 {
-    const stream::IStreamPtr& stream = IResource::getStream();
+    const stream::IStreamPtr stream = IResource::getStream();
     if (!stream)
     {
         LOG_ERROR("CImage: Empty Stream with name [%s]", IResource::getResourseName().c_str());

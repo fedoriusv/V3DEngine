@@ -24,7 +24,7 @@ namespace resources
         CBitmapFontData(const std::string& font);
         ~CBitmapFontData();
 
-        void    init(const stream::IStreamPtr& stream)  override;
+        void    init(const stream::IStreamPtr stream)  override;
         bool    load()                                  override;
 
     private:

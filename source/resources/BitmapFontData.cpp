@@ -20,7 +20,7 @@ CBitmapFontData::~CBitmapFontData()
 {
 }
 
-void CBitmapFontData::init(const stream::IStreamPtr& stream)
+void CBitmapFontData::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }

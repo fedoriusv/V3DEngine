@@ -18,7 +18,7 @@ CModelData::~CModelData()
 {
 }
 
-void CModelData::init(const stream::IStreamPtr& stream)
+void CModelData::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }
