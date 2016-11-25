@@ -28,8 +28,8 @@ namespace renderer
         const MaterialPtr&      getMaterial() const;
         MaterialPtr&            getMaterial();
 
-        const CRenderTechnique* getRenderTechique() const;
-        CRenderTechnique*       getRenderTechique();
+        const RenderTechnique* getRenderTechique() const;
+        RenderTechnique*       getRenderTechique();
 
         const GeometryPtr&      getGeometry() const;
 

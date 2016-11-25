@@ -10,7 +10,7 @@ using namespace v3d;
 using namespace renderer;
 
 
-CGeometryNull::CGeometryNull(const CRenderTechnique* technique)
+CGeometryNull::CGeometryNull(const RenderTechnique* technique)
     : Geometry(technique)
 {
 }

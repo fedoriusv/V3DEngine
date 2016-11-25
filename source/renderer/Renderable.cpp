@@ -62,19 +62,19 @@ void Renderable::render()
     ENGINE_RENDERER->draw(Renderable::getRenderJob());
 }
 
-const CRenderTechnique* Renderable::getRenderTechique() const
+const RenderTechnique* Renderable::getRenderTechique() const
 {
     return m_renderTechnique;
 }
 
-CRenderTechnique* Renderable::getRenderTechique()
+RenderTechnique* Renderable::getRenderTechique()
 {
-    return const_cast<CRenderTechnique*>(m_renderTechnique);
+    return const_cast<RenderTechnique*>(m_renderTechnique);
 }
 
 bool Renderable::setRenderTechnique(const std::string& file)
 {
-    const CRenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
+    const RenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
     if (!technique)
     {
         LOG_ERROR("CMaterial: Error read file [%s]", file.c_str());
@@ -88,7 +88,7 @@ bool Renderable::setRenderTechnique(const std::string& file)
 
 bool Renderable::setRenderTechnique(const stream::IStreamPtr& stream)
 {
-    CRenderTechnique* technique = new CRenderTechnique();
+    RenderTechnique* technique = new RenderTechnique();
     technique->init(stream);
     if (!technique->load())
     {
@@ -102,7 +102,7 @@ bool Renderable::setRenderTechnique(const stream::IStreamPtr& stream)
     return true;
 }
 
-void Renderable::setRenderTechnique(const CRenderTechnique* technique)
+void Renderable::setRenderTechnique(const RenderTechnique* technique)
 {
     m_renderTechnique = technique;
 }

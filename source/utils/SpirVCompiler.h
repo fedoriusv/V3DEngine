@@ -3,7 +3,7 @@
 #include "common.h"
 #include "renderer/ShaderDataTypes.h"
 #include "renderer/Renderer.h"
-#include "renderer/ShaderSouce.h"
+#include "resources/Shader.h"
 #include "renderer/Texture.h"
 
 #ifdef USE_SPIRV
@@ -77,10 +77,10 @@ namespace utils
 
         };
 
-        SpirVCompileWrapper(renderer::ERenderType vendor, const renderer::ShaderDefinesList& defines);
+        SpirVCompileWrapper(renderer::ERenderType vendor, const resources::ShaderDefinesList& defines);
         ~SpirVCompileWrapper();
 
-        ECompileError                   compile(const std::string& source, renderer::EShaderType type, std::vector<u32>& bytecode);
+        ECompileError                   compile(const std::string& source, resources::EShaderType type, std::vector<u32>& bytecode);
         Reflection                      reflection(const std::vector<u32>& bytecode);
 
         const std::string&              errorMessages();
@@ -88,7 +88,7 @@ namespace utils
     private:
 
         std::string                     m_errors;
-        renderer::ShaderDefinesList     m_defines;
+        resources::ShaderDefinesList    m_defines;
         renderer::ERenderType           m_vendor;
     };
 

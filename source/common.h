@@ -28,6 +28,7 @@ namespace v3d
 #include <list>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <array>
 #include <algorithm>

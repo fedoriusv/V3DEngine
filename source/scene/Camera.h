@@ -56,7 +56,7 @@ namespace scene
         void                    init()                  override;
         void                    update(s32 dt)          override;
 
-        void                    init(const stream::IStreamPtr& stream)  override;
+        void                    init(const stream::IStreamPtr stream)  override;
         bool                    load()                                  override;
 
         bool                    isActive()              const;

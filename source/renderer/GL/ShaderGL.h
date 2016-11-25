@@ -1,6 +1,7 @@
 #ifndef _V3D_SHADER_GL_H_
 #define _V3D_SHADER_GL_H_
 
+#ifdef _OPENGL_RENDER_
 #include "renderer/Shader.h"
 
 namespace v3d
@@ -37,5 +38,8 @@ namespace renderer
 
 } //namespace renderer
 } //namespace v3d
+#endif _OPENGL_RENDER_
 
 #endif //_V3D_SHADER_GL_H_
+
+

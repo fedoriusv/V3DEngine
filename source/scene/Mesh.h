@@ -21,7 +21,7 @@ namespace scene
         CMesh();
         virtual     ~CMesh();
 
-        void        init(const stream::IStreamPtr& stream)  override;
+        void        init(const stream::IStreamPtr stream)  override;
         bool        load()                                  override;
 
         void        init()                                  override;

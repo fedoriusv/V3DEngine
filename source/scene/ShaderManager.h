@@ -24,15 +24,20 @@ namespace scene
         void                                        add(const resources::ShaderPtr source);
         const resources::ShaderPtr                  load(const std::string& name, const std::string& alias = "") override;
 
-        void                                        add(renderer::ShaderPtr shader);
-        const renderer::ShaderWPtr                  get(renderer::ShaderPtr shader) const;
-        renderer::ShaderWPtr                        get(std::size_t hash) const;
+        static u64                                  generateHash(const std::string& body, const resources::ShaderDefinesList& defines);
+
+        void                                        addCompiledShader(u64 hash, const resources::Bytecode& bytecode);
+        const resources::Bytecode*                  getCompiledShader(u64 hash) const;
+        bool                                        alreadyCompiled(u64 hash) const;
+
+        const resources::ShaderPtr                  createShaderFromSource(const std::string& source, resources::EShaderType type, const std::string& alias);
+        const resources::ShaderPtr                  createShaderFromBytecode(const resources::Bytecode& bytecode, resources::EShaderType type, const std::string& alias);
 
     private:
 
         std::string                                 getFileExtension(const std::string& fullFileName);
 
-        renderer::ShaderHashMap                     m_shaderList;
+        std::map<u64, resources::Bytecode>          m_compiledShaders;
 
     };
 

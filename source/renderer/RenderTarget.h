@@ -17,7 +17,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class RenderPass;
-    class CRenderTechnique;
+    class RenderTechnique;
     class CTexture;
     class CRenderBuffer;
 
@@ -112,7 +112,7 @@ namespace renderer
     protected:
 
         friend                      RenderPass;
-        friend                      CRenderTechnique;
+        friend                      RenderTechnique;
 
         bool                        parse(const tinyxml2::XMLElement* root);
         bool                        formatParser(const std::string& str, EImageFormat& format, EImageType& type);

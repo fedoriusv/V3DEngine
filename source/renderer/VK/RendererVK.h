@@ -91,9 +91,9 @@ namespace vk
 
 
 
-        ShaderPtr           makeSharedShader()                                                      override;
-        ShaderProgramPtr    makeSharedProgram()                                                     override;
-        RenderStatePtr      makeSharedRenderState()                                                 override;
+        //ShaderPtr           makeSharedShader()                                                      override;
+        //ShaderProgramPtr    makeSharedProgram()                                                     override;
+        //RenderStatePtr      makeSharedRenderState()                                                 override;
 
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
         GeometryTargetPtr   makeSharedGeometryTarget()                                              override;

@@ -21,7 +21,7 @@ D3D_PRIMITIVE_TOPOLOGY EDrawModeD3D[EPrimitivesMode::ePrimitivesModeCount] =
 ID3D11Device* CGeometryD3D::s_device = nullptr;
 ID3D11DeviceContext* CGeometryD3D::s_deviceContext = nullptr;
 
-CGeometryD3D::CGeometryD3D(const CRenderTechnique* technique)
+CGeometryD3D::CGeometryD3D(const RenderTechnique* technique)
 : CGeometry(technique)
 {
 }

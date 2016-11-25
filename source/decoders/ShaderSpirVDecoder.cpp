@@ -2,7 +2,6 @@
 #include "utils/Logger.h"
 #include "stream/StreamManager.h"
 #include "Engine.h"
-#include "resources/ShaderResource.h"
 
 #ifdef USE_SPIRV
 #include "shaderc/shaderc.hpp"
@@ -43,7 +42,7 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
     }
 
 #ifdef USE_SPIRV
-    if (stream->size() > 0)
+    /*if (stream->size() > 0)
     {
         stream->seekBeg(0);
 
@@ -275,6 +274,7 @@ stream::IResource* ShaderSpirVDecoder::decode(const stream::IStreamPtr stream)
 
         return shaderData;
     }
+    */
 #endif //USE_SPIRV
     return nullptr;
 }

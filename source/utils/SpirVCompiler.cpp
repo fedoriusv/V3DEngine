@@ -9,7 +9,7 @@ namespace v3d
 namespace utils
 {
 
-SpirVCompileWrapper::SpirVCompileWrapper(renderer::ERenderType vendor, const renderer::ShaderDefinesList& defines)
+SpirVCompileWrapper::SpirVCompileWrapper(renderer::ERenderType vendor, const resources::ShaderDefinesList& defines)
     : m_defines(defines)
     , m_vendor(vendor)
 {
@@ -19,26 +19,26 @@ SpirVCompileWrapper::~SpirVCompileWrapper()
 {
 }
 
-SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::string& source, renderer::EShaderType type, std::vector<u32>& bytecode)
+SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::string& source, resources::EShaderType type, std::vector<u32>& bytecode)
 {
     m_errors.clear();
 
     bool validShaderType = true;
-    auto getShaderType = [&validShaderType](renderer::EShaderType type) -> shaderc_shader_kind
+    auto getShaderType = [&validShaderType](resources::EShaderType type) -> shaderc_shader_kind
     {
         switch (type)
         {
-        case renderer::EShaderType::eVertex:
+        case resources::EShaderType::eVertex:
             return shaderc_shader_kind::shaderc_glsl_vertex_shader;
-        case renderer::EShaderType::eFragment:
+        case resources::EShaderType::eFragment:
             return shaderc_shader_kind::shaderc_glsl_fragment_shader;
-        case renderer::EShaderType::eGeometry:
+        case resources::EShaderType::eGeometry:
             return shaderc_shader_kind::shaderc_glsl_geometry_shader;
-        case renderer::EShaderType::eCompute:
+        case resources::EShaderType::eCompute:
             return shaderc_shader_kind::shaderc_glsl_compute_shader;
-        case renderer::EShaderType::eTessellationControl:
+        case resources::EShaderType::eTessellationControl:
             return shaderc_shader_kind::shaderc_glsl_tess_control_shader;
-        case renderer::EShaderType::eTessellationEvaluation:
+        case resources::EShaderType::eTessellationEvaluation:
             return shaderc_shader_kind::shaderc_glsl_tess_evaluation_shader;
         default:
             return shaderc_shader_kind::shaderc_spirv_assembly;

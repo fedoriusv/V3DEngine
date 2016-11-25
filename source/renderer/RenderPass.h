@@ -19,7 +19,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class CRenderer;
-    class CRenderTechnique;
+    class RenderTechnique;
     class RenderPass;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ namespace renderer
         RenderPass&             operator=(const RenderPass& pass);
 
         friend                  CRenderer;
-        friend                  CRenderTechnique;
+        friend                  RenderTechnique;
         friend                  std::_Ref_count_obj<RenderPass>;
 
         void                    init();

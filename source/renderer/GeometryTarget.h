@@ -17,7 +17,7 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class RenderPass;
-    class CRenderTechnique;
+    class RenderTechnique;
     class Buffer;
 
     /**
@@ -56,7 +56,7 @@ namespace renderer
     protected:
 
         friend                          RenderPass;
-        friend                          CRenderTechnique;
+        friend                          RenderTechnique;
 
         void                            addBuffer(const std::string& name, ShaderDataType::EShaderDataType type, u32 amount);
         bool                            parse(const tinyxml2::XMLElement* root);

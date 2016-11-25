@@ -19,7 +19,7 @@ CShape::CShape()
 
 void CShape::init()
 {
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CShape: RenderTechique doesn't exist for shape [%s]", CNode::getName().c_str());

@@ -38,6 +38,7 @@ EShaderType Shader::getShaderTypeByName(const std::string& name)
     return EShaderType::eShaderUnknown;
 }
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Shader::Shader()
@@ -50,9 +51,31 @@ Shader::Shader()
 {
 }
 
+Shader::Shader(EShaderType type, const std::string& source)
+    : m_name("")
+    , m_source(nullptr)
+    , m_bytecode(nullptr)
+
+    , m_dataRepresent(EShaderDataRepresent::eSource)
+    , m_shaderType(type)
+{
+    m_source = new std::string(source);
+}
+
+Shader::Shader(EShaderType type, const Bytecode& bytecode)
+    : m_name("")
+    , m_source(nullptr)
+    , m_bytecode(nullptr)
+
+    , m_dataRepresent(EShaderDataRepresent::eBytecode)
+    , m_shaderType(type)
+{
+    m_bytecode = new std::vector<u32>(bytecode);
+}
+
 Shader::~Shader()
 {
-    if (m_dataRepresent == EShaderDataRepresent::eBytecode || m_dataRepresent == EShaderDataRepresent::eBytecodeSpirV)
+    if (m_dataRepresent == EShaderDataRepresent::eBytecode)
     {
         delete m_bytecode;
         m_bytecode = nullptr;
@@ -82,15 +105,15 @@ bool Shader::load()
 
     stream->seekBeg(0);
 
-    stream->read<EShaderType>(m_shaderType);
     stream->read<EShaderDataRepresent>(m_dataRepresent);
+    stream->read<EShaderType>(m_shaderType);
 
-    if (m_dataRepresent == EShaderDataRepresent::eBytecode || m_dataRepresent == EShaderDataRepresent::eBytecodeSpirV)
+    if (m_dataRepresent == EShaderDataRepresent::eBytecode)
     {
         u64 size = 0;
         stream->read<u64>(size);
 
-        m_bytecode = new std::vector<u32>(size);
+        m_bytecode = new Bytecode(size);
         stream->read(m_bytecode->data(), size, 1);
     }
     else
@@ -113,21 +136,26 @@ const std::string& Shader::getName() const
     return m_name;
 }
 
-const std::string& Shader::getSource() const
+const std::string* Shader::getSource() const
 {
     ASSERT(m_source, "invalid data");
-    return *m_source;
+    return m_source;
 }
 
-const std::vector<u32>& Shader::getBytecode() const
+const Bytecode* Shader::getBytecode() const
 {
     ASSERT(m_bytecode, "invalid data");
-    return *m_bytecode;
+    return m_bytecode;
 }
 
 Shader::EShaderDataRepresent Shader::getShaderKind() const
 {
     return m_dataRepresent;
+}
+
+EShaderType Shader::getType() const
+{
+    return m_shaderType;
 }
 
 } //namespace resources

@@ -555,7 +555,7 @@ Buffer* DeviceContextVK::createBuffer(EBufferTarget target, EDataUsageType type)
     return new BufferVK(target, type, mappable);
 }
 
-ShaderProgram* DeviceContextVK::createShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines)
+ShaderProgram* DeviceContextVK::createShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines)
 {
     return new ShaderProgramVK(shaders, defines);
 }

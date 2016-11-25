@@ -22,7 +22,7 @@ namespace gl
     {
     public:
 
-        CGeometryGL(const CRenderTechnique* technique);
+        CGeometryGL(const RenderTechnique* technique);
         ~CGeometryGL();
         
         void                init()      override;

@@ -129,7 +129,7 @@ ShaderProgramPtr RendererD3D::makeSharedProgram()
     //return std::make_shared<CShaderProgramGL>();
 }
 
-GeometryPtr RendererD3D::makeSharedGeometry(const CRenderTechnique* technique)
+GeometryPtr RendererD3D::makeSharedGeometry(const RenderTechnique* technique)
 {
     return std::make_shared<CGeometryD3D>(technique);
 }

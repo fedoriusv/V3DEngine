@@ -67,7 +67,7 @@ namespace renderer
         virtual Texture*            createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) = 0;
         virtual Texture*            createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) = 0;
         virtual Buffer*             createBuffer(EBufferTarget target, EDataUsageType type) = 0;
-        virtual ShaderProgram*      createShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines = {}) = 0;
+        virtual ShaderProgram*      createShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {}) = 0;
 
         virtual void                fillGrapthicCaps() = 0;
 

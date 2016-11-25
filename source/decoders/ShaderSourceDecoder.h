@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceDecoder.h"
+#include "resources/Shader.h"
 
 namespace v3d
 {
@@ -8,22 +9,24 @@ namespace decoders
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ModelF3DDecoder : public ResourceDecoder
+    class ShaderSourceDecoder final : public ResourceDecoder
     {
     public:
 
-        ModelF3DDecoder();
-        explicit ModelF3DDecoder(std::initializer_list<std::string> supportedExtensions);
+        ShaderSourceDecoder(resources::Shader::EShaderDataRepresent kind);
+        explicit ShaderSourceDecoder(std::initializer_list<std::string> supportedExtensions, resources::Shader::EShaderDataRepresent kind);
 
-        ~ModelF3DDecoder();
+        ~ShaderSourceDecoder();
 
         stream::IResource*      decode(const stream::IStreamPtr stream) override;
 
     private:
 
-        stream::IResource*     decode100(const stream::IStreamPtr stream);
+        resources::Shader::EShaderDataRepresent m_kind;
+        resources::EShaderType                  m_type;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 } //namespace decoders
 } //namespace v3d

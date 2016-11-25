@@ -56,7 +56,7 @@ namespace renderer
 
         const std::string&          getName() const;
 
-        void                        init(const stream::IStreamPtr& stream)  override;
+        void                        init(const stream::IStreamPtr stream)  override;
         bool                        load()                                  override;
 
         MaterialPtr                 clone() const                           override;

@@ -11,6 +11,7 @@ namespace renderer
 {
 
 using namespace scene;
+using namespace resources;
 
 ShaderProgram::ShaderProgram()
     : m_impl(nullptr)

@@ -6,7 +6,7 @@ namespace utils
 {
 
 CRefCounted::CRefCounted(s32 refCount)
-: m_refCount(refCount)
+    : m_refCount(refCount)
 {
 }
 

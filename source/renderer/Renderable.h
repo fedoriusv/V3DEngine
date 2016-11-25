@@ -12,7 +12,7 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechnique;
+    class RenderTechnique;
 
     /**
     * Renderable property class
@@ -39,9 +39,9 @@ namespace renderer
         bool                    setRenderTechnique(const std::string& file);
         bool                    setRenderTechnique(const stream::IStreamPtr& stream);
 
-        void                    setRenderTechnique(const CRenderTechnique* technique);
-        const CRenderTechnique* getRenderTechique() const;
-        CRenderTechnique*       getRenderTechique();
+        void                    setRenderTechnique(const RenderTechnique* technique);
+        const RenderTechnique* getRenderTechique() const;
+        RenderTechnique*       getRenderTechique();
 
     protected:
 
@@ -50,7 +50,7 @@ namespace renderer
 
     private:
 
-        const CRenderTechnique* m_renderTechnique;
+        const RenderTechnique* m_renderTechnique;
         MaterialPtr             m_material;
         GeometryPtr             m_geometry;
         RenderJobPtr            m_renderJob;

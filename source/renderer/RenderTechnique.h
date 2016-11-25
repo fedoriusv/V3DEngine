@@ -1,5 +1,4 @@
-#ifndef _V3D_RENDER_TECHNIQUE_H_
-#define _V3D_RENDER_TECHNIQUE_H_
+#pragma once
 
 #include "stream/Resource.h"
 #include "utils/Cloneable.h"
@@ -16,12 +15,12 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class CRenderTechnique final : public stream::IResource, public utils::TCloneable<CRenderTechnique*>
+    class RenderTechnique final : public stream::IResource, public utils::TCloneable<RenderTechnique*>
     {
     public:
 
-        CRenderTechnique();
-        virtual                 ~CRenderTechnique();
+        RenderTechnique();
+        virtual                 ~RenderTechnique();
 
         const RenderPassPtr     getRenderPass(u32 id) const;
         RenderPassPtr           getRenderPass(u32 id);
@@ -36,15 +35,15 @@ namespace renderer
         const std::string&      getName() const;
 
 
-        void                    init(const stream::IStreamPtr& stream) override;
-        bool                    load()                                 override;
+        void                    init(const stream::IStreamPtr stream) override;
+        bool                    load() override;
 
-        CRenderTechnique*       clone() const override;
+        RenderTechnique*        clone() const override;
 
     protected:
 
-        CRenderTechnique(const CRenderTechnique& technique);
-        CRenderTechnique&       operator=(const CRenderTechnique& technique);
+        RenderTechnique(const RenderTechnique& technique);
+        RenderTechnique&        operator=(const RenderTechnique& technique);
 
     private:
 
@@ -54,17 +53,14 @@ namespace renderer
         u32                     m_currentPass;
 
         std::string             m_name;
-
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::shared_ptr<CRenderTechnique>            RenderTechniquePtr;
+    typedef std::shared_ptr<RenderTechnique>            RenderTechniquePtr;
     typedef std::map<std::string, RenderTechniquePtr>    RenderTechniqueMap;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer
 } //namespace v3d
-
-#endif //_V3D_RENDER_TECHNIQUE_H_

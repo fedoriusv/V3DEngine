@@ -10,7 +10,7 @@ namespace scene
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class RenderTechniqueManager : public utils::TSingleton<RenderTechniqueManager>, public stream::TResourceLoader<const renderer::CRenderTechnique*>
+    class RenderTechniqueManager : public utils::TSingleton<RenderTechniqueManager>, public stream::TResourceLoader<const renderer::RenderTechnique*>
     {
     private:
 
@@ -21,8 +21,8 @@ namespace scene
 
     public:
 
-        void                                add(const renderer::CRenderTechnique* technique);
-        const renderer::CRenderTechnique*   load(const std::string& name, const std::string& alias = "") override;
+        void                                add(const renderer::RenderTechnique* technique);
+        const renderer::RenderTechnique*   load(const std::string& name, const std::string& alias = "") override;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

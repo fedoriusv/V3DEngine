@@ -12,13 +12,13 @@ namespace renderer
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     class Buffer;
-    class CRenderTechnique;
+    class RenderTechnique;
 
     class Geometry
     {
     public:
 
-        explicit Geometry(const CRenderTechnique* technique);
+        explicit Geometry(const RenderTechnique* technique);
         virtual                 ~Geometry();
 
         virtual void            init() = 0;
@@ -49,7 +49,7 @@ namespace renderer
         EPrimitivesTopology     m_drawMode;
         EDataUsageType          m_geometyType;
         SVertexData             m_data;
-        const CRenderTechnique* m_technique;
+        const RenderTechnique*  m_technique;
 
         Buffer*                 m_vertexBuffer;
         Buffer*                 m_indexBuffer;

@@ -2,7 +2,7 @@
 
 #include "utils/Cloneable.h"
 #include "utils/RefCounted.h"
-#include "Shader.h"
+#include "resources/Shader.h"
 #include "Texture.h"
 
 namespace v3d
@@ -42,54 +42,54 @@ namespace renderer
             //TODO:
         };
 
-        ShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines = {});
+        ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
         virtual                             ~ShaderProgram();
 
         ShaderProgram(const ShaderProgram& program) = delete;
         ShaderProgram& operator=(const ShaderProgram& program) = delete;
 
-        virtual bool                        setDefine(const std::string& name, const std::string& value = "");
-        virtual bool                        setUndefine(const std::string& name);
+        virtual bool                                    setDefine(const std::string& name, const std::string& value = "");
+        virtual bool                                    setUndefine(const std::string& name);
 
         template<typename T>
-        void                                applyUniform(const std::string& name, const T& value);
+        void                                            applyUniform(const std::string& name, const T& value);
         template<typename T>
-        void                                applyAttribute(const std::string& name, const T& data);
-        virtual void                        applyTexture(const std::string& name, const TexturePtr texure);
+        void                                            applyAttribute(const std::string& name, const T& data);
+        virtual void                                    applyTexture(const std::string& name, const TexturePtr texure);
 
-        virtual void                        attachShader(const ShaderPtr shader);
-        virtual void                        detachShader(const ShaderPtr shader);
+        virtual void                                    attachShader(const resources::ShaderPtr shader);
+        virtual void                                    detachShader(const resources::ShaderPtr shader);
 
-        bool                                compile();
+        bool                                            compile();
 
-        virtual u16                         getFlags() const;
-        virtual bool                        isFlagPresent(EProgramFlags flag);
+        virtual u16                                     getFlags() const;
+        virtual bool                                    isFlagPresent(EProgramFlags flag);
 
-        virtual ShaderProgramPtr            clone() const override;
+        virtual ShaderProgramPtr                        clone() const override;
 
     protected:
 
         ShaderProgram();
 
-        virtual void                        applyUniform(const std::string& name, const void* value, u32 size);
-        virtual void                        applyAttribute(const std::string& name, const void* value, u32 size);
+        virtual void                                    applyUniform(const std::string& name, const void* value, u32 size);
+        virtual void                                    applyAttribute(const std::string& name, const void* value, u32 size);
 
-        virtual const ShaderDefinesList&    getMacroDefinitions() const;
-        virtual const ShaderList&           getShaders() const;
+        virtual const resources::ShaderDefinesList&     getMacroDefinitions() const;
+        virtual const resources::ShaderList&            getShaders() const;
 
-        virtual void                        setMacroDefinitions(const ShaderDefinesList& list);
-        virtual void                        setShaderParams(ShaderParameters& params);
+        virtual void                                    setMacroDefinitions(const resources::ShaderDefinesList& list);
+        virtual void                                    setShaderParams(ShaderParameters& params);
 
-        friend                              RenderThread;
-        virtual bool                        compile(const ShaderDefinesList& defines, const ShaderList& shaders, ShaderParameters& outParameters);
-        virtual void                        destroy();
+        friend                                          RenderThread;
+        virtual bool                                    compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderParameters& outParameters);
+        virtual void                                    destroy();
 
     private:
 
-        friend                              RenderPass;
+        friend                                          RenderPass;
 
 
-        ShaderProgram* const                m_impl;
+        ShaderProgram* const                            m_impl;
 };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////

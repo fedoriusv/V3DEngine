@@ -43,7 +43,7 @@ namespace vk
         Texture*                                createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level) override;
         Texture*                                createCubeTexture(EImageFormat format, EImageType type, const core::Dimension2D& size, const void* data[6], u32 level) override;
         Buffer*                                 createBuffer(EBufferTarget target, EDataUsageType type) override;
-        ShaderProgram*                          createShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines = {}) override;
+        ShaderProgram*                          createShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {}) override;
 
         void                                    fillGrapthicCaps() override;
 

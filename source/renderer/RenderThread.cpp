@@ -1,5 +1,6 @@
 #include "RenderThread.h"
 #include "utils/Logger.h"
+#include "resources/Shader.h"
 
 namespace v3d
 {
@@ -403,8 +404,8 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
     case ERenderCommand::eCommandCompileProgram:
     {
         ShaderProgram* program = command.readValue<ShaderProgram*>();
-        const ShaderDefinesList* defines = command.readValue<const ShaderDefinesList*>();
-        const ShaderList* shaders = command.readValue<const ShaderList*>();
+        const resources::ShaderDefinesList* defines = command.readValue<const resources::ShaderDefinesList*>();
+        const resources::ShaderList* shaders = command.readValue<const resources::ShaderList*>();
         ShaderProgram::ShaderParameters* params = command.readValue<ShaderProgram::ShaderParameters*>();
         bool* result = command.readValue<bool*>();
 

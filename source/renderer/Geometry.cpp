@@ -8,7 +8,7 @@ namespace v3d
 namespace renderer
 {
 
-Geometry::Geometry(const CRenderTechnique* technique)
+Geometry::Geometry(const RenderTechnique* technique)
     : m_drawMode(EPrimitivesTopology::eTriangles)
     , m_geometyType(EDataUsageType::eWriteStatic)
     , m_technique(technique)

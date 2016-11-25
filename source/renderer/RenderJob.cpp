@@ -54,13 +54,13 @@ PassIndexIterConst CRenderJob::renderPassIndexEnd() const
     return m_passIndexList.cend();
 }
 
-const CRenderTechnique* CRenderJob::getRenderTechique() const
+const RenderTechnique* CRenderJob::getRenderTechique() const
 {
     ASSERT(m_renderable, "Renderable is nullptr");
     return m_renderable->getRenderTechique();
 }
 
-CRenderTechnique* CRenderJob::getRenderTechique()
+RenderTechnique* CRenderJob::getRenderTechique()
 {
     ASSERT(m_renderable, "Renderable is nullptr");
     return const_cast<Renderable*>(m_renderable)->getRenderTechique();

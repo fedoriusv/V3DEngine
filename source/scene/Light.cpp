@@ -98,7 +98,7 @@ void CLight::init()
     m_data._attenuation = Vector3D(0.5f, 0.0f, 0.02f);
 }
 
-void CLight::init(const stream::IStreamPtr& stream)
+void CLight::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }

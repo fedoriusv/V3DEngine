@@ -5,7 +5,6 @@
 #include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
 #include "GeometryTarget.h"
-#include "resources/ShaderResource.h"
 
 #include "tinyxml2.h"
 
@@ -22,14 +21,12 @@ RenderPass::RenderPass()
     , m_defaultShaderData(nullptr)
     , m_renderState(nullptr)
     , m_lods(nullptr)
-    , m_program(nullptr)
+    , m_program(new ShaderProgram())
 
     , m_enable(true)
     , m_name("")
 {
     RenderPass::init();
-
-    m_program = ENGINE_RENDERER->makeSharedProgram();
 }
 
 RenderPass::RenderPass(const RenderPass& pass)
@@ -483,7 +480,7 @@ void RenderPass::init()
     m_userShaderData = std::make_shared<ShaderData>();
     m_defaultShaderData = std::make_shared<ShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
-    m_renderState = ENGINE_RENDERER->makeSharedRenderState();
+    //m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }
 
 bool RenderPass::parseRenderTarget(const tinyxml2::XMLElement* root)

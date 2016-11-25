@@ -15,9 +15,11 @@ namespace utils
         TCloneable() {};
         TCloneable(const TCloneable& pass) = delete;
         TCloneable& operator=(const TCloneable& pass) = delete;
-        virtual     ~TCloneable() {};
 
         virtual T   clone() const = 0;
+
+    protected:
+        virtual     ~TCloneable() {};
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

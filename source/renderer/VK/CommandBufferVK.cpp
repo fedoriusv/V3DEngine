@@ -305,10 +305,10 @@ void CommandBufferVK::resolveImage()
 void CommandBufferVK::setViewport(const core::Rect32& viewportPos, f32 minDepth, f32 maxDepth)
 {
     VkViewport viewport = {};
-    viewport.x = viewportPos.getLeftX();
-    viewport.y = viewportPos.getTopY();
-    viewport.width = viewportPos.getWidth();
-    viewport.height = viewportPos.getHeight();
+    viewport.x = static_cast<f32>(viewportPos.getLeftX());
+    viewport.y = static_cast<f32>(viewportPos.getTopY());
+    viewport.width = static_cast<f32>(viewportPos.getWidth());
+    viewport.height = static_cast<f32>(viewportPos.getHeight());
     viewport.minDepth = core::clamp(minDepth, 0.0f, 1.0f);
     viewport.maxDepth = core::clamp(maxDepth, 0.0f, 1.0f);
 

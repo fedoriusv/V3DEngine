@@ -1,7 +1,7 @@
 #pragma once
 
 #include "context/DeviceContext.h"
-#include "Shader.h"
+#include "resources/Shader.h"
 #include "ShaderProgram.h"
 #include "Geometry.h"
 #include "Texture.h"
@@ -84,10 +84,7 @@ namespace renderer
 
         void                        checkForErrors(const std::string& location = "");
 
-        virtual ShaderPtr           makeSharedShader()                                                      = 0;
-        virtual ShaderProgramPtr    makeSharedProgram()                                                     = 0;
-//        virtual GeometryPtr         makeSharedGeometry(const CRenderTechnique* technique)                   = 0;
-        virtual RenderStatePtr      makeSharedRenderState()                                                 = 0;
+//        virtual GeometryPtr         makeSharedGeometry(const RenderTechnique* technique)                   = 0;
 
         virtual RenderTargetPtr     makeSharedRenderTarget()                                                = 0;
         virtual GeometryTargetPtr   makeSharedGeometryTarget()                                              = 0;

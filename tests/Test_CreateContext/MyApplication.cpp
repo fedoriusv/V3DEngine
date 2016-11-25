@@ -28,22 +28,18 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
-    scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
+    /*scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");*/
 
-    ShaderProgram* program = new ShaderProgram(shaderList);
-    program->attach(shader);
-    program->dettach(shader);
-    program->setDefine("ddd");
-
+    resources::ShaderPtr sh0 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
+    resources::ShaderPtr sh1 = scene::ShaderManager::getInstance()->load("shaders/test.frag");
+    ShaderProgram* program = new ShaderProgram({ sh0 , sh1 });
     bool a = program->compile();
+    program->applyUniform<u32>("my", 5);
 
-    program->applyAttribute();
-    program->applyUniform();
 
-    program->execute();
-
-    Texture* tex = new Texture();
-    //scene::ShaderManager::getInstance()->load("shaders/test.frag");
+    resources::ShaderPtr sh3 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
+    ShaderProgram* program2 = new ShaderProgram({ sh3 });
+    bool b = program2->compile();
 
 }
 

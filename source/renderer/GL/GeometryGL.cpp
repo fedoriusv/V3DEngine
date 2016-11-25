@@ -34,7 +34,7 @@ const GLenum EPrimitivesModeGL[EPrimitivesMode::ePrimitivesModeCount] =
 
 u32 CGeometryGL::s_currentArray = 0;
 
-CGeometryGL::CGeometryGL(const CRenderTechnique* technique)
+CGeometryGL::CGeometryGL(const RenderTechnique* technique)
     : CGeometry(technique)
     , m_arrayId(0U)
 

@@ -23,7 +23,7 @@ namespace scene
 
         friend              CScene;
 
-        void                init(const stream::IStreamPtr& stream)  override;
+        void                init(const stream::IStreamPtr stream)  override;
         bool                load()                                  override;
 
         void                init()         override;

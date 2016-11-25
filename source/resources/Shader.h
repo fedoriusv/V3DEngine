@@ -7,6 +7,12 @@
 
 namespace v3d
 {
+
+namespace scene
+{
+    class ShaderManager;
+} //namespace scene
+
 namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +30,9 @@ namespace resources
         eShaderCount
     };
 
+    using ShaderDefinesList = std::map<const std::string, std::string>;
+    using Bytecode = std::vector<u32>;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -36,9 +45,7 @@ namespace resources
         enum EShaderDataRepresent : u16
         {
             eBytecode,
-            eBytecodeSpirV,
-            eSourceGLSL,
-            eSourceHLSL
+            eSource,
         };
 
         Shader();
@@ -49,22 +56,28 @@ namespace resources
 
         const std::string&          getName() const;
 
-        const std::string&          getSource() const;
-        const std::vector<u32>&     getBytecode() const;
+        const std::string*          getSource() const;
+        const Bytecode*             getBytecode() const;
 
         EShaderDataRepresent        getShaderKind() const;
+        EShaderType                 getType() const;
 
         static const std::string&   getShaderTypeNameByType(EShaderType type);
         static EShaderType          getShaderTypeByName(const std::string& name);
 
     private:
 
+        Shader(EShaderType type, const std::string& source);
+        Shader(EShaderType type, const Bytecode& bytecode);
+
+        friend                      scene::ShaderManager;
+
         std::string                 m_name;
 
         union
         {
             std::string*            m_source;
-            std::vector<u32>*       m_bytecode;
+            Bytecode*               m_bytecode;
         };
 
         EShaderDataRepresent        m_dataRepresent;
@@ -75,7 +88,8 @@ namespace resources
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    using ShaderPtr = std::
+    using ShaderPtr = utils::TIntrusivePtr<Shader>;
+    using ShaderList = std::vector<ShaderPtr>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

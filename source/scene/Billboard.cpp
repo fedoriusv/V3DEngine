@@ -49,7 +49,7 @@ void CBillboard::init()
         return;
     }
 
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CBillboard: RenderTechique doesn't exist");

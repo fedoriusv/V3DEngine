@@ -16,7 +16,7 @@ namespace decoders
         TextureResILDecoder();
         explicit TextureResILDecoder(std::initializer_list<std::string> supportedExtensions);
 
-        virtual                 ~TextureResILDecoder();
+        ~TextureResILDecoder();
 
         stream::IResource*      decode(const stream::IStreamPtr stream) override;
 

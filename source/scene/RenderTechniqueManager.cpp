@@ -21,18 +21,18 @@ RenderTechniqueManager::~RenderTechniqueManager()
 {
 }
 
-void RenderTechniqueManager::add(const renderer::CRenderTechnique* technique)
+void RenderTechniqueManager::add(const renderer::RenderTechnique* technique)
 {
     std::string name = technique->getResourseName();
     TResourceLoader::insert(technique, name);
 }
 
-const CRenderTechnique* RenderTechniqueManager::load(const std::string& name, const std::string& alias)
+const RenderTechnique* RenderTechniqueManager::load(const std::string& name, const std::string& alias)
 {
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
-    const CRenderTechnique* findTechnique = TResourceLoader::get(alias.empty() ? nameStr : alias);
+    const RenderTechnique* findTechnique = TResourceLoader::get(alias.empty() ? nameStr : alias);
     if (findTechnique)
     {
         return findTechnique;
@@ -57,7 +57,7 @@ const CRenderTechnique* RenderTechniqueManager::load(const std::string& name, co
 
                 if (stream->isOpen())
                 {
-                    renderer::CRenderTechnique* technique = new renderer::CRenderTechnique();
+                    renderer::RenderTechnique* technique = new renderer::RenderTechnique();
 
                     technique->init(stream);
                     technique->setResourseName(fullName);
@@ -66,7 +66,7 @@ const CRenderTechnique* RenderTechniqueManager::load(const std::string& name, co
 
                     if (!technique->load())
                     {
-                        LOG_ERROR("CRenderTechniqueManager: Streaming error read file [%s]", nameStr.c_str());
+                        LOG_ERROR("RenderTechniqueManager: Streaming error read file [%s]", nameStr.c_str());
                         stream->close();
 
                         return nullptr;
@@ -74,13 +74,13 @@ const CRenderTechnique* RenderTechniqueManager::load(const std::string& name, co
                     stream->close();
 
                     TResourceLoader::insert(technique, alias.empty() ? nameStr : alias);
-                    LOG_INFO("CRenderTechniqueManager: File [%s] success loaded", fullName.c_str());
+                    LOG_INFO("RenderTechniqueManager: File [%s] success loaded", fullName.c_str());
                     return technique;
                 }
             }
             else
             {
-                LOG_WARNING("CRenderTechniqueManager: File [%s] not found", fullName.c_str());
+                LOG_WARNING("RenderTechniqueManager: File [%s] not found", fullName.c_str());
             }
         }
     }

@@ -2,6 +2,7 @@
 
 #include "renderer/ShaderProgram.h"
 #include "renderer/ConstantBuffer.h"
+#include "resources/Shader.h"
 
 #ifdef _VULKAN_RENDER_
 #include "vulkan/vulkan.h"
@@ -22,15 +23,15 @@ namespace vk
     public:
 
         ShaderProgramVK();
-        ShaderProgramVK(const ShaderList& shaders, const ShaderDefinesList& defines = {});
+        ShaderProgramVK(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
 
         ~ShaderProgramVK();
 
         bool                                setDefine(const std::string& name, const std::string& value = "") override;
         bool                                setUndefine(const std::string& name) override;
 
-        void                                attachShader(const ShaderPtr shader) override;
-        void                                detachShader(const ShaderPtr shader) override;
+        void                                attachShader(const resources::ShaderPtr shader) override;
+        void                                detachShader(const resources::ShaderPtr shader) override;
 
         u16                                 getFlags() const override;
         bool                                isFlagPresent(EProgramFlags flag) override;
@@ -43,19 +44,19 @@ namespace vk
         void                                applyAttribute(const std::string& name, const void* value, u32 size) override;
         void                                applyTexture(const std::string& name, const TexturePtr texure) override;
 
-        const ShaderDefinesList&            getMacroDefinitions() const override;
-        const ShaderList&                   getShaders() const override;
+        const resources::ShaderDefinesList& getMacroDefinitions() const override;
+        const resources::ShaderList&        getShaders() const override;
 
-        void                                setMacroDefinitions(const ShaderDefinesList& list) override;
+        void                                setMacroDefinitions(const resources::ShaderDefinesList& list) override;
         void                                setShaderParams(ShaderParameters& params) override;
 
-        bool                                compile(const ShaderDefinesList& defines, const ShaderList& shaders, ShaderParameters& outParameters) override;
+        bool                                compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderParameters& outParameters) override;
         void                                destroy();
 
         void                                destoryAllModules();
 
-        ShaderList                          m_shaderList;
-        ShaderDefinesList                   m_defines;
+        resources::ShaderList               m_shaderList;
+        resources::ShaderDefinesList        m_defines;
 
         ShaderParameters                    m_parameters;
         ConstantBuffers                     m_constantBuffers;

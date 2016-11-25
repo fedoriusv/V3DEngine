@@ -64,7 +64,7 @@ void CMesh::init()
         return;
     }
 
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CMesh: RenderTechique doesn't exist");
@@ -87,7 +87,7 @@ void CMesh::init()
     m_initialiazed = true;
 }
 
-void CMesh::init(const stream::IStreamPtr& stream)
+void CMesh::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }

@@ -188,7 +188,7 @@ void CCamera::update(s32 dt)
     }
 }
 
-void CCamera::init(const stream::IStreamPtr& stream)
+void CCamera::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }

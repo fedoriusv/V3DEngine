@@ -225,7 +225,7 @@ void IRenderer::draw(const RenderJobPtr& job)
     MaterialPtr& material = job->getMaterial();
     const GeometryPtr& geometry = job->getGeometry();
     const core::Matrix4D& transform = job->getTransform();
-    CRenderTechnique* techique = job->getRenderTechique();
+    RenderTechnique* techique = job->getRenderTechique();
 
     u32 targetIndex = job->getRenderTarget();
     u32 passCount = techique->getRenderPassCount();

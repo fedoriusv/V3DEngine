@@ -215,21 +215,6 @@ void RendererVK::postRender()
 {
 }
 
-ShaderPtr RendererVK::makeSharedShader()
-{
-    return ShaderPtr();
-}
-
-ShaderProgramPtr RendererVK::makeSharedProgram()
-{
-    return ShaderProgramPtr();
-}
-
-RenderStatePtr RendererVK::makeSharedRenderState()
-{
-    return RenderStatePtr();
-}
-
 RenderTargetPtr RendererVK::makeSharedRenderTarget()
 {
     return RenderTargetPtr();

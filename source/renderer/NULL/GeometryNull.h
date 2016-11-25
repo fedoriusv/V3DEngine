@@ -13,7 +13,7 @@ namespace renderer
     {
     public:
 
-        CGeometryNull(const CRenderTechnique* technique);
+        CGeometryNull(const RenderTechnique* technique);
         ~CGeometryNull();
         
         void                init()      override;

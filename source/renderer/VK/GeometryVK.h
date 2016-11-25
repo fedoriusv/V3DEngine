@@ -23,7 +23,7 @@ namespace vk
     {
     public:
 
-        GeometryVK(const CRenderTechnique* technique);
+        GeometryVK(const RenderTechnique* technique);
         ~GeometryVK();
         
         void                init()      override;

@@ -36,7 +36,7 @@ void CParticleSystem::init()
         return;
     }
 
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CParticalSystem: RenderTechique doesn't exist");
@@ -81,7 +81,7 @@ void CParticleSystem::update(s32 dt)
 
     if (fElapsedTime > fNextGenerationTime)
     {
-        const CRenderTechnique* technique = Renderable::getMaterial()->getRenderTechique();
+        const RenderTechnique* technique = Renderable::getMaterial()->getRenderTechique();
         ASSERT(technique && "RenderTechnique don't exist");
 
         technique->getRenderPass(0)->getUserShaderData()->setUniform("iNumToGenerate", iNumToGenerate);
@@ -137,7 +137,7 @@ void CParticleSystem::refresh()
         return;
     }
 
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     ASSERT(technique, "RenderTechique doesn't exist");
 
     /*technique->getRenderPass(0)->getUserShaderData()->setUniform("fTimePassed", fTimePassed);

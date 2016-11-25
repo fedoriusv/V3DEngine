@@ -5,6 +5,7 @@
 
 #ifdef _VULKAN_RENDER_
 #include "context/DebugVK.h"
+#include "RendererVK.h"
 #ifdef USE_SPIRV
 #   include "utils/SpirVCompiler.h"
 #endif //USE_SPIRV
@@ -16,6 +17,8 @@ namespace renderer
 namespace vk
 {
 
+using namespace resources;
+
 ShaderProgramVK::ShaderProgramVK()
     : ShaderProgram()
     , m_flags(ShaderProgram::eCreated)
@@ -23,6 +26,7 @@ ShaderProgramVK::ShaderProgramVK()
     , m_device(VK_NULL_HANDLE)
 {
     LOG_DEBUG("ShaderProgramVK::ShaderProgramVK constructor %x", this);
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 }
 
 ShaderProgramVK::ShaderProgramVK(const ShaderList& shaders, const ShaderDefinesList& defines)
@@ -34,6 +38,7 @@ ShaderProgramVK::ShaderProgramVK(const ShaderList& shaders, const ShaderDefinesL
     , m_device(VK_NULL_HANDLE)
 {
     LOG_DEBUG("ShaderProgramVK::ShaderProgramVK constructor %x", this);
+    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 }
 
 ShaderProgramVK::~ShaderProgramVK()
@@ -168,43 +173,51 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
     m_flags = ShaderProgram::eCreated;
     ShaderProgramVK::destoryAllModules();
 
-    //TODO: replace to async thread
 #ifdef USE_SPIRV
     utils::SpirVCompileWrapper compiler(ENGINE_RENDERER->getRenderType(), defines);
     for (auto& shader : m_shaderList)
     {
         std::vector<u32> bytecode;
-
-        u64 hash = scene::ShaderManager::generateShaderHash(defines, shader);
-        IShader* findedShader = scene::ShaderManager::get(hash);
-        if (findedShader)
+        if (shader->getShaderKind() == Shader::EShaderDataRepresent::eBytecode)
         {
-            ASSERT(kindisbytecode, "");
-            bytecode = shader->bytecode();
+            ASSERT(shader->getBytecode(), "invalid bytecode");
+            bytecode = *shader->getBytecode();
+            //defines ignored
         }
-        else
+        else //source
         {
-            EShaderType type = shader->getType();
-            if () //TODO: kinddata(source or bitecode)
+            const std::string* source = shader->getSource();
+
+            u64 hash = scene::ShaderManager::generateHash(*source, defines);
+            const std::vector<u32>* compiledBytecode = scene::ShaderManager::getInstance()->getCompiledShader(hash);
+            if (compiledBytecode)
             {
-                utils::SpirVCompileWrapper::ECompileError error = compiler.compile(shader->source(), type, bytecode);
+                bytecode = *compiledBytecode;
+            }
+            else
+            {
+                EShaderType type = shader->getType();
+                utils::SpirVCompileWrapper::ECompileError error = compiler.compile(*source, type, bytecode);
                 if (error != utils::SpirVCompileWrapper::eNoErrors)
                 {
-                    LOG_ERROR("ShaderProgramVK::compile: %s[%s] has compile error %d.", shader->getName().c_str(), CShaderSource::getShaderTypeNameByType(type).c_str(), error);
+                    LOG_ERROR("ShaderProgramVK::compile: %s[%s] has compile error %d.", shader->getName().c_str(), Shader::getShaderTypeNameByType(type).c_str(), error);
                     if (!compiler.errorMessages().empty())
                     {
                         LOG("\n%s\n", compiler.errorMessages().c_str());
                     }
+
+                    ShaderProgramVK::destoryAllModules();
+
+                    m_flags |= ShaderProgram::eInvalid;
+                    return false;
                 }
-            }
-            else
-            {
-                bytecode = shader->bytecode();
+
+                scene::ShaderManager::getInstance()->addCompiledShader(hash, bytecode);
             }
         }
 
         utils::SpirVCompileWrapper::Reflection reflection = compiler.reflection(bytecode);
-        //parse reflection to outParameters
+        //TODO: parse reflection to outParameters
 
         VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
         shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

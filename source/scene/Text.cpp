@@ -72,7 +72,7 @@ void CText::init()
         return;
     }
 
-    const CRenderTechnique* technique = Renderable::getRenderTechique();
+    const RenderTechnique* technique = Renderable::getRenderTechique();
     if (!technique)
     {
         LOG_ERROR("CText: RenderTechique doesn't exist");

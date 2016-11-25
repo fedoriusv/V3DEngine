@@ -15,7 +15,7 @@ namespace vk
 
 extern VkFormat getImageFormatVK(EImageFormat format, EImageType type);
 
-GeometryVK::GeometryVK(const CRenderTechnique* technique)
+GeometryVK::GeometryVK(const RenderTechnique* technique)
     : Geometry(technique)
 {
 }

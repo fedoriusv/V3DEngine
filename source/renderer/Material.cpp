@@ -210,7 +210,7 @@ float CMaterial::getTransparency() const
     return m_materialData._transparency;
 }
 
-void CMaterial::init(const stream::IStreamPtr& stream)
+void CMaterial::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }

@@ -68,7 +68,7 @@ void CModel::update(s32 dt)
     CNode::update(dt);
 }
 
-void CModel::init(const stream::IStreamPtr& stream)
+void CModel::init(const stream::IStreamPtr stream)
 {
     IResource::setStream(stream);
 }
@@ -189,7 +189,7 @@ bool CModel::load()
 
 bool CModel::setRenderTechniqueForAllMeshes(const std::string& file)
 {
-    const CRenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
+    const RenderTechnique* technique = scene::RenderTechniqueManager::getInstance()->load(file);
     if (!technique)
     {
         LOG_ERROR("CModel: Error read file [%s]", file.c_str());
