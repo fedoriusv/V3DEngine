@@ -132,7 +132,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
     spirv_cross::CompilerGLSL glsl(bytecode);
     spirv_cross::ShaderResources resources = glsl.get_shader_resources();
 
-    auto getInnerDataType = [](const spirv_cross::SPIRType& type) -> renderer::ShaderDataType::EShaderDataType
+    auto getInnerDataType = [](const spirv_cross::SPIRType& type) -> renderer::ShaderDataType::EDataType
     {
         switch (type.basetype)
         {
@@ -142,148 +142,148 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eInt;
+                    return renderer::ShaderDataType::EDataType::eInt;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2i;
+                    return renderer::ShaderDataType::EDataType::eVector2i;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3i;
+                    return renderer::ShaderDataType::EDataType::eVector3i;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4i;
+                    return renderer::ShaderDataType::EDataType::eVector4i;
                 }
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::UInt:
             if (type.columns == 1)
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eUint;
+                    return renderer::ShaderDataType::EDataType::eUint;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2u;
+                    return renderer::ShaderDataType::EDataType::eVector2u;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3u;
+                    return renderer::ShaderDataType::EDataType::eVector3u;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4u;
+                    return renderer::ShaderDataType::EDataType::eVector4u;
                 }
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::Int64:
             if (type.columns == 1)
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eInt64;
+                    return renderer::ShaderDataType::EDataType::eInt64;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2u64;
+                    return renderer::ShaderDataType::EDataType::eVector2u64;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3u64;
+                    return renderer::ShaderDataType::EDataType::eVector3u64;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4u64;
+                    return renderer::ShaderDataType::EDataType::eVector4u64;
                 }
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::UInt64:
             if (type.columns == 1)
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eUint64;
+                    return renderer::ShaderDataType::EDataType::eUint64;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2u64;
+                    return renderer::ShaderDataType::EDataType::eVector2u64;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3u64;
+                    return renderer::ShaderDataType::EDataType::eVector3u64;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4u64;
+                    return renderer::ShaderDataType::EDataType::eVector4u64;
                 }
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::Float:
             if (type.columns == 1)
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eFloat;
+                    return renderer::ShaderDataType::EDataType::eFloat;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2f;
+                    return renderer::ShaderDataType::EDataType::eVector2f;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3f;
+                    return renderer::ShaderDataType::EDataType::eVector3f;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4f;
+                    return renderer::ShaderDataType::EDataType::eVector4f;
                 }
             }
             else if (type.columns == 3 && type.vecsize == 3)
             {
-                return renderer::ShaderDataType::eMatrix3f;
+                return renderer::ShaderDataType::EDataType::eMatrix3f;
             }
             else if (type.columns == 4 && type.vecsize == 4)
             {
-                return renderer::ShaderDataType::eMatrix4f;
+                return renderer::ShaderDataType::EDataType::eMatrix4f;
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::Double:
             if (type.columns == 1)
             {
                 if (type.vecsize == 1)
                 {
-                    return renderer::ShaderDataType::eDouble;
+                    return renderer::ShaderDataType::EDataType::eDouble;
                 }
                 else if (type.vecsize == 2)
                 {
-                    return renderer::ShaderDataType::eVector2d;
+                    return renderer::ShaderDataType::EDataType::eVector2d;
                 }
                 else if (type.vecsize == 3)
                 {
-                    return renderer::ShaderDataType::eVector3d;
+                    return renderer::ShaderDataType::EDataType::eVector3d;
                 }
                 else if (type.vecsize == 4)
                 {
-                    return renderer::ShaderDataType::eVector4d;
+                    return renderer::ShaderDataType::EDataType::eVector4d;
                 }
             }
             else if (type.columns == 3 && type.vecsize == 3)
             {
-                return renderer::ShaderDataType::eMatrix3d;
+                return renderer::ShaderDataType::EDataType::eMatrix3d;
             }
             else if (type.columns == 4 && type.vecsize == 4)
             {
-                return renderer::ShaderDataType::eMatrix4d;
+                return renderer::ShaderDataType::EDataType::eMatrix4d;
             }
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
 
         case spirv_cross::SPIRType::Char:
         case spirv_cross::SPIRType::Unknown:
@@ -294,10 +294,10 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         case spirv_cross::SPIRType::SampledImage:
         case spirv_cross::SPIRType::Sampler:
         default:
-            return renderer::ShaderDataType::eUnknown;
+            return renderer::ShaderDataType::EDataType::eUnknown;
         };
 
-        return renderer::ShaderDataType::eUnknown;
+        return renderer::ShaderDataType::EDataType::eUnknown;
     };
 
     auto getInnerTextureTarget = [](const spirv_cross::SPIRType& type) -> renderer::ETextureTarget
@@ -367,7 +367,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         u32 location = glsl.get_decoration(inputChannel.id, spv::DecorationLocation);
 
         const spirv_cross::SPIRType& type = glsl.get_type(inputChannel.type_id);
-        renderer::ShaderDataType::EShaderDataType innerType = getInnerDataType(type);
+        renderer::ShaderDataType::EDataType innerType = getInnerDataType(type);
         u32 col = type.columns;
         u32 row = type.vecsize;
 
@@ -389,7 +389,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         u32 location = glsl.get_decoration(outputChannel.id, spv::DecorationLocation);
 
         const spirv_cross::SPIRType& type = glsl.get_type(outputChannel.type_id);
-        renderer::ShaderDataType::EShaderDataType innerType = getInnerDataType(type);
+        renderer::ShaderDataType::EDataType innerType = getInnerDataType(type);
         u32 col = type.columns;
         u32 row = type.vecsize;
 
@@ -413,15 +413,9 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         u32 set = glsl.get_decoration(buffer.id, spv::DecorationDescriptorSet);
         const spirv_cross::SPIRType& block_type = glsl.get_type(buffer.type_id);
 
-        SpirVCompileWrapper::Reflection::UniformBlockParameter block;
-        block.id = buffID;
-        block.name = name;
-        block.set = set;
-        block.binding = binding;
-        
-        reflection.constantBuffers.push_back(block);
-
         u32 index = 0;
+        u32 block_size = 0;
+        u32 offset = 0;
         while (true)
         {
             const std::string& member_name = glsl.get_member_name(buffer.base_type_id, index);
@@ -430,20 +424,39 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
                 break;
             }
             const spirv_cross::SPIRType& type = glsl.get_type(block_type.member_types[index]);
-            renderer::ShaderDataType::EShaderDataType innerType = getInnerDataType(type);
+            renderer::ShaderDataType::EDataType innerType = getInnerDataType(type);
             u32 col = type.columns;
             u32 row = type.vecsize;
-            ++index;
+            u32 array = std::accumulate(type.array.cbegin(), type.array.cend(), 1);
+            u32 size = (type.width / 8) * array * col * row;
 
             SpirVCompileWrapper::Reflection::UniformParameter uniform;
             uniform.block = buffID;
             uniform.name = name;
+            uniform.index = index;
             uniform.type = innerType;
             uniform.colCount = col;
             uniform.rowCount = row;
+            uniform.array = array;
+            uniform.size = size;
+            uniform.offset = offset;
 
             reflection.uniforms.push_back(uniform);
+
+            block_size += size;
+            offset += size;
+
+            ++index;
         }
+
+        SpirVCompileWrapper::Reflection::UniformBlockParameter block;
+        block.id = buffID;
+        block.name = name;
+        block.set = set;
+        block.binding = binding;
+        block.size = block_size;
+
+        reflection.constantBuffers.push_back(block);
 
         ++buffID;
     }

@@ -34,46 +34,51 @@ namespace utils
         {
             struct Channel
             {
-                std::string                                 name;
-                u32                                         location;
+                std::string                         name;
+                u32                                 location;
 
-                u32                                         rowCount;
-                u32                                         colCount;
-                renderer::ShaderDataType::EShaderDataType   type;
+                u32                                 rowCount;
+                u32                                 colCount;
+                renderer::ShaderDataType::EDataType type;
             };
 
             struct TextureParameter
             {
-                std::string                                 name;
-                u32                                         set;
-                u32                                         binding;
-                renderer::ETextureTarget                    target;
-                bool                                        depth;
+                std::string                         name;
+                u32                                 set;
+                u32                                 binding;
+                renderer::ETextureTarget            target;
+                bool                                depth;
             };
 
             struct UniformParameter
             {
-                std::string                                 name;
-                s32                                         block;
+                std::string                         name;
+                s32                                 block;
+                u32                                 index;
 
-                u32                                         rowCount;
-                u32                                         colCount;
-                renderer::ShaderDataType::EShaderDataType   type;
+                u32                                 rowCount;
+                u32                                 colCount;
+                u32                                 array;
+                u32                                 size;
+                u32                                 offset;
+                renderer::ShaderDataType::EDataType type;
             };
 
             struct UniformBlockParameter
             {
-                std::string                                 name;
-                s32                                         id;
-                u32                                         set;
-                u32                                         binding;
+                std::string                         name;
+                s32                                 id;
+                u32                                 set;
+                u32                                 binding;
+                u32                                 size;
             };
 
-            std::vector<Channel>                            channelsIn;
-            std::vector<Channel>                            channelsOut;
-            std::vector<TextureParameter>                   samplers;
-            std::vector<UniformParameter>                   uniforms;
-            std::vector<UniformBlockParameter>              constantBuffers;
+            std::vector<Channel>                    channelsIn;
+            std::vector<Channel>                    channelsOut;
+            std::vector<TextureParameter>           samplers;
+            std::vector<UniformParameter>           uniforms;
+            std::vector<UniformBlockParameter>      constantBuffers;
 
         };
 
