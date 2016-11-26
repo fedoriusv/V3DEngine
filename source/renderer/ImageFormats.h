@@ -105,12 +105,6 @@ namespace renderer
         }
     };
 
-    template<typename E>
-    constexpr auto toEnumType(E enumerator) noexcept
-    {
-        return static_cast<std::underlying_type_t<E>>(enumerator);
-    }
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //namespace renderer

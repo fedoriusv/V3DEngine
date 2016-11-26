@@ -2,6 +2,33 @@
 
 #include "Config.h"
 
+#include <string>
+#include <vector>
+#include <list>
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <queue>
+#include <array>
+#include <algorithm>
+#include <memory>
+#include <mutex>
+#include <atomic>
+#include <fstream>
+#include <numeric>
+#include <functional>
+#include <utility>
+
+#include <type_traits>
+
+#include <assert.h>
+#include <time.h>
+#include <cstdarg>
+#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+
 namespace v3d
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,33 +48,15 @@ namespace v3d
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    template<typename E>
+    constexpr auto              toEnumType(E enumerator) noexcept
+    {
+        return static_cast<std::underlying_type_t<E>>(enumerator);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 } //namespace v3d
-
-#include <string>
-#include <vector>
-#include <list>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <queue>
-#include <array>
-#include <algorithm>
-#include <memory>
-#include <mutex>
-#include <atomic>
-#include <fstream>
-#include <functional>
-#include <utility>
-
-#include <type_traits>
-
-#include <assert.h>
-#include <time.h>
-#include <cstdarg>
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
 
 #ifdef _DEBUG
 #   define ASSERT(x, message) assert(x && message)

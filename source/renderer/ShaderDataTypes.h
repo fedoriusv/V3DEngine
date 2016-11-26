@@ -12,7 +12,7 @@ namespace renderer
     {
     public:
 
-        enum EShaderDataType : s16
+        enum class EDataType : s16
         {
             eUnknown = -1,
 
@@ -53,12 +53,15 @@ namespace renderer
             eCount
         };
 
-        static const std::string&   getStringByDataType(EShaderDataType type);
-        static EShaderDataType      getDataTypeByString(const std::string& name);
+        static const std::string&   getStringByDataType(EDataType type);
+        static EDataType            getDataTypeByString(const std::string& name);
+
+        static u32                  typeSize(EDataType type);
+        static u32                  componentsCount(EDataType type);
 
     private:
 
-        static const std::string    s_typeName[EShaderDataType::eCount];
+        static const std::string    s_typeName[toEnumType(EDataType::eCount)];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
