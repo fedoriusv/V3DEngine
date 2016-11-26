@@ -75,7 +75,14 @@ namespace core
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    using Vector4D = TVector4D<f32>;
+    using Point4D    = TVector4D<s32>;
+    using Point4D64  = TVector4D<s64>;
+
+    using Point4DU   = TVector4D<u32>;
+    using Point4DU64 = TVector4D<u64>;
+
+    using Vector4D   = TVector4D<f32>;
+    using Vector4D64 = TVector4D<f64>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

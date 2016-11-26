@@ -73,8 +73,14 @@ namespace core
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    using Vector3D  = TVector3D<f32>;
-    using Point3D   = TVector3D<u32>;
+    using Vector3D   = TVector3D<f32>;
+    using Vector3D64 = TVector3D<f64>;
+
+    using Point3D    = TVector3D<s32>;
+    using Point3D64  = TVector3D<s64>;
+
+    using Point3DU   = TVector3D<u32>;
+    using Point3DU64 = TVector3D<u64>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -72,8 +72,12 @@ namespace core
 
     using Vector2D      = TVector2D<f32>;
     using Vector2D64    = TVector2D<f64>;
+
     using Point2D       = TVector2D<s32>;
+    using Point2D64     = TVector2D<s64>;
+
     using Point2DU      = TVector2D<u32>;
+    using Point2DU64    = TVector2D<u64>;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
