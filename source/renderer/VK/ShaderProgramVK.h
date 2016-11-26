@@ -44,6 +44,8 @@ namespace vk
         void                                applyAttribute(const std::string& name, const void* value, u32 size) override;
         void                                applyTexture(const std::string& name, const TexturePtr texure) override;
 
+        void                                addUniform(ShaderUniform* uniform) override;
+
         const resources::ShaderDefinesList& getMacroDefinitions() const override;
         const resources::ShaderList&        getShaders() const override;
 

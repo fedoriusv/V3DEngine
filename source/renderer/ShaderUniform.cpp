@@ -1,5 +1,4 @@
 #include "ShaderUniform.h"
-#include "ShaderData.h"
 #include "utils/Logger.h"
 
 #include "tinyxml2.h"
@@ -17,7 +16,7 @@ using namespace core;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::string ShaderUniform::s_uniformName[EUniformData::eUniformsCount] = {
+const std::string ShaderUniform::s_uniformName[ETypeContent::eUniformsCount] = {
 
     "transform.projectionMatrix",
     "transform.modelMatrix",
@@ -47,22 +46,22 @@ const std::string ShaderUniform::s_uniformName[EUniformData::eUniformsCount] = {
 };
 
 
-const std::string& ShaderUniform::getUniformNameByValue(EUniformData type)
+const std::string& ShaderUniform::getUniformNameByValue(ETypeContent type)
 {
     return s_uniformName[type];
 }
 
-ShaderUniform::EUniformData ShaderUniform::getValueByUniformName(const std::string& name)
+ShaderUniform::ETypeContent ShaderUniform::getValueByUniformName(const std::string& name)
 {
-    for (int i = 0; i < EUniformData::eUniformsCount; ++i)
+    for (int i = 0; i < ETypeContent::eUniformsCount; ++i)
     {
-        if (s_uniformName[i].compare(name) == 0)
+        if (s_uniformName[i] == name)
         {
-            return (EUniformData)i;
+            return (ETypeContent)i;
         }
     }
 
-    return EUniformData::eUserUniform;
+    return ETypeContent::eUserUniform;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,120 +69,35 @@ ShaderUniform::EUniformData ShaderUniform::getValueByUniformName(const std::stri
 
 ShaderUniform::ShaderUniform()
     : m_name("")
-    , m_type(ShaderDataType::eUnknown)
-    , m_data(EUniformData::eUserUniform)
+    , m_initValue(nullptr)
+    , m_array(1)
+    , m_dataType(ShaderDataType::EDataType::eUnknown)
+    , m_uniformContent(ShaderUniform::eUserUniform)
 {
-}
-
-ShaderUniform::ShaderUniform(const ShaderUniform& uniform)
-    : m_type(ShaderDataType::eUnknown)
-    , m_name("")
-    , m_data(EUniformData::eUserUniform)
-{
-    if (uniform.m_data != EUniformData::eUserUniform)
-    {
-        ShaderUniform::setUniform(uniform.m_name, uniform.m_data);
-    }
-    else
-    {
-        //ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
-    }
-}
-
-ShaderUniform& ShaderUniform::operator=(const ShaderUniform& uniform)
-{
-    if (&uniform == this)
-    {
-        return *this;
-    }
-
-    if (uniform.m_data != EUniformData::eUserUniform)
-    {
-        ShaderUniform::setUniform(uniform.m_name, uniform.m_data);
-    }
-    else
-    {
-        //ShaderUniform::setUniform(uniform.m_type, uniform.m_name, uniform.m_value);
-    }
-
-    //m_id = -1;
-
-    return *this;
 }
 
 ShaderUniform::~ShaderUniform()
 {
-}
-
-//void ShaderUniform::setUniform(EShaderDataType type, const std::string& name)
-//{
-//    m_type  = type;
-//    m_name = name;
-//}
-
-void ShaderUniform::setUniform(const std::string& name, EUniformData data)
-{
-    m_name = name;
-    m_data = data;
-
-    switch (m_data)
+    if (m_initValue)
     {
-    case ShaderUniform::eTransformProjectionMatrix:
-    case ShaderUniform::eTransformModelMatrix:
-    case ShaderUniform::eTransformViewMatrix:
-    case ShaderUniform::eTransformNormalMatrix:
-        m_type = ShaderDataType::eMatrix4f;
-        break;
-
-    case ShaderUniform::eTransformViewPosition:
-    case ShaderUniform::eTransformViewUpVector:
-    case ShaderUniform::eLightPosition:
-    case ShaderUniform::eLightDirection:
-    case ShaderUniform::eLightAttenuation:
-
-        m_type = ShaderDataType::eVector3f;
-        break;
-
-    case ShaderUniform::eMaterialAmbient:
-    case ShaderUniform::eMaterialDiffuse:
-    case ShaderUniform::eMaterialSpecular:
-    case ShaderUniform::eMaterialEmission:
-    case ShaderUniform::eLightAmbient:
-    case ShaderUniform::eLightDiffuse:
-    case ShaderUniform::eLightSpecular:
-        m_type = ShaderDataType::eVector4f;
-        break;
-
-    case ShaderUniform::eMaterialShininess:
-    case ShaderUniform::eMaterialTransparency:
-    case ShaderUniform::eLightRadius:
-        m_type = ShaderDataType::eFloat;
-        break;
-
-    case ShaderUniform::eLightsCount:
-    case ShaderUniform::eCurrentTime:
-        m_type = ShaderDataType::eInt;
-        break;
-
-    default:
-        m_type = ShaderDataType::eUnknown;
-        break;
+        free(m_initValue);
+        m_initValue = nullptr;
     }
-}
-
-ShaderDataType::EShaderDataType ShaderUniform::getDataType() const
-{
-    return m_type;
-}
-
-ShaderUniform::EUniformData ShaderUniform::getKindData() const
-{
-    return m_data;
 }
 
 const std::string& ShaderUniform::getName() const
 {
     return m_name;
+}
+
+ShaderDataType::EDataType ShaderUniform::getDataType() const
+{
+    return m_dataType;
+}
+
+ShaderUniform::ETypeContent ShaderUniform::getType() const
+{
+    return m_uniformContent;
 }
 
 bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
@@ -201,162 +115,293 @@ bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
     }
     const std::string varName = root->Attribute("name");
 
-    if (!root->Attribute("val"))
+    std::string varVal;
+    ETypeContent uniformType = ETypeContent::eUserUniform;
+    if (root->Attribute("val"))
     {
-        LOG_ERROR("ShaderUniform: Cannot find uniform val");
-        return false;
+        varVal = root->Attribute("val");
+        uniformType = ShaderUniform::getValueByUniformName(varVal);
     }
-    const std::string varVal = root->Attribute("val");
 
-    ShaderDataType::EShaderDataType uniformType = ShaderDataType::eUnknown;
-    EUniformData uniformName = ShaderUniform::getValueByUniformName(varVal);
-    bool defaultUniform = (uniformName != EUniformData::eUserUniform);
+    bool defaultUniform = (uniformType != ETypeContent::eUserUniform);
     if (!defaultUniform)
     {
         if (!root->Attribute("type"))
         {
-            LOG_ERROR("RenderPass: Cannot find uniform type in '%s'", varName.c_str());
+            LOG_ERROR("ShaderUniform: Cannot find uniform type in '%s'", varName.c_str());
             return false;
         }
         const std::string varType = root->Attribute("type");
 
-        uniformType = ShaderDataType::getDataTypeByString(varType);
-        if (uniformType == ShaderDataType::eUnknown)
+        ShaderDataType::EDataType dataType = ShaderDataType::EDataType::eUnknown;
+        dataType = ShaderDataType::getDataTypeByString(varType);
+        if (dataType == ShaderDataType::EDataType::eUnknown)
         {
-            LOG_ERROR("RenderPass: Cannot find uniform type in '%s'", varName.c_str());
+            LOG_ERROR("ShaderUniform: Cannot find uniform type in '%s'", varName.c_str());
             return false;
         }
-        ShaderUniform::parseUserUniform(root, varName, uniformType);
-
+        ShaderUniform::parseUserUniform(root, varName, dataType);
     }
     else
     {
-        ShaderUniform::setUniform(varName, uniformName);
+        ShaderUniform::setUniform(varName, uniformType);
     }
 
     return true;
 }
 
-bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EShaderDataType type)
+bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EDataType type)
 {
+    static const std::string k_separator = ",";
     switch (type)
     {
-        case ShaderDataType::eInt:
+        case ShaderDataType::EDataType::eInt:
         {
             const s32 value = root->IntAttribute("val");
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
 
             return true;
         }
 
-        case ShaderDataType::eFloat:
+        case ShaderDataType::EDataType::eInt64:
+        {
+            const s64 value = root->Int64Attribute("val");
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
+
+            return true;
+        }
+
+        case ShaderDataType::EDataType::eUint:
+        {
+            const u32 value = root->UnsignedAttribute("val");
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
+
+            return true;
+        }
+
+        case ShaderDataType::EDataType::eUint64:
+        {
+            const u64 value = static_cast<u64>(root->Int64Attribute("val"));
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
+
+            return true;
+        }
+
+        case ShaderDataType::EDataType::eFloat:
         {
             const f32 value = root->FloatAttribute("val");
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
 
             return true;
         }
 
-        case ShaderDataType::eVector2f:
+        case ShaderDataType::EDataType::eDouble:
         {
-            Vector2D value(0.f, 0.f);
-            if (root->Attribute("val"))
-            {
-                std::string str = root->Attribute("val");
-
-                f32* val = new f32[2];
-                ShaderUniform::parseArrayValue(str, val, 2);
-                value.x = val[0];
-                value.y = val[1];
-
-                delete[] val;
-                val = nullptr;
-            }
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+            const f64 value = root->DoubleAttribute("val");
+            u32 array = 1;
+            ShaderUniform::setUniform(name, type, array, &value);
 
             return true;
         }
 
-        case ShaderDataType::eVector3f:
+        case ShaderDataType::EDataType::eVector2i:
+        case ShaderDataType::EDataType::eVector3i:
+        case ShaderDataType::EDataType::eVector4i:
         {
-            Vector3D value(0.f, 0.f, 0.f);
-            if (root->Attribute("val"))
+            u32 count = ShaderDataType::componentsCount(type);
+            s32* elements = new s32[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
             {
-                std::string str = root->Attribute("val");
+                size_t pos = 0;
+                std::string str = valueStr;
 
-                f32* val = new f32[3];
-                ShaderUniform::parseArrayValue(str, val, 3);
-                value.x = val[0];
-                value.y = val[1];
-                value.z = val[2];
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
 
-                delete[] val;
-                val = nullptr;
-            }
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+                    elements[i] = std::stoi(valStr);
+                }
+                elements[count - 1] = std::stoi(str);
+            };
 
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
             return true;
         }
 
-        case ShaderDataType::eVector4f:
+        case ShaderDataType::EDataType::eVector2i64:
+        case ShaderDataType::EDataType::eVector3i64:
+        case ShaderDataType::EDataType::eVector4i64:
         {
-            Vector4D value(0.f, 0.f, 0.f, 0.f);
-            if (root->Attribute("val"))
+            u32 count = ShaderDataType::componentsCount(type);
+            s64* elements = new s64[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
             {
-                std::string str = root->Attribute("val");
+                size_t pos = 0;
+                std::string str = valueStr;
 
-                f32* val = new f32[4];
-                ShaderUniform::parseArrayValue(str, val, 4);
-                value.x = val[0];
-                value.y = val[1];
-                value.z = val[2];
-                value.w = val[3];
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
 
-                delete[] val;
-                val = nullptr;
-            }
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+                    elements[i] = std::stoll(valStr);
+                }
+                elements[count - 1] = std::stoll(str);
+            };
 
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
             return true;
         }
 
-        case ShaderDataType::eMatrix3f:
+        case ShaderDataType::EDataType::eVector2u:
+        case ShaderDataType::EDataType::eVector3u:
+        case ShaderDataType::EDataType::eVector4u:
         {
-            Matrix3D value;
-            if (root->Attribute("val"))
+            u32 count = ShaderDataType::componentsCount(type);
+            u32* elements = new u32[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
             {
-                std::string str = root->Attribute("val");
+                size_t pos = 0;
+                std::string str = valueStr;
 
-                f32* val = new f32[9];
-                ShaderUniform::parseArrayValue(str, val, 9);
-                f32* matrix = value.getPtr();
-                memcpy(matrix, val, sizeof(f32)* 9);
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
 
-                delete[] val;
-                val = nullptr;
-            }
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+                    elements[i] = static_cast<u32>(std::stoul(valStr));
+                }
+                elements[count - 1] = static_cast<u32>(std::stoul(str));
+            };
 
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
             return true;
         }
 
-        case ShaderDataType::eMatrix4f:
+        case ShaderDataType::EDataType::eVector2u64:
+        case ShaderDataType::EDataType::eVector3u64:
+        case ShaderDataType::EDataType::eVector4u64:
         {
-            Matrix4D value;
-            if (root->Attribute("val"))
+            u32 count = ShaderDataType::componentsCount(type);
+            u64* elements = new u64[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
             {
-                std::string str = root->Attribute("val");
+                size_t pos = 0;
+                std::string str = valueStr;
 
-                f32* val = new f32[16];
-                ShaderUniform::parseArrayValue(str, val, 16);
-                f32* matrix = value.getPtr();
-                memcpy(matrix, val, sizeof(f32)* 16);
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
 
-                delete[] val;
-                val = nullptr;
-            }
-            //ShaderUniform::setUniform(type, name, (void*)&value);
+                    elements[i] = std::stoull(valStr);
+                }
+                elements[count - 1] = std::stoull(str);
+            };
 
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
+            return true;
+        }
+
+        case ShaderDataType::EDataType::eVector2f:
+        case ShaderDataType::EDataType::eVector3f:
+        case ShaderDataType::EDataType::eVector4f:
+        case ShaderDataType::EDataType::eMatrix3f:
+        case ShaderDataType::EDataType::eMatrix4f:
+        {
+            u32 count = ShaderDataType::componentsCount(type);
+            f32* elements = new f32[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
+            {
+                size_t pos = 0;
+                std::string str = valueStr;
+
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
+
+                    elements[i] = std::stof(valStr);
+                }
+                elements[count - 1] = std::stof(str);
+            };
+
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
+            return true;
+        }
+
+        case ShaderDataType::EDataType::eVector2d:
+        case ShaderDataType::EDataType::eVector3d:
+        case ShaderDataType::EDataType::eVector4d:
+        case ShaderDataType::EDataType::eMatrix3d:
+        case ShaderDataType::EDataType::eMatrix4d:
+        {
+            u32 count = ShaderDataType::componentsCount(type);
+            f64* elements = new f64[count];
+            auto parseElements = [elements](const std::string& valueStr, u32 count) -> void
+            {
+                size_t pos = 0;
+                std::string str = valueStr;
+
+                for (u32 i = 0; i < count - 1; ++i)
+                {
+                    pos = str.find(",");
+                    std::string valStr = str.substr(0, pos);
+                    str = str.substr(pos + 1, str.size());
+
+                    elements[i] = std::stod(valStr);
+                }
+                elements[count - 1] = std::stod(str);
+            };
+
+            std::string str = root->Attribute("val");
+            u32 array = 1;
+            parseElements(str, count);
+
+            ShaderUniform::setUniform(name, type, array, elements);
+
+            delete[] elements;
             return true;
         }
     }
@@ -364,21 +409,70 @@ bool ShaderUniform::parseUserUniform(const tinyxml2::XMLElement* root, const std
     return false;
 }
 
-void ShaderUniform::parseArrayValue(const std::string& valueStr, f32* array, u32 count)
+void ShaderUniform::setUniform(const std::string& name, ETypeContent data)
 {
-    size_t pos = 0;
-    std::string str = valueStr;
+    ASSERT(data != ETypeContent::eUserUniform, "can't be user unifrom");
+    m_name = name;
+    m_uniformContent = data;
 
-    for (u32 i = 0; i < count - 1; ++i)
+    switch (data)
     {
-        pos = str.find(",");
-        std::string valStr = str.substr(0, pos);
-        str = str.substr(pos + 1, str.size());
+    case ShaderUniform::eTransformProjectionMatrix:
+    case ShaderUniform::eTransformModelMatrix:
+    case ShaderUniform::eTransformViewMatrix:
+    case ShaderUniform::eTransformNormalMatrix:
+        m_dataType = ShaderDataType::EDataType::eMatrix4f;
+        break;
 
-        array[i] = ::std::stof(valStr);
+    case ShaderUniform::eTransformViewPosition:
+    case ShaderUniform::eTransformViewUpVector:
+    case ShaderUniform::eLightPosition:
+    case ShaderUniform::eLightDirection:
+    case ShaderUniform::eLightAttenuation:
+
+        m_dataType = ShaderDataType::EDataType::eVector3f;
+        break;
+
+    case ShaderUniform::eMaterialAmbient:
+    case ShaderUniform::eMaterialDiffuse:
+    case ShaderUniform::eMaterialSpecular:
+    case ShaderUniform::eMaterialEmission:
+    case ShaderUniform::eLightAmbient:
+    case ShaderUniform::eLightDiffuse:
+    case ShaderUniform::eLightSpecular:
+        m_dataType = ShaderDataType::EDataType::eVector4f;
+        break;
+
+    case ShaderUniform::eMaterialShininess:
+    case ShaderUniform::eMaterialTransparency:
+    case ShaderUniform::eLightRadius:
+        m_dataType = ShaderDataType::EDataType::eFloat;
+        break;
+
+    case ShaderUniform::eLightsCount:
+    case ShaderUniform::eCurrentTime:
+        m_dataType = ShaderDataType::EDataType::eInt;
+        break;
+
+    default:
+        m_dataType = ShaderDataType::EDataType::eUnknown;
+        break;
     }
+}
 
-    array[count - 1] = ::std::stof(str);
+void ShaderUniform::setUniform(const std::string& name, ShaderDataType::EDataType type, u32 array, const void* data)
+{
+    m_name = name;
+    m_dataType = type;
+    m_uniformContent = ETypeContent::eUserUniform;
+
+    ASSERT(array > 0, "invalid array");
+    u32 size = ShaderDataType::typeSize(type)* array;
+    if (!m_initValue)
+    {
+        m_initValue = malloc(size);
+    }
+    memcpy(m_initValue, data, size);
 }
 
 } //namespace renderer

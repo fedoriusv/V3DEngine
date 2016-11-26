@@ -5,6 +5,8 @@
 #include "scene/TargetManager.h"
 #include "scene/ShaderManager.h"
 #include "GeometryTarget.h"
+#include "renderer/ShaderAttribute.h"
+#include "renderer/ShaderSampler.h"
 
 #include "tinyxml2.h"
 
@@ -17,9 +19,7 @@ using namespace scene;
 using namespace resources;
 
 RenderPass::RenderPass()
-    : m_userShaderData(nullptr)
-    , m_defaultShaderData(nullptr)
-    , m_renderState(nullptr)
+    : m_renderState(nullptr)
     , m_lods(nullptr)
     , m_program(new ShaderProgram())
 
@@ -30,9 +30,7 @@ RenderPass::RenderPass()
 }
 
 RenderPass::RenderPass(const RenderPass& pass)
-    : m_userShaderData(nullptr)
-    , m_defaultShaderData(nullptr)
-    , m_renderState(nullptr)
+    : m_renderState(nullptr)
     , m_lods(nullptr)
     , m_program(nullptr)
 
@@ -45,8 +43,6 @@ RenderPass::RenderPass(const RenderPass& pass)
 
     m_lods->operator=(*pass.m_lods);
     m_renderState->operator=(*pass.m_renderState);
-    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-    m_userShaderData->operator=(*pass.m_userShaderData);
 
     m_program = pass.m_program->clone();
     ASSERT(m_program, "RenderPass: Copy program is failed");
@@ -73,8 +69,6 @@ RenderPass& RenderPass::operator=(const RenderPass& pass)
 
     m_lods->operator=(*pass.m_lods);
     m_renderState->operator=(*pass.m_renderState);
-    m_defaultShaderData->operator=(*pass.m_defaultShaderData);
-    m_userShaderData->operator=(*pass.m_userShaderData);
 
     m_program = pass.m_program->clone();
     ASSERT(m_program, "Copy program is failed");
@@ -110,26 +104,6 @@ void RenderPass::setShaderProgram(const ShaderProgramPtr& program)
     m_program = program;
 }
 
-const ShaderDataPtr RenderPass::getUserShaderData() const
-{
-    return m_userShaderData;
-}
-
-void RenderPass::setUserShaderData(const ShaderDataPtr& data)
-{
-    m_userShaderData = data;
-}
-
-const ShaderDataPtr RenderPass::getDefaultShaderData() const
-{
-    return m_defaultShaderData;
-}
-
-void RenderPass::setDefaultShaderData(const ShaderDataPtr& data)
-{
-    m_defaultShaderData = data;
-}
-
 const RenderStatePtr RenderPass::getRenderState() const
 {
     return m_renderState;
@@ -156,16 +130,6 @@ bool RenderPass::parse(const tinyxml2::XMLElement* root)
     }
 
     m_name = passName;
-
-    //shaders
-    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
-    if (shadersElement)
-    {
-        if (!parseShaders(shadersElement))
-        {
-            return false;
-        }
-    }
 
     //uniforms
     const tinyxml2::XMLElement* uniformsElement = root->FirstChildElement("uniforms");
@@ -202,6 +166,16 @@ bool RenderPass::parse(const tinyxml2::XMLElement* root)
     if (samplersElement)
     {
         if (!parseSamplers(samplersElement))
+        {
+            return false;
+        }
+    }
+
+    //shaders
+    const tinyxml2::XMLElement*  shadersElement = root->FirstChildElement("shaders");
+    if (shadersElement)
+    {
+        if (!parseShaders(shadersElement))
         {
             return false;
         }
@@ -251,7 +225,7 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
     const tinyxml2::XMLElement* varElement = root->FirstChildElement("var");
     while (varElement)
     {
-       /* ShaderUniform* uniform = new ShaderUniform();
+        ShaderUniform* uniform = new ShaderUniform();
 
         if (!uniform->parse(varElement))
         {
@@ -261,17 +235,8 @@ bool RenderPass::parseUniforms(const tinyxml2::XMLElement* root)
             LOG_ERROR("RenderPass: Cannot parse uniform in pass '%s'", m_name.c_str());
             varElement = varElement->NextSiblingElement("var");
             continue;
-        }*/
-
-        /*bool isDefault = (uniform->getData() != ShaderUniform::eUserUniform);
-        if (isDefault)
-        {
-            m_defaultShaderData->addUniform(uniform);
         }
-        else
-        {
-            m_userShaderData->addUniform(uniform);
-        }*/
+        m_program->addUniform(uniform);
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -477,8 +442,6 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
 
 void RenderPass::init()
 {
-    m_userShaderData = std::make_shared<ShaderData>();
-    m_defaultShaderData = std::make_shared<ShaderData>();
     m_lods = std::make_shared<CRenderLOD>();
     //m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }

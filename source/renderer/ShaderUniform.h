@@ -14,8 +14,6 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ShaderData;
-
     /**
     * Shader Uniform
     * Client side
@@ -24,7 +22,7 @@ namespace renderer
     {
     public:
 
-        enum EUniformData : s16
+        enum ETypeContent : s16
         {
             eUserUniform = -1,
 
@@ -58,41 +56,39 @@ namespace renderer
         };
 
         ShaderUniform();
-        ShaderUniform(const ShaderUniform& uniform);
-        ShaderUniform& operator=(const ShaderUniform& uniform);
+        ShaderUniform(const ShaderUniform& uniform) = delete;
+        ShaderUniform& operator=(const ShaderUniform& uniform) = delete;
         ~ShaderUniform();
 
         const std::string&              getName() const;
-
-        ShaderDataType::EShaderDataType getDataType() const;
-        EUniformData                    getKindData() const;
+        ShaderDataType::EDataType       getDataType() const;
+        ETypeContent                    getType() const;
 
         bool                            parse(const tinyxml2::XMLElement* root);
 
-        static const std::string&       getUniformNameByValue(EUniformData type);
-        static EUniformData             getValueByUniformName(const std::string& name);
+        static const std::string&       getUniformNameByValue(ETypeContent type);
+        static ETypeContent             getValueByUniformName(const std::string& name);
 
     private:
 
-        friend                          ShaderData;
+        void                            setUniform(const std::string& name, ETypeContent data);
+        void                            setUniform(const std::string& name, ShaderDataType::EDataType type, u32 array, const void* data);
 
-        void                            setUniform(const std::string& name, EUniformData data);
-
-        bool                            parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EShaderDataType type);
-        void                            parseArrayValue(const std::string& val, f32* array, u32 count);
+        bool                            parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EDataType type);
 
         std::string                     m_name;
 
-        ShaderDataType::EShaderDataType m_type;
-        EUniformData                    m_data;
+        void*                           m_initValue;
+        u32                             m_array;
+        ShaderDataType::EDataType       m_dataType;
+        ETypeContent                    m_uniformContent;
 
-        static const std::string        s_uniformName[EUniformData::eUniformsCount];
+        static const std::string        s_uniformName[ETypeContent::eUniformsCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair<const std::string, ShaderUniform*>   UniformPair;
-    typedef std::map<const std::string, ShaderUniform*>    UniformList;
+    using UniformList = std::vector<ShaderUniform*>;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -147,6 +147,20 @@ void ShaderProgramVK::applyTexture(const std::string& name, const TexturePtr tex
     //TODO
 }
 
+void ShaderProgramVK::addUniform(ShaderUniform* uniform)
+{
+    if (uniform)
+    {
+        auto iter = std::find(m_parameters.uniforms.cbegin(), m_parameters.uniforms.cend(), uniform);
+        if (iter != m_parameters.uniforms.cend())
+        {
+            return;
+        }
+
+        m_parameters.uniforms.push_back(uniform);
+    }
+}
+
 const ShaderDefinesList& ShaderProgramVK::getMacroDefinitions() const
 {
     return m_defines;

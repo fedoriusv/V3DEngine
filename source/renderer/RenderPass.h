@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ShaderProgram.h"
-#include "ShaderData.h"
 #include "RenderState.h"
 #include "RenderLOD.h"
 #include "Target.h"
@@ -44,12 +43,6 @@ namespace renderer
 
         const ShaderProgramPtr  getShaderProgram() const;
         void                    setShaderProgram(const ShaderProgramPtr& program);
-
-        const ShaderDataPtr     getUserShaderData() const;
-        void                    setUserShaderData(const ShaderDataPtr& data);
-
-        const ShaderDataPtr     getDefaultShaderData() const;
-        void                    setDefaultShaderData(const ShaderDataPtr& data);
 
         const RenderStatePtr    getRenderState() const;
         void                    setRenderState(const RenderStatePtr& state);
@@ -97,8 +90,8 @@ namespace renderer
 
         const std::string       attachIndexToUniform(const std::string& name, s32 idx);
 
-        ShaderDataPtr           m_userShaderData;
-        ShaderDataPtr           m_defaultShaderData;
+        //ShaderDataPtr           m_userShaderData;
+        //ShaderDataPtr           m_defaultShaderData;
         RenderStatePtr          m_renderState;
         RenderLODPtr            m_lods;
         TargetList              m_targetList;

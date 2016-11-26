@@ -3,6 +3,7 @@
 #include "utils/Cloneable.h"
 #include "utils/RefCounted.h"
 #include "resources/Shader.h"
+#include "ShaderUniform.h"
 #include "Texture.h"
 
 namespace v3d
@@ -32,14 +33,14 @@ namespace renderer
             eInvalid   = 1 << 1,
             eCreated   = 1 << 2,
             eCompiled  = 1 << 3,
-/*            eLinked    = 1 << 4,
+          /*eLinked    = 1 << 4,
             eValidated = 1 << 5,*/ 
             eDeleted   = 1 << 6
         };
 
         struct ShaderParameters
         {
-            //TODO:
+            UniformList uniforms;
         };
 
         ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
@@ -73,6 +74,8 @@ namespace renderer
 
         virtual void                                    applyUniform(const std::string& name, const void* value, u32 size);
         virtual void                                    applyAttribute(const std::string& name, const void* value, u32 size);
+
+        virtual void                                    addUniform(ShaderUniform* uniform);
 
         virtual const resources::ShaderDefinesList&     getMacroDefinitions() const;
         virtual const resources::ShaderList&            getShaders() const;

@@ -134,6 +134,12 @@ void ShaderProgram::applyAttribute(const std::string& name, const void* value, u
     m_impl->applyAttribute(name, value, size);
 }
 
+void ShaderProgram::addUniform(ShaderUniform* uniform)
+{
+    ASSERT(m_impl, "m_impl is nullptr");
+    return m_impl->addUniform(uniform);
+}
+
 const ShaderDefinesList& ShaderProgram::getMacroDefinitions() const
 {
     ASSERT(m_impl, "m_impl is nullptr");
