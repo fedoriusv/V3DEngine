@@ -33,7 +33,7 @@ namespace vk
 
 
         const VkPipelineVertexInputStateCreateInfo&     getPipelineVertexInputStateCreateInfo() const;
-        void                                            updatePipelineVertexInputStateCreateInfo(const ShaderDataList& shaderDataList);
+        //void                                            updatePipelineVertexInputStateCreateInfo(const ShaderDataList& shaderDataList);
 
     private:
 

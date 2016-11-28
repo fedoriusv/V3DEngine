@@ -3,7 +3,6 @@
 #include "Vertex.h"
 #include "GeometryTypes.h"
 #include "RenderState.h"
-#include "ShaderData.h"
 
 namespace v3d
 {
@@ -44,7 +43,7 @@ namespace renderer
     protected:
 
         void                    setVertexMask(u32 mask);
-        s32                     computeBufferSize(const ShaderDataList& shaderDataList);
+//        s32                     computeBufferSize(const ShaderDataList& shaderDataList);
 
         EPrimitivesTopology     m_drawMode;
         EDataUsageType          m_geometyType;

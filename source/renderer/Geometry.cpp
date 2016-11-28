@@ -90,7 +90,7 @@ void Geometry::draw()
     u32 passIndex = m_technique->getCurrentPass();
     const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
-    Geometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
+    //Geometry::setVertexMask(pass->getDefaultShaderData()->getVertexFormatMask());
 }
 
 bool Geometry::updated() const
@@ -98,75 +98,76 @@ bool Geometry::updated() const
     u32 passIndex = m_technique->getCurrentPass();
     const RenderPassPtr pass = m_technique->getRenderPass(passIndex);
 
-    return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
+    //return m_currentVertexMask != pass->getDefaultShaderData()->getVertexFormatMask();
+    return 0;
 }
 
-s32 Geometry::computeBufferSize(const ShaderDataList& shaderDataList)
-{
-    s32 bufferSize = 0;
-
-    for (auto& shaderData : shaderDataList)
-    {
-        for (const AttributePair& attr : shaderData.lock()->getAttributeList())
-        {
-            ShaderAttribute::EShaderAttribute attribute = attr.second->getChannel();
-            if (attr.second->getLocation() < 0)
-            {
-                continue;
-            }
-
-            switch (attribute)
-            {
-            case ShaderAttribute::eAttribVertexPosition:
-            case ShaderAttribute::eAttribVertexNormal:
-            case ShaderAttribute::eAttribVertexBinormal:
-            case ShaderAttribute::eAttribVertexColor:
-            case ShaderAttribute::eAttribVertexTangent:
-            case ShaderAttribute::eAttribParticalPosition:
-            case ShaderAttribute::eAttribParticalColor:
-            case ShaderAttribute::eAttribParticalVelocity:
-
-                bufferSize += sizeof(f32)* m_data.verticesSize() * 3;
-                break;
-
-            case ShaderAttribute::eAttribVertexTexture0:
-            case ShaderAttribute::eAttribVertexTexture1:
-            case ShaderAttribute::eAttribVertexTexture2:
-            case ShaderAttribute::eAttribVertexTexture3:
-
-                for (v3d::u32 layer = 0; layer < m_data._texCoords.size(); ++layer)
-                {
-                    bufferSize += sizeof(f32)* m_data.verticesSize() * 2;
-                }
-                break;
-
-            case ShaderAttribute::eAttribParticalSize:
-            case ShaderAttribute::eAttribParticalLifeTime:
-
-                bufferSize += sizeof(f32)* m_data.verticesSize();
-                break;
-
-            case ShaderAttribute::eAttribParticalType:
-
-                bufferSize += sizeof(s32)* m_data.verticesSize();
-                break;
-
-            case ShaderAttribute::eAttribUser:
-
-                if (attr.second->getUserDataSize() > 0 && attr.second->getUserDataCount() > 0)
-                {
-                    bufferSize += attr.second->getUserDataSize() * attr.second->getUserDataCount();
-                }
-                break;
-
-            default:
-                break;
-            }
-        }
-    }
-
-    return bufferSize;
-}
+//s32 Geometry::computeBufferSize(const ShaderDataList& shaderDataList)
+//{
+//    s32 bufferSize = 0;
+//
+//    for (auto& shaderData : shaderDataList)
+//    {
+//        for (const AttributePair& attr : shaderData.lock()->getAttributeList())
+//        {
+//            ShaderAttribute::EShaderAttribute attribute = attr.second->getChannel();
+//            if (attr.second->getLocation() < 0)
+//            {
+//                continue;
+//            }
+//
+//            switch (attribute)
+//            {
+//            case ShaderAttribute::eAttribVertexPosition:
+//            case ShaderAttribute::eAttribVertexNormal:
+//            case ShaderAttribute::eAttribVertexBinormal:
+//            case ShaderAttribute::eAttribVertexColor:
+//            case ShaderAttribute::eAttribVertexTangent:
+//            case ShaderAttribute::eAttribParticalPosition:
+//            case ShaderAttribute::eAttribParticalColor:
+//            case ShaderAttribute::eAttribParticalVelocity:
+//
+//                bufferSize += sizeof(f32)* m_data.verticesSize() * 3;
+//                break;
+//
+//            case ShaderAttribute::eAttribVertexTexture0:
+//            case ShaderAttribute::eAttribVertexTexture1:
+//            case ShaderAttribute::eAttribVertexTexture2:
+//            case ShaderAttribute::eAttribVertexTexture3:
+//
+//                for (v3d::u32 layer = 0; layer < m_data._texCoords.size(); ++layer)
+//                {
+//                    bufferSize += sizeof(f32)* m_data.verticesSize() * 2;
+//                }
+//                break;
+//
+//            case ShaderAttribute::eAttribParticalSize:
+//            case ShaderAttribute::eAttribParticalLifeTime:
+//
+//                bufferSize += sizeof(f32)* m_data.verticesSize();
+//                break;
+//
+//            case ShaderAttribute::eAttribParticalType:
+//
+//                bufferSize += sizeof(s32)* m_data.verticesSize();
+//                break;
+//
+//            case ShaderAttribute::eAttribUser:
+//
+//                if (attr.second->getUserDataSize() > 0 && attr.second->getUserDataCount() > 0)
+//                {
+//                    bufferSize += attr.second->getUserDataSize() * attr.second->getUserDataCount();
+//                }
+//                break;
+//
+//            default:
+//                break;
+//            }
+//        }
+//    }
+//
+//    return bufferSize;
+//}
 
 } //namespace renderer
 } //namespace v3d

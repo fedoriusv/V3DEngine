@@ -36,7 +36,7 @@ namespace renderer
             SBufferData& operator=(const SBufferData& data);
 
             std::string _name;
-            ShaderDataType::EShaderDataType   _type;
+            ShaderDataType::EDataType   _type;
             u32         _size;
             Buffer*     _buffer;
 
@@ -58,7 +58,7 @@ namespace renderer
         friend                          RenderPass;
         friend                          RenderTechnique;
 
-        void                            addBuffer(const std::string& name, ShaderDataType::EShaderDataType type, u32 amount);
+        void                            addBuffer(const std::string& name, ShaderDataType::EDataType type, u32 amount);
         bool                            parse(const tinyxml2::XMLElement* root);
 
         std::vector<const c8*>          m_bufferStrings;

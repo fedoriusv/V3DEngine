@@ -28,9 +28,11 @@ MyApplication::~MyApplication()
 void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
-    /*scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");*/
+    
+    scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
 
-    resources::ShaderPtr sh0 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
+
+    /*resources::ShaderPtr sh0 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
     resources::ShaderPtr sh1 = scene::ShaderManager::getInstance()->load("shaders/test.frag");
     ShaderProgram* program = new ShaderProgram({ sh0 , sh1 });
     bool a = program->compile();
@@ -39,7 +41,7 @@ void MyApplication::init()
 
     resources::ShaderPtr sh3 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
     ShaderProgram* program2 = new ShaderProgram({ sh3 });
-    bool b = program2->compile();
+    bool b = program2->compile();*/
 
 }
 

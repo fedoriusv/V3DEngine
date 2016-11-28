@@ -114,7 +114,7 @@ void ShaderAttribute::SUserData::free()
 ShaderAttribute::ShaderAttribute()
     : m_name("")
 
-    , m_type(ShaderDataType::eUnknown)
+    , m_type(ShaderDataType::EDataType::eUnknown)
     , m_channel(eAttribUser)
 
     , m_location(-1)
@@ -225,7 +225,7 @@ ShaderAttribute::EShaderAttribute ShaderAttribute::getChannel() const
     return m_channel;
 }
 
-ShaderDataType::EShaderDataType ShaderAttribute::getDataType() const
+ShaderDataType::EDataType ShaderAttribute::getDataType() const
 {
     return m_type;
 }
@@ -279,8 +279,8 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         }
         const std::string varType = root->Attribute("type");
 
-        ShaderDataType::EShaderDataType attributeType = ShaderDataType::getDataTypeByString(varType);
-        if (attributeType == ShaderDataType::eUnknown)
+        ShaderDataType::EDataType attributeType = ShaderDataType::getDataTypeByString(varType);
+        if (attributeType == ShaderDataType::EDataType::eUnknown)
         {
             LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
             return false;
@@ -295,7 +295,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
 
 void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute data)
 {
-    m_name = name;
+   /* m_name = name;
     m_channel = data;
 
     switch (m_channel)
@@ -330,10 +330,10 @@ void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute dat
     default:
         m_type = ShaderDataType::eUnknown;
         break;
-    }
+    }*/
 }
 
-void ShaderAttribute::setAttribute(ShaderDataType::EShaderDataType type, const std::string& name, u32 size, u32 count, const void* data)
+void ShaderAttribute::setAttribute(ShaderDataType::EDataType type, const std::string& name, u32 size, u32 count, const void* data)
 {
     m_name = name;
     m_channel = eAttribUser;

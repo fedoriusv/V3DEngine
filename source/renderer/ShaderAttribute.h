@@ -14,8 +14,6 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class ShaderData;
-
     /**
     * Shader Attribute(Channel).
     * Client thread
@@ -24,7 +22,7 @@ namespace renderer
     {
     public:
 
-        enum EShaderAttribute
+        enum EShaderAttribute : s16
         {
             eAttribUser = -1,
 
@@ -51,19 +49,15 @@ namespace renderer
         };
 
         ShaderAttribute();
-        ShaderAttribute(const ShaderAttribute& attribute);
-        ShaderAttribute& operator=(const ShaderAttribute& other);
+        ShaderAttribute(const ShaderAttribute& attribute) = delete;
+        ShaderAttribute& operator=(const ShaderAttribute& attribute) = delete;
         ~ShaderAttribute();
-
-
 
         const std::string&              getName() const;
 
 
         EShaderAttribute                getChannel() const;
-        ShaderDataType::EShaderDataType                       getDataType() const;
-
-        u32                             getLocation() const;
+        ShaderDataType::EDataType       getDataType() const;
 
         void*                           getUserData()       const;
         u32                             getUserDataSize()   const;
@@ -76,18 +70,13 @@ namespace renderer
 
     private:
 
-        friend                          ShaderData;
-
         void                            setAttribute(const std::string& name, EShaderAttribute data);
-        void                            setAttribute(ShaderDataType::EShaderDataType type, const std::string& name, u32 size, u32 count, const void* data);
-
+        void                            setAttribute(ShaderDataType::EDataType type, const std::string& name, u32 size, u32 count, const void* data);
 
         std::string                     m_name;
 
-        ShaderDataType::EShaderDataType                       m_type;
+        ShaderDataType::EDataType       m_type;
         EShaderAttribute                m_channel;
-
-        s32                             m_location;
 
         struct SUserData
         {

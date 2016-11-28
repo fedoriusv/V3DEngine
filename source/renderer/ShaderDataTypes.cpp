@@ -50,7 +50,7 @@ const std::string& ShaderDataType::getStringByDataType(EDataType type)
 
 ShaderDataType::EDataType ShaderDataType::getDataTypeByString(const std::string& name)
 {
-    for (u32 i = 0; i < toEnumType(EDataType::eCount); ++i)
+    for (s32 i = 0; i < toEnumType(EDataType::eCount); ++i)
     {
         if (s_typeName[i] == name)
         {

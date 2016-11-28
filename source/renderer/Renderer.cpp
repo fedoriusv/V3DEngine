@@ -7,7 +7,6 @@
 #include "utils/Timer.h"
 #include "ShaderProgram.h"
 #include "Geometry.h"
-#include "ShaderData.h"
 
 
 namespace v3d
@@ -434,7 +433,7 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
         return;
     }
 
-    const ShaderDataPtr data = pass->getDefaultShaderData();
+    //const ShaderDataPtr data = pass->getDefaultShaderData();
     const ShaderProgramPtr& program = pass->getShaderProgram();
 
     //for (std::vector<scene::CLight*>::iterator light = lights.begin(); light < lights.end(); ++light)
@@ -496,10 +495,10 @@ void IRenderer::updateLight(const core::Matrix4D& transform, const RenderPassPtr
 
 void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
 {
-    const ShaderDataPtr defaultData = pass->getDefaultShaderData();
-    const SamplerList& samplerList = defaultData->getSamplerList();
+   // const ShaderDataPtr defaultData = pass->getDefaultShaderData();
+   // const SamplerList& samplerList = defaultData->getSamplerList();
 
-    bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
+    /*bool isUserSamplers = (material->getTextureCount() > 0) ? true : false;
     if (isUserSamplers)
     {
         u32 textureCount = material->getTextureCount();
@@ -561,13 +560,13 @@ void IRenderer::updateTexture(MaterialPtr& material, const RenderPassPtr& pass)
     else
     {
         resetTextures();
-    }
+    }*/
 }
 
 void IRenderer::updateAdvanced(const RenderPassPtr & pass)
 {
-    const ShaderDataPtr data = pass->getDefaultShaderData();
-    const ShaderProgramPtr& program = pass->getShaderProgram();
+    //const ShaderDataPtr data = pass->getDefaultShaderData();
+    //const ShaderProgramPtr& program = pass->getShaderProgram();
 
     //const UniformList& list = data->getUniformList();
     //for (auto& uniform : list)
