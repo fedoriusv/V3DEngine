@@ -127,7 +127,7 @@ SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::strin
     return SpirVCompileWrapper::eNoErrors;
 }
 
-SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vector<u32>& bytecode)
+renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const std::vector<u32>& bytecode)
 {
     spirv_cross::CompilerGLSL glsl(bytecode);
     spirv_cross::ShaderResources resources = glsl.get_shader_resources();
@@ -358,7 +358,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         return renderer::ETextureTarget::eTextureNull;
     };
 
-    SpirVCompileWrapper::Reflection reflection;
+    renderer::ShaderProgram::ShaderParameters reflection;
     for (auto& inputChannel : resources.stage_inputs)
     {
         const std::string& name = glsl.get_name(inputChannel.id);
@@ -371,7 +371,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         u32 col = type.columns;
         u32 row = type.vecsize;
 
-        SpirVCompileWrapper::Reflection::Channel channel;
+        renderer::ShaderProgram::ShaderParameters::Channel channel;
         channel.name = name;
         channel.location = location;
         channel.type = innerType;
@@ -393,7 +393,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         u32 col = type.columns;
         u32 row = type.vecsize;
 
-        SpirVCompileWrapper::Reflection::Channel channel;
+        renderer::ShaderProgram::ShaderParameters::Channel channel;
         channel.name = name;
         channel.location = location;
         channel.type = innerType;
@@ -430,7 +430,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
             u32 array = std::accumulate(type.array.cbegin(), type.array.cend(), 1);
             u32 size = (type.width / 8) * array * col * row;
 
-            SpirVCompileWrapper::Reflection::UniformParameter uniform;
+            renderer::ShaderProgram::ShaderParameters::UniformParameter uniform;
             uniform.block = buffID;
             uniform.name = name;
             uniform.index = index;
@@ -449,7 +449,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
             ++index;
         }
 
-        SpirVCompileWrapper::Reflection::UniformBlockParameter block;
+        renderer::ShaderProgram::ShaderParameters::UniformBlockParameter block;
         block.id = buffID;
         block.name = name;
         block.set = set;
@@ -473,7 +473,7 @@ SpirVCompileWrapper::Reflection SpirVCompileWrapper::reflection(const std::vecto
         renderer::ETextureTarget innerType = getInnerTextureTarget(type);
         bool depth = type.image.depth;
 
-        SpirVCompileWrapper::Reflection::TextureParameter sampler;
+        renderer::ShaderProgram::ShaderParameters::TextureParameter sampler;
         sampler.name = name;
         sampler.set = set;
         sampler.binding = binding;

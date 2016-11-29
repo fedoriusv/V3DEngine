@@ -14,6 +14,9 @@ namespace renderer
 {
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    class IRenderer;
+    class ShaderProgram;
+
     /**
     * Shader Uniform
     * Client side
@@ -71,6 +74,9 @@ namespace renderer
 
     private:
 
+        friend                          IRenderer;
+        friend                          ShaderProgram;
+
         void                            setUniform(const std::string& name, ETypeContent data);
         void                            setUniform(const std::string& name, ShaderDataType::EDataType type, u32 array, const void* data);
 
@@ -80,6 +86,14 @@ namespace renderer
 
         void*                           m_initValue;
         u32                             m_array;
+
+        u32                             m_set;
+        u32                             m_binding;
+
+        u32                             m_buffer;
+        u32                             m_size;
+        u32                             m_offset;
+
         ShaderDataType::EDataType       m_dataType;
         ETypeContent                    m_uniformContent;
 

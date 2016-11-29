@@ -59,10 +59,6 @@ namespace renderer
         EShaderAttribute                getChannel() const;
         ShaderDataType::EDataType       getDataType() const;
 
-        void*                           getUserData()       const;
-        u32                             getUserDataSize()   const;
-        u32                             getUserDataCount()  const;
-
         bool                            parse(const tinyxml2::XMLElement* root);
 
         static const std::string&       getAttributeNameByValue(EShaderAttribute type);
@@ -73,10 +69,9 @@ namespace renderer
         void                            setAttribute(const std::string& name, EShaderAttribute data);
         void                            setAttribute(ShaderDataType::EDataType type, const std::string& name, u32 size, u32 count, const void* data);
 
-        std::string                     m_name;
-
-        ShaderDataType::EDataType       m_type;
-        EShaderAttribute                m_channel;
+        void*                           getUserData()       const;
+        u32                             getUserDataSize()   const;
+        u32                             getUserDataCount()  const;
 
         struct SUserData
         {
@@ -86,23 +81,28 @@ namespace renderer
 
             SUserData& operator=(const SUserData&);
 
-            u32                         _size;
-            u32                         _count;
-            void*                       _data;
+            u32                         size;
+            u32                         count;
+            void*                       data;
 
             void                        copy(u32 size, u32 count, const void* data);
             void                        free();
         };
 
+        std::string                     m_name;
         SUserData*                      m_userData;
+
+        u32                             m_location;
+
+        ShaderDataType::EDataType       m_type;
+        EShaderAttribute                m_channel;
 
         static const std::string        s_attributeName[EShaderAttribute::eAttribCount];
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    typedef std::pair<const std::string, ShaderAttribute*> AttributePair;
-    typedef std::map<const std::string, ShaderAttribute*>  AttributeList;
+    using AttributeList = std::vector<ShaderAttribute*>;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 

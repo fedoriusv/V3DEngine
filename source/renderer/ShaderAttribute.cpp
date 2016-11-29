@@ -55,15 +55,15 @@ const ShaderAttribute::EShaderAttribute ShaderAttribute::getValueByAttributeName
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ShaderAttribute::SUserData::SUserData()
-    : _size(0U)
-    , _count(0U)
-    , _data(nullptr)
+    : size(0U)
+    , count(0U)
+    , data(nullptr)
 {
 }
 
-ShaderAttribute::SUserData::SUserData(u32 size, u32 count, const void* data)
+ShaderAttribute::SUserData::SUserData(u32 newSize, u32 newCount, const void* newData)
 {
-    SUserData::copy(size, count, data);
+    SUserData::copy(newSize, newCount, newData);
 }
 
 ShaderAttribute::SUserData::~SUserData()
@@ -79,33 +79,33 @@ ShaderAttribute::SUserData& ShaderAttribute::SUserData::operator=(const SUserDat
     }
 
     SUserData::free();
-    SUserData::copy(other._size, other._count, other._data);
+    SUserData::copy(other.size, other.count, other.data);
 
     return *this;
 }
 
-void ShaderAttribute::SUserData::copy(u32 size, u32 count, const void* data)
+void ShaderAttribute::SUserData::copy(u32 newSize, u32 newCount, const void* newData)
 {
     if (count * size > 0 && data)
     {
-        _size = size;
-        _count = count;
-        _data = malloc(count * size);
+        size = newSize;
+        count = newCount;
+        data = malloc(count * size);
 
-        memcpy(_data, data, count * size);
+        memcpy(data, newData, count * size);
     }
 }
 
 void ShaderAttribute::SUserData::free()
 {
-    if (_data != nullptr)
+    if (data != nullptr)
     {
-        ::free(_data);
-        _data = nullptr;
+        ::free(data);
+        data = nullptr;
     }
 
-    _size = 0U;
-    _count = 0U;
+    size = 0U;
+    count = 0U;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,67 +113,13 @@ void ShaderAttribute::SUserData::free()
 
 ShaderAttribute::ShaderAttribute()
     : m_name("")
+    , m_userData(nullptr)
+
+    , m_location(0)
 
     , m_type(ShaderDataType::EDataType::eUnknown)
-    , m_channel(eAttribUser)
-
-    , m_location(-1)
-
-    , m_userData(nullptr)
+    , m_channel(EShaderAttribute::eAttribUser)
 {
-}
-
-ShaderAttribute::ShaderAttribute(const ShaderAttribute& attribute)
-    : m_name(attribute.m_name)
-
-    , m_type(attribute.m_type)
-    , m_channel(attribute.m_channel)
-
-    , m_location(attribute.m_location)
-
-    , m_userData(nullptr)
-{
-    if (attribute.m_channel != EShaderAttribute::eAttribUser)
-    {
-        ShaderAttribute::setAttribute(attribute.m_name, attribute.m_channel);
-    }
-    else
-    {
-        if (attribute.m_userData)
-        {
-            ShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
-        }
-    }
-}
-
-ShaderAttribute& ShaderAttribute::operator=(const ShaderAttribute& attribute)
-{
-    if (this == &attribute)
-    {
-        return *this;
-    }
-
-    if (m_userData)
-    {
-        delete m_userData;
-        m_userData = nullptr;
-    }
-
-    if (attribute.m_channel != EShaderAttribute::eAttribUser)
-    {
-        ShaderAttribute::setAttribute(attribute.m_name, attribute.m_channel);
-    }
-    else
-    {
-        if (attribute.m_userData)
-        {
-            ShaderAttribute::setAttribute(attribute.m_type, attribute.m_name, attribute.m_userData->_size, attribute.m_userData->_count, attribute.m_userData->_data);
-        }
-    }
-
-    m_location = attribute.m_location;
-
-    return *this;
 }
 
 ShaderAttribute::~ShaderAttribute()
@@ -194,7 +140,7 @@ void* ShaderAttribute::getUserData() const
 {
     if (m_userData)
     {
-        return m_userData->_data;
+        return m_userData->data;
     }
 
     return nullptr;
@@ -204,7 +150,7 @@ u32 ShaderAttribute::getUserDataSize() const
 {
     if (m_userData)
     {
-        return m_userData->_size;
+        return m_userData->size;
     }
 
     return 0;
@@ -214,7 +160,7 @@ u32 ShaderAttribute::getUserDataCount() const
 {
     if (m_userData)
     {
-        return m_userData->_count;
+        return m_userData->count;
     }
 
     return 0;
@@ -230,11 +176,6 @@ ShaderDataType::EDataType ShaderAttribute::getDataType() const
     return m_type;
 }
 
-u32 ShaderAttribute::getLocation() const
-{
-    return m_location;
-}
-
 bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
 {
     if (!root)
@@ -246,7 +187,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
     const std::string varName = root->Attribute("name");
     if (varName.empty())
     {
-        LOG_ERROR("ShaderAttribute: Cannot find attribute name");
+        LOG_ERROR("ShaderAttribute: Can't find attribute name");
         return false;
     }
 
@@ -255,7 +196,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         const std::string varVal = root->Attribute("val");
         if (varVal.empty())
         {
-            LOG_ERROR("RenderPass: Cannot find attribute val '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Can't find attribute val '%s'", varName.c_str());
             return false;
         }
 
@@ -274,7 +215,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
 
         if (!root->Attribute("type"))
         {
-            LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Can't find attribute type in '%s'", varName.c_str());
             return false;
         }
         const std::string varType = root->Attribute("type");
@@ -282,7 +223,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
         ShaderDataType::EDataType attributeType = ShaderDataType::getDataTypeByString(varType);
         if (attributeType == ShaderDataType::EDataType::eUnknown)
         {
-            LOG_ERROR("RenderPass: Cannot find attribute type in '%s'", varName.c_str());
+            LOG_ERROR("RenderPass: Can't find attribute type in '%s'", varName.c_str());
             return false;
         }
 
@@ -295,7 +236,7 @@ bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
 
 void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute data)
 {
-   /* m_name = name;
+    m_name = name;
     m_channel = data;
 
     switch (m_channel)
@@ -308,29 +249,29 @@ void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute dat
     case EShaderAttribute::eAttribParticalPosition:
     case EShaderAttribute::eAttribParticalColor:
     case EShaderAttribute::eAttribParticalVelocity:
-        m_type = ShaderDataType::eVector3f;
+        m_type = ShaderDataType::EDataType::eVector3f;
         break;
 
     case EShaderAttribute::eAttribVertexTexture0:
     case EShaderAttribute::eAttribVertexTexture1:
     case EShaderAttribute::eAttribVertexTexture2:
     case EShaderAttribute::eAttribVertexTexture3:
-        m_type = ShaderDataType::eVector2f;
+        m_type = ShaderDataType::EDataType::eVector2f;
         break;
 
     case EShaderAttribute::eAttribParticalLifeTime:
     case EShaderAttribute::eAttribParticalSize:
-        m_type = ShaderDataType::eFloat;
+        m_type = ShaderDataType::EDataType::eFloat;
         break;
 
     case EShaderAttribute::eAttribParticalType:
-        m_type = ShaderDataType::eInt;
+        m_type = ShaderDataType::EDataType::eInt;
         break;
 
     default:
-        m_type = ShaderDataType::eUnknown;
+        m_type = ShaderDataType::EDataType::eUnknown;
         break;
-    }*/
+    }
 }
 
 void ShaderAttribute::setAttribute(ShaderDataType::EDataType type, const std::string& name, u32 size, u32 count, const void* data)

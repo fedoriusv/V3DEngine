@@ -4,6 +4,8 @@
 #include "utils/RefCounted.h"
 #include "resources/Shader.h"
 #include "ShaderUniform.h"
+#include "ShaderAttribute.h"
+#include "ConstantBuffer.h"
 #include "Texture.h"
 
 namespace v3d
@@ -15,6 +17,7 @@ namespace renderer
     class RenderPass;
     class ShaderProgram;
     class Texture;
+    class IRenderer;
 
     using ShaderProgramPtr = utils::TIntrusivePtr<ShaderProgram>;
 
@@ -40,11 +43,64 @@ namespace renderer
 
         struct ShaderParameters
         {
-            UniformList uniforms;
+            struct Channel
+            {
+                std::string                         name;
+                u32                                 location;
+
+                u32                                 rowCount;
+                u32                                 colCount;
+                renderer::ShaderDataType::EDataType type;
+            };
+
+            struct TextureParameter
+            {
+                std::string                         name;
+                u32                                 set;
+                u32                                 binding;
+                renderer::ETextureTarget            target;
+                bool                                depth;
+            };
+
+            struct UniformParameter
+            {
+                std::string                         name;
+                s32                                 block;
+                u32                                 index;
+
+                u32                                 rowCount;
+                u32                                 colCount;
+                u32                                 array;
+                u32                                 size;
+                u32                                 offset;
+                renderer::ShaderDataType::EDataType type;
+            };
+
+            struct UniformBlockParameter
+            {
+                std::string                         name;
+                s32                                 id;
+                u32                                 set;
+                u32                                 binding;
+                u32                                 size;
+            };
+
+            std::unordered_map<std::string, Channel>            channelsIn;
+            std::unordered_map<std::string, Channel>            channelsOut;
+            std::unordered_map<std::string, TextureParameter>   samplers;
+            std::unordered_map<std::string, UniformParameter>   uniforms;
+            std::vector<UniformBlockParameter>                  constantBuffers;
+        };
+
+        struct ShaderData
+        {
+            UniformList     uniforms;
+            UniformList     builtin;
+            AttributeList   attributes;
         };
 
         ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
-        virtual                             ~ShaderProgram();
+        virtual                                     ~ShaderProgram();
 
         ShaderProgram(const ShaderProgram& program) = delete;
         ShaderProgram& operator=(const ShaderProgram& program) = delete;
@@ -75,22 +131,25 @@ namespace renderer
         virtual void                                    applyUniform(const std::string& name, const void* value, u32 size);
         virtual void                                    applyAttribute(const std::string& name, const void* value, u32 size);
 
+        static bool                                     updateConstantBuffers(ConstantBuffers& buffers, const UniformList& uniforms, const std::string& name, const void* value, u32 size);
+        static void                                     updateShaderData(const std::vector<ShaderParameters>& params, ShaderData& data);
+
         virtual void                                    addUniform(ShaderUniform* uniform);
 
         virtual const resources::ShaderDefinesList&     getMacroDefinitions() const;
         virtual const resources::ShaderList&            getShaders() const;
 
         virtual void                                    setMacroDefinitions(const resources::ShaderDefinesList& list);
-        virtual void                                    setShaderParams(ShaderParameters& params);
+        virtual void                                    setShaderParams(const std::vector<ShaderParameters>& params);
 
+        //Render thread
         friend                                          RenderThread;
-        virtual bool                                    compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderParameters& outParameters);
+        virtual bool                                    compile(const std::string& defines, const resources::ShaderList& shaders);
         virtual void                                    destroy();
 
     private:
 
         friend                                          RenderPass;
-
 
         ShaderProgram* const                            m_impl;
 };

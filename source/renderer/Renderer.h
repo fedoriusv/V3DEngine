@@ -8,6 +8,7 @@
 #include "RenderJob.h"
 #include "RenderState.h"
 #include "RenderPass.h"
+#include "ConstantBuffer.h"
 
 #include "RenderTarget.h"
 #include "GeometryTarget.h"
@@ -54,6 +55,8 @@ namespace renderer
         void                            draw();
 
         void                            pushCommand(RenderStreamCommand& command, bool wait);
+
+        void                            updateConstantBuffers(ConstantBuffer* buffer, u32 size, u32 offset, const void* data);
 
     private:
 
@@ -111,9 +114,10 @@ namespace renderer
 
         virtual void                resetTextures()     = 0;
 
+
         void                        updateLight(const core::Matrix4D& transform, const RenderPassPtr& pass);
         void                        updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass);
-        void                        updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass);
+        void                        updateShaderTransform(const core::Matrix4D& transform, const UniformList& buildin);
         void                        updateTexture(MaterialPtr& material, const RenderPassPtr& pass);
         void                        updateAdvanced(const RenderPassPtr& pass);
 
@@ -125,6 +129,10 @@ namespace renderer
 
         RenderTargetPtr             m_defaultRenderTarget;
         RenderTargetPtr             m_currentRenderTarget;
+
+        ShaderProgram*              m_currentProgram;
+        ShaderProgram::ShaderParameters* m_currentProgramParameters;
+        ConstantBuffers             m_currentConstantBuffers;
 
 #ifdef _DEBUG
         bool                        m_debugMode;

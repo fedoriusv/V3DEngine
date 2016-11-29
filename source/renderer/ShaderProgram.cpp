@@ -78,21 +78,35 @@ bool ShaderProgram::compile()
         return true;
     }
 
-    ShaderParameters params;
-    bool result = false;
-
     ASSERT(m_impl, "m_impl is nullptr");
+
+    std::string defines = "";
+    for (auto& def : m_impl->getMacroDefinitions())
+    {
+        defines.append("#define ");
+        defines.append(def.first);
+        if (!def.second.empty())
+        {
+            defines.append(" ");
+            defines.append(def.second);
+        }
+        defines.append("\n");
+    }
+
+
+
+
     if (ENGINE_RENDERER->isThreaded())
     {
         RenderStreamCommand command(ERenderCommand::eCommandCompileProgram);
         command.writeValue<ShaderProgram* const>(m_impl);
-        command.writeValue<const void* const>(&m_impl->getMacroDefinitions());
+        command.writeValue(defines.data(), defines.size(), 1);
         command.writeValue<const void* const>(&m_impl->getShaders());
         command.writeValue<void* const>(&params);
         command.writeValue<bool*>(&result);
         command.endCommand();
 
-        ENGINE_RENDERER->pushCommand(command, true);
+        ENGINE_RENDERER->pushCommand(command, false);
     }
     else
     {
@@ -132,6 +146,22 @@ void ShaderProgram::applyAttribute(const std::string& name, const void* value, u
 {
     ASSERT(m_impl, "m_impl is nullptr");
     m_impl->applyAttribute(name, value, size);
+}
+
+bool ShaderProgram::updateConstantBuffers(ConstantBuffers& buffers, const UniformList& uniforms, const std::string& name, const void* value, u32 size)
+{
+    auto iter = uniforms.find(name);
+    if (iter != uniforms.cend())
+    {
+        ConstantBuffer* buffer = buffers[(*iter).second->m_buffer];
+        ASSERT((*iter).second->m_size == size, "different sizes");
+        ENGINE_RENDERER->updateConstantBuffers(buffer, (*iter).second->m_size, (*iter).second->m_offset, value);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void ShaderProgram::addUniform(ShaderUniform* uniform)

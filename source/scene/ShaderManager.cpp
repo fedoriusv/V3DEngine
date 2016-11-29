@@ -78,12 +78,16 @@ ShaderManager::~ShaderManager()
 
 void ShaderManager::add(const ShaderPtr shader)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     std::string name = shader->getName();
     TResourceLoader::insert(shader, name);
 }
 
 const ShaderPtr ShaderManager::load(const std::string& name, const std::string& alias)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     std::string nameStr = name;
     std::transform(name.begin(), name.end(), nameStr.begin(), ::tolower);
 
@@ -146,22 +150,9 @@ const ShaderPtr ShaderManager::load(const std::string& name, const std::string& 
     return nullptr;
 }
 
-u64 ShaderManager::generateHash(const std::string& body, const ShaderDefinesList& defines)
+u64 ShaderManager::generateHash(const std::string& body, const std::string& defines)
 {
-    std::string header = "";
-    for (auto& def : defines)
-    {
-        header.append("#define ");
-        header.append(def.first);
-        if (!def.second.empty())
-        {
-            header.append(" ");
-            header.append(def.second);
-        }
-        header.append("\n");
-    }
-
-    CompiledParams params = { header, body };
+    CompiledParams params = { defines, body };
 
     std::hash<CompiledParams> hashFunc;
     u64 hash = hashFunc(params);
@@ -171,6 +162,8 @@ u64 ShaderManager::generateHash(const std::string& body, const ShaderDefinesList
 
 void ShaderManager::addCompiledShader(u64 hash, const Bytecode& bytecode)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     if (!alreadyCompiled(hash))
     {
         m_compiledShaders.insert(std::make_pair(hash, bytecode));
@@ -179,6 +172,8 @@ void ShaderManager::addCompiledShader(u64 hash, const Bytecode& bytecode)
 
 const Bytecode* ShaderManager::getCompiledShader(u64 hash) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     auto iter = m_compiledShaders.find(hash);
     if (iter != m_compiledShaders.cend())
     {
@@ -190,6 +185,8 @@ const Bytecode* ShaderManager::getCompiledShader(u64 hash) const
 
 bool ShaderManager::alreadyCompiled(u64 hash) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     auto iter = m_compiledShaders.find(hash);
     if (iter != m_compiledShaders.cend())
     {
@@ -201,6 +198,8 @@ bool ShaderManager::alreadyCompiled(u64 hash) const
 
 const ShaderPtr ShaderManager::createShaderFromSource(const std::string& source, EShaderType type, const std::string& alias)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     ShaderPtr shader = new Shader(type, source);
     shader->setResourseName(alias);
 
@@ -211,6 +210,8 @@ const ShaderPtr ShaderManager::createShaderFromSource(const std::string& source,
 
 const ShaderPtr ShaderManager::createShaderFromBytecode(const resources::Bytecode& bytecode, EShaderType type, const std::string& alias)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     ShaderPtr shader = new Shader(type, bytecode);
     shader->setResourseName(alias);
 

@@ -240,7 +240,7 @@ void IRenderer::draw(const RenderJobPtr& job)
 
         techique->setCurrentPass((*passIter));
 
-        IRenderer::updateTransform(transform, pass);
+        IRenderer::updateShaderTransform(transform, m_currentProgramParameters->builtin);
         IRenderer::updateMaterial(material, pass);
         IRenderer::updateTexture(material, pass);
         IRenderer::updateLight(transform, pass);
@@ -270,86 +270,69 @@ bool IRenderer::isDebugMode() const
 }
 #endif //_DEBUG
 
-void IRenderer::updateTransform(const core::Matrix4D& transform, const RenderPassPtr& pass)
+void IRenderer::updateShaderTransform(const core::Matrix4D& transform, const UniformList& buildin)
 {
-    //const ShaderDataPtr data = pass->getDefaultShaderData();
-    //const ShaderProgramPtr program = pass->getShaderProgram();
+    for (auto& uniform : buildin)
+    {
+        const ShaderUniform::ETypeContent type = uniform.second->getType();
+        switch (type)
+        {
+        case ShaderUniform::eTransformProjectionMatrix:
+        {
+            ASSERT(m_camera, "Camera doesn't exist");
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], 
+                uniform.second->m_size, uniform.second->m_offset, &m_camera->getProjectionMatrix());
+        }
+        break;
 
-    //const UniformList& list = data->getUniformList();
-    //for (auto& uniform : list)
-    //{
-    //    const ShaderUniform::EUniformData type = uniform.second->getKindData();
-    //    s32 id = 0;// uniform.second->getID();
-    //    switch (type)
-    //    {
-    //    case ShaderUniform::eTransformProjectionMatrix:
-    //    {
-    //        if (!m_camera)
-    //        {
-    //            ASSERT(false, "Camera doesn't exist");
-    //            break;
-    //        }
-    //        program->applyUniformMatrix4(id, m_camera->getProjectionMatrix());
-    //    }
-    //    break;
+        case ShaderUniform::eTransformModelMatrix:
+        {
+            core::Matrix4D modelMatrix(transform);
+            modelMatrix.makeTransposed();
 
-    //    case ShaderUniform::eTransformModelMatrix:
-    //    {
-    //        core::Matrix4D modelMatrix(transform);
-    //        modelMatrix.makeTransposed();
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], 
+                uniform.second->m_size, uniform.second->m_offset, &modelMatrix);
+        }
+        break;
 
-    //        program->applyUniformMatrix4(id, modelMatrix);
-    //    }
-    //    break;
+        case ShaderUniform::eTransformViewMatrix:
+        {
+            ASSERT(m_camera, "Camera doesn't exist");
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], 
+                uniform.second->m_size, uniform.second->m_offset, &m_camera->getViewMatrix());
+        }
+        break;
 
-    //    case ShaderUniform::eTransformViewMatrix:
-    //    {
-    //        if (!m_camera)
-    //        {
-    //            ASSERT(false, "Camera doesn't exist");
-    //            break;
-    //        }
+        case ShaderUniform::eTransformViewPosition:
+        {
+            ASSERT(m_camera, "Camera doesn't exist");
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], 
+                uniform.second->m_size, uniform.second->m_offset, &m_camera->getPosition());
+        }
+        break;
 
-    //        program->applyUniformMatrix4(id, m_camera->getViewMatrix());
-    //    }
-    //    break;
+        case ShaderUniform::eTransformViewUpVector:
+        {
+            ASSERT(m_camera, "Camera doesn't exist");
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], 
+                uniform.second->m_size, uniform.second->m_offset, &m_camera->getUpVector());
+        }
+        break;
 
-    //    case ShaderUniform::eTransformViewPosition:
-    //    {
-    //        if (!m_camera)
-    //        {
-    //            ASSERT(false, "Camera doesn't exist");
-    //            break;
-    //        }
-    //        program->applyUniformVector3(id, m_camera->getPosition());
-    //    }
-    //    break;
+        case ShaderUniform::eTransformNormalMatrix:
+        {
+            core::Matrix4D normalMatrix;
+            transform.getInverse(normalMatrix);
 
-    //    case ShaderUniform::eTransformViewUpVector:
-    //    {
-    //        if (!m_camera)
-    //        {
-    //            ASSERT(false, "Camera doesn't exist");
-    //            break;
-    //        }
-    //        program->applyUniformVector3(id, m_camera->getUpVector());
-    //    }
-    //    break;
+            IRenderer::updateConstantBuffers(m_currentConstantBuffers[uniform.second->m_buffer], uniform.second->m_size, uniform.second->m_offset, &normalMatrix);
+        }
+        break;
 
-    //    case ShaderUniform::eTransformNormalMatrix:
-    //    {
-    //        core::Matrix4D normalMatrix;
-    //        transform.getInverse(normalMatrix);
-
-    //        program->applyUniformMatrix4(id, normalMatrix);
-    //    }
-    //    break;
-
-    //    case -1:
-    //    default:
-    //        break;
-    //    }
-    //}
+        case -1:
+        default:
+            break;
+        }
+    }
 }
 
 void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
@@ -593,6 +576,11 @@ void IRenderer::updateAdvanced(const RenderPassPtr & pass)
     //            break;
     //    }
     //}
+}
+
+void IRenderer::updateConstantBuffers(ConstantBuffer* buffer, u32 size, u32 offset, const void* data)
+{
+    buffer->update(size, offset, data);
 }
 
 } //namespace renderer

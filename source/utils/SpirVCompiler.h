@@ -5,6 +5,7 @@
 #include "renderer/Renderer.h"
 #include "resources/Shader.h"
 #include "renderer/Texture.h"
+#include "renderer/ShaderProgram.h"
 
 #ifdef USE_SPIRV
 
@@ -30,71 +31,19 @@ namespace utils
             eInvalidAssembly
         };
 
-        struct Reflection
-        {
-            struct Channel
-            {
-                std::string                         name;
-                u32                                 location;
-
-                u32                                 rowCount;
-                u32                                 colCount;
-                renderer::ShaderDataType::EDataType type;
-            };
-
-            struct TextureParameter
-            {
-                std::string                         name;
-                u32                                 set;
-                u32                                 binding;
-                renderer::ETextureTarget            target;
-                bool                                depth;
-            };
-
-            struct UniformParameter
-            {
-                std::string                         name;
-                s32                                 block;
-                u32                                 index;
-
-                u32                                 rowCount;
-                u32                                 colCount;
-                u32                                 array;
-                u32                                 size;
-                u32                                 offset;
-                renderer::ShaderDataType::EDataType type;
-            };
-
-            struct UniformBlockParameter
-            {
-                std::string                         name;
-                s32                                 id;
-                u32                                 set;
-                u32                                 binding;
-                u32                                 size;
-            };
-
-            std::vector<Channel>                    channelsIn;
-            std::vector<Channel>                    channelsOut;
-            std::vector<TextureParameter>           samplers;
-            std::vector<UniformParameter>           uniforms;
-            std::vector<UniformBlockParameter>      constantBuffers;
-
-        };
-
         SpirVCompileWrapper(renderer::ERenderType vendor, const resources::ShaderDefinesList& defines);
         ~SpirVCompileWrapper();
 
-        ECompileError                   compile(const std::string& source, resources::EShaderType type, std::vector<u32>& bytecode);
-        Reflection                      reflection(const std::vector<u32>& bytecode);
+        ECompileError                               compile(const std::string& source, resources::EShaderType type, std::vector<u32>& bytecode);
+        renderer::ShaderProgram::ShaderParameters   reflection(const std::vector<u32>& bytecode);
 
-        const std::string&              errorMessages();
+        const std::string&                          errorMessages();
 
     private:
 
-        std::string                     m_errors;
-        resources::ShaderDefinesList    m_defines;
-        renderer::ERenderType           m_vendor;
+        std::string                                 m_errors;
+        resources::ShaderDefinesList                m_defines;
+        renderer::ERenderType                       m_vendor;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

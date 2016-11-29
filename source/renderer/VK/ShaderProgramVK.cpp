@@ -134,7 +134,20 @@ const std::vector<VkShaderModule>& ShaderProgramVK::getShaderModules() const
 
 void ShaderProgramVK::applyUniform(const std::string& name, const void* value, u32 size)
 {
-    //TODO
+    if (m_flags & EProgramFlags::eCompiled)
+    {
+        ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size);
+    }
+    else
+    {
+        if (!ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size))
+        {
+            ShaderUniform* uniform = new ShaderUniform();
+            m_parameters.uniforms.insert(std::make_pair(name, uniform));
+
+            ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size);
+        }
+    }
 }
 
 void ShaderProgramVK::applyAttribute(const std::string& name, const void* value, u32 size)
@@ -151,13 +164,13 @@ void ShaderProgramVK::addUniform(ShaderUniform* uniform)
 {
     if (uniform)
     {
-        auto iter = std::find(m_parameters.uniforms.cbegin(), m_parameters.uniforms.cend(), uniform);
+        auto iter = m_parameters.uniforms.find(uniform->getName());
         if (iter != m_parameters.uniforms.cend())
         {
             return;
         }
 
-        m_parameters.uniforms.push_back(uniform);
+        m_parameters.uniforms.insert(std::make_pair(uniform->getName(), uniform));
     }
 }
 
@@ -186,6 +199,8 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
 {
     m_flags = ShaderProgram::eCreated;
     ShaderProgramVK::destoryAllModules();
+
+    std::vector<ShaderProgram::ShaderParameters> parameters;
 
 #ifdef USE_SPIRV
     utils::SpirVCompileWrapper compiler(ENGINE_RENDERER->getRenderType(), defines);
@@ -230,8 +245,8 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
             }
         }
 
-        utils::SpirVCompileWrapper::Reflection reflection = compiler.reflection(bytecode);
-        //TODO: parse reflection to outParameters
+        ShaderProgram::ShaderParameters reflection = compiler.reflection(bytecode);
+        parameters.push_back(reflection);
 
         VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
         shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -255,6 +270,10 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
     }
 
     m_flags |= ShaderProgram::eCompiled;
+
+
+    //TODO: transfer parameters to client thread
+
     return true;
 #else //USE_SPIRV
     ASSERT(false, "shader compiler not found");
