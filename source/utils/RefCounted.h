@@ -13,12 +13,11 @@ namespace utils
     public:
 
         explicit    CRefCounted(s32 refCount = 0);
-
         s32         getCount() const;
 
     protected:
 
-        ~CRefCounted();
+        virtual     ~CRefCounted();
 
     private:
 

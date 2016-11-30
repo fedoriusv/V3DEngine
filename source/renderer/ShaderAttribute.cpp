@@ -115,9 +115,7 @@ ShaderAttribute::ShaderAttribute()
     : m_name("")
     , m_userData(nullptr)
 
-    , m_location(0)
-
-    , m_type(ShaderDataType::EDataType::eUnknown)
+    , m_dataType(ShaderDataType::EDataType::eUnknown)
     , m_channel(EShaderAttribute::eAttribUser)
 {
 }
@@ -173,7 +171,7 @@ ShaderAttribute::EShaderAttribute ShaderAttribute::getChannel() const
 
 ShaderDataType::EDataType ShaderAttribute::getDataType() const
 {
-    return m_type;
+    return m_dataType;
 }
 
 bool ShaderAttribute::parse(const tinyxml2::XMLElement* root)
@@ -249,27 +247,27 @@ void ShaderAttribute::setAttribute(const std::string& name, EShaderAttribute dat
     case EShaderAttribute::eAttribParticalPosition:
     case EShaderAttribute::eAttribParticalColor:
     case EShaderAttribute::eAttribParticalVelocity:
-        m_type = ShaderDataType::EDataType::eVector3f;
+        m_dataType = ShaderDataType::EDataType::eVector3f;
         break;
 
     case EShaderAttribute::eAttribVertexTexture0:
     case EShaderAttribute::eAttribVertexTexture1:
     case EShaderAttribute::eAttribVertexTexture2:
     case EShaderAttribute::eAttribVertexTexture3:
-        m_type = ShaderDataType::EDataType::eVector2f;
+        m_dataType = ShaderDataType::EDataType::eVector2f;
         break;
 
     case EShaderAttribute::eAttribParticalLifeTime:
     case EShaderAttribute::eAttribParticalSize:
-        m_type = ShaderDataType::EDataType::eFloat;
+        m_dataType = ShaderDataType::EDataType::eFloat;
         break;
 
     case EShaderAttribute::eAttribParticalType:
-        m_type = ShaderDataType::EDataType::eInt;
+        m_dataType = ShaderDataType::EDataType::eInt;
         break;
 
     default:
-        m_type = ShaderDataType::EDataType::eUnknown;
+        m_dataType = ShaderDataType::EDataType::eUnknown;
         break;
     }
 }
@@ -278,7 +276,7 @@ void ShaderAttribute::setAttribute(ShaderDataType::EDataType type, const std::st
 {
     m_name = name;
     m_channel = eAttribUser;
-    m_type = type;
+    m_dataType = type;
 
     if (count > 0 && data != nullptr)
     {

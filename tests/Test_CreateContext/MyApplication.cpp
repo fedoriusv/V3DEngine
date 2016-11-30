@@ -29,14 +29,14 @@ void MyApplication::init()
 {
     BaseApplication::getInputEventHandler()->connectKeyboardEvent(std::bind(&MyApplication::onKeyboard, this, std::placeholders::_1));
     
-    scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
+    //scene::RenderTechniqueManager::getInstance()->load("shaders/simple.xml");
 
 
-    /*resources::ShaderPtr sh0 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
+    resources::ShaderPtr sh0 = scene::ShaderManager::getInstance()->load("shaders/test.vert");
     resources::ShaderPtr sh1 = scene::ShaderManager::getInstance()->load("shaders/test.frag");
     ShaderProgram* program = new ShaderProgram({ sh0 , sh1 });
     bool a = program->compile();
-    program->applyUniform<u32>("my", 5);
+    /*program->applyUniform<u32>("my", 5);
 
 
     resources::ShaderPtr sh3 = scene::ShaderManager::getInstance()->load("shaders/test.vert");

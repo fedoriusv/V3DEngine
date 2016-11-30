@@ -72,13 +72,6 @@ ShaderUniform::ShaderUniform()
     , m_initValue(nullptr)
     , m_array(1)
 
-    , m_set(0)
-    , m_binding(0)
-
-    , m_buffer(0)
-    , m_size(0)
-    , m_offset(0)
-
     , m_dataType(ShaderDataType::EDataType::eUnknown)
     , m_uniformContent(ShaderUniform::eUserUniform)
 {

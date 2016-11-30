@@ -95,8 +95,9 @@ namespace renderer
         struct ShaderData
         {
             UniformList     uniforms;
-            UniformList     builtin;
+            UniformList     builtinUniforms;
             AttributeList   attributes;
+            AttributeList   builtinAttributes;
         };
 
         ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
@@ -131,20 +132,18 @@ namespace renderer
         virtual void                                    applyUniform(const std::string& name, const void* value, u32 size);
         virtual void                                    applyAttribute(const std::string& name, const void* value, u32 size);
 
-        static bool                                     updateConstantBuffers(ConstantBuffers& buffers, const UniformList& uniforms, const std::string& name, const void* value, u32 size);
-        static void                                     updateShaderData(const std::vector<ShaderParameters>& params, ShaderData& data);
-
         virtual void                                    addUniform(ShaderUniform* uniform);
+        virtual void                                    addAttribute(ShaderAttribute* attribute);
 
         virtual const resources::ShaderDefinesList&     getMacroDefinitions() const;
         virtual const resources::ShaderList&            getShaders() const;
 
         virtual void                                    setMacroDefinitions(const resources::ShaderDefinesList& list);
-        virtual void                                    setShaderParams(const std::vector<ShaderParameters>& params);
+        virtual void                                    setShaderParams(ShaderParameters& params);
 
         //Render thread
         friend                                          RenderThread;
-        virtual bool                                    compile(const std::string& defines, const resources::ShaderList& shaders);
+        virtual bool                                    compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderProgram::ShaderParameters& outParameters);
         virtual void                                    destroy();
 
     private:

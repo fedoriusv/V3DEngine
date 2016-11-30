@@ -92,9 +92,7 @@ namespace renderer
         std::string                     m_name;
         SUserData*                      m_userData;
 
-        u32                             m_location;
-
-        ShaderDataType::EDataType       m_type;
+        ShaderDataType::EDataType       m_dataType;
         EShaderAttribute                m_channel;
 
         static const std::string        s_attributeName[EShaderAttribute::eAttribCount];

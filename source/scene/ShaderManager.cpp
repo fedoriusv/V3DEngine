@@ -150,9 +150,22 @@ const ShaderPtr ShaderManager::load(const std::string& name, const std::string& 
     return nullptr;
 }
 
-u64 ShaderManager::generateHash(const std::string& body, const std::string& defines)
+u64 ShaderManager::generateHash(const std::string& body, const resources::ShaderDefinesList& defines)
 {
-    CompiledParams params = { defines, body };
+    std::string definesAppend = "";
+    for (auto& def : defines)
+    {
+        definesAppend.append("#define ");
+        definesAppend.append(def.first);
+        if (!def.second.empty())
+        {
+            definesAppend.append(" ");
+            definesAppend.append(def.second);
+        }
+        definesAppend.append("\n");
+    }
+
+    CompiledParams params = { definesAppend, body };
 
     std::hash<CompiledParams> hashFunc;
     u64 hash = hashFunc(params);

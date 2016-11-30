@@ -45,6 +45,7 @@ namespace vk
         void                                applyTexture(const std::string& name, const TexturePtr texure) override;
 
         void                                addUniform(ShaderUniform* uniform) override;
+        void                                addAttribute(ShaderAttribute* attribute) override;
 
         const resources::ShaderDefinesList& getMacroDefinitions() const override;
         const resources::ShaderList&        getShaders() const override;
@@ -52,7 +53,7 @@ namespace vk
         void                                setMacroDefinitions(const resources::ShaderDefinesList& list) override;
         void                                setShaderParams(ShaderParameters& params) override;
 
-        bool                                compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderParameters& outParameters) override;
+        bool                                compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderProgram::ShaderParameters& outParameters) override;
         void                                destroy();
 
         void                                destoryAllModules();
@@ -61,6 +62,8 @@ namespace vk
         resources::ShaderDefinesList        m_defines;
 
         ShaderParameters                    m_parameters;
+        ShaderData                          m_shaderData;
+
         ConstantBuffers                     m_constantBuffers;
 
         VkDevice                            m_device;

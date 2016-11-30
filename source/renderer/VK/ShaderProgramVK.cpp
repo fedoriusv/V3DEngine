@@ -134,43 +134,127 @@ const std::vector<VkShaderModule>& ShaderProgramVK::getShaderModules() const
 
 void ShaderProgramVK::applyUniform(const std::string& name, const void* value, u32 size)
 {
-    if (m_flags & EProgramFlags::eCompiled)
+    if (ShaderProgramVK::isFlagPresent(EProgramFlags::eCompiled))
     {
-        ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size);
-    }
-    else
-    {
-        if (!ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size))
-        {
-            ShaderUniform* uniform = new ShaderUniform();
-            m_parameters.uniforms.insert(std::make_pair(name, uniform));
 
-            ShaderProgram::updateConstantBuffers(m_constantBuffers, m_parameters.uniforms, name, value, size);
+        auto iter = m_parameters.uniforms.find(name);
+        if (iter == m_parameters.uniforms.cend())
+        {
+            return;
+        }
+
+        ShaderProgram::ShaderParameters::UniformParameter& param = (*iter).second;
+        if (param.block > -1)
+        {
+            ConstantBuffer* buffer = m_constantBuffers[param.block];
+            ENGINE_RENDERER->updateConstantBuffers(buffer, param.size, param.offset, value);
+        }
+        else
+        {
+            ASSERT(false, "uniform without block");
         }
     }
 }
 
 void ShaderProgramVK::applyAttribute(const std::string& name, const void* value, u32 size)
 {
-    //TODO
-}
-
-void ShaderProgramVK::applyTexture(const std::string& name, const TexturePtr texure)
-{
-    //TODO
-}
-
-void ShaderProgramVK::addUniform(ShaderUniform* uniform)
-{
-    if (uniform)
+    if (ShaderProgramVK::isFlagPresent(EProgramFlags::eCompiled))
     {
-        auto iter = m_parameters.uniforms.find(uniform->getName());
-        if (iter != m_parameters.uniforms.cend())
+        auto iter = m_parameters.channelsIn.find(name);
+        if (iter == m_parameters.channelsIn.cend())
         {
             return;
         }
 
-        m_parameters.uniforms.insert(std::make_pair(uniform->getName(), uniform));
+        ShaderProgram::ShaderParameters::Channel& param = (*iter).second;
+        
+        //TODO:
+    }
+}
+
+void ShaderProgramVK::applyTexture(const std::string& name, const TexturePtr texure)
+{
+    if (ShaderProgramVK::isFlagPresent(EProgramFlags::eCompiled))
+    {
+        auto iter = m_parameters.samplers.find(name);
+        if (iter == m_parameters.samplers.cend())
+        {
+            return;
+        }
+
+        ShaderProgram::ShaderParameters::TextureParameter& param = (*iter).second;
+
+        //TODO:
+    }
+}
+
+void ShaderProgramVK::addUniform(ShaderUniform* uniform)
+{
+    //TODO: replace to ShaderProgram class
+    if (uniform)
+    {
+        const std::string& name = uniform->getName();
+        if (uniform->getType() == ShaderUniform::eUserUniform)
+        {
+            auto iter = std::find_if(m_shaderData.uniforms.cbegin(), m_shaderData.uniforms.cend(), [name](const ShaderUniform* uniform) -> bool
+            {
+                return name == uniform->getName();
+            });
+
+            if (iter != m_shaderData.uniforms.cend())
+            {
+                return;
+            }
+            m_shaderData.uniforms.push_back(uniform);
+        }
+        else
+        {
+            auto iter = std::find_if(m_shaderData.builtinUniforms.cbegin(), m_shaderData.builtinUniforms.cend(), [name](const ShaderUniform* uniform) -> bool
+            {
+                return name == uniform->getName();
+            });
+
+            if (iter != m_shaderData.builtinUniforms.cend())
+            {
+                return;
+            }
+            m_shaderData.builtinUniforms.push_back(uniform);
+        }
+    }
+}
+
+void ShaderProgramVK::addAttribute(ShaderAttribute* attribute)
+{
+    //TODO: replace to ShaderProgram class
+    if (attribute)
+    {
+        const std::string& name = attribute->getName();
+        if (attribute->getChannel() == ShaderAttribute::eAttribUser)
+        {
+            auto iter = std::find_if(m_shaderData.attributes.cbegin(), m_shaderData.attributes.cend(), [name](const ShaderAttribute* attribute) -> bool
+            {
+                return name == attribute->getName();
+            });
+
+            if (iter != m_shaderData.attributes.cend())
+            {
+                return;
+            }
+            m_shaderData.attributes.push_back(attribute);
+        }
+        else
+        {
+            auto iter = std::find_if(m_shaderData.builtinAttributes.cbegin(), m_shaderData.builtinAttributes.cend(), [name](const ShaderAttribute* attribute) -> bool
+            {
+                return name == attribute->getName();
+            });
+
+            if (iter != m_shaderData.builtinAttributes.cend())
+            {
+                return;
+            }
+            m_shaderData.builtinAttributes.push_back(attribute);
+        }
     }
 }
 
@@ -192,20 +276,19 @@ void ShaderProgramVK::setMacroDefinitions(const ShaderDefinesList& list)
 
 void ShaderProgramVK::setShaderParams(ShaderParameters& params)
 {
-    m_parameters = params;
+    m_parameters = std::move(params);
 }
 
-bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList& shaders, ShaderParameters& outParameters)
+bool ShaderProgramVK::compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderProgram::ShaderParameters& outParameters)
 {
     m_flags = ShaderProgram::eCreated;
     ShaderProgramVK::destoryAllModules();
-
-    std::vector<ShaderProgram::ShaderParameters> parameters;
 
 #ifdef USE_SPIRV
     utils::SpirVCompileWrapper compiler(ENGINE_RENDERER->getRenderType(), defines);
     for (auto& shader : m_shaderList)
     {
+        EShaderType type = shader->getType();
         std::vector<u32> bytecode;
         if (shader->getShaderKind() == Shader::EShaderDataRepresent::eBytecode)
         {
@@ -225,7 +308,6 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
             }
             else
             {
-                EShaderType type = shader->getType();
                 utils::SpirVCompileWrapper::ECompileError error = compiler.compile(*source, type, bytecode);
                 if (error != utils::SpirVCompileWrapper::eNoErrors)
                 {
@@ -246,7 +328,17 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
         }
 
         ShaderProgram::ShaderParameters reflection = compiler.reflection(bytecode);
-        parameters.push_back(reflection);
+        if (type == EShaderType::eVertex)
+        {
+            outParameters.channelsIn = std::move(reflection.channelsIn);
+        }
+        else if (type == EShaderType::eFragment)
+        {
+            outParameters.channelsOut = std::move(reflection.channelsOut);
+        }
+        std::copy(reflection.samplers.cbegin(), reflection.samplers.cend(), std::inserter(outParameters.samplers, reflection.samplers.end()));
+        std::copy(reflection.uniforms.cbegin(), reflection.uniforms.cend(), std::inserter(outParameters.uniforms, reflection.uniforms.end()));
+        std::copy(reflection.constantBuffers.cbegin(), reflection.constantBuffers.cend(), std::back_inserter(outParameters.constantBuffers));
 
         VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
         shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -270,9 +362,6 @@ bool ShaderProgramVK::compile(const ShaderDefinesList& defines, const ShaderList
     }
 
     m_flags |= ShaderProgram::eCompiled;
-
-
-    //TODO: transfer parameters to client thread
 
     return true;
 #else //USE_SPIRV

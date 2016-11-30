@@ -55,10 +55,12 @@ namespace renderer
         template <class T>
         const T             readValue(u32 count = 1) const;
         void*               readValue(u32 size, u32 count = 1) const;
+        const std::string   readString() const;
 
         template <class T>
         void                writeValue(const T& val, u32 count = 1);
         void                writeValue(const void* data, u32 size, u32 count = 1);
+        void                writeString(const std::string& string);
 
         void                endCommand();
 

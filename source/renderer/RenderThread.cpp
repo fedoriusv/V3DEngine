@@ -1,6 +1,7 @@
 #include "RenderThread.h"
 #include "utils/Logger.h"
 #include "resources/Shader.h"
+#include "stream/StreamManager.h"
 
 namespace v3d
 {
@@ -40,9 +41,22 @@ void* RenderStreamCommand::readValue(u32 size, u32 count) const
     return data;
 }
 
+const std::string RenderStreamCommand::readString() const
+{
+    std::string string;
+    m_commandStream.read(string);
+
+    return string;
+}
+
 void RenderStreamCommand::writeValue(const void* data, u32 size, u32 count)
 {
     m_commandStream.write(data, size, count);
+}
+
+void RenderStreamCommand::writeString(const std::string& string)
+{
+    m_commandStream.write(string);
 }
 
 void RenderStreamCommand::endCommand()
@@ -404,12 +418,45 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
     case ERenderCommand::eCommandCompileProgram:
     {
         ShaderProgram* program = command.readValue<ShaderProgram*>();
-        const resources::ShaderDefinesList* defines = command.readValue<const resources::ShaderDefinesList*>();
-        const resources::ShaderList* shaders = command.readValue<const resources::ShaderList*>();
-        ShaderProgram::ShaderParameters* params = command.readValue<ShaderProgram::ShaderParameters*>();
+
+        u64 defineCount = command.readValue<u64>();
+        resources::ShaderDefinesList defines;
+        for (u32 i = 0; i < defineCount; ++i)
+        {
+            const std::string define = command.readString();
+            std::string value = command.readString();
+
+            defines.insert(std::make_pair(define, value));
+        }
+
+        u64 shaderCount = command.readValue<u64>();
+        resources::ShaderList shaders;
+        shaders.reserve(shaderCount);
+        for (u32 i = 0; i < shaderCount; ++i)
+        {
+            std::string name = command.readString();
+
+            u32 size = command.readValue<u32>();
+            void* data = command.readValue(size, 1);
+
+            stream::IStreamPtr stream = stream::StreamManager::createMemoryStream(data, size);
+            resources::ShaderPtr shader = new resources::Shader();
+
+            shader->setResourseName(name);
+            shader->init(stream);
+            if (!shader->load())
+            {
+                ASSERT(false, "can't load shader from stream");
+                break;
+            }
+
+            shaders.push_back(shader);
+        }
+
+        ShaderProgram::ShaderParameters* param = command.readValue<ShaderProgram::ShaderParameters*>();
         bool* result = command.readValue<bool*>();
 
-        *result = program->compile(*defines, *shaders, *params);
+        *result = program->compile(defines, shaders, *param);
         break;
     }
 

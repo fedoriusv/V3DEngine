@@ -76,6 +76,11 @@ SpirVCompileWrapper::ECompileError SpirVCompileWrapper::compile(const std::strin
         ASSERT(false, "unknown render");
     }
 
+    for (auto& define : m_defines)
+    {
+        options.AddMacroDefinition(define.first, define.second);
+    }
+
     shaderc::Compiler compiler;
     shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, shaderType, "shader", options);
     if (!compiler.IsValid())
@@ -378,7 +383,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
         channel.colCount = col;
         channel.rowCount = row;
 
-        reflection.channelsIn.push_back(channel);
+        reflection.channelsIn.insert(std::make_pair(name, channel));
     }
 
     for (auto& outputChannel : resources.stage_outputs)
@@ -400,7 +405,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
         channel.colCount = col;
         channel.rowCount = row;
 
-        reflection.channelsOut.push_back(channel);
+        reflection.channelsOut.insert(std::make_pair(name, channel));
     }
 
     s32 buffID = 0;
@@ -441,7 +446,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
             uniform.size = size;
             uniform.offset = offset;
 
-            reflection.uniforms.push_back(uniform);
+            reflection.uniforms.insert(std::make_pair(name, uniform));
 
             block_size += size;
             offset += size;
@@ -480,7 +485,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
         sampler.target = innerType;
         sampler.depth = depth;
 
-        reflection.samplers.push_back(sampler);
+        reflection.samplers.insert(std::make_pair(name, sampler));
     }
 
     return reflection;

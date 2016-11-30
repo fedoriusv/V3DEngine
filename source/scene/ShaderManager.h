@@ -28,7 +28,7 @@ namespace scene
         void                                        add(const resources::ShaderPtr source);
         const resources::ShaderPtr                  load(const std::string& name, const std::string& alias = "") override;
 
-        static u64                                  generateHash(const std::string& body, const std::string& defines);
+        static u64                                  generateHash(const std::string& body, const resources::ShaderDefinesList& defines);
 
         void                                        addCompiledShader(u64 hash, const resources::Bytecode& bytecode);
         const resources::Bytecode*                  getCompiledShader(u64 hash) const;

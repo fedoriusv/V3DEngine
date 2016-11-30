@@ -38,7 +38,7 @@ namespace resources
     /**
     * Shader resource class
     */
-    class Shader : public stream::IResource, public utils::CRefCounted
+    class Shader : public utils::CRefCounted, public stream::IResource
     {
     public:
 
@@ -53,6 +53,7 @@ namespace resources
 
         void                        init(const stream::IStreamPtr stream) override;
         bool                        load() override;
+        stream::IStreamPtr          serialize();
 
         const std::string&          getName() const;
 

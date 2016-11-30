@@ -240,7 +240,7 @@ void IRenderer::draw(const RenderJobPtr& job)
 
         techique->setCurrentPass((*passIter));
 
-        IRenderer::updateShaderTransform(transform, m_currentProgramParameters->builtin);
+        //IRenderer::updateShaderTransform(transform, m_currentProgramParameters->builtin);
         IRenderer::updateMaterial(material, pass);
         IRenderer::updateTexture(material, pass);
         IRenderer::updateLight(transform, pass);
@@ -272,7 +272,7 @@ bool IRenderer::isDebugMode() const
 
 void IRenderer::updateShaderTransform(const core::Matrix4D& transform, const UniformList& buildin)
 {
-    for (auto& uniform : buildin)
+    /*for (auto& uniform : buildin)
     {
         const ShaderUniform::ETypeContent type = uniform.second->getType();
         switch (type)
@@ -332,7 +332,7 @@ void IRenderer::updateShaderTransform(const core::Matrix4D& transform, const Uni
         default:
             break;
         }
-    }
+    }*/
 }
 
 void IRenderer::updateMaterial(const MaterialPtr& material, const RenderPassPtr& pass)
