@@ -51,6 +51,7 @@ Example:<br>
 
 ###Attributes
 List of attributes(channels) which will be used in shader program. Included in Pass tag
+
 var tag:
 - name - [required] name of attribute. Must be same just in shader.
 - type - [required/optional] type of data of attribute. Must be same just in shader. If attribute has fixed value, then this value ignored.
@@ -61,7 +62,7 @@ Used next fixed types: "int", "uint", "int64_t", "uint64_t", "float", "double", 
 Used next fixed values: "mesh.position", "mesh.color", "mesh.normal", "mesh.binormal", "mesh.tangent", "mesh.texture0", "mesh.texture1", "mesh.texture2", "mesh.texture3",
  "partical.position", "partical.color", "partical.velocity", "particals.lifetime", "partical.size", "partical.type", "attachment.color"
 
-- div - [optional] (divisor) how often data of attributes updated every instance. (1 - every instance, n - every n instance). Default value is 1.
+- div - [optional] "divisor" how often data of attributes updated every instance. (1 - every instance, n - every n instance). Default value is 1.
 
 Example:<br>
 &lt;attributes&gt;<br>
@@ -77,6 +78,7 @@ TODO:
 
 ###Shaders
 Included shaders modules which will be used in shader program. Included in Pass tag
+
 Contains shaders and defines tags.
 
 defines tag [optional]:
