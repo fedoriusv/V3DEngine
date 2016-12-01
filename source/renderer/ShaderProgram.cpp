@@ -18,6 +18,11 @@ ShaderProgram::ShaderProgram()
 {
 }
 
+ShaderProgram::ShaderProgram(const resources::ShaderDefinesList& defaultDefines)
+    : m_impl(ENGINE_CONTEXT->createShaderProgram({}, defaultDefines))
+{
+}
+
 ShaderProgram::ShaderProgram(const ShaderList& shaders, const ShaderDefinesList& defines)
     : m_impl(ENGINE_CONTEXT->createShaderProgram(shaders, defines))
 {
@@ -79,6 +84,12 @@ bool ShaderProgram::compile()
     }
 
     ASSERT(m_impl, "m_impl is nullptr");
+    if (m_impl->getShaders().empty())
+    {
+        LOG_ERROR("ShaderProgram::compile: shader list is empty");
+        return false;
+    }
+
     bool result = false;
     ShaderProgram::ShaderParameters params;
 
@@ -90,8 +101,8 @@ bool ShaderProgram::compile()
         command.writeValue<u64>(m_impl->getMacroDefinitions().size());
         for (auto& def : m_impl->getMacroDefinitions())
         {
-            command.writeValue(def.first);
-            command.writeValue(def.second);
+            command.writeString(def.first);
+            command.writeString(def.second);
         }
 
         command.writeValue<u64>(m_impl->getShaders().size());
@@ -131,11 +142,11 @@ bool ShaderProgram::isFlagPresent(EProgramFlags flag)
     return m_impl->isFlagPresent(flag);
 }
 
-ShaderProgramPtr ShaderProgram::clone() const
-{
-    //TODO:
-    return ShaderProgramPtr();
-}
+//ShaderProgramPtr ShaderProgram::clone() const
+//{
+//    //TODO:
+//    return ShaderProgramPtr();
+//}
 
 void ShaderProgram::applyUniform(const std::string& name, const void* value, u32 size)
 {
@@ -155,10 +166,78 @@ void ShaderProgram::addUniform(ShaderUniform* uniform)
     return m_impl->addUniform(uniform);
 }
 
+void ShaderProgram::addUniformToShaderData(ShaderData& data, ShaderUniform* uniform)
+{
+    if (uniform)
+    {
+        const std::string& name = uniform->getName();
+        if (uniform->getType() == ShaderUniform::eUserUniform)
+        {
+            auto iter = std::find_if(data.uniforms.cbegin(), data.uniforms.cend(), [name](const ShaderUniform* uniform) -> bool
+            {
+                return name == uniform->getName();
+            });
+
+            if (iter != data.uniforms.cend())
+            {
+                return;
+            }
+            data.uniforms.push_back(uniform);
+        }
+        else
+        {
+            auto iter = std::find_if(data.builtinUniforms.cbegin(), data.builtinUniforms.cend(), [name](const ShaderUniform* uniform) -> bool
+            {
+                return name == uniform->getName();
+            });
+
+            if (iter != data.builtinUniforms.cend())
+            {
+                return;
+            }
+            data.builtinUniforms.push_back(uniform);
+        }
+    }
+}
+
 void ShaderProgram::addAttribute(ShaderAttribute* attribute)
 {
     ASSERT(m_impl, "m_impl is nullptr");
     m_impl->addAttribute(attribute);
+}
+
+void ShaderProgram::addAttributeToShaderData(ShaderData& data, ShaderAttribute* attribute)
+{
+    if (attribute)
+    {
+        const std::string& name = attribute->getName();
+        if (attribute->getChannel() == ShaderAttribute::eAttribUser)
+        {
+            auto iter = std::find_if(data.attributes.cbegin(), data.attributes.cend(), [name](const ShaderAttribute* attribute) -> bool
+            {
+                return name == attribute->getName();
+            });
+
+            if (iter != data.attributes.cend())
+            {
+                return;
+            }
+            data.attributes.push_back(attribute);
+        }
+        else
+        {
+            auto iter = std::find_if(data.builtinAttributes.cbegin(), data.builtinAttributes.cend(), [name](const ShaderAttribute* attribute) -> bool
+            {
+                return name == attribute->getName();
+            });
+
+            if (iter != data.builtinAttributes.cend())
+            {
+                return;
+            }
+            data.builtinAttributes.push_back(attribute);
+        }
+    }
 }
 
 const ShaderDefinesList& ShaderProgram::getMacroDefinitions() const
@@ -177,6 +256,69 @@ void ShaderProgram::setShaderParams(ShaderParameters& params)
 {
     ASSERT(m_impl, "m_impl is nullptr");
     return m_impl->setShaderParams(params);
+}
+
+void ShaderProgram::updateShaderData(const ShaderParameters& params, ShaderData& data)
+{
+    for (auto uniform = data.uniforms.begin(), end = data.uniforms.end(); uniform != end;)
+    {
+        const std::string& name = (*uniform)->getName();
+
+        auto param = params.uniforms.find(name);
+        if (param == params.uniforms.cend())
+        {
+            LOG_WARNING("ShaderProgram: Uniform didn't found: %s in program", name.c_str());
+            data.uniforms.erase(uniform++);
+            break;
+            //(*uniform)->setEnable(true);
+        }
+        ++uniform;
+    }
+
+    for (auto uniform = data.builtinUniforms.begin(), end = data.builtinUniforms.end(); uniform != end;)
+    {
+        const std::string& name = (*uniform)->getName();
+
+        auto param = params.uniforms.find(name);
+        if (param == params.uniforms.cend())
+        {
+            LOG_WARNING("ShaderProgram: Uniform didn't found: %s in program", name.c_str());
+            data.uniforms.erase(uniform++);
+            break;
+            //(*uniform)->setEnable(true);
+        }
+        ++uniform;
+    }
+
+    for (auto attribute = data.attributes.begin(), end = data.attributes.end(); attribute != end;)
+    {
+        const std::string& name = (*attribute)->getName();
+
+        auto param = params.channelsIn.find(name);
+        if (param == params.channelsIn.cend())
+        {
+            LOG_WARNING("ShaderProgram: Attribute didn't found: %s in program", name.c_str());
+            data.attributes.erase(attribute++);
+            break;
+            //(*attribute)->setEnable(true);
+        }
+        ++attribute;
+    }
+
+    for (auto attribute = data.builtinAttributes.begin(), end = data.builtinAttributes.end(); attribute != end;)
+    {
+        const std::string& name = (*attribute)->getName();
+
+        auto param = params.channelsIn.find(name);
+        if (param == params.channelsIn.cend())
+        {
+            LOG_WARNING("ShaderProgram: Attribute didn't found: %s in program", name.c_str());
+            data.attributes.erase(attribute++);
+            break;
+            //(*attribute)->setEnable(true);
+        }
+        ++attribute;
+    }
 }
 
 void ShaderProgram::setMacroDefinitions(const ShaderDefinesList& list)

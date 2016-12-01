@@ -27,7 +27,7 @@ namespace renderer
     * Shader Program Interface
     * Client side. Provide transfer data to render thread
     */
-    class ShaderProgram : public utils::CRefCounted, public utils::TCloneable<ShaderProgramPtr>
+    class ShaderProgram : public utils::CRefCounted/*, public utils::TCloneable<ShaderProgramPtr>*/
     {
     public:
 
@@ -100,8 +100,9 @@ namespace renderer
             AttributeList   builtinAttributes;
         };
 
-        ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
-        virtual                                     ~ShaderProgram();
+        explicit ShaderProgram(const resources::ShaderDefinesList& defaultDefines);
+        explicit ShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {});
+        virtual ~ShaderProgram();
 
         ShaderProgram(const ShaderProgram& program) = delete;
         ShaderProgram& operator=(const ShaderProgram& program) = delete;
@@ -123,7 +124,7 @@ namespace renderer
         virtual u16                                     getFlags() const;
         virtual bool                                    isFlagPresent(EProgramFlags flag);
 
-        virtual ShaderProgramPtr                        clone() const override;
+//        virtual ShaderProgramPtr                        clone() const override;
 
     protected:
 
@@ -133,13 +134,18 @@ namespace renderer
         virtual void                                    applyAttribute(const std::string& name, const void* value, u32 size);
 
         virtual void                                    addUniform(ShaderUniform* uniform);
+        static void                                     addUniformToShaderData(ShaderData& data, ShaderUniform* uniform);
+
         virtual void                                    addAttribute(ShaderAttribute* attribute);
+        static void                                     addAttributeToShaderData(ShaderData& data, ShaderAttribute* attribute);
 
         virtual const resources::ShaderDefinesList&     getMacroDefinitions() const;
         virtual const resources::ShaderList&            getShaders() const;
 
         virtual void                                    setMacroDefinitions(const resources::ShaderDefinesList& list);
+
         virtual void                                    setShaderParams(ShaderParameters& params);
+        static void                                     updateShaderData(const ShaderParameters& params, ShaderData& data);
 
         //Render thread
         friend                                          RenderThread;

@@ -85,7 +85,7 @@ bool ShaderProgramVK::setUndefine(const std::string& name)
 
 void ShaderProgramVK::attachShader(const ShaderPtr shader)
 {
-    if (!shader)
+    if (shader)
     {
         m_shaderList.push_back(shader);
         m_flags &= ~ShaderProgram::eCompiled;
@@ -94,7 +94,7 @@ void ShaderProgramVK::attachShader(const ShaderPtr shader)
 
 void ShaderProgramVK::detachShader(const ShaderPtr shader)
 {
-    if (!shader)
+    if (shader)
     {
         auto current = std::find_if(m_shaderList.cbegin(), m_shaderList.cend(), [&shader](const ShaderPtr& item) -> bool
         {
@@ -190,72 +190,12 @@ void ShaderProgramVK::applyTexture(const std::string& name, const TexturePtr tex
 
 void ShaderProgramVK::addUniform(ShaderUniform* uniform)
 {
-    //TODO: replace to ShaderProgram class
-    if (uniform)
-    {
-        const std::string& name = uniform->getName();
-        if (uniform->getType() == ShaderUniform::eUserUniform)
-        {
-            auto iter = std::find_if(m_shaderData.uniforms.cbegin(), m_shaderData.uniforms.cend(), [name](const ShaderUniform* uniform) -> bool
-            {
-                return name == uniform->getName();
-            });
-
-            if (iter != m_shaderData.uniforms.cend())
-            {
-                return;
-            }
-            m_shaderData.uniforms.push_back(uniform);
-        }
-        else
-        {
-            auto iter = std::find_if(m_shaderData.builtinUniforms.cbegin(), m_shaderData.builtinUniforms.cend(), [name](const ShaderUniform* uniform) -> bool
-            {
-                return name == uniform->getName();
-            });
-
-            if (iter != m_shaderData.builtinUniforms.cend())
-            {
-                return;
-            }
-            m_shaderData.builtinUniforms.push_back(uniform);
-        }
-    }
+    ShaderProgram::addUniformToShaderData(m_shaderData, uniform);
 }
 
 void ShaderProgramVK::addAttribute(ShaderAttribute* attribute)
 {
-    //TODO: replace to ShaderProgram class
-    if (attribute)
-    {
-        const std::string& name = attribute->getName();
-        if (attribute->getChannel() == ShaderAttribute::eAttribUser)
-        {
-            auto iter = std::find_if(m_shaderData.attributes.cbegin(), m_shaderData.attributes.cend(), [name](const ShaderAttribute* attribute) -> bool
-            {
-                return name == attribute->getName();
-            });
-
-            if (iter != m_shaderData.attributes.cend())
-            {
-                return;
-            }
-            m_shaderData.attributes.push_back(attribute);
-        }
-        else
-        {
-            auto iter = std::find_if(m_shaderData.builtinAttributes.cbegin(), m_shaderData.builtinAttributes.cend(), [name](const ShaderAttribute* attribute) -> bool
-            {
-                return name == attribute->getName();
-            });
-
-            if (iter != m_shaderData.builtinAttributes.cend())
-            {
-                return;
-            }
-            m_shaderData.builtinAttributes.push_back(attribute);
-        }
-    }
+    ShaderProgram::addAttributeToShaderData(m_shaderData, attribute);
 }
 
 const ShaderDefinesList& ShaderProgramVK::getMacroDefinitions() const
@@ -277,6 +217,7 @@ void ShaderProgramVK::setMacroDefinitions(const ShaderDefinesList& list)
 void ShaderProgramVK::setShaderParams(ShaderParameters& params)
 {
     m_parameters = std::move(params);
+    ShaderProgram::updateShaderData(m_parameters, m_shaderData);
 }
 
 bool ShaderProgramVK::compile(const resources::ShaderDefinesList& defines, const resources::ShaderList& shaders, ShaderProgram::ShaderParameters& outParameters)

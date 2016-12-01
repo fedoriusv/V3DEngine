@@ -13,6 +13,11 @@ namespace scene
     class ShaderManager;
 } //namespace scene
 
+namespace renderer
+{
+    class RenderPass;
+} //namespace renderer
+
 namespace resources
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +76,10 @@ namespace resources
         Shader(EShaderType type, const std::string& source);
         Shader(EShaderType type, const Bytecode& bytecode);
 
+        void                        setType(EShaderType type);
+
         friend                      scene::ShaderManager;
+        friend                      renderer::RenderPass;
 
         std::string                 m_name;
 

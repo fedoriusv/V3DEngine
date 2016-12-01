@@ -21,7 +21,7 @@ using namespace resources;
 RenderPass::RenderPass()
     : m_renderState(nullptr)
     , m_lods(nullptr)
-    , m_program(new ShaderProgram())
+    , m_program(nullptr)
 
     , m_enable(true)
     , m_name("")
@@ -44,7 +44,7 @@ RenderPass::RenderPass(const RenderPass& pass)
     m_lods->operator=(*pass.m_lods);
     m_renderState->operator=(*pass.m_renderState);
 
-    m_program = pass.m_program->clone();
+//    m_program = pass.m_program->clone();
     ASSERT(m_program, "RenderPass: Copy program is failed");
     if (m_program)
     {
@@ -70,7 +70,7 @@ RenderPass& RenderPass::operator=(const RenderPass& pass)
     m_lods->operator=(*pass.m_lods);
     m_renderState->operator=(*pass.m_renderState);
 
-    m_program = pass.m_program->clone();
+//    m_program = pass.m_program->clone();
     ASSERT(m_program, "Copy program is failed");
     if (m_program)
     {
@@ -265,16 +265,7 @@ bool RenderPass::parseAttributes(const tinyxml2::XMLElement* root)
             varElement = varElement->NextSiblingElement("var");
             continue;
         }
-
-        /*bool isDefault = (attribute->getData() != ShaderAttribute::eAttribUser);
-        if (isDefault)
-        {
-            m_defaultShaderData->addAttribute(attribute);
-        }
-        else
-        {
-            m_userShaderData->addAttribute(attribute);
-        }*/
+        m_program->addAttribute(attribute);
 
         varElement = varElement->NextSiblingElement("var");
     }
@@ -365,7 +356,6 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
         return false;
     }
 
-    ShaderDefinesList definesList;
     const tinyxml2::XMLElement*  definesElement = root->FirstChildElement("defines");
     if (definesElement)
     {
@@ -377,71 +367,81 @@ bool RenderPass::parseShaders(const tinyxml2::XMLElement* root)
                 std::string name = defineElement->Attribute("name");
                 std::string value = (defineElement->Attribute("val")) ? defineElement->Attribute("val") : "";
 
-                definesList.insert(std::map<std::string, std::string>::value_type(name, value));
+                m_program->setDefine(name, value);
             }
 
             defineElement = defineElement->NextSiblingElement("var");
-        }
-
-        if (!definesList.empty())
-        {
-            m_program->setMacroDefinitions(definesList);
         }
     }
 
     const tinyxml2::XMLElement* shaderElement = root->FirstChildElement("var");
     while (shaderElement)
     {
-        /*ShaderResource shaderData;
-        if (!IShader::parse(shaderElement, shaderData))
+        if (!shaderElement->Attribute("name"))
         {
-            LOG_ERROR("RenderPass: Shader parse error");
-            ASSERT(false, "Shader parse error");
-
-            shaderElement = shaderElement->NextSiblingElement("var");
+            LOG_ERROR("RenderPass: can't parse shader name. Required value");
             continue;
+        }
+        std::string name = shaderElement->Attribute("name");
 
-        if (!definesList.empty())
+
+        EShaderType type = EShaderType::eShaderUnknown;
+        if (shaderElement->Attribute("type"))
         {
-            shaderData.setDefines(definesList);
-        }*/
+            std::string typeName = shaderElement->Attribute("type");
+            type = Shader::getShaderTypeByName(typeName);
+        }
 
-        /*ShaderWPtr shader = ShaderManager::getInstance()->get(shaderData.getHash());
-        if (shader.expired())
+        if (shaderElement->Attribute("file"))
         {
-            ShaderPtr newShader = ENGINE_RENDERER->makeSharedShader();
-            newShader->setFlag(IShader::eLoaded);
-
-            if (!newShader->create(std::move(shaderData)))
+            std::string file = shaderElement->Attribute("file");
+            ShaderPtr shader = ShaderManager::getInstance()->load(file, name);
+            if (!shader)
             {
-                LOG_ERROR("RenderPass: Error create shader");
-                shaderElement = shaderElement->NextSiblingElement("var");
+                LOG_ERROR("RenderPass: Can't load shader %s", name.c_str());
                 continue;
             }
 
-            ShaderManager::getInstance()->add(newShader);
-            shader = newShader;
-        }
+            if (type != EShaderType::eShaderUnknown)
+            {
+                shader->setType(type);
+            }
 
-        m_program->attachShader(shader);*/
+            m_program->attachShader(shader);
+        }
+        else
+        {
+            ShaderPtr shader = ShaderManager::getInstance()->get(name);
+            if (!shader)
+            {
+                if (!shaderElement->GetText())
+                {
+                    LOG_ERROR("RenderPass: Can't get shader source. name [%s]", name.c_str());
+                    return false;
+                }
+                std::string source = shaderElement->GetText();
+                shader = ShaderManager::getInstance()->createShaderFromSource(source, type, name);
+            }
+            m_program->attachShader(shader);
+        }
 
         shaderElement = shaderElement->NextSiblingElement("var");
     }
 
-    /*m_program->addShaderData(m_defaultShaderData);
-    m_program->addShaderData(m_userShaderData);*/
-
-   /* if (!m_program->create())
+    if (!m_program->compile())
     {
-        LOG_ERROR("RenderPass: Error Create Shader Program");
+        LOG_ERROR("RenderPass: Can't compile program");
         return false;
-    }*/
+    }
 
     return true;
 }
 
 void RenderPass::init()
 {
+    ShaderDefinesList defaultDefines = {};
+    m_program = new ShaderProgram(defaultDefines);
+
     m_lods = std::make_shared<CRenderLOD>();
     //m_renderState = ENGINE_RENDERER->makeSharedRenderState();
 }

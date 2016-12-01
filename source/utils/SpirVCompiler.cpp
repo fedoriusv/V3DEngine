@@ -437,7 +437,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
 
             renderer::ShaderProgram::ShaderParameters::UniformParameter uniform;
             uniform.block = buffID;
-            uniform.name = name;
+            uniform.name = member_name;
             uniform.index = index;
             uniform.type = innerType;
             uniform.colCount = col;
@@ -446,7 +446,7 @@ renderer::ShaderProgram::ShaderParameters SpirVCompileWrapper::reflection(const 
             uniform.size = size;
             uniform.offset = offset;
 
-            reflection.uniforms.insert(std::make_pair(name, uniform));
+            reflection.uniforms.insert(std::make_pair(member_name, uniform));
 
             block_size += size;
             offset += size;

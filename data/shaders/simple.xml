@@ -5,14 +5,11 @@
 			<var name="projectionMatrix" val="transform.projectionMatrix"/>
             <var name="modelMatrix" val="transform.modelMatrix"/>
             <var name="viewMatrix" val="transform.viewMatrix"/>
-            <var name="finSize" type="float" val="5.5"/>
-            <var name="finPosition" type="vec3" val="1.0, 1.0, 1.0"/>
+            <var name="color" type="vec4" val="1.0, 1.0, 1.0, 1.0"/>
         </uniforms>
         <attributes>
-            <var name="position" type="vec3" val="mesh.position"/>
+            <var name="inPosition" val="mesh.position"/>
         </attributes>
-        <samplers>
-        </samplers>
         <renderstate>
             <polygonmode val="line"/>
             <winding val="ccw"/>
@@ -26,9 +23,6 @@
         </rendertarget>
         <lod geometry="0.0"/>
         <shaders>
-            <defines>
-                <var name="TEST" val="1"/>
-            </defines>
             <var type="vertex" name="vsimple">
                 <![CDATA[
                     #version 450
@@ -36,12 +30,12 @@
                     
                     layout (location = 0) in vec3 inPosition;
                     
-                    layout(std430, binding = 0) buffer transform
+                    layout(std140, binding = 0) uniform Transform
                     {
                         mat4 projectionMatrix;
                         mat4 modelMatrix;
                         mat4 viewMatrix;
-                    };
+                    } transform;
                     
                     void main()
                     {
@@ -57,9 +51,14 @@
                     
                     layout (location = 0) out vec4 outFragColor;
                     
+                    layout(std140, binding = 0) uniform Color
+                    {
+                        vec4 color;
+                    } colors;
+                    
                     void main()
                     {
-                        outFragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                        outFragColor = colors.color;
                     }
                 ]]>
             </var>

@@ -13,10 +13,12 @@ namespace decoders
     {
     public:
 
-        ShaderSourceDecoder(resources::Shader::EShaderDataRepresent kind);
-        explicit ShaderSourceDecoder(std::initializer_list<std::string> supportedExtensions, resources::Shader::EShaderDataRepresent kind);
+        explicit ShaderSourceDecoder(resources::Shader::EShaderDataRepresent kind);
+        ShaderSourceDecoder(std::initializer_list<std::string> supportedExtensions, resources::Shader::EShaderDataRepresent kind);
 
         ~ShaderSourceDecoder();
+
+        void                    setShaderType(resources::EShaderType type);
 
         stream::IResource*      decode(const stream::IStreamPtr stream) override;
 

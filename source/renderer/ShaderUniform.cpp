@@ -74,6 +74,7 @@ ShaderUniform::ShaderUniform()
 
     , m_dataType(ShaderDataType::EDataType::eUnknown)
     , m_uniformContent(ShaderUniform::eUserUniform)
+//    , m_enable(false)
 {
 }
 
@@ -100,6 +101,11 @@ ShaderUniform::ETypeContent ShaderUniform::getType() const
 {
     return m_uniformContent;
 }
+
+//bool ShaderUniform::isEnable() const
+//{
+//    return m_enable;
+//}
 
 bool ShaderUniform::parse(const tinyxml2::XMLElement* root)
 {
@@ -475,6 +481,11 @@ void ShaderUniform::setUniform(const std::string& name, ShaderDataType::EDataTyp
     }
     memcpy(m_initValue, data, size);
 }
+
+//void ShaderUniform::setEnable(bool enable)
+//{
+//    m_enable = enable;
+//}
 
 } //namespace renderer
 } //namespace v3d

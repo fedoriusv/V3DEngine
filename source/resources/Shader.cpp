@@ -61,6 +61,7 @@ Shader::Shader(EShaderType type, const std::string& source)
     , m_shaderType(type)
 {
     m_source = new std::string(source);
+    IResource::setLoaded(true);
 }
 
 Shader::Shader(EShaderType type, const Bytecode& bytecode)
@@ -72,6 +73,12 @@ Shader::Shader(EShaderType type, const Bytecode& bytecode)
     , m_shaderType(type)
 {
     m_bytecode = new std::vector<u32>(bytecode);
+    IResource::setLoaded(true);
+}
+
+void Shader::setType(EShaderType type)
+{
+    m_shaderType = type;
 }
 
 Shader::~Shader()

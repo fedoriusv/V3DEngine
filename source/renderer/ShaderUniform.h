@@ -67,6 +67,8 @@ namespace renderer
         ShaderDataType::EDataType       getDataType() const;
         ETypeContent                    getType() const;
 
+        //bool                            isEnable() const;
+
         bool                            parse(const tinyxml2::XMLElement* root);
 
         static const std::string&       getUniformNameByValue(ETypeContent type);
@@ -79,6 +81,7 @@ namespace renderer
 
         void                            setUniform(const std::string& name, ETypeContent data);
         void                            setUniform(const std::string& name, ShaderDataType::EDataType type, u32 array, const void* data);
+        //void                            setEnable(bool enable);
 
         bool                            parseUserUniform(const tinyxml2::XMLElement* root, const std::string& name, ShaderDataType::EDataType type);
 
@@ -89,6 +92,8 @@ namespace renderer
 
         ShaderDataType::EDataType       m_dataType;
         ETypeContent                    m_uniformContent;
+
+        //bool                            m_enable;
 
         static const std::string        s_uniformName[ETypeContent::eUniformsCount];
     };

@@ -54,10 +54,14 @@ using namespace decoders;
 ShaderManager::ShaderManager()
 {
     TResourceLoader::registerPath("../../../../data/");
-    TResourceLoader::registerPath("../../../../../data/");
+    TResourceLoader::registerPath("../../../../data/shaders/");
     TResourceLoader::registerPath("data/");
+    TResourceLoader::registerPath("data/shaders/");
 
-    std::initializer_list<std::string> extSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
+    std::initializer_list<std::string> extTypeSrc = { ".vert", ".frag", ".tesc", ".tese", ".geom", ".comp" };
+    TResourceLoader::registerDecoder(std::make_shared<ShaderSourceDecoder>(extTypeSrc, Shader::EShaderDataRepresent::eSource));
+
+    std::initializer_list<std::string> extSrc = { ".glsl", ".hlsl"};
     TResourceLoader::registerDecoder(std::make_shared<ShaderSourceDecoder>(extSrc, Shader::EShaderDataRepresent::eSource));
 
 #ifdef USE_SPIRV
@@ -104,8 +108,8 @@ const ShaderPtr ShaderManager::load(const std::string& name, const std::string& 
             const bool isFileExist = stream::FileStream::isFileExist(fullName);
             if (!isFileExist)
             {
-                LOG_WARNING("ShaderManager::load: File [%s] not found", name.c_str());
-                return nullptr;
+                //LOG_WARNING("ShaderManager::load: File [%s] not found", name.c_str());
+                continue;
             }
 
             const stream::FileStreamPtr stream = stream::StreamManager::createFileStream(fullName, stream::FileStream::e_in);

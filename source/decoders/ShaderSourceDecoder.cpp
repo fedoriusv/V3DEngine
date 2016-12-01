@@ -25,6 +25,11 @@ ShaderSourceDecoder::~ShaderSourceDecoder()
 {
 }
 
+void ShaderSourceDecoder::setShaderType(resources::EShaderType type)
+{
+    m_type = type;
+}
+
 stream::IResource* ShaderSourceDecoder::decode(const stream::IStreamPtr stream)
 {
     if (!stream)
@@ -79,7 +84,10 @@ stream::IResource* ShaderSourceDecoder::decode(const stream::IStreamPtr stream)
             return EShaderType::eShaderUnknown;
         };
 
-        m_type = getShaderType(file);
+        if (m_type == EShaderType::eShaderUnknown) //Try define shader type
+        {
+            m_type = getShaderType(file);
+        }
 
 
         stream::IStreamPtr data = stream::StreamManager::createMemoryStream();
