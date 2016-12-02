@@ -304,16 +304,22 @@ file(GLOB DECODERS_HEADERS ${SOURCE_DIR}/decoders/*.h)
 file(GLOB DECODERS_SOURCES ${SOURCE_DIR}/decoders/*.cpp)
 
 #GL Source
-file(GLOB GL_HEADERS ${SOURCE_DIR}/renderer/GL/*.h)
-file(GLOB GL_SOURCES ${SOURCE_DIR}/renderer/GL/*.cpp)
+if (BUILD_USE_OPENGL_SDK)
+    file(GLOB GL_HEADERS ${SOURCE_DIR}/renderer/GL/*.h)
+    file(GLOB GL_SOURCES ${SOURCE_DIR}/renderer/GL/*.cpp)
+endif(BUILD_USE_OPENGL_SDK)
 
 #D3D Source
-file(GLOB D3D_HEADERS ${SOURCE_DIR}/renderer/D3D/*.h)
-file(GLOB D3D_SOURCES ${SOURCE_DIR}/renderer/D3D/*.cpp)
+if (BUILD_USE_DIRECTX_SDK)
+    file(GLOB D3D_HEADERS ${SOURCE_DIR}/renderer/D3D/*.h)
+    file(GLOB D3D_SOURCES ${SOURCE_DIR}/renderer/D3D/*.cpp)
+endif(BUILD_USE_DIRECTX_SDK)
 
 #VK Source
-file(GLOB VK_HEADERS ${SOURCE_DIR}/renderer/VK/*.h)
-file(GLOB VK_SOURCES ${SOURCE_DIR}/renderer/VK/*.cpp)
+if (BUILD_USE_VULKAN_SDK)
+    file(GLOB VK_HEADERS ${SOURCE_DIR}/renderer/VK/*.h)
+    file(GLOB VK_SOURCES ${SOURCE_DIR}/renderer/VK/*.cpp)
+endif (BUILD_USE_VULKAN_SDK)
 
 #NULL Source
 file(GLOB NULL_HEADERS ${SOURCE_DIR}/renderer/NULL/*.h)
