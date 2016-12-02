@@ -117,6 +117,7 @@ namespace renderer
 
     /**
     * RenderState class
+    * Client side
     */
     class RenderState
     {

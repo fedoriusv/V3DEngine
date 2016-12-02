@@ -38,6 +38,9 @@ namespace vk
 
         const std::vector<VkShaderModule>&  getShaderModules() const;
 
+        const VkPipelineShaderStageCreateInfo createShaderStage(u32 index) const;
+        u32                                 getShaderStagesCount() const;
+
     private:
 
         void                                applyUniform(const std::string& name, const void* value, u32 size) override;
@@ -70,6 +73,8 @@ namespace vk
         std::vector<VkShaderModule>         m_shadersModules;
 
         std::atomic<u16>                    m_flags;
+
+        const std::string                   k_entryPoint = "main";
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

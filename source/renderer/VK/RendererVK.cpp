@@ -9,6 +9,7 @@
 #include "RenderStateVK.h"
 #include "FramebufferVK.h"
 #include "GeometryVK.h"
+#include "ShaderProgramVK.h"
 
 namespace v3d
 {
@@ -69,7 +70,7 @@ void RendererVK::immediateDraw()
 {
 }
 
-VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry)
+VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry, const ShaderProgramVK* program)
 {
     VkPipeline pipeline;
     VkPipelineCache pipelineCache = VK_NULL_HANDLE;
@@ -138,15 +139,14 @@ VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, c
     pipelineCreateInfo.pTessellationState = &renderState->getPipelineTessellationStateCreateInfo();
     pipelineCreateInfo.pVertexInputState = &geometry->getPipelineVertexInputStateCreateInfo();
 
-    //pipelineCreateInfo.stageCount = ;
-
-    VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
-    //pipelineShaderStageCreateInfo.sType = ;
-    pipelineShaderStageCreateInfo.pNext = nullptr;
-    pipelineShaderStageCreateInfo.flags = 0;
-    //pipelineShaderStageCreateInfo.;
-
-    //pipelineCreateInfo.pStages = ;
+    std::vector<VkPipelineShaderStageCreateInfo> pipelineShaderStageCreateInfos;
+    u32 stageCount = program->getShaderStagesCount();
+    for (u32 stage = 0; stage < stageCount; ++stage)
+    {
+        pipelineShaderStageCreateInfos.push_back(program->createShaderStage(stage));
+    }
+    pipelineCreateInfo.stageCount = static_cast<u32>(pipelineShaderStageCreateInfos.size());
+    pipelineCreateInfo.pStages = pipelineShaderStageCreateInfos.data();
 
     //pipelineCreateInfo.layout = ;
 
@@ -163,13 +163,13 @@ VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, c
     return pipeline;
 }
 
-VkPipeline RendererVK::getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer)
+VkPipeline RendererVK::getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const ShaderProgramVK* program)
 {
     u64 hashPipeline = 0; //TODO: get hash
     auto pipeline = m_pipelineList.find(hashPipeline);
     if (pipeline == m_pipelineList.cend())
     {
-        VkPipeline newPipeline = RendererVK::createGraphicPipeline(renderState, framebuffer, nullptr);
+        VkPipeline newPipeline = RendererVK::createGraphicPipeline(renderState, framebuffer, nullptr, program);
         m_pipelineList.insert(std::make_pair(hashPipeline, newPipeline));
 
         return newPipeline;

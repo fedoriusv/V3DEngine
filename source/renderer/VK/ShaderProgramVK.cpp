@@ -132,6 +132,52 @@ const std::vector<VkShaderModule>& ShaderProgramVK::getShaderModules() const
     return m_shadersModules;
 }
 
+const VkPipelineShaderStageCreateInfo ShaderProgramVK::createShaderStage(u32 index) const
+{
+    ASSERT(m_shadersModules.size() < index, "Range out");
+    VkShaderModule module = m_shadersModules[index];
+    ShaderPtr shader = m_shaderList[index];
+
+    auto getShaderModuleFlag = [](EShaderType type) -> VkShaderStageFlagBits
+    {
+        switch (type)
+        {
+            case EShaderType::eVertex:
+                return VK_SHADER_STAGE_VERTEX_BIT;
+            case EShaderType::eFragment:
+                return VK_SHADER_STAGE_FRAGMENT_BIT;
+            case EShaderType::eGeometry:
+                return VK_SHADER_STAGE_GEOMETRY_BIT;
+            case EShaderType::eTessellationControl:
+                return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+            case EShaderType::eTessellationEvaluation:
+                return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+            case EShaderType::eCompute:
+                return VK_SHADER_STAGE_COMPUTE_BIT;
+            default:
+                return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
+        }
+
+        return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
+    };
+
+    VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
+    pipelineShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    pipelineShaderStageCreateInfo.pNext = nullptr;
+    pipelineShaderStageCreateInfo.flags = 0;
+    pipelineShaderStageCreateInfo.stage = getShaderModuleFlag(shader->getType());
+    pipelineShaderStageCreateInfo.module = module;
+    pipelineShaderStageCreateInfo.pName = k_entryPoint.c_str();
+    pipelineShaderStageCreateInfo.pSpecializationInfo = nullptr; //TODO: list of constanst
+
+    return pipelineShaderStageCreateInfo;
+}
+
+u32 ShaderProgramVK::getShaderStagesCount() const
+{
+    return static_cast<u32>(m_shadersModules.size());
+}
+
 void ShaderProgramVK::applyUniform(const std::string& name, const void* value, u32 size)
 {
     if (ShaderProgramVK::isFlagPresent(EProgramFlags::eCompiled))
