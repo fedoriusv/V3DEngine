@@ -151,7 +151,7 @@ Texture::~Texture()
 {
     if (ENGINE_RENDERER->isThreaded())
     {
-        RenderStreamCommand command(ERenderCommand::eCommandDestoyTexure);
+        RenderStreamCommand command(ERenderCommand::eCommandDestroyTexure);
         command.writeValue<Texture* const>(m_impl);
         command.endCommand();
 

@@ -81,7 +81,7 @@ ERenderCommand RenderStreamCommand::getCommand() const
 
 RenderThread::RenderThread(const renderer::RendererPtr renderer)
     : m_renderer(renderer)
-    , m_waitSemophore(1)
+    , m_waitSemaphore(1)
     , m_lastCommand(eCommandUnknown)
 {
     bool result = m_thread.run(std::bind(&RenderThread::threadWorker, this, std::placeholders::_1), nullptr);
@@ -103,12 +103,12 @@ void RenderThread::pushCommand(RenderStreamCommand& command)
 
 void RenderThread::submit()
 {
-    m_waitSemophore.signal();
+    m_waitSemaphore.signal();
 }
 
 void RenderThread::wait()
 {
-    m_waitSemophore.wait();
+    m_waitSemaphore.wait();
 }
 
 const RenderStreamCommand RenderThread::popCommand()
@@ -340,7 +340,7 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         break;
     }
 
-    case ERenderCommand::eCommandDestoyTexure:
+    case ERenderCommand::eCommandDestroyTexure:
     {
         Texture* texute = command.readValue<Texture*>();
         texute->destroy();

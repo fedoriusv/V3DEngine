@@ -21,7 +21,7 @@ namespace renderer
         eCommandUpdateTexure,
         eCommandReadTexture,
         eCommandFillTexure,
-        eCommandDestoyTexure,
+        eCommandDestroyTexure,
         eCommandCopyTexure,
 
         eCommandCreateBuffer,
@@ -116,7 +116,7 @@ namespace renderer
         std::queue<RenderStreamCommand>     m_commandBufferQueue;
 
         utils::Thread                       m_thread;
-        utils::Semaphore                    m_waitSemophore;
+        utils::Semaphore                    m_waitSemaphore;
 
         renderer::RendererWPtr              m_renderer;
     };

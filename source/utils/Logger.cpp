@@ -63,6 +63,8 @@ void CLogger::log(ELoggerType type, ELogOut out, const char* format, ...)
 {
     char buffer[1024];
 
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     va_list args;
     va_start(args, format);
     vsnprintf(buffer, sizeof(buffer), format, args);
@@ -76,6 +78,8 @@ void CLogger::log(ELoggerType type, ELogOut out, const char* format, ...)
 
 void CLogger::log(const std::string& message, ELoggerType type, ELogOut out)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     switch (out)
     {
     case ELogOut::eConsoleLog:

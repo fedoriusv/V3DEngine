@@ -42,20 +42,22 @@ namespace utils
 
     public:
 
-        void            createLogFile(const std::string& filename);
+        void                createLogFile(const std::string& filename);
 
-        void            log(const std::string& message, ELoggerType type = ELoggerType::eLoggerInfo, ELogOut out = ELogOut::eConsoleLog);
-        void            log(ELoggerType type, ELogOut out, const char* format, ...);
+        void                log(const std::string& message, ELoggerType type = ELoggerType::eLoggerInfo, ELogOut out = ELogOut::eConsoleLog);
+        void                log(ELoggerType type, ELogOut out, const char* format, ...);
 
-        void            destroyLogFile();
+        void                destroyLogFile();
 
     protected:
 
-        void            logToConsole(const std::string& message, ELoggerType type);
-        void            logToFile(const std::string& message, ELoggerType type);
+        void                logToConsole(const std::string& message, ELoggerType type);
+        void                logToFile(const std::string& message, ELoggerType type);
 
-        std::string     m_logFilename;
-        std::ofstream   m_file;
+        std::string         m_logFilename;
+        std::ofstream       m_file;
+
+        std::recursive_mutex m_mutex;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ namespace utils
         friend void intrusivePtrAddRef(const CRefCounted* obj);
         friend void intrusivePtrRelease(const CRefCounted* obj);
 
-        mutable s32 m_refCount;
+        mutable std::atomic<s32> m_refCount;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

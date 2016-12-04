@@ -267,12 +267,7 @@ bool WindowWinApi::begin()
 
 bool WindowWinApi::end()
 {
-#ifdef _OPENGL_RENDER_
-    //return SwapBuffers(GetDC(m_window)) != FALSE;
     return true;
-#else //_OPENGL_RENDER_
-    return true;
-#endif //_OPENGL_RENDER_
 }
 
 void WindowWinApi::create()
