@@ -118,6 +118,11 @@ bool Engine::begin()
     bool result = m_window->begin();
     m_inputEventHandler->update();
 
+    if (m_render)
+    {
+        m_render->beginFrame();
+    }
+
     return result;
 }
 
@@ -131,8 +136,10 @@ bool Engine::end()
     if (m_render)
     {
         m_scene->draw();
+        m_render->endFrame();
+
+        m_render->presentFrame();
     }
-    m_render->presentFrame();
 
     return m_window->end();
 }

@@ -20,6 +20,8 @@ using namespace scene;
 IRenderer::IRenderer(const ContextPtr context, bool isThreaded)
     : m_context(context)
     , m_frameIndex(0U)
+    , m_waitPresent(true)
+    , m_isLocked(false)
 
     , m_renderThread(nullptr)
     , m_isThreaded(isThreaded)
@@ -70,7 +72,13 @@ void IRenderer::beginFrame()
 {
     if (m_isThreaded)
     {
-        m_renderThread->init();
+        if (m_waitPresent)
+        {
+            m_renderThread->waitPresent();
+        }
+
+        RenderStreamCommand command(ERenderCommand::eCommandBeginFrame);
+        IRenderer::pushCommand(command, false);
     }
     else
     {
@@ -82,7 +90,8 @@ void IRenderer::endFrame()
 {
     if (m_isThreaded)
     {
-        m_renderThread->endFrame();
+        RenderStreamCommand command(ERenderCommand::eCommandEndFrame);
+        IRenderer::pushCommand(command, false);
     }
     else
     {
@@ -92,9 +101,16 @@ void IRenderer::endFrame()
 
 void IRenderer::presentFrame()
 {
+    m_frameIndex++;
+
     if (m_isThreaded)
     {
-        m_renderThread->presentFrame();
+        RenderStreamCommand command(ERenderCommand::eCommandPresentFrame);
+        command.writeValue<bool>(m_waitPresent);
+        command.writeValue<u64>(m_frameIndex);
+        command.endCommand();
+
+        IRenderer::pushCommand(command, false);
     }
     else
     {
@@ -104,14 +120,14 @@ void IRenderer::presentFrame()
 
 void IRenderer::draw()
 {
-    if (m_isThreaded)
+   /* if (m_isThreaded)
     {
         m_renderThread->draw();
     }
     else
     {
         this->immediateDraw();
-    }
+    }*/
 }
 
 void IRenderer::pushCommand(RenderStreamCommand& command, bool wait)

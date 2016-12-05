@@ -23,6 +23,8 @@ namespace vk
         CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level);
         ~CommandBufferVK();
 
+        const VkCommandBuffer   commandBuffer() const;
+
         void                    clearColorImage(VkImage image, VkImageLayout imageLayout, const core::Vector4D& color, const VkImageSubresourceRange& subresourceRange);
         void                    clearDepthStencilImage(VkImage image, VkImageLayout imageLayout, f32 depth, u32 stencil, const VkImageSubresourceRange& subresourceRange);
 

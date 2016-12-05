@@ -539,6 +539,11 @@ const VkPhysicalDeviceMemoryProperties& DeviceContextVK::getVulkanPhysicalDevice
     return m_vulkanPropsDevice._memoryProperties;
 }
 
+SwapChainVK* DeviceContextVK::getSwapChain() const
+{
+    return m_swapchain;
+}
+
 Texture* DeviceContextVK::createTexture(ETextureTarget target, EImageFormat format, EImageType type, const core::Dimension3D& size, const void* data, u32 level)
 {
     return new TextureVK(target, format, type, size, data, level);

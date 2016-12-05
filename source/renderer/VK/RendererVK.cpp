@@ -10,6 +10,9 @@
 #include "FramebufferVK.h"
 #include "GeometryVK.h"
 #include "ShaderProgramVK.h"
+#include "FenceVK.h"
+#include "context/DeviceContextVK.h"
+
 
 namespace v3d
 {
@@ -22,6 +25,9 @@ RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
     , m_memoryMamager(nullptr)
     , m_commandPool(nullptr)
+
+    , m_backbufferIndex(0)
+    , m_renderQueue(VK_NULL_HANDLE)
 {
     m_device = RendererVK::getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = RendererVK::getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
@@ -41,6 +47,29 @@ ERenderType RendererVK::getRenderType() const
 
 void RendererVK::immediateInit()
 {
+    ASSERT(!m_context.expired(), "invalid pointer");
+    m_swapChain = RendererVK::getVulkanContext()->getSwapChain();
+
+    m_queueFamilyIndex = RendererVK::getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+    ASSERT(m_queueFamilyIndex >= 0, "m_queueFamilyIndex < 0");
+    m_renderQueue = RendererVK::getVulkanContext()->getVuklanQueue(m_queueFamilyIndex, 0);
+
+    if (m_fences.empty())
+    {
+        m_fences.resize(m_swapChain->swapBuffersCount());
+        for (auto& fance : m_fences)
+        {
+            fance = new FenceVK(m_device);
+            if (!fance->create())
+            {
+                LOG_ERROR("RendererVK::immediateInit: can't create face");
+
+                delete fance;
+                fance = nullptr;
+            }
+        }
+    }
+
     if (!m_memoryMamager)
     {
         m_memoryMamager = new MemoryManagerVK(RendererVK::getVulkanContext());
@@ -54,16 +83,60 @@ void RendererVK::immediateInit()
     //TODO:
 }
 
+void RendererVK::immediateTerminate()
+{
+    for (auto& fance : m_fences)
+    {
+        fance->destroy();
+        delete fance;
+        fance = nullptr;
+    }
+
+    if (m_commandPool)
+    {
+        delete m_commandPool;
+        m_commandPool = nullptr;
+    }
+
+    if (m_memoryMamager)
+    {
+        delete m_memoryMamager;
+        m_memoryMamager = nullptr;
+    }
+}
+
 void RendererVK::immediaterBeginFrame()
 {
+    if (m_isLocked)
+    {
+        return;
+    }
+
+    m_isLocked = true;
 }
 
 void RendererVK::immediateEndFrame()
 {
+    if (!m_isLocked)
+    {
+        return;
+    }
+
+    m_isLocked = false;
 }
 
 void RendererVK::immediatePresentFrame()
 {
+    m_backbufferIndex = m_swapChain->prepareFrame();
+    ASSERT(m_backbufferIndex < 0, "invalid frame index");
+
+    m_fences[m_backbufferIndex]->wait();
+    m_fences[m_backbufferIndex]->reset();
+
+    m_swapChain->submitFrame(RendererVK::getCurrentCommandBuffer()->commandBuffer(), m_fences[m_backbufferIndex]->fence());
+    m_swapChain->presentFrame();
+
+    //TODO: get texture by m_backbufferIndex
 }
 
 void RendererVK::immediateDraw()

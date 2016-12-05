@@ -4,7 +4,7 @@
 
 #ifdef _VULKAN_RENDER_
 #include "vulkan/vulkan.h"
-#include "context/DeviceContextVK.h"
+#include "context/SwapChainVK.h"
 
 namespace v3d
 {
@@ -22,6 +22,7 @@ namespace vk
     class FramebufferVK;
     class GeometryVK;
     class ShaderProgramVK;
+    class FenceVK;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,14 +45,14 @@ namespace vk
         explicit RendererVK(const ContextPtr context);
         ~RendererVK();
 
-        ERenderType             getRenderType() const override;
+        ERenderType                 getRenderType() const override;
 
-        const ContextVKPtr      getVulkanContext() const;
-        MemoryManagerVK*        getMemoryManager();
-        CommandBufferVK*        getCurrentCommandBuffer() const;
+        const ContextVKPtr          getVulkanContext() const;
+        MemoryManagerVK*            getMemoryManager();
+        CommandBufferVK*            getCurrentCommandBuffer() const;
 
         template <class V, typename T>
-        static bool checkPresentState(const V& container, T value)
+        static bool                 checkPresentState(const V& container, T value)
         {
             /*auto iter = std::find(container.cbegin(), container.cend(), T);
             if (iter != container.cend())
@@ -64,37 +65,38 @@ namespace vk
 
     private:
 
-        void                    immediateInit() override;
+        void                        immediateInit() override;
+        void                        immediateTerminate() override;
 
-        void                    immediaterBeginFrame() override;
-        void                    immediateEndFrame() override;
-        void                    immediatePresentFrame() override;
+        void                        immediaterBeginFrame() override;
+        void                        immediateEndFrame() override;
+        void                        immediatePresentFrame() override;
 
-        void                    immediateDraw() override;
+        void                        immediateDraw() override;
 
-        VkPipeline              createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry, const ShaderProgramVK* program);
-        VkPipeline              getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const ShaderProgramVK* program);
-        void                    destroyGraphicPipelines();
+        VkPipeline                  createGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const GeometryVK* geometry, const ShaderProgramVK* program);
+        VkPipeline                  getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const ShaderProgramVK* program);
+        void                        destroyGraphicPipelines();
 
-        MemoryManagerVK*        m_memoryMamager;
+        MemoryManagerVK*            m_memoryMamager;
 
-        CommandPoolVK*          m_commandPool;
+        CommandPoolVK*              m_commandPool;
 
-        VkDevice                m_device;
-        u32                     m_queueFamilyIndex;
+        VkDevice                    m_device;
+        u32                         m_queueFamilyIndex;
 
-        std::map<u64, VkPipeline> m_pipelineList;
+        u32                         m_backbufferIndex;
+        SwapChainVK*                m_swapChain;
+        std::vector<FenceVK*>       m_fences;
+        VkQueue                     m_renderQueue;
+
+
+        std::map<u64, VkPipeline>   m_pipelineList;
 
     public:
 
         void                preRender(bool clear = false)                                           override;
         void                postRender()                                                            override;
-
-
-
-        //ShaderPtr           makeSharedShader()                                                      override;
-        //ShaderProgramPtr    makeSharedProgram()                                                     override;
-        //RenderStatePtr      makeSharedRenderState()                                                 override;
 
         RenderTargetPtr     makeSharedRenderTarget()                                                override;
         GeometryTargetPtr   makeSharedGeometryTarget()                                              override;

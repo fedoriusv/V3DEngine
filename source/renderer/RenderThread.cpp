@@ -111,36 +111,22 @@ void RenderThread::wait()
     m_waitSemaphore.wait();
 }
 
+void RenderThread::waitPresent()
+{
+    //TODO:
+}
+
+void RenderThread::submitPresent()
+{
+    //TODO:
+}
+
 const RenderStreamCommand RenderThread::popCommand()
 {
     RenderStreamCommand command = std::move(m_commandBufferQueue.front());
     m_commandBufferQueue.pop();
 
     return command;
-}
-
-void RenderThread::init()
-{
-}
-
-void RenderThread::beginFrame()
-{
-    //m_commandBuffer.write(s32(ERenderCommand::eRCmdBeginFrame));
-}
-
-void RenderThread::endFrame()
-{
-    //m_commandBuffer.write(s32(ERenderCommand::eRCmdEndFrame));
-}
-
-void RenderThread::presentFrame()
-{
-    //m_commandBuffer.write(s32(ERenderCommand::eRCmdPresentFrame));
-}
-
-void RenderThread::draw()
-{
-    //m_commandBuffer.write(s32(ERenderCommand::eRCmdDraw));
 }
 
 void RenderThread::destroy()
@@ -191,19 +177,29 @@ void RenderThread::runCommand(const RenderStreamCommand& command)
         RenderThread::submit();
         break;
 
- /*   case ERenderCommand::eRCmdBeginFrame:
-        render->beginFrame();
+    case ERenderCommand::eCommandBeginFrame:
+        render->immediaterBeginFrame();
         break;
 
-    case ERenderCommand::eRCmdEndFrame:
-        render->endFrame();
+    case ERenderCommand::eCommandEndFrame:
+        render->immediateEndFrame();
         break;
 
-    case ERenderCommand::eRCmdPresentFrame:
-        render->presentFrame();
-        break;
+    case ERenderCommand::eCommandPresentFrame:
+    {
+        bool waitPresent = command.readValue<bool>();
+        u64 currentFrame = command.readValue<u64>();
 
-    case ERenderCommand::eRCmdDraw:
+        render->immediatePresentFrame(/*currentFrame*/);
+
+        if (waitPresent)
+        {
+            RenderThread::submitPresent();
+        }
+        break;
+    }
+
+   /* case ERenderCommand::eRCmdDraw:
         render->draw();
         break;
 

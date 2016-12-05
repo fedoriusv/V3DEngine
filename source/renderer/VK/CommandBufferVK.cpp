@@ -46,6 +46,11 @@ CommandBufferVK::~CommandBufferVK()
     }
 }
 
+const VkCommandBuffer CommandBufferVK::commandBuffer() const
+{
+    return m_commandBuffer;
+}
+
 void CommandBufferVK::clearColorImage(VkImage image, VkImageLayout imageLayout, const core::Vector4D& color, const VkImageSubresourceRange& subresourceRange)
 {
     VkClearColorValue clearColorValue = {};

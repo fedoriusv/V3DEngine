@@ -37,6 +37,7 @@ namespace vk
         VkQueue                                 getVuklanQueue(u32 queueFamily, u32 index) const;
         s32                                     getVulkanQueueFamilyIndex(VkQueueFlagBits queueFlag) const;
         const VkPhysicalDeviceMemoryProperties& getVulkanPhysicalDeviceMemoryProperties() const;
+        SwapChainVK*                            getSwapChain() const;
 
     protected:
 

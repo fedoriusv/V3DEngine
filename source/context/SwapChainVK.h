@@ -32,15 +32,16 @@ namespace vk
         bool                        update(const core::Dimension2D& size, bool vsync);
 
         void                        presentFrame();
+        void                        submitFrame(VkCommandBuffer buffer, VkFence fence);
         s32                         prepareFrame();
+
+        u32                         swapBuffersCount() const;
 
     private:
 
         bool                        createSurface();
         bool                        createSwapChain();
         bool                        createSwapchainImages();
-
-        u32                         m_currentBuffer;
 
         VkSwapchainKHR              m_swapChain;
         VkSurfaceKHR                m_surface;
@@ -49,6 +50,7 @@ namespace vk
         VkQueue                     m_queuePresent;
 
         VkSemaphore                 m_semaphorePresent;
+        VkSemaphore                 m_semaphoreRenderComplete;
 
         VkInstance                  m_instance;
         VkDevice                    m_device;
@@ -61,6 +63,9 @@ namespace vk
         VkSurfaceFormatKHR          m_surfaceFormat;
         VkExtent2D                  m_surfaceSize;
         VkBool32                    m_isVSync;
+
+        u32                         m_currentBuffer;
+        std::vector<Texture*>       m_swapBuffers;
 
 #if defined(_PLATFORM_WIN_)
         bool                        createSurfaceWinApi();

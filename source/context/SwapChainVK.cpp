@@ -25,6 +25,7 @@ SwapChainVK::SwapChainVK(const ContextVKPtr context)
     , m_queuePresent(VK_NULL_HANDLE)
 
     , m_semaphorePresent(VK_NULL_HANDLE)
+    , m_semaphoreRenderComplete(VK_NULL_HANDLE)
 
     , m_instance(VK_NULL_HANDLE)
     , m_device(VK_NULL_HANDLE)
@@ -60,6 +61,12 @@ SwapChainVK::SwapChainVK(const ContextVKPtr context)
     {
         LOG_ERROR(" SwapChainVK::SwapChainVK: vkCreateSemaphore error %s", DebugVK::errorString(result).c_str());
     }
+
+    result = vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_semaphoreRenderComplete);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR(" SwapChainVK::SwapChainVK: vkCreateSemaphore error %s", DebugVK::errorString(result).c_str());
+    }
 }
 
 SwapChainVK::~SwapChainVK()
@@ -71,6 +78,12 @@ SwapChainVK::~SwapChainVK()
     {
         vkDestroySemaphore(m_device, m_semaphorePresent, nullptr);
         m_semaphorePresent = VK_NULL_HANDLE;
+    }
+
+    if (m_semaphoreRenderComplete != VK_NULL_HANDLE)
+    {
+        vkDestroySemaphore(m_device, m_semaphoreRenderComplete, nullptr);
+        m_semaphoreRenderComplete = VK_NULL_HANDLE;
     }
 }
 
@@ -128,7 +141,7 @@ bool SwapChainVK::update(const core::Dimension2D& size, bool vsync)
 
 void SwapChainVK::presentFrame()
 {
-    ASSERT(m_semaphorePresent, "Invalid semaphore");
+    ASSERT(m_semaphoreRenderComplete, "Invalid semaphore");
 
     VkPresentInfoKHR presentInfo;
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -136,7 +149,7 @@ void SwapChainVK::presentFrame()
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &m_swapChain;
     presentInfo.pImageIndices = &m_currentBuffer;
-    presentInfo.pWaitSemaphores = &m_semaphorePresent;
+    presentInfo.pWaitSemaphores = &m_semaphoreRenderComplete;
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pResults = nullptr;
 
@@ -153,6 +166,28 @@ void SwapChainVK::presentFrame()
     }
 }
 
+void SwapChainVK::submitFrame(VkCommandBuffer buffer, VkFence fence)
+{
+    VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.pNext = nullptr;
+    submitInfo.pWaitDstStageMask = &waitStageMask;
+    submitInfo.pWaitSemaphores = &m_semaphorePresent;
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &m_semaphoreRenderComplete;
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pCommandBuffers = &buffer;
+    submitInfo.commandBufferCount = 1;
+
+    VkResult result = vkQueueSubmit(m_queuePresent, 1, &submitInfo, fence);
+    if (result != VK_SUCCESS)
+    {
+        LOG_ERROR("RendererVK::immediatePresentFrame: vkQueueSubmit error %s", vk::DebugVK::errorString(result).c_str());
+    }
+}
+
 s32 SwapChainVK::prepareFrame()
 {
     ASSERT(m_semaphorePresent, "Invalid semaphore");
@@ -164,6 +199,14 @@ s32 SwapChainVK::prepareFrame()
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         LOG_WARNING("SwapChainVK::prepareFrame: Error VK_ERROR_OUT_OF_DATE_KHR. Swapchain is out of date. Needs to be recreated for defined results");
+
+        vkDeviceWaitIdle(m_device);
+        result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
+        if (result != VK_SUCCESS)
+        {
+            LOG_ERROR("SwapChainVK::prepareFrame: vkAcquireNextImageKHR. Error %s", DebugVK::errorString(result).c_str());
+            return m_currentBuffer;
+        }
     }
     else if (result != VK_SUCCESS)
     {
@@ -173,6 +216,11 @@ s32 SwapChainVK::prepareFrame()
     m_currentBuffer = outImageIndex;
 
     return m_currentBuffer;
+}
+
+u32 SwapChainVK::swapBuffersCount() const
+{
+    return static_cast<u32>(m_swapBuffers.size());
 }
 
 bool SwapChainVK::createSurface()
@@ -234,7 +282,7 @@ bool SwapChainVK::createSurface()
     u32 surfaceFormatIndex = 0;
     // If the surface format list only includes one entry with VK_FORMAT_UNDEFINED,
     // there is no preferered format, so we assume VK_FORMAT_B8G8R8A8_UNORM
-    if ((surfaceFormatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
+    if ((surfaceFormatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED)) //???
     {
         surfaceFormatCount = VK_FORMAT_B8G8R8A8_UNORM;
     }
@@ -392,6 +440,8 @@ bool SwapChainVK::createSwapchainImages()
 
     //    err = vkCreateImageView(device, &colorAttachmentView, nullptr, &buffers[i].view);
     //    assert(!err);
+
+    m_swapBuffers.resize(swapChainImageCount);
 
     return true;
 }

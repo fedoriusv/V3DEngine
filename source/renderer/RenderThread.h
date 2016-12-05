@@ -12,10 +12,14 @@ namespace renderer
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    enum ERenderCommand
+    enum ERenderCommand : s32
     {
         eCommandUnknown = -1,
-        eCommandInitialize = 0,
+        eCommandInitialize,
+
+        eCommandBeginFrame,
+        eCommandEndFrame,
+        eCommandPresentFrame,
 
         eCommandCreateTexture,
         eCommandUpdateTexure,
@@ -88,13 +92,8 @@ namespace renderer
         void                                submit();
         void                                wait();
 
-        void                                init();
-                                            
-        void                                beginFrame();
-        void                                endFrame();
-        void                                presentFrame();
-                                            
-        void                                draw();
+        void                                waitPresent();
+        void                                submitPresent();
 
         //
 

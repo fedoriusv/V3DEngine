@@ -45,7 +45,7 @@ namespace renderer
 
         bool                            isThreaded() const;
 
-        //main thread
+        //Main thread
         void                            init();
 
         void                            beginFrame();
@@ -62,8 +62,9 @@ namespace renderer
 
         friend                          RenderThread;
 
-        //render thread
+        //Render thread
         virtual void                    immediateInit() = 0;
+        virtual void                    immediateTerminate() = 0;
 
         virtual void                    immediaterBeginFrame() = 0;
         virtual void                    immediateEndFrame() = 0;
@@ -122,10 +123,18 @@ namespace renderer
         void                        updateAdvanced(const RenderPassPtr& pass);
 
         ContextWPtr                 m_context;
-        u32                         m_frameIndex;
+        
+        //Main Thread
+        u64                         m_frameIndex;
+        bool                        m_waitPresent;
 
         RenderThread*               m_renderThread;
         bool                        m_isThreaded;
+
+
+        //Render Thread
+        bool                        m_isLocked;
+
 
         RenderTargetPtr             m_defaultRenderTarget;
         RenderTargetPtr             m_currentRenderTarget;
