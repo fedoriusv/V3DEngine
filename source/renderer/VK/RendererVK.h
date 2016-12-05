@@ -78,7 +78,7 @@ namespace vk
         VkPipeline                  getGraphicPipeline(const RenderStateVK* renderState, const FramebufferVK* framebuffer, const ShaderProgramVK* program);
         void                        destroyGraphicPipelines();
 
-        MemoryManagerVK*            m_memoryMamager;
+        MemoryManagerVK*            m_memoryManager;
 
         CommandPoolVK*              m_commandPool;
 

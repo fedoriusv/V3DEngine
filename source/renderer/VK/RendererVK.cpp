@@ -23,7 +23,7 @@ namespace vk
 
 RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
-    , m_memoryMamager(nullptr)
+    , m_memoryManager(nullptr)
     , m_commandPool(nullptr)
 
     , m_backbufferIndex(0)
@@ -35,7 +35,7 @@ RendererVK::RendererVK(const ContextPtr context)
 
 RendererVK::~RendererVK()
 {
-    ASSERT(!m_memoryMamager, "m_memoryMamager already exist");
+    ASSERT(!m_memoryManager, "m_memoryMamager already exist");
     ASSERT(!m_commandPool, "m_commandPool already exist");
     ASSERT(m_pipelineList.empty(), "m_pipelineList is not empty");
 }
@@ -70,9 +70,9 @@ void RendererVK::immediateInit()
         }
     }
 
-    if (!m_memoryMamager)
+    if (!m_memoryManager)
     {
-        m_memoryMamager = new MemoryManagerVK(RendererVK::getVulkanContext());
+        m_memoryManager = new MemoryManagerVK(RendererVK::getVulkanContext());
     }
 
     if (!m_commandPool)
@@ -98,10 +98,10 @@ void RendererVK::immediateTerminate()
         m_commandPool = nullptr;
     }
 
-    if (m_memoryMamager)
+    if (m_memoryManager)
     {
-        delete m_memoryMamager;
-        m_memoryMamager = nullptr;
+        delete m_memoryManager;
+        m_memoryManager = nullptr;
     }
 }
 
@@ -272,7 +272,7 @@ const ContextVKPtr RendererVK::getVulkanContext() const
 
 MemoryManagerVK* RendererVK::getMemoryManager()
 {
-    return m_memoryMamager;
+    return m_memoryManager;
 }
 
 CommandBufferVK* RendererVK::getCurrentCommandBuffer() const
