@@ -17,16 +17,15 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 using namespace resources;
 
 ShaderProgramVK::ShaderProgramVK()
     : ShaderProgram()
     , m_flags(ShaderProgram::eCreated)
-
-    , m_device(VK_NULL_HANDLE)
 {
     LOG_DEBUG("ShaderProgramVK::ShaderProgramVK constructor %x", this);
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 }
 
 ShaderProgramVK::ShaderProgramVK(const ShaderList& shaders, const ShaderDefinesList& defines)
@@ -34,11 +33,8 @@ ShaderProgramVK::ShaderProgramVK(const ShaderList& shaders, const ShaderDefinesL
     , m_shaderList(shaders)
     , m_defines(defines)
     , m_flags(ShaderProgram::eCreated)
-
-    , m_device(VK_NULL_HANDLE)
 {
     LOG_DEBUG("ShaderProgramVK::ShaderProgramVK constructor %x", this);
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 }
 
 ShaderProgramVK::~ShaderProgramVK()
@@ -335,7 +331,7 @@ bool ShaderProgramVK::compile(const resources::ShaderDefinesList& defines, const
         shaderModuleCreateInfo.codeSize = bytecode.size();
 
         VkShaderModule module = VK_NULL_HANDLE;
-        VkResult result = vkCreateShaderModule(m_device, &shaderModuleCreateInfo, nullptr, &module);
+        VkResult result = vkCreateShaderModule(g_vulkanDevice.device, &shaderModuleCreateInfo, nullptr, &module);
         if (result != VK_SUCCESS)
         {
             LOG_ERROR("ShaderProgramVK::compile: vkCreateShaderModule error %s", DebugVK::errorString(result));
@@ -367,7 +363,7 @@ void ShaderProgramVK::destoryAllModules()
 {
     for (auto& module : m_shadersModules)
     {
-        vkDestroyShaderModule(m_device, module, nullptr);
+        vkDestroyShaderModule(g_vulkanDevice.device, module, nullptr);
         module = VK_NULL_HANDLE;
     }
 

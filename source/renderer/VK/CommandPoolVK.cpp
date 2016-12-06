@@ -14,6 +14,8 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 CommandPoolVK::CommandPoolVK(const ContextVKPtr context, VkCommandBufferLevel level)
     : m_commandPool(VK_NULL_HANDLE)
     , m_level(level)
@@ -21,10 +23,8 @@ CommandPoolVK::CommandPoolVK(const ContextVKPtr context, VkCommandBufferLevel le
     , m_creatFlags(0)
     , m_resetFlags(0)
 
-    , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
 {
-    m_device = context->getVulkanDevice();
     m_queueFamilyIndex = context->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 
     VkCommandPoolCreateInfo commandPoolCreateInfo = {};
@@ -33,7 +33,7 @@ CommandPoolVK::CommandPoolVK(const ContextVKPtr context, VkCommandBufferLevel le
     commandPoolCreateInfo.flags = m_creatFlags;
     commandPoolCreateInfo.queueFamilyIndex = m_queueFamilyIndex;
 
-    VkResult result = vkCreateCommandPool(m_device, &commandPoolCreateInfo, nullptr, &m_commandPool);
+    VkResult result = vkCreateCommandPool(g_vulkanDevice.device, &commandPoolCreateInfo, nullptr, &m_commandPool);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("CommandPoolVK::CommandPoolVK: vkCreateCommandPool. Error: %s", DebugVK::errorString(result).c_str());
@@ -51,14 +51,14 @@ CommandPoolVK::~CommandPoolVK()
 
     if (m_commandPool != VK_NULL_HANDLE)
     {
-        vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+        vkDestroyCommandPool(g_vulkanDevice.device, m_commandPool, nullptr);
         m_commandPool = nullptr;
     }
 }
 
 bool CommandPoolVK::reset()
 {
-    VkResult result = vkResetCommandPool(m_device, m_commandPool, m_resetFlags);
+    VkResult result = vkResetCommandPool(g_vulkanDevice.device, m_commandPool, m_resetFlags);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("CommandPoolVK::reset: vkResetCommandPool. Error: %s", DebugVK::errorString(result).c_str());

@@ -25,6 +25,8 @@ namespace renderer
 namespace vk
 {
 
+VulkanDevice g_vulkanDevice = {};
+
 const bool k_useValidationLayers = false;
 const std::string k_vulkanApplicationName = "V3DWinApiVulkan";
 
@@ -352,6 +354,8 @@ bool DeviceContextVK::createLogicalDevice(bool useSwapChain, const std::list<std
         return false;
     }
 
+    DeviceContextVK::fillVulkanDeviceDesc();
+
     return true;
 }
 
@@ -487,21 +491,6 @@ bool DeviceContextVK::setVSync(bool use)
     return true;
 }
 
-VkInstance DeviceContextVK::getVulkanInstance() const
-{
-    return m_instance;
-}
-
-VkDevice DeviceContextVK::getVulkanDevice() const
-{
-    return m_device;
-}
-
-VkPhysicalDevice DeviceContextVK::getVulkanPhysicalDevice() const
-{
-    return m_physicalDevice;
-}
-
 VkQueue DeviceContextVK::getVuklanQueue(u32 queueFamily, u32 index) const
 {
     auto result = m_queueFamily.find(queueFamily);
@@ -615,6 +604,14 @@ void DeviceContextVK::fillGrapthicCaps()
     LOG("Max Draw Buffers: %d", maxDrawBuffers);
     LOG("MSAA x%d", samplesCount);
     LOG("Max supported patch vertices: %d", maxPatchVertices);*/
+}
+
+void DeviceContextVK::fillVulkanDeviceDesc()
+{
+    g_vulkanDevice.instance = m_instance;
+    g_vulkanDevice.physicalDevice = m_physicalDevice;
+    g_vulkanDevice.device = m_device;
+    g_vulkanDevice.queueGraphicsFamilyIndex = DeviceContextVK::getQueueFamiliyIndex(VK_QUEUE_GRAPHICS_BIT);
 }
 
 void DeviceContextVK::printExtensionList() const

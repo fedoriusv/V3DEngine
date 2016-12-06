@@ -14,9 +14,10 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 FramebufferVK::FramebufferVK()
     : m_framebuffer(VK_NULL_HANDLE)
-    , m_device(VK_NULL_HANDLE)
     , m_initialized(false)
 {
     LOG_DEBUG("FramebufferVK::FramebufferVK constructor %x", this);
@@ -45,8 +46,6 @@ bool FramebufferVK::create()
     {
         return true;
     }
-
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
 
     const core::Rect32& rect = RenderTarget::getViewport();
     u32 width = rect.getWidth();
@@ -90,7 +89,7 @@ bool FramebufferVK::create()
     framebufferCreateInfo.height = height;
     framebufferCreateInfo.layers = 1;
 
-    VkResult result = vkCreateFramebuffer(m_device, &framebufferCreateInfo, nullptr, &m_framebuffer);
+    VkResult result = vkCreateFramebuffer(g_vulkanDevice.device, &framebufferCreateInfo, nullptr, &m_framebuffer);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("FramebufferVK::create: vkCreateFramebuffer. Error: %s", DebugVK::errorString(result).c_str());
@@ -106,7 +105,7 @@ void FramebufferVK::destroy()
 {
     if (m_framebuffer != VK_NULL_HANDLE)
     {
-        vkDestroyFramebuffer(m_device, m_framebuffer, nullptr);
+        vkDestroyFramebuffer(g_vulkanDevice.device, m_framebuffer, nullptr);
         m_framebuffer = VK_NULL_HANDLE;
     }
 

@@ -51,7 +51,6 @@ namespace vk
         bool                        m_coherentMemory;
         bool                        m_mapped;
 
-        VkDevice                    m_device;
         u32                         m_queueFamilyIndex;
 
         SMemoryVK                   m_memory;

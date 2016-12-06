@@ -52,10 +52,6 @@ namespace vk
         VkSemaphore                 m_semaphorePresent;
         VkSemaphore                 m_semaphoreRenderComplete;
 
-        VkInstance                  m_instance;
-        VkDevice                    m_device;
-        VkPhysicalDevice            m_physicalDevice;
-
         VkSurfaceCapabilitiesKHR    m_surfaceCaps;
 
         std::mutex                  m_mutex;

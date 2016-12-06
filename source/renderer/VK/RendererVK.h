@@ -82,7 +82,6 @@ namespace vk
 
         CommandPoolVK*              m_commandPool;
 
-        VkDevice                    m_device;
         u32                         m_queueFamilyIndex;
 
         u32                         m_backbufferIndex;

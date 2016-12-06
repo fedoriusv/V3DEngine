@@ -5,6 +5,7 @@
 #ifdef _VULKAN_RENDER_
 #include "context/DebugVK.h"
 #include "RendererVK.h"
+#include "context/DeviceContextVK.h"
 
 namespace v3d
 {
@@ -13,15 +14,13 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     : m_commandBuffer(VK_NULL_HANDLE)
     , m_bufferLevel(level)
     , m_commandPool(pool)
-
-    , m_device(VK_NULL_HANDLE)
 {
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-
     VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     commandBufferAllocateInfo.pNext = nullptr;
@@ -29,7 +28,7 @@ CommandBufferVK::CommandBufferVK(VkCommandPool pool, VkCommandBufferLevel level)
     commandBufferAllocateInfo.level = m_bufferLevel;
     commandBufferAllocateInfo.commandBufferCount = 1;
 
-    VkResult result = vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, &m_commandBuffer);
+    VkResult result = vkAllocateCommandBuffers(g_vulkanDevice.device, &commandBufferAllocateInfo, &m_commandBuffer);
     if (result != VK_SUCCESS)
     {
         
@@ -41,7 +40,7 @@ CommandBufferVK::~CommandBufferVK()
 {
     if (m_commandBuffer != VK_NULL_HANDLE)
     {
-        vkFreeCommandBuffers(m_device, m_commandPool, 1, &m_commandBuffer);
+        vkFreeCommandBuffers(g_vulkanDevice.device, m_commandPool, 1, &m_commandBuffer);
         m_commandBuffer = VK_NULL_HANDLE;
     }
 }

@@ -11,6 +11,15 @@ namespace renderer
 {
 namespace vk
 {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    struct VulkanDevice
+    {
+        VkInstance       instance;
+        VkPhysicalDevice physicalDevice;
+        VkDevice         device;
+        u32              queueGraphicsFamilyIndex;
+    };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,9 +40,6 @@ namespace vk
 
         bool                                    setVSync(bool use) override;
 
-        VkInstance                              getVulkanInstance() const;
-        VkDevice                                getVulkanDevice() const;
-        VkPhysicalDevice                        getVulkanPhysicalDevice() const;
         VkQueue                                 getVuklanQueue(u32 queueFamily, u32 index) const;
         s32                                     getVulkanQueueFamilyIndex(VkQueueFlagBits queueFlag) const;
         const VkPhysicalDeviceMemoryProperties& getVulkanPhysicalDeviceMemoryProperties() const;
@@ -47,6 +53,7 @@ namespace vk
         ShaderProgram*                          createShaderProgram(const resources::ShaderList& shaders, const resources::ShaderDefinesList& defines = {}) override;
 
         void                                    fillGrapthicCaps() override;
+        void                                    fillVulkanDeviceDesc();
 
         void                                    printExtensionList() const;
 

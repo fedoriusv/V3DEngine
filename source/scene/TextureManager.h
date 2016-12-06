@@ -43,7 +43,7 @@ namespace scene
 
     private:
 
-        u32                         culculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level);
+        u32                         calculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level);
 
         std::string                 getFileExtension(const std::string& fullFileName);
 

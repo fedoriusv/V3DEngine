@@ -69,7 +69,6 @@ namespace vk
 
         ConstantBuffers                     m_constantBuffers;
 
-        VkDevice                            m_device;
         std::vector<VkShaderModule>         m_shadersModules;
 
         std::atomic<u16>                    m_flags;

@@ -139,7 +139,6 @@ namespace vk
 
         std::mutex          m_mutex;
 
-        VkDevice            m_device;
         const VkPhysicalDeviceMemoryProperties& m_physicalDeviceMemoryProperties;
    };
 

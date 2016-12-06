@@ -21,6 +21,8 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 RendererVK::RendererVK(const ContextPtr context)
     : IRenderer(context, true)
     , m_memoryManager(nullptr)
@@ -29,7 +31,6 @@ RendererVK::RendererVK(const ContextPtr context)
     , m_backbufferIndex(0)
     , m_renderQueue(VK_NULL_HANDLE)
 {
-    m_device = RendererVK::getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = RendererVK::getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 }
 
@@ -59,7 +60,7 @@ void RendererVK::immediateInit()
         m_fences.resize(m_swapChain->swapBuffersCount());
         for (auto& fance : m_fences)
         {
-            fance = new FenceVK(m_device);
+            fance = new FenceVK(g_vulkanDevice.device);
             if (!fance->create())
             {
                 LOG_ERROR("RendererVK::immediateInit: can't create face");
@@ -226,7 +227,7 @@ VkPipeline RendererVK::createGraphicPipeline(const RenderStateVK* renderState, c
     //pipelineCreateInfo.renderPass = ;
     //pipelineCreateInfo.subpass = ;
 
-    VkResult result = vkCreateGraphicsPipelines(m_device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
+    VkResult result = vkCreateGraphicsPipelines(g_vulkanDevice.device, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("RendererVK::createGraphicPipeline: vkCreateGraphicsPipelines. Error: %s", DebugVK::errorString(result).c_str());
@@ -257,7 +258,7 @@ void RendererVK::destroyGraphicPipelines()
     {
         if (pipline.second != VK_NULL_HANDLE)
         {
-            vkDestroyPipeline(m_device, pipline.second, nullptr);
+            vkDestroyPipeline(g_vulkanDevice.device, pipline.second, nullptr);
             pipline.second = VK_NULL_HANDLE;
         }
     }

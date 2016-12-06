@@ -1,9 +1,11 @@
 #include "SwapChainVK.h"
 #include "utils/Logger.h"
+#include "Engine.h"
 
 #ifdef _VULKAN_RENDER_
 #include "DebugVK.h"
 #include "DeviceContextVK.h"
+#include "renderer/VK/TextureVK.h"
 
 #if defined(_PLATFORM_WIN_)
 #   include "platform/WindowWinApi.h"
@@ -16,6 +18,8 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 SwapChainVK::SwapChainVK(const ContextVKPtr context)
     : m_currentBuffer(0)
     , m_swapChain(VK_NULL_HANDLE)
@@ -27,9 +31,6 @@ SwapChainVK::SwapChainVK(const ContextVKPtr context)
     , m_semaphorePresent(VK_NULL_HANDLE)
     , m_semaphoreRenderComplete(VK_NULL_HANDLE)
 
-    , m_instance(VK_NULL_HANDLE)
-    , m_device(VK_NULL_HANDLE)
-    , m_physicalDevice(VK_NULL_HANDLE)
 #if defined(_PLATFORM_WIN_)
     , m_appInstance(NULL)
     , m_appWindow(NULL)
@@ -40,9 +41,6 @@ SwapChainVK::SwapChainVK(const ContextVKPtr context)
     m_appWindow = std::static_pointer_cast<const platform::WindowWinApi>(context->getWindow())->getHandleWindow();
 #endif //_PLATFORM_WIN_
 
-    m_instance = context->getVulkanInstance();
-    m_physicalDevice = context->getVulkanPhysicalDevice();
-    m_device = context->getVulkanDevice();
     m_queueFamilyIndex = context->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
     ASSERT(m_queueFamilyIndex >= 0, "m_queueFamilyIndex < 0");
     m_queuePresent = context->getVuklanQueue(m_queueFamilyIndex, 0);
@@ -56,13 +54,13 @@ SwapChainVK::SwapChainVK(const ContextVKPtr context)
     semaphoreInfo.pNext = nullptr;
     semaphoreInfo.flags = 0;
 
-    VkResult result = vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_semaphorePresent);
+    VkResult result = vkCreateSemaphore(g_vulkanDevice.device, &semaphoreInfo, nullptr, &m_semaphorePresent);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR(" SwapChainVK::SwapChainVK: vkCreateSemaphore error %s", DebugVK::errorString(result).c_str());
     }
 
-    result = vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_semaphoreRenderComplete);
+    result = vkCreateSemaphore(g_vulkanDevice.device, &semaphoreInfo, nullptr, &m_semaphoreRenderComplete);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR(" SwapChainVK::SwapChainVK: vkCreateSemaphore error %s", DebugVK::errorString(result).c_str());
@@ -76,13 +74,13 @@ SwapChainVK::~SwapChainVK()
 
     if (m_semaphorePresent != VK_NULL_HANDLE)
     {
-        vkDestroySemaphore(m_device, m_semaphorePresent, nullptr);
+        vkDestroySemaphore(g_vulkanDevice.device, m_semaphorePresent, nullptr);
         m_semaphorePresent = VK_NULL_HANDLE;
     }
 
     if (m_semaphoreRenderComplete != VK_NULL_HANDLE)
     {
-        vkDestroySemaphore(m_device, m_semaphoreRenderComplete, nullptr);
+        vkDestroySemaphore(g_vulkanDevice.device, m_semaphoreRenderComplete, nullptr);
         m_semaphoreRenderComplete = VK_NULL_HANDLE;
     }
 }
@@ -114,13 +112,13 @@ void SwapChainVK::destroy()
 {
     if (m_swapChain != VK_NULL_HANDLE)
     {
-        vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+        vkDestroySwapchainKHR(g_vulkanDevice.device, m_swapChain, nullptr);
         m_swapChain = VK_NULL_HANDLE;
     }
 
     if (m_surface != VK_NULL_HANDLE)
     {
-        vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+        vkDestroySurfaceKHR(g_vulkanDevice.instance, m_surface, nullptr);
         m_surface = VK_NULL_HANDLE;
     }
 }
@@ -195,13 +193,13 @@ s32 SwapChainVK::prepareFrame()
     std::lock_guard<std::mutex> lock(m_mutex);
 
     u32 outImageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
+    VkResult result = vkAcquireNextImageKHR(g_vulkanDevice.device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         LOG_WARNING("SwapChainVK::prepareFrame: Error VK_ERROR_OUT_OF_DATE_KHR. Swapchain is out of date. Needs to be recreated for defined results");
 
-        vkDeviceWaitIdle(m_device);
-        result = vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
+        vkDeviceWaitIdle(g_vulkanDevice.device);
+        result = vkAcquireNextImageKHR(g_vulkanDevice.device, m_swapChain, UINT64_MAX, m_semaphorePresent, VK_NULL_HANDLE, &outImageIndex);
         if (result != VK_SUCCESS)
         {
             LOG_ERROR("SwapChainVK::prepareFrame: vkAcquireNextImageKHR. Error %s", DebugVK::errorString(result).c_str());
@@ -237,7 +235,7 @@ bool SwapChainVK::createSurface()
     return false;
 #endif //_PLATFORM_WIN_
 
-    VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &m_surfaceCaps);
+    VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_vulkanDevice.physicalDevice, m_surface, &m_surfaceCaps);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSurface: vkGetPhysicalDeviceSurfaceCapabilitiesKHR. Error %s", DebugVK::errorString(result).c_str());
@@ -251,7 +249,7 @@ bool SwapChainVK::createSurface()
     }
 
     VkBool32 supportsPresentation = false;
-    vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, m_queueFamilyIndex, m_surface, &supportsPresentation);
+    vkGetPhysicalDeviceSurfaceSupportKHR(g_vulkanDevice.physicalDevice, m_queueFamilyIndex, m_surface, &supportsPresentation);
     if (!supportsPresentation)
     {
         LOG_ERROR("SwapChainVK::createSurface: not support presentation");
@@ -260,7 +258,7 @@ bool SwapChainVK::createSurface()
 
     //Get Surface format
     u32 surfaceFormatCount;
-    result = vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, nullptr);
+    result = vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkanDevice.physicalDevice, m_surface, &surfaceFormatCount, nullptr);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSurface: vkGetPhysicalDeviceSurfaceFormatsKHR. Error %s", DebugVK::errorString(result).c_str());
@@ -268,7 +266,7 @@ bool SwapChainVK::createSurface()
     }
 
     std::vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
-    result = vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, surfaceFormats.data());
+    result = vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkanDevice.physicalDevice, m_surface, &surfaceFormatCount, surfaceFormats.data());
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSurface: vkGetPhysicalDeviceSurfaceFormatsKHR. Error %s", DebugVK::errorString(result).c_str());
@@ -284,7 +282,7 @@ bool SwapChainVK::createSurface()
     // there is no preferered format, so we assume VK_FORMAT_B8G8R8A8_UNORM
     if ((surfaceFormatCount == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED)) //???
     {
-        surfaceFormatCount = VK_FORMAT_B8G8R8A8_UNORM;
+        m_surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
     }
     else
     {
@@ -308,10 +306,10 @@ bool SwapChainVK::createSwapChain()
 
     // Select a present mode for the swapchain
     u32 presentModeCount = 0;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(g_vulkanDevice.physicalDevice, m_surface, &presentModeCount, nullptr);
 
     std::vector<VkPresentModeKHR> presentModes(presentModeCount);
-    vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.data());
+    vkGetPhysicalDeviceSurfacePresentModesKHR(g_vulkanDevice.physicalDevice, m_surface, &presentModeCount, presentModes.data());
 
     // The VK_PRESENT_MODE_FIFO_KHR mode must always be present as per spec
     // This mode waits for the vertical blank ("v-sync")
@@ -374,7 +372,7 @@ bool SwapChainVK::createSwapChain()
     swapChainInfo.clipped = VK_TRUE; // Setting clipped to VK_TRUE allows the implementation to discard rendering outside of the surface area
     swapChainInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
-    VkResult result = vkCreateSwapchainKHR(m_device, &swapChainInfo, nullptr, &m_swapChain);
+    VkResult result = vkCreateSwapchainKHR(g_vulkanDevice.device, &swapChainInfo, nullptr, &m_swapChain);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSwapChain: vkCreateSwapchainKHR. Error %s", DebugVK::errorString(result).c_str());
@@ -389,7 +387,7 @@ bool SwapChainVK::createSwapChain()
 bool SwapChainVK::createSwapchainImages()
 {
     u32 swapChainImageCount;
-    VkResult result = vkGetSwapchainImagesKHR(m_device, m_swapChain, &swapChainImageCount, nullptr);
+    VkResult result = vkGetSwapchainImagesKHR(g_vulkanDevice.device, m_swapChain, &swapChainImageCount, nullptr);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSwapchainImages: vkGetSwapchainImagesKHR count. Error %s", DebugVK::errorString(result).c_str());
@@ -405,43 +403,27 @@ bool SwapChainVK::createSwapchainImages()
     LOG_DEBUG("SwapChainVK::createSwapchainImages: Count images %d", swapChainImageCount);
 
     std::vector<VkImage> images(swapChainImageCount);
-    result = vkGetSwapchainImagesKHR(m_device, m_swapChain, &swapChainImageCount, images.data());
+    result = vkGetSwapchainImagesKHR(g_vulkanDevice.device, m_swapChain, &swapChainImageCount, images.data());
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSwapchainImages: vkGetSwapchainImagesKHR array. Error %s", DebugVK::errorString(result).c_str());
         return false;
     }
 
-   //TODO:
-    //buffers.resize(imageCount);
-    //for (uint32_t i = 0; i < imageCount; i++)
-    //{
-    //    VkImageViewCreateInfo colorAttachmentView = {};
-    //    colorAttachmentView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    //    colorAttachmentView.pNext = NULL;
-    //    colorAttachmentView.format = colorFormat;
-    //    colorAttachmentView.components = {
-    //        VK_COMPONENT_SWIZZLE_R,
-    //        VK_COMPONENT_SWIZZLE_G,
-    //        VK_COMPONENT_SWIZZLE_B,
-    //        VK_COMPONENT_SWIZZLE_A
-    //    };
-    //    colorAttachmentView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    //    colorAttachmentView.subresourceRange.baseMipLevel = 0;
-    //    colorAttachmentView.subresourceRange.levelCount = 1;
-    //    colorAttachmentView.subresourceRange.baseArrayLayer = 0;
-    //    colorAttachmentView.subresourceRange.layerCount = 1;
-    //    colorAttachmentView.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    //    colorAttachmentView.flags = 0;
+    m_swapBuffers.reserve(swapChainImageCount);
+    for (auto& image : images)
+    {
+        //TODO: extract format and type from m_surfaceFormat
+        TextureVK* texture = new TextureVK(ETextureTarget::eTextureRectangle, EImageFormat::eRGBA, EImageType::eUnsignedByte, 
+            core::Dimension3D(m_surfaceSize.width, m_surfaceSize.height, 1), nullptr);
 
-    //    buffers[i].image = images[i];
-
-    //    colorAttachmentView.image = buffers[i].image;
-
-    //    err = vkCreateImageView(device, &colorAttachmentView, nullptr, &buffers[i].view);
-    //    assert(!err);
-
-    m_swapBuffers.resize(swapChainImageCount);
+        if (!texture->create(image))
+        {
+            LOG_ERROR("SwapChainVK::createSwapchainImages: can't create surface texture");
+            delete texture;
+        }
+        m_swapBuffers.push_back(texture);
+    }
 
     return true;
 }
@@ -455,7 +437,7 @@ bool SwapChainVK::createSurfaceWinApi()
     surfaceCreateInfo.flags = 0;
     surfaceCreateInfo.hinstance = m_appInstance;
     surfaceCreateInfo.hwnd = m_appWindow;
-    VkResult result = vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &m_surface);
+    VkResult result = vkCreateWin32SurfaceKHR(g_vulkanDevice.instance, &surfaceCreateInfo, nullptr, &m_surface);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("SwapChainVK::createSurfaceWinApi: vkCreateWin32SurfaceKHR. Error %s", DebugVK::errorString(result).c_str());

@@ -6,6 +6,7 @@
 #include "context/DebugVK.h"
 #include "RendererVK.h"
 #include "CommandBufferVK.h"
+#include "context/DeviceContextVK.h"
 
 namespace v3d
 {
@@ -13,6 +14,8 @@ namespace renderer
 {
 namespace vk
 {
+
+extern VulkanDevice g_vulkanDevice;
 
 VkBufferUsageFlags EBufferTargetVK[EBufferTarget::eBufferTargetCount] =
 {
@@ -30,7 +33,6 @@ BufferVK::BufferVK(EBufferTarget target, EDataUsageType type, bool mappable)
     , m_coherentMemory(false)
     , m_mapped(false)
 
-    , m_device(VK_NULL_HANDLE)
     , m_queueFamilyIndex(0)
 
     , m_memory(k_invalidMemory)
@@ -259,7 +261,6 @@ bool BufferVK::create(u32 size, const void* data)
         return true;
     }
 
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
     m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 
     VkBufferCreateInfo bufferCreateInfo = {};
@@ -272,7 +273,7 @@ bool BufferVK::create(u32 size, const void* data)
     bufferCreateInfo.size = static_cast<VkDeviceSize>(size);
     bufferCreateInfo.usage = m_usage;
 
-    VkResult result = vkCreateBuffer(m_device, &bufferCreateInfo, nullptr, &m_buffer);
+    VkResult result = vkCreateBuffer(g_vulkanDevice.device, &bufferCreateInfo, nullptr, &m_buffer);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("BufferVK::create. Error %s", DebugVK::errorString(result).c_str());
@@ -321,7 +322,7 @@ void BufferVK::destroy()
 
     if (m_buffer != VK_NULL_HANDLE)
     {
-        vkDestroyBuffer(m_device, m_buffer, nullptr);
+        vkDestroyBuffer(g_vulkanDevice.device, m_buffer, nullptr);
     }
 }
 

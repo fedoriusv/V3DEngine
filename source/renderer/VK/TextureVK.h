@@ -85,8 +85,6 @@ namespace vk
         //TODO: add Sampler 
 
     private:
-        VkDevice                        m_device;
-        u32                             m_queueFamilyIndex;
 
         SMemoryVK                       m_memory;
         VkImage                         m_image;

@@ -5,6 +5,7 @@
 
 #ifdef _VULKAN_RENDER_
 #include "context/DebugVK.h"
+#include "context/DeviceContextVK.h"
 #include "RendererVK.h"
 #include "CommandBufferVK.h"
 #include "BufferVK.h"
@@ -15,6 +16,8 @@ namespace renderer
 {
 namespace vk
 {
+
+extern VulkanDevice g_vulkanDevice;
 
 using namespace core;
 
@@ -361,8 +364,6 @@ TextureVK::TextureVK(ETextureTarget target, EImageFormat format, EImageType type
     , m_anisotropicLevel(eAnisotropic16x)
     , m_wrap(eClampToEdge)
 
-    , m_device(VK_NULL_HANDLE)
-    , m_queueFamilyIndex(0)
     , m_image(VK_NULL_HANDLE)
     , m_imageView(VK_NULL_HANDLE)
     , m_aspectFlags(0)
@@ -415,8 +416,6 @@ TextureVK::TextureVK(EImageFormat format, EImageType type, const core::Dimension
     , m_magFilter(eLinear)
     , m_mipmapLevel(mipCount)
 
-    , m_device(VK_NULL_HANDLE)
-    , m_queueFamilyIndex(0)
     , m_image(VK_NULL_HANDLE)
     , m_memory(k_invalidMemory)
     , m_imageView(VK_NULL_HANDLE)
@@ -452,20 +451,15 @@ bool TextureVK::create(const void* data, u32 srcSize)
         ASSERT(!data, "not support data for attachment format");
         return false;
     }
-
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-
     VkFormat format = getImageFormatVK(m_format, m_type);
     VkImageType imageType = getImageTypeVK(m_target);
     u32 countLayers = getArrayLayersCountVK(m_target, m_size);
 
-    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
-    vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
+    vkGetPhysicalDeviceImageFormatProperties(g_vulkanDevice.physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
     ASSERT(m_mipmapLevel <= m_imageProps.maxMipLevels, "unsupport mipmap level");
 
     VkFormatProperties formatProperties = {};
-    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
+    vkGetPhysicalDeviceFormatProperties(g_vulkanDevice.physicalDevice, format, &formatProperties);
 
     if (m_usage & VK_IMAGE_USAGE_SAMPLED_BIT)
     {
@@ -483,13 +477,13 @@ bool TextureVK::create(const void* data, u32 srcSize)
     imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
+    imageCreateInfo.pQueueFamilyIndices = &g_vulkanDevice.queueGraphicsFamilyIndex;
     imageCreateInfo.queueFamilyIndexCount = 1;
     imageCreateInfo.initialLayout = m_imageLayout;
     imageCreateInfo.extent = getImageExtentVK(m_target, m_size);
     imageCreateInfo.usage = m_usage;
 
-    VkResult result = vkCreateImage(m_device, &imageCreateInfo, nullptr, &m_image);
+    VkResult result = vkCreateImage(g_vulkanDevice.device, &imageCreateInfo, nullptr, &m_image);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("TextureVK::create: vkCreateImage. Error: %s", DebugVK::errorString(result).c_str());
@@ -579,17 +573,13 @@ bool TextureVK::create(VkImage image)
         return false;
     }
 
-    m_device = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanDevice();
-    m_queueFamilyIndex = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-
     VkFormat format = getImageFormatVK(m_format, m_type);
     VkImageType imageType = getImageTypeVK(m_target);
 
-    VkPhysicalDevice physicalDevice = std::static_pointer_cast<RendererVK>(ENGINE_RENDERER)->getVulkanContext()->getVulkanPhysicalDevice();
-    vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
+    vkGetPhysicalDeviceImageFormatProperties(g_vulkanDevice.physicalDevice, format, imageType, VK_IMAGE_TILING_OPTIMAL, m_usage, m_flags, &m_imageProps);
 
     VkFormatProperties formatProperties = {};
-    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
+    vkGetPhysicalDeviceFormatProperties(g_vulkanDevice.physicalDevice, format, &formatProperties);
 
     if (image == VK_NULL_HANDLE)
     {
@@ -604,13 +594,13 @@ bool TextureVK::create(VkImage image)
         imageCreateInfo.samples = getSampleCountVK(ENGINE_CONTEXT->getSamplesCount(), m_target);
         imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
         imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-        imageCreateInfo.pQueueFamilyIndices = &m_queueFamilyIndex;
+        imageCreateInfo.pQueueFamilyIndices = &g_vulkanDevice.queueGraphicsFamilyIndex;
         imageCreateInfo.queueFamilyIndexCount = 1;
         imageCreateInfo.initialLayout = m_imageLayout;
         imageCreateInfo.extent = getImageExtentVK(m_target, m_size);
         imageCreateInfo.usage = m_usage;
 
-        VkResult result = vkCreateImage(m_device, &imageCreateInfo, nullptr, &m_image);
+        VkResult result = vkCreateImage(g_vulkanDevice.device, &imageCreateInfo, nullptr, &m_image);
         if (result != VK_SUCCESS)
         {
             LOG_ERROR("TextureVK::create: vkCreateImage. Error: %s", DebugVK::errorString(result).c_str());
@@ -651,14 +641,14 @@ bool TextureVK::create(VkImage image)
 
     m_initialized = true;
 
-    return false;
+    return true;
 }
 
 void TextureVK::destroy()
 {
     if (m_imageView != VK_NULL_HANDLE)
     {
-        vkDestroyImageView(m_device, m_imageView, nullptr);
+        vkDestroyImageView(g_vulkanDevice.device, m_imageView, nullptr);
         m_imageView = nullptr;
     }
 
@@ -671,7 +661,7 @@ void TextureVK::destroy()
 
     if (m_image != VK_NULL_HANDLE)
     {
-        vkDestroyImage(m_device, m_image, nullptr);
+        vkDestroyImage(g_vulkanDevice.device, m_image, nullptr);
     }
 }
 
@@ -1043,7 +1033,7 @@ bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& 
     imageViewCreateInfo.subresourceRange = imageSubresourceRange;
     imageViewCreateInfo.image = m_image;
 
-    VkResult result = vkCreateImageView(m_device, &imageViewCreateInfo, nullptr, &m_imageView);
+    VkResult result = vkCreateImageView(g_vulkanDevice.device, &imageViewCreateInfo, nullptr, &m_imageView);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("TextureVK::createImageView: vkCreateImageView. Error: %s", DebugVK::errorString(result).c_str());
@@ -1055,7 +1045,7 @@ bool TextureVK::createImageView(VkFormat format, const VkImageSubresourceRange& 
         //TODO: create subresources
     }
 
-    return false;
+    return true;
 }
 
 } //namespace vk

@@ -40,7 +40,6 @@ namespace vk
         VkCommandPoolCreateFlags    m_creatFlags;
         VkCommandPoolResetFlags     m_resetFlags;
 
-        VkDevice                    m_device;
         u32                         m_queueFamilyIndex;
     };
 

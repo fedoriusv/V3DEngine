@@ -34,8 +34,6 @@ namespace vk
         VkFramebuffer               m_framebuffer;
         std::vector<VkImageView>    m_attacmentsView;
 
-        VkDevice                    m_device;
-
         bool                        m_initialized;
     };
 

@@ -12,13 +12,14 @@ namespace renderer
 namespace vk
 {
 
+extern VulkanDevice g_vulkanDevice;
+
 using namespace utils;
 
 
 MemoryManagerVK::MemoryManagerVK(const ContextVKPtr context)
     : m_imagePoolAllocator(1 * 1024 * 1024, 256, 512) //image allocator
     , m_bufferPoolAllocator(1 * 1024, 128, 256) //buffer allocator
-    , m_device(context->getVulkanDevice())
     , m_physicalDeviceMemoryProperties(context->getVulkanPhysicalDeviceMemoryProperties())
 {
 }
@@ -55,7 +56,7 @@ SMemoryVK MemoryManagerVK::allocateImage(AllocatorVK& allocator, VkImage image, 
     std::lock_guard<std::mutex> lock(m_mutex);
 
     VkMemoryRequirements memoryRequirements = {};
-    vkGetImageMemoryRequirements(m_device, image, &memoryRequirements);
+    vkGetImageMemoryRequirements(g_vulkanDevice.device, image, &memoryRequirements);
 
     s32 memoryTypeIndex = MemoryManagerVK::findMemoryTypeIndex(memoryRequirements, flags);
     if (memoryTypeIndex < 0)
@@ -66,13 +67,13 @@ SMemoryVK MemoryManagerVK::allocateImage(AllocatorVK& allocator, VkImage image, 
         return k_invalidMemory;
     }
 
-    SMemoryVK memory = allocator.allocate(m_device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
+    SMemoryVK memory = allocator.allocate(g_vulkanDevice.device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
     if (memory._memory == VK_NULL_HANDLE)
     {
         return k_invalidMemory;
     }
 
-    VkResult result = vkBindImageMemory(m_device, image, memory._memory, memory._offset);
+    VkResult result = vkBindImageMemory(g_vulkanDevice.device, image, memory._memory, memory._offset);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("MemoryManagerVK::allocateImage: vkBindImageMemory. Error %s", DebugVK::errorString(result).c_str());
@@ -95,7 +96,7 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
     std::lock_guard<std::mutex> lock(m_mutex);
 
     VkMemoryRequirements memoryRequirements = {};
-    vkGetBufferMemoryRequirements(m_device, buffer, &memoryRequirements);
+    vkGetBufferMemoryRequirements(g_vulkanDevice.device, buffer, &memoryRequirements);
 
     s32 memoryTypeIndex = MemoryManagerVK::findMemoryTypeIndex(memoryRequirements, flags);
     if (memoryTypeIndex < 0)
@@ -106,13 +107,13 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
         return k_invalidMemory;
     }
 
-    SMemoryVK memory = allocator.allocate(m_device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
+    SMemoryVK memory = allocator.allocate(g_vulkanDevice.device, m_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags, memoryRequirements.size, memoryTypeIndex);
     if (memory._memory == VK_NULL_HANDLE)
     {
         return k_invalidMemory;
     }
 
-    VkResult result = vkBindBufferMemory(m_device, buffer, memory._memory, memory._offset);
+    VkResult result = vkBindBufferMemory(g_vulkanDevice.device, buffer, memory._memory, memory._offset);
     if (result != VK_SUCCESS)
     {
         LOG_ERROR("MemoryManagerVK::allocateBuffer: vkBindBufferMemory. Error %s", DebugVK::errorString(result).c_str());
@@ -124,7 +125,7 @@ SMemoryVK MemoryManagerVK::allocateBuffer(AllocatorVK& allocator, VkBuffer buffe
 
 void MemoryManagerVK::free(AllocatorVK& allocator, SMemoryVK& memory)
 {
-    allocator.free(m_device, memory);
+    allocator.free(g_vulkanDevice.device, memory);
 }
 
 void* MemoryManagerVK::beginAccessToHostMemory(const SMemoryVK& memory, u64 offset, u64 size)
@@ -153,7 +154,7 @@ void* MemoryManagerVK::beginAccessToHostMemory(const SMemoryVK& memory, u64 offs
         }
 
         //TODO: check multiple of ENGINE_CONTEXT->getMemoryBlockSize();
-        VkResult result = vkInvalidateMappedMemoryRanges(m_device, 1, &range);
+        VkResult result = vkInvalidateMappedMemoryRanges(g_vulkanDevice.device, 1, &range);
         if (result != VK_SUCCESS)
         {
             LOG_ERROR("MemoryManagerVK::beginAccessToHostMemory. Error %s", DebugVK::errorString(result).c_str());
@@ -199,7 +200,7 @@ bool MemoryManagerVK::endAccessToHostMemory(const SMemoryVK& memory, u64 offset,
         }
 
         //TODO: check multiple of ENGINE_CONTEXT->getMemoryBlockSize();
-        VkResult result = vkFlushMappedMemoryRanges(m_device, 1, &range);
+        VkResult result = vkFlushMappedMemoryRanges(g_vulkanDevice.device, 1, &range);
         if (result != VK_SUCCESS)
         {
             LOG_ERROR("MemoryManagerVK::endAccessToHostMemory. Error %s", DebugVK::errorString(result).c_str());

@@ -305,7 +305,7 @@ void* TextureManager::generateMipMaps(const core::Dimension3D& size, const void*
     for (u32 mip = 1; mip < mipCount; ++mip)
     {
         step = 2 << mip - 1;
-        u32 mipAllocSize = TextureManager::culculateMipmapLevelSize(size, format, type, mip);
+        u32 mipAllocSize = TextureManager::calculateMipmapLevelSize(size, format, type, mip);
         u8* allocData = reinterpret_cast<u8*>(malloc(mipAllocSize));
 
         for (u32 pos = 0; pos < mipSize.getArea(); pos += step)
@@ -327,7 +327,7 @@ void* TextureManager::generateMipMaps(const core::Dimension3D& size, const void*
     return generateData;
 }
 
-u32 TextureManager::culculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level)
+u32 TextureManager::calculateMipmapLevelSize(const core::Dimension3D& size, renderer::EImageFormat format, renderer::EImageType type, u32 level)
 {
     u32 componentCount = ImageFormat::componentCount(format);
     u32 typeSize = ImageFormat::typeSize(type);

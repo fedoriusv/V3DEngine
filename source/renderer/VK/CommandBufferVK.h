@@ -50,8 +50,6 @@ namespace vk
         VkCommandBufferLevel    m_bufferLevel;
         VkCommandBuffer         m_commandBuffer;
         VkCommandPool           m_commandPool;
-
-        VkDevice                m_device;
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
